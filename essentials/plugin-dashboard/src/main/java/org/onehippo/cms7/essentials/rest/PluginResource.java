@@ -56,6 +56,7 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
@@ -384,7 +385,7 @@ public class PluginResource extends BaseResource {
                 }
 
                 if (dependenciesNotInstalled.size() == 0 && repositoriesNotInstalled.size() == 0) {
-                    final PluginContext context = getContext(servletContext);
+                    final PluginContext context = PluginContextFactory.getContext();
                     try (PluginConfigService service = new FilePluginService(context)) {
                         service.write(createPluginInstallerDocument(id));
                     }
@@ -428,7 +429,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/settings")
     public RestfulList<KeyValueRestful> getKeyValue(@Context ServletContext servletContext) {
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
         final RestfulList<KeyValueRestful> list = new RestList<>();
         for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
@@ -449,7 +450,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/projectsettings")
     public ProjectSettings getProjectSettings(@Context ServletContext servletContext) {
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         return context.getProjectSettings();
     }
 
@@ -536,7 +537,7 @@ public class PluginResource extends BaseResource {
     @Path("/changes/")
     public RestfulList<MessageRestful> getInstructionPackageChanges(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
         final Map<String, String> values = payload.getValues();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         context.addPlaceholderData(new HashMap<String, Object>(values));
 
         final String pluginId = values.get(PLUGIN_ID);
@@ -684,7 +685,7 @@ public class PluginResource extends BaseResource {
         final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<PluginRestful> items = getLocalPlugins(servletContext);
         final Collection<String> restClasses = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         // remote plugins
         final ProjectSettings projectSettings = getProjectSettings(servletContext);
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();

@@ -41,6 +41,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -62,7 +63,7 @@ public class SelectionResource extends BaseResource {
     public MessageRestful addField(final PostPayloadRestful payloadRestful,
                                    @Context ServletContext servletContext,
                                    @Context HttpServletResponse response) {
-        final Session session = getContext(servletContext).createSession();
+        final Session session = PluginContextFactory.getContext().createSession();
 
         try {
             return addField(session, payloadRestful.getValues(), response);
@@ -79,7 +80,7 @@ public class SelectionResource extends BaseResource {
     public List<SelectionFieldRestful> getSelectionFields(@Context ServletContext servletContext,
                                                           @PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
-        final Session session = getContext(servletContext).createSession();
+        final Session session = PluginContextFactory.getContext().createSession();
 
         try {
             addSelectionFields(fields, docType, session);

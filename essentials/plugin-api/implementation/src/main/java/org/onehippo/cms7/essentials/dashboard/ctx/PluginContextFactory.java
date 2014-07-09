@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks;
+package org.onehippo.cms7.essentials.dashboard.ctx;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 
 /**
- * @version "$Id$"
+ * Created by tjeger on 7/9/14.
  */
-public class HasProviderMatcher implements JcrMatcher {
+public class PluginContextFactory {
 
-    @Override
-    public boolean matches(final Node prototypeNode) throws RepositoryException {
-        return (prototypeNode.hasProperty("cbitem") && prototypeNode.getProperty("cbitem").getBoolean());
+    public static PluginContext getContext() {
+        final String className = ProjectSetupPlugin.class.getName();
+        return new DefaultPluginContext(new PluginRestful(className));
+    }
+
+    public static PluginContext getContext(PluginRestful plugin) {
+        return new DefaultPluginContext(plugin);
     }
 }

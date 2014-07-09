@@ -25,7 +25,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compounds;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compound;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.DocumentType;
 
 /**
@@ -40,7 +40,7 @@ public class RestList<T extends Restful> extends RestfulList<T> {
     @JsonSubTypes({
             @JsonSubTypes.Type(KeyValueRestful.class),
             @JsonSubTypes.Type(DocumentType.class),
-            @JsonSubTypes.Type(Compounds.class)
+            @JsonSubTypes.Type(Compound.class)
     })
     @Override
     public List<T> getItems() {

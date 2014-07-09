@@ -43,6 +43,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -54,7 +55,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.exc.RestException;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.RestList;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.CBPayload;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compounds;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compound;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.ContentBlockModel;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.DocumentType;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.HasProviderMatcher;
@@ -64,10 +65,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-/**
- * @version "$Id$"
- */
-// TODO mm: move this to own directory (as part of the plugin)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -80,13 +77,13 @@ public class ContentBlocksResource extends BaseResource {
     public RestfulList<DocumentType> getControllers(@Context ServletContext servletContext) {
         final RestfulList<DocumentType> types = new RestList<>();
         final Session session = GlobalUtils.createSession();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         String prefix = projectNamespacePrefix + ':';
 
         try {
             final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new AllDocumentMatcher(), "new-document");
-            final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
+            final Map<String, Compound> compoundMap = getCompoundMap(servletContext);
 
             for (String primaryType : primaryTypes) {
                 final RestList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
@@ -96,8 +93,8 @@ public class ContentBlocksResource extends BaseResource {
                     final String name = it.nextNode().getName();
                     String namespaceName = MessageFormat.format("{0}{1}", prefix, name);
                     if (compoundMap.containsKey(namespaceName)) {
-                        final Compounds compounds = compoundMap.get(namespaceName);
-                        keyValueRestfulRestfulList.add(compounds);
+                        final Compound compound = compoundMap.get(namespaceName);
+                        keyValueRestfulRestfulList.add(compound);
                     }
                 }
 
@@ -120,10 +117,10 @@ public class ContentBlocksResource extends BaseResource {
         return execute.getNodes();
     }
 
-    private Map<String, Compounds> getCompoundMap(final ServletContext servletContext) {
-        final RestfulList<Compounds> compounds = getCompounds(servletContext);
-        Map<String, Compounds> compoundMap = new HashMap<>();
-        for (Compounds compound : compounds.getItems()) {
+    private Map<String, Compound> getCompoundMap(final ServletContext servletContext) {
+        final RestfulList<Compound> compounds = getCompounds(servletContext);
+        Map<String, Compound> compoundMap = new HashMap<>();
+        for (Compound compound : compounds.getItems()) {
             compoundMap.put(compound.getValue(), compound);
         }
         return compoundMap;
@@ -131,13 +128,13 @@ public class ContentBlocksResource extends BaseResource {
 
     @GET
     @Path("/compounds")
-    public RestfulList<Compounds> getCompounds(@Context ServletContext servletContext) {
-        final RestfulList<Compounds> types = new RestList<>();
+    public RestfulList<Compound> getCompounds(@Context ServletContext servletContext) {
+        final RestfulList<Compound> types = new RestList<>();
         final Session session = GlobalUtils.createSession();
         try {
             final Set<String> primaryTypes = HippoNodeUtils.getCompounds(session, new HasProviderMatcher());
             for (String primaryType : primaryTypes) {
-                types.add(new Compounds(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, HippoNodeUtils.resolvePath(primaryType)));
+                types.add(new Compound(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, HippoNodeUtils.resolvePath(primaryType)));
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
@@ -156,7 +153,7 @@ public class ContentBlocksResource extends BaseResource {
         }
         final Session session = GlobalUtils.createSession();
         try {
-            final PluginContext context = getContext(servletContext);
+            final PluginContext context = PluginContextFactory.getContext();
             final RestWorkflow workflow = new RestWorkflow(session, context);
             workflow.addContentBlockCompound(name);
             return new MessageRestful("Successfully created compound with name: " + name);
@@ -171,7 +168,7 @@ public class ContentBlocksResource extends BaseResource {
         final Session session = GlobalUtils.createSession();
         try {
 
-            final PluginContext context = getContext(servletContext);
+            final PluginContext context = PluginContextFactory.getContext();
             final RestWorkflow workflow = new RestWorkflow(session, context);
             workflow.removeDocumentType(name);
             return new MessageRestful("Document type for name: " + name + " successfully deleted. You'll have to manually delete " + name + " entry from project CND file");
@@ -189,7 +186,7 @@ public class ContentBlocksResource extends BaseResource {
         final List<DocumentType> docTypes = body.getDocumentTypes().getItems();
         final Session session = GlobalUtils.createSession();
         try {
-            final RestWorkflow workflow = new RestWorkflow(session, getContext(servletContext));
+            final RestWorkflow workflow = new RestWorkflow(session, PluginContextFactory.getContext());
             for (DocumentType documentType : docTypes) {
                 final List<KeyValueRestful> providers = documentType.getProviders().getItems();
                 if (providers.isEmpty()) {

@@ -19,15 +19,17 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th class="nav nav-justified" colspan="2">New plugins</th>
+            <th class="nav nav-justified" colspan="2">All Plugins</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:true} | filter:{type:'plugins'} | orderBy:'name'">
+        <tr ng-repeat="plugin in plugins | filter:{type:'plugins'} | orderBy:'name'">
             <td>{{plugin.name}}</td>
             <td>{{plugin.introduction}}</td>
             <td class="pull-right">
-                <a class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Install</a>
+              <button class="btn btn-primary"
+                      ng-disabled="!plugin.needsInstallation"
+                      ng-click="installPlugin(plugin.pluginId)">{{plugin.needsInstallation ? 'Install' : 'Installed'}}</button>
             </td>
         </tr>
         </tbody>

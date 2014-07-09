@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model;
+package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.util.Set;
 

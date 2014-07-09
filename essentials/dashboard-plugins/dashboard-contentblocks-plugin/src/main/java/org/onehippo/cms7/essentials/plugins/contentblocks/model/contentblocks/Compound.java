@@ -25,16 +25,16 @@ import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
  * @version "$Id$"
  */
 @XmlRootElement(name = "items")
-public class Compounds extends KeyValueRestful implements Restful {
+public class Compound extends KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
     private String path;
 
-    public Compounds() {
+    public Compound() {
     }
 
-    public Compounds(final String key, final String value, final String path) {
+    public Compound(final String key, final String value, final String path) {
         super(key, value);
         this.path = path;
     }
