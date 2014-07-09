@@ -55,18 +55,18 @@
     <hippo.services.contenttype.version>1.04.01-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.utilities.version>1.03.01-SNAPSHOT</hippo.utilities.version>
 
-    <forge.content-blocks.version>1.11.01-SNAPSHOT</forge.content-blocks.version>
-    <forge.dashboard-document-wizard.version>1.05.01-SNAPSHOT</forge.dashboard-document-wizard.version>
-    <forge.ecm-tagging.version>4.07.01-SNAPSHOT</forge.ecm-tagging.version>
+    <forge.content-blocks.version>1.11.00</forge.content-blocks.version>
+    <forge.dashboard-document-wizard.version>1.05.00</forge.dashboard-document-wizard.version>
+    <forge.ecm-tagging.version>4.07.00</forge.ecm-tagging.version>
     <forge.gallerypicker.version>1.13.01-SNAPSHOT</forge.gallerypicker.version>
-    <forge.poll.version>1.08.01-SNAPSHOT</forge.poll.version>
-    <forge.relateddocs.version>2.10.01-SNAPSHOT</forge.relateddocs.version>
+    <forge.poll.version>1.08.00</forge.poll.version>
+    <forge.relateddocs.version>2.10.00</forge.relateddocs.version>
     <forge.resourcebundle.version>1.02.02-SNAPSHOT</forge.resourcebundle.version>
     <forge.robotstxt.version>1.08.01-SNAPSHOT</forge.robotstxt.version>
     <forge.selection.version>2.08.01-SNAPSHOT</forge.selection.version>
-    <forge.sitemap.version>1.06.01-SNAPSHOT</forge.sitemap.version>
+    <forge.sitemap.version>1.06.00</forge.sitemap.version>
     <forge.taxonomy.version>1.11.01-SNAPSHOT</forge.taxonomy.version>
-    <forge.tcmp.version>1.09.01-SNAPSHOT</forge.tcmp.version>
+    <forge.tcmp.version>1.09.00</forge.tcmp.version>
 
   </properties>
 
@@ -237,7 +237,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-deprecated-translation</artifactId>
+        <artifactId>hippo-repository-deprecated-facetsearch</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
       <dependency>
