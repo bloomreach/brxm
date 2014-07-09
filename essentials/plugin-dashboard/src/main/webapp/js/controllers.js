@@ -24,7 +24,7 @@
         .service('menuService', function () {
             this.getMenu = function () {
                 return [
-                    {name: "Installed plugins", link: "#/installed-plugins"},
+                    {name: "Installed Plugins", link: "#/installed-plugins"},
                     {name: "Plugins", link: "#/plugins"},
                     {name: "Tools", link: "#/tools"}
                 ];
