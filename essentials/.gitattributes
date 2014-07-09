@@ -1509,6 +1509,7 @@ plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-modal.less 
 plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-variables.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/hippo-essentials.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/infobox.less -text
+plugin-dashboard/src/main/webapp/css/less/essentials-less/messages.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/space.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/_variables.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/vars.less -text
