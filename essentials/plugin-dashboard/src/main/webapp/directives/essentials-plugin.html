@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div class="plugin plugin-info">
+<div ng-class="plugin.type=='tools'? 'plugin plugin-primary':plugin.needsInstallation ? 'plugin plugin-warn':'plugin plugin-success'">
     <div class="plugin-header">
         <h3 class="plugin-title">{{plugin.name}}</h3>
         <div class="plugin-tools pull-right">
