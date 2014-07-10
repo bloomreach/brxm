@@ -19,9 +19,10 @@
         <h3 class="plugin-title">{{plugin.name}}</h3>
         <div class="plugin-tools pull-right">
             <button class="btn btn-primary"
-                    ng-disabled="!plugin.needsInstallation"
-                    ng-click="installPlugin(plugin.pluginId)">{{plugin.needsInstallation ? 'Add to project' : 'Installed'}}
+                    ng-show="plugin.needsInstallation"
+                    ng-click="installPlugin(plugin.pluginId)">Add to project
             </button>
+            <a ng-show="!plugin.needsInstallation" class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Configure</a>
         </div>
 
     </div>

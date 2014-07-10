@@ -421,9 +421,6 @@
   float: left;
   cursor: default;
 }
-.plugin .plugin-header a {
-  color: #444;
-}
 .plugin .plugin-header > .plugin-tools {
   padding: 5px 10px 5px 5px;
 }
