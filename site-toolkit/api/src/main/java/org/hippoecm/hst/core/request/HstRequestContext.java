@@ -383,6 +383,14 @@ public interface HstRequestContext {
     HippoBean getContentBean();
 
     /**
+     * Returns same as {@link #getContentBean()} but if the found {@link HippoBean} is not of type
+     * <code>beanMappingClass</code>, then <code>null</code> is returned.
+     * @return {@link HippoBean} of type <code>beanMappingClass</code> or <code>null</code>
+     * @see #getContentBean()  getContentBean()
+     */
+    <T extends HippoBean> T getContentBean(Class<T> beanMappingClass);
+
+    /**
      * @return a <code>ObjectBeanManager</code> instance for the current {@link HstRequestContext} backed by the
      * {@link #getSession()}
      * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager

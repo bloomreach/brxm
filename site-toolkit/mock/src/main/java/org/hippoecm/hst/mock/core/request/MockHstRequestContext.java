@@ -424,6 +424,11 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         return contentBean;
     }
 
+    @Override
+    public <T extends HippoBean> T getContentBean(final Class<T> beanMappingClass) {
+        return (T)getContentBean();
+    }
+
     public void setContentBean(final HippoBean contentBean) {
         this.contentBean = contentBean;
     }

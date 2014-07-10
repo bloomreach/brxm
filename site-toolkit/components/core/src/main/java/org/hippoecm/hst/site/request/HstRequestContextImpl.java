@@ -588,6 +588,19 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
+    public <T extends HippoBean> T getContentBean(final Class<T> beanMappingClass) {
+        HippoBean bean = getContentBean();
+        if (bean == null) {
+            return null;
+        }
+        if (!beanMappingClass.isAssignableFrom(bean.getClass())) {
+            log.debug("Required bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(), bean.getClass().getName());
+            return null;
+        }
+        return (T) bean;
+    }
+
+    @Override
     public String getSiteContentBasePath() {
         HstRequestContext requestContext = RequestContextProvider.get();
 
