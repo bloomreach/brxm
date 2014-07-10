@@ -42,6 +42,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
@@ -204,7 +205,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         final IndexReader reader = getIndexReader();
         // an authorizationFilter that is equal to null means: no filter for bitset
         CachingMultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
-        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
+        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
                 searcher.execute(query, sort, resultFetchHint,
@@ -238,7 +239,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         final IndexReader reader = getIndexReader();
         CachingMultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
-        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
+        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
                 query.execute(searcher, orderings, resultFetchHint)) {
@@ -358,9 +359,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             indexingConfiguration = builder.parse(configurationInputSource).getDocumentElement();
         } catch (ParserConfigurationException e) {
             log.warn("Unable to create XML parser", e);
-        } catch (IOException e) {
-            log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
-        } catch (SAXException e) {
+        } catch (IOException | SAXException e) {
             log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
         }
         return indexingConfiguration;
@@ -402,10 +401,10 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         final NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
         super.updateNodes(removedIt, addedIt);
         updateContainingDocumentNodes(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
-        updateSiblingDocumentStates(addedIt.processedStates, removedIt.processedIds);
+        updateSiblingDocumentStates(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
     }
 
-    private void updateSiblingDocumentStates(final List<NodeState> addedStates, final List<NodeId> removedIds) throws IOException, RepositoryException {
+    private void updateSiblingDocumentStates(final List<NodeState> addedStates, final List<NodeId> addedIds, final List<NodeId> removedIds) throws IOException, RepositoryException {
         final List<NodeState> updateDocumentStates = new ArrayList<>();
         final List<NodeId> updateDocumentIds = new ArrayList<>();
         for (NodeState addedState : addedStates) {
@@ -417,7 +416,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 if (parentId == null) {
                     continue;
                 }
-                final NodeState parentState = (NodeState) getContext().getItemStateManager().getItemState(parentId);
+                final NodeState parentState = getNodeState(parentId);
                 if (!isHandle(parentState)) {
                     continue;
                 }
@@ -426,10 +425,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                     if (siblingId.equals(addedState.getId())) {
                         continue;
                     }
-                    if (updateDocumentIds.contains(siblingId) || removedIds.contains(siblingId)) {
+                    if (addedIds.contains(siblingId) || removedIds.contains(siblingId)) {
                         continue;
                     }
-                    final NodeState siblingState = (NodeState) getContext().getItemStateManager().getItemState(siblingId);
+                    if (updateDocumentIds.contains(siblingId)) {
+                        continue;
+                    }
+                    final NodeState siblingState = getNodeState(siblingId);
                     if (!isHippoDocument(siblingState)) {
                         continue;
                     }
@@ -561,7 +563,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         try {
-            final NodeState parent = (NodeState) getContext().getItemStateManager().getItemState(node.getParentId());
+            final NodeState parent = getNodeState(node.getParentId());
             return skipIndexing(parent, excludedIdsCache, includedIdsCache, nodeIdHierarchy);
         } catch (ItemStateException e) {
             String msg = "Error while indexing node: " + nodeId + " of "
@@ -581,7 +583,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 return false;
             }
 
-            ItemStateManager ism = getContext().getItemStateManager();
+            ItemStateManager ism = getItemStateManager();
 
             NodeState parent = (NodeState) ism.getItemState(node.getParentId());
             if (parent != null && isHandle(parent) && isHippoDocument(node)) {
@@ -627,7 +629,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         if (isDocumentVariant(state)) {
             return state;
         }
-        ItemStateManager ism = getContext().getItemStateManager();
+        ItemStateManager ism = getItemStateManager();
         if (state.getParentId() == null) {
             return null;
         }
@@ -652,7 +654,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             }
             Document aDoc;
             try {
-                final ItemStateManager itemStateManager = getContext().getItemStateManager();
+                final ItemStateManager itemStateManager = getItemStateManager();
                 final NodeState childState = (NodeState) itemStateManager.getItemState(childNodeEntry.getId());
                 if (aggregateChildTypes) {
                     if (getIndexingConfig().isChildAggregate(childState.getNodeTypeName())) {
@@ -729,7 +731,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             if (parentId == null) {
                 return;
             }
-            final NodeState parentState = (NodeState) getContext().getItemStateManager().getItemState(parentId);
+            final NodeState parentState = getNodeState(parentId);
             if (!isHandle(parentState) || !isTranslated(parentState)) {
                 return;
             }
@@ -739,9 +741,9 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                     continue;
                 }
                 final NodeId translationId = childNodeEntry.getId();
-                final NodeState translationState = (NodeState) getContext().getItemStateManager().getItemState(translationId);
+                final NodeState translationState = getNodeState(translationId);
                 final PropertyId messagePropertyId = new PropertyId(translationState.getNodeId(), getIndexingConfig().getHippoMessageName());
-                final PropertyState messagePropertyState = (PropertyState) getContext().getItemStateManager().getItemState(messagePropertyId);
+                final PropertyState messagePropertyState = getPropertyState(messagePropertyId);
                 if (messagePropertyState.getValues().length == 0 || messagePropertyState.getValues()[0] == null || messagePropertyState.getValues()[0].getString().isEmpty()) {
                     continue;
                 }
@@ -749,8 +751,25 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 indexer.addStringValue(doc, getIndexingConfig().getTranslationMessageFieldName(), messagePropertyState.getValues()[0].getString(), true, true, 2.0f, true, false);
             }
         } catch (ItemStateException | RepositoryException e) {
-            e.printStackTrace();
+            final String message = "Unable to add index translations of document " + state.getId();
+            if (log.isDebugEnabled()) {
+                log.warn(message, e);
+            } else {
+                log.warn(message + ": " + e + " (full stack on debug level)");
+            }
         }
+    }
+
+    private PropertyState getPropertyState(ItemId propertyId) throws ItemStateException {
+        return (PropertyState) getItemStateManager().getItemState(propertyId);
+    }
+
+    private NodeState getNodeState(ItemId nodeId) throws ItemStateException {
+        return (NodeState) getItemStateManager().getItemState(nodeId);
+    }
+
+    private ItemStateManager getItemStateManager() {
+        return getContext().getItemStateManager();
     }
 
     private class NodeIdIteratorImpl implements Iterator<NodeId> {

@@ -120,6 +120,10 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository.quartz.JCRJobStore">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
 
   <root>
     <level value="warn"/>
