@@ -62,7 +62,7 @@
                 if (data.data && data.data.successMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
                 } else if (data.successMessage) {
-                    $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
+                    $rootScope.feedbackMessages.push({type: 'info', message: data.successMessage.value});
                 }
 
             }
