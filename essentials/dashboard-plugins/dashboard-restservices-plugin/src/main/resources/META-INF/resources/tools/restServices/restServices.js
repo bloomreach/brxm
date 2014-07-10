@@ -83,9 +83,7 @@
             // UTIL
             //############################################
             function displayError(msg) {
-                $rootScope.globalError = [];
-                $rootScope.feedbackMessages = [];
-                $rootScope.globalError.push(msg);
+                $rootScope.feedbackMessages.push({type: 'error', message: msg});
             }
 
             function checkValid() {

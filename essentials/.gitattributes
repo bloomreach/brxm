@@ -1576,6 +1576,7 @@ plugin-dashboard/src/test/resources/log4j.xml -text
 /pom.xml -text
 test-skeleton/.bowerrc -text
 test-skeleton/bower.json -text
+test-skeleton/feedback.js -text
 test-skeleton/index.html -text
 test-skeleton/package.json -text
 test-skeleton/readme.md -text
