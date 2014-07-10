@@ -22,7 +22,4 @@
   <sv:property sv:name="hipposys:securityprovider" sv:type="String">
     <sv:value>internal</sv:value>
   </sv:property>
-  <sv:property sv:name="hipposys:system" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
 </sv:node>
