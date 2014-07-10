@@ -237,7 +237,7 @@
 
                     $scope.activeMessages = [];
                     $scope.archiveMessages = [$scope.messages[0]];
-                    $scope.archiveOpen = true;
+                    $scope.archiveOpen = false;
 
                     $scope.$watch('messages', function () {
                         // don't execute if message count is not changed, e.g. when changing visibility only

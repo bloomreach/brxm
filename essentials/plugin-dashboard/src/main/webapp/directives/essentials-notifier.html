@@ -15,7 +15,7 @@
   -->
 
 <div class="feedback" ng-show="activeMessages.length">
-    <div class="feedback-active" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
+    <div class="feedback-active feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
         <div ng-switch-when="info" class="info">
             <i class="fa fa-info"></i> {{message.date}}
             <div class="feedback-message" ng-bind-html="message.message"></div>

@@ -123,39 +123,15 @@
 // SHOW HIDE
 //############################################
 */
-
-.feedbackanimation.ng-enter,
-.feedbackanimation.ng-hide,
-.feedbackanimation.ng-show,
-.feedbackanimation.ng-leave {
+.feedbackanimation.ng-enter {
   -webkit-animation: feedback_sequence 1s linear;
   -moz-transition: feedback_sequence 1s linear;
   -o-transition: feedback_sequence 1s linear;
   animation: feedback_sequence 1s linear;
 }
 
-.feedbackanimation.ng-show {
-  opacity: 1;
-}
-
-.feedbackanimation.ng-enter {
-  opacity: 0;
-}
-
-.feedbackanimation.ng-leave {
-  opacity: 1;
-}
-
-.feedbackanimation.ng-hide {
-  opacity: 0;
-}
-
 .feedbackanimation.ng-enter.ng-enter-active {
   opacity: 1;
-}
-
-.feedbackanimation.ng-leave.ng-leave-active {
-  opacity: 0;
 }
 
 @-webkit-keyframes feedback_sequence {

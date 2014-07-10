@@ -314,32 +314,14 @@
 // SHOW HIDE
 //############################################
 */
-.feedbackanimation.ng-enter,
-.feedbackanimation.ng-hide,
-.feedbackanimation.ng-show,
-.feedbackanimation.ng-leave {
+.feedbackanimation.ng-enter {
   -webkit-animation: feedback_sequence 1s linear;
   -moz-transition: feedback_sequence 1s linear;
   -o-transition: feedback_sequence 1s linear;
   animation: feedback_sequence 1s linear;
 }
-.feedbackanimation.ng-show {
-  opacity: 1;
-}
-.feedbackanimation.ng-enter {
-  opacity: 0;
-}
-.feedbackanimation.ng-leave {
-  opacity: 1;
-}
-.feedbackanimation.ng-hide {
-  opacity: 0;
-}
 .feedbackanimation.ng-enter.ng-enter-active {
   opacity: 1;
-}
-.feedbackanimation.ng-leave.ng-leave-active {
-  opacity: 0;
 }
 @-webkit-keyframes feedback_sequence {
   from {
@@ -372,7 +354,7 @@
   position: fixed;
   width: 100%;
   top: 0;
-  height: 30px;
+  height: 36px;
 }
 .navbar-fixed-top {
   border-width: 0 0 1px;
@@ -380,8 +362,8 @@
   top: 0;
 }
 .navbar-push {
-  top: 30px;
-  margin-bottom: 30px;
+  top: 36px;
+  margin-bottom: 36px;
 }
 .footer {
   border-top: 1px solid #eeeeee;

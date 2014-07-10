@@ -29,12 +29,43 @@
  */
 (function () {
     "use strict";
-    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute','ngAnimate', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
 //############################################
         .config(function ($provide, $httpProvider) {
+
+            function addError($rootScope, error) {
+                if(!error){
+                    return;
+                }
+                if (error.data) {
+                    if (error.data.value) {
+                        $rootScope.feedbackMessages.push({type: 'error', message: error.data.value});
+                    } else {
+                        $rootScope.feedbackMessages.push({type: 'error', message: error.data});
+                    }
+                }
+                else if (error.status) {
+                    $rootScope.feedbackMessages.push({type: 'error', message: error.status});
+                } else {
+                    $rootScope.feedbackMessages.push({type: 'error', message: error});
+                }
+
+            }
+
+            function addMessage($rootScope, data) {
+                if(!data){
+                    return;
+                }
+                if (data.data && data.data.successMessage) {
+                    $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
+                } else if (data.successMessage) {
+                    $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
+                }
+
+            }
 
             $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
                 return {
@@ -46,20 +77,7 @@
                     },
                     requestError: function (error) {
                         $rootScope.busyLoading = true;
-                        $rootScope.globalError = [];
-                        $rootScope.feedbackMessages = [];
-                        if (error.data) {
-                            $rootScope.showNotifications = true;
-                            if (error.data.value) {
-                                $rootScope.globalError.push(error.data.value);
-
-                            } else {
-                                $rootScope.globalError.push(error.data);
-                            }
-                        }
-                        else {
-                            $rootScope.globalError.push(error.status);
-                        }
+                        addError($rootScope, error);
                         return $q.reject(error);
                     },
 
@@ -68,33 +86,14 @@
                     //############################################
                     response: function (data) {
                         $rootScope.busyLoading = false;
-                        $rootScope.globalError = [];
                         // show success message:
-                        if (data.data.successMessage) {
-                            $rootScope.globalError = [];
-                            $rootScope.showNotifications = true;
-                            $rootScope.feedbackMessages = [];
-                            $rootScope.feedbackMessages.push(data.data.value);
-                        }
-                        $log.info(data);
+                        addMessage($rootScope, data);
                         return data || $q.when(data);
                     },
                     responseError: function (error) {
-                        $rootScope.showNotifications = true;
                         $rootScope.busyLoading = false;
-                        $rootScope.globalError = [];
-                        $rootScope.feedbackMessages = [];
-                        if (error.data) {
-                            if (error.data.value) {
-                                $rootScope.globalError.push(error.data.value);
-                            } else {
-                                $rootScope.globalError.push(error.data);
-                            }
-                        }
-                        else {
-                            $rootScope.globalError.push(error.status);
-                        }
-                        $log.error(error);
+                        addError($rootScope, error);
+
                         return $q.reject(error);
                     }
                 };
@@ -108,7 +107,7 @@
 
 
         .run(function ($rootScope, $location, $log, $http, $timeout, modalService) {
-            $rootScope.showNotifications = false;
+            $rootScope.feedbackMessages = [];
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             $rootScope.applicationUrl = 'http://localhost:8080/essentials';
             var root = 'http://localhost:8080/essentials/rest';
@@ -201,18 +200,20 @@
                         actionButtonText: 'Close',
                         headerText: 'Service Down',
                         bodyText: 'The Essentials dashboard server appears to be down. If you are' +
-                                ' rebuilding the project, please wait until it is up and running again.'
+                            ' rebuilding the project, please wait until it is up and running again.'
 
                     };
+
                     function openModal() {
                         if (pingModal == null) {
                             pingModal = modalService.showModal({}, modalOptions);
-                            pingModal.then(function() {
+                            pingModal.then(function () {
                                 // discard modal
                                 pingModal = null;
                             });
                         }
                     }
+
                     $http.get($rootScope.REST.ping).success(function (data) {
                         if (data === 'true') {
                             $timeout(ping, PING_RUNNING_TIMER);
@@ -317,7 +318,7 @@
             };
             return broadcaster;
         })
-        .service('modalService',function ($modal) {
+        .service('modalService', function ($modal) {
             /**
              *
              * NOTE: template must be here because if server is down,
@@ -343,7 +344,9 @@
             };
 
             this.showModal = function (customModalDefaults, customModalOptions) {
-                if (!customModalDefaults) customModalDefaults = {};
+                if (!customModalDefaults) {
+                    customModalDefaults = {};
+                }
                 customModalDefaults.backdrop = 'static';
                 return this.show(customModalDefaults, customModalOptions);
 

@@ -1553,6 +1553,8 @@ plugin-dashboard/src/main/webapp/js/Essentials.js -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/directives.js -text
+plugin-dashboard/src/main/webapp/js/lib/angular-animate.js -text
+plugin-dashboard/src/main/webapp/js/lib/angular-animate.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js -text

@@ -41,6 +41,7 @@
   <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-tpls.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/angular-animate.js"></script>
 
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
 
@@ -59,26 +60,10 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container" ng-cloak ng-class="showNotifications ? 'body-push':''">
-<div ng-show="showNotifications" class="container notification-bar">
-  <div class="busy-loader ng-hide" ng-show="busyLoading">
-    <img src="${pageContext.request.contextPath}/images/loader.gif"/>
-  </div>
-  <div class="row">
-    <!-- ERROR MESSAGES -->
-    <div class="alert-danger messages ng-hide" ng-show="globalError.length > 0">
-      <div ng-repeat="message in globalError">
-        {{message}}
-      </div>
-    </div>
-    <div class="alert-success messages ng-hide" ng-show="feedbackMessages.length > 0">
-      <div ng-repeat="message in feedbackMessages">
-        <strong>{{message}}</strong>
-      </div>
-    </div>
-  </div>
-</div>
-<div ng-class="showNotifications ? 'navbar navbar-default navbar-fixed-top navbar-push' : 'navbar navbar-default navbar-fixed-top'"  role="navigation">
+<body id="container" ng-cloak ng-class="feedbackMessages.length ? 'body-push':''">
+<essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
+<div ng-class="feedbackMessages.length ? 'navbar navbar-default navbar-fixed-top navbar-push' : 'navbar navbar-default navbar-fixed-top'"  role="navigation">
+
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo Essentials</a>
