@@ -38,9 +38,11 @@ import javax.jcr.observation.EventListener;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.DaemonModule;
+import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ProvidesService(types = { NodeUpdaterService.class })
 public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(UpdaterExecutionModule.class);
