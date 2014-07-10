@@ -18,11 +18,15 @@
     <div class="plugin-header">
         <h3 class="plugin-title">{{plugin.name}}</h3>
         <div class="plugin-tools pull-right">
+
             <button class="btn btn-primary"
-                    ng-show="plugin.needsInstallation"
+                    ng-show="plugin.type !='tools' && plugin.needsInstallation"
                     ng-click="installPlugin(plugin.pluginId)">Add to project
             </button>
-            <a ng-show="!plugin.needsInstallation" class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Configure</a>
+            <a ng-show="plugin.type !='tools' && !plugin.needsInstallation" class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Configure</a>
+
+            <a ng-show="plugin.type=='tools'" class="btn btn-primary" href="#/tools/{{plugin.pluginId}}">Use {{plugin.name}}</a>
+
         </div>
     </div>
     <div class="plugin-body">
