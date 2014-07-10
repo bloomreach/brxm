@@ -15,22 +15,11 @@
   -->
 
 <div class="row" ng-controller="pluginCtrl">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th class="nav nav-justified" colspan="2">The following tools are available</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'tools'}">
-            <td >
-                <a class="btn btn-primary" href="#/tools/{{plugin.pluginId}}">{{plugin.name}}</a>
-            </td>
-            <td>{{plugin.introduction}}</td>
-        </tr>
-        </tbody>
-    </table>
 
+    <h1>Tools</h1>
+    <div ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'tools'}">
+        <essentials-plugin plugins="plugins" plugin="plugin"></essentials-plugin>
+    </div>
 
 </div>
 
