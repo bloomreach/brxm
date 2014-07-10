@@ -62,27 +62,18 @@
 </head>
 <body id="container" ng-cloak ng-class="feedbackMessages.length ? 'body-push':''">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
-<div ng-class="feedbackMessages.length ? 'navbar navbar-default navbar-fixed-top navbar-push' : 'navbar navbar-default navbar-fixed-top'"  role="navigation">
-
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo Essentials</a>
-    </div>
-    <div class="navbar-collapse collapse pull-right" ng-controller="mainMenuCtrl">
-      <ul class="nav navbar-nav navbar-right">
-        <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-          <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
-        </li>
-        <li>
-          <a target="FEEDBACK" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">Feedback</a>
-        </li>
-      </ul>
-    </div>
+<div class="container-fluid">
+  <div class="col-md-2">
+    <ul class="side-menu" ng-controller="mainMenuCtrl">
+      <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
+        <a href="{{item.link}}" ng-click="onMenuClick(item)">
+          <i class="fa fa-dashboard"></i>
+          <span>{{item.name}}</span></a>
+      </li>
+    </ul>
   </div>
-</div>
-<div class="container">
-  <div ui-view autoscroll="false"></div>
-
+  <div class="col-md-10" ui-view autoscroll="false">
+  </div>
 </div>
 
 <!-- Include the loader.js script -->

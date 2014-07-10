@@ -300,6 +300,40 @@
                     };
                 }
             }
+        }).directive("essentialsPlugin", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    plugin: '=',
+                    plugins: '='
+                },
+                templateUrl: 'directives/essentials-plugin.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
+                    $scope.installPlugin = function (pluginId) {
+                        $rootScope.pluginsCache = null;
+                        $scope.selectedPlugin = extracted(pluginId);
+                        if ($scope.selectedPlugin) {
+                            $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
+                                // we'll get error message or
+                                //$scope.init();
+                            });
+                        }
+                    };
+                    function extracted(pluginId) {
+                        var sel = null;
+                        angular.forEach($scope.plugins, function (selected) {
+                            if (selected.pluginId == pluginId) {
+                                sel = selected;
+                            }
+                        });
+                        return sel;
+                    }
+
+                }
+
+
+            }
         })
 
 

@@ -340,6 +340,245 @@
   }
 }
 /*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.plugin {
+  position: relative;
+  background: #ffffff;
+  border-top: 2px solid #c1c1c1;
+  margin-bottom: 20px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  width: 100%;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+.plugin.plugin-primary {
+  border-top-color: #428bca;
+}
+.plugin.plugin-info {
+  border-top-color: #45b3e3;
+}
+.plugin.plugin-danger {
+  border-top-color: #e7484c;
+}
+.plugin.plugin-warning {
+  border-top-color: #f0ad4e;
+}
+.plugin.plugin-success {
+  border-top-color: #5cb85c;
+}
+.plugin.height-control .plugin-body {
+  max-height: 300px;
+  overflow: auto;
+}
+.plugin .plugin-header {
+  position: relative;
+  -webkit-border-top-left-radius: 2px;
+  -webkit-border-top-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -moz-border-radius-topleft: 2px;
+  -moz-border-radius-topright: 2px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom: 0px solid #f4f4f4;
+  color: #444;
+  padding-bottom: 10px;
+}
+.plugin .plugin-header:before,
+.plugin .plugin-header:after {
+  display: table;
+  content: " ";
+}
+.plugin .plugin-header:after {
+  clear: both;
+}
+.plugin .plugin-header > .fa,
+.plugin .plugin-header > .glyphicon,
+.plugin .plugin-header .plugin-title {
+  display: inline-block;
+  padding: 10px 0px 10px 10px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 400;
+  float: left;
+  cursor: default;
+}
+.plugin .plugin-header a {
+  color: #444;
+}
+.plugin .plugin-header > .plugin-tools {
+  padding: 5px 10px 5px 5px;
+}
+.plugin .plugin-body {
+  padding: 10px;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 2px;
+  -webkit-border-bottom-left-radius: 2px;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 2px;
+  -moz-border-radius-bottomleft: 2px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+.plugin .plugin-body > table,
+.plugin .plugin-body > .table {
+  margin-bottom: 0;
+}
+.plugin .plugin-footer {
+  border-top: 1px solid #f4f4f4;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 2px;
+  -webkit-border-bottom-left-radius: 2px;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 2px;
+  -moz-border-radius-bottomleft: 2px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  padding: 10px;
+  background-color: #ffffff;
+}
+.plugin.plugin-solid {
+  border-top: 0px;
+}
+.plugin.plugin-solid > .plugin-header {
+  padding-bottom: 0px !important;
+}
+.plugin.plugin-solid > .plugin-header .btn.btn-default {
+  background: transparent;
+}
+.plugin.plugin-solid.plugin-primary > .plugin-header {
+  color: #fff;
+  background: #428bca;
+  background-color: #428bca;
+}
+.plugin.plugin-solid.plugin-primary > .plugin-header a {
+  color: #444;
+}
+.plugin.plugin-solid.plugin-info > .plugin-header {
+  color: #fff;
+  background: #45b3e3;
+  background-color: #45b3e3;
+}
+.plugin.plugin-solid.plugin-info > .plugin-header a {
+  color: #444;
+}
+.plugin.plugin-solid.plugin-danger > .plugin-header {
+  color: #fff;
+  background: #e7484c;
+  background-color: #e7484c;
+}
+.plugin.plugin-solid.plugin-danger > .plugin-header a {
+  color: #444;
+}
+.plugin.plugin-solid.plugin-warning > .plugin-header {
+  color: #fff;
+  background: #f0ad4e;
+  background-color: #f0ad4e;
+}
+.plugin.plugin-solid.plugin-warning > .plugin-header a {
+  color: #444;
+}
+.plugin.plugin-solid.plugin-success > .plugin-header {
+  color: #fff;
+  background: #5cb85c;
+  background-color: #5cb85c;
+}
+.plugin.plugin-solid.plugin-success > .plugin-header a {
+  color: #444;
+}
+.plugin.plugin-solid > .plugin-header > .plugin-tools > .btn {
+  border: 0;
+  box-shadow: none;
+}
+.plugin.plugin-solid.collapsed-plugin .plugin-header {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.plugin.plugin-solid[class*='bg'] > .plugin-header {
+  color: #fff;
+}
+.plugin.plugin-solid .plugin-group > .plugin {
+  margin-bottom: 5px;
+}
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.side-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.side-menu > li {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #dbdbdb;
+}
+.side-menu > li > a {
+  padding: 12px 5px 12px 15px;
+  display: block;
+  color: #555555;
+}
+.side-menu > li > a > .glyphicon {
+  width: 20px;
+}
+.side-menu > li > a:hover {
+  text-decoration: none;
+}
+.side-menu > li:first-of-type {
+  border-top: 1px solid #dbdbdb;
+}
+.side-menu > li:first-of-type > a {
+  border-top: 1px solid #fff;
+}
+.side-menu > li > a {
+  margin-right: 1px;
+}
+.side-menu > li > a:hover,
+.side-menu > li.active > a {
+  color: #222;
+  background: #f9f9f9;
+}
+/*
 //############################################
 // HIPPO SPECIFIC  CSS
 //############################################

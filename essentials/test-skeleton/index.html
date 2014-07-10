@@ -21,10 +21,11 @@
     <title></title>
     <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/main.css">
     <!--<link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css">-->
-    <link rel="stylesheet" href="messages.css">
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/plugin.css">
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/essentials-menu.css">
     <script src="../plugin-dashboard/src/main/webapp/components/jquery/jquery.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/components/angular/angular.js"></script>
-    <script src="animate.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-animate.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/components/angular/angular-sanitize.min.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/components/chosen/chosen.jquery.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/components/underscore/underscore.js"></script>
@@ -46,16 +47,31 @@
     <script src="../plugin-dashboard/src/main/webapp/js/directives.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/js/controllers.js"></script>
 
+    <style media="all">
+
+    </style>
 
 </head>
 <body ng-app="hippo.essentials">
+<essentials-notifier  messages="feedbackMessages"></essentials-notifier>
+<div style="margin-top: 200px;" class="container-fluid">
+    <div class="col-xs-2">
+        <ul class="side-menu">
+            <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
+                <a href="{{item.link}}" ng-click="onMenuClick(item)">
+                    <i class="fa fa-dashboard"></i>
+                    <span>{{item.name}}</span></a>
+            </li>
+        </ul>
+    </div>
 
-
-<div ng-controller="feedbackCtrl">
-    <essentials-notifier messages="messages"></essentials-notifier>
-    <h1 ng-click="generateMessage()">One</h1>
-    <h1 ng-click="generateFew()">Few</h1>
-
+    <div class="col-xs-10" ng-controller="feedbackCtrl">
+            <essentials-plugin plugin="plugin"></essentials-plugin>
+    </div>
 </div>
+
+
+
+
 </body>
 </html>

@@ -1,0 +1,176 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import "essentials-variables.less";
+@plugin-border-color: #f4f4f4;
+@plugin-border-radius: 2px;
+@plugin-footer-bg: #fff;
+
+
+.plugin {
+  position: relative;
+  background: #ffffff;
+  border-top: 2px solid darken(@plugin-border-color, 20%);
+  margin-bottom: 20px;
+  .border-radius(@plugin-border-radius);
+  width: 100%;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+
+  &.plugin-primary {
+    border-top-color: @brand-primary;
+  }
+  &.plugin-info {
+    border-top-color: @brand-info;
+  }
+  &.plugin-danger {
+    border-top-color: @brand-danger;
+  }
+  &.plugin-warning {
+    border-top-color: @brand-warning;
+  }
+  &.plugin-success {
+    border-top-color: @brand-success;
+  }
+
+  &.height-control {
+    .plugin-body {
+      max-height: 300px;
+      overflow: auto;
+    }
+  }
+
+  // plugin header
+  .plugin-header {
+    position: relative;
+    .clearfix();
+
+    .border-radius(@plugin-border-radius; @plugin-border-radius; 0; 0);
+    border-bottom: 0px solid @plugin-border-color;
+    color: #444;
+    padding-bottom: 10px;
+    > .fa, > .glyphicon,
+    .plugin-title {
+      display: inline-block;
+      padding: 10px 0px 10px 10px;
+      margin: 0;
+      font-size: 20px;
+      font-weight: 400;
+      float: left;
+      cursor: default;
+    }
+    a {
+      color: #444;
+    }
+    > .plugin-tools {
+      padding: 5px 10px 5px 5px;
+    }
+
+  }
+
+  .plugin-body {
+    padding: 10px;
+    .border-radius(0; 0; @plugin-border-radius; @plugin-border-radius);
+    > table, > .table {
+      margin-bottom: 0;
+    }
+
+  }
+
+  .plugin-footer {
+    border-top: 1px solid @plugin-border-color;
+    .border-radius(0; 0; @plugin-border-radius; @plugin-border-radius);
+    padding: 10px;
+    background-color: @plugin-footer-bg;
+  }
+
+  &.plugin-solid {
+    border-top: 0px;
+    > .plugin-header {
+      padding-bottom: 0px !important;
+      .btn.btn-default {
+        background: transparent;
+      }
+    }
+
+    &.plugin-primary {
+      .plugin-solid-variant(@brand-primary);
+    }
+    &.plugin-info {
+      .plugin-solid-variant(@brand-info);
+    }
+    &.plugin-danger {
+      .plugin-solid-variant(@brand-danger);
+    }
+    &.plugin-warning {
+      .plugin-solid-variant(@brand-warning);
+    }
+    &.plugin-success {
+      .plugin-solid-variant(@brand-success);
+    }
+    > .plugin-header > .plugin-tools > .btn {
+      border: 0;
+      box-shadow: none;
+    }
+    &.collapsed-plugin {
+      .plugin-header {
+        .border-radius(@plugin-border-radius);
+      }
+    }
+
+    &[class*='bg'] {
+      > .plugin-header {
+        color: #fff;
+      }
+    }
+
+    .plugin-group {
+      > .plugin {
+        margin-bottom: 5px;
+      }
+    }
+
+  }
+}
+
+.plugin-solid-variant(@color) {
+  > .plugin-header {
+    color: #fff;
+    background: @color;
+    background-color: @color;
+    a {
+      color: #444;
+    }
+  }
+}
+.border-radius(@top-left; @top-right; @bottom-left; @bottom-right) {
+    -webkit-border-top-left-radius: @top-left;
+    -webkit-border-top-right-radius: @top-right;
+    -webkit-border-bottom-right-radius: @bottom-right;
+    -webkit-border-bottom-left-radius: @bottom-left;
+
+    -moz-border-radius-topleft: @top-left;
+    -moz-border-radius-topright: @top-right;
+    -moz-border-radius-bottomright: @bottom-right;
+    -moz-border-radius-bottomleft: @bottom-left;
+
+    border-top-left-radius: @top-left;
+    border-top-right-radius: @top-right;
+    border-bottom-right-radius: @bottom-right;
+    border-bottom-left-radius: @bottom-left;
+}
+
+
+
+

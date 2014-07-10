@@ -14,21 +14,9 @@
   limitations under the License.
   -->
 
-<div class="row" style="margin-top: 40px;" ng-hide="!plugins.length">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th class="nav nav-justified" colspan="2">There are recently installed plugins that can be configured:</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'plugins'} | orderBy:'name'">
-            <td>{{plugin.name}}</td>
-            <td>{{plugin.introduction}}</td>
-            <td class="pull-right">
-                <a class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Configure</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="row">
+    <h1>Installed Plugins</h1>
+    <div ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'plugins'} | orderBy:'name'">
+          <essentials-plugin plugins="plugins" plugin="plugin"></essentials-plugin>
+    </div>
 </div>

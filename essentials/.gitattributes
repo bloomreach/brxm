@@ -1505,11 +1505,13 @@ plugin-dashboard/src/main/webapp/css/chosen-sprite.png -text
 plugin-dashboard/src/main/webapp/css/chosen-sprite@2x.png -text
 plugin-dashboard/src/main/webapp/css/chosen.css -text
 plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css -text
+plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-menu.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-modal.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-variables.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/hippo-essentials.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/infobox.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/messages.less -text
+plugin-dashboard/src/main/webapp/css/less/essentials-less/plugin.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/space.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/_variables.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/vars.less -text
@@ -1524,6 +1526,7 @@ plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-notifier.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-plugin.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-simple-install-plugin.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-template-settings.html -text
 plugin-dashboard/src/main/webapp/docs/rest-api/css/highlight.default.css -text
