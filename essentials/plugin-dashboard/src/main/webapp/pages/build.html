@@ -15,15 +15,11 @@
   -->
 
 <div class="row">
-    <div>
-        <p>Welcome to the Hippo Essentials CMS setup.</p>
-        Using this tool you can easily <a href="#/find-plugins">add additional</a> or
-        <a href="#/plugins">configure existing</a> plugins for your project or perform common
-        <a href="#/tools">developer tasks</a>.
-    </div>
-    <h1 ng-show="plugins.length">Recently installed plugins</h1>
-    <div ng-repeat="plugin in plugins | filter:{type:'plugins'} | orderBy:'name'">
-        <essentials-plugin plugins="plugins" plugin="plugin"></essentials-plugin>
-    </div>
 
+
+    <h1>Build instructions</h1>
+    <pre>
+$ mvn clean package
+$ mvn -P cargo.run
+    </pre>
 </div>

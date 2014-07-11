@@ -26,7 +26,8 @@
                 return [
                     {name: "Installed Plugins", link: "#/installed-plugins"},
                     {name: "Plugins", link: "#/plugins"},
-                    {name: "Tools", link: "#/tools"}
+                    {name: "Tools", link: "#/tools"},
+                    {name: "Build", link: "#/build"}
                 ];
             };
 

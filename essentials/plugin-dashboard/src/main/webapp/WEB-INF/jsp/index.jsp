@@ -70,6 +70,11 @@
           <i class="fa fa-dashboard"></i>
           <span>{{item.name}}</span></a>
       </li>
+      <li>
+        <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
+          <i class="fa fa-external-link"></i>
+          <span>Feedback</span></a>
+      </li>
     </ul>
   </div>
   <div class="col-md-10" ui-view autoscroll="false">

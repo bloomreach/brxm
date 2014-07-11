@@ -57,6 +57,11 @@
                     templateUrl: 'pages/plugins.html',
                     controller: 'pluginCtrl'
                 })
+                .state('build', {
+                    url: '/build',
+                    templateUrl: 'pages/build.html',
+                    controller: 'pluginCtrl'
+                })
                 .state('installed-plugins', {
                     url: '/installed-plugins',
                     templateUrl: 'pages/installed-plugins.html',
