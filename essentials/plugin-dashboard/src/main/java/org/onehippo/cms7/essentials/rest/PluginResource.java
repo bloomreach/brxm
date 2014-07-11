@@ -389,7 +389,7 @@ public class PluginResource extends BaseResource {
                     try (PluginConfigService service = new FilePluginService(context)) {
                         service.write(createPluginInstallerDocument(id));
                     }
-                    message.setValue("Plugin successfully installed. Please rebuild and restart your application");
+                    message.setValue("Plugin <a href='#/plugins/" + pluginId + "'>" + plugin.getName() + "</a> successfully installed.");
                     return message;
                 } else {
                     final StringBuilder builder = new StringBuilder();

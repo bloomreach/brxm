@@ -18,30 +18,100 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('feedbackCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
-            $scope.plugin = {"restClasses": ["org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"], "vendor": {"url": "http://content-blocks.forge.onehippo.org", "name": "Detailed Content Blocks documentation", "logo": null, "introduction": null, "content": null}, "dependencies": [
-                {"groupId": "org.onehippo.forge", "artifactId": "content-blocks", "repositoryId": null, "repositoryUrl": null, "version": null, "scope": "compile", "type": "cms", "dependencyType": "CMS"}
-            ], "repositories": [], "title": null, "name": "Content Blocks plugin", "introduction": "Provides the ability to add multiple Content Blocks to document types. Each Content Block offers a choice between multiple (potentially complex) field types, as determined by a Provider Compound.", "description": null, "packageClass": null, "packageFile": null, "type": "plugins", "installed": false, "needsInstallation": false, "installState": "boarding", "enabled": true, "dateInstalled": 1404986236235, "documentationLink": null, "libraries": [
-                {"prefix": null, "items": [
-                    {"browser": null, "component": "contentBlocks", "file": "contentBlocks.js"}
-                ]}
-            ], "pluginId": "contentBlocks", "issuesLink": null};
+            $scope.plugin = {
+                "restClasses": [],
+                "vendor": {
+                    "url": "http://www.onehippo.com",
+                    "name": "Hippo",
+                    "logo": null,
+                    "introduction": null,
+                    "content": null
+                },
+                "dependencies": [
+                    {
+                        "groupId": "org.onehippo.forge.robotstxt",
+                        "artifactId": "robotstxt-addon-repository",
+                        "repositoryId": null,
+                        "repositoryUrl": null,
+                        "version": null,
+                        "scope": "compile",
+                        "type": "cms",
+                        "dependencyType": "CMS"
+                    },
+                    {
+                        "groupId": "org.onehippo.forge.robotstxt",
+                        "artifactId": "robotstxt-hst-client",
+                        "repositoryId": null,
+                        "repositoryUrl": null,
+                        "version": null,
+                        "scope": "compile",
+                        "type": "site",
+                        "dependencyType": "SITE"
+                    }
+                ],
+                "repositories": [],
+                "title": null,
+                "name": "Robots plugin",
+                "introduction": "Add Robots plugin support",
+                "description": "The robotstxt plugin adds a special document type to the CMS, allowing webmasters to determine the content of the robots.txt file retrieved by webbots. See <a href=\"http://www.robotstxt.org/\">robotstxt.org</a> for more information on the format and purpose of that file.<p>The robotstxt plugin provides Beans and Components for retrieving the robots.txt-related data from the Hippo repository, and a sample JSP file for rendering that data into the robots.txt file.</p>\n<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://robotstxt.forge.onehippo.org/\" target=\"_blank\">http://robotstxt.forge.onehippo.org/</a></p>",
+                "packageClass": null,
+                "packageFile": "/META-INF/robots_plugin_instructions.xml",
+                "type": "plugins",
+                "installed": false,
+                "needsInstallation": false,
+                "installState": "boarding",
+                "enabled": true,
+                "dateInstalled": 1405070530039,
+                "documentationLink": null,
+                "libraries": [],
+                "pluginId": "robotsPlugin",
+                "issuesLink": null
+            };
 
             $rootScope.feedbackMessages.push({type: "error", message: "initial message"});
-            console.log("messages====================");
 
 
-        })
-        .directive("essentialsPlugin", function () {
+
+        }).directive("essentialsPluginTest", function () {
             return {
                 replace: false,
                 restrict: 'E',
                 scope: {
-                    plugin: '='
+                    plugin: '=',
+                    plugins: '='
                 },
-                templateUrl: 'essentials-plugin.html',
+                templateUrl: 'directives/essentials-plugin.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
+                    $scope.installPlugin = function (pluginId) {
+                        $rootScope.pluginsCache = null;
+                        $scope.selectedPlugin = extracted(pluginId);
+                        if ($scope.selectedPlugin) {
+                            $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
+                                // we'll get error message or
+                                //$scope.init();
+                            });
+                        }
+                    };
+                    var p = $scope.plugin;
+                    // set install state:
+                    if (p) {
+                        $scope.showRebuildMessage = p.installState === 'installing';
+                        $scope.showInstalledMessage = p.installState === 'installed';
+                        $scope.showBoardingMessage = p.installState === 'boarding';
+                        $scope.showPlugin = !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
+                    }
+                    function extracted(pluginId) {
+                        var sel = null;
+                        angular.forEach($scope.plugins, function (selected) {
+                            if (selected.pluginId == pluginId) {
+                                sel = selected;
+                            }
+                        });
+                        return sel;
+                    }
 
                 }
             }
         })
+
 })();

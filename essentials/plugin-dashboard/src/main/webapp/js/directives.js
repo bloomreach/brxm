@@ -309,17 +309,31 @@
                     plugins: '='
                 },
                 templateUrl: 'directives/essentials-plugin.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
                     $scope.installPlugin = function (pluginId) {
                         $rootScope.pluginsCache = null;
                         $scope.selectedPlugin = extracted(pluginId);
                         if ($scope.selectedPlugin) {
                             $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
-                                // we'll get error message or
-                                //$scope.init();
+                                // reload because of install state change:
+                                $http.get($rootScope.REST.plugins +'plugins/' + pluginId).success(function (data) {
+                                    $scope.plugin = data;
+                                    initializeInstallState($scope.plugin);
+                                });
                             });
                         }
                     };
+                    initializeInstallState($scope.plugin);
+                    function initializeInstallState(p){
+
+                        // set install state:
+                        if (p) {
+                            $scope.showRebuildMessage = p.installState === 'installing';
+                            $scope.showInstalledMessage = p.installState === 'installed';
+                            $scope.showBoardingMessage = p.installState === 'boarding';
+                            $scope.showPlugin = !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
+                        }
+                    }
                     function extracted(pluginId) {
                         var sel = null;
                         angular.forEach($scope.plugins, function (selected) {
@@ -331,10 +345,7 @@
                     }
 
                 }
-
-
             }
         })
-
 
 })();

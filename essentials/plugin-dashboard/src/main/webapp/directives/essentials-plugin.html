@@ -17,8 +17,7 @@
 <div ng-class="plugin.type=='tools'? 'plugin plugin-primary':plugin.needsInstallation ? 'plugin plugin-warn':'plugin plugin-success'">
     <div class="plugin-header">
         <h3 class="plugin-title">{{plugin.name}}</h3>
-        <div class="plugin-tools pull-right">
-
+        <div ng-show="showPlugin" class="plugin-tools pull-right">
             <button class="btn btn-primary"
                     ng-show="plugin.type !='tools' && plugin.needsInstallation"
                     ng-click="installPlugin(plugin.pluginId)">Add to project
@@ -30,7 +29,25 @@
         </div>
     </div>
     <div class="plugin-body">
-        <div ng-bind-html="plugin.description ? plugin.description:plugin.introduction"></div>
+
+        <div class="infobox infobox-warning" ng-show="showBoardingMessage">
+            <h3>Please Rebuild</h3>
+            <p>In order to be able to add this feature to your project, you first need to rebuild it.</p>
+        </div>
+        <div class="infobox infobox-info" ng-show="showRebuildMessage">
+            <h3>Please Rebuild</h3>
+            <p>Installation of
+                <em>{{plugin.name}}</em> is pending. Please rebuild your project to make the changes effective.</p>
+        </div>
+        <div class="infobox infobox-success" ng-show="showInstalledMessage">
+            <h3>Installed</h3>
+            <p>
+                <em>{{plugin.name}}</em> has been installed successfully. The corresponding feature is now available in your Hippo project.
+            </p>
+        </div>
+
+
+        <div ng-show="showPlugin" ng-bind-html="plugin.description ? plugin.description:plugin.introduction"></div>
     </div>
     <div class="plugin-footer">
         Provided by: <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a>
