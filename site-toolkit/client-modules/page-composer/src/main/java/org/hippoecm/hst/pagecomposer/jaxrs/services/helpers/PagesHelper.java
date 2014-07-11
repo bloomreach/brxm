@@ -85,7 +85,13 @@ public class PagesHelper extends AbstractHelper {
         return newPage;
     }
 
-    //public Node
+    public Node rename(final Node oldPage, final String targetPageNodeName) throws RepositoryException {
+        // check if not locked
+        lockHelper.acquireLock(oldPage, 0);
+        Node newPage = create(oldPage, targetPageNodeName, null, false);
+        deletePageNodeIfNotReferencedAnyMore(oldPage);
+        return newPage;
+    }
 
     public Node reapply(final Node newPrototypePage,
                         final Node oldPage,

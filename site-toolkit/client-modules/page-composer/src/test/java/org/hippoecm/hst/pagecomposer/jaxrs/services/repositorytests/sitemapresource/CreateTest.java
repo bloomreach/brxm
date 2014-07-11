@@ -474,7 +474,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response renamed = siteMapResource.update(foo);
         assertEquals(Response.Status.OK.getStatusCode(), renamed.getStatus());
 
-        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+        String renamedPageNodeName = "bar-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + renamedPageNodeName));
+        assertFalse(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
 
         final Node fooBar = session.getNodeByIdentifier(foo.getId());
         assertEquals("bar", fooBar.getName());
@@ -490,6 +492,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             assertEquals(Response.Status.OK.getStatusCode(), renamedAgain.getStatus());
             final Node barFoo = admin.getNodeByIdentifier(foo.getId());
             assertEquals("foo", barFoo.getName());
+            // first page node name must be there again
+            assertTrue(admin.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
             admin.logout();
         }
 

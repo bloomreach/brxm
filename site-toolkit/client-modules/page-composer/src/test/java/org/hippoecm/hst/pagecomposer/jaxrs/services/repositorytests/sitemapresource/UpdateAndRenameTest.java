@@ -45,6 +45,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import junit.framework.Assert;
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -292,19 +293,35 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+
+            assertEquals("hst:pages/homepage", home.getComponentConfigurationId());
             Node homeNode = session.getNodeByIdentifier(home.getId());
+            String configurationsPath = homeNode.getParent().getParent().getPath();
             String parentPath = homeNode.getParent().getPath();
             home.setName("renamedHome");
             Response response = siteMapResource.update(home);
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("renamedHome", homeNode.getName());
+
+            assertEquals("Rename of sitemap item should also rename hst page",
+                  "hst:pages/renamedHomepage", homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+
             assertEquals(parentPath + "/renamedHome", homeNode.getPath());
 
             assertTrue(session.nodeExists(parentPath + "/home"));
             Node deletedMarkerNode = session.getNode(parentPath + "/home");
             assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
             assertEquals("deleted", deletedMarkerNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+
+            // assert old page marked deleted and locked and assert new page locked
+            assertTrue(session.nodeExists(configurationsPath + "/hst:pages/homepage"));
+            Node deletedPageMarkerNode = session.getNode(configurationsPath + "/hst:pages/homepage");
+            assertEquals("admin", deletedPageMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("deleted", deletedPageMarkerNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+            assertTrue(session.nodeExists(configurationsPath + "/hst:pages/renamedHomepage"));
+            Node newPagerNode = session.getNode(configurationsPath + "/hst:pages/renamedHomepage");
+            assertEquals("admin", newPagerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
         }
         // assert bob cannot rename 'news' to 'home' now as it is locked.
         // also bob cannot rename 'renamedHome' as is locked
@@ -383,11 +400,18 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             siteMapResource.update(home);
 
 
-            home.setName("rename2");
-            siteMapResource.update(home);
         }
         // because of Jackrabbit issue we need a fresh session for tests with this move because
         // JR sometimes throws a incorrect repository exception during SessionMoveOperation
+        {
+            final Session admin = createSession("admin", "admin");
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(admin, "rename1");
+            // trigger model reload
+            home.setName("rename2");
+            siteMapResource.update(home);
+            admin.logout();
+        }
+
         {
             final Session admin = createSession("admin", "admin");
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(admin, "rename2");
