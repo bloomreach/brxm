@@ -20,8 +20,8 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css"/>
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
-
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/essentials-less/hippo-essentials.css"/>
+
 
   <script src="${pageContext.request.contextPath}/components/jquery/jquery.js"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js"></script>
@@ -63,23 +63,78 @@
 <body id="container" ng-cloak ng-class="feedbackMessages.length ? 'body-push':''">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
 <div class="container-fluid">
-  <div class="col-md-2">
-    <ul class="side-menu" ng-controller="mainMenuCtrl">
-      <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-        <a href="{{item.link}}" ng-click="onMenuClick(item)">
-          <i class="fa fa-dashboard"></i>
-          <span>{{item.name}}</span></a>
-      </li>
-      <li>
-        <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
-          <i class="fa fa-external-link"></i>
-          <span>Feedback</span></a>
-      </li>
-    </ul>
+  <div class="content fixed-fixed">
+    <div class="row-fluid">
+      <div class="col-lg-12">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4 essentials-header"><h1>{{mainHeader}}</h1></div>
+        <div class="col-lg-4">
+          <div ng-show="NEEDS_REBUILD" class="pull-right">
+            <a href="#/build">System needs a rebuild</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-md-10" ui-view autoscroll="false">
+  <div class="row-fluid">
+    <div class="sidebar-nav">
+      <ul class="side-menu" ng-controller="mainMenuCtrl">
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/plugins')]">
+          <a href="#/plugins" ng-click="onMenuClick('Plugins')">
+            <i class="fa fa-dashboard"></i>
+            <span>Plugins</span>
+            <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span>
+          </a>
+
+        </li>
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/installed-plugins')]">
+          <a href="#/installed-plugins" ng-click="onMenuClick('Installed Plugins')">
+            <i class="fa fa-dashboard"></i>
+            <span>Installed plugins</span>
+            <span class="badge pull-right alert-success">{{TOTAL_CONFIGURABLE}}</span>
+          </a>
+
+        </li>
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
+          <a href="#/tools" ng-click="onMenuClick('Tools')">
+            <i class="fa fa-dashboard"></i>
+            <span>Tools</span>
+            <span class="badge  pull-right alert-info">{{TOTAL_TOOLS}}</span>
+          </a>
+        </li>
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/build')]">
+          <a href="#/build" ng-click="onMenuClick('Build instructions')">
+            <i class="fa fa-dashboard "></i>
+            <span>Build</span>
+                        <span ng-show="NEEDS_REBUILD" class="badge pull-right alert-danger">
+                              <i class="fa fa-bell"></i>
+                        </span>
+                        <span ng-hide="NEEDS_REBUILD" class="badge pull-right alert-success">
+                              <i class="fa fa-check"></i>
+                        </span>
+          </a>
+
+        </li>
+        <li>
+          <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
+            <i class="fa fa-external-link"></i>
+            <span>Feedback</span></a>
+        </li>
+      </ul>
+    </div>
+    <div class="content fixed-fixed">
+      <div class="row-fluid">
+        <div class="col-lg-12" ui-view autoscroll="false">
+        </div>
+      </div>
+    </div>
   </div>
+
 </div>
+
+<footer class="footer">
+  <p>&copy 1999-2014 Hippo B.V.</p>
+</footer>
 
 <!-- Include the loader.js script -->
 <script src="${pageContext.request.contextPath}/js/loader.js" data-modules="http://localhost:8080/essentials/rest/plugins/modules"></script>

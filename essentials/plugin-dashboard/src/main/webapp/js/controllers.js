@@ -18,20 +18,6 @@
     "use strict";
     angular.module('hippo.essentials')
 
-        //############################################
-        // MENU DATA
-        //############################################
-        .service('menuService', function () {
-            this.getMenu = function () {
-                return [
-                    {name: "Installed Plugins", link: "#/installed-plugins"},
-                    {name: "Plugins", link: "#/plugins"},
-                    {name: "Tools", link: "#/tools"},
-                    {name: "Build", link: "#/build"}
-                ];
-            };
-
-        })
 
         //############################################
         // PLUGINS CONTROLLER LOADER
@@ -48,7 +34,7 @@
             $scope.removeUrl = function (url) {
                 var idx = $scope.projectSettings.pluginRepositories.indexOf(url);
                 if (idx > -1) {
-                     $scope.projectSettings.pluginRepositories.splice(idx, 1);
+                    $scope.projectSettings.pluginRepositories.splice(idx, 1);
                 }
             };
             $scope.getStarted = function () {
@@ -173,13 +159,8 @@
          // MENU CONTROLLER
          //############################################
          */
-        .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', 'menuService', function ($scope, $location, $rootScope, menuService) {
+        .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
 
-            $scope.$watch(function () {
-                return $rootScope.busyLoading;
-            }, function () {
-                $scope.menu = menuService.getMenu();
-            });
 
             $scope.isPageSelected = function (path) {
                 var myPath = $location.path();
@@ -193,10 +174,12 @@
                 return  '#' + myPath == path;
             };
 
-            $scope.onMenuClick = function (menuItem) {
-                //
-            };
+            $scope.onMenuClick = function (header) {
 
+                if (header) {
+                    $rootScope.mainHeader = header;
+                }
+            };
         }]);
 
 })();

@@ -78,6 +78,28 @@
   margin-bottom: @header-size;
 }
 
+//############################################
+// SIDEBAR & LAYOUT
+//############################################
+
+.sidebar-nav {
+  padding: 10px 0;
+  float: left;
+}
+
+.row-fluid > .sidebar-nav {
+  position: relative;
+  top: 0;
+  left: auto;
+  width: 220px;
+}
+
+.fixed-fixed {
+  margin-left: 240px;
+}
+
+
+
 .footer {
   border-top: 1px solid @footer-border;
   margin-top: 400px;
@@ -87,42 +109,25 @@
   color: @color-hippo-footer-text;
   font-size: 13px;
   min-height: 600px;
+  margin-left: 240px;
 
 }
 
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-  /* Remove the padding we set earlier */
-  .masthead,
-  .marketing,
-  .footer {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
-.masthead {
-  margin-bottom: 30px;
-  text-align: center;
-  min-width: @screen-sm;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 body {
   background-color: @body-bg;
-  margin-top: 70px;
+  margin-top: 50px;
+}
+
+.essentials-header {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  color: #5cb85c;
 }
 
 .form-group {
   height: 30px;
-}
-
-/* menu stuff*/
-.nav-stacked li {
-  margin-bottom: 10px;
-  font-size: 16px;
-  font-weight: bold;
 }
 
 .plugin-introduction {
@@ -136,14 +141,6 @@ body {
   left: 50%;
 }
 
-.tabs li {
-  min-width: 120px;
-  width: 160px;
-}
-
-.tabs {
-  width: 160px;
-}
 
 .essentials-group-item {
   padding-top: 6px;

@@ -215,11 +215,20 @@
                     }
 
                     $http.get($rootScope.REST.ping).success(function (data) {
-                        if (data === 'true') {
-                            $timeout(ping, PING_RUNNING_TIMER);
-                        } else {
-                            // app is back up, but needs to restart
-                            window.location.href = $rootScope.applicationUrl;
+                        console.log("==============================");
+                        console.log(data);
+                        if (data) {
+                            if (data.initialized) {
+                                $timeout(ping, PING_RUNNING_TIMER);
+                                $rootScope.TOTAL_PLUGINS = data.totalPlugins;
+                                $rootScope.TOTAL_TOOLS = data.totalTools;
+                                $rootScope.NEEDS_REBUILD = data.needsRebuild;
+                                $rootScope.TOTAL_CONFIGURABLE = data.configurablePlugins;
+
+                            } else {
+                                // app is back up, but needs to restart
+                                window.location.href = $rootScope.applicationUrl;
+                            }
                         }
                     }).error(function () {
                         openModal();

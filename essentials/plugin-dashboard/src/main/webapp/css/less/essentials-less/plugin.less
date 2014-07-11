@@ -16,17 +16,18 @@
 @import "essentials-variables.less";
 @plugin-border-color: #f4f4f4;
 @plugin-border-radius: 2px;
-@plugin-footer-bg: #fff;
+@plugin-background: lighten(#f7f7f7, 30%);
 
 
 .plugin {
   position: relative;
-  background: #ffffff;
-  border-top: 2px solid darken(@plugin-border-color, 20%);
-  margin-bottom: 20px;
+  background: @plugin-background;
+  border-top: 2px solid darken(@plugin-border-color, 50%);
+  margin-bottom: 30px;
   .border-radius(@plugin-border-radius);
   width: 100%;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+
 
   &.plugin-primary {
     border-top-color: @brand-primary;
@@ -50,8 +51,6 @@
       overflow: auto;
     }
   }
-
-  // plugin header
   .plugin-header {
     position: relative;
     .clearfix();
@@ -89,7 +88,7 @@
     border-top: 1px solid @plugin-border-color;
     .border-radius(0; 0; @plugin-border-radius; @plugin-border-radius);
     padding: 10px;
-    background-color: @plugin-footer-bg;
+    background-color: @plugin-background;
   }
 
   &.plugin-solid {
@@ -131,13 +130,6 @@
         color: #fff;
       }
     }
-
-    .plugin-group {
-      > .plugin {
-        margin-bottom: 5px;
-      }
-    }
-
   }
 }
 

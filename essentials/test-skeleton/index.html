@@ -20,9 +20,10 @@
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/main.css">
-    <!--<link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css">-->
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css">
     <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/plugin.css">
     <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/essentials-menu.css">
+    <link rel="stylesheet" href="essentials-header.css">
     <script src="../plugin-dashboard/src/main/webapp/components/jquery/jquery.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/components/angular/angular.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-animate.js"></script>
@@ -53,25 +54,11 @@
 
 </head>
 <body ng-app="hippo.essentials">
-<essentials-notifier  messages="feedbackMessages"></essentials-notifier>
-<div style="margin-top: 200px;" class="container-fluid">
-    <div class="col-xs-2">
-        <ul class="side-menu">
-            <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-                <a href="{{item.link}}" ng-click="onMenuClick(item)">
-                    <i class="fa fa-dashboard"></i>
-                    <span>{{item.name}}</span></a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="col-xs-10" ng-controller="feedbackCtrl">
-            <essentials-plugin-test plugin="plugin"></essentials-plugin-test>
-    </div>
-</div>
 
 
-
+<footer class="text-center footer">
+    <p>&copy 1999-2014 Hippo B.V.</p>
+</footer>
 
 </body>
 </html>

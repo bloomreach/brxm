@@ -16,10 +16,7 @@
   -->
 
 <div class="row">
-
-    <h1>All Plugins</h1>
     <div ng-repeat="plugin in plugins | filter:{type:'plugins'} | orderBy:'name'">
         <essentials-plugin plugins="plugins" plugin="plugin"></essentials-plugin>
     </div>
-
 </div>

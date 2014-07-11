@@ -934,6 +934,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/Controlle
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestList.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/SystemInfo.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/TranslationRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrBrowserResource.java -text
@@ -1567,7 +1568,6 @@ plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls.min.js -text
 plugin-dashboard/src/main/webapp/js/loader.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/pages/build.html -text
-plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/pages/installed-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/introduction.html -text

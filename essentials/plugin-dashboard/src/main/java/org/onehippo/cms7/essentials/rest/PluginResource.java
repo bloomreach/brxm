@@ -80,6 +80,7 @@ import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
+import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,8 +158,33 @@ public class PluginResource extends BaseResource {
             response = boolean.class)
     @GET
     @Path("/ping")
-    public boolean ping(@Context ServletContext servletContext) {
-        return initialized;
+    public SystemInfo ping(@Context ServletContext servletContext) {
+
+        final SystemInfo systemInfo = new SystemInfo();
+        systemInfo.setInitialized(initialized);
+        final List<PluginRestful> plugins = getPlugins(servletContext);
+        for (PluginRestful plugin : plugins) {
+            final String type = plugin.getType();
+            if ("tools".equals(type)) {
+                systemInfo.incrementTools();
+            } else {
+                systemInfo.incrementPlugins();
+            }
+
+            final String installState = plugin.getInstallState();
+            if (!Strings.isNullOrEmpty(installState)) {
+                if (installState.equals("boarding") || installState.equals("installing")) {
+                    systemInfo.setNeedsRebuild(true);
+                } else if (!plugin.isNeedsInstallation()) {
+                    systemInfo.incrementConfigurablePlugins();
+                }
+
+
+            }
+        }
+        return systemInfo;
+
+
     }
 
 
