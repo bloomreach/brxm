@@ -15,8 +15,37 @@
   -->
 
 <div class="row">
+    <div class="infobox infobox-info" ng-hide="REBUILD_PLUGINS">
+        There are no changes at this moment that need project rebuild.
+    </div>
+
+    <div ng-show="REBUILD_PLUGINS">
+
+        <p>Project rebuild is needed to be able to use following plugins:</p>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="plugin in REBUILD_PLUGINS">
+                <a href="#/plugins/{{plugin.pluginId}}">{{plugin.name}}</a></li>
+        </ul>
+        <div class="infobox infobox-info">In order to make the features available in your Hippo project, you have to rebuild it. You don't need to do this for every single feature you add to the project.
+            Rebuilding once after you added a batch of features is sufficient.
+        </div>
+
+
+    </div>
+    <h3>Build instructions</h3>
+    <p>You can build your project in the root folder of your project, using the following command:</p>
     <pre>
-$ mvn clean package
-$ mvn -P cargo.run
+mvn verify
     </pre>
+    <p>To run the CMS, site and Essentials WARs, issue the following command from the project root directory:</p>
+    <pre>
+mvn -Pcargo.run -Drepo.path=storage -Drepo.bootstrap=true
+    </pre>
+    <div class="infobox infobox-success">
+        <p>By default, the repository content is stored in the directory target/storage. This has the effect that when you run mvn clean, the repository content, along with all changes and additions you made during development, are erased.</p>
+        <p>To avoid accidents in this area, it is a best practice to specify a different location for storing the repository, outside the target directory. </p>
+        <p>This is expressed by the repo.path parameter in he command above.</p>
+
+        <p>In order to make sure that repository settings pertaining to new project dependencies are correctly bootstrapped into the repository, make sure you specify the repo.bootstrap parameter. This is especially important when restarting the project after adding plugins.</p>
+    </div>
 </div>

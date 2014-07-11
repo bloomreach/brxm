@@ -223,7 +223,9 @@
                                 $rootScope.TOTAL_PLUGINS = data.totalPlugins;
                                 $rootScope.TOTAL_TOOLS = data.totalTools;
                                 $rootScope.NEEDS_REBUILD = data.needsRebuild;
+                                $rootScope.NEEDS_REBUILD_PLUGINS = data.plugins;
                                 $rootScope.TOTAL_CONFIGURABLE = data.configurablePlugins;
+                                $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
 
                             } else {
                                 // app is back up, but needs to restart

@@ -68,6 +68,7 @@ import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackag
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
@@ -170,16 +171,14 @@ public class PluginResource extends BaseResource {
             } else {
                 systemInfo.incrementPlugins();
             }
-
             final String installState = plugin.getInstallState();
             if (!Strings.isNullOrEmpty(installState)) {
                 if (installState.equals("boarding") || installState.equals("installing")) {
+                    systemInfo.addRebuildPlugin(plugin);
                     systemInfo.setNeedsRebuild(true);
                 } else if (!plugin.isNeedsInstallation()) {
                     systemInfo.incrementConfigurablePlugins();
                 }
-
-
             }
         }
         return systemInfo;
@@ -210,7 +209,7 @@ public class PluginResource extends BaseResource {
 
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
-        Plugin myPlugin = getPluginById(pluginId, servletContext);
+        final Plugin myPlugin = getPluginById(pluginId, servletContext);
 
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
             final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
@@ -230,7 +229,7 @@ public class PluginResource extends BaseResource {
         // execute InstructionPackage itself
         InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
         if (instructionPackage == null) {
-            return new MessageRestful("Could not execute Installation package", DisplayEvent.DisplayType.STRONG);
+            return new MessageRestful("Could not execute Installation package: " + myPlugin.getPackageFile(), DisplayEvent.DisplayType.STRONG);
         }
         instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
@@ -244,11 +243,13 @@ public class PluginResource extends BaseResource {
             }
             document.setDateAdded(Calendar.getInstance());
             service.write(document);
+            new MessageRestful("Successfully installed " + myPlugin.getName(), DisplayEvent.DisplayType.STRONG);
         } catch (Exception e) {
-            log.error("Error in proccessing installer documents", e);
+            log.error("Error in processing installer documents", e);
+            return new MessageRestful("There was an error in processing " + myPlugin.getName() + " Please see the error logs for more details");
         }
+        return new ErrorMessageRestful("Couldn't install " + myPlugin.getName() + " Please see the error logs for more details");
 
-        return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
 
 
