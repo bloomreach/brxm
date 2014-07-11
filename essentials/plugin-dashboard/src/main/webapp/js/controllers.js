@@ -174,12 +174,7 @@
                 return  '#' + myPath == path;
             };
 
-            $scope.onMenuClick = function (header) {
 
-                if (header) {
-                    $rootScope.mainHeader = header;
-                }
-            };
         }]);
 
 })();

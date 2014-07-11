@@ -104,9 +104,28 @@
 //############################################
 // RUN
 //############################################
-
-
         .run(function ($rootScope, $location, $log, $http, $timeout, modalService) {
+            $rootScope.$on('$stateChangeStart',
+                function (event, toState, toParams, fromState, fromParams) {
+                    console.log(toState.url);
+                    if(toState && toState.url){
+                        if(toState.url.indexOf('/tools') !=-1){
+                            $rootScope.mainHeader = 'Tools';
+                        }
+                        else if(toState.url.indexOf('/build') !=-1){
+                            $rootScope.mainHeader = 'Build instructions';
+                        }
+                        if(toState.url.indexOf('/plugins') !=-1){
+                            $rootScope.mainHeader = 'All plugins';
+                        }
+                        if(toState.url.indexOf('/installed-plugins') !=-1){
+                            $rootScope.mainHeader = 'Installed plugins';
+                        }else{
+                            $rootScope.mainHeader = 'Hippo Essentials';
+                        }
+                    }
+                });
+
             $rootScope.feedbackMessages = [];
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             $rootScope.applicationUrl = 'http://localhost:8080/essentials';

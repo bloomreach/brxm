@@ -80,7 +80,7 @@
     <div class="sidebar-nav">
       <ul class="side-menu" ng-controller="mainMenuCtrl">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/plugins')]">
-          <a href="#/plugins" ng-click="onMenuClick('Plugins')">
+          <a href="#/plugins">
             <i class="fa fa-dashboard"></i>
             <span>Plugins</span>
             <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span>
@@ -88,7 +88,7 @@
 
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/installed-plugins')]">
-          <a href="#/installed-plugins" ng-click="onMenuClick('Installed Plugins')">
+          <a href="#/installed-plugins">
             <i class="fa fa-dashboard"></i>
             <span>Installed plugins</span>
             <span class="badge pull-right alert-success">{{TOTAL_CONFIGURABLE}}</span>
@@ -96,14 +96,14 @@
 
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
-          <a href="#/tools" ng-click="onMenuClick('Tools')">
+          <a href="#/tools">
             <i class="fa fa-dashboard"></i>
             <span>Tools</span>
             <span class="badge  pull-right alert-info">{{TOTAL_TOOLS}}</span>
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/build')]">
-          <a href="#/build" ng-click="onMenuClick('Build instructions')">
+          <a href="#/build">
             <i class="fa fa-dashboard "></i>
             <span>Build</span>
                         <span ng-show="NEEDS_REBUILD" class="badge pull-right alert-danger">
