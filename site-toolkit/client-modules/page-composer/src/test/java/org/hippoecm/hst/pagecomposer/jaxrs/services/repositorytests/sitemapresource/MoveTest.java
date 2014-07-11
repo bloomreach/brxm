@@ -68,7 +68,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         final Node markedDeletedHome = session.getNode(homePathBeforeMove);
         final Response moveDeletedFail = siteMapResource.move(markedDeletedHome.getIdentifier(), news.getId());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), moveDeletedFail.getStatus());
-        assertThat(((ExtResponseRepresentation) moveDeletedFail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
+        assertThat(((ExtResponseRepresentation) moveDeletedFail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.INVALID_MOVE_TO_SELF.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.INVALID_MOVE_TO_SELF.name()));
     }
 
 
@@ -140,7 +140,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), aboutUs.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 
     @Test
@@ -151,6 +151,6 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(aboutUs.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 }

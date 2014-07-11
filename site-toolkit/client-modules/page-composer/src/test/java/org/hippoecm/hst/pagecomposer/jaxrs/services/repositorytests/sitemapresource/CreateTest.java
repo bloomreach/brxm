@@ -347,11 +347,11 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             fooByBob.setName("bar");
             final Response bobResponse = siteMapResource.update(fooByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            assertThat(((ExtResponseRepresentation) bobResponse.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ExtResponseRepresentation) bobResponse.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             final Response bobResponseDelete = siteMapResource.delete(fooByBob.getId());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponseDelete.getStatus());
-            assertThat(((ExtResponseRepresentation) bobResponseDelete.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ExtResponseRepresentation) bobResponseDelete.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             bob.logout();
         }
@@ -508,7 +508,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+        assertThat(((ExtResponseRepresentation) response.getEntity()).getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
     @Test
@@ -522,7 +522,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation next =  createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final Response fail = siteMapResource.create(next);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
 
@@ -556,7 +556,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             homeByBob.setName("newName");
             final Response fail = siteMapResource.update(homeByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-            assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
             bob.logout();
         }
 
@@ -566,7 +566,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             homeAgain.setName("newName");
             final Response fail = siteMapResource.update(homeAgain);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-            assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
         }
 
         // delete the childByBob : after that, admin should be able to rename home
@@ -649,7 +649,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
+        assertThat(((ExtResponseRepresentation) response.getEntity()).getErrorCode(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test

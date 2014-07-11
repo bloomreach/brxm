@@ -334,14 +334,14 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             Response bobResponse = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
             final ExtResponseRepresentation representation = (ExtResponseRepresentation) bobResponse.getEntity();
-            assertThat(representation.getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(representation.getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             // bob also sees the 'renamedHome' locked
             news.setName("renamedHome");
             Response bobResponse2 = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse2.getStatus());
             final ExtResponseRepresentation entity = (ExtResponseRepresentation) bobResponse2.getEntity();
-            assertThat(entity.getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+            assertThat(entity.getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
         }
     }
 
@@ -492,7 +492,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         final ExtResponseRepresentation entity = (ExtResponseRepresentation) response.getEntity();
-        assertThat(entity.getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+        assertThat(entity.getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
     @Test
@@ -510,7 +510,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
         final ExtResponseRepresentation entity = (ExtResponseRepresentation) failResponse.getEntity();
-        assertThat(entity.getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+        assertThat(entity.getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
         // news should still be possible to move
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
@@ -534,8 +534,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         home.setName("about-us");
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
-        final String message = ((ExtResponseRepresentation) failResponse.getEntity()).getMessage();
-        assertThat(message, is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
+        final String errorCode = ((ExtResponseRepresentation) failResponse.getEntity()).getErrorCode();
+        assertThat(errorCode, is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test

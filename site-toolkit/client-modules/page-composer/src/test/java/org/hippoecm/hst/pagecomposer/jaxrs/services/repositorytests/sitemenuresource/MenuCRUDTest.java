@@ -124,7 +124,7 @@ public class MenuCRUDTest extends AbstractMenuResourceTest {
 
         final Response fail = resource.update(contactItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
         bob.logout();
     }
 }

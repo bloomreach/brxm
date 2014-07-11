@@ -26,6 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 public class ExtResponseRepresentation {
     private boolean success;
     private String message;
+    private String errorCode;
     private Object data;
 
     public ExtResponseRepresentation() {
@@ -50,6 +51,14 @@ public class ExtResponseRepresentation {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(final String errorCode) {
+        this.errorCode = errorCode;
     }
 
     public boolean isSuccess() {
