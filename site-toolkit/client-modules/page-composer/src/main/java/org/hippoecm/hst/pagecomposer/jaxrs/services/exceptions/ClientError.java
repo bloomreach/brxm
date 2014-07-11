@@ -52,6 +52,8 @@ public enum ClientError {
 
     INVALID_URL,
 
+    INVALID_PATH_INFO,
+
     ITEM_CANNOT_BE_CLONED,
 
     ITEM_NOT_IN_PREVIEW,

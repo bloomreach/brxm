@@ -19,8 +19,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -78,7 +76,7 @@ public class PathInfoValidator implements Validator {
             String msg = String.format("Invalid pathInfo '%s' because contains invalid encoded chars like " +
                     " %%2f, %%5c or %%2e which are typically used for directory traversal (attacks)", pathInfo);
             log.info(msg);
-            throw new ClientException(msg, ClientError.INVALID_URL);
+            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
         if (StringUtils.isEmpty(pathInfo)) {
@@ -87,7 +85,7 @@ public class PathInfoValidator implements Validator {
         if (XSSUrlFilter.containsMarkups(pathInfo)) {
             String msg = String.format("Invalid pathInfo '%s' because it contains XSS markup", pathInfo);
             log.info(msg);
-            throw new ClientException(msg, ClientError.INVALID_URL);
+            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
         HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
@@ -95,14 +93,14 @@ public class PathInfoValidator implements Validator {
             String msg = String.format("PathInfo '%s' cannot be used because it is skipped through web.xml prefix or postfix " +
                     "exclusions.", pathInfo);
             log.info(msg);
-            throw new ClientException(msg, ClientError.INVALID_URL);
+            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
         if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isExcluded(pathInfo)) {
             String msg = String.format("PathInfo '%s' cannot be used because it is skipped through prefix or postfix " +
                     "exclusions on /hst:hst/hst:hosts configuration.", pathInfo);
             log.info(msg);
-            throw new ClientException(msg, ClientError.INVALID_URL);
+            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
     }
 
