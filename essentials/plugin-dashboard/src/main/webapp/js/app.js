@@ -29,7 +29,7 @@
  */
 (function () {
     "use strict";
-    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute','ngAnimate', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'ngAnimate', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
@@ -37,7 +37,7 @@
         .config(function ($provide, $httpProvider) {
 
             function addError($rootScope, error) {
-                if(!error){
+                if (!error) {
                     return;
                 }
                 if (error.data) {
@@ -56,7 +56,7 @@
             }
 
             function addMessage($rootScope, data) {
-                if(!data){
+                if (!data) {
                     return;
                 }
                 if (data.data && data.data.successMessage) {
@@ -107,22 +107,23 @@
         .run(function ($rootScope, $location, $log, $http, $timeout, modalService) {
             $rootScope.$on('$stateChangeStart',
                 function (event, toState, toParams, fromState, fromParams) {
-                    console.log(toState.url);
-                    if(toState && toState.url){
-                        if(toState.url.indexOf('/tools') !=-1){
+                    if (toState && toState.url) {
+                        if (toState.url.indexOf('/tools') != -1) {
                             $rootScope.mainHeader = 'Tools';
                         }
-                        else if(toState.url.indexOf('/build') !=-1){
+                        else if (toState.url.indexOf('/build') != -1) {
                             $rootScope.mainHeader = 'Build instructions';
                         }
-                        if(toState.url.indexOf('/plugins') !=-1){
+                        if (toState.url.indexOf('/plugins') != -1) {
                             $rootScope.mainHeader = 'All plugins';
                         }
-                        if(toState.url.indexOf('/installed-plugins') !=-1){
+                        if (toState.url.indexOf('/installed-plugins') != -1) {
                             $rootScope.mainHeader = 'Installed plugins';
-                        }else{
+                        } else {
                             $rootScope.mainHeader = 'Hippo Essentials';
                         }
+                    } else {
+                        $rootScope.mainHeader = 'Hippo Essentials';
                     }
                 });
 
