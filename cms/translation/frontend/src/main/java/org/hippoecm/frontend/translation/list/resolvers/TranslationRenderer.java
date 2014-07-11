@@ -92,13 +92,17 @@ public class TranslationRenderer extends AbstractNodeRenderer {
                 @Override
                 protected void populateItem(Item<HippoLocale> item) {
                     HippoLocale itemLocale = item.getModelObject();
+                    Image img = new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS)) {
+
+                        @Override
+                        protected boolean shouldAddAntiCacheParameter() {
+                            return false;
+                        }
+                    };
                     if (itemLocale.getName().equals(locale)) {
-                        Image img = new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS));
                         img.add(new AttributeAppender("class", new Model<String>("hippo-translation-current"), " "));
-                        item.add(img);
-                    } else {
-                        item.add(new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS)));
                     }
+                    item.add(img);
                 }
 
             });
