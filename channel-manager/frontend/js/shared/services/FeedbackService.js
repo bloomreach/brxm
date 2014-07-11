@@ -31,7 +31,7 @@
 
             feedbackService.getFeedback = function (errorResponse) {
                 var translationId = errorResponse.errorCode;
-                $log.info("Client exception: " + errorResponse.message);
+                $log.warn("Client exception: " + errorResponse.message);
                 var interpolateParams = errorResponse.data;
                 if (translationId && translationId.match(translationIdRegex)) {
                     var clientErrorMessage = translate(translationId, interpolateParams);
