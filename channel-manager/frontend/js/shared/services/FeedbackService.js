@@ -19,8 +19,9 @@
     angular.module('hippo.channel')
 
         .service('hippo.channel.FeedbackService', [
+        '$log',
         '$filter',
-        function ($filter) {
+        function ($log, $filter) {
             var feedbackService = {},
                 translate = $filter('translate');
 
@@ -29,7 +30,8 @@
             var technicalErrorTranslationId = 'TECHNICAL_ERROR';
 
             feedbackService.getFeedback = function (errorResponse) {
-                var translationId = errorResponse.message;
+                var translationId = errorResponse.errorCode;
+                $log.info("Client exception: " + errorResponse.message);
                 var interpolateParams = errorResponse.data;
                 if (translationId && translationId.match(translationIdRegex)) {
                     var clientErrorMessage = translate(translationId, interpolateParams);

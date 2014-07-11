@@ -9,6 +9,7 @@
     "EXTERNAL_LINK": "Externer Link",
     "EXTERNAL_LINK_REQUIRED": "Ein externer Link ist erforderlich",
     "EXTERNAL_LINK_INVALID": "Der externe Link ist ungültig",
+    "INVALID_PATH_INFO": "Der Link ist ungültig",
     "INTERNAL_LINK": "Interner Link",
     "LABEL": "Beschriftung",
     "LABEL_REQUIRED": "Eine Beschriftung ist erforderlich",
