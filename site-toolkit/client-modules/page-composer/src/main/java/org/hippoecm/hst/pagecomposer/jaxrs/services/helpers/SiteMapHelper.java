@@ -109,7 +109,7 @@ public class SiteMapHelper extends AbstractHelper {
                 Node existingPage = session.getNodeByIdentifier(existingPageConfig.getCanonicalIdentifier());
                 if (existingPage.getPath().startsWith(getPreviewWorkspacePath())) {
                     // Really re-apply a prototype now
-                    updatedPage = pagesHelper.reapply(newPrototypePage,existingPage, targetPageNodeName);
+                    updatedPage = pagesHelper.reapply(newPrototypePage, existingPage, targetPageNodeName);
                 } else {
                     log.warn("Unexpected update with re-apply prototype of sitemap item '{}' because existing page '{}'" +
                             " is not stored in workspace. Instead of re-apply prototype, just create page" +

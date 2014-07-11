@@ -25,6 +25,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType.EXTERNAL;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType.SITEMAPITEM;
 
 public class SiteMenuItemRepresentationValidator implements Validator {
 
@@ -42,6 +43,8 @@ public class SiteMenuItemRepresentationValidator implements Validator {
         final String link = representation.getLink();
         if (linkType == EXTERNAL && !uriValidator.apply(link)) {
             throw new ClientException(link + " is not valid", ClientError.INVALID_URL);
+        } else if (linkType == SITEMAPITEM) {
+            new PathInfoValidator(link).validate(requestContext);
         }
     }
 }

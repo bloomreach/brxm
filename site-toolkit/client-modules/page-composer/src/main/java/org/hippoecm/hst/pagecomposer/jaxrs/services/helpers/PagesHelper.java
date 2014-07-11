@@ -85,6 +85,8 @@ public class PagesHelper extends AbstractHelper {
         return newPage;
     }
 
+    //public Node
+
     public Node reapply(final Node newPrototypePage,
                         final Node oldPage,
                         final String targetPageNodeName) throws RepositoryException {

@@ -367,7 +367,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertFalse(admin.nodeExists(parentPath + "/renamedHome"));
             admin.logout();
         }
-
     }
 
 

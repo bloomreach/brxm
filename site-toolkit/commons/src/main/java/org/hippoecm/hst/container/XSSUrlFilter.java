@@ -65,7 +65,7 @@ public class XSSUrlFilter implements Filter {
         return true;
     }
 
-    private boolean containsMarkups(String value) {
+    public static boolean containsMarkups(String value) {
         if (value.indexOf('<') != -1 || value.indexOf('>') != -1) {
             return true;
         }

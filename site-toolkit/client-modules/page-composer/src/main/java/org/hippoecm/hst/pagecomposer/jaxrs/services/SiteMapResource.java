@@ -131,7 +131,8 @@ public class SiteMapResource extends AbstractConfigResource {
                         siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
-                .add(validatorFactory.getNameValidator(siteMapItem.getName()));
+                .add(validatorFactory.getNameValidator(siteMapItem.getName()))
+                .add(validatorFactory.getPathInfoValidator(siteMapItem, null, siteMapHelper));
 
         // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
@@ -174,7 +175,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()))
-                .add(validatorFactory.getNameValidator(siteMapItem.getName()));
+                .add(validatorFactory.getNameValidator(siteMapItem.getName()))
+                .add(validatorFactory.getPathInfoValidator(siteMapItem, parentId, siteMapHelper));
 
         if (parentId != null) {
             preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(parentId, siteMapHelper));

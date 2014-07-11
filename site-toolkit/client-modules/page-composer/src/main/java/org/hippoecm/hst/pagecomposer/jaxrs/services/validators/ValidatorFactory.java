@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 import com.google.common.base.Predicate;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -67,5 +68,11 @@ public class ValidatorFactory {
 
     public Validator getNameValidator(String name) {
         return new NameValidator(name);
+    }
+
+    public Validator getPathInfoValidator(final SiteMapItemRepresentation siteMapItem,
+                                          final String parentId,
+                                          final SiteMapHelper siteMapHelper) {
+        return new PathInfoValidator(siteMapItem, parentId, siteMapHelper);
     }
 }
