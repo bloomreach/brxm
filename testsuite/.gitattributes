@@ -267,6 +267,7 @@ intranet/src/main/java/org/hippoecm/hst/intranet/components/ListView.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/components/NotFound.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/components/Overview.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/components/Search.java -text
+intranet/src/main/java/org/hippoecm/hst/intranet/components/subsite/SubsiteHeader.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/componentsinfo/GeneralListInfo.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/componentsinfo/ListViewInfo.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/componentsinfo/PageableListInfo.java -text
