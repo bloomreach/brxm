@@ -756,6 +756,7 @@ public class JCRJobStore implements JobStore {
             public void run() {
                 try {
                     refreshLock(session, identifier);
+                    failedAttempts = 0;
                 } catch (RepositoryException e) {
                     log.warn("Failed to refresh lock: {}", e.getMessage());
                     failedAttempts++;
