@@ -19,9 +19,10 @@ import java.lang.reflect.Method;
 
 /**
  * Property access provider interface to the {@link Service} instances.
- * 
- * @version $Id$
+ *
+ * @deprecated since 2.28.05 (CMS 7.9.1). Do not use any more. No replacement
  */
+@Deprecated
 public interface ServiceBeanAccessProvider {
     
     Object getProperty(String namespacePrefix, String name, Class returnType, Method method);

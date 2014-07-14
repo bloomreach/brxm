@@ -15,27 +15,31 @@
  */
 package org.hippoecm.hst.service.jcr;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.UnderlyingServiceAware;
 
-public class HippoStdImpl implements HippoStd, UnderlyingServiceAware {
+
+@Node(jcrType="hippostd:document")
+public class HippoStdImpl implements UnderlyingServiceAware, Serializable {
     
     private static final long serialVersionUID = 1L;
 
     private Service service;
     private String state;
     private Map<String, Object> properties;
-    
+
     public Service getUnderlyingService() {
         return service;
     }
-    
+
     public void setUnderlyingService(Service service) {
         this.service = service;
     }
-    
+
     public String getState() {
         return state;
     }

@@ -21,6 +21,11 @@ import java.util.Calendar;
 
 import org.hippoecm.hst.provider.ValueProvider;
 
+/**
+ *
+ * @deprecated since 2.28.05 (CMS 7.9.1). Do not use any more. No replacement
+ */
+@Deprecated
 public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider, Serializable {
     
     private static final long serialVersionUID = 1L;

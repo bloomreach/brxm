@@ -18,6 +18,8 @@ package org.hippoecm.hst.service;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.proxy.ProxyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory util class to create lightweight JCR Node mapped POJO.
@@ -25,7 +27,9 @@ import org.hippoecm.hst.proxy.ProxyUtils;
  * @version $Id$
  */
 public class ServiceFactory {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(ServiceFactory.class);
+
     /**
      * Create and returns a lightweight JCR Node mapped POJO.
      * <P>
@@ -59,6 +63,8 @@ public class ServiceFactory {
         if (proxyInterfacesOrDelegateeClass.length == 1 && !proxyInterfacesOrDelegateeClass[0].isInterface()) {
             proxy = (T) proxyInterfacesOrDelegateeClass[0].newInstance();
         } else {
+            log.warn("ServiceFactory#create support for proxyInterfacesOrDelegateeClass argument(s) which is" +
+                    "a interface(s) is not supported any more. Only classes.");
             proxy = (T) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProviderImpl(service), proxyInterfacesOrDelegateeClass);
         }
         

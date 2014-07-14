@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.service.jcr;
 
+import org.hippoecm.hst.content.beans.Node;
 
-public class TextPageImpl extends HippoStdImpl implements TextPage {
+@Node(jcrType="unittestproject:textpage")
+public class TextPageImpl extends HippoStdImpl {
     
     private static final long serialVersionUID = 1L;
 

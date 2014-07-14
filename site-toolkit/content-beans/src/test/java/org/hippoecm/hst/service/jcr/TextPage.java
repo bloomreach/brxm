@@ -17,8 +17,12 @@ package org.hippoecm.hst.service.jcr;
 
 import org.hippoecm.hst.content.beans.Node;
 
+/**
+ * @deprecated since 2.28.05 (CMS 7.9.1). Support for interfaces as beans have been deprecated
+ */
+@Deprecated
 @Node(jcrType="unittestproject:textpage")
-public interface TextPage extends HippoStd{
+public interface TextPage extends HippoStd {
     
     public String getTitle();
     public String getSummary();

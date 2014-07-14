@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.service;
 
+/**
+ * @deprecated since 2.28.05 (CMS 7.9.1) Do not use any more. No replacement
+ */
+@Deprecated
 public class ServiceException extends Exception {
 
     private static final long serialVersionUID = 1L;

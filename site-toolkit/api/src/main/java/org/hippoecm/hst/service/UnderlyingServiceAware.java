@@ -18,9 +18,9 @@ package org.hippoecm.hst.service;
 
 /**
  * Interface to be implemented by beans that wish to be aware of its originating {@link Service} instance.
- * 
- * @version $Id$
+ * @deprecated since 2.28.05 (CMS 7.9.1) Do not use any more. No replacement
  */
+@Deprecated
 public interface UnderlyingServiceAware {
 
     /**
@@ -33,7 +33,7 @@ public interface UnderlyingServiceAware {
     /**
      * Callback that supplies the originating {@link Service} instance.
      * 
-     * @param node
+     * @param service
      */
     void setUnderlyingService(Service service);
     

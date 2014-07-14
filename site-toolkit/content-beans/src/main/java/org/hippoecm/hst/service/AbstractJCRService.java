@@ -23,6 +23,11 @@ import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.jcr.JCRService;
 
+
+/**
+ * @deprecated since 2.28.05 (CMS 7.9.1). Do not use any more. No replacement
+ */
+@Deprecated
 public abstract class AbstractJCRService implements JCRService, Serializable {
     
     private static final long serialVersionUID = 1L;

@@ -59,7 +59,7 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
     public void testServiceBeanProxyWithClass() throws Exception {
 
         Node node = (Node)session.getItem(TESTPROJECT_EXISTING_NODE);
-        TextPage t = ServiceFactory.create(node, TextPageImpl.class);
+        TextPageImpl t = ServiceFactory.create(node, TextPageImpl.class);
         
         assertTrue("the returned class is not implementation delegatee class.", t instanceof TextPageImpl);
         assertNotNull("title property is null!", t.getTitle());
@@ -67,7 +67,7 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         assertNotNull("summary property is null!", t.getSummary());
         
         byte [] bytes = SerializationUtils.serialize((Serializable) t);
-        TextPage t2 = (TextPage) SerializationUtils.deserialize(bytes);
+        TextPageImpl t2 = (TextPageImpl) SerializationUtils.deserialize(bytes);
         
         assertEquals("The title property of the deserialized one is different from the original.", 
                 t.getTitle(), t2.getTitle());

@@ -20,6 +20,11 @@ import java.io.Serializable;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.service.UnderlyingServiceAware;
 
+
+/**
+ * @deprecated since 2.28.05 (CMS 7.9.1). Support for interfaces as beans have been deprecated
+ */
+@Deprecated
 @Node(jcrType="hippostd:document")
 public interface HippoStd extends UnderlyingServiceAware, Serializable {
     public String getState();

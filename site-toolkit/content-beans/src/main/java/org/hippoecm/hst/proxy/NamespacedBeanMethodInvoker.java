@@ -22,6 +22,10 @@ import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 
+/**
+ * @deprecated since 2.28.05 (CMS 7.9.1). Do not use any more. No replacement
+ */
+@Deprecated
 public class NamespacedBeanMethodInvoker implements Invoker, Serializable {
     
     private static final long serialVersionUID = 1L;

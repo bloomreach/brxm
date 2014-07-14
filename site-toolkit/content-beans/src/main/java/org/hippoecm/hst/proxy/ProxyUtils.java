@@ -25,8 +25,7 @@ import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 
 /**
  * Utility class to create proxies.
- * 
- * @version $Id$
+ *
  */
 public class ProxyUtils
 {
@@ -68,7 +67,9 @@ public class ProxyUtils
      * @param provider the underlying service bean access provider
      * @param proxyInterfacesOrDelegateeClass the interfaces the proxy should implement or delegatee class which may implement interface(s).
      * @return
+     * @deprecated since 2.28.05 (CMS 7.9.1). Do not use any more. No replacement
      */
+    @Deprecated
     public static Object createBeanAccessProviderProxy(final ServiceBeanAccessProvider provider, Class ... proxyInterfacesOrDelegateeClass) {
         ProxyFactory factory = new ProxyFactory();
         String primaryJcrType = findPrimaryJcrType(proxyInterfacesOrDelegateeClass);
