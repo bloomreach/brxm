@@ -236,8 +236,6 @@
                     }
 
                     $http.get($rootScope.REST.ping).success(function (data) {
-                        console.log("==============================");
-                        console.log(data);
                         if (data) {
                             if (data.initialized) {
                                 $timeout(ping, PING_RUNNING_TIMER);

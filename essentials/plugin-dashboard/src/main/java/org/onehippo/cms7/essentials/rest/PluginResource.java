@@ -166,13 +166,14 @@ public class PluginResource extends BaseResource {
         final List<PluginRestful> plugins = getPlugins(servletContext);
         for (PluginRestful plugin : plugins) {
             final String type = plugin.getType();
-            if ("tools".equals(type)) {
+            final boolean toolType = "tools".equals(type);
+            if (toolType) {
                 systemInfo.incrementTools();
             } else {
                 systemInfo.incrementPlugins();
             }
             final String installState = plugin.getInstallState();
-            if (!Strings.isNullOrEmpty(installState)) {
+            if (!toolType && !Strings.isNullOrEmpty(installState)) {
                 if (installState.equals("boarding") || installState.equals("installing")) {
                     systemInfo.addRebuildPlugin(plugin);
                     systemInfo.setNeedsRebuild(true);
