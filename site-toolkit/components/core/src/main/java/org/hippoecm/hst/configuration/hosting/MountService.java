@@ -987,8 +987,12 @@ public class MountService implements ContextualizableMount, MutableMount {
         if (channel == null || previewChannel == null) {
             throw new IllegalArgumentException("Channel to set is not allowed to be null");
         }
-        log.info("Setting on mount [{}]  live channel [{}]", toString(), channel.toString());
-        log.info("Setting on mount [{}]  preview channel [{}]", toString(), previewChannel.toString());
+        if (log.isInfoEnabled()) {
+            // first check isInfoEnabled because channel.toString() and previewChannel.toString() populate the
+            // ChannelLazyLoadingChangedBySet
+            log.info("Setting on mount [{}]  live channel [{}]", toString(), channel.toString());
+            log.info("Setting on mount [{}]  preview channel [{}]", toString(), previewChannel.toString());
+        }
         this.channel = channel;
         this.previewChannel = previewChannel;
     }
