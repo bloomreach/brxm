@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,11 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -36,14 +40,40 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 
 @Path("/hst:exception/")
 public class ExceptionResource extends AbstractConfigResource {
-   
+
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest) {
-        
+    public Response exceptionGet(@Context HttpServletRequest servletRequest) {
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
-     
+    }
+
+    @HEAD
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exceptionHead(@Context HttpServletRequest servletRequest) {
+        return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
+    }
+
+    @POST
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exceptionPost(@Context HttpServletRequest servletRequest) {
+        return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
+    }
+
+    @PUT
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exceptionPut(@Context HttpServletRequest servletRequest) {
+        return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
+    }
+
+    @DELETE
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exceptionDelete(@Context HttpServletRequest servletRequest) {
+        return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
     }
 
     
