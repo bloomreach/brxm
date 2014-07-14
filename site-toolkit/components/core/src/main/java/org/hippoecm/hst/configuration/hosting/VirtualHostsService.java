@@ -886,10 +886,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
                             continue;
                         }
                         if (!channelPath.startsWith(channelsRoot)) {
-                            log.warn(
-                                    "Channel path '{}' is not part of the HST configuration under {}, ignoring channel info for mount {}.  Use the full repository path for identification.",
+                            log.warn("Channel path '{}' is not part of the HST configuration under {}, " +
+                                    "ignoring channel info for mount {}.  Use the full repository path for identification.",
                                     channelPath, hstNodeLoadingCache.getRootPath(), mount.getName());
-
                             continue;
                         }
 
@@ -898,8 +897,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         if (channel == null) {
                             channel = loadChannel(rootConfigNode, channelNodeName);
                             if (channel == null) {
-                                log.info("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
-                                        mount);
+                                log.warn("Mount '{}' has channel path '{}' configured that does not point to a channel info. " +
+                                        "Cannot set channelInfo for mount.",
+                                        mount, channelNodeName);
                                 continue;
                             }
                             hostGroupAgnosticChannels.put(channelNodeName, channel);
