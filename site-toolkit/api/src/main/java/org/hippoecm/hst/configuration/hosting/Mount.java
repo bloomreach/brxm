@@ -154,7 +154,8 @@ public interface Mount {
      * {@link #isMapped()} equal to true, this method can return a different path than {@link #getMountPoint()}.
      * </p>
      *
-     * @return the content path for this {@link Mount}. It cannot be <code>null</code>
+     * @return the content path for this {@link Mount}. It will be <code>null</code> in case {@link #getMountPoint()}
+     * returns <code>null</code>
      */
     String getContentPath();
 
