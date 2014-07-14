@@ -271,22 +271,20 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     defaultWorkflow.localizeName(name);
                 }
 
-                // added new document : because the document must be in 'preview' availability, we now set this explicitly
-                // if needed UNLESS the document already has availability 'preview' (from the prototype)
-                // To be sure, we also set the hippostd:stateSummary and hippostd:state correct
-                // IF the document does not have availability = preview but is in state 'unpublished', we first need to change the
-                // state to 'draft' and hippostd:stateSummary to 'new'
-                // This is a workaround to be backwards compatible due to REPO-444
                 if (documentAdditionWorkflowCategory.equals(category)) {
-                    if (!addedNode.hasProperty(HippoNodeType.HIPPO_AVAILABILITY) ||
-                            addedNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 1 ||
-                            !"preview".equals(addedNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
-                        // now set the correct values (not through workflow as this is just overhead)
-                        addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
-                    }
+
+                    // added new document : because the document must be in 'preview' availability, we now set this explicitly
                     if (addedNode.isNodeType("hippostd:publishable")) {
+                        log.info("Added document '{}' is pusblishable so set status to preview.",
+                                addedNode.getPath());
                         addedNode.setProperty("hippostd:state", "unpublished");
+                        addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
+                    } else {
+                        log.info("Added document '{}' is not publishable so set status to live & preview directly.",
+                                addedNode.getPath());
+                        addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"live", "preview"});
                     }
+
                     if (addedNode.isNodeType("hippostd:publishableSummary")) {
                         addedNode.setProperty("hippostd:stateSummary", "new");
                     }
