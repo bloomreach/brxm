@@ -152,12 +152,10 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
 
         for (PropertyIterator propIt = bundleNode.getProperties("resourcebundle:messages_*"); propIt.hasNext(); ) {
             Property prop = propIt.nextProperty();
-
+            String localeString = prop.getName().substring("resourcebundle:messages_".length());
             if (prop != null) {
-                Locale locale = null;
-
                 try {
-                    locale = LocaleUtils.toLocale(prop.getName().substring("resourcebundle:messages_".length()));
+                    Locale locale = LocaleUtils.toLocale(localeString);
                     String[] localizedMessages = getPropertyAsStringArray(prop);
 
                     if (localizedMessages != null) {
@@ -176,10 +174,10 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                     }
                 } catch (Exception e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Failed to load default resource bundle from '"+bundleNode.getPath()+"' for locale: " + locale, e);
+                        log.warn("Failed to load default resource bundle from '"+bundleNode.getPath()+"' for locale: " + localeString, e);
                     } else {
                         log.warn("Failed to load default resource bundle from '{}' for locale '{}' : {}.",
-                                new String[]{bundleNode.getPath(), locale.toString(), e.toString()});
+                                new String[]{bundleNode.getPath(), localeString, e.toString()});
                     }
                 }
             }
