@@ -220,7 +220,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private final boolean cacheable;
 
-    private String[] defaultResourceBundleIds;
+    private String [] defaultResourceBundleIds;
 
     private String formLoginPage;
     private ChannelInfo channelInfo;
@@ -252,41 +252,41 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.parameters = new HashMap<String, String>();
         String[] parameterNames = mount.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = mount.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
-        if (parameterNames != null && parameterValues != null) {
-            if (parameterNames.length != parameterValues.length) {
+        if(parameterNames != null && parameterValues != null){
+            if(parameterNames.length != parameterValues.length) {
                 log.warn("Skipping parameters for mount '{}' at '{}' because they only make sense if there are equal number of names and values",
                         getName(), mount.getValueProvider().getPath());
-            } else {
-                for (int i = 0; i < parameterNames.length; i++) {
+            }  else {
+                for(int i = 0; i < parameterNames.length ; i++) {
                     this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                 }
             }
         }
-        if (this.parent != null) {
+        if(this.parent != null){
             // add the parent parameters that are not already present
-            for (Entry<String, String> parentParam : ((MountService) this.parent).getParameters().entrySet()) {
-                if (!this.parameters.containsKey(parentParam.getKey())) {
+            for(Entry<String, String> parentParam : ((MountService)this.parent).getParameters().entrySet()) {
+                if(!this.parameters.containsKey(parentParam.getKey())) {
                     this.parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
                 }
             }
         }
         this.parameters = CollectionOptimizer.optimizeHashMap(this.parameters);
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
             this.alias = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase());
         }
 
-        if (parent == null) {
+        if(parent == null) {
             mountPath = "";
         } else {
             mountPath = StringPool.get((parent.getMountPath() + "/" + name));
         }
 
         // is the context path visible in the url
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWCONTEXTPATH)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SHOWCONTEXTPATH);
         } else {
-            if (parent != null) {
+            if(parent != null) {
                 this.contextPathInUrl = parent.isContextPathInUrl();
             } else {
                 this.contextPathInUrl = virtualHost.isContextPathInUrl();
@@ -294,10 +294,10 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
         // is the port number visible in the url
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT)) {
             this.showPort = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT);
         } else {
-            if (parent != null) {
+            if(parent != null) {
                 this.showPort = parent.isPortInUrl();
             } else {
                 this.showPort = virtualHost.isPortInUrl();
@@ -314,7 +314,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.contextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH);
         }
 
-        if (contextPath == null) {
+        if(contextPath == null) {
             if (parent == null) {
                 this.contextPath = virtualHost.getContextPath();
             } else {
@@ -330,21 +330,21 @@ public class MountService implements ContextualizableMount, MutableMount {
             throw new ModelLoadingException(msg);
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SCHEME)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SCHEME)) {
             scheme = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_SCHEME));
         }
         if (StringUtils.isBlank(scheme)) {
             scheme = parent != null ? parent.getScheme() : virtualHost.getScheme();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
             schemeAgnostic = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
         } else {
             schemeAgnostic = parent != null ? parent.isSchemeAgnostic() : virtualHost.isSchemeAgnostic();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
-            schemeNotMatchingResponseCode = (int) mount.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
+            schemeNotMatchingResponseCode = (int)mount.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
             if (!ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
                 log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
                         mount.getValueProvider().getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
@@ -356,36 +356,36 @@ public class MountService implements ContextualizableMount, MutableMount {
                     parent.getSchemeNotMatchingResponseCode() : virtualHost.getSchemeNotMatchingResponseCode();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
             homepage = StringPool.get(homepage);
         } else {
-            // try to get the one from the parent
-            if (parent != null) {
+           // try to get the one from the parent
+            if(parent != null) {
                 this.homepage = parent.getHomePage();
             } else {
                 this.homepage = virtualHost.getHomePage();
             }
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
             locale = StringPool.get(locale);
         } else {
-            // try to get the one from the parent
-            if (parent != null) {
+           // try to get the one from the parent
+            if(parent != null) {
                 this.locale = parent.getLocale();
             } else {
                 this.locale = virtualHost.getLocale();
             }
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
             pageNotFound = StringPool.get(pageNotFound);
         } else {
-            // try to get the one from the parent
-            if (parent != null) {
+           // try to get the one from the parent
+            if(parent != null) {
                 this.pageNotFound = parent.getPageNotFound();
             } else {
                 this.pageNotFound = virtualHost.getPageNotFound();
@@ -393,89 +393,89 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         } else {
-            // try to get the one from the parent
-            if (parent != null) {
+           // try to get the one from the parent
+            if(parent != null) {
                 this.versionInPreviewHeader = parent.isVersionInPreviewHeader();
             } else {
                 this.versionInPreviewHeader = virtualHost.isVersionInPreviewHeader();
             }
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
             this.type = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_TYPE);
             type = StringPool.get(type);
-        } else if (parent != null) {
+        } else if(parent != null) {
             this.type = parent.getType();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPES)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPES)) {
             String[] typesProperty = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_TYPES);
-            for (int i = 0; i < typesProperty.length; i++) {
+            for(int i = 0; i< typesProperty.length ; i++) {
                 typesProperty[i] = StringPool.get(typesProperty[i]);
             }
             this.types = Arrays.asList(typesProperty);
-        } else if (parent != null) {
+        } else if(parent != null) {
             // because the parent.getTypes also includes the primary type, below we CANNOT use parent.getTypes() !!
-            this.types = ((MountService) parent).types;
+            this.types = ((MountService)parent).types;
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED)) {
             this.isMapped = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED);
-        } else if (parent != null) {
+        } else if(parent != null) {
             this.isMapped = parent.isMapped();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_IS_SITE)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_IS_SITE)) {
             this.isSite = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_IS_SITE);
-        } else if (parent != null) {
+        } else if(parent != null) {
             this.isSite = parent.isSite();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE);
-            namedPipeline = StringPool.get(namedPipeline);
-        } else if (parent != null) {
+            namedPipeline  = StringPool.get(namedPipeline);
+        } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             this.mountPoint = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT);
             mountPoint = StringPool.get(mountPoint);
             // now, we need to create the HstSite object
-            if ("".equals(mountPoint)) {
+            if("".equals(mountPoint)){
                 mountPoint = null;
             }
-        } else if (parent != null) {
-            this.mountPoint = ((MountService) parent).mountPoint;
-            if (mountPoint != null) {
-                log.info("mountPoint for Mount '{}' is inherited from its parent Mount and is '{}'", getName(), mountPoint);
+        } else if(parent != null) {
+            this.mountPoint = ((MountService)parent).mountPoint;
+            if(mountPoint != null) {
+                log.info("mountPoint for Mount '{}' is inherited from its parent Mount and is '{}'", getName() , mountPoint);
             }
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
             this.authenticated = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED);
-        } else if (parent != null) {
+        } else if (parent != null){
             this.authenticated = parent.isAuthenticated();
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ROLES)) {
-            String[] rolesProp = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_ROLES);
+            String [] rolesProp = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_ROLES);
             this.roles = new HashSet<String>();
             CollectionUtils.addAll(this.roles, rolesProp);
-        } else if (parent != null) {
+        } else if (parent != null){
             this.roles = new HashSet<String>(parent.getRoles());
         } else {
             this.roles = new HashSet<String>();
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_USERS)) {
-            String[] usersProp = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_USERS);
+            String [] usersProp = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_USERS);
             this.users = new HashSet<String>();
             CollectionUtils.addAll(this.users, usersProp);
-        } else if (parent != null) {
+        } else if (parent != null){
             this.users = new HashSet<String>(parent.getUsers());
         } else {
             this.users = new HashSet<String>();
@@ -483,39 +483,39 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SUBJECTBASEDSESSION)) {
             this.subjectBasedSession = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SUBJECTBASEDSESSION);
-        } else if (parent != null) {
+        } else if (parent != null){
             this.subjectBasedSession = parent.isSubjectBasedSession();
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SESSIONSTATEFUL)) {
             this.sessionStateful = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SESSIONSTATEFUL);
-        } else if (parent != null) {
+        } else if (parent != null){
             this.sessionStateful = parent.isSessionStateful();
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE)) {
             this.formLoginPage = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE));
-        } else if (parent != null) {
+        } else if (parent != null){
             this.formLoginPage = parent.getFormLoginPage();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
             this.cacheable = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
-        } else if (parent != null) {
+        } else if(parent != null) {
             this.cacheable = parent.isCacheable();
         } else {
-            this.cacheable = virtualHost.isCacheable();
+            this.cacheable =  virtualHost.isCacheable();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
             this.defaultResourceBundleIds = StringUtils.split(mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
-        } else if (parent != null) {
+        } else if(parent != null) {
             this.defaultResourceBundleIds = parent.getDefaultResourceBundleIds();
         } else {
-            this.defaultResourceBundleIds = virtualHost.getDefaultResourceBundleIds();
+            this.defaultResourceBundleIds =  virtualHost.getDefaultResourceBundleIds();
         }
 
-        this.cmsLocations = ((VirtualHostService) virtualHost).getCmsLocations();
+        this.cmsLocations = ((VirtualHostService)virtualHost).getCmsLocations();
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS)) {
             defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
@@ -571,12 +571,13 @@ public class MountService implements ContextualizableMount, MutableMount {
 
                 MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
                 long start = System.currentTimeMillis();
-                previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
                 if (Mount.PREVIEW_NAME.equals(type)) {
                     // explicit preview
+                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
                     hstSite = previewHstSite;
                 } else {
                     hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
                 }
 
                 contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
@@ -612,7 +613,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private void assertContentPathNotEmpty(final HstNode mount, final String contentPath) throws ModelLoadingException {
         if (StringUtils.isEmpty(contentPath)) {
-            throw new ModelLoadingException("Mount '" + mount.getValueProvider().getPath() + "' does have an empty or null contentPath, " +
+            throw new ModelLoadingException("Mount '"+mount.getValueProvider().getPath()+"' does have an empty or null contentPath, " +
                     "hence has broken configuration. Fix the hst:content property when the mountpoint points to a hst:site node, or make sure" +
                     " hst:ismapped = false if this mount does not need a mountpoint to a hst:site node. Available child mounts will still be loaded");
         }
@@ -648,11 +649,11 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     @Override
     public void addMount(MutableMount mount) throws ModelLoadingException {
-        if (childMountServices.containsKey(mount.getName())) {
-            throw new ModelLoadingException("Cannot add Mount with name '" + mount.getName() + "' because already exists for " + this.toString());
+        if(childMountServices.containsKey(mount.getName())) {
+            throw new ModelLoadingException("Cannot add Mount with name '"+mount.getName()+"' because already exists for " + this.toString());
         }
         childMountServices.put(mount.getName(), mount);
-        ((MutableVirtualHosts) virtualHost.getVirtualHosts()).addMount(mount);
+        ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(mount);
     }
 
     @Override
@@ -792,20 +793,20 @@ public class MountService implements ContextualizableMount, MutableMount {
         return type;
     }
 
-    public List<String> getTypes() {
+    public List<String> getTypes(){
         List<String> combined = new ArrayList<String>();
         // add the primary type  first
         combined.add(getType());
 
-        if (types != null) {
-            if (types.contains(getType())) {
-                for (String extraType : types) {
-                    if (extraType != null) {
-                        if (extraType.equals(getType())) {
-                            // already got it
-                            continue;
-                        }
-                        combined.add(extraType);
+        if(types != null) {
+            if(types.contains(getType())) {
+                for(String extraType : types) {
+                    if(extraType != null) {
+                       if(extraType.equals(getType())) {
+                           // already got it
+                           continue;
+                       }
+                       combined.add(extraType);
                     }
                 }
             } else {
@@ -827,7 +828,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     @Deprecated
     public String getCmsLocation() {
         if (!cmsLocations.isEmpty()) {
-            return cmsLocations.get(0);
+           return  cmsLocations.get(0);
         }
         return null;
     }
@@ -836,7 +837,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         return cmsLocations;
     }
 
-    public String getNamedPipeline() {
+    public String getNamedPipeline(){
         return namedPipeline;
     }
 
@@ -848,7 +849,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             return matcher;
         }
         HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        matcher = mngr.getSiteMapMatcher();
+        matcher =  mngr.getSiteMapMatcher();
         return matcher;
     }
 
@@ -878,7 +879,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public String getProperty(String name) {
         Object o = allProperties.get(name);
-        if (o != null) {
+        if(o != null) {
             return o.toString();
         }
         return null;
@@ -907,7 +908,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     @Override
-    public String[] getDefaultResourceBundleIds() {
+    public String [] getDefaultResourceBundleIds() {
         if (defaultResourceBundleIds == null) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
@@ -917,14 +918,14 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public Map<String, String> getMountProperties() {
         Map<String, String> mountProperties = new HashMap<String, String>();
-        for (Entry<String, Object> entry : allProperties.entrySet()) {
-            if (entry.getValue() instanceof String) {
-                if (entry.getKey().startsWith(PROPERTY_NAME_MOUNT_PREFIX)) {
-                    if (entry.getKey().equals(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
+        for(Entry<String, Object> entry : allProperties.entrySet()) {
+            if(entry.getValue() instanceof String) {
+                if(entry.getKey().startsWith(PROPERTY_NAME_MOUNT_PREFIX)) {
+                    if(entry.getKey().equals(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
                         // skip the hst:mountpoint property as this is a reserved property with a different meaning
                         continue;
                     }
-                    mountProperties.put(entry.getKey().substring(PROPERTY_NAME_MOUNT_PREFIX.length()).toLowerCase(), ((String) entry.getValue()).toLowerCase());
+                    mountProperties.put(entry.getKey().substring(PROPERTY_NAME_MOUNT_PREFIX.length()).toLowerCase(), ((String)entry.getValue()).toLowerCase());
                 }
             }
         }
@@ -952,7 +953,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     @Override
-    public String getPreviewChannelPath() {
+    public String getPreviewChannelPath(){
         return previewChannelPath;
     }
 
@@ -972,6 +973,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     public void setChannelInfo(final ChannelInfo channelInfo, final ChannelInfo previewChannelInfo) {
+        if (channelInfo == null || previewChannelInfo == null) {
+            throw new IllegalArgumentException("ChannelInfo to set is not allowed to be null");
+        }
+        log.info("Setting on mount [{}]  live channelInfo [{}]", toString(), channelInfo.toString());
+        log.info("Setting on mount [{}]  preview channelInfo [{}]", toString(), channelInfo.toString());
         this.channelInfo = channelInfo;
         this.previewChannelInfo = previewChannelInfo;
     }
@@ -981,6 +987,8 @@ public class MountService implements ContextualizableMount, MutableMount {
         if (channel == null || previewChannel == null) {
             throw new IllegalArgumentException("Channel to set is not allowed to be null");
         }
+        log.info("Setting on mount [{}]  live channel [{}]", toString(), channel.toString());
+        log.info("Setting on mount [{}]  preview channel [{}]", toString(), previewChannel.toString());
         this.channel = channel;
         this.previewChannel = previewChannel;
     }
@@ -990,7 +998,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     public String toString() {
         StringBuilder builder = new StringBuilder("MountService [jcrPath=");
         builder.append(jcrLocation).append(", hostName=").append(virtualHost.getHostName()).append("]");
-        return builder.toString();
+        return  builder.toString();
     }
 
 }
