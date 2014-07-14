@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.Credentials;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -101,10 +102,13 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             Node node = session.getNodeByIdentifier(uuid);
         	resourceType = node.getPrimaryNodeType().getName();
 
-        } catch (RepositoryException e) {
+        } catch (ItemNotFoundException e) {
+            log.info("Configuration node with uuid {} does not exist any more : {}", uuid, e.toString());
+            return setErrorMessageAndReturn(requestContext, request, e.toString());
+        }  catch (RepositoryException e) {
             log.warn("RepositoryException ", e);
-		    return setErrorMessageAndReturn(requestContext, request, e.toString());
-		} finally {
+            return setErrorMessageAndReturn(requestContext, request, e.toString());
+        } finally {
             if (session != null) {
                 // logout in this case means return to pool
                 session.logout();
