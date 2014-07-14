@@ -738,26 +738,32 @@ public class JCRJobStore implements JobStore {
         }
     }
 
-    private void refreshLock(final Session session, String identifier) {
+    private void refreshLock(final Session session, String identifier) throws RepositoryException {
         synchronized (session) {
-            try {
-                final Node node = session.getNodeByIdentifier(identifier);
-                final LockManager lockManager = session.getWorkspace().getLockManager();
-                final Lock lock = lockManager.getLock(node.getPath());
-                lock.refresh();
-                log.debug("Lock successfully refreshed");
-            } catch (RepositoryException e) {
-                log.error("Failed to refresh lock", e);
-            }
+            final Node node = session.getNodeByIdentifier(identifier);
+            final LockManager lockManager = session.getWorkspace().getLockManager();
+            final Lock lock = lockManager.getLock(node.getPath());
+            lock.refresh();
+            log.debug("Lock successfully refreshed");
         }
     }
 
     private void startLockKeepAlive(final Session session, final String identifier) {
         final long refreshInterval = lockTimeout / 2;
         final Future<?> future = executorService.scheduleAtFixedRate(new Runnable() {
+            private int failedAttempts = 0;
             @Override
             public void run() {
-                refreshLock(session, identifier);
+                try {
+                    refreshLock(session, identifier);
+                } catch (RepositoryException e) {
+                    log.warn("Failed to refresh lock: {}", e.getMessage());
+                    failedAttempts++;
+                    if (failedAttempts > 1) {
+                        log.warn("Cancelling keep alive after {} attempts to refresh lock", failedAttempts);
+                        stopLockKeepAlive(identifier);
+                    }
+                }
             }
         }, refreshInterval, refreshInterval, TimeUnit.SECONDS);
         keepAlives.put(identifier, future);
