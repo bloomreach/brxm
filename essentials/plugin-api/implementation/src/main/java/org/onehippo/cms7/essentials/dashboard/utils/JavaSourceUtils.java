@@ -392,12 +392,9 @@ public final class JavaSourceUtils {
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoHtml");
     }
 
-    /**
-     * getBean("politie:assetfolder", HippoMirrorBean.class);
-     */
 
     /**
-     * Adds {@code getBean(namespace, HippoMirrorBean.class)} method
+     * Adds {@code getBean(namespace, HippoBean.class)} method
      *
      * @param path         source file path
      * @param methodName   generated method name
@@ -407,12 +404,12 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoMirrorBean", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoBean", path, "getLinkedBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoMirrorBean", path, methodName, propertyName);
+            addTwoArgumentsMethod("getLinkedBean", "HippoBean", path, methodName, propertyName);
         }
-        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoMirrorBean");
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoBean");
 
 
     }
