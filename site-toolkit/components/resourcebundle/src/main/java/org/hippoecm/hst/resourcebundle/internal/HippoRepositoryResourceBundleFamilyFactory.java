@@ -39,6 +39,7 @@ import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,14 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         for (Credentials credentials : creds) {
             try {
                 // the order by @resourcebundle:id is only added to avoid that QueryResult#getSize() or QueryResult#getNodes#getSize can return -1
-                String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename + "'] order by @resourcebundle:id";
+                String hippoAvailabilityConstraint = HippoNodeType.HIPPO_AVAILABILITY ;
+                if (credentials == previewCredentials) {
+                    hippoAvailabilityConstraint += "='preview'";
+                } else {
+                    hippoAvailabilityConstraint += "='live'";
+                }
+                String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename + "' and " +
+                        " "+hippoAvailabilityConstraint+"] order by @resourcebundle:id";
                 session = repository.login(credentials);
                 Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.XPATH);
 
