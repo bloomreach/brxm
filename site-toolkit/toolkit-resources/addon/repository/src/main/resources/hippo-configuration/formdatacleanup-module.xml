@@ -33,8 +33,11 @@
       <sv:value>0 14 4 * * ?</sv:value>
     </sv:property>
     <sv:property sv:name="minutestolive" sv:type="Long">
-      <!-- disabled by default - don't delete anything -->
-      <sv:value>-1</sv:value>
+      <!-- by default 1 day -->
+      <sv:value>1440</sv:value>
+    </sv:property>
+    <sv:property sv:name="batchsize" sv:type="Long">
+      <sv:value>100</sv:value>
     </sv:property>
     <sv:property sv:name="excludepaths" sv:multiple="true" sv:type="String">
       <sv:value>/formdata/permanent/</sv:value>

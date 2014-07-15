@@ -206,6 +206,14 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>940</sv:value>
     </sv:property>
+
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.28.05</sv:value>
+    </sv:property>
+
   </sv:node>
 
   <sv:node sv:name="hst-move-containers-to-workspace-script">

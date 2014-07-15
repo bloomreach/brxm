@@ -90,7 +90,7 @@ public class FormDataCleanupModuleTest extends RepositoryTestCase {
         createFormDataNode(null, now - 65 * 1000);
         assertEquals(2l, getFormdataNodes().getTotalSize());
 
-        FormDataCleanupModule formDataCleanupModule = new FormDataCleanupModule(
+        FormDataCleanupModule formDataCleanupModule = new FormDataCleanupModule (
                 "FormDataCleanupModule",
                 "/hippo:configuration/hippo:modules/formdatacleanup/hippo:moduleconfig",
                 "0/2 * * * * ?", 1l, "");

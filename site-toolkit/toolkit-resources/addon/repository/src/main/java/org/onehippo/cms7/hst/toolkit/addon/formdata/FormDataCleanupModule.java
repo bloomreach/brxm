@@ -53,6 +53,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private static final String CONFIG_MODULECONFIGPATH = "moduleconfigpath";
     private static final String CONFIG_CRONEXPRESSION_PROPERTY = "cronexpression";
     private static final String CONFIG_MINUTES_TO_LIVE_PROPERTY = "minutestolive";
+    private static final String CONFIG_BATCH_SIZE = "batchsize";
     private static final String CONFIG_EXCLUDE_PATHS = "excludepaths";
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
@@ -60,17 +61,25 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private static String FORMDATA_QUERY = "SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC";
 
     private String cronExpression;
-    private long minutesToLive = -1l;
+    // 1 day
+    private static final Long DEFAULT_MINUTES_TO_LIVE = 24 * 60L;
+    private Long minutesToLive = DEFAULT_MINUTES_TO_LIVE;
+
+    private static final Long DEFAULT_BATCH_SIZE = 100L;
+    private Long batchSize = DEFAULT_BATCH_SIZE;
+
     private String excludePaths = "";
     private RepositoryJobInfo jobInfo;
     private String schedulerJobName = "FormDataCleanup";
     private String schedulerGroupName = "default";
 
+
+    @SuppressWarnings("UnusedDeclaration")
     public FormDataCleanupModule() {
     }
 
     /* Test only */
-    public FormDataCleanupModule(String moduleName, String moduleConfigPath, String cronExpression, long minutesToLive,
+    public FormDataCleanupModule(String moduleName, String moduleConfigPath, String cronExpression, Long minutesToLive,
                                  String excludePaths)
             throws RepositoryException {
         this.moduleName = moduleName;
@@ -85,7 +94,8 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
-        minutesToLive = JcrUtils.getLongProperty(moduleConfig, CONFIG_MINUTES_TO_LIVE_PROPERTY, -1l);
+        minutesToLive = JcrUtils.getLongProperty(moduleConfig, CONFIG_MINUTES_TO_LIVE_PROPERTY, DEFAULT_MINUTES_TO_LIVE);
+        batchSize = JcrUtils.getLongProperty(moduleConfig, CONFIG_BATCH_SIZE, DEFAULT_BATCH_SIZE);
         if (moduleConfig.hasProperty(CONFIG_EXCLUDE_PATHS)) {
             StringBuilder buf = new StringBuilder();
             Value[] values = moduleConfig.getProperty(CONFIG_EXCLUDE_PATHS).getValues();
@@ -95,6 +105,9 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
             }
             excludePaths = buf.toString();
         }
+        log.info("FormDataCleanupModule configuration : cronExpression = {}, minutesToLive = {}, excludePaths = {}, " +
+                "batchSize = {}",
+                cronExpression, String.valueOf(minutesToLive), excludePaths.toString(), String.valueOf(batchSize));
     }
 
     @Override
@@ -141,6 +154,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
         jobInfo = new RepositoryJobInfo(schedulerJobName, schedulerGroupName, FormDataCleanupJob.class);
         jobInfo.setAttribute(CONFIG_MODULECONFIGPATH, moduleConfigPath);
         jobInfo.setAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY, String.valueOf(minutesToLive));
+        jobInfo.setAttribute(CONFIG_BATCH_SIZE, String.valueOf(batchSize));
         jobInfo.setAttribute(CONFIG_EXCLUDE_PATHS, excludePaths);
         final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger(schedulerJobName + "Trigger", cronExpression);
         repositoryScheduler.scheduleJob(jobInfo, jobTrigger);
@@ -157,17 +171,27 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
         @Override
         public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
             log.info("Running form data cleanup job");
-            final Session session = context.getSession(new SimpleCredentials("system", new char[] {}));
+            final Session session = context.createSession(new SimpleCredentials("system", new char[]{}));
             try {
                 long minutesToLive = Long.parseLong(context.getAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY));
+                long batchSize;
+                try {
+                    batchSize = Long.parseLong(context.getAttribute(CONFIG_BATCH_SIZE));
+                } catch (NumberFormatException e) {
+                    log.warn("Incorrect batch size '"+context.getAttribute(CONFIG_BATCH_SIZE)+"'. Setting default to 100");
+                    batchSize = 100;
+                }
                 String[] excludePaths = context.getAttribute(CONFIG_EXCLUDE_PATHS).split("\\|");
-                removeOldFormData(minutesToLive, excludePaths, session);
+                removeOldFormData(minutesToLive, batchSize, excludePaths, session);
             } finally {
                 session.logout();
             }
         }
 
-        private void removeOldFormData(long minutesToLive, final String[] excludePaths, final Session session) throws RepositoryException {
+        private void removeOldFormData(long minutesToLive,
+                                       final long batchSize,
+                                       final String[] excludePaths,
+                                       final Session session) throws RepositoryException {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final Query query = queryManager.createQuery(FORMDATA_QUERY, Query.SQL);
             final NodeIterator nodes = query.execute().getNodes();
@@ -189,9 +213,12 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
                         log.debug("Removing form data item at " + node.getPath());
                     }
                     remove(node, 2);
-                    if (count++ % 10 == 0) {
+                    if (count++ % batchSize == 0) {
                         session.save();
-                        try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
                     }
                 } catch (RepositoryException e) {
                     log.error("Error while cleaning up form data", e);
