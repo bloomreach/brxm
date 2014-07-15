@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -33,6 +35,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.CmsHeaderItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +51,13 @@ public class CKEditorPanel extends Panel {
 
     private static final String WICKET_ID_EDITOR = "editor";
     private static final ResourceReference CKEDITOR_PANEL_CSS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.css");
-    private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js");
+    private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js") {
+        private final List<CmsHeaderItem> dependencies = Arrays.asList(CmsHeaderItem.get());
+        @Override
+        public Iterable<? extends HeaderItem> getDependencies() {
+            return dependencies;
+        }
+    };
     private static final String CKEDITOR_TIMESTAMP = RandomStringUtils.randomAlphanumeric(4);
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
     private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
