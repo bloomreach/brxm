@@ -1,12 +1,12 @@
 /**
  * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -96,7 +96,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         paths.add(node.getPath());
                     }
                     log.warn("Multiple resource bundles found for resourcebundle:id '{}'. We only resource bundle '{}'. Resource bundles containing duplicate ids are: '{}'",
-                            new String[]{basename, paths.get(0),  paths.toString()});
+                            new String[]{basename, paths.get(0), paths.toString()});
                 } else {
                     boolean isPreview = (credentials == previewCredentials);
                     populateResourceBundleFamily(bundleFamily, nodes.nextNode(), isPreview);
@@ -130,9 +130,9 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 if (messages != null) {
                     if (keys.length != messages.length) {
                         String state = preview ? "preview" : "live";
-                        throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '"+state+"'");
+                        throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '" + state + "'");
                     }
-                    final Map<String,String> contents = createListResourceBundleContents(keys, messages);
+                    final Map<String, String> contents = createListResourceBundleContents(keys, messages);
                     ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
 
                     if (preview) {
@@ -143,9 +143,9 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Failed to load default resource bundle from '"+bundleNode.getPath()+"'.", e);
+                    log.warn("Failed to load default resource bundle from '" + bundleNode.getPath() + "'.", e);
                 } else {
-                    log.warn("Failed to load default resource bundle from '{}' : {}.",bundleNode.getPath(), e.toString());
+                    log.warn("Failed to load default resource bundle from '{}' : {}.", bundleNode.getPath(), e.toString());
                 }
             }
         }
@@ -153,45 +153,43 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         for (PropertyIterator propIt = bundleNode.getProperties("resourcebundle:messages_*"); propIt.hasNext(); ) {
             Property prop = propIt.nextProperty();
             String localeString = prop.getName().substring("resourcebundle:messages_".length());
-            if (prop != null) {
-                try {
-                    Locale locale = LocaleUtils.toLocale(localeString);
-                    String[] localizedMessages = getPropertyAsStringArray(prop);
+            try {
+                Locale locale = LocaleUtils.toLocale(localeString);
+                String[] localizedMessages = getPropertyAsStringArray(prop);
 
-                    if (localizedMessages != null) {
-                        if (keys.length != localizedMessages.length) {
-                            String state = preview ? "preview" : "live";
-                            throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '"+state+"'");
-                        }
-                        final Map<String,String> contents = createListResourceBundleContents(keys, localizedMessages);
-                        ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
-
-                        if (preview) {
-                            bundleFamily.setLocalizedBundleForPreview(locale, localizedBundle);
-                        } else {
-                            bundleFamily.setLocalizedBundle(locale, localizedBundle);
-                        }
+                if (localizedMessages != null) {
+                    if (keys.length != localizedMessages.length) {
+                        String state = preview ? "preview" : "live";
+                        throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '" + state + "'");
                     }
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to load default resource bundle from '"+bundleNode.getPath()+"' for locale: " + localeString, e);
+                    final Map<String, String> contents = createListResourceBundleContents(keys, localizedMessages);
+                    ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
+
+                    if (preview) {
+                        bundleFamily.setLocalizedBundleForPreview(locale, localizedBundle);
                     } else {
-                        log.warn("Failed to load default resource bundle from '{}' for locale '{}' : {}.",
-                                new String[]{bundleNode.getPath(), localeString, e.toString()});
+                        bundleFamily.setLocalizedBundle(locale, localizedBundle);
                     }
+                }
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to load default resource bundle from '" + bundleNode.getPath() + "' for locale: " + localeString, e);
+                } else {
+                    log.warn("Failed to load default resource bundle from '{}' for locale '{}' : {}.",
+                            new String[]{bundleNode.getPath(), localeString, e.toString()});
                 }
             }
         }
     }
 
 
-    private String [] getPropertyAsStringArray(final Node node, final String propName) throws RepositoryException {
+    private String[] getPropertyAsStringArray(final Node node, final String propName) throws RepositoryException {
         return getPropertyAsStringArray(node.getProperty(propName));
     }
 
-    private String [] getPropertyAsStringArray(final Property prop) throws RepositoryException {
-        String [] stringValues = null;
-        Value [] values = prop.getValues();
+    private String[] getPropertyAsStringArray(final Property prop) throws RepositoryException {
+        String[] stringValues = null;
+        Value[] values = prop.getValues();
 
         if (values != null) {
             stringValues = new String[values.length];
@@ -204,8 +202,8 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         return (stringValues != null ? stringValues : ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
-    protected Map<String,String> createListResourceBundleContents(String [] keys, String [] messages) {
-        Map<String,String> contents = new HashMap<>(keys.length);
+    protected Map<String, String> createListResourceBundleContents(String[] keys, String[] messages) {
+        Map<String, String> contents = new HashMap<>(keys.length);
         Map<String, String> contentsMap = new HashMap<String, String>();
 
         for (int i = 0; i < keys.length; i++) {
