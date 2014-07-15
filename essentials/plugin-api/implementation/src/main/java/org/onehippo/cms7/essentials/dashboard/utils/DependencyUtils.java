@@ -34,6 +34,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -247,12 +248,24 @@ public final class DependencyUtils {
         if (isEnterpriseProject()) {
             return true;
         }
+        final Repository repository = new RepositoryRestful();
+        repository.setId("hippo-maven2-enterprise");
+        repository.setId("Hippo Enterprise Maven 2");
+        repository.setId("https://maven.onehippo.com/maven2-enterprise");
+        addRepository(repository);
         final Model pomModel = ProjectUtils.getPomModel(DependencyType.PROJECT);
         if (pomModel != null) {
             final Parent parent = new Parent();
             parent.setArtifactId(ProjectUtils.ENT_GROUP_ID);
             parent.setGroupId(ProjectUtils.ENT_GROUP_ID);
             pomModel.setParent(parent);
+            // add indicator:
+            final Model cmsModel = ProjectUtils.getPomModel(DependencyType.CMS);
+            final Dependency indicator = new Dependency();
+            indicator.setArtifactId("hippo-addon-edition-indicator");
+            indicator.setGroupId("com.onehippo.cms7");
+            cmsModel.addDependency(indicator);
+            writePom(ProjectUtils.getPomPath(DependencyType.CMS), cmsModel);
             return writePom(ProjectUtils.getPomPath(DependencyType.PROJECT), pomModel);
         }
         return false;
