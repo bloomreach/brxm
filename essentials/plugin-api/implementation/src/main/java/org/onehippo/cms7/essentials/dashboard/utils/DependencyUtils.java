@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
@@ -46,6 +47,9 @@ public final class DependencyUtils {
     public static final String DEFAULT_ID = "default";
     private static Logger log = LoggerFactory.getLogger(DependencyUtils.class);
 
+
+    private DependencyUtils() {
+    }
 
     /**
      * Add maven repository node to pom model
@@ -73,7 +77,6 @@ public final class DependencyUtils {
         }
         return true;
     }
-
 
     public static boolean writePom(final String path, final Model model) {
         FileWriter fileWriter = null;
@@ -147,7 +150,6 @@ public final class DependencyUtils {
 
 
     }
-
 
     /**
      * Adds dependency if one does not exists. If dependency exists, only version will be updated
@@ -241,12 +243,35 @@ public final class DependencyUtils {
 
     }
 
+    public static boolean upgradeToEnterpriseProject() {
+        if (isEnterpriseProject()) {
+            return true;
+        }
+        final Model pomModel = ProjectUtils.getPomModel(DependencyType.PROJECT);
+        if (pomModel != null) {
+            final Parent parent = new Parent();
+            parent.setArtifactId(ProjectUtils.ENT_GROUP_ID);
+            parent.setGroupId(ProjectUtils.ENT_GROUP_ID);
+            pomModel.setParent(parent);
+            return writePom(ProjectUtils.getPomPath(DependencyType.PROJECT), pomModel);
+        }
+        return false;
+    }
+
+    public static boolean isEnterpriseProject() {
+        final Model pomModel = ProjectUtils.getPomModel(DependencyType.PROJECT);
+        final Parent parent = pomModel.getParent();
+        if (parent == null) {
+            return false;
+        }
+        final String groupId = parent.getGroupId();
+        final String artifactId = parent.getArtifactId();
+        return groupId.equals(ProjectUtils.ENT_GROUP_ID) && artifactId.equals(ProjectUtils.ENT_ARTIFACT_ID);
+
+    }
 
     private static boolean isSameDependency(final EssentialsDependency dependency, final Dependency projectDependency) {
         return projectDependency.getArtifactId().equals(dependency.getArtifactId())
                 && projectDependency.getGroupId().equals(dependency.getGroupId());
-    }
-
-    private DependencyUtils() {
     }
 }

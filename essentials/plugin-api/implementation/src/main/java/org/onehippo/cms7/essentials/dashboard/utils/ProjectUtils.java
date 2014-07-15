@@ -33,7 +33,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -52,6 +51,8 @@ import com.google.common.base.Strings;
 public final class ProjectUtils {
 
     private static final String BOOTSTRAP = "bootstrap";
+    public static final String ENT_GROUP_ID = "com.onehippo.cms7";
+    public static final String ENT_ARTIFACT_ID = "hippo-cms7-enterprise-release";
     private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
 
 
@@ -76,6 +77,7 @@ public final class ProjectUtils {
         return Collections.emptyList();
     }
 
+
     public static File getSiteJavaFolder(final PluginContext context) {
         final File siteDirectory = context.getSiteDirectory();
         return getJavaFolder(siteDirectory);
@@ -87,16 +89,6 @@ public final class ProjectUtils {
         return new File(absolutePath);
     }
 
-
-    public static File getSiteJspFolder() {
-        final File site = getSite();
-        final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "webapp"
-                + File.separator + "WEB-INF"
-                + File.separator + "jsp";
-        return new File(absolutePath);
-    }
-
-
     /**
      * Returns SITE root folder e.g. {@code /home/foo/myproject/site}
      *
@@ -104,6 +96,22 @@ public final class ProjectUtils {
      */
     public static File getSite() {
         return getFolder("site");
+    }
+
+    public static String getBaseProjectDirectory() {
+        if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
+            return System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
+        } else {
+            return null;
+        }
+    }
+
+    public static File getSiteJspFolder() {
+        final File site = getSite();
+        final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "webapp"
+                + File.separator + "WEB-INF"
+                + File.separator + "jsp";
+        return new File(absolutePath);
     }
 
     /**
@@ -148,7 +156,7 @@ public final class ProjectUtils {
         return new File(absolutePath);
     }
 
-    public static File getProjectRootFolder(){
+    public static File getProjectRootFolder() {
         return new File(getBaseProjectDirectory());
     }
 
@@ -161,30 +169,6 @@ public final class ProjectUtils {
         return getFolder(BOOTSTRAP);
     }
 
-    private static File getFolder(final String name) {
-        final String baseDir = GlobalUtils.decodeUrl(ProjectUtils.getBaseProjectDirectory());
-        if (Strings.isNullOrEmpty(baseDir)) {
-            return null;
-        }
-        final File baseFile = new File(baseDir);
-        if (!baseFile.exists() || !baseFile.isDirectory()) {
-            return null;
-        }
-        File folder = new File(baseDir + File.separatorChar + name);
-        if (folder.isDirectory()) {
-            return folder;
-        }
-        return null;
-    }
-
-    public static String getBaseProjectDirectory() {
-        if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
-            return System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
-        } else {
-            return null;
-        }
-    }
-
     public static Model getPomModel(DependencyType type) {
         final String pomPath = getPomPath(type);
         if (Strings.isNullOrEmpty(pomPath)) {
@@ -193,7 +177,6 @@ public final class ProjectUtils {
         return getPomModel(pomPath);
 
     }
-
 
     /**
      * Read web.xml file content
@@ -244,54 +227,6 @@ public final class ProjectUtils {
 
     }
 
-    private static String getPomForDir(final File folder) {
-        if (folder != null) {
-            return folder.getPath() + File.separatorChar + EssentialConst.POM_XML;
-        }
-        return null;
-    }
-
-    private static Model getPomModel(String path) {
-
-        try (Reader fileReader = new FileReader(path)) {
-            final MavenXpp3Reader reader = new MavenXpp3Reader();
-            return reader.read(fileReader);
-        } catch (XmlPullParserException | IOException e) {
-            log.error("Error parsing pom", e);
-        }
-        return null;
-
-    }
-
-
-    public static boolean isInstalled(final DependencyType type, final Dependency dependency) {
-        final Model model = getPomModel(type);
-        final List<Dependency> dependencies = model.getDependencies();
-        for (Dependency dep : dependencies) {
-            if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
-                // check version:
-                final String version = dep.getVersion();
-                if(Strings.isNullOrEmpty(version)){
-                    log.info("version {}", version);
-                }
-                return true;
-            }
-
-        }
-        return false;
-    }
-
-
-    private static File getJavaFolder(final File baseFolder) {
-        final String absolutePath = baseFolder.getAbsolutePath();
-        final String javaFolder = absolutePath
-                + File.separatorChar
-                + "src" + File.separatorChar
-                + "main" + File.separatorChar
-                + "java" + File.separatorChar;
-        return new File(javaFolder);
-    }
-
     public static String getWebXmlPath(DependencyType type) {
         if (type == null
                 || type == DependencyType.INVALID
@@ -307,6 +242,51 @@ public final class ProjectUtils {
                 return getWebXmlForDir(ProjectUtils.getCms());
             case ESSENTIALS:
                 return getWebXmlForDir(ProjectUtils.getEssentialsFolder());
+        }
+        return null;
+
+    }
+
+    private static File getJavaFolder(final File baseFolder) {
+        final String absolutePath = baseFolder.getAbsolutePath();
+        final String javaFolder = absolutePath
+                + File.separatorChar
+                + "src" + File.separatorChar
+                + "main" + File.separatorChar
+                + "java" + File.separatorChar;
+        return new File(javaFolder);
+    }
+
+    private static File getFolder(final String name) {
+        final String baseDir = GlobalUtils.decodeUrl(ProjectUtils.getBaseProjectDirectory());
+        if (Strings.isNullOrEmpty(baseDir)) {
+            return null;
+        }
+        final File baseFile = new File(baseDir);
+        if (!baseFile.exists() || !baseFile.isDirectory()) {
+            return null;
+        }
+        File folder = new File(baseDir + File.separatorChar + name);
+        if (folder.isDirectory()) {
+            return folder;
+        }
+        return null;
+    }
+
+    private static String getPomForDir(final File folder) {
+        if (folder != null) {
+            return folder.getPath() + File.separatorChar + EssentialConst.POM_XML;
+        }
+        return null;
+    }
+
+    private static Model getPomModel(String path) {
+
+        try (Reader fileReader = new FileReader(path)) {
+            final MavenXpp3Reader reader = new MavenXpp3Reader();
+            return reader.read(fileReader);
+        } catch (XmlPullParserException | IOException e) {
+            log.error("Error parsing pom", e);
         }
         return null;
 

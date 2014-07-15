@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.net.URL;
+
+import org.apache.maven.model.Dependency;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
@@ -90,6 +93,20 @@ public class DependencyUtilsTest extends BaseResourceTest {
         hasDep = DependencyUtils.hasDependency(dependency);
         assertFalse("Expected hippo-plugins-non-existing to be removed", hasDep);
 
+
+    }
+
+    @Test
+    public void testDependencies() throws Exception {
+        final URL resource = getClass().getResource("/project");
+        Dependency dependency = new Dependency();
+        dependency.setGroupId("org.onehippo.cms7.essentials");
+        dependency.setArtifactId("hippo-components-plugin-components");
+        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, resource.getPath());
+        boolean enterpriseProject = DependencyUtils.isEnterpriseProject();
+        assertFalse(enterpriseProject);
+        enterpriseProject = DependencyUtils.upgradeToEnterpriseProject();
+        assertTrue(enterpriseProject);
 
     }
 }
