@@ -24,5 +24,7 @@
 
 [unittestproject:textpage] > unittestproject:basedocument, hippostd:relaxed
 
+[unittestproject:subtextpage] > unittestproject:textpage
+
 [unittestproject:newspage] > unittestproject:basedocument, hippostd:relaxed
 

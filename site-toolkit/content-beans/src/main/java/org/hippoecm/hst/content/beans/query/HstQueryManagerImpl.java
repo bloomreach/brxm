@@ -15,11 +15,15 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -36,8 +40,8 @@ public class HstQueryManagerImpl implements HstQueryManager {
 
     private static final Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
 
-    private ObjectConverter objectConverter;
-    private Session session;
+    private final ObjectConverter objectConverter;
+    private final Session session;
     private final DateTools.Resolution defaultResolution;
 
     /**
@@ -45,20 +49,22 @@ public class HstQueryManagerImpl implements HstQueryManager {
      * instead
      */
     @Deprecated
-    public HstQueryManagerImpl(Session session, ObjectConverter objectConverter) {
+    public HstQueryManagerImpl(final Session session, final ObjectConverter objectConverter) {
         this(session, objectConverter, DateTools.Resolution.MILLISECOND);
         log.warn("Using deprecated HstQueryManagerImpl constructor. No Filter.Resolution is specified. Use default" +
                 " Filter.Resolution.EXPENSIVE_PRECISE");
     }
 
-    public HstQueryManagerImpl(final Session session, final ObjectConverter objectConverter, final DateTools.Resolution resolution) {
+    public HstQueryManagerImpl(final Session session,
+                               final ObjectConverter objectConverter,
+                               final DateTools.Resolution resolution) {
         this.session = session;
         this.objectConverter = objectConverter;
         defaultResolution = resolution;
     }
 
 
-    public HstQuery createQuery(Node scope) throws QueryException {
+    public HstQuery createQuery(final Node scope) throws QueryException {
         return createQuery(scope, (NodeTypeFilter)null);
     }
     
@@ -68,7 +74,9 @@ public class HstQueryManagerImpl implements HstQueryManager {
      * 
      */
     @SuppressWarnings("unchecked")
-    public HstQuery createQuery(Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
+    public HstQuery createQuery(final Node scope,
+                                final Class<? extends HippoBean> filterBean,
+                                final boolean includeSubTypes) throws QueryException {
         if(!includeSubTypes) {
            return createQuery(scope, filterBean);
         }
@@ -86,7 +94,7 @@ public class HstQueryManagerImpl implements HstQueryManager {
     /**
      * Creates a empty query, with the scope HippoBean
      */
-    public HstQuery createQuery(HippoBean scope) throws QueryException{
+    public HstQuery createQuery(final HippoBean scope) throws QueryException{
         if(scope == null || scope.getNode() == null) {
             return createQuery((Node)null);
         }
@@ -100,33 +108,56 @@ public class HstQueryManagerImpl implements HstQueryManager {
      * the result may also contain HippoBean's whose primarytype is a subtype of the filterBean type. 
      * 
      */
-    public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
+    public HstQuery createQuery(final HippoBean scope,
+                                final Class<? extends HippoBean> filterBean,
+                                final boolean includeSubTypes) throws QueryException {
         if(scope.getNode() == null) {
             return createQuery((Node)null, filterBean, includeSubTypes);
         }
         return createQuery(scope.getNode(), filterBean, includeSubTypes);
     }
-    
-    public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
+
+    public HstQuery createQuery(final HippoBean scope,
+                                final Class<? extends HippoBean>... filterBeans) throws QueryException{
+        return createQuery(scope, false, filterBeans);
+    }
+
+    public HstQuery createQuery(final HippoBean scope,
+                                final boolean includeSubTypes,
+                                final Class<? extends HippoBean>... filterBeans) throws QueryException{
         if(scope.getNode() == null) {
-            return createQuery((Node)null, filterBeans);
+            return createQuery((Node)null, includeSubTypes, filterBeans);
         }
-        return createQuery(scope.getNode(), filterBeans);
+        return createQuery(scope.getNode(), includeSubTypes,  filterBeans);
     }
 
     /**
      * Creates a query, with the scope HippoBean and with a Filter that filters to only return HippoBeans of the types that are 
      * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans.
      */
-    public HstQuery createQuery(Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
-        List<String> primaryNodeTypes = new ArrayList<String>(); 
+    public HstQuery createQuery(final Node scope, final Class<? extends HippoBean>... filterBeans) throws QueryException{
+        return createQuery(scope, false, filterBeans);
+    }
+
+    public HstQuery createQuery(final Node scope,
+                                final boolean includeSubTypes,
+                                final Class<? extends HippoBean>... filterBeans) throws QueryException {
+        Set<String> primaryNodeTypes = new LinkedHashSet<>();
         for(Class<? extends HippoBean> annotatedBean : filterBeans) {
-           String primaryNodeTypeNameForBean = objectConverter.getPrimaryNodeTypeNameFor(annotatedBean);
-           if(primaryNodeTypeNameForBean != null) {
-               primaryNodeTypes.add(primaryNodeTypeNameForBean);
-           } else {
-               throw new QueryException("Cannot find primaryNodeType for '"+annotatedBean.getClass().getName()+"'.");
-           }
+            String primaryNodeTypeNameForBean = objectConverter.getPrimaryNodeTypeNameFor(annotatedBean);
+            if(primaryNodeTypeNameForBean != null) {
+                if (includeSubTypes) {
+                    try {
+                        Set<String> subNodeTypes = getSubTypes(primaryNodeTypeNameForBean);
+                        primaryNodeTypes.addAll(subNodeTypes);
+                    } catch (RepositoryException e) {
+                        throw new QueryException("RepositoryException while getting sub types",e);
+                    }
+                }
+                primaryNodeTypes.add(primaryNodeTypeNameForBean);
+            } else {
+                throw new QueryException("Cannot find primaryNodeType for '"+annotatedBean.getClass().getName()+"'.");
+            }
         }
         NodeTypeFilter primaryNodeTypeFilter = null;
         if(primaryNodeTypes.size() > 0) {
@@ -134,8 +165,11 @@ public class HstQueryManagerImpl implements HstQueryManager {
         }
         return createQuery(scope, primaryNodeTypeFilter);
     }
-    
-    public HstQuery createQuery(Node scope, String nodeType, boolean includeSubTypes) throws QueryException {
+
+
+    public HstQuery createQuery(final Node scope,
+                                final String nodeType,
+                                final boolean includeSubTypes) throws QueryException {
         if (nodeType == null) {
             throw new IllegalArgumentException("The node type for query must not be null!");
         }
@@ -149,29 +183,72 @@ public class HstQueryManagerImpl implements HstQueryManager {
         query.setDefaultResolution(defaultResolution);
         return query;
     }
-    
-    public HstQuery createQuery(HippoBean scope, String... primaryNodeTypes) throws QueryException {
+
+    public HstQuery createQuery(final HippoBean scope,
+                                final String... primaryNodeTypes) throws QueryException {
         if (scope.getNode() == null) {
             return createQuery((Node) null, primaryNodeTypes);
         }
-        
+
         return createQuery(scope.getNode(), primaryNodeTypes);
     }
+
+    public HstQuery createQuery(final HippoBean scope,
+                                final boolean includeSubTypes,
+                                final String... primaryNodeTypes) throws QueryException {
+        if (scope.getNode() == null) {
+            return createQuery((Node) null, includeSubTypes, primaryNodeTypes);
+        }
+
+        return createQuery(scope.getNode(), includeSubTypes, primaryNodeTypes);
+    }
     
-    public HstQuery createQuery(Node scope, String ... primaryNodeTypes) throws QueryException {
+    public HstQuery createQuery(final Node scope,
+                                final String ... primaryNodeTypes) throws QueryException {
+        return createQuery(scope, false, primaryNodeTypes);
+    }
+
+    public HstQuery createQuery(final Node scope,
+                                final boolean includeSubTypes,
+                                final String ... primaryNodeTypes) throws QueryException {
         if (primaryNodeTypes == null) {
             throw new IllegalArgumentException("Primary node types for query must not be null!");
         }
-        
-        NodeTypeFilter primaryNodeTypeFilter = null;
-        primaryNodeTypeFilter = new PrimaryNodeTypeFilterImpl(primaryNodeTypes);
+        Set<String> primaryNodeTypesSet = new LinkedHashSet<>();
+        for (String primaryNodeType : primaryNodeTypes) {
+            primaryNodeTypesSet.add(primaryNodeType);
+            if (includeSubTypes) {
+                try {
+                    Set<String> subNodeTypes = getSubTypes(primaryNodeType);
+                    primaryNodeTypesSet.addAll(subNodeTypes);
+                } catch (RepositoryException e) {
+                    throw new QueryException("RepositoryException while getting sub types",e);
+                }
+            }
+        }
+        NodeTypeFilter primaryNodeTypeFilter  = new PrimaryNodeTypeFilterImpl(primaryNodeTypesSet.toArray(new String[primaryNodeTypesSet.size()]));
         return createQuery(scope, primaryNodeTypeFilter);
     }
+
     
     private HstQuery createQuery(Node scope, NodeTypeFilter filter) throws QueryException {
         HstQueryImpl query  = new HstQueryImpl(session, this.objectConverter, scope, filter);
         query.setDefaultResolution(defaultResolution);
         return query;
+    }
+
+
+    private Set<String> getSubTypes(final String primaryNodeType) throws RepositoryException {
+        Set<String> subTypes = new LinkedHashSet<>();
+        NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+        NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
+        while (allTypes.hasNext()) {
+            NodeType nt = allTypes.nextNodeType();
+            if (nt.isNodeType(primaryNodeType)) {
+                subTypes.add(nt.getName());
+            }
+        }
+        return subTypes;
     }
     
 }

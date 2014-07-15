@@ -33,21 +33,62 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     public final static String COMMON_QUERY_SCOPE_PART = "(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode')";
     public final static String COMMON_QUERY_ORDERBY_PART = " order by @jcr:score descending";
     
-    private HstQuery query;
-    
+
+    private HstQueryManager queryMngr;
     @Before
     public void setUp() throws Exception {
         super.setUp();
         ObjectConverter objectConverter = getObjectConverter();
-        HstQueryManager queryMngr = new HstQueryManagerImpl(session,objectConverter, null);
-        Node scope = session.getRootNode();
-        query = queryMngr.createQuery(scope);
+        queryMngr = new HstQueryManagerImpl(session,objectConverter, null);
     }
-    
+
+    @Test
+    public void single_sub_type_query() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode(), "unittestproject:basedocument", true);
+        assertEquals("//element(*,unittestproject:basedocument)[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') " +
+                "and not(@jcr:primaryType='nt:frozenNode')] order by @jcr:score descending "
+                , query.getQueryAsString(false));
+    }
+
+    @Test
+    public void multiple_types_query_no_subtypes() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode(), "unittestproject:textpage", "unittestproject:newspage");
+        HstQuery queryNoSubTypesExplicit = queryMngr.createQuery(session.getRootNode(), false, "unittestproject:textpage", "unittestproject:newspage");
+
+        assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode') " +
+                "and ((@jcr:primaryType='unittestproject:textpage' " +
+                "or @jcr:primaryType='unittestproject:newspage'))] order by @jcr:score descending ",
+                query.getQueryAsString(false));
+
+        assertEquals(query.getQueryAsString(false), queryNoSubTypesExplicit.getQueryAsString(false));
+
+    }
+
+    @Test
+    public void multiple_types_query_including_subtypes() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode(), true, "unittestproject:textpage", "unittestproject:newspage");
+        assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode') " +
+                "and ((@jcr:primaryType='unittestproject:textpage' or @jcr:primaryType='unittestproject:subtextpage' " +
+                "or @jcr:primaryType='unittestproject:newspage'))] order by @jcr:score descending ",
+                query.getQueryAsString(false));
+    }
+
+    @Test
+    public void multiple_types_query_including_overlapping_subtypes() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode(), true, "unittestproject:textpage", "unittestproject:newspage",
+                "unittestproject:basedocument");
+
+        assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode') " +
+                "and ((@jcr:primaryType='unittestproject:textpage' or @jcr:primaryType='unittestproject:subtextpage' " +
+                "or @jcr:primaryType='unittestproject:newspage' or @jcr:primaryType='unittestproject:basedocument'))] " +
+                "order by @jcr:score descending ",
+                query.getQueryAsString(false));
+    }
+
     @Test
     public void testNoFilter() throws Exception {
-        
 
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
         assertEquals("//*["+COMMON_QUERY_SCOPE_PART+"]"+COMMON_QUERY_ORDERBY_PART, query.getQueryAsString(false).trim());
         assertEquals("//*["+COMMON_QUERY_SCOPE_PART+"]", query.getQueryAsString(true).trim());
          
@@ -55,6 +96,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     
     @Test
     public void testEmptyFilter() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
         Filter emptyFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         query.setFilter(emptyFilter);
         assertEquals("//*["+COMMON_QUERY_SCOPE_PART+"]", query.getQueryAsString(true).trim());
@@ -64,6 +106,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     
     @Test
     public void testSimpleFilter() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addEqualTo("@a", "a");
         assertEquals("@a = 'a'",mainFilter.getJcrExpression());
@@ -79,6 +122,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
      */
     @Test
     public void testANDedChildFilters() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addContains(".", "contains");
         Filter subAnd1a = new FilterImpl(session, DateTools.Resolution.DAY);
@@ -101,6 +145,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
      */
     @Test
     public void testANDedChildFiltersWithEmptyParent() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         Filter subAnd1a = new FilterImpl(session, DateTools.Resolution.DAY);
         Filter subAnd1b = new FilterImpl(session, DateTools.Resolution.DAY);
@@ -121,6 +166,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
      */
     @Test
     public void testORedChildFilters() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addContains(".", "contains");
         Filter subOr1a = new FilterImpl(session, DateTools.Resolution.DAY);

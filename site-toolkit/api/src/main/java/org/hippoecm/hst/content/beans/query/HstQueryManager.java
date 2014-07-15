@@ -75,8 +75,7 @@ public interface HstQueryManager {
     
     /**
      * Creates a query, with the scope HippoBean and with a Filter that filters to only return HippoBeans of the types that are 
-     * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans. If needed, use 
-     * {@link #createQuery(HstRequestContext, HippoBean, Class, boolean)} instead.
+     * added as variable arguments.
      * 
      * @param scope
      * @param filterBeans
@@ -84,11 +83,16 @@ public interface HstQueryManager {
      * @throws QueryException
      */
     HstQuery createQuery(Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException;
-    
+
+    /**
+     * @see #createQuery(Node, Class[]) createQuery(Node scope, Class<? extends HippoBean>... filterBeans) only now also subtypes of
+     * <code>filterBeans</code> are included <b>if</b> <code>includeSubTypes = true</code>
+     */
+    HstQuery createQuery(Node scope, boolean includeSubTypes, Class<? extends HippoBean>... filterBeans) throws QueryException;
+
     /**
      * Creates a query, with the scope HippoBean and with a Filter that filters to only return HippoBeans of the types that are 
-     * added as variable arguments. It is not possible to retrieve subtypes of the applied primary node types. If needed, use 
-     * {@link #createQuery(HstRequestContext, HippoBean, Class, boolean)} instead.
+     * added as variable arguments.
      * 
      * @param scope
      * @param primaryNodeTypes
@@ -96,11 +100,16 @@ public interface HstQueryManager {
      * @throws QueryException
      */
     HstQuery createQuery(Node scope, String ... primaryNodeTypes) throws QueryException;
+
+    /**
+     * @see #createQuery(Node, String[]) createQuery(Node scope, String ... primaryNodeTypes) only now also subtypes of
+     * <code>filterBeans</code> are included <b>if</b> <code>includeSubTypes = true</code>
+     */
+    HstQuery createQuery(Node scope, boolean includeSubTypes, String ... primaryNodeTypes) throws QueryException;
     
     /**
      * Creates a query, with a scope and with a Filter that filters to only return HippoBeans of the types that are 
-     * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans with this method. If needed, use 
-     * {@link #createQuery(HstRequestContext, Node, Class, boolean)} instead.
+     * added as variable arguments.
      * 
      * @param scope
      * @param filterBean
@@ -108,11 +117,16 @@ public interface HstQueryManager {
      * @throws QueryException
      */
     HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
+
+    /**
+     * @see #createQuery(HippoBean, Class[]) createQuery(HippoBean scope, Class<? extends HippoBean>... filterBean) only now also subtypes of
+     * <code>filterBeans</code> are included <b>if</b> <code>includeSubTypes = true</code>
+     */
+    HstQuery createQuery(HippoBean scope, boolean includeSubTypes, Class<? extends HippoBean>... filterBean) throws QueryException;
     
     /**
      * Creates a query, with a scope and with a Filter that filters to only return HippoBeans of the types that are 
-     * added as variable arguments. It is not possible to retrieve subtypes of the applied primary node types with this method. If needed, use 
-     * {@link #createQuery(HstRequestContext, Node, Class, boolean)} instead.
+     * added as variable arguments.
      * 
      * @param scope
      * @param primaryNodeTypes
@@ -120,5 +134,11 @@ public interface HstQueryManager {
      * @throws QueryException
      */
     HstQuery createQuery(HippoBean scope, String ... primaryNodeTypes) throws QueryException;
+
+    /**
+     * @see #createQuery(HippoBean, String[]) createQuery(HippoBean scope, String ... primaryNodeTypes) only now also subtypes of
+     * <code>filterBeans</code> are included <b>if</b> <code>includeSubTypes = true</code>
+     */
+    HstQuery createQuery(HippoBean scope, boolean includeSubTypes , String ... primaryNodeTypes) throws QueryException;
     
 }
