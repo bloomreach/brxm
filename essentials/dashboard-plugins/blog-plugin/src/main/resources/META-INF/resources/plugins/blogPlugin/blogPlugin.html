@@ -16,8 +16,27 @@
 
 <div class="panel panel-default" ng-controller="blogPluginCtrl">
     <div class="panel-heading">Blog plugin</div>
+
     <div class="panel-body">
-        <form novalidate name="blogForm">
+
+        <div class="infobox infobox-warning" ng-show="showBoardingMessage">
+            <h3>Please Rebuild</h3>
+            <p>In order to be able to add this feature to your project, you first need to rebuild it.</p>
+        </div>
+        <div class="infobox infobox-info" ng-show="showRebuildMessage">
+            <h3>Please Rebuild</h3>
+            <p>Installation of
+                <em>{{plugin.name}}</em> is pending. Please rebuild your project to make the changes effective.</p>
+        </div>
+        <div class="infobox infobox-success" ng-show="showInstalledMessage">
+            <h3>Installed</h3>
+            <p>
+                <em>{{plugin.name}}</em> has been installed successfully. The corresponding feature is now available in your Hippo project.
+            </p>
+        </div>
+
+
+        <form novalidate name="blogForm" ng-show="showPlugin">
             <div>
                 <essentials-template-settings has-sample-data="true" sample-data="sampleData" template-name="templateName"/>
             </div>
@@ -120,7 +139,7 @@
     <div class="panel-footer">
         <div class="input-group">
               <span class="input-group-btn">
-                <button ng-disabled="!blogForm.$valid || (setupImport && !importForm.$valid)" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Add Blog support</button>
+                <button ng-show="setupImport" ng-disabled="!blogForm.$valid || (setupImport && !importForm.$valid)" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Add Blog support</button>
               </span>
         </div>
     </div>

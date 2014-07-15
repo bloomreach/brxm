@@ -74,7 +74,6 @@
                     });
                 });
 
-                console.log(payload);
                 $http.post(restEndpoint + 'compounds/contentblocks/create', payload).success(function (data) {
                     // ignore
                 });

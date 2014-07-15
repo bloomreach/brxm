@@ -110,6 +110,11 @@
         // INIT APP
         //############################################
 
+
+        $http.get($rootScope.REST.projectSettings).success(function (data) {
+            $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
+            $scope.imageSetPrefix = $rootScope.projectSettings ? $rootScope.projectSettings.namespace : '';
+        });
         $scope.init();
 
         //############################################
@@ -117,7 +122,7 @@
         //############################################
 
         function displayError(msg) {
-            $rootScope.feedbackMessages.push({type:'error', message:msg});
+            $rootScope.feedbackMessages.push({type: 'error', message: msg});
         }
 
         //############################################

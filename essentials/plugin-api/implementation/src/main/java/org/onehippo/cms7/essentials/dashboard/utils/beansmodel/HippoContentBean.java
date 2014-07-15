@@ -185,6 +185,7 @@ public class HippoContentBean {
         return name;
     }
 
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentBean{");

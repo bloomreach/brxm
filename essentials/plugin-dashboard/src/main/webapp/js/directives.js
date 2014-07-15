@@ -57,8 +57,6 @@
                             if (selected) {
                                 $scope.selected = selected;
                                 $scope.selectedPath = selected.id;
-                            } else {
-                                console.log("Nothing selected");
                             }
                         });
                     };
@@ -70,7 +68,6 @@
                     var ModalInstanceCtrl = function ($scope, $modalInstance, endPoint, title, selectedPath) {
                         $scope.title = title;
                         $http.get(endPoint).success(function (data) {
-                            console.log("selectedPath" + selectedPath);
                             $scope.treeItems = data.items;
                         });
                         $scope.ok = function () {
@@ -218,7 +215,7 @@
                 templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
                     $scope.label = 'CMS Document Type Editor';
-                    $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
+                    $scope.defaultNameSpace = $rootScope.projectSettings.namespace;
                 }
             }
         }).directive("essentialsNotifier", function () {

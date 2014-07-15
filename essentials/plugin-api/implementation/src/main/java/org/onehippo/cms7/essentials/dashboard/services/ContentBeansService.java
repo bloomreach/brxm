@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -89,25 +90,26 @@ public class ContentBeansService {
     public void createBeans() throws RepositoryException {
 
         final Map<String, Path> existing = findExitingBeans();
-        final Iterator<HippoContentBean> iterator = filterMissingBeans(existing);
-        while (iterator.hasNext()) {
-            final HippoContentBean next = iterator.next();
+        final List<HippoContentBean> missingBeans = Lists.newArrayList(filterMissingBeans(existing));
+        final Iterator<HippoContentBean> missingBeanIterator = missingBeans.iterator();
+        for (; missingBeanIterator.hasNext();) {
+            final HippoContentBean missingBean = missingBeanIterator.next();
             // check if directly extending compound:
-            final Set<String> superTypes = next.getSuperTypes();
+            final Set<String> superTypes = missingBean.getSuperTypes();
             if (superTypes.size() == 1 && superTypes.iterator().next().equals(BASE_COMPOUND_TYPE)) {
-                createBaseBean(next);
-                iterator.remove();
+                createBaseBean(missingBean);
+                missingBeanIterator.remove();
             } else {
-                final String parent = findExistingParent(next, existing);
+                final String parent = findExistingParent(missingBean, existing);
                 if (parent != null) {
-                    log.debug("found parent: {}, {}", parent, next);
-                    iterator.remove();
-                    createBean(next, existing.get(parent));
+                    log.debug("found parent: {}, {}", parent, missingBean);
+                    missingBeanIterator.remove();
+                    createBean(missingBean, existing.get(parent));
                 }
             }
         }
         // process beans without resolved parent beans
-        processMissing(Lists.newArrayList(iterator));
+        processMissing(missingBeans);
         processProperties();
         // check if still missing(beans that extended missing beans)
         final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(findExitingBeans());
@@ -115,7 +117,7 @@ public class ContentBeansService {
         if (missingBeansDepth < MISSING_DEPTH_MAX && hasNonCreatedBeans) {
             missingBeansDepth++;
             createBeans();
-        }else if(hasNonCreatedBeans){
+        } else if (hasNonCreatedBeans) {
             log.error("Not all beans were created: {}", extendedMissing);
         }
 
@@ -155,9 +157,24 @@ public class ContentBeansService {
     }
 
 
-    private void processMissing(final Iterable<HippoContentBean> missingBeans) {
+    private void processMissing(final List<HippoContentBean> missingBeans) {
         for (HippoContentBean missingBean : missingBeans) {
-            log.info("############# >> {}", missingBean);
+            final SortedSet<String> mySupertypes = missingBean.getContentType().getSuperTypes();
+            if(mySupertypes.contains("hippogallery:relaxed")){
+                final Path javaClass = createJavaClass(missingBean);
+                JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
+                JavaSourceUtils.addExtendsClass(javaClass, "HippoGalleryImageSet");
+                JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
+                // check if we need to update image sets:
+                final String updateInstruction = (String) context.getPlaceholderData().get(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS);
+                if(Boolean.valueOf(updateInstruction)){
+                   // TODO...implement
+                }
+
+            }
+            log.info("mySupertypes {}", mySupertypes);
+
+
         }
     }
 
@@ -404,14 +421,16 @@ public class ContentBeansService {
         final String extendsName = FilenameUtils.removeExtension(parentPath.toFile().getName());
         JavaSourceUtils.addExtendsClass(javaClass, extendsName);
         JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
+
     }
 
     private Path createJavaClass(final HippoContentBean bean) {
-         String name = bean.getName();
-        if(name.indexOf(',') !=-1){
+        String name = bean.getName();
+        if (name.indexOf(',') != -1) {
             name = name.split(",")[0];
         }
         final String className = GlobalUtils.createClassName(name);
+        context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(className, ActionType.CREATED_CLASS));
         return JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
     }
 

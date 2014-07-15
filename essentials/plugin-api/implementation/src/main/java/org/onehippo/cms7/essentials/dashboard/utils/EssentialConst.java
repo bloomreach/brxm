@@ -89,6 +89,11 @@ public final class EssentialConst {
     public static final String MIME_APPLICATION_PDF = "application/pdf";
     public static final String FILE_EXTENSION_JAVA = ".java";
     public static final String SOURCE_PATTERN_JAVA = "java";
+
+    /**
+     * Flag which, if set, initiates updating of image beans
+     */
+    public static final String INSTRUCTION_UPDATE_IMAGE_SETS = "updateImageSets";
     /**
      * Name of the system property set by cargo maven build
      */
@@ -142,6 +147,7 @@ public final class EssentialConst {
     public static final String HIPPO_COMPOUND = "hippo:compound";
     public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
+    public static final String HIPPO_IMAGE_SET_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet";
     public static final String INSTRUCTION_GROUP_DEFAULT = "default";
     public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(INSTRUCTION_GROUP_DEFAULT).build();
     public static final String REPO_FOLDER_FORMAT = "yyyy/MM";

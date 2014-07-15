@@ -60,7 +60,6 @@
                                     suffix++;
                                     var v = val.value;
                                     var author = val.author;
-                                    console.log(author);
                                     var k = 'url' + suffix;
                                     var keyAuthor = 'author' + suffix;
                                     Essentials.addPayloadData(prefix + k, v, payload);
@@ -104,6 +103,18 @@
                 });
 
             };
+            // check install state
+            $http.get($rootScope.REST.plugins + "plugins/" + $scope.pluginId).success(function (p) {
+                $scope.plugin = p;
+                if (p) {
+                    $scope.showRebuildMessage = p.installState === 'installing';
+                    $scope.showInstalledMessage = p.installState === 'installed';
+                    $scope.showBoardingMessage = p.installState === 'boarding';
+                    $scope.showPlugin = p.installed && !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
+                }
+            });
+
+
             $scope.init();
         })
 })();

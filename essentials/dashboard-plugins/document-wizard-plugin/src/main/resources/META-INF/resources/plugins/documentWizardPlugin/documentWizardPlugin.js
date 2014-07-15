@@ -43,7 +43,6 @@
 
             $scope.addCancel = function () {
                 $scope.showDialog = false;
-                console.log("cancel");
             };
             $scope.addWizard = function () {
                 var payload = Essentials.addPayloadData("documentType", $scope.selectedDocument.fullName, null);

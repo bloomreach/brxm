@@ -269,6 +269,11 @@ public final class ProjectUtils {
         final List<Dependency> dependencies = model.getDependencies();
         for (Dependency dep : dependencies) {
             if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
+                // check version:
+                final String version = dep.getVersion();
+                if(Strings.isNullOrEmpty(version)){
+                    log.info("version {}", version);
+                }
                 return true;
             }
 

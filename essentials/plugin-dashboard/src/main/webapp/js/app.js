@@ -104,11 +104,13 @@
 //############################################
 // RUN
 //############################################
-        .run(function ($rootScope, $location, $log, $http, $timeout, modalService) {
+        .run(function ($rootScope, $location, $log, $http, $timeout, $templateCache, modalService) {
             $rootScope.$on('$stateChangeStart',
                 function (event, toState, toParams, fromState, fromParams) {
-                    console.log(toState.url);
+
                     if (toState && toState.url) {
+                        // disbale caching of pages:
+                        $templateCache.remove(toState.url);
                         if (toState.url.indexOf('/tools') != -1) {
                             $rootScope.mainHeader = 'Tools';
                         }
@@ -116,7 +118,7 @@
                             $rootScope.mainHeader = 'Build instructions';
                         }
                         else if (toState.url.indexOf('/plugins') != -1) {
-                            $rootScope.mainHeader = 'All plugins';
+                            $rootScope.mainHeader = 'Essentials library';
                         }
                         else if (toState.url.indexOf('/installed-plugins') != -1) {
                             $rootScope.mainHeader = 'Installed plugins';

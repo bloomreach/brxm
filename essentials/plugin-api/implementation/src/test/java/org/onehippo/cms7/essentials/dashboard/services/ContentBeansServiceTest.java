@@ -18,13 +18,13 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
-@Ignore("Needs running hippo repository through RMI")
+//@Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
     @Test
@@ -36,7 +36,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
         context.setUseHippoSession(true);
         context.setHippoRepository(repository);
-        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/myaaa");
+        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/betatwo");
 
         final ContentBeansService contentBeansService = new ContentBeansService(context);
         contentBeansService.createBeans();
@@ -51,6 +51,12 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         testPluginContext.setProjectNamespacePrefix("myaaa");
 
         return testPluginContext;
+    }
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        projectSetup();
     }
 
 

@@ -81,15 +81,15 @@
       <ul class="side-menu" ng-controller="mainMenuCtrl">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/plugins')]">
           <a href="#/plugins">
-            <i class="fa fa-dashboard"></i>
-            <span>Plugins</span>
+            <i class="fa fa-gear"></i>
+            <span>Essentials library</span>
             <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span>
           </a>
 
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/installed-plugins')]">
           <a href="#/installed-plugins">
-            <i class="fa fa-dashboard"></i>
+            <i class="fa fa-gears"></i>
             <span>Installed plugins</span>
             <span class="badge pull-right alert-success">{{TOTAL_CONFIGURABLE}}</span>
           </a>
@@ -97,14 +97,15 @@
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
           <a href="#/tools">
-            <i class="fa fa-dashboard"></i>
+            <i class="fa fa-gavel"></i>
             <span>Tools</span>
             <span class="badge  pull-right alert-info">{{TOTAL_TOOLS}}</span>
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/build')]">
           <a href="#/build">
-            <i class="fa fa-dashboard "></i>
+            <i ng-hide="NEEDS_REBUILD" class="fa fa-check-square-o"></i>
+            <i ng-show="NEEDS_REBUILD" class="fa fa-exclamation-triangle"></i>
             <span>Build</span>
                         <span ng-show="NEEDS_REBUILD" class="badge pull-right alert-danger">
                               <i class="fa fa-bell"></i>
