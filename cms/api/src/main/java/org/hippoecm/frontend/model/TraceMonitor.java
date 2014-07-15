@@ -15,41 +15,84 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.jcr.Item;
+
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Item;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * <code>javax.jcr.Item</code> usage tracing/monitoring utility.
+ * <P>
+ * <EM>
+ *   Note: This is turned off by default. Set '-DTraceMonitor.enabled=true' system property to turn it on.
+ *   Also, the default trace item size is 2000. You can increase it by setting '-DTraceMonitor.max=3000' for instance.
+ *   Setting it to zero means unlimited size, which could be dangerous at runtime. So use it only in debugging mode!
+ * </EM>
+ * </P>
+ */
+@SuppressWarnings("unchecked")
 public class TraceMonitor {
 
-    static final Logger log = LoggerFactory.getLogger(TraceMonitor.class);
+    static Logger log = LoggerFactory.getLogger(TraceMonitor.class);
 
-    private static final Map<String, String> initializedAndNotDetached = new HashMap<String, String>();
+    static final String ENABLED_PROP = TraceMonitor.class.getSimpleName() + ".enabled";
+    static final String MAX_PROP = TraceMonitor.class.getSimpleName() + ".max";
+    static final int DEFAULT_MAX_SIZE = 2000;
+    private static final int maxSize;
+    private static final Map<String, String> initializedAndNotDetached;
 
-    protected static final void track(Item item) {
-        if (log.isDebugEnabled()) {
+    static {
+        boolean enabled = BooleanUtils.toBoolean(System.getProperty(ENABLED_PROP));
+
+        int max = NumberUtils.toInt(System.getProperty(MAX_PROP), -1);
+        if (max < 0) {
+            maxSize = DEFAULT_MAX_SIZE;
+        } else {
+            maxSize = max;
+        }
+
+        if (enabled) {
+            if (maxSize > 0) {
+                log.info("{}: Max monitoring items set to {}", TraceMonitor.class.getSimpleName(), maxSize);
+                initializedAndNotDetached = Collections.synchronizedMap(new LRUMap(maxSize));
+            } else {
+                log.warn("{}: No limit to monitoring items.", TraceMonitor.class.getSimpleName());
+                initializedAndNotDetached = new ConcurrentHashMap<String, String>();
+            }
+        } else {
+            initializedAndNotDetached = null;
+        }
+    }
+
+    protected static void track(Item item) {
+        if (initializedAndNotDetached != null && log.isDebugEnabled()) {
             initializedAndNotDetached.put(item.toString(), getCallee());
         }
     }
 
-    protected static final void release(Item item) {
-        if (log.isDebugEnabled()) {
+    protected static void release(Item item) {
+        if (initializedAndNotDetached != null && log.isDebugEnabled()) {
             initializedAndNotDetached.remove(item.toString());
         }
     }
 
-    protected static final void trace(Item item) {
-        if (log.isDebugEnabled() && initializedAndNotDetached.containsKey(item.toString())) {
+    protected static void trace(Item item) {
+        if (initializedAndNotDetached != null && log.isDebugEnabled() && initializedAndNotDetached.containsKey(item.toString())) {
             String stackTrace = initializedAndNotDetached.get(item.toString());
             log.debug(stackTrace);
         }
     }
 
-    protected static final String getCallee() {
+    protected static String getCallee() {
         Exception exception = new RuntimeException("Determine CallStackTrace");
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -60,4 +103,11 @@ public class TraceMonitor {
         return os.toString();
     }
 
+    protected static int getSize() {
+        if (initializedAndNotDetached != null) {
+            return initializedAndNotDetached.size();
+        } else {
+            return 0;
+        }
+    }
 }
