@@ -411,6 +411,13 @@ public interface Mount {
     String getProperty(String name);
 
     /**
+     * Returns the unmodifiable {@link List} of all properties names and EMPTY list if no properties available. Through
+     * {@link #getProperty(String)} the value of a property can be retrieved.
+     * @return the unmodifiable {@link List} of all properties names and EMPTY list if no properties available
+     */
+    List<String> getPropertyNames();
+
+    /**
      * <p>
      * Returns all the properties that start with {@value #PROPERTY_NAME_MOUNT_PREFIX} and have value of type {@link String}. This map has as key the
      * propertyname after {@value #PROPERTY_NAME_MOUNT_PREFIX}.

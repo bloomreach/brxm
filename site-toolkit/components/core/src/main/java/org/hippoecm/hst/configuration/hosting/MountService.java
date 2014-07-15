@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -885,6 +887,10 @@ public class MountService implements ContextualizableMount, MutableMount {
         return null;
     }
 
+    @Override
+    public List<String> getPropertyNames() {
+        return ImmutableList.copyOf(allProperties.keySet());
+    }
 
     @Override
     public String[] getDefaultSiteMapItemHandlerIds() {

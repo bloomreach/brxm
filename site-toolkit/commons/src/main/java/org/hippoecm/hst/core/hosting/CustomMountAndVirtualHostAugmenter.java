@@ -652,6 +652,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public List<String> getPropertyNames() {
+            return Collections.emptyList();
+        }
+
+        @Override
         public Map<String, String> getMountProperties() {
             return Collections.emptyMap();
         }

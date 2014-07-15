@@ -286,6 +286,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public List<String> getPropertyNames() {
+            return delegatee.getPropertyNames();
+        }
+
+        @Override
         public String getParameter(String name) {
             return delegatee.getParameter(name);
         }

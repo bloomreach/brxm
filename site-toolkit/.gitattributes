@@ -730,6 +730,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelProp
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtilsTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/menu/TestHstMenuModels.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/model/TestBrokenModelConfigurations.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/mount/TestMountService.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/pages/TestPagesModels.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/site/TestSiteService.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/TestHstSiteMapItemIntegerPlaceHolders.java -text
