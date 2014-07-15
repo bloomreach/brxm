@@ -386,20 +386,28 @@ public class RepositoryServlet extends HttpServlet {
                 templateParams.put("ancestorNodes", ancestorNodes);
             }
 
-            String param = null;
+            String param;
 
             if ((param = req.getParameter("xpath")) != null || (param = req.getParameter("sql")) != null) {
                 QueryManager qmgr = jcrSession.getWorkspace().getQueryManager();
 
-                String language = (req.getParameter("xpath") != null ? Query.XPATH: Query.SQL);
-                Query query = null;
+                String language = req.getParameter("xpath") != null ? Query.XPATH: Query.SQL;
+                Query query;
+                String statement = param.toLowerCase();
+                if (!statement.contains("order by")) {
+                    if (language.equals(Query.XPATH)) {
+                        statement = statement + " order by @jcr:score asc";
+                    } else {
+                        statement = statement + " order by jcr:score asc";
+                    }
+                }
 
                 if (Query.XPATH.equals(language)) {
                     // we encode xpath queries to support queries like /jcr:root/7_8//*
                     // the 7 needs to be encode
-                    query = qmgr.createQuery(RepoUtils.encodeXpath(param), language);
+                    query = qmgr.createQuery(RepoUtils.encodeXpath(statement), language);
                 } else {
-                    query = qmgr.createQuery(param, language);
+                    query = qmgr.createQuery(statement, language);
                 }
 
                 String limit = req.getParameter("limit");
