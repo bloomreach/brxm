@@ -209,12 +209,11 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         } else {
             credsDomains.add(credentialsDomain);
         }
-        
         return session;
     }
 
     private synchronized Session getSessionFromRepositoryCreatedOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
-        Session session = null;
+        Session session;
         PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
         
         if (repository != null && !repository.isMarkedForDisposal()) {
@@ -273,6 +272,14 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         }
         
         return session;
+    }
+
+    public synchronized void close() {
+        super.close();
+        if (inactiveRepositoryDisposer != null) {
+            inactiveRepositoryDisposer.interrupt();
+        }
+
     }
 
     private class DelegatingResourceLifecycleManagements implements ResourceLifecycleManagement {

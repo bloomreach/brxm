@@ -141,6 +141,7 @@ public class TestCustomMountAndVirtualCmsHostAugmenter extends AbstractTestConfi
 
         } finally {
             restoreHstConfigBackup(session);
+            session.logout();
         }
     }
 

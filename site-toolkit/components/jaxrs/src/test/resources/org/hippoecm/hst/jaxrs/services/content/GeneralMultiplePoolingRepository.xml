@@ -48,7 +48,7 @@
     <constructor-arg value="${hstconfigreader.repository.password}"/>
   </bean>
   
-  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
+  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl" destroy-method="close">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
       <map>
@@ -82,6 +82,11 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="resourceLifecycleManagement">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+        <property name="alwaysActive" value="true"/>
+      </bean>
+    </property>
   </bean>
   
   <bean id="javax.jcr.Repository.preview" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -104,6 +109,11 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="resourceLifecycleManagement">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+        <property name="alwaysActive" value="true"/>
+      </bean>
+    </property>
   </bean>
   
   <bean id="javax.jcr.Repository.writable" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -126,6 +136,11 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="resourceLifecycleManagement">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+        <property name="alwaysActive" value="true"/>
+      </bean>
+    </property>
   </bean>
   
   <bean id="javax.jcr.Repository.hstconfigreader" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -147,6 +162,11 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="resourceLifecycleManagement">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+        <property name="alwaysActive" value="true"/>
+      </bean>
+    </property>
   </bean>
   
   <!-- Delegating repository to the raw hippo repository -->

@@ -59,7 +59,7 @@
     <property name="enabled" value="${repository.pool.counter.enabled}" />
   </bean>
   
-  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl">
+  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl" destroy-method="close">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
       <map>

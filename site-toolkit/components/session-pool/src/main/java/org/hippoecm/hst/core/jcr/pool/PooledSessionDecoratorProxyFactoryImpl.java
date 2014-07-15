@@ -118,9 +118,18 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                          * because commons-pool's GenericObjectPool does not have a guard
                          * on multiple returning the object to the pool,
                          * which would result in negative numActives and a broken pool.
-                         */ 
-                        poolingRepository.returnSession(pooledSessionProxy);
-                        
+                         */
+                        if (poolingRepository.isActive()) {
+                            poolingRepository.returnSession(pooledSessionProxy);
+                        } else {
+                            // poolingRepository has been closed
+                            Session session = (Session) invocation.getProxy();
+                            // HSTTWO-1337: Hippo Repository requires to check isLive() before logout().
+                            if (session.isLive()) {
+                                session.logout();
+                            }
+                        }
+
                         ResourceLifecycleManagement pooledSessionLifecycleManagement = poolingRepository.getResourceLifecycleManagement();
                         // If client returns the session he used, then unregister it 
                         if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {

@@ -66,6 +66,7 @@ public class TestNoChannelsOrBlueprints extends AbstractTestConfigurations {
     @After
     public void tearDown() throws Exception {
         restoreHstConfigBackup(session);
+        session.logout();
         super.tearDown();
     }
 

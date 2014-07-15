@@ -235,7 +235,7 @@ public class HstManagerImpl implements MutableHstManager {
                     } catch (ContainerException e) {
                         log.warn("Exception during building virtualhosts model. ", e);
                     } catch (InterruptedException e) {
-                        log.error("InterruptedException ", e);
+                        log.info("InterruptedException ", e);
                     }
                 }
             });

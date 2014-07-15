@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.MutableHstManager;
+import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -55,11 +56,11 @@ import static org.easymock.EasyMock.replay;
  * AbstractSpringTestCase
  * </p>
  * <p>
- * 
+ *
  * </p>
- * 
+ *
  * @version $Id$
- *  
+ *
  */
 public abstract class AbstractSpringTestCase
 {
@@ -71,11 +72,10 @@ public abstract class AbstractSpringTestCase
     public void setUp() throws Exception {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
-        
+
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-
         final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
         if (hstManager != null) {
             ((MutableHstManager) hstManager).setContextPath("/site");
@@ -84,11 +84,9 @@ public abstract class AbstractSpringTestCase
 
     @After
     public void tearDown() throws Exception {
-        final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
-
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
     }

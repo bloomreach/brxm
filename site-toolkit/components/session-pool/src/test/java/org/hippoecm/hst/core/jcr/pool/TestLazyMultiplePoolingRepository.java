@@ -36,6 +36,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -77,6 +78,11 @@ public class TestLazyMultiplePoolingRepository {
         
         assertEquals(0, multipleRepository.getRepositoryMap().size());
     }
+
+    @After
+    public void tearDown() {
+        ((LazyMultipleRepositoryImpl) multipleRepository).close();
+    }
     
     @Test
     public void testLazyMultiplePoolingRepository() throws Exception {
@@ -101,7 +107,7 @@ public class TestLazyMultiplePoolingRepository {
         session.logout();
         
         try {
-            session = multipleRepository.login(nonExistingUserCreds);
+            multipleRepository.login(nonExistingUserCreds);
             fail("It should throw repository exception here.");
         } catch (RepositoryException ignore) {
         }

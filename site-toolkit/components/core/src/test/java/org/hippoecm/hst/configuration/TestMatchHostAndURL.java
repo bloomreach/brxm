@@ -125,6 +125,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
                 }
             } finally {
                 restoreHstConfigBackup(session);
+                session.logout();
             }
         }
 
@@ -177,6 +178,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
             }
         } finally {
             restoreHstConfigBackup(session);
+            session.logout();
         }
     }
 
@@ -290,6 +292,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         }
         } finally {
             restoreHstConfigBackup(session);
+            session.logout();
         }
     }
         

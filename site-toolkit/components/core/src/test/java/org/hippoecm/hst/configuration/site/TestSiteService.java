@@ -172,6 +172,7 @@ public class TestSiteService extends AbstractTestConfigurations {
 
         } finally {
             restoreHstConfigBackup(session);
+            session.logout();
         }
 
     }

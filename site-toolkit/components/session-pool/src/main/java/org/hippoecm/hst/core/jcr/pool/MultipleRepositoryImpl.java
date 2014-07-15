@@ -33,9 +33,12 @@ import javax.jcr.Value;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.ResourceVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultipleRepositoryImpl implements MultipleRepository {
-    
+    private static final Logger log = LoggerFactory.getLogger(MultipleRepositoryImpl.class);
+
     private static ThreadLocal<Repository> tlCurrentRepository = new ThreadLocal<Repository>();
     private ResourceLifecycleManagement currentRepositoryResourceLifecycleManagement = new CurrentRepositoryResourceLifecycleManagement();
     
@@ -236,7 +239,20 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         
         this.resourceLifecycleManagements = tempResourceLifecycleManagements; 
     }
-    
+
+
+    public synchronized void close() {
+        final ResourceLifecycleManagement[] resourceLifecycleManagements = getResourceLifecycleManagements();
+        for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
+            try {
+                resourceLifecycleManagement.disposeAllResources();
+            } catch (Exception e) {
+                log.warn("Exception while disposing resources", e);
+            }
+        }
+    }
+
+
     protected boolean equalsCredentials(Credentials credentials1, Credentials credentials2) {
         if (credentials1 instanceof SimpleCredentials && credentials2 instanceof SimpleCredentials) {
             return (((SimpleCredentials) credentials1).getUserID().equals(((SimpleCredentials) credentials2).getUserID()));
