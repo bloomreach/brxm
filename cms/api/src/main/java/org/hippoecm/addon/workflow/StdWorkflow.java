@@ -17,7 +17,6 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -28,6 +27,7 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.MappingException;
@@ -128,7 +128,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         add(new ActionDisplay("icon") {
             @Override
             protected void initialize() {
-                add(new Image("icon", new LoadableDetachableModel<ResourceReference>() {
+                add(new CachingImage("icon", new LoadableDetachableModel<ResourceReference>() {
                     @Override
                     protected ResourceReference load() {
                         return getIcon();

@@ -15,16 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
@@ -37,15 +34,14 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.editor.resources.CmsEditorHeaderItem;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -152,7 +148,7 @@ public class YuiDateTimeField extends DateTimeField {
             }
         });
 
-        today.add(new Image("current-date-img", new PackageResourceReference(YuiDateTimeField.class,
+        today.add(new CachingImage("current-date-img", new PackageResourceReference(YuiDateTimeField.class,
                 "resources/set-now-16.png")));
 
         //Add change behavior to super fields

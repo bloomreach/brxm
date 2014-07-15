@@ -30,6 +30,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.DocumentTranslationProvider;
@@ -92,13 +93,7 @@ public class TranslationRenderer extends AbstractNodeRenderer {
                 @Override
                 protected void populateItem(Item<HippoLocale> item) {
                     HippoLocale itemLocale = item.getModelObject();
-                    Image img = new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS)) {
-
-                        @Override
-                        protected boolean shouldAddAntiCacheParameter() {
-                            return false;
-                        }
-                    };
+                    Image img = new CachingImage("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS));
                     if (itemLocale.getName().equals(locale)) {
                         img.add(new AttributeAppender("class", new Model<String>("hippo-translation-current"), " "));
                     }

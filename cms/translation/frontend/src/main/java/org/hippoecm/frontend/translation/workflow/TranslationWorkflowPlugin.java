@@ -34,9 +34,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
@@ -46,6 +44,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -56,6 +55,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.IconSize;
@@ -589,7 +589,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
                 HippoLocale locale = localeProvider.getLocale(languageModel.getObject());
                 ResourceReference resourceRef = locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
-                fragment.add(new Image("img", resourceRef));
+                fragment.add(new CachingImage("img", resourceRef));
                 fragment.add(new Label("current-language", locale.getDisplayName(getLocale())));
                 return fragment;
             }

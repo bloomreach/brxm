@@ -36,6 +36,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
@@ -79,7 +80,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         ExpandCollapseLink link = new ExpandCollapseLink("toggleFullscreen");
         ResourceReference toggleFullscreenImage = new PackageResourceReference(ExpandCollapseListingPlugin.class,
                 TOGGLE_FULLSCREEN_IMG);
-        link.add(new Image("toggleFullscreenImage", toggleFullscreenImage));
+        link.add(new CachingImage("toggleFullscreenImage", toggleFullscreenImage));
 
         addButton(link);
 

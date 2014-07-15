@@ -21,12 +21,12 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -108,7 +108,7 @@ public class IconRenderer implements IListCellRenderer<Node> {
 
         IconContainer(String id, ResourceReference resourceRef) {
             super(id);
-            add(new Image("icon", resourceRef));
+            add(new CachingImage("icon", resourceRef));
         }
     }
 

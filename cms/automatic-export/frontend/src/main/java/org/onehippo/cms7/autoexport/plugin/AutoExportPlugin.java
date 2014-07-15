@@ -15,11 +15,6 @@
  */
 package org.onehippo.cms7.autoexport.plugin;
 
-import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_ENABLED_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
-import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
-import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
-
 import java.util.Iterator;
 
 import javax.jcr.Node;
@@ -44,10 +39,16 @@ import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_ENABLED_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
+import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
+import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class AutoExportPlugin extends RenderPlugin<Node> {
 
@@ -90,7 +91,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             }
         }));
         // set up icon component
-        final Image icon = new Image("icon") {
+        final Image icon = new CachingImage("icon") {
             private static final long serialVersionUID = 1L;
 
 

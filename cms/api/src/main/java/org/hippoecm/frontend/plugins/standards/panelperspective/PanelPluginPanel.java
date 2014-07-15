@@ -23,13 +23,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -107,7 +107,7 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
                         return service.create(componentId, getBreadCrumbModel());
                     }
                 };
-                link.add(new Image("img", service.getImage()));
+                link.add(new CachingImage("img", service.getImage()));
                 link.add(new Label("title", service.getTitle()));
                 link.add(new Label("help", service.getHelp()));
                 item.add(link);

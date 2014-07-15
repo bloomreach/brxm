@@ -20,14 +20,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 
 public class FieldHint extends Panel {
 
@@ -57,7 +57,7 @@ public class FieldHint extends Panel {
             IModel<String> translatedHintModel = new StringResourceModel(hint, this, null, hint);
             // display the hint
             hintContainer.add(new Label("hint-text", translatedHintModel));
-            hintContainer.add(new Image("hint-image", HINT_PNG));
+            hintContainer.add(new CachingImage("hint-image", HINT_PNG));
         }
         return hintContainer;
     }

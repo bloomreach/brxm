@@ -31,7 +31,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -53,6 +52,7 @@ import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.Documen
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
@@ -420,7 +420,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         return null;
     }
 
-    private static class SearchIcon extends Image {
+    private static class SearchIcon extends CachingImage {
         private static final long serialVersionUID = 1L;
 
         public SearchIcon(DocumentCollection collection) {

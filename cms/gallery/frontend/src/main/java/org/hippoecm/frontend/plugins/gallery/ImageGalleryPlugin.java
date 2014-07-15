@@ -49,6 +49,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
@@ -130,7 +131,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         });
         toggleLink.setOutputMarkupId(true);
 
-        toggleImage = new Image("toggleimg", TOGGLE_LIST_IMG);
+        toggleImage = new CachingImage("toggleimg", TOGGLE_LIST_IMG);
         toggleImage.setOutputMarkupId(true);
         toggleLink.add(toggleImage);
     }
@@ -141,11 +142,11 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         if (mode == LIST) {
             this.dataTable.setVisible(true);
             this.galleryList.setVisible(false);
-            toggleImage = new Image("toggleimg", TOGGLE_LIST_IMG);
+            toggleImage = new CachingImage("toggleimg", TOGGLE_LIST_IMG);
         } else {
             this.dataTable.setVisible(false);
             this.galleryList.setVisible(true);
-            toggleImage = new Image("toggleimg", TOGGLE_THUMBNAIL_IMG);
+            toggleImage = new CachingImage("toggleimg", TOGGLE_THUMBNAIL_IMG);
         }
 
         toggleLink.replace(toggleImage);
@@ -273,7 +274,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                                     itemLink.add(itemWidthStyle);
                                     itemLink.add(itemHeightStyle);
 
-                                    Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
+                                    Image folderIcon = new CachingImage("folder-icon", "hippo-gallery-folder.png");
                                     folderIcon.setVisible(false);
                                     itemLink.add(folderIcon);
                                     itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem),
@@ -306,7 +307,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                     itemLink.add(itemHeightStyle);
                     itemLink.add(new EmptyPanel("thumbnail"));
 
-                    Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
+                    Image folderIcon = new CachingImage("folder-icon", "hippo-gallery-folder.png");
                     folderIcon.add(thumbnailStyle);
                     itemLink.add(folderIcon);
 

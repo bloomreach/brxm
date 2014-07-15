@@ -37,7 +37,6 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.Loop;
@@ -56,6 +55,7 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
@@ -308,7 +308,7 @@ public class TabbedPanel extends WebMarkupContainer {
             image = new EmptyPanel("icon");
             image.setVisible(false);
         } else {
-            image = new Image("icon", iconResource);
+            image = new CachingImage("icon", iconResource);
         }
         IModel<String> sizeModel = new Model<String>(Integer.valueOf(iconType.getSize()).toString());
         image.add(new AttributeModifier("width", true, sizeModel));
