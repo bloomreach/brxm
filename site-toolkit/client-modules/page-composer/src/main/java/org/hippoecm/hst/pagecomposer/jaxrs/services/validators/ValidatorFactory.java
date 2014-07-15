@@ -18,11 +18,13 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
 import com.google.common.base.Predicate;
 
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 
 public class ValidatorFactory {
@@ -73,6 +75,42 @@ public class ValidatorFactory {
     public Validator getPathInfoValidator(final SiteMapItemRepresentation siteMapItem,
                                           final String parentId,
                                           final SiteMapHelper siteMapHelper) {
-        return new PathInfoValidator(siteMapItem, parentId, siteMapHelper);
+        return new SiteMapItemBasedPathInfoValidator(siteMapItem, parentId, siteMapHelper);
     }
+
+    private static final class SiteMapItemBasedPathInfoValidator extends AbstractPathInfoValidator {
+
+        private final SiteMapItemRepresentation siteMapItem;
+        private final String parentId;
+        private final SiteMapHelper siteMapHelper;
+
+        private SiteMapItemBasedPathInfoValidator(final SiteMapItemRepresentation siteMapItem, final String parentId, final SiteMapHelper siteMapHelper) {
+            this.siteMapItem = siteMapItem;
+            this.parentId = parentId;
+            this.siteMapHelper = siteMapHelper;
+        }
+
+        @Override
+        protected String getPathInfo() throws ClientException {
+            String pathInfo = "";
+            if (siteMapItem != null) {
+                if (parentId == null) {
+                    pathInfo = "/" + siteMapItem.getName();
+                } else {
+                    // Calling getConfigObject can throw a ClientException
+                    HstSiteMapItem parent = siteMapHelper.getConfigObject(parentId);
+                    while (parent != null) {
+                        pathInfo = parent.getValue() + "/" + pathInfo;
+                        parent = parent.getParentItem();
+                    }
+                    if (!pathInfo.endsWith("/")) {
+                        pathInfo += "/";
+                    }
+                    pathInfo = pathInfo + siteMapItem.getName();
+                }
+            }
+            return pathInfo;
+        }
+    }
+
 }

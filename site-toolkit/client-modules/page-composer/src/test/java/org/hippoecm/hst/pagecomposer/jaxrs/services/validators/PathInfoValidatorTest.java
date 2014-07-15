@@ -16,10 +16,21 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PathInfoValidatorTest {
 
@@ -42,4 +53,39 @@ public class PathInfoValidatorTest {
                 "deny those requests because of security ", PathInfoValidator.containsEncodedDirectoryTraversalChars("test%test", "UTF-8"));
     }
 
+    @Test
+    public void test_validate_fails_on_xss_markup() {
+        final HstRequestContext context = createNiceMock(HstRequestContext.class);
+        final HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(context.getServletRequest()).andReturn(request);
+        replay(context, request);
+
+        final String pathInfo = "abc<def>";
+        final PathInfoValidator validator = new PathInfoValidator(pathInfo);
+        try {
+            validator.validate(context);
+            fail("Expected an exception of type " + ClientException.class.getSimpleName());
+        } catch (ClientException e) {
+            assertThat(e.getError(), is(ClientError.INVALID_PATH_INFO));
+        }
+    }
+
+
+    @Test
+    public void test_validate_fails_on_wrong_character_encoding() {
+        final HstRequestContext context = createNiceMock(HstRequestContext.class);
+        final HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(context.getServletRequest()).andReturn(request);
+        expect(request.getCharacterEncoding()).andReturn("UNKNOWN_CHARACTER_ENCODING");
+        replay(context, request);
+
+        final String pathInfo = "%24";
+        final PathInfoValidator validator = new PathInfoValidator(pathInfo);
+        try {
+            validator.validate(context);
+            fail("Expected an exception of type " + ClientException.class.getSimpleName());
+        } catch (ClientException e) {
+            assertThat(e.getError(), is(ClientError.INVALID_PATH_INFO));
+        }
+    }
 }

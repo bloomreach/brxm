@@ -324,6 +324,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/ContainerItemHelper.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/PagesHelper.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/SiteMapHelper.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/AbstractPathInfoValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/ChildExistsValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/CurrentPreviewConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/HasPreviewConfigurationValidator.java -text
