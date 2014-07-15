@@ -99,6 +99,12 @@
         <artifactId>relateddocs</artifactId>
     </dependency>
 
+    <!-- Resource Bundle Editor plugin -->
+    <dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>resource-bundle-editor-plugin</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>
