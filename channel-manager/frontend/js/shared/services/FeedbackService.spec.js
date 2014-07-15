@@ -62,21 +62,21 @@ describe('Feedback Service', function () {
 
     it('should return server error feedback if message is not a translationId', function () {
 
-        var feedback = feedbackService.getFeedback({message: 'does not match with regex'});
+        var feedback = feedbackService.getFeedback({"message" : 'some message', errorCode: 'does not match with regex'});
         expect(feedback.message).toBe(translatedMessage);
         expect(translateMock).toHaveBeenCalledWith('TECHNICAL_ERROR');
     });
 
     it('should return server error feedback if translationId is absent', function () {
 
-        var feedback = feedbackService.getFeedback({message: 'NO_TRANSLATION'});
+        var feedback = feedbackService.getFeedback({"message" : 'some message', errorCode: 'NO_TRANSLATION'});
         expect(feedback.message).toBe(translatedMessage);
         expect(translateMock).toHaveBeenCalledWith('TECHNICAL_ERROR');
     });
 
     it('should return client error feedback if translationId is present', function () {
 
-        var feedback = feedbackService.getFeedback({message: 'THIS_IS_A_TRANSLATION_ID', data: {}});
+        var feedback = feedbackService.getFeedback({"message" : 'some message', errorCode: 'THIS_IS_A_TRANSLATION_ID', data: {}});
         expect(feedback.message).toBe(translatedMessage);
         expect(translateMock).toHaveBeenCalledWith('THIS_IS_A_TRANSLATION_ID', {});
     });
