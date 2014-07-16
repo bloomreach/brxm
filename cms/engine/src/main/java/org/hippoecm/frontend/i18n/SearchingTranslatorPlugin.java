@@ -60,6 +60,7 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
                 list.add(new NodeWrapper(nodes.nextNode(), criteria));
             }
             if (list.size() > 0) {
+                log.info("For query '{}' found #{} translation results", strQuery, String.valueOf(list.size()));
                 return new TranslationSelectionStrategy<IModel>(criteria.keySet()).select(list).getModel();
             }
         } catch (InvalidQueryException ex) {
@@ -71,6 +72,7 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
                 log.warn("RepositoryException : {}", ex.toString());
             }
         }
+        log.info("For query '{}' no translation results found", strQuery);
         return null;
     }
 

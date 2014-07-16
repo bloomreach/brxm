@@ -148,7 +148,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
                             }
                         }
                     } catch (RepositoryException ex) {
-                        log.error(ex.getMessage());
+                        log.error(ex.toString());
                     }
                 }
             }
