@@ -85,6 +85,40 @@ public class TestHstQuery  extends AbstractBeanTestCase {
                 query.getQueryAsString(false));
     }
 
+
+    @Test
+    public void query_order_by() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
+        query.addOrderByAscending("unittestproject:title");
+        query.addOrderByDescending("unittestproject:summary");
+        assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode')] " +
+                "order by @unittestproject:title ascending,@unittestproject:summary descending",
+                query.getQueryAsString(false));
+    }
+
+
+    @Test
+    public void query_order_by_case_insensitive() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
+        query.addOrderByAscendingCaseInsensitive("unittestproject:title");
+        query.addOrderByDescendingCaseInsensitive("unittestproject:summary");
+        assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode')] " +
+                "order by fn:lower-case(@unittestproject:title) ascending,fn:lower-case(@unittestproject:summary) descending",
+                query.getQueryAsString(false));
+    }
+
+
+    @Test
+    public void query_order_by_mixed_case() throws Exception {
+        HstQuery query = queryMngr.createQuery(session.getRootNode());
+        query.addOrderByAscending("unittestproject:title");
+        query.addOrderByDescendingCaseInsensitive("unittestproject:summary");
+        assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode')] " +
+                "order by @unittestproject:title ascending,fn:lower-case(@unittestproject:summary) descending",
+                query.getQueryAsString(false));
+    }
+
+
     @Test
     public void testNoFilter() throws Exception {
 

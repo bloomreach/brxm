@@ -31,15 +31,25 @@ public class TestHstFilters extends AbstractBeanTestCase {
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         assertEquals(null,mainFilter.getJcrExpression());
     }
-    
+
     @Test
-    public void testSimpleFilter() throws Exception {
+    public void test_equal_to() throws Exception {
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addEqualTo("@a", "a");
         assertEquals("@a = 'a'",mainFilter.getJcrExpression());
-        
+
         mainFilter.addEqualTo("@b", "b");
         assertEquals("@a = 'a' and @b = 'b'",mainFilter.getJcrExpression());
+    }
+
+    @Test
+    public void test_equal_to_case_insenstive() throws Exception {
+        Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
+        mainFilter.addEqualToCaseInsensitive("@a", "a");
+        assertEquals("@a = fn:lower-case('a')",mainFilter.getJcrExpression());
+
+        mainFilter.addEqualToCaseInsensitive("@b", "b");
+        assertEquals("@a = fn:lower-case('a') and @b = fn:lower-case('b')",mainFilter.getJcrExpression());
     }
     
     /**
@@ -55,11 +65,11 @@ public class TestHstFilters extends AbstractBeanTestCase {
         Filter subAnd1c = new FilterImpl(session, DateTools.Resolution.DAY);
         subAnd1a.addEqualTo("@a", "a");
         subAnd1b.addEqualTo("@b", "b");
-        subAnd1c.addEqualTo("@c", "c");
+        subAnd1c.addEqualToCaseInsensitive("@c", "c");
         mainFilter.addAndFilter(subAnd1a);
         mainFilter.addAndFilter(subAnd1b);
         mainFilter.addAndFilter(subAnd1c);
-        assertEquals("jcr:contains(., 'contains') and (@a = 'a') and (@b = 'b') and (@c = 'c')",mainFilter.getJcrExpression());
+        assertEquals("jcr:contains(., 'contains') and (@a = 'a') and (@b = 'b') and (@c = fn:lower-case('c'))",mainFilter.getJcrExpression());
     }
     
     

@@ -94,43 +94,64 @@ public class HstQueryImpl implements HstQuery {
     public void setDefaultResolution(final DateTools.Resolution defaultResolution) {
         this.defaultResolution = defaultResolution;
     }
-   
+
+    @Override
     public void addOrderByAscending(String fieldNameAttribute) {
         orderByList.add("@"+fieldNameAttribute + " ascending");
     }
 
+    @Override
+    public void addOrderByAscendingCaseInsensitive(final String fieldNameAttribute) {
+        orderByList.add("fn:lower-case(@"+fieldNameAttribute + ") ascending");
+    }
+
+    @Override
     public void addOrderByDescending(String fieldNameAttribute) {
         orderByList.add("@"+fieldNameAttribute + " descending");
     }
-    
 
+    @Override
+    public void addOrderByDescendingCaseInsensitive(final String fieldNameAttribute) {
+        orderByList.add("fn:lower-case(@"+fieldNameAttribute + ") descending");
+    }
+
+    @Override
     public Filter createFilter() {
         // note: the session can be null
         return new FilterImpl(session, defaultResolution);
     }
 
+    @Override
     public BaseFilter getFilter() {
         return this.filter;
     }
 
+    @Override
     public void setFilter(BaseFilter filter) {
         this.filter = filter;
     }
 
+    @Override
     public void setLimit(int limit) {
         this.limit = limit;
     }
+
+    @Override
     public int getLimit() {
         return this.limit;
     }
 
+    @Override
     public void setOffset(int offset) {
         this.offset= offset;
     }
+
+    @Override
     public int getOffset() {
         return this.offset;
     }
 
+    @Override
     public String getQueryAsString(boolean skipDefaultOrderBy) throws QueryException{
         if(this.scopes == null || this.scopes.size() == 0) {
             throw new QueryException("There must be a scope for a search");
@@ -262,6 +283,7 @@ public class HstQueryImpl implements HstQuery {
         return super.toString() + " = " + query;
     }
 
+    @Override
     public HstQueryResult execute() throws QueryException {
         Task queryTask = null;
 
@@ -309,6 +331,7 @@ public class HstQueryImpl implements HstQuery {
         throw new QueryException("Unable to get QueryManager");
     }
 
+    @Override
     public void addScopes(List<HippoBean> scopes) {
         for(HippoBean scope : scopes) {
             if(scope != null) {
@@ -321,6 +344,7 @@ public class HstQueryImpl implements HstQuery {
         }
     }
 
+    @Override
     public void addScopes(Node[] scopes) {
        for(Node scope : scopes) {
            if(scope != null) {
@@ -332,10 +356,12 @@ public class HstQueryImpl implements HstQuery {
        }
     }
 
+    @Override
     public void setSkipInvalidScopes(boolean skipInvalidScopes) {
        log.info("skipInvalidScopes is deprecated since 2.25.02. No need to set it any more");
     }
-    
+
+    @Override
     public void excludeScopes(List<HippoBean> scopes) {
         for(HippoBean scope : scopes) {
             if(scope != null) {
@@ -346,6 +372,7 @@ public class HstQueryImpl implements HstQuery {
         }
     }
 
+    @Override
     public void excludeScopes(Node[] scopes) {
         for(Node scope : scopes) {
             if(scope != null) {

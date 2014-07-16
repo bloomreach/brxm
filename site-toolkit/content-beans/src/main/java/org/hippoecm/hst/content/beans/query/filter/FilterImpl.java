@@ -66,6 +66,7 @@ public class FilterImpl implements Filter {
         }
     }
 
+    @Override
     public Filter negate(){
         this.negated = !negated;
         return this;
@@ -107,12 +108,14 @@ public class FilterImpl implements Filter {
             addExpression(jcrExpression);
         }
     }
-    
 
+
+    @Override
     public void addContains(String scope, String fullTextSearch) throws FilterException{
         addContains(scope, fullTextSearch, false);
     }
-    
+
+    @Override
     public void addNotContains(String scope, String fullTextSearch) throws FilterException{
         addContains(scope, fullTextSearch, true);
     }
@@ -175,6 +178,7 @@ public class FilterImpl implements Filter {
     }
 
 
+    @Override
     public void addBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException {
         addBetween(fieldAttributeName, value1, value2,false);
     }
@@ -184,6 +188,7 @@ public class FilterImpl implements Filter {
         addBetween(fieldAttributeName, start, end, resolution, false);
     }
 
+    @Override
     public void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException {
         addBetween(fieldAttributeName, value1, value2,true);
     }
@@ -193,7 +198,19 @@ public class FilterImpl implements Filter {
         addBetween(fieldAttributeName, start, end, resolution, true);
     }
 
-    private void addConstraintWithOperator(final String fieldAttributeName,final Object value, final String operator, boolean isRangeConstraint) throws FilterException{
+
+    private void addConstraintWithOperator(final String fieldAttributeName,
+                                           final Object value,
+                                           final String operator,
+                                           final boolean isRangeConstraint) throws FilterException{
+        addConstraintWithOperator(fieldAttributeName, value, operator, isRangeConstraint, false);
+    }
+
+    private void addConstraintWithOperator(final String fieldAttributeName,
+                                           final Object value,
+                                           final String operator,
+                                           final boolean isRangeConstraint,
+                                           final boolean caseInsensitive) throws FilterException{
         if(value == null ) {
             throw new FilterException("Not allowed to search on 'null'.");
         }
@@ -211,7 +228,15 @@ public class FilterImpl implements Filter {
             }
         }
         final String xpathProperty = toXPathProperty(fieldAttributeName, true, "operator : " + operator);
-        final String jcrExpression = xpathProperty + operator + getStringValue(value);
+
+        final String stringValue;
+        if (caseInsensitive && (value instanceof String)) {
+            stringValue = "fn:lower-case(" + getStringValue(value) + ")";
+        } else {
+            stringValue = getStringValue(value);
+        }
+
+        final String jcrExpression = xpathProperty + operator + stringValue;
         addExpression(jcrExpression);
     }
 
@@ -236,6 +261,12 @@ public class FilterImpl implements Filter {
         addConstraintWithOperator(fieldAttributeName, value, " = ", false);
     }
 
+
+    @Override
+    public void addEqualToCaseInsensitive(String fieldAttributeName, String value) throws FilterException{
+        addConstraintWithOperator(fieldAttributeName, value, " = ", false, true);
+    }
+
     @Override
     public void addEqualTo(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
         addConstraintWithOperator(fieldAttributeName, calendar, resolution, " = ");
@@ -244,6 +275,12 @@ public class FilterImpl implements Filter {
     @Override
     public void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException{
         addConstraintWithOperator(fieldAttributeName, value, " != ", false);
+    }
+
+
+    @Override
+    public void addNotEqualToCaseInsensitive(String fieldAttributeName, String value) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, value, " = ", false, true);
     }
 
     @Override

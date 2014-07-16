@@ -95,7 +95,7 @@ public interface Filter extends BaseFilter {
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code>, <code>value1</code> or <code>value2</code> are invalid types/values or one of them is <code>null</code>
      */
-    void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
+    void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException;
 
     /**
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
@@ -112,7 +112,14 @@ public interface Filter extends BaseFilter {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    void addEqualTo(String fieldAttributeName, Object value) throws FilterException ;
+    void addEqualTo(String fieldAttributeName, Object value) throws FilterException;
+
+    /**
+     * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
+     * @see #addEqualTo(String, Object) same as addEqualTo(String, Object) only now the equality is checked
+     * case insensitive and the value can only be of type <code>String</code>
+     */
+    void addEqualToCaseInsensitive(String fieldAttributeName, String value) throws FilterException;
 
     /**
      * <p>
@@ -135,6 +142,13 @@ public interface Filter extends BaseFilter {
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException;
+
+    /**
+     * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
+     * @see #addNotEqualTo(String, Object) same as addNotEqualTo(String, Object) only now the inequality is checked
+     * case insensitive and the value can only be of type <code>String</code>
+     */
+    void addNotEqualToCaseInsensitive(String fieldAttributeName, String value) throws FilterException;
 
     /**
      *

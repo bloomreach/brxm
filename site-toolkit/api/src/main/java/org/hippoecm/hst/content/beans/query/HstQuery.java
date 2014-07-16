@@ -75,19 +75,31 @@ public interface HstQuery {
      * @return the offset 
      */
     int getOffset();
-    
+
     /**
-     * Order the object found (ascending)
+     * Order the object found  case sensitive ascending
      * @param fieldNameAttribute the name of the field used to sort the search result
      */
     void addOrderByAscending(String fieldNameAttribute);
 
     /**
-     * Order the object found (descending)
+     * Order the object found case insensitive ascending
+     * @param fieldNameAttribute the name of the field used to sort the search result
+     */
+    void addOrderByAscendingCaseInsensitive(String fieldNameAttribute);
+
+    /**
+     * Order the object found case sensitive descending
      * @param fieldNameAttribute the name of the field used to sort the search result
      */
 
     void addOrderByDescending(String fieldNameAttribute);
+
+    /**
+     * Order the object found case insensitive descending
+     * @param fieldNameAttribute the name of the field used to sort the search result
+     */
+    void addOrderByDescendingCaseInsensitive(String fieldNameAttribute);
 
     /**
      * add scopes to search in. 
