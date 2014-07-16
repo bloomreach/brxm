@@ -259,7 +259,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 throw new ModelLoadingException("ContainerComponents are not allowed to have a reference. Pls fix the" +
                         "configuration for '"+canonicalStoredLocation+"'");
             } else if (type == Type.CONTAINER_ITEM_COMPONENT) {
-                log.error("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
+                log.warn("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
                         "components of type '{}'. Setting reference to null.", new String[]{canonicalStoredLocation, HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT,
                         HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT});
                 this.referenceComponent = null;
