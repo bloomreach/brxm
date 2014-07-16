@@ -16,8 +16,6 @@
 package org.onehippo.cms7.repository.upgrade;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -109,6 +107,12 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         checkAtticDocumentHistory();
     }
 
+    @Test
+    public void testNeverPublishedHandleMigration() throws Exception {
+        migrate();
+        checkUnpublished();
+    }
+
     private void deleteDocuments() throws Exception {
         for (Node handle : new NodeIterable(documents.getNodes())) {
             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -182,14 +186,12 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
 
     private void checkDocumentHistory() throws Exception {
         for (int i = 0; i < NO_OF_DOCS; i++) {
-            checkDocumentHistory(getPreview(i));
+            checkDocumentHistory(getUnpublished(i));
         }
     }
 
     private void checkDocumentHistory(Node document) throws Exception {
-        assertNotNull("No preview available", document);
-        assertFalse("Preview still has harddocument mixin", document.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
-        assertTrue("Document is not versionable", document.isNodeType(JcrConstants.MIX_VERSIONABLE));
+        checkUnpublished(document);
         final VersionManager versionManager = session.getWorkspace().getVersionManager();
         final String documentPath = document.getPath();
         final String documentIdentifier = document.getIdentifier();
@@ -202,9 +204,21 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         assertFalse("Preview still has harddocument mixin", document.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
     }
 
+    private void checkUnpublished() throws Exception {
+        for (int i = 0; i < NO_OF_DOCS; i++) {
+            checkUnpublished(getUnpublished(i));
+        }
+    }
+
+    private void checkUnpublished(final Node document) throws RepositoryException {
+        assertNotNull("No unpublished available", document);
+        assertFalse("Unpublished still has harddocument mixin", document.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
+        assertTrue("Document is not versionable", document.isNodeType(JcrConstants.MIX_VERSIONABLE));
+    }
+
     private void checkAvailability(Set<String> expected) throws Exception {
         for (int i = 0; i < NO_OF_DOCS; i++) {
-            checkAvailability(getPreview(i), expected);
+            checkAvailability(getUnpublished(i), expected);
         }
     }
 
@@ -293,7 +307,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         return getFolderWorkflow(documents).add("legacy-document", "testcontent:news", "document" + index);
     }
 
-    private Node getPreview(final int index) throws RepositoryException {
+    private Node getUnpublished(final int index) throws RepositoryException {
         final NodeIterator documents = session.getNode("/content/documents/document" + index).getNodes("document" + index);
         while (documents.hasNext()) {
             final Node variant = documents.nextNode();

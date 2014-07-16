@@ -40,7 +40,6 @@ import javax.jcr.version.VersionManager;
 
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
 import org.apache.jackrabbit.core.version.VersionHistoryRemover;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
@@ -52,8 +51,13 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.OverwritingCopyHandler;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.repository.util.JcrConstants;
 import org.xml.sax.InputSource;
+
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HARDDOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HARDHANDLE;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
 
@@ -87,7 +91,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
         if (handle.getSession() != defaultSession) {
             handle = defaultSession.getNodeByIdentifier(identifier);
         }
-        if (!handle.isNodeType(HippoNodeType.NT_HARDHANDLE)) {
+        if (!handle.isNodeType(NT_HARDHANDLE)) {
             return false;
         }
         try {
@@ -116,13 +120,26 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
     private void migrateHandle(final Node handle) throws RepositoryException {
         log.debug("Migrating handle {}", handle.getPath());
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-            if (!HippoStdNodeType.UNPUBLISHED.equals(JcrUtils.getStringProperty(variant, HippoStdNodeType.HIPPOSTD_STATE, null))) {
-                removeMixin(variant, HippoNodeType.NT_HARDDOCUMENT);
-                removeMixin(variant, JcrConstants.MIX_VERSIONABLE);
+            if (variant.isNodeType(NT_HARDDOCUMENT)) {
+                removeMixin(variant, NT_HARDDOCUMENT);
+                if (!isUnpublishedVariant(variant) && variant.isNodeType(MIX_VERSIONABLE)) {
+                    removeMixin(variant, MIX_VERSIONABLE);
+                }
             }
         }
-        removeMixin(handle, HippoNodeType.NT_HARDHANDLE);
+        removeMixin(handle, NT_HARDHANDLE);
         defaultSession.save();
+        // have to do the following after removal of harddocument (getting exception deep down in jr)
+        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+            if (isUnpublishedVariant(variant) && !variant.isNodeType(MIX_VERSIONABLE)) {
+                variant.addMixin(MIX_VERSIONABLE);
+                defaultSession.save();
+            }
+        }
+    }
+
+    private boolean isUnpublishedVariant(final Node variant) throws RepositoryException {
+        return UNPUBLISHED.equals(JcrUtils.getStringProperty(variant, HIPPOSTD_STATE, null));
     }
 
     private void migrateVersionHistory(final Node handle, final List<Version> versions) throws RepositoryException {
@@ -179,8 +196,8 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
 
     private Node getOldPreview(final Node handle, final String identifier) throws RepositoryException {
         for (Node document : new NodeIterable(handle.getNodes(handle.getName()))) {
-            final String state = JcrUtils.getStringProperty(document, HippoStdNodeType.HIPPOSTD_STATE, null);
-            if (HippoStdNodeType.UNPUBLISHED.equals(state) && !document.getIdentifier().equals(identifier)) {
+            final String state = JcrUtils.getStringProperty(document, HIPPOSTD_STATE, null);
+            if (UNPUBLISHED.equals(state) && !document.getIdentifier().equals(identifier)) {
                 return document;
             }
         }
@@ -197,7 +214,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
         String tmpPath = tmp.getPath();
         for (Version version : versions) {
             copy(version.getFrozenNode(), tmp);
-            tmp.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED);
+            tmp.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
             migrationSession.save();
             versionManager.checkin(tmpPath, version.getCreated());
             versionManager.checkout(tmpPath);
@@ -209,7 +226,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
     private boolean createTemporaryNode(final String identifier) throws RepositoryException {
         final Node tmp = migrationSession.getRootNode().addNode(identifier);
         if (tmp.getIndex() == 1) {
-            tmp.addMixin(JcrConstants.MIX_VERSIONABLE);
+            tmp.addMixin(MIX_VERSIONABLE);
             migrationSession.save();
             return true;
         } else {
@@ -239,7 +256,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
             }
         }
         for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
-            if (!nodeType.getName().equals(JcrConstants.MIX_VERSIONABLE)) {
+            if (!nodeType.getName().equals(MIX_VERSIONABLE)) {
                 srcNode.removeMixin(nodeType.getName());
             }
         }
@@ -252,10 +269,10 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
                 String[] oldMixins = nodeInfo.getMixinNames();
                 Set<String> mixins = new HashSet<>();
                 for (String mixin : oldMixins) {
-                    if (!HippoNodeType.NT_HARDDOCUMENT.equals(mixin)) {
+                    if (!NT_HARDDOCUMENT.equals(mixin)) {
                         mixins.add(mixin);
                     } else {
-                        mixins.add(JcrConstants.MIX_VERSIONABLE);
+                        mixins.add(MIX_VERSIONABLE);
                     }
                 }
                 String[] newMixins = mixins.toArray(new String[mixins.size()]);
