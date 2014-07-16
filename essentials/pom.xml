@@ -33,6 +33,7 @@
 
   <properties>
     <notice.project.name>Hippo Essentials</notice.project.name>
+    <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
 
     <!--***START temporary override of versions*** -->
 

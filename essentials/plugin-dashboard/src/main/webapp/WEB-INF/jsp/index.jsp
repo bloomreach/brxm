@@ -134,7 +134,7 @@
 </div>
 
 <footer class="footer">
-  <p>&copy 1999-2014 Hippo B.V.</p>
+  <p>&copy 1999-2014 Hippo B.V. <span class="project-version">version: ${project.version}</span></p>
 </footer>
 
 <!-- Include the loader.js script -->

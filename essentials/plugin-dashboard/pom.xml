@@ -60,11 +60,28 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <warName>dashboard</warName>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <targetPath>WEB-INF/jsp</targetPath>
+              <directory>src/main/webapp/WEB-INF/jsp</directory>
+              <includes>
+                <include>**/*.jsp</include>
+              </includes>
+            </resource>
+          </webResources>
         </configuration>
       </plugin>
     </plugins>
     <finalName>dashboard</finalName>
     <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/webapp/WEB-INF/jsp</directory>
+        <includes>
+          <include>**/*.jsp</include>
+        </includes>
+      </resource>
       <resource>
         <filtering>false</filtering>
         <directory>src/main/resources</directory>
