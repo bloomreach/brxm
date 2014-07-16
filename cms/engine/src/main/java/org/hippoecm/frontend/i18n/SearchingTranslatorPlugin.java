@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
@@ -46,12 +47,12 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
     }
 
     public IModel getModel(Map<String, String> criteria) {
+        String  strQuery = "//element(*, " + HippoNodeType.NT_TRANSLATED+ ")[fn:name()='"
+                + StringCodecFactory.ISO9075Helper.encodeLocalName(NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_KEY)))
+                + "']/element(" + HippoNodeType.NT_TRANSLATION + ", " + HippoNodeType.HIPPO_TRANSLATION + ")[@" +
+                HippoNodeType.HIPPO_LANGUAGE + "='" + NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_LANGUAGE)) + "']";
         try {
             QueryManager qMgr = UserSession.get().getQueryManager();
-            String strQuery = "//element(*, " + HippoNodeType.NT_TRANSLATED+ ")[fn:name()='"
-                    + StringCodecFactory.ISO9075Helper.encodeLocalName(NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_KEY)))
-                    + "']/element(" + HippoNodeType.NT_TRANSLATION + ", " + HippoNodeType.HIPPO_TRANSLATION + ")[@" +
-                    HippoNodeType.HIPPO_LANGUAGE + "='" + NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_LANGUAGE)) + "']";
             Query query = qMgr.createQuery(strQuery, Query.XPATH);
             NodeIterator nodes = query.execute().getNodes();
             Set<NodeWrapper> list = new HashSet<NodeWrapper>();
@@ -61,8 +62,14 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
             if (list.size() > 0) {
                 return new TranslationSelectionStrategy<IModel>(criteria.keySet()).select(list).getModel();
             }
+        } catch (InvalidQueryException ex) {
+            log.info("For criteria '{}' the xpath query '{}' is not valid : {}", criteria.toString(), strQuery, ex.toString());
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            if (log.isDebugEnabled()) {
+                log.warn("RepositoryException", ex);
+            } else {
+                log.warn("RepositoryException : {}", ex.toString());
+            }
         }
         return null;
     }
