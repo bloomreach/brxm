@@ -231,7 +231,7 @@ public class FilterImpl implements Filter {
 
         final String stringValue;
         if (caseInsensitive && (value instanceof String)) {
-            stringValue = "fn:lower-case(" + getStringValue(value) + ")";
+            stringValue = "fn:lower-case(" + getStringValue(value).toLowerCase() + ")";
         } else {
             stringValue = getStringValue(value);
         }

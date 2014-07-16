@@ -51,6 +51,16 @@ public class TestHstFilters extends AbstractBeanTestCase {
         mainFilter.addEqualToCaseInsensitive("@b", "b");
         assertEquals("@a = fn:lower-case('a') and @b = fn:lower-case('b')",mainFilter.getJcrExpression());
     }
+
+    @Test
+    public void test_equal_to_case_insensitive_value_to_lowercase() throws Exception {
+        Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
+        mainFilter.addEqualToCaseInsensitive("@A", "aaAB");
+        assertEquals("@A = fn:lower-case('aaab')",mainFilter.getJcrExpression());
+
+        mainFilter.addEqualToCaseInsensitive("@B", "BB");
+        assertEquals("@A = fn:lower-case('aaab') and @B = fn:lower-case('bb')",mainFilter.getJcrExpression());
+    }
     
     /**
      * Combine some AND-ed filters
