@@ -264,6 +264,57 @@ public final class JavaSourceUtils {
         return classType.getName().getIdentifier();
     }
 
+
+    /**
+     * Add text to class comment (javadoc) node. If text already exists it will not be added
+     * @param content parsed content of an class
+     * @param text text to add
+     * @return rewritten source (with text node added to the javadoc)
+     */
+    @SuppressWarnings("unchecked")
+    public static String addClassJavaDoc(final String content, final String text) {
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(content);
+        final AST ast = unit.getAST();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        Javadoc javadoc = classType.getJavadoc();
+        if (javadoc == null) {
+            javadoc = ast.newJavadoc();
+            TextElement element = ast.newTextElement();
+            element.setText(text);
+            TagElement tag = ast.newTagElement();
+            tag.fragments().add(element);
+            javadoc.tags().add(tag);
+            classType.setJavadoc(javadoc);
+            return JavaSourceUtils.rewrite(unit, ast);
+        } else {
+            // check if text exists
+            final List<TagElement> tags = javadoc.tags();
+            for (TagElement tag : tags) {
+                @SuppressWarnings("rawtypes")
+                final List fragments = tag.fragments();
+                if (fragments != null) {
+                    for (Object fragment : fragments) {
+                        if (fragment instanceof TextElement) {
+                            final TextElement textNode = (TextElement) fragment;
+                            final String existingText = textNode.getText();
+                            if (existingText.equals(text)) {
+                                log.debug("Comment already in there: {}", existingText);
+                                return content;
+                            }
+                        }
+                    }
+                }
+            }
+            final TextElement element = ast.newTextElement();
+            element.setText(text);
+            final TagElement tag = ast.newTagElement();
+            tag.fragments().add(element);
+            javadoc.tags().add(tag);
+            return JavaSourceUtils.rewrite(unit, ast);
+        }
+
+    }
+
     /**
      * Adds {@code HippoEssentialsGenerated} annotation to provided java source file (class level)
      *
