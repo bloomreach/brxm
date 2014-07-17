@@ -80,6 +80,9 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
             if (isSystemExitCall(expression)) {
                 return false;
             }
+            if (isRuntimeCall(expression)) {
+                return false;
+            }
             if (isClassForNameCall(expression)) {
                 return false;
             }
@@ -94,6 +97,18 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
                         if (((MethodCallExpression) expression).getMethodAsString().equals("exit")) {
                             return true;
                         }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private boolean isRuntimeCall(final Expression expression) {
+            if (expression instanceof MethodCallExpression) {
+                final Expression objectExpression = ((MethodCallExpression) expression).getObjectExpression();
+                if (objectExpression instanceof ClassExpression) {
+                    if (objectExpression.getType().getName().equals(Runtime.class.getName())) {
+                        return true;
                     }
                 }
             }
