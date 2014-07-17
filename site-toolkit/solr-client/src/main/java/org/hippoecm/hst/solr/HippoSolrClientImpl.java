@@ -46,9 +46,17 @@ public class HippoSolrClientImpl implements HippoSolrClient {
     private SolrServer solrServer;
 
     private volatile List<ContentBeanBinder> defaultContentBeanBinders;
+    private DocumentObjectBinder documentObjectBinder;
 
+
+    @SuppressWarnings("UnusedDeclaration")
     public void setSolrUrl(String solrUrl) {
         this.solrUrl = solrUrl;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public void setDocumentObjectBinder(final DocumentObjectBinder documentObjectBinder) {
+        this.documentObjectBinder = documentObjectBinder;
     }
 
     @Override
@@ -122,7 +130,10 @@ public class HippoSolrClientImpl implements HippoSolrClient {
 
                 @Override
                 public org.apache.solr.client.solrj.beans.DocumentObjectBinder getBinder() {
-                    return new DocumentObjectBinder();
+                    if (documentObjectBinder == null) {
+                        return new DocumentObjectBinder();
+                    }
+                    return documentObjectBinder;
                 }
             };
         } catch (MalformedURLException e) {
