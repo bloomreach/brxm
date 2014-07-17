@@ -220,11 +220,7 @@
                                                 + (options.siblingId ? ('&sibling=' + options.siblingId) : '') : '')), menuItem)
                             .then(function(response) {
                                         menuItem.id = response.data;
-                                        loadMenu().then(function() {
-                                            deferred.resolve(response.data);
-                                        }, function () {
-                                            deferred.resolve(response.data);
-                                        });
+                                        deferred.resolve(response.data);
                                     }, function (errorResponse) {
                                         deferred.reject(errorResponse);
                                     });
