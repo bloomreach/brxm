@@ -49,8 +49,8 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
 
     @Override
     public String loadStringResource(final Component component, final String key, final Locale locale, final String style, final String variation) {
-        IStringResourceProvider provider;
         long start = System.nanoTime();
+        final IStringResourceProvider provider;
         if (component instanceof IStringResourceProvider) {
             provider = (IStringResourceProvider) component;
         } else if (component != null) {
@@ -60,11 +60,11 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
         }
         if (provider != null) {
 
-            CacheKey cacheKey =  new CacheKey(provider.getClass().getName(), key, locale);
+            final CacheKey cacheKey = new CacheKey(provider.getClass().getName(), key, locale, component.getStyle());
             final Optional<String> optional = stringResourceCache.getIfPresent(cacheKey);
             if (optional != null) {
                 final String s = optional.orNull();
-                log.info("Found cached value '{}' for key '{}'",s, cacheKey);
+                log.info("Found cached value '{}' for key '{}'", s, cacheKey);
                 return s;
             }
             Map<String, String> keys = new TreeMap<>();
@@ -102,11 +102,11 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
 
             if (result != null) {
                 if (log.isInfoEnabled()) {
-                    log.info("Took {} milliseconds to find resource '{}' for key '{}'.", ((System.nanoTime() - start)/1000000.0), result, cacheKey);
+                    log.info("Took {} milliseconds to find resource '{}' for key '{}'.", ((System.nanoTime() - start) / 1000000.0), result, cacheKey);
                 }
             } else {
                 if (log.isInfoEnabled()) {
-                    log.info("Took {} milliseconds to not find resource for key '{}'.", ((System.nanoTime() - start)/1000000.0), cacheKey);
+                    log.info("Took {} milliseconds to not find resource for key '{}'.", ((System.nanoTime() - start) / 1000000.0), cacheKey);
                 }
             }
             // regardless null or not, cache result
@@ -126,11 +126,13 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
         private final String className;
         private final String key;
         private final Locale locale;
+        private final String style;
 
-        public CacheKey(final String className, final String key, final Locale locale) {
+        public CacheKey(final String className, final String key, final Locale locale, final String style) {
             this.className = className;
             this.key = key;
             this.locale = locale;
+            this.style = style;
         }
 
         @Override
@@ -153,6 +155,9 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
             if (!className.equals(cacheKey.className)) {
                 return false;
             }
+            if (style != null ? !style.equals(cacheKey.style) : cacheKey.style != null) {
+                return false;
+            }
 
             return true;
         }
@@ -162,6 +167,7 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
             int result = className.hashCode();
             result = 31 * result + key.hashCode();
             result = 31 * result + locale.hashCode();
+            result = 31 * result + (style != null ? style.hashCode() : 0);
             return result;
         }
 
@@ -171,6 +177,7 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
                     "className='" + className + '\'' +
                     ", key='" + key + '\'' +
                     ", locale=" + locale +
+                    ", style='" + style + '\'' +
                     '}';
         }
     }
