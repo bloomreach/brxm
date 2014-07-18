@@ -164,7 +164,7 @@ angular/components/angular-route/*
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/angular-ui-tree/dist/angular-ui-tree.min.js
+angular/components/angular-ui-tree/dist/angular-ui-tree.min.*.js
 
     The MIT License (MIT)
 
@@ -188,8 +188,8 @@ angular/components/angular-ui-tree/dist/angular-ui-tree.min.js
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/angular-translate/angular-translate.min.js
-angular/components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js
+angular/components/angular-translate/angular-translate.min.*.js
+angular/components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.*.js
 
     The MIT License (MIT)
 
@@ -214,7 +214,7 @@ angular/components/angular-translate-loader-static-files/angular-translate-loade
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/angular-ui-router/release/angular-ui-router.min.js
+angular/components/angular-ui-router/release/angular-ui-router.min.*.js
 
     The MIT License
 
@@ -239,7 +239,7 @@ angular/components/angular-ui-router/release/angular-ui-router.min.js
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/bootstrap/dist/js/bootstrap.js
+angular/components/bootstrap/dist/js/bootstrap.min.*.js
 
     The MIT License (MIT)
 
@@ -264,7 +264,7 @@ angular/components/bootstrap/dist/js/bootstrap.js
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/chosen/chosen.jquery.min.js
+angular/components/chosen/chosen.jquery.min.*.js
 
     - by Patrick Filler for [Harvest](http://getharvest.com)
     - Copyright (c) 2011-2014 by Harvest
@@ -290,7 +290,7 @@ angular/components/chosen/chosen.jquery.min.js
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/es5-shim/es5-shim.min.js
+angular/components/es5-shim/es5-shim.min.*.js
 
     Copyright (C) 2009-2014 Kristopher Michael Kowal and contributors
 
@@ -320,9 +320,9 @@ angular/components/font-awesome/fonts/*
     For general information about the SIL OFL License: http://scripts.sil.org/OFL
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/hippo-plugins/dist/js/main.min.js
-angular/components/hippo-theme/dist/css/main.min.css
-angular/components/hippo-theme/dist/js/main.js
+angular/components/hippo-plugins/dist/js/main.min.*.js
+angular/components/hippo-theme/dist/css/main.min.*.css
+angular/components/hippo-theme/dist/js/main.min.*.js
 
     Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -364,7 +364,7 @@ angular/components/jquery/*
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/respond/dest/respond.src.js
+angular/components/respond/dest/respond.min.*.js
 
     Copyright (c) 2012 Scott Jehl
 
@@ -390,7 +390,7 @@ angular/components/respond/dest/respond.src.js
     OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/underscore/*
+angular/components/underscore/underscore-min.*.js
 
     Copyright (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative
     Reporters & Editors
