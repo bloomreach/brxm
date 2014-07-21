@@ -234,7 +234,8 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         }
 
         private boolean isValidEvent(final Node node) throws RepositoryException {
-            return !JcrUtils.getBooleanProperty(node, "hippolog:system", Boolean.FALSE);
+            return !JcrUtils.getBooleanProperty(node, "hippolog:system", Boolean.FALSE)
+                    && JcrUtils.getStringProperty(node, "hippolog:exception", null) == null;
         }
 
     }

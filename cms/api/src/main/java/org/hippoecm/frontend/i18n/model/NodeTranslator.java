@@ -110,7 +110,9 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                 stopObservation();
             }
             accessed = new HashSet<JcrNodeModel>();
-            accessed.add(nodeModel.getParentModel());
+            if (nodeModel.getParentModel() != null) {
+                accessed.add(nodeModel.getParentModel());
+            }
 
             try {
                 Node node = nodeModel.getObject();
