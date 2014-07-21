@@ -285,9 +285,9 @@ public class HstManagerImpl implements MutableHstManager {
                             state = BuilderState.FAILED;
                             consecutiveBuildFailCounter++;
                             if (prevVirtualHostsModel == null) {
-                                throw new ContainerException("HST model failed to load", e);
+                                throw new ContainerException("HST model failed to load : " + e.toString(), e);
                             } else {
-                                log.warn("Exception during model loading happened. Return previous stale model. Reason: ", e);
+                                log.warn("Exception during model loading happened. Return previous stale model. Reason: " + e.toString(), e);
                             }
                             return prevVirtualHostsModel;
                         }
