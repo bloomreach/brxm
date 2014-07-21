@@ -219,10 +219,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String currentTime = null;
         for (int i = 0; i + 1 < values.length; i += 2) {
             String newValue = values[i + 1];
-            if (newValue.equals("$name")) {
-                newValue = name;
+            String[] newValues = null;
+            if (newValue == null) {
+                continue;
+            }
+            else if (newValue.equals("$name")) {
+                newValues = new String[] { name };
             } else if (newValue.equals("$holder")) {
-                newValue = workflowContext.getUserIdentity();
+                newValues = new String[] { workflowContext.getUserIdentity() };
             } else if (newValue.equals("$now")) {
                 if (currentTime == null) {
                     currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -230,43 +234,48 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     currentTime = currentTime.substring(0, currentTime.length() - 2) + ":"
                             + currentTime.substring(currentTime.length() - 2);
                 }
-                newValue = currentTime;
+                newValues = new String[] { currentTime };
             } else if (newValue.startsWith("$inherit")) {
                 String relpath = values[i];
                 String propPath = relpath.substring(relpath.lastIndexOf('/') + 1);
                 if (arguments.containsKey(propPath)) {
-                    newValue = arguments.get(propPath);
+                    newValues = new String[] { arguments.get(propPath) };
                 } else {
                     final HierarchyResolver hr = ((HippoWorkspace) rootSession.getWorkspace()).getHierarchyResolver();
                     Property parentProperty = hr.getProperty(target, propPath);
                     if (parentProperty == null) {
                         continue;
                     } else {
-                        newValue = parentProperty.getValue().getString();
+                        if (parentProperty.isMultiple()) {
+                            final Value[] parentPropertyValues = parentProperty.getValues();
+                            newValues = new String[parentPropertyValues.length];
+                            for (int j = 0; j < parentPropertyValues.length; j++) {
+                                newValues[j] = parentPropertyValues[j].getString();
+                            }
+                        } else {
+                            newValues = new String[] { parentProperty.getValue().getString() };
+                        }
                     }
                 }
             } else if (newValue.startsWith("$uuid")) {
-                newValue = UUID.randomUUID().toString();
+                newValues = new String[] { UUID.randomUUID().toString() };
             } else if (newValue.startsWith("$")) {
                 String key = newValue.substring(1);
                 if (arguments.containsKey(key)) {
-                    newValue = arguments.get(key);
-                } else {
-                    newValue = null;
+                    newValues = new String[] { arguments.get(key) };
                 }
-            }
-            if (renames.containsKey(values[i])) {
-                String[] oldValues = renames.get(values[i]);
-                String[] newValues = new String[oldValues.length + 1];
-                System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                newValues[oldValues.length] = newValue;
-                renames.put(values[i], newValues);
             } else {
-                if (newValue == null) {
-                    renames.put(values[i], null);
-                } else {
-                    renames.put(values[i], new String[] { newValue });
+                newValues = new String[] { newValue };
+            }
+            if (newValues != null) {
+                String[] oldValues = renames.get(values[i]);
+                if (oldValues != null) {
+                    String[] tmpValues = newValues;
+                    newValues = new String[oldValues.length + newValues.length];
+                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                    System.arraycopy(tmpValues, 0, newValues, oldValues.length, tmpValues.length);
                 }
+                renames.put(values[i], newValues);
             }
         }
     }
