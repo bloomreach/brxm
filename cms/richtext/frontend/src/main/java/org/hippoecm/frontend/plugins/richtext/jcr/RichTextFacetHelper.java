@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
@@ -67,7 +68,7 @@ public class RichTextFacetHelper {
 
     public static String getChildDocBaseOrNull(final Node node, final String childNodeName) {
         try {
-            if (node.hasNode(childNodeName)) {
+            if (isRelativePath(childNodeName) && node.hasNode(childNodeName)) {
                 final Node child = node.getNode(childNodeName);
                 return getDocBaseOrNull(child);
             }
@@ -77,6 +78,10 @@ public class RichTextFacetHelper {
             log.warn("Cannot get child node '{}'", childNodePath, e);
         }
         return null;
+    }
+
+    private static boolean isRelativePath(final String childNodeName) {
+        return StringUtils.isNotEmpty(childNodeName) && !StringUtils.startsWith(childNodeName, "/");
     }
 
     private static String getDocBaseOrNull(final Node node) throws RepositoryException {
