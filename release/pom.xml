@@ -42,7 +42,7 @@
     <hippo.addon-hst-configuration-editor.version>1.13.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.26.02</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>1.03.01-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>1.04.01-SNAPSHOT</hippo.commons.version>
+    <hippo.commons.version>1.04.01</hippo.commons.version>
     <hippo.cms.version>2.26.04</hippo.cms.version>
     <hippo.frontend.plugins.version>1.01.01-SNAPSHOT</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>1.01.01-SNAPSHOT</hippo.frontend.theme.version>
