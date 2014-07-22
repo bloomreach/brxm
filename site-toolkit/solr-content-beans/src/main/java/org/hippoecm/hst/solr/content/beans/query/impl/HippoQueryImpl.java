@@ -88,7 +88,6 @@ public class HippoQueryImpl implements HippoQuery {
             solrQuery.setRows(HippoQuery.DEFAULT_LIMIT);
         }
 
-
         // We ALWAYS need to fetch the following STORED properties (perhaps they are missing, however we need to try to fetch them)
         // if the getFields does not start with * we need to include the fields below
         // 1. id

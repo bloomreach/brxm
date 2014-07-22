@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.solr;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
@@ -115,30 +114,18 @@ public class HippoSolrClientImpl implements HippoSolrClient {
                 throw new SolrServerException("Solr server not available");
             }
         }
-        try {
 
-            /*
-            CommonsHttpSolrServer is thread-safe and if you are using the following constructor,
-            you *MUST* re-use the same instance for all requests.  If instances are created on
-            the fly, it can cause a connection leak. The recommended practice is to keep a
-            static instance of CommonsHttpSolrServer per solr server url and share it for all requests.
-            See https://issues.apache.org/jira/browse/SOLR-861 for more details
-            */
+        solrServer = new HttpSolrServer(solrUrl) {
+            private static final long serialVersionUID = 1L;
 
-            solrServer = new CommonsHttpSolrServer(solrUrl) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public org.apache.solr.client.solrj.beans.DocumentObjectBinder getBinder() {
-                    if (documentObjectBinder == null) {
-                        return new DocumentObjectBinder();
-                    }
-                    return documentObjectBinder;
+            @Override
+            public org.apache.solr.client.solrj.beans.DocumentObjectBinder getBinder() {
+                if (documentObjectBinder == null) {
+                    return new DocumentObjectBinder();
                 }
-            };
-        } catch (MalformedURLException e) {
-            throw new SolrServerException("Malformed solr URL '"+solrUrl+"'");
-        }
+                return documentObjectBinder;
+            }
+        };
 
         if (!isSolrServerLive()) {
             throw new SolrServerException("Solr server not available");
