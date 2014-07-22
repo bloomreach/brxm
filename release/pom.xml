@@ -48,7 +48,7 @@
     <hippo.frontend.theme.version>1.01.01</hippo.frontend.theme.version>
     <hippo.hst.version>2.28.05</hippo.hst.version>
     <hippo.packages.version>2.26.00</hippo.packages.version>
-    <hippo.release.version>7.9.1</hippo.release.version>
+    <hippo.release.version>7.9.2-SNAPSHOT</hippo.release.version>
     <hippo.repository.version>2.26.04</hippo.repository.version>
     <hippo.services.version>1.04.01</hippo.services.version>
     <hippo.services.eventbus.version>1.04.01</hippo.services.eventbus.version>
