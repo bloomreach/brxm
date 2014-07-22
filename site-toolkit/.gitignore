@@ -74,10 +74,12 @@ components/jaxrs/.project
 components/jaxrs/.settings
 components/jaxrs/hst-jaxrs.iml
 components/jaxrs/target
+components/resourcebundle-cnd/*.iml
 components/resourcebundle-cnd/.classpath
 components/resourcebundle-cnd/.project
 components/resourcebundle-cnd/.settings
 components/resourcebundle-cnd/target
+components/resourcebundle/*.iml
 components/resourcebundle/.classpath
 components/resourcebundle/.project
 components/resourcebundle/.settings
@@ -109,10 +111,12 @@ dependencies/client-dependencies/.project
 dependencies/client-dependencies/.settings
 dependencies/client-dependencies/hst-client-dependencies.iml
 dependencies/client-dependencies/target
+dependencies/cms-dependencies/*.iml
 dependencies/cms-dependencies/.project
 dependencies/cms-dependencies/.settings
 dependencies/cms-dependencies/target
 dependencies/dependencies.iml
+dependencies/repository-dependencies/*.iml
 dependencies/repository-dependencies/.project
 dependencies/repository-dependencies/.settings
 dependencies/repository-dependencies/target
