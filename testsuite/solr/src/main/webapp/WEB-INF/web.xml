@@ -59,14 +59,14 @@
          You will need to put this prefix in front of the SolrDispatchFilter
          url-pattern mapping too (/solr/*), and also on any paths for
          legacy Solr servlet mappings you may be using.
-         For the admin JSP's to work properly in a path-prefixed configuration,
-         the admin folder containing the JSPs needs to be under the app context root
+         For the Admin UI to work properly in a path-prefixed configuration,
+         the admin folder containing the resources needs to be under the app context root
          named to match the path-prefix.  For example:
 
             .war
                xxx
-                 admin
-                   stats.jsp
+                 js
+                   main.js
     -->
     <!--
     <init-param>
@@ -99,57 +99,41 @@
   </listener>
 
   <servlet>
-    <description>Solr Server</description>
-    <display-name>Solr</display-name>
-    <servlet-name>SolrServer</servlet-name>
-    <servlet-class>org.apache.solr.servlet.SolrServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
+    <servlet-name>LoadAdminUI</servlet-name>
+    <servlet-class>org.apache.solr.servlet.LoadAdminUiServlet</servlet-class>
   </servlet>
 
   <servlet>
-    <description>Solr Update Handler</description>
-    <display-name>SolrUpdate</display-name>
-    <servlet-name>SolrUpdate</servlet-name>
-    <servlet-class>org.apache.solr.servlet.SolrUpdateServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
+    <servlet-name>SolrRestApi</servlet-name>
+    <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+    <init-param>
+      <param-name>org.restlet.application</param-name>
+      <param-value>org.apache.solr.rest.SolrSchemaRestApi</param-value>
+    </init-param>
   </servlet>
 
   <servlet>
-    <servlet-name>Logging</servlet-name>
-    <servlet-class>org.apache.solr.servlet.LogLevelSelection</servlet-class>
+    <servlet-name>SolrConfigRestApi</servlet-name>
+    <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+    <init-param>
+      <param-name>org.restlet.application</param-name>
+      <param-value>org.apache.solr.rest.SolrConfigRestApi</param-value>
+    </init-param>
   </servlet>
 
-  <!-- @Deprecated -->
-  <servlet>
-    <servlet-name>ping</servlet-name>
-    <jsp-file>/admin/ping.jsp</jsp-file>
-  </servlet>
-
   <servlet-mapping>
-    <servlet-name>SolrServer</servlet-name>
-    <url-pattern>/select/*</url-pattern>
+    <servlet-name>LoadAdminUI</servlet-name>
+    <url-pattern>/admin.html</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>SolrUpdate</servlet-name>
-    <url-pattern>/update/*</url-pattern>
+    <servlet-name>SolrRestApi</servlet-name>
+    <url-pattern>/schema/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>Logging</servlet-name>
-    <url-pattern>/admin/logging</url-pattern>
-  </servlet-mapping>
-
-  <!-- @Deprecated -->
-  <servlet-mapping>
-    <servlet-name>ping</servlet-name>
-    <url-pattern>/admin/ping</url-pattern>
-  </servlet-mapping>
-
-  <!-- @Deprecated -->
-  <servlet-mapping>
-    <servlet-name>Logging</servlet-name>
-    <url-pattern>/admin/logging.jsp</url-pattern>
+    <servlet-name>SolrConfigRestApi</servlet-name>
+    <url-pattern>/config/*</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
@@ -159,8 +143,6 @@
   </mime-mapping>
 
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>index.html</welcome-file>
+    <welcome-file>admin.html</welcome-file>
   </welcome-file-list>
-
 </web-app>

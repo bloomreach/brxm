@@ -16,6 +16,7 @@
 package org.hippoecm.hst.demo.components;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -43,16 +44,18 @@ public class SolrRight extends AbstractSearchComponent {
             HippoQuery hippoQuery = solrClient.createQuery(suggest);
 
             // we want to get suggestions/autocompletion/didyoumean only!
-            hippoQuery.getSolrQuery().setQueryType("suggest");
+            hippoQuery.getSolrQuery().setRequestHandler("suggest");
             HippoQueryResult result = hippoQuery.execute();
 
             // we do not need to bind the beans with their providers for faceting, so no need for
             // result.bindHits()
 
             // because suggestions reuse the spell check component, we can use the spell check response
-            request.setAttribute("collated",result.getQueryResponse().getSpellCheckResponse().getCollatedResult());
-            request.setAttribute("suggestions",result.getQueryResponse().getSpellCheckResponse().getSuggestions());
-
+            final SpellCheckResponse spellCheckResponse = result.getQueryResponse().getSpellCheckResponse();
+            if (spellCheckResponse != null) {
+                request.setAttribute("collated", spellCheckResponse.getCollatedResult());
+                request.setAttribute("suggestions", spellCheckResponse.getSuggestions());
+            }
 
         } catch (SolrServerException e) {
             throw new HstComponentException(e);

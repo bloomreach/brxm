@@ -58,7 +58,7 @@
 
     <jmxremote.port>9875</jmxremote.port>
 
-    <dependency.solr.version>3.5.0</dependency.solr.version>
+    <dependency.solr.version>4.9.0</dependency.solr.version>
 
     <json-lib.version>2.2.2</json-lib.version>
 
