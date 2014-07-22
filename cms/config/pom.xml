@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms</artifactId>
-    <version>2.26.04-SNAPSHOT</version>
+    <version>2.26.04</version>
   </parent>
 
   <name>CMS Package Configuration</name>
