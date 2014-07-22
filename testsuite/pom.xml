@@ -332,10 +332,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
-                <!-- copy of the Apache Solr admin webapp -->
-                <exclude>solr/src/main/webapp/index.jsp</exclude>
-                <exclude>solr/src/main/webapp/admin/**</exclude>
-                <exclude>solr/src/main/webapp/WEB-INF/solr/**</exclude>
+                <exclude>solr/src/main/webapp/**</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml</exclude>
                 <exclude>resources/src/main/webapp/css/yui-2.8.1-reset-fonts-grids.css</exclude>
