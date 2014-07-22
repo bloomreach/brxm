@@ -99,6 +99,9 @@
        replication is in use, this should match the replication
        configuration.
     -->
+  <!-- bit hacky: In case there is no explicit repo path, this will result in something like
+  ../..//home/user/.... which will work correctly also.
+  -->
   <dataDir>../../${repo.path:}/solr</dataDir>
 
   <!--<dataDir>/home/aschrijvers/hippo-projects/TESTSUITE/trunk/SOLRREPO/solr</dataDir>-->
