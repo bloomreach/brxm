@@ -41,9 +41,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/branches/services-eventbus-1.04.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/branches/services-eventbus-1.04.xx</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/branches/services-eventbus-1.04.xx</url>
   </scm>
 
   <repositories>
