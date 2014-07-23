@@ -31,9 +31,9 @@
   <inceptionYear>2008</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/branches/hippo-packages-2.26.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/branches/hippo-packages-2.26.xx</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/branches/hippo-packages-2.26.xx</url>
   </scm>
 
   <properties>
