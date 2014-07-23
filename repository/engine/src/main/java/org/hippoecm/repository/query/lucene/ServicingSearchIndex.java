@@ -21,10 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -382,7 +383,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     @Override
     public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add) throws RepositoryException, IOException {
-        List<NodeState> includedNodeStates = new ArrayList<>();
+        Map<NodeId, NodeState> includedNodeStates = new HashMap<>();
         // since NodeState does not have hashcode/equals impls, we need to use NodeId for caches
         Set<NodeId> excludedIdsCache = new HashSet<>();
         Set<NodeId> includedIdsCache = new HashSet<>();
@@ -390,24 +391,30 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             NodeState state = add.next();
             if (state != null) {
                 if (!skipIndexing(state, excludedIdsCache, includedIdsCache)) {
-                    includedNodeStates.add(state);
+                    includedNodeStates.put(state.getNodeId(), state);
                 } else {
                     log.debug("Nodestate '{}' is marked to be skipped for indexing.", state.getId());
                 }
             }
         }
 
-        final NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(includedNodeStates.iterator());
-        final NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
-        super.updateNodes(removedIt, addedIt);
-        updateContainingDocumentNodes(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
-        updateSiblingDocumentStates(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
+        NodeIdsNodeStatesHolder augmentedNodeIdsNodeStatesHolder = new NodeIdsNodeStatesHolder(remove, includedNodeStates);
+        augmentDocumentsToUpdate(augmentedNodeIdsNodeStatesHolder);
+
+        super.updateNodes(augmentedNodeIdsNodeStatesHolder.remove.iterator(),
+                augmentedNodeIdsNodeStatesHolder.add.values().iterator());
+
     }
 
-    private void updateSiblingDocumentStates(final List<NodeState> addedStates, final List<NodeId> addedIds, final List<NodeId> removedIds) throws IOException, RepositoryException {
-        final List<NodeState> updateDocumentStates = new ArrayList<>();
-        final List<NodeId> updateDocumentIds = new ArrayList<>();
-        for (NodeState addedState : addedStates) {
+    private void augmentDocumentsToUpdate(final NodeIdsNodeStatesHolder augmentedNodeIdsNodeStatesHolder) throws IOException, RepositoryException {
+        appendContainingDocumentStates(augmentedNodeIdsNodeStatesHolder);
+        appendDocumentsForTranslations(augmentedNodeIdsNodeStatesHolder);
+    }
+
+    private void appendDocumentsForTranslations(NodeIdsNodeStatesHolder nodeIdsNodeStatesHolder) throws IOException, RepositoryException {
+        List<NodeState> toAdd = new ArrayList<>();
+        for (Map.Entry<NodeId, NodeState> addEntry : nodeIdsNodeStatesHolder.add.entrySet()) {
+            final NodeState addedState = addEntry.getValue();
             if (!isTranslation(addedState.getNodeTypeName())) {
                 continue;
             }
@@ -422,28 +429,30 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 }
                 for (ChildNodeEntry siblingNodeEntry : parentState.getChildNodeEntries()) {
                     final NodeId siblingId = siblingNodeEntry.getId();
-                    if (siblingId.equals(addedState.getId())) {
+
+                    if(nodeIdsNodeStatesHolder.add.containsKey(siblingId) ||
+                            nodeIdsNodeStatesHolder.remove.contains(siblingId)) {
                         continue;
                     }
-                    if (addedIds.contains(siblingId) || removedIds.contains(siblingId)) {
-                        continue;
-                    }
-                    if (updateDocumentIds.contains(siblingId)) {
-                        continue;
-                    }
+
                     final NodeState siblingState = getNodeState(siblingId);
                     if (!isHippoDocument(siblingState)) {
                         continue;
                     }
-                    updateDocumentStates.add(siblingState);
-                    updateDocumentIds.add(siblingId);
+
+                    if(nodeIdsNodeStatesHolder.add.containsKey(siblingId) ||
+                            nodeIdsNodeStatesHolder.remove.contains(siblingId)) {
+                        continue;
+                    }
+                    toAdd.add(siblingState);
                 }
             } catch (ItemStateException e) {
                 log.debug("Unable to retrieve state: {}", e.getMessage());
             }
         }
-        if (!updateDocumentStates.isEmpty()) {
-            super.updateNodes(updateDocumentIds.iterator(), updateDocumentStates.iterator());
+        for (NodeState nodeState : toAdd) {
+            nodeIdsNodeStatesHolder.add.put(nodeState.getNodeId(), nodeState);
+            nodeIdsNodeStatesHolder.remove.add(nodeState.getNodeId());
         }
     }
 
@@ -451,32 +460,29 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * If node states have been updated that are descendants of hippo:document nodes, then those hippo:document
      * nodes need to be re-indexed.
      */
-    private void updateContainingDocumentNodes(final List<NodeState> addedStates,
-                                               final List<NodeId> addedIds,
-                                               final List<NodeId> removedIds) throws RepositoryException, IOException {
-        final Set<NodeId> checkedIds = new HashSet<NodeId>();
-        final List<NodeState> updateDocumentStates = new ArrayList<NodeState>();
-        final List<NodeId> updateDocumentIds = new ArrayList<NodeId>();
-        for (NodeState addedState : addedStates) {
+    private void appendContainingDocumentStates(NodeIdsNodeStatesHolder nodeIdsNodeStatesHolder) throws RepositoryException, IOException {
+        final Set<NodeId> checkedIds = new HashSet<>();
+        List<NodeState> toAdd = new ArrayList<>();
+        for (Map.Entry<NodeId, NodeState> addEntry : nodeIdsNodeStatesHolder.add.entrySet()) {
             try {
-                NodeState document = getContainingDocument(addedState, checkedIds);
-                if (document != null && !addedIds.contains(document.getNodeId())
-                        && !updateDocumentIds.contains(document.getNodeId())) {
-                    if (!removedIds.contains(document.getNodeId())) {
-                        updateDocumentStates.add(document);
-                        updateDocumentIds.add(document.getNodeId());
+                NodeState document = getContainingDocument(addEntry.getValue(), checkedIds);
+                if (document != null) {
+                    final NodeId nodeId = document.getNodeId();
+                    if(nodeIdsNodeStatesHolder.add.containsKey(nodeId) ||
+                            nodeIdsNodeStatesHolder.remove.contains(nodeId)) {
+                        continue;
                     }
+                    toAdd.add(document);
                 }
             } catch (ItemStateException e) {
                 log.debug("Unable to retrieve state: {}", e.getMessage());
             }
         }
-
-        if (!updateDocumentStates.isEmpty()) {
-            super.updateNodes(updateDocumentIds.iterator(), updateDocumentStates.iterator());
+        for (NodeState nodeState : toAdd) {
+            nodeIdsNodeStatesHolder.add.put(nodeState.getNodeId(), nodeState);
+            nodeIdsNodeStatesHolder.remove.add(nodeState.getNodeId());
         }
     }
-
 
     @Override
     protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
@@ -772,66 +778,18 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return getContext().getItemStateManager();
     }
 
-    private class NodeIdIteratorImpl implements Iterator<NodeId> {
+    private class NodeIdsNodeStatesHolder {
 
-        private final Iterator iter;
-        List<NodeId> processedIds = new ArrayList<NodeId>();
+        Set<NodeId> remove = new HashSet<>();
+        // NodeState does not implement equals hence we need NodeId
+        Map<NodeId, NodeState> add = new HashMap<>();
 
-        public NodeIdIteratorImpl(Iterator iterator) {
-            this.iter = iterator;
-        }
-
-        public NodeId nextNodeId() throws NoSuchElementException {
-            NodeId id = (NodeId) iter.next();
-            processedIds.add(id);
-            return id;
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean hasNext() {
-            return iter.hasNext();
-        }
-
-        public NodeId next() {
-            return nextNodeId();
-        }
-
-    }
-
-    private class NodeStateIteratorImpl implements Iterator<NodeState> {
-        Iterator process;
-        List<NodeState> processedStates = new ArrayList<NodeState>();
-        List<NodeId> processedIds = new ArrayList<NodeId>();
-
-        NodeStateIteratorImpl(Iterator process) {
-            this.process = process;
-        }
-
-        public NodeState nextNodeState() throws NoSuchElementException {
-            NodeState state = (NodeState) process.next();
-            if (state != null) {
-                processedStates.add(state);
-                processedIds.add(state.getNodeId());
+        NodeIdsNodeStatesHolder(Iterator<NodeId> remove, Map<NodeId, NodeState> add) {
+            while(remove.hasNext()) {
+                this.remove.add(remove.next());
             }
-            return state;
+            this.add = add;
         }
-
-        public boolean hasNext() {
-            return process.hasNext();
-        }
-
-        public NodeState next() {
-            return nextNodeState();
-        }
-
-        public void remove() {
-            process.remove();
-        }
-
     }
-
 
 }
