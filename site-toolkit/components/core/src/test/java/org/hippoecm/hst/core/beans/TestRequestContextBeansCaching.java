@@ -44,18 +44,14 @@ import static org.junit.Assert.assertTrue;
 
 public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
 
-    private ContentBeansTool contentBeansTool;
+    private DefaultContentBeansTool contentBeansTool;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         HstQueryManagerFactory qmf = getComponent(HstQueryManagerFactory.class.getName());
-        contentBeansTool = new DefaultContentBeansTool(qmf) {
-            @Override
-            public ObjectConverter getObjectConverter() {
-                return TestRequestContextBeansCaching.this.getObjectConverter();
-            }
-        };
+        contentBeansTool = new DefaultContentBeansTool(qmf);
+        contentBeansTool.setAnnotatedClassesResourcePath("classpath*:org/hippoecm/hst/core/beans/**.class");
     }
 
     @After
