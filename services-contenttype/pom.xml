@@ -40,9 +40,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/branches/hippo-services-contenttype-1.04.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/branches/hippo-services-contenttype-1.04.xx</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/branches/hippo-services-contenttype-1.04.xx</url>
   </scm>
 
   <repositories>
