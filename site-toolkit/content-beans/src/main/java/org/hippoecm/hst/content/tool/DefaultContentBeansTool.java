@@ -18,15 +18,14 @@ package org.hippoecm.hst.content.tool;
 import java.util.List;
 
 import javax.jcr.Session;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ClasspathResourceScanner;
@@ -50,8 +49,27 @@ public class DefaultContentBeansTool implements ContentBeansTool {
      */
     private ObjectConverter objectConverter;
 
+    private String annotatedClassesResourcePath;
+
     public DefaultContentBeansTool(HstQueryManagerFactory queryManagerFactory) {
         this.queryManagerFactory = queryManagerFactory;
+    }
+
+    /**
+     * Gets the manually configured annotated classes resource path.
+     * @return
+     */
+    public String getAnnotatedClassesResourcePath() {
+        return annotatedClassesResourcePath;
+    }
+
+    /**
+     * Sets the annotated classes resource path manually.
+     * If not set, then it reads the servlet context init parameter named 'hst-beans-annotated-classes' by default.
+     * @param annotatedClassesResourcePath
+     */
+    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
+        this.annotatedClassesResourcePath = annotatedClassesResourcePath;
     }
 
     public ObjectConverter getObjectConverter() {
@@ -85,14 +103,24 @@ public class DefaultContentBeansTool implements ContentBeansTool {
     }
 
     private List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner classpathResourceScanner) {
-        HstRequestContext requestContext = RequestContextProvider.get();
+        List<Class<? extends HippoBean>> annotatedClasses = null;
 
-        if (requestContext == null) {
-            throw new IllegalStateException("HstRequestContext is not set in handler.");
+        String ocmAnnotatedClassesResourcePath = getAnnotatedClassesResourcePath();
+
+        // if not manually configured, then read it from servlet context init parameter.
+        if (ocmAnnotatedClassesResourcePath == null) {
+            ServletContext servletContext = HstServices.getComponentManager().getServletContext();
+
+            if (servletContext == null) {
+                throw new IllegalStateException("ServletContext is not found.");
+            }
+
+            ocmAnnotatedClassesResourcePath = servletContext.getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
         }
 
-        List<Class<? extends HippoBean>> annotatedClasses = null;
-        String ocmAnnotatedClassesResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+        if (ocmAnnotatedClassesResourcePath == null) {
+            throw new IllegalStateException("No content bean annotation class resource path found.");
+        }
 
         try {
             annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));

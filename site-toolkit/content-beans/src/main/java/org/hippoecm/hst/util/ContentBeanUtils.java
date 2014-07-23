@@ -58,6 +58,12 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Note most of the utilities in this class rely on that the {@link HstRequestContext} is available via a thread local via
+ * {@link org.hippoecm.hst.container.RequestContextProvider#get()}. This is the case when this utility is used in the context
+ * of HST request processing. If you only include the hst-content-beans dependency to a project, the utility method in this
+ * class do not function
+ */
 public class ContentBeanUtils {
 
     private final static Logger log = LoggerFactory.getLogger(ContentBeanUtils.class);
