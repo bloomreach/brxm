@@ -110,9 +110,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/site-toolkit/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/site-toolkit/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/site-toolkit/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/site-toolkit/branches/hst-2.28.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/site-toolkit/branches/hst-2.28.xx</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/site-toolkit/branches/hst-2.28.xx</url>
   </scm>
 
   <mailingLists>
