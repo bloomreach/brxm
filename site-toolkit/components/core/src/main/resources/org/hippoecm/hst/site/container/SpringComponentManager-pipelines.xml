@@ -248,6 +248,32 @@
             </property>
           </bean>
         </entry>
+
+        <!-- PlainFilterChainInvokingPipeline Pipeline that only does
+            initializationValve and cleanup valves and does not have things like  securityValve or
+            subjectBasedSessionValve but directly delegates to the next servlet filter / servlet
+             -->
+        <entry key="PlainFilterChainInvokingPipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="filterChainInvokingValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="cleanupValve" />
+                <ref bean="diagnosticReportingValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+
         <!-- ESI (component window) Include Rendering Pipeline -->
         <entry key="ESIIncludePipeline">
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
