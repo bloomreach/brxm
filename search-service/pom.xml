@@ -28,7 +28,7 @@
   <url>http://www.onehippo.com/</url>
 
   <artifactId>hippo-search-service</artifactId>
-  <version>1.03.01-SNAPSHOT</version>
+  <version>1.04.00-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2012</inceptionYear>
 
@@ -435,9 +435,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/branches/hippo-search-service-1.03.xx</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/branches/hippo-search-service-1.03.xx</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/branches/hippo-search-service-1.03.xx</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/trunk</url>
   </scm>
 
 
