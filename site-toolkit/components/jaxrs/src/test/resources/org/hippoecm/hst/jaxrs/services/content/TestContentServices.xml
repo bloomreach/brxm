@@ -25,7 +25,17 @@
       </list>
     </property>
   </bean>
-  
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
+    <property name="targetMethod" value="setAnnotatedClassesResourcePath" />
+    <property name="arguments">
+      <list>
+        <value>classpath*:org/hippoecm/hst/jaxrs/model/beans/**.class</value>
+      </list>
+    </property>
+  </bean>
+
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml" />
