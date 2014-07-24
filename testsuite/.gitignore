@@ -38,6 +38,13 @@ dependencies/site/.settings
 dependencies/site/target
 dependencies/target
 /derby.log
+intranet-bootstrap/*.iml
+intranet-bootstrap/configuration/*.iml
+intranet-bootstrap/configuration/target
+intranet-bootstrap/content/*.iml
+intranet-bootstrap/content/target
+intranet/*.iml
+intranet/target
 /jackrabbit
 linear-algebra/*.iml
 linear-algebra/.classpath
@@ -45,6 +52,8 @@ linear-algebra/.project
 linear-algebra/.settings
 linear-algebra/target
 /node_modules
+prod-server-config/*.iml
+prod-server-config/target
 random-numbers/*.iml
 random-numbers/.classpath
 random-numbers/.project
