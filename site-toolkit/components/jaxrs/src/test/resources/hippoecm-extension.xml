@@ -75,7 +75,7 @@
       <sv:value>testproject-gallery.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/testcontent</sv:value>
     </sv:property>
   </sv:node>
 
