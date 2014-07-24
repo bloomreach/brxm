@@ -102,7 +102,9 @@ class HstReferenceEditor extends Panel {
         private void load() {
             linkText = null;
             linkModel = null;
-
+            if (StringUtils.isBlank(getModelObject())) {
+                return;
+            }
             try {
                 final Node targetNode = getHstReferencedNode();
                 linkModel = new JcrNodeModel(targetNode);
