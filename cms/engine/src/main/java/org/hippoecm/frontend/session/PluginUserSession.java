@@ -72,6 +72,8 @@ public class PluginUserSession extends UserSession {
     private static UserCredentials fallbackCredentials;
     private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
 
+    private transient JcrSessionReference jcrSessionReference;
+
     private transient Session fallbackSession;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
@@ -174,7 +176,7 @@ public class PluginUserSession extends UserSession {
         synchronized (jcrSessions) {
             JcrSessionReference ref = jcrSessions.get(this);
             if (ref != null) {
-                return ref.jcrSession;
+                return ref.getJcrSessionModel();
             }
             return null;
         }
@@ -297,12 +299,11 @@ public class PluginUserSession extends UserSession {
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {
-                oldModel = sessionRef.jcrSession;
+                oldModel = sessionRef.getJcrSessionModel();
             } else {
-                sessionRef = new JcrSessionReference(this);
+                sessionRef = new JcrSessionReference(this, sessionModel);
                 jcrSessions.put(this, sessionRef);
             }
-            sessionRef.jcrSession = sessionModel;
         }
 
         this.credentials = credentials;
@@ -336,7 +337,7 @@ public class PluginUserSession extends UserSession {
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {
-                oldModel = sessionRef.jcrSession;
+                oldModel = sessionRef.getJcrSessionModel();
                 jcrSessions.remove(this);
             }
         }

@@ -18,9 +18,9 @@ package org.hippoecm.frontend.session;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-import org.apache.wicket.model.IModel;
-
 import javax.jcr.Session;
+
+import org.apache.wicket.model.IModel;
 
 /**
  * Maintains a reference to a JCR session model, based on a Wicket session.
@@ -31,32 +31,24 @@ class JcrSessionReference extends WeakReference<UserSession> {
 
     static final ReferenceQueue<UserSession> refQueue = new ReferenceQueue<UserSession>();
 
+    private IModel<Session> jcrSessionModel;
+
+    JcrSessionReference(UserSession referent, IModel<Session> jcrSessionModel) {
+        super(referent, refQueue);
+        this.jcrSessionModel = jcrSessionModel;
+    }
+
+    IModel<Session> getJcrSessionModel() {
+        return jcrSessionModel;
+    }
+
     static void cleanup() {
         JcrSessionReference ref;
         while ((ref = (JcrSessionReference) refQueue.poll()) != null) {
-            if (ref.jcrSession != null) {
-                ref.jcrSession.detach();
+            if (ref.jcrSessionModel != null) {
+                ref.jcrSessionModel.detach();
             }
         }
     }
 
-    IModel<Session> jcrSession;
-
-    JcrSessionReference(UserSession referent) {
-        super(referent, refQueue);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof JcrSessionReference) && ((JcrSessionReference) obj).get() == get();
-    }
-
-    @Override
-    public int hashCode() {
-        UserSession session = get();
-        if (session != null) {
-            return session.hashCode() ^ 327;
-        }
-        return 17;
-    }
 }
