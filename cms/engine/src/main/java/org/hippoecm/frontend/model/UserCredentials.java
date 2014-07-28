@@ -15,19 +15,10 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-
-import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
-import org.hippoecm.frontend.session.LoginException;
 
 public class UserCredentials implements Serializable {
 
@@ -45,28 +36,6 @@ public class UserCredentials implements Serializable {
         this.credentials = credentials;
         if(credentials instanceof SimpleCredentials) {
             username = ((SimpleCredentials)credentials).getUserID();
-        }
-    }
-
-    public UserCredentials(CallbackHandler callbackHandler) throws LoginException {
-        NameCallback nameCallback = new NameCallback("username");
-        PasswordCallback passwordCallback = new PasswordCallback("password", false);
-        CredentialsCallback credentialsCallback = new CredentialsCallback();
-        try {
-            callbackHandler.handle(new Callback[] { credentialsCallback, nameCallback });
-        } catch (IOException | UnsupportedCallbackException ignore) {
-        }
-        credentials = credentialsCallback.getCredentials();
-        username = nameCallback.getName();
-        if(credentials == null) {
-            try {
-                callbackHandler.handle(new Callback[] { nameCallback, passwordCallback });
-                char[] password = passwordCallback.getPassword();
-                credentials = new SimpleCredentials(username, password);
-            } catch (IOException ioe) {
-                throw new LoginException(LoginException.CAUSE.INCORRECT_CREDENTIALS, ioe);
-            } catch (UnsupportedCallbackException e) {
-            }
         }
     }
 

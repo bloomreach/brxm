@@ -58,19 +58,6 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- FIXME: this dependency MUST ABSOLUTELY be removed before next GA release -->
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-core</artifactId>
-      <version>${jackrabbit.patched.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
