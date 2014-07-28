@@ -197,10 +197,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
-        while(nodes.hasNext()) {
-            Node doc = nodes.nextNode();
-            assertTrue(doc.getName().equals("Document1"));
-        }
+        assertTrue(nodes.nextNode().getName().equals("Document1"));
         
         Node n = session.getNode("/test/Document1/Document1");
         n.getNode("compoundchild").remove();
@@ -236,10 +233,8 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
-        while(nodes.hasNext()) {
-            Node doc = nodes.nextNode();
-            assertTrue(doc.getName().equals("Document1"));
-        }
+        Node doc = nodes.nextNode();
+        assertTrue(doc.getName().equals("Document1"));
         
         Node n = session.getNode("/test/Document1/Document1/compoundchild");
         n.getNode("hippo:testhtml").remove();

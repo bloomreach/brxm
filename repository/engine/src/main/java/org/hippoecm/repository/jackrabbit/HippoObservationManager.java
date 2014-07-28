@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Collections;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
@@ -48,7 +50,7 @@ public class HippoObservationManager extends ObservationManagerImpl {
         }
 
         EventFilter filter = createEventFilter(
-                eventTypes, absPath, isDeep, uuid, nodeTypeName, false);
+                eventTypes, Collections.singletonList(absPath), isDeep, uuid, nodeTypeName, false, false, false);
         return new RevisionEventJournalImpl(
                 filter, clusterNode.getJournal(), clusterNode.getId(), session);
     }

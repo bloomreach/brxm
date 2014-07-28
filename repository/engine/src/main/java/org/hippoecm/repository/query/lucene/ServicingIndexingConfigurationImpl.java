@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
+import org.apache.jackrabbit.core.query.lucene.AggregateRule;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
@@ -84,6 +85,8 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * QName's of all the child node that should be aggregated
      */
     private Name[] hippoAggregates;
+
+    private AggregateRule[] aggregateRules;
 
     /**
      * The child node types which properties should be indexed within the parent lucene document,
@@ -198,6 +201,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         skipIndex = nameResolver.getQName(HippoNodeType.NT_SKIPINDEX);
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
         translationMessageFieldName = nameResolver.getJCRName(hippoTranslation) + "/" + nameResolver.getJCRName(hippoMessage);
+        aggregateRules = super.getAggregateRules();
+        if (aggregateRules == null) {
+            aggregateRules = new AggregateRule[0];
+        }
+
     }
 
     public boolean isChildAggregate(Name childType) {
@@ -334,6 +342,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     @Override
     public Name getSkipIndexName() {
         return skipIndex;
+    }
+
+    @Override
+    public AggregateRule[] getAggregateRules() {
+        return aggregateRules;
     }
 
 }
