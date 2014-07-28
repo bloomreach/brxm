@@ -105,10 +105,10 @@ public class ResponseToChannelExceptionMapper implements ResponseExceptionMapper
             parsedInfo[0] = (message != null) ? message.getTextValue() : "";
             final JsonNode parameters = error.get("parameters");
             parsedInfo[1] = parseParameters(parameters);
+        } else {
+            parsedInfo[0] = "";
+            parsedInfo[1] = new String[0];
         }
-
-        parsedInfo[0] = "";
-        parsedInfo[1] = new String[0];
         return parsedInfo;
     }
 
