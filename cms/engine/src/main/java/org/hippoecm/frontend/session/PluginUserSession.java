@@ -141,8 +141,7 @@ public class PluginUserSession extends UserSession {
         dirty();
     }
 
-    @Deprecated
-    public PluginUserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
+    PluginUserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
         super(request);
         classLoader = new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
@@ -287,8 +286,7 @@ public class PluginUserSession extends UserSession {
         }
     }
 
-    @Deprecated
-    public void login(UserCredentials credentials, LoadableDetachableModel<Session> sessionModel) throws LoginException {
+    void login(UserCredentials credentials, LoadableDetachableModel<Session> sessionModel) throws LoginException {
         if (sessionModel == null) {
             sessionModel = new JcrSessionModel(credentials);
         }

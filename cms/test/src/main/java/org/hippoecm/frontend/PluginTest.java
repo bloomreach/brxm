@@ -39,7 +39,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
-import org.hippoecm.frontend.session.LoginException;
+import org.hippoecm.frontend.session.AccessiblePluginUserSession;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.junit.After;
@@ -81,19 +81,13 @@ public abstract class PluginTest extends RepositoryTestCase {
 
         @Override
         public PluginUserSession newSession(Request request, Response response) {
-            PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
-
-            try {
-                userSession.login(USER_CREDENTIALS, new LoadableDetachableModel<Session>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected Session load() {
-                        return session;
-                    }
-
-                });
-            } catch (LoginException ignore) {}
+            PluginUserSession userSession = new AccessiblePluginUserSession(request, new LoadableDetachableModel<Session>() {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected Session load() {
+                    return session;
+                }
+            });
 
             return userSession;
         }

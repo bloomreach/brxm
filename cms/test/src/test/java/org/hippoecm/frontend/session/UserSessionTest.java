@@ -37,7 +37,10 @@ public class UserSessionTest extends PluginTest {
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
         jcrSession.getRootNode().addNode("test", "nt:unstructured");
+
+        //noinspection UnusedAssignment enables the gc to clean jcrSession
         jcrSession = null;
+        //noinspection UnusedAssignment enables the gc to clean session
         userSession = null;
         System.gc();
 
@@ -61,7 +64,10 @@ public class UserSessionTest extends PluginTest {
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
         jcrSession.getRootNode().addNode("test", "nt:unstructured");
+
+        //noinspection UnusedAssignment enables the gc to clean jcrSession
         jcrSession = null;
+        //noinspection UnusedAssignment enables the gc to clean session
         userSession = null;
         System.gc();
 

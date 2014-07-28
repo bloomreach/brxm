@@ -34,7 +34,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaConfigService;
-import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.session.AccessiblePluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.onehippo.repository.mock.MockNode;
@@ -133,7 +133,7 @@ public class HippoTester extends WicketTester {
 
         @Override
         public UserSession newSession(Request request, Response response) {
-            return new PluginUserSession(request, new LoadableDetachableModel<Session>() {
+            return new AccessiblePluginUserSession(request, new LoadableDetachableModel<Session>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override

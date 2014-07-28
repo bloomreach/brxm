@@ -2538,6 +2538,7 @@ richtext/repository/src/main/resources/html-cleaner-service.xml -text
 richtext/repository/src/main/resources/system-html-template_de.xml -text
 richtext/repository/src/main/resources/system-html-template_it.xml -text
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
+test/src/main/java/org/hippoecm/frontend/session/AccessiblePluginUserSession.java -text
 test/src/main/resources/domain-defaultread.xml -text
 test/src/main/resources/domain-defaultwrite.xml -text
 test/src/main/resources/frontendtest.cnd -text
