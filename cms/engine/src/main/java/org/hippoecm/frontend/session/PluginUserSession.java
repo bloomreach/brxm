@@ -71,9 +71,6 @@ public class PluginUserSession extends UserSession {
 
     private static UserCredentials fallbackCredentials;
     private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
-
-    private transient JcrSessionReference jcrSessionReference;
-
     private transient Session fallbackSession;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
