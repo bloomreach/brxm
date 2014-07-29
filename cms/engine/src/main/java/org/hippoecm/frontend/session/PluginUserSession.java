@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.frontend.session;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
@@ -70,13 +69,13 @@ public class PluginUserSession extends UserSession {
     private static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
     private static UserCredentials fallbackCredentials;
-    private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
+    private IModel<Session> jcrSessionModel;
     private transient Session fallbackSession;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
     private transient FacetRootsObserver facetRootsObserver;
     private UserCredentials credentials;
-    private Map<String, Integer> pluginComponentCounters = new HashMap<String, Integer>();
+    private Map<String, Integer> pluginComponentCounters = new HashMap<>();
 
     @SuppressWarnings("unused")
     private String sessionId;
@@ -169,16 +168,6 @@ public class PluginUserSession extends UserSession {
         dirty();
     }
 
-    private IModel<Session> getJcrSessionModel() {
-        synchronized (jcrSessions) {
-            JcrSessionReference ref = jcrSessions.get(this);
-            if (ref != null) {
-                return ref.getJcrSessionModel();
-            }
-            return null;
-        }
-    }
-
     /**
      * Retrieve the JCR {@link javax.jcr.Session} that is bound to the Wicket {@link org.apache.wicket.Session}. This
      * method will throw a RestartResponseException when no JCR session is available.
@@ -213,9 +202,8 @@ public class PluginUserSession extends UserSession {
     }
 
     private Session getJcrSessionInternal() {
-        IModel<Session> sessionModel = getJcrSessionModel();
-        if (sessionModel != null) {
-            Session result = sessionModel.getObject();
+        if (jcrSessionModel != null) {
+            Session result = jcrSessionModel.getObject();
             if (result != null && result.isLive()) {
                 return result;
             }
@@ -225,12 +213,11 @@ public class PluginUserSession extends UserSession {
 
     /**
      * Release the JCR {@link javax.jcr.Session} that is bound to the Wicket session.  The session model will take care
-     * of saving any pending changes.  Event listeners will remain registered and will reregister with a new session.
+     * of saving any pending changes.  Event listeners will remain registered and will re-register with a new session.
      */
     public void releaseJcrSession() {
-        IModel<Session> sessionModel = getJcrSessionModel();
-        if (sessionModel != null) {
-            sessionModel.detach();
+        if (jcrSessionModel != null) {
+            jcrSessionModel.detach();
         }
         classLoader.detach();
         workflowManager.detach();
@@ -240,7 +227,7 @@ public class PluginUserSession extends UserSession {
     public void login() {
         try {
             UserCredentials userCreds = getUserCredentialsFromRequestAttribute();
-            login(userCreds, null);
+            login(userCreds, new JcrSessionModel(userCreds));
         } catch (LoginException ignore) {}
     }
 
@@ -261,14 +248,13 @@ public class PluginUserSession extends UserSession {
     }
 
     public void login(UserCredentials credentials) throws LoginException {
-        login(credentials, null);
+        login(credentials, new JcrSessionModel(credentials));
 
         IApplicationFactory factory = getApplicationFactory();
         final IPluginConfigService application = factory.getApplication(getApplicationName());
         if (application != null && !application.isSaveOnExitEnabled()) {
-            IModel<Session> sessionModel = getJcrSessionModel();
-            if (sessionModel instanceof JcrSessionModel) {
-                ((JcrSessionModel) sessionModel).setSaveOnExit(false);
+            if (jcrSessionModel instanceof JcrSessionModel) {
+                ((JcrSessionModel) jcrSessionModel).setSaveOnExit(false);
             }
         }
     }
@@ -286,21 +272,15 @@ public class PluginUserSession extends UserSession {
     }
 
     void login(UserCredentials credentials, LoadableDetachableModel<Session> sessionModel) throws LoginException {
-        if (sessionModel == null) {
-            sessionModel = new JcrSessionModel(credentials);
-        }
         classLoader.detach();
         workflowManager.detach();
         facetRootsObserver = null;
         IModel<Session> oldModel = null;
-        synchronized (jcrSessions) {
-            JcrSessionReference sessionRef = jcrSessions.get(this);
-            if (sessionRef != null) {
-                oldModel = sessionRef.getJcrSessionModel();
-            }
-            sessionRef = new JcrSessionReference(this, sessionModel);
-            jcrSessions.put(this, sessionRef);
+        if (jcrSessionModel != null) {
+            oldModel = jcrSessionModel;
         }
+
+        jcrSessionModel = sessionModel;
 
         this.credentials = credentials;
         if (oldModel != null) {
@@ -325,23 +305,9 @@ public class PluginUserSession extends UserSession {
     }
 
     public void logout() {
-        classLoader.detach();
-        workflowManager.detach();
-        facetRootsObserver = null;
+        releaseJcrSession();
 
-        IModel<Session> oldModel = null;
-        synchronized (jcrSessions) {
-            JcrSessionReference sessionRef = jcrSessions.get(this);
-            if (sessionRef != null) {
-                oldModel = sessionRef.getJcrSessionModel();
-                jcrSessions.remove(this);
-            }
-        }
-        if (oldModel != null) {
-            oldModel.detach();
-        }
         JcrObservationManager.getInstance().cleanupListeners(this);
-
         pageId = 0;
 
         invalidate();
@@ -420,8 +386,6 @@ public class PluginUserSession extends UserSession {
             fallbackSession.logout();
             fallbackSession = null;
         }
-
-        JcrSessionReference.cleanup();
         super.detach();
     }
 
@@ -432,10 +396,14 @@ public class PluginUserSession extends UserSession {
 
     @Override
     public void onInvalidate() {
-        releaseJcrSession();
 
+        if (fallbackSession != null) {
+            fallbackSession.logout();
+            fallbackSession = null;
+        }
+        releaseJcrSession();
         JcrObservationManager.getInstance().cleanupListeners(this);
-        JcrSessionReference.cleanup();
+
     }
 
     /**

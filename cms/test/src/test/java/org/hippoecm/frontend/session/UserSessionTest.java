@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ public class UserSessionTest extends PluginTest {
 
     @Test
     public void testSaveOnLogout() throws Exception {
-//        tester.setupRequestAndResponse();
 
         PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
         userSession.login(credentials);
@@ -38,15 +37,14 @@ public class UserSessionTest extends PluginTest {
         javax.jcr.Session jcrSession = userSession.getJcrSession();
         jcrSession.getRootNode().addNode("test", "nt:unstructured");
 
-        //noinspection UnusedAssignment enables the gc to clean jcrSession
-        jcrSession = null;
-        //noinspection UnusedAssignment enables the gc to clean session
-        userSession = null;
-        System.gc();
-
-        Thread.sleep(500);
-
+        // on detach the changes are not persisted
         RequestCycle.get().detach();
+
+        session.refresh(false);
+        assertFalse(session.getRootNode().hasNode("test"));
+
+        // on invalidate the backing jcr session gets logged out and saves its changes
+        userSession.onInvalidate();
 
         session.refresh(false);
         assertTrue(session.getRootNode().hasNode("test"));
@@ -54,8 +52,6 @@ public class UserSessionTest extends PluginTest {
 
     @Test
     public void testDontSaveOnLogoutWhenSaveOnExitIsFalse() throws Exception {
-//        tester.setupRequestAndResponse();
-
         session.getNode("/config/test-app").setProperty("frontend:saveonexit", false);
         session.save();
 
@@ -65,15 +61,9 @@ public class UserSessionTest extends PluginTest {
         javax.jcr.Session jcrSession = userSession.getJcrSession();
         jcrSession.getRootNode().addNode("test", "nt:unstructured");
 
-        //noinspection UnusedAssignment enables the gc to clean jcrSession
-        jcrSession = null;
-        //noinspection UnusedAssignment enables the gc to clean session
-        userSession = null;
-        System.gc();
-
-        Thread.sleep(500);
-
-        RequestCycle.get().detach();
+        // on invalidate the backing jcr session gets logged out and does not save its changes
+        // due to saveonexit = false
+        userSession.onInvalidate();
 
         session.refresh(false);
         assertFalse(session.getRootNode().hasNode("test"));

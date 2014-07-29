@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public abstract class PluginTest extends RepositoryTestCase {
     @Deprecated
     protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTestCase.SYSTEMUSER_ID + ",password=" + RepositoryTestCase.SYSTEMUSER_PASSWORD.toString());
 
-    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTestCase.SYSTEMUSER_ID, RepositoryTestCase.SYSTEMUSER_PASSWORD.toString());
+    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTestCase.SYSTEMUSER_ID, String.valueOf(RepositoryTestCase.SYSTEMUSER_PASSWORD));
 
     private String[] config = new String[] {
             "/config", "nt:unstructured",
