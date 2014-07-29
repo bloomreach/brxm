@@ -209,8 +209,8 @@ public class PluginUserSession extends UserSession {
                 return null;
             }
             if (!result.isLive()) {
-                log.error("Found session in an invalid unallowed state: not live. Return log in screen");
-                throw new RestartResponseException(WebApplication.get().getHomePage());
+                log.error("Found session in an invalid unallowed state: not live. Logout PluginUserSession");
+                logout();
             }
             return result;
         }
@@ -223,7 +223,11 @@ public class PluginUserSession extends UserSession {
      */
     public void releaseJcrSession() {
         if (jcrSessionModel != null) {
-            jcrSessionModel.detach();
+            try {
+                jcrSessionModel.detach();
+            } catch (Exception e) {
+                log.error("Error during detaching JCR Model", e);
+            }
         }
         classLoader.detach();
         workflowManager.detach();
