@@ -59,6 +59,10 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     private boolean saveOnExit = true;
     private LoginException lastThrownLoginException;
 
+    // although only written to, this instance variable is important : It serves to make sure
+    // the transientModelObject jcr session gets logged out during serialization
+    private TransientJCrSessionWrapper transientJcrSessionWrapper;
+
     public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
         this.remoteAddress = ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getRemoteAddr();
@@ -78,6 +82,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                 session.logout();
                 logHippoEvent(false, session.getUserID(), "logout", true);
             }
+            transientJcrSessionWrapper = null;
             super.detach();
         }
     }
@@ -110,13 +115,13 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     protected Session load() {
         Session session = null;
         boolean fatalError = false;
-
         try {
             if (credentials == null) {
                 return null;
             }
             session = login(credentials);
             if (isSystemUser(session)) {
+                // TODO when does this happen and when does this session gets logged out?
                 logHippoEvent(true, credentials.getUsername(), "system user", false);
                 return null;
             }
@@ -133,6 +138,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             // there's no sense in continuing
             throw new AbortWithHttpErrorCodeException(503, "Unable to load session");
         }
+        transientJcrSessionWrapper = new TransientJCrSessionWrapper(session);
         return session;
     }
 

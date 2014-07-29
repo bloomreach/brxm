@@ -15,8 +15,18 @@
  */
 package org.hippoecm.frontend.session;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
+import javax.jcr.Session;
+
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.model.TransientJCrSessionWrapper;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.junit.Test;
 
@@ -50,6 +60,7 @@ public class UserSessionTest extends PluginTest {
         assertTrue(session.getRootNode().hasNode("test"));
     }
 
+
     @Test
     public void testDontSaveOnLogoutWhenSaveOnExitIsFalse() throws Exception {
         session.getNode("/config/test-app").setProperty("frontend:saveonexit", false);
@@ -68,5 +79,46 @@ public class UserSessionTest extends PluginTest {
         session.refresh(false);
         assertFalse(session.getRootNode().hasNode("test"));
     }
+
+    @Test
+    public void assert_jcr_session_gets_logged_out_during_serialization() throws Exception {
+
+        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
+        userSession.login(credentials);
+
+        javax.jcr.Session jcrSession = userSession.getJcrSession();
+
+        assertTrue(jcrSession.isLive());
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(userSession);
+
+        assertFalse(jcrSession.isLive());
+    }
+
+    @Test
+    public void assert_jcr_session_is_new_one_and_live_after_deserialization() throws Exception {
+        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
+        userSession.login(credentials);
+
+        javax.jcr.Session jcrSession = userSession.getJcrSession();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(userSession);
+        bos.flush();
+        // assert jcrSession is not live any more
+        assertFalse(jcrSession.isLive());
+
+        InputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(bis);
+
+        PluginUserSession deserUserSession = (PluginUserSession) in.readObject();
+        javax.jcr.Session deserJcrSession = deserUserSession.getJcrSession();
+
+        assertTrue(deserJcrSession.isLive());
+        assertFalse(deserJcrSession == jcrSession);
+    }
+
 
 }

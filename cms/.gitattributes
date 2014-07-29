@@ -1898,6 +1898,7 @@ engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/SearchingTranslatorPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
 engine/src/main/java/org/hippoecm/frontend/model/JcrSessionModel.java -text
+engine/src/main/java/org/hippoecm/frontend/model/TransientJCrSessionWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/FacetRootsObserver.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/JcrListener.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/JcrObservationManager.java -text
@@ -2564,6 +2565,7 @@ test/src/test/java/org/hippoecm/frontend/model/JcrItemModelTest.java svneol=nati
 test/src/test/java/org/hippoecm/frontend/model/JcrMultiPropertyValueModelTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/JcrPropertyModelTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/PropertyValueProviderTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/model/TransientJcrSessionWrapperTest.java -text
 test/src/test/java/org/hippoecm/frontend/model/event/ObservationTest.java -text
 test/src/test/java/org/hippoecm/frontend/model/map/JcrValueListTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/ocm/JcrObjectTest.java -text
