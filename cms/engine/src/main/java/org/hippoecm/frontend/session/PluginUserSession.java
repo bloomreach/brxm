@@ -70,6 +70,7 @@ public class PluginUserSession extends UserSession {
 
     private static UserCredentials fallbackCredentials;
     private IModel<Session> jcrSessionModel;
+    private transient Session requestSession;
     private transient Session fallbackSession;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
@@ -204,9 +205,14 @@ public class PluginUserSession extends UserSession {
     private Session getJcrSessionInternal() {
         if (jcrSessionModel != null) {
             Session result = jcrSessionModel.getObject();
-            if (result != null && result.isLive()) {
-                return result;
+            if (result == null) {
+                return null;
             }
+            if (!result.isLive()) {
+                log.error("Found session in an invalid unallowed state: not live. Return log in screen");
+                throw new RestartResponseException(WebApplication.get().getHomePage());
+            }
+            return result;
         }
         return null;
     }
