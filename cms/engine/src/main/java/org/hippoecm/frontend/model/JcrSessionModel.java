@@ -121,7 +121,6 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             }
             session = login(credentials);
             if (isSystemUser(session)) {
-                // TODO when does this happen and when does this session gets logged out?
                 logHippoEvent(true, credentials.getUsername(), "system user", false);
                 return null;
             }
