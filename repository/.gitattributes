@@ -175,6 +175,7 @@ engine/src/main/java/org/hippoecm/repository/query/lucene/QueryHelper.java svneo
 engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/StandardHippoAnalyzer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilder.java -text
+engine/src/main/java/org/hippoecm/repository/security/DelegatingSecurityProvider.java -text
 engine/src/main/java/org/hippoecm/repository/security/ExampleLoginModule.java -text
 engine/src/main/java/org/hippoecm/repository/security/FacetAuthConstants.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/HippoAMContext.java -text svneol=unset#text/plain
@@ -195,6 +196,8 @@ engine/src/main/java/org/hippoecm/repository/security/role/Role.java svneol=nati
 engine/src/main/java/org/hippoecm/repository/security/service/GroupImpl.java -text
 engine/src/main/java/org/hippoecm/repository/security/service/SecurityServiceImpl.java -text
 engine/src/main/java/org/hippoecm/repository/security/service/UserImpl.java -text
+engine/src/main/java/org/hippoecm/repository/security/user/DelegatingHippoUserManager.java -text
+engine/src/main/java/org/hippoecm/repository/security/user/DelegatingUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text

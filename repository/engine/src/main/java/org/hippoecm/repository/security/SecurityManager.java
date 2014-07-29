@@ -80,7 +80,6 @@ import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
-import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
 import org.slf4j.Logger;
@@ -271,7 +270,7 @@ public class SecurityManager implements HippoSecurityManager {
                 return AuthenticationStatus.FAILED;
             }
 
-            Node user = ((AbstractUserManager)providers.get(INTERNAL_PROVIDER).getUserManager()).getUser(userId);
+            Node user = ((HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager()).getUser(userId);
 
             // find security provider.
             String providerId = null;
@@ -289,7 +288,7 @@ public class SecurityManager implements HippoSecurityManager {
                 }
 
                 // check the password
-                if (!((AbstractUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
+                if (!((HippoUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
                     log.debug("Invalid username and password: {}, provider: {}", userId, providerId);
                     return AuthenticationStatus.FAILED;
                 }
@@ -299,7 +298,7 @@ public class SecurityManager implements HippoSecurityManager {
                 for(Iterator<String> iter = providers.keySet().iterator(); iter.hasNext();) {
                     providerId = iter.next();
                     log.debug("Trying to authenticate user {} with provider {}", userId, providerId);
-                    if (((AbstractUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
+                    if (((HippoUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
                         authenticated = true;
                         break;
                     }
@@ -313,7 +312,7 @@ public class SecurityManager implements HippoSecurityManager {
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
             creds.setAttribute("providerId", providerId);
             
-            AbstractUserManager userMgr = (AbstractUserManager)providers.get(providerId).getUserManager();
+            HippoUserManager userMgr = (HippoUserManager)providers.get(providerId).getUserManager();
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
 
             // Check if user is active
@@ -355,7 +354,7 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     /**
-     * Get the memberships for a user. See the AbstractUserManager.getMemberships for details.
+     * Get the memberships for a user. See the {@link GroupManager#getMembershipIds(String)} for details.
      *
      *
      * @param rawUserId the unparsed userId
@@ -516,14 +515,14 @@ public class SecurityManager implements HippoSecurityManager {
             return null;
         }
         if (providers.containsKey(providerId)) {
-            if (((AbstractUserManager)providers.get(providerId).getUserManager()).isCaseSensitive()) {
+            if (((HippoUserManager)providers.get(providerId).getUserManager()).isCaseSensitive()) {
                 return rawUserId.trim();
             } else {
                 return rawUserId.trim().toLowerCase();
             }
         } else {
             // fallback to internal provider
-            if (((AbstractUserManager)providers.get(INTERNAL_PROVIDER).getUserManager()).isCaseSensitive()) {
+            if (((HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager()).isCaseSensitive()) {
                 return rawUserId.trim();
             } else {
                 return rawUserId.trim().toLowerCase();

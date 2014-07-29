@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.user;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.api.security.user.UserManager;
 
@@ -65,4 +66,57 @@ public interface HippoUserManager extends UserManager {
      * @throws RepositoryException
      */
     NodeIterator listUsers(String providerId, long offset, long limit) throws RepositoryException;
+
+    /**
+     * Authenticate the user by the credentials
+     * @param creds SimpleCredentials
+     * @return true when successfully authenticate
+     * @throws RepositoryException
+     */
+    boolean authenticate(SimpleCredentials creds) throws RepositoryException;
+
+    /**
+     * Check if the user is active
+     * @param userId
+     * @return true if the user is active
+     * @throws RepositoryException
+     */
+    boolean isActive(final String userId) throws RepositoryException;
+
+    /**
+     * Check if the password of the user has been expired
+     * @param userId
+     * @return true if the password of the user has been expired
+     * @throws RepositoryException
+     */
+    boolean isPasswordExpired(final String userId) throws RepositoryException;
+
+    /**
+     * Synchronizes user info from the security store backend with the repository if applicable.
+     * This method is supposed to be called after authentication especially when the user
+     * is synchronized from external security data store.
+     * @param userId
+     */
+    void syncUserInfo(String userId);
+
+    /**
+     * Updates the last login datetime. This method is supposed to be called after authentication
+     * especially when the user is synchronized from external security data store.
+     * @param userId
+     */
+    void updateLastLogin(String userId);
+
+    /**
+     * Saves the user node data. This method is supposed to be called after authentication
+     * especially when the user node is sychronized from external security data store.
+     * @throws RepositoryException
+     */
+    void saveUsers() throws RepositoryException;
+
+    /**
+     * Checks if the username should be treated in a case-sensitive way.
+     * @return true if the username should be treated in a case-sensitive way.
+     */
+    boolean isCaseSensitive();
+
 }

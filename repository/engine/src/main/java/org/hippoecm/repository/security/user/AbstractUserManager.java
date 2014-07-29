@@ -17,7 +17,6 @@ package org.hippoecm.repository.security.user;
 
 import java.security.Principal;
 import java.util.Calendar;
-
 import java.util.Iterator;
 
 import javax.jcr.InvalidItemStateException;
@@ -35,7 +34,6 @@ import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
 import org.apache.jackrabbit.api.security.user.Group;
 import org.apache.jackrabbit.api.security.user.User;
-import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -335,6 +333,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
     /**
      * Only last login date for external users.
      */
+    @Override
     public void updateLastLogin(String rawUserId) {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
@@ -353,16 +352,19 @@ public abstract class AbstractUserManager implements HippoUserManager {
         }
     }
 
+    @Override
     public boolean isActive(final String rawUserId) throws RepositoryException {
         return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_ACTIVE, true);
     }
 
+    @Override
     public abstract boolean isPasswordExpired(final String rawUserId) throws RepositoryException;
 
     public boolean isSystemUser(String rawUserId) throws RepositoryException {
         return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_SYSTEM, false);
     }
 
+    @Override
     public final void saveUsers() throws RepositoryException {
         try {
             session.refresh(true);
@@ -424,6 +426,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
      * @return true when successfully authenticate
      * @throws RepositoryException
      */
+    @Override
     public abstract boolean authenticate(SimpleCredentials creds) throws RepositoryException;
 
     /**
@@ -431,6 +434,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
      * Called just after authenticate.
      * @param userId
      */
+    @Override
     public abstract void syncUserInfo(String userId);
 
     public Authorizable getAuthorizable(String id) throws RepositoryException {
