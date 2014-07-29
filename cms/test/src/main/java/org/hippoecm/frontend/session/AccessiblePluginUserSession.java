@@ -24,12 +24,16 @@ import org.hippoecm.frontend.model.UserCredentials;
 
 public class AccessiblePluginUserSession extends PluginUserSession {
 
+    public AccessiblePluginUserSession(final Request request) {
+        super(request);
+    }
+
     public AccessiblePluginUserSession(final Request request, final LoadableDetachableModel<Session> jcrSessionModel) {
         super(request, jcrSessionModel);
     }
 
     @Override
-    void login(final UserCredentials credentials, final LoadableDetachableModel<Session> sessionModel) throws LoginException {
+    public void login(final UserCredentials credentials, final LoadableDetachableModel<Session> sessionModel) throws LoginException {
         super.login(credentials, sessionModel);
     }
 }
