@@ -18,10 +18,12 @@ package org.hippoecm.frontend.plugins.logout;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
@@ -57,6 +59,9 @@ public class LogoutLink extends Panel {
                         dialogWindow.show(dialog);
                     } else {
                         userSession.logout();
+                        if (WebApplication.exists()) {
+                            throw new RestartResponseException(WebApplication.get().getHomePage());
+                        }
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());

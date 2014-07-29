@@ -15,18 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
 
 public class LogoutLink extends MarkupContainer {
 
@@ -42,24 +44,47 @@ public class LogoutLink extends MarkupContainer {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                LogoutLink.this.logout();
+                LogoutLink.this.clearStates();
+                LogoutLink.this.logoutSession();
+                LogoutLink.this.redirectPage();
             }
         });
     }
 
-    protected void logout() {
+    /**
+     * Clear any user states other than user session.
+     */
+    protected void clearStates() {
         // Remove the Hippo Auto Login cookie
         WebApplicationHelper.clearCookie(WebApplicationHelper.getFullyQualifiedCookieName(HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME));
+    }
 
+    /**
+     * Log out user session.
+     */
+    protected void logoutSession() {
         UserSession userSession = UserSession.get();
+
         try {
             Session session = userSession.getJcrSession();
+
             if (session != null) {
                 session.save();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
+
         userSession.logout();
     }
+
+    /**
+     * Redirect it to (home)page
+     */
+    protected void redirectPage() {
+        if (WebApplication.exists()) {
+            throw new RestartResponseException(WebApplication.get().getHomePage());
+        }
+    }
+
 }

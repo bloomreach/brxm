@@ -107,8 +107,6 @@ public class RootPlugin extends TabsPlugin {
 
         add(new Label("username", new PropertyModel(this, "username")));
 
-        add(new LogoutLink("logout"));
-
         services = new LinkedList<IRenderService>();
 
         final IDataProvider<IRenderService> provider = new ListDataProvider<IRenderService>(services) {

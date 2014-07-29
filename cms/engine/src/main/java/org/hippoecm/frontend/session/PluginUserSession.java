@@ -34,7 +34,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.Home;
@@ -322,9 +321,6 @@ public class PluginUserSession extends UserSession {
 
         invalidate();
         dirty();
-        if (WebApplication.exists()) {
-            throw new RestartResponseException(WebApplication.get().getHomePage());
-        }
     }
 
     public Credentials getCredentials() {

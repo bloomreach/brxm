@@ -2399,6 +2399,8 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspecti
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutPlugin.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text

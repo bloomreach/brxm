@@ -414,6 +414,12 @@
     <sv:property sv:name="item" sv:type="String">
       <sv:value>header.bar.right</sv:value>
     </sv:property>
+    <sv:property sv:name="extension.logout" sv:type="String">
+      <sv:value>service.logout</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
     <sv:node sv:name="browser.ie">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -442,6 +448,17 @@
         <sv:value>tabbed-panel-layout</sv:value>
       </sv:property>
     </sv:node>
+  </sv:node>
+  <sv:node sv:name="logout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.root.LogoutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.logout</sv:value>
+    </sv:property>
   </sv:node>
 
   <!-- Needs to load first to make the DashboardPerspective correspond with the first button -->

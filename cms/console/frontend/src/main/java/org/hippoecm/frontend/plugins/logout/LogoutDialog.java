@@ -17,9 +17,11 @@ package org.hippoecm.frontend.plugins.logout;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -66,6 +68,9 @@ public class LogoutDialog extends AbstractDialog {
                 log.error("Unable to remove the pending changes upon logout.");
             }
             userSession.logout();
+            if (WebApplication.exists()) {
+                throw new RestartResponseException(WebApplication.get().getHomePage());
+            }
         }
         super.onClose();
     }
