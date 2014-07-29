@@ -297,10 +297,9 @@ public class PluginUserSession extends UserSession {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {
                 oldModel = sessionRef.getJcrSessionModel();
-            } else {
-                sessionRef = new JcrSessionReference(this, sessionModel);
-                jcrSessions.put(this, sessionRef);
             }
+            sessionRef = new JcrSessionReference(this, sessionModel);
+            jcrSessions.put(this, sessionRef);
         }
 
         this.credentials = credentials;
