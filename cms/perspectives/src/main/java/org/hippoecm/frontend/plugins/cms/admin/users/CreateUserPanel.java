@@ -26,7 +26,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -39,6 +38,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
@@ -63,12 +63,16 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
     private final IPasswordValidationService passwordValidationService;
 
-    public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
+    private final String defaultUserSecurityProviderName;
+
+    public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext context, final IPluginConfig config) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
         this.passwordValidationService = context.getService(IPasswordValidationService.class.getName(),
                 IPasswordValidationService.class);
+
+        defaultUserSecurityProviderName = config.getString(ListUsersPlugin.DEFAULT_USER_SECURITY_PROVIDER_KEY);
 
         // add form with markup id setter so it can be updated via ajax
         final User user = new User();
@@ -138,7 +142,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                 String username = user.getUsername();
 
                 try {
-                    user.create();
+                    user.create(defaultUserSecurityProviderName);
                     user.savePassword(password);
                     HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
                     if (eventBus != null) {

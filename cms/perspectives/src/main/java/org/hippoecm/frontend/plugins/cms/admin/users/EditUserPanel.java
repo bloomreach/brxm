@@ -15,9 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
@@ -26,6 +32,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
@@ -39,7 +46,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EditUserPanel extends AdminBreadCrumbPanel {
+
     private static final long serialVersionUID = 1L;
+
+    private static final String QUERY_SECURITY_PROVIDERS = "//element(*, hipposys:securityprovider)";
+
     private static final Logger log = LoggerFactory.getLogger(EditUserPanel.class);
 
     private final Form form;
@@ -69,11 +80,12 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
         fc.setRequired(false);
         form.add(fc);
 
-
         fc = new CheckBox("active");
         form.add(fc);
 
-        
+        fc = new DropDownChoice<String>("provider", getAvailableSecurityProviderNames());
+        form.add(fc);
+
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("save-button", form) {
             private static final long serialVersionUID = 1L;
@@ -117,5 +129,32 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
 
     public IModel<String> getTitle(Component component) {
         return new StringResourceModel("user-edit-title", component, model);
+    }
+
+    private List<String> getAvailableSecurityProviderNames() {
+        List<String> providers = new ArrayList<String>();
+
+        try {
+            UserSession session = UserSession.get();
+            Query query = session.getQueryManager().createQuery(QUERY_SECURITY_PROVIDERS, Query.XPATH);
+            QueryResult result = query.execute();
+            Node node = null;
+
+            for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
+                node = nodeIt.nextNode();
+
+                if (node != null) {
+                    providers.add(node.getName());
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to query all the available security provider names.", e);
+        }
+
+        if (providers.size() > 1) {
+            Collections.sort(providers);
+        }
+
+        return providers;
     }
 }

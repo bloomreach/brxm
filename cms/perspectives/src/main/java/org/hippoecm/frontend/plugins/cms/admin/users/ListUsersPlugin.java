@@ -30,7 +30,9 @@ public class ListUsersPlugin extends AdminPanelPlugin {
     /**
      * Configuration key for Boolean property to determine whether user creation is enabled.
      */
-    public final static String USER_CREATION_ENABLED_KEY = "user.creation.enabled";
+    public static final String USER_CREATION_ENABLED_KEY = "user.creation.enabled";
+
+    public static final String DEFAULT_USER_SECURITY_PROVIDER_KEY = "default.security.provider";
 
     private final UserDataProvider userDataProvider;
 

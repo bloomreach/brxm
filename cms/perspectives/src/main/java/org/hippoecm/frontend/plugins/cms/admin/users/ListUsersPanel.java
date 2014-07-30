@@ -84,7 +84,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new CreateUserPanel(componentId, breadCrumbModel, context);
+                return new CreateUserPanel(componentId, breadCrumbModel, context, config);
             }
 
             @Override

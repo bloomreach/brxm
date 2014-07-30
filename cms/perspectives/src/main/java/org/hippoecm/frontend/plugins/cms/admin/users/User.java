@@ -35,10 +35,11 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.apache.wicket.util.io.IClusterable;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.session.UserSession;
@@ -430,6 +431,15 @@ public class User implements Comparable<User>, IClusterable {
      * @throws RepositoryException
      */
     public void create() throws RepositoryException {
+        create(null);
+    }
+
+    /**
+     * Create a new user with setting security provider by the specified name
+     * @param securityProviderName
+     * @throws RepositoryException
+     */
+    public void create(final String securityProviderName) throws RepositoryException {
         if (userExists(getUsername())) {
             throw new RepositoryException("User already exists");
         }
@@ -446,6 +456,11 @@ public class User implements Comparable<User>, IClusterable {
         setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
         setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
         setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
+
+        if (StringUtils.isNotEmpty(securityProviderName)) {
+            setOrRemoveStringProperty(node, PROP_PROVIDER, securityProviderName);
+        }
+
         // save parent when adding a node
         node.getParent().getSession().save();
     }
@@ -476,6 +491,11 @@ public class User implements Comparable<User>, IClusterable {
             setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
             setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
             node.setProperty(HippoNodeType.HIPPO_ACTIVE, isActive());
+
+            if (StringUtils.isNotEmpty(getProvider())) {
+                setOrRemoveStringProperty(node, PROP_PROVIDER, getProvider());
+            }
+
             node.getSession().save();
         } else {
             throw new RepositoryException("Only frontend:users can be edited.");
