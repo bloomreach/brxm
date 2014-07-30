@@ -103,13 +103,6 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 String userID = session.getJcrSession().getUserID();
                 log.warn("The event queue is full. Flushing session of user " + userID);
                 session.flush();
-            } else {
-                // The wicket session was serialized but the JCR Session not yet logged out
-                // through JcrSessionReference.cleanup()
-                // When the wicket session becomes active again a reinitialization of the
-                // session will occur so we don't need these events anymore.
-                log.info("The event queue is full. Clearing pending events.");
-                this.events.clear();
             }
         }
     }

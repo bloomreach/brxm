@@ -32,6 +32,7 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseException;
+import org.apache.wicket.ThreadContext;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.Request;
@@ -80,6 +81,7 @@ public class PluginUserSession extends UserSession {
     @SuppressWarnings("unused")
     private String sessionId;
     private int pageId;
+    private boolean clearRequired;
 
 
     public UserCredentials getUserCredentials() {
@@ -91,7 +93,12 @@ public class PluginUserSession extends UserSession {
     }
 
     public static PluginUserSession get() {
-        return (PluginUserSession) UserSession.get();
+        final PluginUserSession pluginUserSession = (PluginUserSession) UserSession.get();
+        if (pluginUserSession.clearRequired) {
+            pluginUserSession.clear();
+            pluginUserSession.clearRequired = false;
+        }
+        return pluginUserSession;
     }
 
     public PluginUserSession(Request request) {
@@ -397,7 +404,14 @@ public class PluginUserSession extends UserSession {
 
     public void flush() {
         JcrObservationManager.getInstance().cleanupListeners(this);
-        clear();
+        // do not use UserSession.get() as that creates a user session on threadlocal
+        if (ThreadContext.getSession() == this) {
+            clear();
+        } else {
+            log.info("There might be no wicket application attached to current thread. Mark PluginUserSession to be cleared " +
+                    "on next access");
+            clearRequired = true;
+        }
     }
 
     @Override
