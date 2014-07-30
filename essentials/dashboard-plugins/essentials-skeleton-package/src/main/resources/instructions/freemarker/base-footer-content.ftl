@@ -25,6 +25,6 @@
 <div class="row">
     <hr/>
     <div class="text-center">
-        <sub>(&copy;) 2014, All Rights Reserved</sub>
+        <sub>(&copy;) 2013-2014 <a target="_blank" href="http://www.onehippo.com">Hippo B.V.</a></sub>
     </div>
 </div>
