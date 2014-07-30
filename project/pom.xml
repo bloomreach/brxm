@@ -74,6 +74,7 @@
     <groovy.version>2.2.2</groovy.version>
     <freemarker.version>2.3.16</freemarker.version>
     <jackrabbit.version>2.8.0</jackrabbit.version>
+    <patched.jackrabbit.version>2.8.0-h1</patched.jackrabbit.version>
 
     <!-- END properties versions with dependency management -->
 
