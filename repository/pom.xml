@@ -85,7 +85,6 @@
     <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
     <pdfbox.version>1.7.1</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
-    <jackrabbit.patched.version>${jackrabbit.version}-h1</jackrabbit.patched.version>
     <json-lib.version>2.2.2</json-lib.version>
     <easymock.version>3.2</easymock.version>
     <decentxml.version>1.4</decentxml.version>
@@ -184,7 +183,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-        <version>${jackrabbit.patched.version}</version>
+        <version>${patched.jackrabbit.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -195,7 +194,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-        <version>${jackrabbit.patched.version}</version>
+        <version>${patched.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
