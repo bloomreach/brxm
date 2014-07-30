@@ -20,11 +20,23 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<h1>TITLE</h1>
-<h1>${pageable.total}</h1>
+<#if pageable??>
+  <#list pageable.items as item>
+    <#if item.title??>
+      <@hst.link var="link" hippobean=item />
+      <article class="has-edit-button">
+        <@hst.cmseditlink hippobean=item/>
+        <h3><a href="${link}">${item.title}</a></h3>
+        <#if item.introduction??>
+          <p>${item.introduction}</p>
+        </#if>
+      </article>
+    </#if>
+  </#list>
 {{#repositoryBased}}
     <#include "../../hst:default/hst:templates/pagination.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/pagination.ftl">
 {{/fileBased}}
+</#if>

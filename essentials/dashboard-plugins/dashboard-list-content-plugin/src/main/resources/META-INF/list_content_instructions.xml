@@ -28,7 +28,7 @@
   </instructionSet>
 
   <instructionSet group="freemarker, repository">
-    <freemarker action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-comonent.ftl"/>
+    <freemarker action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-component.ftl"/>
     <freemarker action="copy" source="freemarker/content-component.ftl" target="{{freemarkerRoot}}/hstdefault/content-component.ftl"/>
     </instructionSet>
   <instructionSet group="freemarker">
