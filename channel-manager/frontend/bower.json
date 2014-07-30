@@ -3,16 +3,16 @@
   "private": true,
   "dependencies": {
     "angular": "1.2.18",
+    "angular-mocks": "1.2.18",
     "angular-route": "1.2.18",
     "angular-translate": "2.1.0",
     "angular-translate-loader-static-files": "2.1.0",
-    "angular-mocks": "1.2.18",
     "angular-ui-router": "0.2.7",
+    "angular-ui-tree": "#7546311fe9c82ad10f94bb0184d7abbf32664c56",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
     "hippo-plugins": "./target/dependency/hippo-plugins.zip",
     "jasmine-jquery": "2.0.3",
-    "respond": "1.4.2",
-    "angular-ui-tree": "2.0.11"
+    "respond": "1.4.2"
   },
   "resolutions": {
     "angular": "1.2.18",
