@@ -147,6 +147,16 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
     }
 
     @Test
+    public void compoundOutsideDocument_doesNotSetBaseUuid() throws RepositoryException {
+        createUntranslatedRootFolder();
+        docbaseValueModel = createLinkField(rootFolder);
+
+        IPluginConfig config = LinkPickerDialogConfig.fromPluginConfig(new JavaPluginConfig(), docbaseValueModel);
+
+        assertNull("A compound outside a document should not set a specific root folder UUID", config.getString("base.uuid"));
+    }
+
+    @Test
     public void germanDocument_doesNotSetBaseUuid() throws RepositoryException {
         createDutchRootFolder();
 
@@ -158,7 +168,6 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
         assertNull("The fixture does not contain a German base folder, so no specific root folder UUID should be set for a German document",
                 config.getString("base.uuid"));
     }
-
 
     @Test
     public void englishDocument_NotlanguageAware_useRootFolder() throws RepositoryException {
@@ -175,8 +184,5 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
                         " the base folder when base uuid has not been set and language.context.aware has been set to false",
                 null, config.getString("base.uuid"));
     }
-
-
-
 
 }

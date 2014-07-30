@@ -71,7 +71,7 @@ public class LinkPickerDialogConfig {
 
     private static String getTranslatedBaseUuid(final JcrPropertyValueModel model) throws RepositoryException {
         final Node compound = getCompoundNode(model);
-        final Node document = getDocumentNode(compound);
+        final Node document = getDocumentNodeOrNull(compound);
         final String documentLocaleOrNull = getLocaleOrNull(document);
         if (documentLocaleOrNull != null) {
             final Node localizedRoot = getLocalizedAncestorClosestToRoot(document, documentLocaleOrNull);
@@ -88,12 +88,13 @@ public class LinkPickerDialogConfig {
         return (Node) nodeModel.getObject();
     }
 
-    private static Node getDocumentNode(final Node compound) throws RepositoryException {
-        Node cursor = compound;
-        while (!isDocument(cursor)) {
-            cursor = cursor.getParent();
+    private static Node getDocumentNodeOrNull(final Node compound) throws RepositoryException {
+        for (Node cursor = compound; cursor.getDepth() > 0; cursor = cursor.getParent()) {
+            if (isDocument(cursor)) {
+                return cursor;
+            }
         }
-        return cursor;
+        return null;
     }
 
     private static boolean isDocument(final Node node) throws RepositoryException {
@@ -116,7 +117,8 @@ public class LinkPickerDialogConfig {
     }
 
     private static String getLocaleOrNull(final Node node) throws RepositoryException {
-        if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
+        if (node != null
+                && node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
                 && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
                return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
         }
