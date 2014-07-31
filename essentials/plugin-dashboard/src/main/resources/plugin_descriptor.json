@@ -1,10 +1,10 @@
 {"items": [
 
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Content Blocks plugin",
-        "introduction": "Provides the ability to add multiple Content Blocks to document types. Each Content Block offers a choice between multiple (potentially complex) field types, as determined by a Provider Compound.",
+        "name": "Content Blocks",
+        "introduction": "With Content Blocks, the content- and document editor can add multiple pre-configured compound type blocks to a document.",
+        "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This Essentials Feature wraps the certified Hippo Forge Content Blocks plugin.</p>",
         "documentationLink": "http://content-blocks.forge.onehippo.org",
         "pluginId": "contentBlocks",
         "type": "plugins",
@@ -35,10 +35,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Blog support",
-        "introduction": "Add blog and author document types to your project. Render blogs in an overview page including faceted navigation. Add an item to the site's main menu.",
+        "name": "Blog",
+        "introduction": "With Blog, you add complete Blog functionality to your project. This Feature will be installed as a  set of drag-and-drop components in the document template editor. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
+        "description": "<ul><li>This Essentials feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocuments&gt; and blog/authors/&lt;authors&gt;. On root level in the CMS, the entry ‘administration’ is created.</li><li>Several drag-and-drop components are added to the Document template editor: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
         "packageFile": "/META-INF/blog_instructions.xml",
         "restClasses": [],
         "pluginId": "blogPlugin",
@@ -92,11 +92,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Taxonomy plugin",
-        "introduction": "Adds taxonomy support to hippo project",
-        "description": "Editors can enrich their metadata using the Taxonomy plugin to categorize the content. The CMS administrator can edit the taxonomy.<p>Read more about the taxonomy plugin at <a href=\"http://taxonomy.forge.onehippo.org/\" target=\"_blank\">http://taxonomy.forge.onehippo.org/</a></p>",
+        "name": "Taxonomy",
+        "introduction": "With the Taxonomy feature you can add extra meta data to your documents to categorize them.",
+        "description": "This Essentials Feature wraps the certified Hippo Forge Taxonomy Plugin.",
         "documentationLink": "http://taxonomy.forge.onehippo.org",
         "pluginId": "taxonomyPlugin",
         "packageFile": "",
@@ -166,9 +165,9 @@
         "@type": "plugin",
         "type": "plugins",
         "pluginId": "selectionPlugin",
-        "name": "Selection plugin",
-        "introduction": "Add value lists and selection document fields to your Hippo project",
-        "description": "Add selection fields to your document types. The choices are backed by a CMS-based value list. <p>Read more about the Selection plugin at <a href=\"http://selection.forge.onehippo.org/\" target=\"_blank\">http://selection.forge.onehippo.org/</a></p>",
+        "name": "Selections",
+        "introduction": "With the Selections feature, you can add several kinds of dropdowns, pulldowns and radio groups to your page template.",
+        "description": "This Essentials Feature wraps the certified Hippo Forge Selection Plugin.",
         "documentationLink": "http://selection.forge.onehippo.org",
         "packageFile": "/META-INF/selectionPlugin_instructions.xml",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.selection.SelectionResource"],
@@ -212,11 +211,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "ECM tagging plugin",
-        "introduction": "Adds ECM tagging support to hippo project",
-        "description": "The taggin plugin is an editor plugin for Hippo CMS 7. <p>Read more about the ECM tagging plugin plugin at <a href=\"http://ecm-tagging.forge.onehippo.org/\" target=\"_blank\">http://ecm-tagging.forge.onehippo.org/</a></p>",
+        "name": "Tagging",
+        "introduction": "With the Tagging feature, you can assign tags to your content.",
+        "description": "This Essentials Feature wraps the certified Hippo Forge CMS Tagging Addon.",
         "documentationLink": "http://ecm-tagging.forge.onehippo.org",
         "pluginId": "ecmTaggingPlugin",
         "packageFile": "",
@@ -248,11 +246,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Document wizard plugin",
-        "introduction": "Adds Document wizard support to hippo project",
-        "description": "The Document Wizard is an addon for Hippo CMS that lets CMS users create new documents quickly and easily from the dashboard. On clicking a shortcut link a dialog window opens where information for the document to create can be entered.<p>Read more about the document wizard plugin at <a href=\"http://documentwizard.forge.onehippo.org/\" target=\"_blank\">http://documentwizard.forge.onehippo.org/</a></p>",
+        "name": "Documents wizard",
+        "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Hippo CMS while working in another part of the CMS.",
+        "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This Essentials Feature wraps the certified Hippo Dashboard Document Wizard.",
         "documentationLink": "http://documentwizard.forge.onehippo.org",
         "pluginId": "documentWizardPlugin",
         "packageFile": "",
@@ -298,11 +295,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Related documents plugin",
-        "introduction": "Adds Related documents support to hippo project",
-        "description": "The Related Documents plugin is a Hippo CMS 7 document editor plugin with which you can pick documents that are related to the currently edited document. It has the capability of creating a list of suggested documents you may want to pick, based on matching metadata search.<p>Read more about the Related documents  plugin at <a href=\"http://relateddocs.forge.onehippo.org/\" target=\"_blank\">http://relateddocs.forge.onehippo.org/</a></p>",
+        "name": "Related Documents",
+        "introduction": "With the Related Documents feature, you can pick documents that are related to the currently edited document in the Hippo CMS.",
+        "description": "<p>The feature can also create a list of suggested documents that you might want to pick, based on a matching metadata search.</p><p>This Essentials Feature wraps the certified Hippo Forge Related Documents plugin.</p>",
         "documentationLink": "http://relateddocs.forge.onehippo.org",
         "pluginId": "relatedDocumentsPlugin",
         "packageFile": "",
@@ -334,11 +330,9 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "SEO  plugin",
-        "introduction": "Adds SEO  support to hippo project",
-        "description": "The HST SEO Support Components provides HST Components which enable easy HTML metadata head elements contributions.<p>Read more about the SEO plugin at <a href=\"http://hst-seo-support.forge.onehippo.org/\" target=\"_blank\">http://hst-seo-support.forge.onehippo.org/</a></p>",
+        "name": "Search engine optimization",
+        "introduction": "<p>Search engine optimization adds SEO support to your Hippo project. You can easily add head elements contributions in your HTML, that can improve search results and help users find relevant documents.</p><p>This Essentials Feature wraps the Hippo HST SEO Support Components.</p>",
         "documentationLink": "http://hst-seo-support.forge.onehippo.org",
         "pluginId": "seoPlugin",
         "packageFile": "/META-INF/seoPlugin_instructions.xml",
@@ -362,7 +356,6 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
         "name": "Gallery manager",
         "introduction": "Manage your project's image sets.",
@@ -386,12 +379,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
         "name": "Beanwriter",
         "introduction": "Generate HST Content beans.",
         "pluginId": "beanwriter",
-        "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
         "type": "tools",
         "vendor": {
@@ -411,11 +402,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Robots plugin",
-        "introduction": "Add Robots plugin support",
-        "description": "The robotstxt plugin adds a special document type to the CMS, allowing webmasters to determine the content of the robots.txt file retrieved by webbots. See <a href=\"http://www.robotstxt.org/\">robotstxt.org</a> for more information on the format and purpose of that file.<p>The robotstxt plugin provides Beans and Components for retrieving the robots.txt-related data from the Hippo repository, and a sample JSP file for rendering that data into the robots.txt file.</p>\n<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://robotstxt.forge.onehippo.org/\" target=\"_blank\">http://robotstxt.forge.onehippo.org/</a></p>",
+        "name": "Robots.txt",
+        "introduction": "With the Robots.txt Essentials feature you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
+        "description": "Besides the component, a sample JSP file for rendering that data into the robots.txt file. This Essentials Feature wraps the certified Hippo Forge Robots.txt Generator.",
         "documentationLink": "http://robotstxt.forge.onehippo.org",
         "pluginId": "robotsPlugin",
         "restClasses": [],
@@ -447,11 +437,10 @@
 
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Poll plugin",
-        "introduction": "Add poll plugin support",
-        "description": "The poll plug-in allows you to create poll documents in the CMS. It also provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class.<p>Read more about Poll plugin at plugin site:</p><a href=\"http://poll.forge.onehippo.org/\" target=\"_blank\">http://poll.forge.onehippo.org/</a>",
+        "name": "Polls",
+        "introduction": "With Polls, you add functionality for creating and showing polls and storing and accessing the acquired poll data.",
+        "description": "The poll feature wraps the Hippo Forge Poll Plugin. It provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class that contains the following functionality:<ul><li>Search the current active poll document in a parameterized repository location</li><li>Provide a bean for this active poll upon request from the view layer</li><li>Vote on a poll, storing the votes in repository outside the document tree in /polldata</li><li>Cookies are used to prevent voting multiple times</li></ul>",
         "documentationLink": "http://poll.forge.onehippo.org",
         "pluginId": "pollPlugin",
         "restClasses": [],
@@ -483,10 +472,9 @@
 
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Search support",
-        "introduction": "Add a search page to the project, including URL mapping and main menu item, and a Search Box component to the Channel Manager's component catalog.",
+        "name": "Search",
+        "introduction": "This Essentials feature adds search functionality to your site by providing a search box in the form of a document template component that can be dragged-and-dropped into your template.",
         "pluginId": "searchPlugin",
         "packageFile": "/META-INF/searchPlugin_instructions.xml",
         "restClasses": [],
@@ -505,10 +493,9 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Image component",
-        "introduction": "Add image component and rendering template",
+        "name": "Images",
+        "introduction": "With Images, you can easily place single images in your document template. This Feature will be installed as a drag-and-drop component in the document template editor. You can select in the CMS what image from the repository needs to be shown.",
         "pluginId": "imageComponentPlugin",
         "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
         "restClasses": [],
@@ -527,10 +514,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Video component",
-        "introduction": "Add video component and rendering template",
+        "name": "Videos",
+        "introduction": "The Video feature adds a new drag-and-drop component in the document template editor, enabling you to add video in your document template.",
+        "description": "The feature adds the new document type ‘video’ to the project. You can choose to include a sample video when you configure the feature in Essentials. The feature uses youtube video links instead of the video itself.",
         "pluginId": "videoComponentPlugin",
         "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
         "restClasses": [],
@@ -549,10 +536,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "FAQ support",
-        "introduction": "Add FAQ document types, component, rendering template and sample data",
+        "name": "FAQ",
+        "introduction": "With FAQ, you add complete FAQ section to your project. This Feature will be installed as a drag-and-drop component in the document template editor.",
+        "description": "<ul><li>This Essentials feature installs two new document types: ‘faqdocument’ and ‘faqlistdocument’ in the CMS.</li><li>A structured document tree is created in the project: faq/about FAQ items</li><li>A drag-and-drop component ‘Faq’ is added to the Document template editor.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
         "pluginId": "faqPlugin",
         "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
         "restClasses": [],
@@ -571,10 +558,9 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Banner component",
-        "introduction": "Add Banner document type to your project. Add Banner and Carousel components to the Channel Manager's component catalog.",
+        "name": "Banners",
+        "introduction": "With Banner, you add banners to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a ‘Banner’ document type and some sample banner documents and images will be installed.",
         "pluginId": "bannerPlugin",
         "packageFile": "/META-INF/banner_instructions.xml",
         "restClasses": [],
@@ -591,10 +577,9 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Menu support",
-        "introduction": "Add a Menu component to the Channel Manager's component catalog.",
+        "name": "Menus",
+        "introduction": "With Menus, you add a customizable menu in the document template editor. It will be available as drag-and-drop component for you to add to your template.",
         "pluginId": "menuPlugin",
         "packageFile": "/META-INF/menu_instructions.xml",
         "restClasses": [],
@@ -611,10 +596,9 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Simple content support",
-        "introduction": "Add a simple content document type, displayed on a content overview as well as content detail pages. Add a main menu item to access the overview. Add a Simple Content component to the Channel Manager's component catalog.",
+        "name": "Simple content",
+        "introduction": "The Simple content feature adds a new drag-and-drop component to the document template editor (with the name \"Simple content\"). In the CMS, you can configure this component by selecting a single document to be shown in your template.",
         "pluginId": "simpleContent",
         "packageFile": "/META-INF/simpleContent_instructions.xml",
         "restClasses": [],
@@ -633,7 +617,6 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
         "name": "Rest Services setup",
         "introduction": "Configure your project's site application to have REST endpoints.",
@@ -657,10 +640,10 @@
         ]
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "Events support",
-        "introduction": "Add support for event documents, rendered in an event overview and event detail pages. All pages are disclosed under the \"events\" URL space, and the overview is linked into the site's main menu.",
+        "name": "Events",
+        "introduction": "With Events, you can easily integrate events functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
+        "description": "<ul><li>This Essentials feature installs a new document type ‘eventsdocument’ in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocuments&gt;</li><li>A drag-and-drop component ‘events list’ is added to the Document template editor. This events list component can be configured.</li><li>Some sample events articles are installed and a page (with corresponding menu entry) with an example eventslist is created.</li></ul>",
         "packageFile": "/META-INF/events_package_instructions.xml",
         "pluginId": "eventsPlugin",
         "restClasses": [],
@@ -680,10 +663,9 @@
 
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "List and Content component",
-        "introduction": "Add generic List and Content components to the Channel Manager's component catalog.",
+        "name": "List and Content",
+        "introduction": "This essentials feature installs two new components in the document template editor: \"Generic List\" and \"Generic Content\". With these components you can add paginated lists and content items in your template. You will need to edit the page rendering templates (JSP or Freemarker) to use these features.",
         "packageFile": "/META-INF/list_content_instructions.xml",
         "pluginId": "listContentPlugin",
         "restClasses": [],
@@ -703,10 +685,10 @@
 
     },
     {
-        "enabled": true,
         "@type": "plugin",
-        "name": "News support",
-        "introduction": "Add support for news documents, rendered in a news overview and news detail pages. All pages are disclosed under the \"news\" URL space, and the overview is linked into the site's main menu.",
+        "name": "News",
+        "introduction": "With News, you can easily integrate news functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
+        "description": "<ul><li>This Essentials feature installs a new document type ‘newsdocument’ in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component ‘newslist’ is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>"
         "packageFile": "/META-INF/news_package_instructions.xml",
         "pluginId": "newsPlugin",
         "restClasses": [],
@@ -723,6 +705,5 @@
                 ]
             }
         ]
-
     }
 ]}
