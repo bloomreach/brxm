@@ -8,7 +8,7 @@
     "angular-translate": "2.1.0",
     "angular-translate-loader-static-files": "2.1.0",
     "angular-ui-router": "0.2.7",
-    "angular-ui-tree": "#7546311fe9c82ad10f94bb0184d7abbf32664c56",
+    "angular-ui-tree": "2.1.5",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
     "hippo-plugins": "./target/dependency/hippo-plugins.zip",
     "jasmine-jquery": "2.0.3",
