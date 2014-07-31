@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.util.io.IClusterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Formats numeric byte values into human-readable strings.
@@ -28,6 +30,7 @@ import org.apache.wicket.util.io.IClusterable;
 public class ByteSizeFormatter implements IClusterable {
     private static final long serialVersionUID = 1L;
 
+    private static Logger log = LoggerFactory.getLogger(ByteSizeFormatter.class);
 
     private static final double ONE_KB = new Double(1024);
     private static final double ONE_MB = Math.pow(ONE_KB, 2);
@@ -62,17 +65,38 @@ public class ByteSizeFormatter implements IClusterable {
         this.decimalPlaces = decimalPlaces;
     }
 
-    /** Formats filesize in bytes as appropriate to bytes, KB, MB or GB
+    /** 
+     * Formats filesize in bytes as appropriate to bytes, KB, MB or GB.
+     * By default, it formats based on the current user's locale information if available.
      *
      * @param filesize in bytes
      * @return formatted filesize
      **/
     public String format(long filesize) {
+        Locale loc = null;
+
+        try {
+            loc = Session.get().getLocale();
+        } catch (Exception e) {
+            log.warn("No wicket session available. {}", e.toString());
+        }
+
+        return format(filesize, loc);
+    }
+
+    /**
+     * Formats filesize in bytes as appropriate to bytes, KB, MB or GB, based on the given <code>locale</code>.
+     * If the <code>locale</code> is null, then the default locale will be used.
+     *
+     * @param filesize in bytes
+     * @param loc Locale
+     * @return formatted filesize
+     **/
+    public String format(long filesize, final Locale loc) {
         if (Math.abs(filesize) < ONE_KB) {
             return filesize + byteSuffix;
         }
 
-        Locale loc = Session.get().getLocale();
         NumberFormat numberFormat = NumberFormat.getNumberInstance(loc != null ? loc : Locale.getDefault());
         numberFormat.setMaximumFractionDigits(decimalPlaces);
 
