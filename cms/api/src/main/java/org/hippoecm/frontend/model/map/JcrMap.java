@@ -448,7 +448,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
             if (log.isDebugEnabled()) {
                 log.warn("Failed to check the liveness of the session.", e);
             } else {
-                log.warn("Failed to check the liveness of the session. {}", e);
+                log.warn("Failed to check the liveness of the session. {}", e.toString());
             }
         }
 
