@@ -129,10 +129,17 @@
                 'fa-times': form.sitemapItem.$invalid || !isSaved.link
                }"></i>
                 <span class="input-group-btn">
+                    <div class="tooltip-newlines"
+                          data-tooltip
+                          data-placement="left"
+                          data-title="{{ tooltip }}"
+                          data-ng-mouseenter="showTooltip()"
+                          data-ng-mouseleave="hideTooltip()">
                     <button class="btn btn-default" type="button"
                             data-ng-click="showPage()">
                         <i class="fa fa-external-link"></i>
                     </button>
+                    </div>
                 </span>
             </div>
         </div>

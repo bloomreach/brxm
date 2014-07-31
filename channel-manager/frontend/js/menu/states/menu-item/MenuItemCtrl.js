@@ -21,10 +21,12 @@
 
         .controller('hippo.channel.menu.MenuItemCtrl', [
             '$scope',
+            '$filter',
             '$rootScope',
             '$state',
             'hippo.channel.menu.MenuService',
-            function ($scope, $rootScope, $state, MenuService) {
+            function ($scope, $filter, $rootScope, $state, MenuService) {
+                var translate = $filter('translate');
                 $scope.list = [];
                 $scope.selectedMenuItem = {};
                 $scope.feedback = {};
@@ -49,6 +51,19 @@
                             });
                         }
                     }, false);
+
+                    $scope.showTooltip = function() {
+                        $scope.tooltip = translate('OPEN_LINK');
+
+                    };
+
+                    $scope.hideTooltip = function() {
+                        $scope.tooltip = '';
+                    };
+
+                    $scope.deletePage = function () {
+                        $scope.isConfirmationVisible = true;
+                    };
                 });
 
                 // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually

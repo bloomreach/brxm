@@ -35,6 +35,7 @@
 
     "UNTITLED": "Untitled",
     "MENU_ITEM": "menu item",
+    "OPEN_LINK": "Open link",
 
     "CLOSE_PANEL_TITLE": "Are you sure you want to close this panel?",
     "CLOSE_PANEL_CONFIRMATION": "The latest changes will be discarded.",

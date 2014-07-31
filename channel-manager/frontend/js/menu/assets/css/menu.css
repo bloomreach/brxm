@@ -197,3 +197,8 @@ h3.lead.item-title {
     margin-right: 0;
     width: 100%;
 }
+
+/* --- Tooltip --- */
+.tooltip-newlines + .tooltip > .tooltip-inner {
+    white-space: pre-wrap;
+}
