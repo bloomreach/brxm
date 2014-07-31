@@ -45,16 +45,6 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-
-    }
-
-    @Override
     public String getDescription() {
         return "test";
     }

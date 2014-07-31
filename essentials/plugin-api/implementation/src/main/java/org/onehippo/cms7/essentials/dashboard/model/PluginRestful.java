@@ -49,7 +49,6 @@ public class PluginRestful implements Plugin, Restful {
     private String type;
     private boolean installed;
     private String installState;
-    private boolean enabled;
     private Calendar dateInstalled;
     private String documentationLink;
     private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
@@ -274,16 +273,6 @@ public class PluginRestful implements Plugin, Restful {
     @Override
     public void setRestClasses(final List<String> restClasses) {
         this.restClasses = restClasses;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override

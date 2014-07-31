@@ -33,10 +33,6 @@ public interface Plugin extends Serializable {
 
     void setRestClasses(List<String> restClasses);
 
-    boolean isEnabled();
-
-    void setEnabled(boolean enabled);
-
     String getDescription();
 
     void setDescription(String description);
