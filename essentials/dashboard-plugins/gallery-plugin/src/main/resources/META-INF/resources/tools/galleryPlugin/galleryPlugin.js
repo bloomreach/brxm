@@ -53,7 +53,8 @@
                 }
             });
             if (exists) {
-                displayError("Image variant with name: " + $scope.imageVariantName + " already exists");
+                displayError("Image variant with name '" + $scope.imageVariantName + "' already exists");
+                return;
             }
             var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
             Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
