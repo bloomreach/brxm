@@ -30,6 +30,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
@@ -58,7 +59,9 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.component.IRequestablePage;
+import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycleListenerCollection;
 import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
 import org.apache.wicket.request.http.WebRequest;
@@ -115,6 +118,12 @@ public class Main extends PluginApplication {
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
 
     /**
+     * Custom Wicket {@link IRequestCycleListener} class names parameter
+     * which can be comma or whitespace-separated string to set multiple {@link IRequestCycleListener}s.
+     */
+    public final static String REQUEST_CYCLE_LISTENERS_PARAM = "wicket.request.cycle.listeners";
+
+    /**
      * Wicket RequestCycleSettings timeout configuration parameter name in development mode.
      */
     public final static String DEVELOPMENT_REQUEST_TIMEOUT_PARAM = "wicket.development.request.timeout";
@@ -145,6 +154,8 @@ public class Main extends PluginApplication {
     @Override
     protected void init() {
         super.init();
+
+        addRequestCycleListeners();
 
         getPageSettings().setVersionPagesByDefault(false);
 //        getPageSettings().setAutomaticMultiWindowSupport(false);
@@ -573,5 +584,30 @@ public class Main extends PluginApplication {
         }
     }
 
+    /**
+     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s.
+     * <P>
+     * If no custom {@link IRequestCycleListener}s are configured, then this simply registers the default built-in
+     * {@link RepositoryRuntimeExceptionHandlingRequestCycleListener}.
+     * Otherwise, this registers only the custom configured {@link IRequestCycleListener}s.
+     * </P>
+     */
+    private void addRequestCycleListeners() {
+        String [] listenerClassNames = StringUtils.split(getConfigurationParameter(REQUEST_CYCLE_LISTENERS_PARAM, null), " ,\t\r\n");
+        RequestCycleListenerCollection requestCycleListenerCollection = getRequestCycleListeners();
 
+        if (listenerClassNames == null || listenerClassNames.length == 0) {
+            requestCycleListenerCollection.add(new RepositoryRuntimeExceptionHandlingRequestCycleListener());
+        } else {
+            for (String listenerClassName : listenerClassNames) {
+                try {
+                    Class<?> clazz = Class.forName(listenerClassName);
+                    IRequestCycleListener listener = (IRequestCycleListener) clazz.newInstance();
+                    requestCycleListenerCollection.add(listener);
+                } catch (Throwable th) {
+                    log.error("Failed to register RequestCycleListener, " + listenerClassName, th);
+                }
+            }
+        }
+    }
 }

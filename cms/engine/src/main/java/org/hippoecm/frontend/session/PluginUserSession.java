@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ThreadContext;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -39,8 +38,8 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.NoRepositoryAvailablePage;
 import org.hippoecm.frontend.PluginApplication;
+import org.hippoecm.frontend.RepositoryUnavailableException;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.FacetRootsObserver;
@@ -199,7 +198,7 @@ public class PluginUserSession extends UserSession {
             session = fallbackSession;
             if (session == null) {
                 main.resetConnection();
-                throw new RestartResponseException(NoRepositoryAvailablePage.class);
+                throw new RepositoryUnavailableException("Repository is not available.");
             }
         } else if (fallbackSession != null) {
             fallbackSession.logout();
@@ -215,8 +214,9 @@ public class PluginUserSession extends UserSession {
                 return null;
             }
             if (!result.isLive()) {
-                log.error("Found session in an invalid unallowed state: not live. Logout PluginUserSession");
+                log.error("Found session in an invalid unallowed state: not live. Logout PluginUserSession.");
                 logout();
+                throw new InvalidSessionException("Invalid (non-live) session found.", new Throwable("StackTraceTrigger"));
             }
             return result;
         }

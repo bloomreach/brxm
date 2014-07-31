@@ -35,10 +35,9 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.InvalidSessionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -443,10 +442,14 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
         try {
             if (!getNode().getSession().isLive()) {
                 log.error("Found session in an invalid unallowed state: not live. Return log in screen");
-                throw new RestartResponseException(WebApplication.get().getHomePage());
+                throw new InvalidSessionException("Invalid (non-live) session found.", ex);
             }
         } catch (RepositoryException e) {
-            // log the original ex above
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to check the liveness of the session.", e);
+            } else {
+                log.warn("Failed to check the liveness of the session. {}", e);
+            }
         }
 
         if (log.isDebugEnabled()) {

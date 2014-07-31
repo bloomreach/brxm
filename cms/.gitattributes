@@ -22,6 +22,8 @@ api/src/main/java/org/hippoecm/frontend/Home.java -text
 api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/PluginApplication.java -text
 api/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/RepositoryRuntimeException.java -text
+api/src/main/java/org/hippoecm/frontend/RepositoryUnavailableException.java -text
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingDecorator.java -text
 api/src/main/java/org/hippoecm/frontend/behaviors/OnEnterAjaxBehavior.java svneol=native#text/plain
@@ -540,6 +542,7 @@ api/src/main/java/org/hippoecm/frontend/service/render/ListViewService_row.html 
 api/src/main/java/org/hippoecm/frontend/service/render/RenderPlugin.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/render/RenderService.html -text
 api/src/main/java/org/hippoecm/frontend/service/render/RenderService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/session/InvalidSessionException.java -text
 api/src/main/java/org/hippoecm/frontend/session/SessionClassLoaderModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/session/UserSession.java -text
 api/src/main/java/org/hippoecm/frontend/types/BuiltinFieldDescriptor.java -text
@@ -1884,6 +1887,7 @@ engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_it.properties -t
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_nl.properties -text
 engine/src/main/java/org/hippoecm/frontend/PluginPage.html -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/PluginPage.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/frontend/RepositoryRuntimeExceptionHandlingRequestCycleListener.java -text
 engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
