@@ -117,11 +117,11 @@
                         else if (toState.url.indexOf('/build') != -1) {
                             $rootScope.mainHeader = 'Build instructions';
                         }
-                        else if (toState.url.indexOf('/plugins') != -1) {
-                            $rootScope.mainHeader = 'Essentials library';
+                        else if (toState.url.indexOf('/library') != -1) {
+                            $rootScope.mainHeader = 'Library';
                         }
-                        else if (toState.url.indexOf('/installed-plugins') != -1) {
-                            $rootScope.mainHeader = 'Installed plugins';
+                        else if (toState.url.indexOf('/installed-features') != -1) {
+                            $rootScope.mainHeader = 'Installed features';
                         } else {
                             $rootScope.mainHeader = 'Hippo Essentials';
                         }

@@ -50,11 +50,10 @@
                     controller: 'homeCtrl',
                     url: '/home',
                     templateUrl: 'pages/home.html'
-
                 })
-                .state('plugins', {
-                    url: '/plugins',
-                    templateUrl: 'pages/plugins.html',
+                .state('library', {
+                    url: '/library',
+                    templateUrl: 'pages/library.html',
                     controller: 'pluginCtrl'
                 })
                 .state('build', {
@@ -62,12 +61,12 @@
                     templateUrl: 'pages/build.html',
                     controller: 'pluginCtrl'
                 })
-                .state('installed-plugins', {
-                    url: '/installed-plugins',
-                    templateUrl: 'pages/installed-plugins.html',
+                .state('installed-features', {
+                    url: '/installed-features',
+                    templateUrl: 'pages/installed-features.html',
                     controller: 'pluginCtrl'
-                }
-            ).state('plugin', {
+                })
+                .state('plugin', {
                     url: '/plugins/:id',
                     templateUrl: function ($stateParams) {
                         return 'plugins/' + $stateParams.id + '/' + $stateParams.id + '.html';

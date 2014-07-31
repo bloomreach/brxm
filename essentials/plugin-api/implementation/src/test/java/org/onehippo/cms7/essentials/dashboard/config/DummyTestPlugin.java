@@ -66,16 +66,6 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public boolean isNeedsInstallation() {
-        return false;
-    }
-
-    @Override
-    public void setNeedsInstallation(final boolean needsInstallation) {
-
-    }
-
-    @Override
     public String getInstallState() { return "installed"; }
 
     @Override

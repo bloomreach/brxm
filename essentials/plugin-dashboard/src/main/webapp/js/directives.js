@@ -176,7 +176,7 @@
                     requireOnBoardState: '@' // use if CMS dependency bootstraps namespace required during installation.
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $sce, $log, $rootScope, $http) {
+                controller: function ($scope, $sce, $log, $location, $rootScope, $http) {
                     $scope.showForm = false;
 
                     $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
@@ -191,10 +191,12 @@
                     $scope.run = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
                             $scope.plugin.installState = 'installing';
+                            $log.debug('signalling state change for plugin ' + $scope.plugin.pluginId);
                             $rootScope.$broadcast('update-plugin-install-state', {
                                 'pluginId': $scope.pluginId,
                                 'state': $scope.plugin.installState
                             });
+                            $location.path('/installed-features');
                         });
                     };
                     $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
@@ -302,10 +304,73 @@
                 replace: false,
                 restrict: 'E',
                 scope: {
+                    plugin: '='
+                },
+                templateUrl: 'directives/essentials-plugin.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    var displayTypeMap = {
+                        'plugins' : 'feature',
+                        'tools'   : 'tool'
+                    };
+                    $scope.getDisplayType = function() {
+                        return displayTypeMap[$scope.plugin.type];
+                    };
+                    $scope.isDiscovered = function() {
+                        return $scope.plugin.installState === 'discovered';
+                    };
+                    $scope.isBoarding = function() {
+                        return $scope.plugin.installState === 'boarding';
+                    };
+                    $scope.isOnBoard = function() {
+                        return $scope.plugin.installState !== 'discovered' && $scope.plugin.installState !== 'boarding';
+                    };
+                    $scope.installPlugin = function () {
+                        $rootScope.pluginsCache = null;
+                        var pluginId = $scope.plugin.pluginId;
+                        $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
+                            // reload because of install state change:
+                            $http.get($rootScope.REST.plugins +'plugins/' + pluginId).success(function (data) {
+                                $scope.plugin = data;
+                            });
+                        });
+                    };
+                }
+            }
+        }).directive("essentialsInstalledFeature", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    plugin: '='
+                },
+                templateUrl: 'directives/essentials-installed-feature.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    $scope.needsRebuild = function() {
+                        var state = $scope.plugin.installState;
+                        return state === 'boarding' || state === 'installing';
+                    };
+                    $scope.needsConfiguration = function() {
+                        return $scope.plugin.installState === 'onBoard';
+                    };
+                    $scope.hasConfiguration = function() {
+                        // TODO: require additional info from plugin to make this more selective!
+                        return $scope.plugin.installState === 'installed';
+                    };
+                    $scope.hasNoConfiguration = function() {
+                        // TODO: require additional info from plugin to make this more selective!
+                        return false;
+                    };
+                }
+            }
+        }).directive("essentialsInstalledTool", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
                     plugin: '=',
                     plugins: '='
                 },
-                templateUrl: 'directives/essentials-plugin.html',
+                templateUrl: 'directives/essentials-installed-tool.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
                     $scope.installPlugin = function (pluginId) {
                         $rootScope.pluginsCache = null;

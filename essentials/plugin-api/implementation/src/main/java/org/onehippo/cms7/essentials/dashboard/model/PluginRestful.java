@@ -48,7 +48,6 @@ public class PluginRestful implements Plugin, Restful {
     private String packageFile;
     private String type;
     private boolean installed;
-    private boolean needsInstallation;
     private String installState;
     private boolean enabled;
     private Calendar dateInstalled;
@@ -108,16 +107,6 @@ public class PluginRestful implements Plugin, Restful {
     @Override
     public void setType(final String type) {
         this.type = type;
-    }
-
-    @Override
-    public boolean isNeedsInstallation() {
-        return needsInstallation;
-    }
-
-    @Override
-    public void setNeedsInstallation(final boolean needsInstallation) {
-        this.needsInstallation = needsInstallation;
     }
 
     @Override
@@ -336,7 +325,6 @@ public class PluginRestful implements Plugin, Restful {
         sb.append(", pluginId='").append(pluginLink).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
-        sb.append(", needsInstallation=").append(needsInstallation);
         sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();

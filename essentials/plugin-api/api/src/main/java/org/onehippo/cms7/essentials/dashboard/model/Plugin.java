@@ -41,11 +41,6 @@ public interface Plugin extends Serializable {
 
     void setDescription(String description);
 
-
-    boolean isNeedsInstallation();
-
-    void setNeedsInstallation(boolean needsInstallation);
-
     String getInstallState();
 
     void setInstallState(String installState);

@@ -52,6 +52,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.PluginInstallationState;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
@@ -177,7 +178,7 @@ public class PluginResource extends BaseResource {
                 if (installState.equals("boarding") || installState.equals("installing")) {
                     systemInfo.addRebuildPlugin(plugin);
                     systemInfo.setNeedsRebuild(true);
-                } else if (!plugin.isNeedsInstallation()) {
+                } else if (false /* TODO: was !plugin.isNeedsInstallation() */) {
                     systemInfo.incrementConfigurablePlugins();
                 }
             }
@@ -243,6 +244,7 @@ public class PluginResource extends BaseResource {
                 document = createPluginInstallerDocument(pluginId);
             }
             document.setDateAdded(Calendar.getInstance());
+            document.setInstallationState(PluginInstallationState.INSTALLING); // TODO: If rebuild is not necessary, go to INSTALLED durectly!
             service.write(document);
             new MessageRestful("Successfully installed " + myPlugin.getName(), DisplayEvent.DisplayType.STRONG);
         } catch (Exception e) {
@@ -389,10 +391,12 @@ public class PluginResource extends BaseResource {
                 continue;
             }
             if (pluginId.equals(id)) {
-                if (isInstalled(plugin)) {
-                    message.setValue("Plugin was already installed. Please rebuild and restart your application");
-                    return message;
-                }
+                final boolean isPackaged = isInstalled(plugin);
+//                if (isInstalled(plugin)) {
+//                    message.setValue("Plugin was already installed. Please rebuild and restart your application");
+//                    return message;
+//                }
+                // add dependencies and repositories, if necessary
                 final List<EssentialsDependency> dependencies = plugin.getDependencies();
                 final Collection<EssentialsDependency> dependenciesNotInstalled = new ArrayList<>();
                 for (EssentialsDependency dependency : dependencies) {
@@ -415,7 +419,11 @@ public class PluginResource extends BaseResource {
                 if (dependenciesNotInstalled.size() == 0 && repositoriesNotInstalled.size() == 0) {
                     final PluginContext context = PluginContextFactory.getContext();
                     try (PluginConfigService service = new FilePluginService(context)) {
-                        service.write(createPluginInstallerDocument(id));
+                        InstallerDocument document = createPluginInstallerDocument(id);
+                        // TODO: If the plugin was packaged, check additional plugin info to see if there actually is an
+                        // TODO: additional installation step or not. If not, transit to 'installed'!
+                        document.setInstallationState(isPackaged ? PluginInstallationState.ONBOARD : PluginInstallationState.BOARDING);
+                        service.write(document);
                     }
                     message.setValue("Plugin <a href='#/plugins/" + pluginId + "'>" + plugin.getName() + "</a> successfully installed.");
                     return message;
@@ -608,11 +616,7 @@ public class PluginResource extends BaseResource {
                                 final Collection<String> restClasses, final PluginConfigService service, final PluginContext context) {
         for (PluginRestful item : items) {
             plugins.add(item);
-            final String pluginId = item.getPluginId();
-            if (!isInstalled(item)) {
-                item.setNeedsInstallation(true);
-            }
-            populateInstallState(item, context);
+            populateAndUpdateInstallState(item, context);
             //############################################
             // collect endpoints
             //############################################
@@ -625,6 +629,7 @@ public class PluginResource extends BaseResource {
 
             // check if recently installed:
             // TODO: move to client?
+            final String pluginId = item.getPluginId();
             final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
             if (document != null && document.getDateInstalled() != null) {
                 final Calendar dateInstalled = document.getDateInstalled();
@@ -637,43 +642,56 @@ public class PluginResource extends BaseResource {
         }
     }
 
-    private void populateInstallState(final PluginRestful plugin, final PluginContext context) {
-        boolean boarding = false;
-        boolean onBoard = false;
-        boolean installing = false;
-        boolean installed = false;
+    private void populateAndUpdateInstallState(final PluginRestful plugin, final PluginContext context) {
 
-        try (PluginConfigService service = new FilePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null) {
-                boarding = document.getDateInstalled() != null;
-                installing = document.getDateAdded() != null;
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
-        }
-
+        // Retrieve resource-based installation state of plugin (what's in the WAR).
+        String resourceBasedInstallationState = null;
         try (PluginConfigService service = new ResourcePluginService(context)) {
             final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
             if (document != null) {
-                onBoard = document.getDateInstalled() != null;
-                installed = document.getDateAdded() != null;
+                resourceBasedInstallationState = document.getInstallationState();
             }
         } catch (Exception e) {
             log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
         }
 
-        if (installed) {
-            plugin.setInstallState("installed");
-        } else if (installing) {
-            plugin.setInstallState("installing");
-        } else if (onBoard) {
-            plugin.setInstallState("onBoard");
-        } else if (boarding) {
-            plugin.setInstallState("boarding");
-        } else {
-            plugin.setInstallState("discovered");
+        // Retrieve filesystem-based installation state of plugin.
+        String installationState = null;
+        try (PluginConfigService service = new FilePluginService(context)) {
+            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            if (document == null) {
+                installationState = PluginInstallationState.DISCOVERED;
+            } else {
+                installationState = document.getInstallationState();
+
+                // If we find that both the resource based and the FS-based installation state "need a rebuild"
+                // and are identical, this is a sign that the rebuild did happen, and that the install state can
+                // proceed to the next level.
+                boolean updated = false;
+                if (PluginInstallationState.BOARDING.equals(installationState)
+                 && PluginInstallationState.BOARDING.equals(resourceBasedInstallationState)) {
+                    // Proceed from "boarding" to "onBoard".
+                    // TODO: If the plugin was packaged, check additional plugin info to see if there actually is an
+                    // TODO: additional installation step or not. If not, transit to 'installed'!
+                    installationState = PluginInstallationState.ONBOARD;
+                    updated = true;
+                } else if (PluginInstallationState.INSTALLING.equals(installationState)
+                        && PluginInstallationState.INSTALLING.equals(resourceBasedInstallationState)) {
+                    // Proceed from "installing" to "installed".
+                    installationState = PluginInstallationState.INSTALLED;
+                    updated = true;
+                }
+
+                if (updated) {
+                    document.setInstallationState(installationState);
+                    service.write(document);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
         }
+
+        plugin.setInstallState(installationState);
     }
 
     private Plugin getPluginById(final String id, final ServletContext context) {

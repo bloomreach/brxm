@@ -710,6 +710,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginInstallationState.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ResourcePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DefaultPluginContext.java -text
@@ -1525,6 +1526,8 @@ plugin-dashboard/src/main/webapp/css/theme.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-installed-feature.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-installed-tool.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-notifier.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-plugin.html -text
@@ -1569,9 +1572,9 @@ plugin-dashboard/src/main/webapp/js/loader.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/pages/build.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
-plugin-dashboard/src/main/webapp/pages/installed-plugins.html -text
+plugin-dashboard/src/main/webapp/pages/installed-features.html -text
 plugin-dashboard/src/main/webapp/pages/introduction.html -text
-plugin-dashboard/src/main/webapp/pages/plugins.html -text
+plugin-dashboard/src/main/webapp/pages/library.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRestfulTest.java -text

@@ -5,13 +5,14 @@
         "@type": "plugin",
         "name": "Content Blocks plugin",
         "introduction": "Provides the ability to add multiple Content Blocks to document types. Each Content Block offers a choice between multiple (potentially complex) field types, as determined by a Provider Compound.",
+        "documentationLink": "http://content-blocks.forge.onehippo.org",
         "pluginId": "contentBlocks",
         "type": "plugins",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"],
         "vendor": {
             "@type": "vendor",
-            "name": "Detailed Content Blocks documentation",
-            "url": "http://content-blocks.forge.onehippo.org"
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
         },
         "dependencies": [
             {
@@ -96,6 +97,7 @@
         "name": "Taxonomy plugin",
         "introduction": "Adds taxonomy support to hippo project",
         "description": "Editors can enrich their metadata using the Taxonomy plugin to categorize the content. The CMS administrator can edit the taxonomy.<p>Read more about the taxonomy plugin at <a href=\"http://taxonomy.forge.onehippo.org/\" target=\"_blank\">http://taxonomy.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://taxonomy.forge.onehippo.org",
         "pluginId": "taxonomyPlugin",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"],
@@ -167,6 +169,7 @@
         "name": "Selection plugin",
         "introduction": "Add value lists and selection document fields to your Hippo project",
         "description": "Add selection fields to your document types. The choices are backed by a CMS-based value list. <p>Read more about the Selection plugin at <a href=\"http://selection.forge.onehippo.org/\" target=\"_blank\">http://selection.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://selection.forge.onehippo.org",
         "packageFile": "/META-INF/selectionPlugin_instructions.xml",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.selection.SelectionResource"],
         "vendor": {
@@ -214,6 +217,7 @@
         "name": "ECM tagging plugin",
         "introduction": "Adds ECM tagging support to hippo project",
         "description": "The taggin plugin is an editor plugin for Hippo CMS 7. <p>Read more about the ECM tagging plugin plugin at <a href=\"http://ecm-tagging.forge.onehippo.org/\" target=\"_blank\">http://ecm-tagging.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://ecm-tagging.forge.onehippo.org",
         "pluginId": "ecmTaggingPlugin",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.ecm.EcmTaggingResource"],
@@ -249,6 +253,7 @@
         "name": "Document wizard plugin",
         "introduction": "Adds Document wizard support to hippo project",
         "description": "The Document Wizard is an addon for Hippo CMS that lets CMS users create new documents quickly and easily from the dashboard. On clicking a shortcut link a dialog window opens where information for the document to create can be entered.<p>Read more about the document wizard plugin at <a href=\"http://documentwizard.forge.onehippo.org/\" target=\"_blank\">http://documentwizard.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://documentwizard.forge.onehippo.org",
         "pluginId": "documentWizardPlugin",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"],
@@ -298,6 +303,7 @@
         "name": "Related documents plugin",
         "introduction": "Adds Related documents support to hippo project",
         "description": "The Related Documents plugin is a Hippo CMS 7 document editor plugin with which you can pick documents that are related to the currently edited document. It has the capability of creating a list of suggested documents you may want to pick, based on matching metadata search.<p>Read more about the Related documents  plugin at <a href=\"http://relateddocs.forge.onehippo.org/\" target=\"_blank\">http://relateddocs.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://relateddocs.forge.onehippo.org",
         "pluginId": "relatedDocumentsPlugin",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
@@ -333,6 +339,7 @@
         "name": "SEO  plugin",
         "introduction": "Adds SEO  support to hippo project",
         "description": "The HST SEO Support Components provides HST Components which enable easy HTML metadata head elements contributions.<p>Read more about the SEO plugin at <a href=\"http://hst-seo-support.forge.onehippo.org/\" target=\"_blank\">http://hst-seo-support.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://hst-seo-support.forge.onehippo.org",
         "pluginId": "seoPlugin",
         "packageFile": "/META-INF/seoPlugin_instructions.xml",
         "restClasses": [],
@@ -409,6 +416,7 @@
         "name": "Robots plugin",
         "introduction": "Add Robots plugin support",
         "description": "The robotstxt plugin adds a special document type to the CMS, allowing webmasters to determine the content of the robots.txt file retrieved by webbots. See <a href=\"http://www.robotstxt.org/\">robotstxt.org</a> for more information on the format and purpose of that file.<p>The robotstxt plugin provides Beans and Components for retrieving the robots.txt-related data from the Hippo repository, and a sample JSP file for rendering that data into the robots.txt file.</p>\n<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://robotstxt.forge.onehippo.org/\" target=\"_blank\">http://robotstxt.forge.onehippo.org/</a></p>",
+        "documentationLink": "http://robotstxt.forge.onehippo.org",
         "pluginId": "robotsPlugin",
         "restClasses": [],
         "packageFile": "/META-INF/robots_plugin_instructions.xml",
@@ -444,6 +452,7 @@
         "name": "Poll plugin",
         "introduction": "Add poll plugin support",
         "description": "The poll plug-in allows you to create poll documents in the CMS. It also provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class.<p>Read more about Poll plugin at plugin site:</p><a href=\"http://poll.forge.onehippo.org/\" target=\"_blank\">http://poll.forge.onehippo.org/</a>",
+        "documentationLink": "http://poll.forge.onehippo.org",
         "pluginId": "pollPlugin",
         "restClasses": [],
         "packageFile": "/META-INF/poll_plugin_instructions.xml",
@@ -578,16 +587,6 @@
         "libraries": [
             {
                 "items": []
-            }
-        ],
-        "dependencies": [
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.cms7.essentials",
-                "artifactId": "hippo-banner-plugin",
-                "scope": "compile",
-                "type": "essentials",
-                "version": "1.01.05-SNAPSHOT"
             }
         ]
     },

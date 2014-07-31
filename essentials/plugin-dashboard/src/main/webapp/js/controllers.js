@@ -41,7 +41,7 @@
                 // mark setup as done...
                 $scope.projectSettings.setupDone = true;
                 $http.post($rootScope.REST.save_settings, $scope.projectSettings).success(function (data) {
-                    window.location = "/essentials";
+                    $location.path('/library'); // Start in the Library
                 });
 
             }
@@ -61,7 +61,6 @@
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
             $scope.plugins = [];
-            $scope.pluginNeedsInstall = [];
             $scope.selectedPlugin = null;
             $scope.tabs = [
                 {name: "Installed Plugins", link: "/plugins"},
@@ -78,7 +77,12 @@
                 var myPath = $location.path();
                 return  myPath.indexOf(path) != -1;
             };
-
+            $scope.isInstalledFeature = function (plugin) {
+                return plugin.type === 'plugins' && plugin.installState !== 'discovered';
+            };
+            $scope.isInstalledTool = function (plugin) {
+                return plugin.type === 'tools'; // TODO: handle install state.
+            };
 
             $scope.showPluginDetail = function (pluginId) {
                 $scope.selectedPlugin = extracted(pluginId);
@@ -94,7 +98,15 @@
                     });
                 }
             };
-
+            // Receive state updates from individual plugins
+            $rootScope.$on('update-plugin-install-state', function(event, data) {
+                $log.debug('Caught state update for plugin ' + data.pluginId);
+                angular.forEach($scope.plugins, function (plugin) {
+                    if (plugin.pluginId === data.pluginId) {
+                        plugin.installState = data.state;
+                    }
+                });
+            });
 
             //fetch plugin list
             $scope.init = function () {
@@ -111,12 +123,6 @@
 
                 function processItems(items) {
                     $scope.plugins = items;
-                    $scope.pluginNeedsInstall = [];
-                    angular.forEach(items, function (obj) {
-                        if (obj.needsInstallation) {
-                            $scope.pluginNeedsInstall.push(obj);
-                        }
-                    });
                 }
             };
             $scope.init();

@@ -38,16 +38,11 @@
     <div class="panel-footer">
       <div class="input-group">
         <span class="input-group-btn">
-          <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Add {{plugin.name}}</button>
+          <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Apply</button>
+          <a class="btn btn-info pull-right" href="#/installed-features">Cancel</a>
         </span>
       </div>
     </div>
-  </div>
-
-  <div class="infobox infobox-info" ng-show="plugin.installState === 'installing'">
-    <h3>Please Rebuild</h3>
-    <p>Installation of <em>{{plugin.name}}</em> is pending. Please rebuild your project to make the changes effective.</p>
-    <!--plugin-specific instructions-->
   </div>
 
   <div class="infobox infobox-success" ng-show="plugin.installState === 'installed' && !hideInstalledInfo">
