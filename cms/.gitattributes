@@ -2583,7 +2583,6 @@ test/src/test/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFact
 test/src/test/java/org/hippoecm/frontend/plugins/standards/browse/BrowseServiceTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/plugins/standards/diff/LCSTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/plugins/standards/diff/TextDifferTest.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/frontend/plugins/standards/format/ByteSizeFormatterTest.java -text svneol=unset#text/plain
 test/src/test/java/org/hippoecm/frontend/plugins/standards/list/SearchDocumentsProviderTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/plugins/standards/search/TextSearchTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/plugins/standards/tabs/TabsTest.java svneol=native#text/plain
