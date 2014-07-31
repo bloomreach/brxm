@@ -216,7 +216,7 @@ public class PluginUserSession extends UserSession {
             if (!result.isLive()) {
                 log.error("Found session in an invalid unallowed state: not live. Logout PluginUserSession.");
                 logout();
-                throw new InvalidSessionException("Invalid (non-live) session found.", new Throwable("StackTraceTrigger"));
+                throw new InvalidSessionException("Invalid (non-live) session found.");
             }
             return result;
         }
