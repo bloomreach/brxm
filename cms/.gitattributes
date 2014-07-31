@@ -1113,6 +1113,7 @@ api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaDataT
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageUtilTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ReusableInputStreamTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ScaleImageOperationTest.java -text
+api/src/test/java/org/hippoecm/frontend/plugins/standards/util/ByteSizeFormatterTest.java -text
 api/src/test/resources/log4j.xml -text
 api/src/test/resources/test-1x5000.png -text
 api/src/test/resources/test-380x428.gif -text

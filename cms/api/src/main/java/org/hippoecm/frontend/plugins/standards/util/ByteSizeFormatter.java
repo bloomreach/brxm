@@ -16,9 +16,10 @@
 
 package org.hippoecm.frontend.plugins.standards.util;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.util.io.IClusterable;
 
 /**
@@ -42,8 +43,7 @@ public class ByteSizeFormatter implements IClusterable {
     private final String megabyteSuffix;
     private final String kilobyteSuffix;
     private final String byteSuffix;
-
-    private DecimalFormat numberFormat;
+    private final int decimalPlaces;
 
     public ByteSizeFormatter() {
         this(DEFAULT_DECIMAL_PLACES);
@@ -59,12 +59,7 @@ public class ByteSizeFormatter implements IClusterable {
         this.megabyteSuffix = megabyteSuffix;
         this.kilobyteSuffix = kilobyteSuffix;
         this.byteSuffix = byteSuffix;
-        
-        numberFormat = new DecimalFormat("#,##0.###");
-        DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
-        symbols.setDecimalSeparator(',');
-        numberFormat.setDecimalFormatSymbols(symbols);
-        numberFormat.setMaximumFractionDigits(decimalPlaces);
+        this.decimalPlaces = decimalPlaces;
     }
 
     /** Formats filesize in bytes as appropriate to bytes, KB, MB or GB
@@ -75,7 +70,13 @@ public class ByteSizeFormatter implements IClusterable {
     public String format(long filesize) {
         if (Math.abs(filesize) < ONE_KB) {
             return filesize + byteSuffix;
-        } else if (Math.abs(filesize) < ONE_MB) {
+        }
+
+        Locale loc = Session.get().getLocale();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(loc != null ? loc : Locale.getDefault());
+        numberFormat.setMaximumFractionDigits(decimalPlaces);
+
+        if (Math.abs(filesize) < ONE_MB) {
             return new StringBuilder(numberFormat.format(filesize / ONE_KB)).append(kilobyteSuffix).toString();
         } else if (Math.abs(filesize) < ONE_GB) {
             return new StringBuilder(numberFormat.format(filesize / ONE_MB)).append(megabyteSuffix).toString();
