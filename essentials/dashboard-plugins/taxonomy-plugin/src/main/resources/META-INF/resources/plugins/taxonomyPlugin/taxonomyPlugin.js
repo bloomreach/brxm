@@ -64,9 +64,9 @@
             });
             //
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                loadTaxonomies();
-                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                $scope.plugin = plugin;
             });
+            loadTaxonomies();
             //############################################
             // HELPERS
             //############################################

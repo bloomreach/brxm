@@ -15,11 +15,10 @@
   -->
 <div ng-controller="taxonomyPluginCtrl">
     <div class="panel panel-default">
-        <div class="panel-heading">Taxonomy plugin</div>
+        <div class="panel-heading">{{plugin.name}}</div>
         <div class="panel-body">
             <div>
                 <form novalidate name="taxonomyForm">
-                    <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
                     <h3>Create new taxonomy:</h3>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Taxonomy Name:</label>

@@ -304,7 +304,7 @@
         "description": "<p>The feature can also create a list of suggested documents that you might want to pick, based on a matching metadata search.</p><p>This Essentials Feature wraps the certified Hippo Forge Related Documents plugin.</p>",
         "documentationLink": "http://relateddocs.forge.onehippo.org",
         "pluginId": "relatedDocumentsPlugin",
-        "packageFile": "",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
         "type": "plugins",
         "vendor": {
@@ -712,7 +712,7 @@
         "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
         "description": "This Essentials Feature wraps the certified Hippo Forge Sitemap Component.",
         "documentationLink": "http://sitemap.forge.onehippo.org",
-        "packageFile": "/META-INF/sitemap_instructions.xml",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.sitemap.SitemapParameterService",
         "pluginId": "sitemapPlugin",
         "restClasses": [],
         "type": "plugins",

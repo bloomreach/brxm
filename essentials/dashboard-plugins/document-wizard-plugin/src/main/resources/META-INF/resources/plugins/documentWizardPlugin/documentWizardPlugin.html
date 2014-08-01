@@ -15,9 +15,8 @@
   -->
 
 <div class="panel panel-default" ng-controller="documentWizardCtrl">
-    <div class="panel-heading">Document wizard plugin</div>
+    <div class="panel-heading">{{plugin.name}}</div>
     <div class="panel-body">
-        <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
         <h3>Create document wizard shortcut:</h3>
         <div>
             <form class="form-horizontal" novalidate name="wizardForm">

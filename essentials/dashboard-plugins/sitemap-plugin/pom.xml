@@ -28,6 +28,17 @@
   <description>Hippo Essentials Sitemap plugin</description>
   <artifactId>hippo-essentials-sitemap-plugin</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
