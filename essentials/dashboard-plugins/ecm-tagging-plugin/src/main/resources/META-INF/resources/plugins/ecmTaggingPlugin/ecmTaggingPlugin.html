@@ -15,17 +15,11 @@
   -->
 
 <div class="panel panel-default" ng-controller="ecmTaggingPluginCtrl">
-    <div class="panel-heading">ECM tagging plugin</div>
+    <div class="panel-heading">{{plugin.name}}</div>
     <div class="panel-body">
         <form novalidate name="ecmTaggingForm">
-            <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
-
-
-        </form>
-        <form novalidate name="ecmTaggingForm">
             <div ng-show="documentTypes.length">
-                <h3>Add ECM Tagging fields to following documents:</h3>
-
+                <h3>Add Tagging fields to following documents:</h3>
 
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Nr. of suggestions</label>
@@ -61,14 +55,12 @@
                     </tr>
                     </tbody>
                 </table>
-
             </div>
         </form>
-
     </div>
     <div class="panel-footer">
         <div class="pull-right">
-            <button ng-disabled="!ecmTaggingForm.$valid" class="btn btn-primary" ng-click="addDocuments()">Add ECM tagging</button>
+            <button ng-disabled="!ecmTaggingForm.$valid" class="btn btn-primary" ng-click="addDocuments()">Add tagging</button>
         </div>
         <p class="clearfix">&nbsp;</p>
     </div>

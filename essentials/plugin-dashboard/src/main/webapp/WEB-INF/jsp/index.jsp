@@ -79,19 +79,19 @@
   <div class="row-fluid">
     <div class="sidebar-nav">
       <ul class="side-menu" ng-controller="mainMenuCtrl">
-        <li ng-class="{true:'active', false:''}[isPageSelected('#/plugins')]">
-          <a href="#/plugins">
-            <i class="fa fa-gear"></i>
-            <span>Essentials library</span>
-            <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span>
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
+          <a href="#/installed-features">
+            <i class="fa fa-gears"></i>
+            <span>Installed features</span>
+            <span class="badge pull-right alert-success">{{TOTAL_CONFIGURABLE}}</span>
           </a>
 
         </li>
-        <li ng-class="{true:'active', false:''}[isPageSelected('#/installed-plugins')]">
-          <a href="#/installed-plugins">
-            <i class="fa fa-gears"></i>
-            <span>Installed plugins</span>
-            <span class="badge pull-right alert-success">{{TOTAL_CONFIGURABLE}}</span>
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
+          <a href="#/library">
+            <i class="fa fa-gear"></i>
+            <span>Library</span>
+            <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span>
           </a>
 
         </li>

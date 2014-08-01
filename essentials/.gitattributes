@@ -179,6 +179,7 @@ dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/blog-plugin/pom.xml -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogDaemonModuleInstruction.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogFacetInstruction.java -text
+dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogParameterService.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.html -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.js -text
@@ -310,6 +311,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksParameterService.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksResource.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/RestList.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/AllDocumentMatcher.java -text
@@ -429,6 +431,7 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-conten
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/document-wizard-plugin/pom.xml -text
+dashboard-plugins/document-wizard-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/docwiz/DocumentWizardParameterService.java -text
 dashboard-plugins/document-wizard-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/docwiz/DocumentWizardResource.java -text
 dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizardPlugin/documentWizardPlugin.html -text
 dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizardPlugin/documentWizardPlugin.js -text
@@ -436,6 +439,7 @@ dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/web-fragmen
 dashboard-plugins/document-wizard-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/ecm-tagging-plugin/pom.xml -text
 dashboard-plugins/ecm-tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/ecm/EcmTaggingResource.java -text
+dashboard-plugins/ecm-tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/ecm/TaggingParameterService.java -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/ecmTaggingPlugin/ecmTaggingPlugin.html -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/ecmTaggingPlugin/ecmTaggingPlugin.js -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/web-fragment.xml -text
@@ -560,6 +564,7 @@ dashboard-plugins/poll-plugin/src/main/resources/xml/poll-folder.xml -text
 dashboard-plugins/poll-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
 dashboard-plugins/related-documents-plugin/pom.xml -text
+dashboard-plugins/related-documents-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/relateddocuments/RelatedDocumentsParameterService.java -text
 dashboard-plugins/related-documents-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/relateddocuments/RelatedDocumentsResource.java -text
 dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/plugins/relatedDocumentsPlugin/relatedDocumentsPlugin.html -text
 dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/plugins/relatedDocumentsPlugin/relatedDocumentsPlugin.js -text
@@ -594,6 +599,7 @@ dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-s
 dashboard-plugins/selection-plugin/README.md -text
 dashboard-plugins/selection-plugin/pom.xml -text
 dashboard-plugins/selection-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionFieldRestful.java -text
+dashboard-plugins/selection-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionParameterService.java -text
 dashboard-plugins/selection-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionResource.java -text
 dashboard-plugins/selection-plugin/src/main/resources/META-INF/resources/plugins/selectionPlugin/selectionPlugin.html -text
 dashboard-plugins/selection-plugin/src/main/resources/META-INF/resources/plugins/selectionPlugin/selectionPlugin.js -text
@@ -635,7 +641,13 @@ dashboard-plugins/simple-content/src/main/resources/java/ContentDocument.txt -te
 dashboard-plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -text
 dashboard-plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
 dashboard-plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
+dashboard-plugins/sitemap-plugin/pom.xml -text
+dashboard-plugins/sitemap-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/sitemap/SitemapParameterService.java -text
+dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/resources/plugins/sitemapPlugin/sitemapPlugin.html -text
+dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/sitemap_instructions.xml -text
+dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/taxonomy-plugin/pom.xml -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyParameterService.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyResource.java -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.html -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.js -text
@@ -682,6 +694,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Docum
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DocumentType.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Folder.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginConfigService.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginParameterService.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginContext.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayLocation.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
@@ -708,8 +721,11 @@ plugin-api/api/src/test/resources/log4j.xml -text
 plugin-api/implementation/pom.xml -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/AbstractPluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultPluginParameterService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginInstallationState.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginParameterServiceFactory.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ResourcePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DefaultPluginContext.java -text
@@ -1525,6 +1541,8 @@ plugin-dashboard/src/main/webapp/css/theme.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-installed-feature.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-installed-tool.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-notifier.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-plugin.html -text
@@ -1569,9 +1587,9 @@ plugin-dashboard/src/main/webapp/js/loader.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/pages/build.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
-plugin-dashboard/src/main/webapp/pages/installed-plugins.html -text
+plugin-dashboard/src/main/webapp/pages/installed-features.html -text
 plugin-dashboard/src/main/webapp/pages/introduction.html -text
-plugin-dashboard/src/main/webapp/pages/plugins.html -text
+plugin-dashboard/src/main/webapp/pages/library.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRestfulTest.java -text

@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -15,8 +15,13 @@
   limitations under the License.
   -->
 
-<div class="row">
-    <div ng-repeat="plugin in plugins | filter:{type:'plugins'} | orderBy:'name'">
-        <essentials-plugin plugins="plugins" plugin="plugin"></essentials-plugin>
-    </div>
-</div>
+<web-fragment id="WebFragment_ID" version="3.0" metadata-complete="true"
+              xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
+  <display-name>Hippo Sitemap plugin plugin</display-name>
+  <ordering>
+    <after>
+      <others/>
+    </after>
+  </ordering>
+</web-fragment>

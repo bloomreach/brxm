@@ -64,6 +64,7 @@
     <module>ecm-tagging-plugin</module>
     <module>selection-plugin</module>
     <module>gallery-plugin</module>
+    <module>sitemap-plugin</module>
   </modules>
   <dependencyManagement>
 

@@ -1,3 +1,4 @@
+
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,9 +15,8 @@
   limitations under the License.
   -->
 
-<div class="row" ng-controller="pluginCtrl">
-    <div ng-repeat="plugin in plugins | filter:isInstalledTool">
-        <essentials-installed-tool plugins="plugins" plugin="plugin"></essentials-installed-tool>
+<div class="row">
+    <div ng-repeat="plugin in plugins | orderBy:'name'">
+        <essentials-plugin plugin="plugin"></essentials-plugin>
     </div>
 </div>
-

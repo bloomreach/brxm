@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,9 +15,9 @@
   limitations under the License.
   -->
 
-<div class="row" ng-controller="pluginCtrl">
-    <div ng-repeat="plugin in plugins | filter:isInstalledTool">
-        <essentials-installed-tool plugins="plugins" plugin="plugin"></essentials-installed-tool>
-    </div>
-</div>
-
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet>
+    <!--  TODO -->
+  </instructionSet>
+</instructions>

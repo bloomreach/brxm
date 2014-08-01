@@ -44,13 +44,14 @@ public class PluginRestful implements Plugin, Restful {
     private String introduction;
     private String description;
     private String pluginLink;
-    private String packageClass;
+    private String packageClass; // TODO: no longer used?
+    private String parameterServiceClass;
+    private boolean hasGeneralizedSetupParameters = true;
+    private boolean hasConfiguration = false;
     private String packageFile;
     private String type;
     private boolean installed;
-    private boolean needsInstallation;
     private String installState;
-    private boolean enabled;
     private Calendar dateInstalled;
     private String documentationLink;
     private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
@@ -111,16 +112,6 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public boolean isNeedsInstallation() {
-        return needsInstallation;
-    }
-
-    @Override
-    public void setNeedsInstallation(final boolean needsInstallation) {
-        this.needsInstallation = needsInstallation;
-    }
-
-    @Override
     public String getInstallState() {
         return installState;
     }
@@ -170,6 +161,35 @@ public class PluginRestful implements Plugin, Restful {
         this.packageClass = packageClass;
     }
 
+    @Override
+    public String getParameterServiceClass() {
+        return parameterServiceClass;
+    }
+
+    @Override
+    public void setParameterServiceClass(final String parameterServiceClass) {
+        this.parameterServiceClass = parameterServiceClass;
+    }
+
+    @Override
+    public void setHasGeneralizedSetupParameters(final boolean hasGeneralizedSetupParameters) {
+        this.hasGeneralizedSetupParameters = hasGeneralizedSetupParameters;
+    }
+
+    @Override
+    public boolean getHasGeneralizedSetupParameters() {
+        return hasGeneralizedSetupParameters;
+    }
+
+    @Override
+    public void setHasConfiguration(final boolean hasConfiguration) {
+        this.hasConfiguration = hasConfiguration;
+    }
+
+    @Override
+    public boolean getHasConfiguration() {
+        return hasConfiguration;
+    }
 
     @Override
     @XmlElementRef(type = VendorRestful.class)
@@ -288,16 +308,6 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
     public String getDescription() {
         return description;
     }
@@ -313,7 +323,7 @@ public class PluginRestful implements Plugin, Restful {
     @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryRestful.class, name = "repository")})
     @Override
     public List<Repository> getRepositories() {
-        if(repositories ==null){
+        if (repositories == null) {
             return new ArrayList<>();
         }
         return repositories;
@@ -336,11 +346,8 @@ public class PluginRestful implements Plugin, Restful {
         sb.append(", pluginId='").append(pluginLink).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
-        sb.append(", needsInstallation=").append(needsInstallation);
         sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();
     }
-
-
 }

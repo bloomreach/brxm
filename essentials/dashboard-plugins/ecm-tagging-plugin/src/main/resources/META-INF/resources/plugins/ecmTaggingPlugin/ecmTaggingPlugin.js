@@ -48,7 +48,7 @@
             //
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                $scope.plugin = plugin;
             });
             //############################################
             // HELPERS
@@ -65,6 +65,5 @@
                 }
                 return locales.join(',');
             }
-
         })
 })();

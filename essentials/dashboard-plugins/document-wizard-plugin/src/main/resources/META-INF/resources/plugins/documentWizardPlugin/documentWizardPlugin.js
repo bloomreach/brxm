@@ -33,7 +33,6 @@
             $scope.dateLabel = "Document date";
             $scope.listLabel = "";
 
-
             $scope.anyOf = function () {
                 return true;
             };
@@ -60,15 +59,13 @@
                 $http.post(endpoint, payload).success(function (data) {
 
                 });
-
             };
-
 
             //############################################
             // INIT
             //############################################
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                $scope.plugin = plugin;
             });
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
@@ -81,7 +78,5 @@
             $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
                 $scope.valueLists = data;
             });
-
-
         })
 })();

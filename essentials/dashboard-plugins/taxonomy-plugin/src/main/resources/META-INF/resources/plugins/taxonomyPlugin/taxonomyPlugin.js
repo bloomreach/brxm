@@ -22,7 +22,6 @@
             var endpoint = $rootScope.REST.documents;
             var endpointTaxonomy = $scope.endpoint = $rootScope.REST.dynamic + 'taxonomyplugin/';
             var endpointDocument = endpointTaxonomy + "add";
-            $scope.uiEnabled = false;
             $scope.locales = [
                 {name: "en"},
                 {name: "fr"},
@@ -54,7 +53,6 @@
                 var payload = Essentials.addPayloadData("locales", extractLocales($scope.locales), null);
                 Essentials.addPayloadData("taxonomyName", $scope.taxonomyName, payload);
                 $http.post(endpointTaxonomy, payload).success(function (data) {
-
                     loadTaxonomies();
                 });
             };
@@ -66,12 +64,9 @@
             });
             //
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                $scope.uiEnabled = plugin.installState !== 'boarding';
-                if ($scope.uiEnabled) {
-                    loadTaxonomies();
-                }
-                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                $scope.plugin = plugin;
             });
+            loadTaxonomies();
             //############################################
             // HELPERS
             //############################################

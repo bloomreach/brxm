@@ -45,16 +45,6 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-
-    }
-
-    @Override
     public String getDescription() {
         return "test";
     }
@@ -62,16 +52,6 @@ public class DummyTestPlugin implements Plugin {
 
     @Override
     public void setDescription(final String description) {
-
-    }
-
-    @Override
-    public boolean isNeedsInstallation() {
-        return false;
-    }
-
-    @Override
-    public void setNeedsInstallation(final boolean needsInstallation) {
 
     }
 
@@ -124,6 +104,30 @@ public class DummyTestPlugin implements Plugin {
     @Override
     public void setPackageClass(final String packageClass) {
 
+    }
+
+    @Override
+    public String getParameterServiceClass() {
+        return null;
+    }
+
+    @Override
+    public void setParameterServiceClass(final String packageClass) { }
+
+    @Override
+    public void setHasGeneralizedSetupParameters(final boolean hasGeneralizedSetupParameters) { }
+
+    @Override
+    public boolean getHasGeneralizedSetupParameters() {
+        return true;
+    }
+
+    @Override
+    public void setHasConfiguration(final boolean hasConfiguration) { }
+
+    @Override
+    public boolean getHasConfiguration() {
+        return false;
     }
 
     @Override

@@ -14,9 +14,12 @@
   limitations under the License.
   -->
 
-<div class="row" ng-controller="pluginCtrl">
-    <div ng-repeat="plugin in plugins | filter:isInstalledTool">
-        <essentials-installed-tool plugins="plugins" plugin="plugin"></essentials-installed-tool>
-    </div>
-</div>
+<!--Note: Due to the settings in SitemapParametersService, the dashboard currently doesn't make this fragment accessible at all!-->
+<essentials-simple-install-plugin
+        plugin-id="sitemapPlugin"
+        sample="false"
+        has-no-templates="true"
+        />
+
+
 
