@@ -469,7 +469,6 @@
                 "type": "site"
             }
         ]
-
     },
     {
         "@type": "plugin",
@@ -660,7 +659,6 @@
                 ]
             }
         ]
-
     },
     {
         "@type": "plugin",
@@ -682,13 +680,12 @@
                 ]
             }
         ]
-
     },
     {
         "@type": "plugin",
         "name": "News",
         "introduction": "With News, you can easily integrate news functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This Essentials feature installs a new document type ‘newsdocument’ in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component ‘newslist’ is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>"
+        "description": "<ul><li>This Essentials feature installs a new document type ‘newsdocument’ in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component ‘newslist’ is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>",
         "packageFile": "/META-INF/news_package_instructions.xml",
         "pluginId": "newsPlugin",
         "restClasses": [],
@@ -703,6 +700,53 @@
                 "items": [
 
                 ]
+            }
+        ]
+    },
+    {
+        "@type": "plugin",
+        "name": "Sitemap",
+        "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
+        "description": "This Essentials Feature wraps the certified Hippo Forge Sitemap Component.",
+        "documentationLink": "http://sitemap.forge.onehippo.org",
+        "packageFile": "/META-INF/sitemap_instructions.xml",
+        "pluginId": "sitemapPlugin",
+        "restClasses": [],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+
+                ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.sitemap",
+                "artifactId": "sitemap-content",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.sitemap",
+                "artifactId": "sitemap-component",
+                "scope": "compile",
+                "type": "site"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "com.sun.xml.bind",
+                "artifactId": "jaxb-impl",
+                "scope": "compile",
+                "type": "site",
+                "version": "2.1.13"
             }
         ]
     }
