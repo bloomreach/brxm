@@ -8,6 +8,7 @@
         "documentationLink": "http://content-blocks.forge.onehippo.org",
         "pluginId": "contentBlocks",
         "type": "plugins",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"],
         "vendor": {
             "@type": "vendor",
@@ -170,6 +171,7 @@
         "description": "This Essentials Feature wraps the certified Hippo Forge Selection Plugin.",
         "documentationLink": "http://selection.forge.onehippo.org",
         "packageFile": "/META-INF/selectionPlugin_instructions.xml",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.selection.SelectionParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.selection.SelectionResource"],
         "vendor": {
             "@type": "vendor",

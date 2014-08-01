@@ -59,6 +59,10 @@ public interface Plugin extends Serializable {
 
     void setPackageClass(String packageClass);
 
+    String getParameterServiceClass();
+
+    void setParameterServiceClass(String parameterServiceClass);
+
     void setVendor(Vendor vendor);
 
     String getName();
@@ -93,4 +97,9 @@ public interface Plugin extends Serializable {
     List<Repository> getRepositories();
 
     void setRepositories(List<Repository> repositories);
+
+    void setHasGeneralizedSetupParameters(boolean hasSetupParameters);
+    boolean getHasGeneralizedSetupParameters();
+    void setHasConfiguration(boolean hasConfiguration);
+    boolean getHasConfiguration();
 }

@@ -44,7 +44,10 @@ public class PluginRestful implements Plugin, Restful {
     private String introduction;
     private String description;
     private String pluginLink;
-    private String packageClass;
+    private String packageClass; // TODO: no longer used?
+    private String parameterServiceClass;
+    private boolean hasGeneralizedSetupParameters = true;
+    private boolean hasConfiguration = false;
     private String packageFile;
     private String type;
     private boolean installed;
@@ -158,6 +161,35 @@ public class PluginRestful implements Plugin, Restful {
         this.packageClass = packageClass;
     }
 
+    @Override
+    public String getParameterServiceClass() {
+        return parameterServiceClass;
+    }
+
+    @Override
+    public void setParameterServiceClass(final String parameterServiceClass) {
+        this.parameterServiceClass = parameterServiceClass;
+    }
+
+    @Override
+    public void setHasGeneralizedSetupParameters(final boolean hasGeneralizedSetupParameters) {
+        this.hasGeneralizedSetupParameters = hasGeneralizedSetupParameters;
+    }
+
+    @Override
+    public boolean getHasGeneralizedSetupParameters() {
+        return hasGeneralizedSetupParameters;
+    }
+
+    @Override
+    public void setHasConfiguration(final boolean hasConfiguration) {
+        this.hasConfiguration = hasConfiguration;
+    }
+
+    @Override
+    public boolean getHasConfiguration() {
+        return hasConfiguration;
+    }
 
     @Override
     @XmlElementRef(type = VendorRestful.class)
@@ -291,7 +323,7 @@ public class PluginRestful implements Plugin, Restful {
     @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryRestful.class, name = "repository")})
     @Override
     public List<Repository> getRepositories() {
-        if(repositories ==null){
+        if (repositories == null) {
             return new ArrayList<>();
         }
         return repositories;
@@ -318,6 +350,4 @@ public class PluginRestful implements Plugin, Restful {
         sb.append('}');
         return sb.toString();
     }
-
-
 }

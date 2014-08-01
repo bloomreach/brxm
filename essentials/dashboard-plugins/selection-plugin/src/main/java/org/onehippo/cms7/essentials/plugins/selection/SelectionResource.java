@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -60,9 +59,7 @@ public class SelectionResource extends BaseResource {
 
     @POST
     @Path("/addfield")
-    public MessageRestful addField(final PostPayloadRestful payloadRestful,
-                                   @Context ServletContext servletContext,
-                                   @Context HttpServletResponse response) {
+    public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
         final Session session = PluginContextFactory.getContext().createSession();
 
         try {
@@ -77,8 +74,7 @@ public class SelectionResource extends BaseResource {
 
     @GET
     @Path("/fieldsfor/{docType}/")
-    public List<SelectionFieldRestful> getSelectionFields(@Context ServletContext servletContext,
-                                                          @PathParam("docType") String docType) {
+    public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
         final Session session = PluginContextFactory.getContext().createSession();
 

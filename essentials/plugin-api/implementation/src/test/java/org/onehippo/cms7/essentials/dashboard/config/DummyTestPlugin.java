@@ -107,6 +107,30 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public String getParameterServiceClass() {
+        return null;
+    }
+
+    @Override
+    public void setParameterServiceClass(final String packageClass) { }
+
+    @Override
+    public void setHasGeneralizedSetupParameters(final boolean hasGeneralizedSetupParameters) { }
+
+    @Override
+    public boolean getHasGeneralizedSetupParameters() {
+        return true;
+    }
+
+    @Override
+    public void setHasConfiguration(final boolean hasConfiguration) { }
+
+    @Override
+    public boolean getHasConfiguration() {
+        return false;
+    }
+
+    @Override
     public void setVendor(final Vendor vendor) {
 
     }

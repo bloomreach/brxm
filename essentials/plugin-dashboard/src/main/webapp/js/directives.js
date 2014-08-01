@@ -316,13 +316,14 @@
                         return displayTypeMap[$scope.plugin.type];
                     };
                     $scope.isDiscovered = function() {
-                        return $scope.plugin.installState === 'discovered';
+                        return $scope.plugin.type === 'plugins' && $scope.plugin.installState === 'discovered';
                     };
                     $scope.isBoarding = function() {
                         return $scope.plugin.installState === 'boarding';
                     };
                     $scope.isOnBoard = function() {
-                        return $scope.plugin.installState !== 'discovered' && $scope.plugin.installState !== 'boarding';
+                        return $scope.plugin.type === 'tools'
+                               || ($scope.plugin.installState !== 'discovered' && $scope.plugin.installState !== 'boarding');
                     };
                     $scope.installPlugin = function () {
                         $rootScope.pluginsCache = null;
@@ -353,12 +354,10 @@
                         return $scope.plugin.installState === 'onBoard';
                     };
                     $scope.hasConfiguration = function() {
-                        // TODO: require additional info from plugin to make this more selective!
-                        return $scope.plugin.installState === 'installed';
+                        return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
                     };
                     $scope.hasNoConfiguration = function() {
-                        // TODO: require additional info from plugin to make this more selective!
-                        return false;
+                        return $scope.plugin.installState === 'installed' && !$scope.plugin.hasConfiguration;
                     };
                 }
             }

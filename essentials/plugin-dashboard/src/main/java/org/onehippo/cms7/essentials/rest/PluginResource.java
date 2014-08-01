@@ -53,6 +53,8 @@ import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginInstallationState;
+import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
+import org.onehippo.cms7.essentials.dashboard.config.PluginParameterServiceFactory;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
@@ -87,6 +89,7 @@ import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
@@ -211,7 +214,7 @@ public class PluginResource extends BaseResource {
 
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
-        final Plugin myPlugin = getPluginById(pluginId, servletContext);
+        final PluginRestful myPlugin = getPluginById(pluginId, servletContext);
 
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
             final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
@@ -244,7 +247,7 @@ public class PluginResource extends BaseResource {
                 document = createPluginInstallerDocument(pluginId);
             }
             document.setDateAdded(Calendar.getInstance());
-            document.setInstallationState(PluginInstallationState.INSTALLING); // TODO: If rebuild is not necessary, go to INSTALLED durectly!
+            document.setInstallationState(determineInstallStateAfterSetup(myPlugin));
             service.write(document);
             new MessageRestful("Successfully installed " + myPlugin.getName(), DisplayEvent.DisplayType.STRONG);
         } catch (Exception e) {
@@ -420,9 +423,7 @@ public class PluginResource extends BaseResource {
                     final PluginContext context = PluginContextFactory.getContext();
                     try (PluginConfigService service = new FilePluginService(context)) {
                         InstallerDocument document = createPluginInstallerDocument(id);
-                        // TODO: If the plugin was packaged, check additional plugin info to see if there actually is an
-                        // TODO: additional installation step or not. If not, transit to 'installed'!
-                        document.setInstallationState(isPackaged ? PluginInstallationState.ONBOARD : PluginInstallationState.BOARDING);
+                        document.setInstallationState(determineInstallStateAfterInstallation(plugin, isPackaged));
                         service.write(document);
                     }
                     message.setValue("Plugin <a href='#/plugins/" + pluginId + "'>" + plugin.getName() + "</a> successfully installed.");
@@ -666,18 +667,14 @@ public class PluginResource extends BaseResource {
 
                 // If we find that both the resource based and the FS-based installation state "need a rebuild"
                 // and are identical, this is a sign that the rebuild did happen, and that the install state can
-                // proceed to the next level.
+                // proceed to the next phase.
                 boolean updated = false;
                 if (PluginInstallationState.BOARDING.equals(installationState)
                  && PluginInstallationState.BOARDING.equals(resourceBasedInstallationState)) {
-                    // Proceed from "boarding" to "onBoard".
-                    // TODO: If the plugin was packaged, check additional plugin info to see if there actually is an
-                    // TODO: additional installation step or not. If not, transit to 'installed'!
-                    installationState = PluginInstallationState.ONBOARD;
+                    installationState = determineInstallStateAfterInstallation(plugin, true);
                     updated = true;
                 } else if (PluginInstallationState.INSTALLING.equals(installationState)
                         && PluginInstallationState.INSTALLING.equals(resourceBasedInstallationState)) {
-                    // Proceed from "installing" to "installed".
                     installationState = PluginInstallationState.INSTALLED;
                     updated = true;
                 }
@@ -692,15 +689,64 @@ public class PluginResource extends BaseResource {
         }
 
         plugin.setInstallState(installationState);
+        populatePluginParameters(plugin);
     }
 
-    private Plugin getPluginById(final String id, final ServletContext context) {
+    private void populatePluginParameters(final PluginRestful plugin) {
+        final String installState = plugin.getInstallState();
+
+        if (installState != null
+            && (installState.equals(PluginInstallationState.ONBOARD)
+             || installState.equals(PluginInstallationState.INSTALLING)
+             || installState.equals(PluginInstallationState.INSTALLED)))
+        {
+            final boolean hasGeneralizedSetup = StringUtils.hasText(plugin.getPackageFile());
+            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
+
+            plugin.setHasGeneralizedSetupParameters(hasGeneralizedSetup && params.hasGeneralizedSetupParameters());
+            plugin.setHasConfiguration(params.hasConfiguration());
+        }
+    }
+
+    private String determineInstallStateAfterInstallation(final PluginRestful plugin, final boolean isPackaged) {
+        String installState;
+
+        if (isPackaged) {
+            // Plugin was packaged with Essentials WAR, no rebuild needed.
+            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
+            if (params.hasSetup()) {
+                installState = PluginInstallationState.ONBOARD;
+            } else {
+                installState = PluginInstallationState.INSTALLED;
+            }
+        } else {
+            // We require a rebuild to get the JARs on board.
+            installState = PluginInstallationState.BOARDING;
+        }
+
+        return installState;
+    }
+
+    private String determineInstallStateAfterSetup(final PluginRestful plugin) {
+        String installState;
+
+        final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
+        if (params.doesSetupRequireRebuild()) {
+            installState = PluginInstallationState.INSTALLING;
+        } else {
+            installState = PluginInstallationState.INSTALLED;
+        }
+
+        return installState;
+    }
+
+    private PluginRestful getPluginById(final String id, final ServletContext context) {
         if (Strings.isNullOrEmpty(id)) {
             return null;
         }
 
         final List<PluginRestful> plugins = getPlugins(context);
-        for (final Plugin next : plugins) {
+        for (final PluginRestful next : plugins) {
             final String pluginId = next.getPluginId();
             if (Strings.isNullOrEmpty(pluginId)) {
                 continue;
