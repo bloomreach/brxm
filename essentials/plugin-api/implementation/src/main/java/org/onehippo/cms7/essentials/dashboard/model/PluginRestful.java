@@ -43,6 +43,7 @@ public class PluginRestful implements Plugin, Restful {
     private String name;
     private String introduction;
     private String description;
+    private List<String> imageUrls;
     private String pluginLink;
     private String packageClass; // TODO: no longer used?
     private String parameterServiceClass;
@@ -317,6 +318,15 @@ public class PluginRestful implements Plugin, Restful {
         this.description = description;
     }
 
+    @Override
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    @Override
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
 
     @XmlElementRef(type = RepositoryRestful.class)
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)

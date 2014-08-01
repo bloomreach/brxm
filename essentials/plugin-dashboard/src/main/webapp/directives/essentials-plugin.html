@@ -29,6 +29,9 @@
   <div class="plugin-body">
     <div ng-bind-html="plugin.introduction"></div>
     <div ng-show="plugin.description" ng-bind-html="plugin.description"></div>
+
+    <!--TODO: These images should go into the carrousel...-->
+    <img ng-repeat="imageUrl in plugin.imageUrls" ng-src="{{imageUrl}}"/>
   </div>
   <div class="plugin-footer">
     <div>

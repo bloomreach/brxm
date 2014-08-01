@@ -56,6 +56,14 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public List<String> getImageUrls() {
+        return null;
+    }
+
+    @Override
+    public void setImageUrls(List<String> imageUrls) { }
+
+    @Override
     public String getInstallState() { return "installed"; }
 
     @Override
