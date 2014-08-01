@@ -65,6 +65,5 @@
                 }
                 return locales.join(',');
             }
-
         })
 })();

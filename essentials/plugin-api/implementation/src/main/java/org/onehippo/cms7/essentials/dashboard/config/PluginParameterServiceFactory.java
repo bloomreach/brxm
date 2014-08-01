@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 public class PluginParameterServiceFactory {
 
     private static Logger log = LoggerFactory.getLogger(PluginParameterServiceFactory.class);
+    private static final PluginParameterService defaultService = new DefaultPluginParameterService();
 
     public static PluginParameterService getParameterService(PluginRestful plugin) {
         final String parameterServiceClassName = plugin.getParameterServiceClass();
@@ -46,6 +47,6 @@ public class PluginParameterServiceFactory {
             }
         }
 
-        return new DefaultPluginParameterService();
+        return defaultService;
     }
 }

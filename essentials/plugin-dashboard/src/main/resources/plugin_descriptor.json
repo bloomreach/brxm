@@ -41,6 +41,7 @@
         "introduction": "With Blog, you add complete Blog functionality to your project. This Feature will be installed as a  set of drag-and-drop components in the document template editor. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
         "description": "<ul><li>This Essentials feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocuments&gt; and blog/authors/&lt;authors&gt;. On root level in the CMS, the entry ‘administration’ is created.</li><li>Several drag-and-drop components are added to the Document template editor: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
         "packageFile": "/META-INF/blog_instructions.xml",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogParameterService",
         "restClasses": [],
         "pluginId": "blogPlugin",
         "type": "plugins",
@@ -99,7 +100,7 @@
         "description": "This Essentials Feature wraps the certified Hippo Forge Taxonomy Plugin.",
         "documentationLink": "http://taxonomy.forge.onehippo.org",
         "pluginId": "taxonomyPlugin",
-        "packageFile": "",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"],
         "type": "plugins",
         "vendor": {
@@ -219,7 +220,7 @@
         "description": "This Essentials Feature wraps the certified Hippo Forge CMS Tagging Addon.",
         "documentationLink": "http://ecm-tagging.forge.onehippo.org",
         "pluginId": "ecmTaggingPlugin",
-        "packageFile": "",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.ecm.TaggingParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.ecm.EcmTaggingResource"],
         "type": "plugins",
         "vendor": {
@@ -254,7 +255,7 @@
         "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This Essentials Feature wraps the certified Hippo Dashboard Document Wizard.",
         "documentationLink": "http://documentwizard.forge.onehippo.org",
         "pluginId": "documentWizardPlugin",
-        "packageFile": "",
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"],
         "type": "plugins",
         "vendor": {

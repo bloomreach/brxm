@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.selection;
+package org.onehippo.cms7.essentials.dashboard.blog;
 
 import org.onehippo.cms7.essentials.dashboard.config.DefaultPluginParameterService;
 
-public class SelectionParameterService extends DefaultPluginParameterService {
+public class BlogParameterService extends DefaultPluginParameterService {
     @Override
     public boolean hasConfiguration() { return true; }
 }

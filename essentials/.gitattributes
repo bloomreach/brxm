@@ -179,6 +179,7 @@ dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/blog-plugin/pom.xml -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogDaemonModuleInstruction.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogFacetInstruction.java -text
+dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogParameterService.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.html -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.js -text
@@ -430,6 +431,7 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-conten
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/document-wizard-plugin/pom.xml -text
+dashboard-plugins/document-wizard-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/docwiz/DocumentWizardParameterService.java -text
 dashboard-plugins/document-wizard-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/docwiz/DocumentWizardResource.java -text
 dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizardPlugin/documentWizardPlugin.html -text
 dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizardPlugin/documentWizardPlugin.js -text
@@ -437,6 +439,7 @@ dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/web-fragmen
 dashboard-plugins/document-wizard-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/ecm-tagging-plugin/pom.xml -text
 dashboard-plugins/ecm-tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/ecm/EcmTaggingResource.java -text
+dashboard-plugins/ecm-tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/ecm/TaggingParameterService.java -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/ecmTaggingPlugin/ecmTaggingPlugin.html -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/ecmTaggingPlugin/ecmTaggingPlugin.js -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/web-fragment.xml -text
@@ -642,6 +645,7 @@ dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/resources/plugins/s
 dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/sitemap_instructions.xml -text
 dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/taxonomy-plugin/pom.xml -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyParameterService.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyResource.java -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.html -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.js -text

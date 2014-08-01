@@ -14,11 +14,24 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.selection;
+package org.onehippo.cms7.essentials.plugins.ecm;
 
-import org.onehippo.cms7.essentials.dashboard.config.DefaultPluginParameterService;
+import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 
-public class SelectionParameterService extends DefaultPluginParameterService {
-    @Override
-    public boolean hasConfiguration() { return true; }
+public class TaggingParameterService implements PluginParameterService {
+    public boolean hasSetup() {
+        return false;
+    }
+
+    public boolean hasGeneralizedSetupParameters() {
+        return false;
+    }
+
+    public boolean doesSetupRequireRebuild() {
+        return false;
+    }
+
+    public boolean hasConfiguration() {
+        return true;
+    }
 }
