@@ -366,45 +366,11 @@
                 replace: false,
                 restrict: 'E',
                 scope: {
-                    plugin: '=',
-                    plugins: '='
+                    plugin: '='
                 },
                 templateUrl: 'directives/essentials-installed-tool.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
-                    $scope.installPlugin = function (pluginId) {
-                        $rootScope.pluginsCache = null;
-                        $scope.selectedPlugin = extracted(pluginId);
-                        if ($scope.selectedPlugin) {
-                            $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
-                                // reload because of install state change:
-                                $http.get($rootScope.REST.plugins +'plugins/' + pluginId).success(function (data) {
-                                    $scope.plugin = data;
-                                    initializeInstallState($scope.plugin);
-                                });
-                            });
-                        }
-                    };
-                    initializeInstallState($scope.plugin);
-                    function initializeInstallState(p){
-
-                        // set install state:
-                        if (p) {
-                            $scope.showRebuildMessage = p.installState === 'installing';
-                            $scope.showInstalledMessage = p.installState === 'installed';
-                            $scope.showBoardingMessage = p.installState === 'boarding';
-                            $scope.showPlugin = !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
-                        }
-                    }
-                    function extracted(pluginId) {
-                        var sel = null;
-                        angular.forEach($scope.plugins, function (selected) {
-                            if (selected.pluginId == pluginId) {
-                                sel = selected;
-                            }
-                        });
-                        return sel;
-                    }
-
+                    // empty
                 }
             }
         })
