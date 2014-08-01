@@ -34,6 +34,7 @@
 
     "UNTITLED": "Ohne Titel",
     "MENU_ITEM": "Menüelement",
+    "TOOLTIP_OPEN_LINK": "Link öffnen",
 
     "CLOSE_PANEL_TITLE": "Sind Sie sicher, dass Sie dieses Fenster schließen möchten?",
     "CLOSE_PANEL_CONFIRMATION": "Die letzten Änderungen werden nicht gespeichert",

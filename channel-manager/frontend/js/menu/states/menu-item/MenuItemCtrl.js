@@ -26,7 +26,6 @@
             '$state',
             'hippo.channel.menu.MenuService',
             function ($scope, $filter, $rootScope, $state, MenuService) {
-                var translate = $filter('translate');
                 $scope.list = [];
                 $scope.selectedMenuItem = {};
                 $scope.feedback = {};
@@ -53,16 +52,12 @@
                     }, false);
 
                     $scope.showTooltip = function() {
-                        $scope.tooltip = translate('OPEN_LINK');
-
+                        var translate = $filter('translate');
+                        $scope.tooltip = translate('TOOLTIP_OPEN_LINK');
                     };
 
                     $scope.hideTooltip = function() {
                         $scope.tooltip = '';
-                    };
-
-                    $scope.deletePage = function () {
-                        $scope.isConfirmationVisible = true;
                     };
                 });
 
