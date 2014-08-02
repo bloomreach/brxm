@@ -45,10 +45,6 @@ public interface Plugin extends Serializable {
 
     void setInstallState(String installState);
 
-    boolean isInstalled();
-
-    void setInstalled(boolean installed);
-
     String getId();
 
     void setId(String id);

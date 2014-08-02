@@ -155,21 +155,6 @@
                 packageMessages: plugins + '/changes/',
                 controllers: plugins + '/controllers/',
                 /**
-                 * Returns list of all plugins that need configuration
-                 */
-                pluginsToConfigure: plugins + '/configure/list/',
-                /**
-                 *Add a plugin to the list of plugins that need configuration:
-                 * POST method
-                 * DELETE method deletes plugin from the list
-                 */
-                pluginsAddToConfigure: plugins + '/configure/add/',
-                /**
-                 *
-                 * /installstate/{className}
-                 */
-                pluginInstallState: plugins + '/installstate/',
-                /**
                  *  * /install/{className}
                  */
                 pluginInstall: plugins + '/install/',
@@ -180,7 +165,7 @@
 
                 package_install: plugins + '/install/package',
                 save_settings: plugins + '/savesettings',
-                project_settings: plugins + '/projectsettings',
+                project_settings: plugins + '/projectsettings', // TODO: Why do we also have projectSettings?
 
                 //############################################
                 // NODE

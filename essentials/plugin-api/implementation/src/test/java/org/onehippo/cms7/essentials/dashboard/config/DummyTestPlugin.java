@@ -70,16 +70,6 @@ public class DummyTestPlugin implements Plugin {
     public void setInstallState(final String installState) { }
 
     @Override
-    public boolean isInstalled() {
-        return false;
-    }
-
-    @Override
-    public void setInstalled(final boolean installed) {
-
-    }
-
-    @Override
     public String getId() {
         return "id";
     }

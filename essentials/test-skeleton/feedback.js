@@ -64,7 +64,7 @@
                 "dateInstalled": 1405070530039,
                 "documentationLink": null,
                 "libraries": [],
-                "pluginId": "robotsPlugin",
+                "id": "robotsPlugin",
                 "issuesLink": null
             };
 
@@ -103,7 +103,7 @@
                     function extracted(pluginId) {
                         var sel = null;
                         angular.forEach($scope.plugins, function (selected) {
-                            if (selected.pluginId == pluginId) {
+                            if (selected.id == pluginId) {
                                 sel = selected;
                             }
                         });

@@ -123,16 +123,6 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public boolean isInstalled() {
-        return installed;
-    }
-
-    @Override
-    public void setInstalled(final boolean installed) {
-        this.installed = installed;
-    }
-
-    @Override
     public String getId() {
         return id;
     }
@@ -353,7 +343,7 @@ public class PluginRestful implements Plugin, Restful {
         sb.append(", title='").append(title).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
-        sb.append(", pluginId='").append(id).append('\'');
+        sb.append(", id='").append(id).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
         sb.append(", dateInstalled=").append(dateInstalled);

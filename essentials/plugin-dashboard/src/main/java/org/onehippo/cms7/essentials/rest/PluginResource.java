@@ -292,49 +292,6 @@ public class PluginResource extends BaseResource {
     }
 
     @ApiOperation(
-            value = "Adds a plugin to recently installed list of plugins",
-            response = RestfulList.class)
-    @POST
-    @Path("/configure/add")
-    public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
-
-        final RestfulList<PluginRestful> plugins = new RestList<>();
-        final List<PluginRestful> pluginList = getPlugins(servletContext);
-        for (Plugin p : pluginList) {
-
-            final PluginRestful resource = new PluginRestful();
-
-            resource.setTitle(p.getName());
-            resource.setInstalled(isInstalled(p));
-            // TODO save this list
-            plugins.add(resource);
-        }
-        return plugins;
-    }
-
-
-    @ApiOperation(
-            value = "Lists of all available plugins",
-            notes = "Retrieves list of  PluginRestful objects",
-            response = RestfulList.class)
-    @GET
-    @Path("/configure/list")
-    public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
-
-        final RestfulList<PluginRestful> recentlyInstalledPlugins = new RestList<>();
-        final List<PluginRestful> pluginList = getPlugins(servletContext);
-        for (PluginRestful plugin : pluginList) {
-            final PluginRestful recentlyInstalledPlugin = new PluginRestful();
-            recentlyInstalledPlugin.setTitle(plugin.getName());
-            recentlyInstalledPlugin.setId(plugin.getId());
-            recentlyInstalledPlugin.setInstalled(isInstalled(plugin));
-            recentlyInstalledPlugins.add(recentlyInstalledPlugin);
-        }
-        return recentlyInstalledPlugins;
-    }
-
-
-    @ApiOperation(
             value = "Returns plugin descriptor file",
             notes = "Used for plugin layout etc.",
             response = PluginRestful.class)
@@ -349,33 +306,6 @@ public class PluginResource extends BaseResource {
             }
         }
         return new PluginRestful();
-    }
-
-    @ApiOperation(
-            value = "Checks if certain plugin is installed",
-            notes = "Sets PluginRestful installed flag to true or false",
-            response = PluginRestful.class)
-    @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
-    @GET
-    @Path("/installstate/{pluginId}")
-    public PluginRestful getInstallStateList(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
-
-        final PluginRestful resource = new PluginRestful();
-        final List<PluginRestful> pluginList = getPlugins(servletContext);
-        for (Plugin plugin : pluginList) {
-            if (plugin.getId().equals(pluginId)) {
-                if (Strings.isNullOrEmpty(plugin.getId())) {
-                    continue;
-                }
-                resource.setTitle(plugin.getName());
-                resource.setId(plugin.getId());
-                resource.setInstalled(isInstalled(plugin));
-                return resource;
-            }
-
-
-        }
-        return resource;
     }
 
     @ApiOperation(
@@ -394,11 +324,7 @@ public class PluginResource extends BaseResource {
                 continue;
             }
             if (pluginId.equals(id)) {
-                final boolean isPackaged = isInstalled(plugin);
-//                if (isInstalled(plugin)) {
-//                    message.setValue("Plugin was already installed. Please rebuild and restart your application");
-//                    return message;
-//                }
+                final boolean isPackaged = isPackaged(plugin);
                 // add dependencies and repositories, if necessary
                 final List<EssentialsDependency> dependencies = plugin.getDependencies();
                 final Collection<EssentialsDependency> dependenciesNotInstalled = new ArrayList<>();

@@ -93,7 +93,16 @@ public class BaseResource {
         return instructionPackage;
     }
 
-    protected boolean isInstalled(final Plugin plugin) {
+    /**
+     * This function determines by the fact that all dependencies and repositories specified in a plugin's descriptor
+     * are present in the relevant POM files if the plugin was packaged with Essentials, or pulled-in from a marketplace.
+     *
+     * The return value of this function is only valid while the plugin is in its "discovered" installation state.
+     *
+     * @param plugin the plugin under consideration
+     * @return true if the plugin was packages with Essentials, false otherwise.
+     */
+    protected boolean isPackaged(final Plugin plugin) {
         final List<EssentialsDependency> dependencies = plugin.getDependencies();
         for (EssentialsDependency dependency : dependencies) {
             if (!DependencyUtils.hasDependency(dependency)) {
