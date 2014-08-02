@@ -100,9 +100,8 @@
             };
             // Receive state updates from individual plugins
             $rootScope.$on('update-plugin-install-state', function(event, data) {
-                $log.debug('Caught state update for plugin ' + data.pluginId);
                 angular.forEach($scope.plugins, function (plugin) {
-                    if (plugin.pluginId === data.pluginId) {
+                    if (plugin.id === data.pluginId) {
                         plugin.installState = data.state;
                     }
                 });
@@ -129,7 +128,7 @@
             function extracted(pluginId) {
                 var sel = null;
                 angular.forEach($scope.plugins, function (selected) {
-                    if (selected.pluginId == pluginId) {
+                    if (selected.id == pluginId) {
                         sel = selected;
                     }
                 });

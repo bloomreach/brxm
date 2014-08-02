@@ -44,7 +44,7 @@ public class PluginRestful implements Plugin, Restful {
     private String introduction;
     private String description;
     private List<String> imageUrls;
-    private String pluginLink;
+    private String id;
     private String packageClass; // TODO: no longer used?
     private String parameterServiceClass;
     private boolean hasGeneralizedSetupParameters = true;
@@ -133,13 +133,13 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public String getPluginId() {
-        return pluginLink;
+    public String getId() {
+        return id;
     }
 
     @Override
-    public void setPluginId(final String pluginId) {
-        this.pluginLink = pluginId;
+    public void setId(final String id) {
+        this.id = id;
     }
 
     @Override
@@ -353,7 +353,7 @@ public class PluginRestful implements Plugin, Restful {
         sb.append(", title='").append(title).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
-        sb.append(", pluginId='").append(pluginLink).append('\'');
+        sb.append(", pluginId='").append(id).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
         sb.append(", dateInstalled=").append(dateInstalled);

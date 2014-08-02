@@ -81,7 +81,7 @@ public class BaseResource {
         InstructionPackage instructionPackage;
         if (Strings.isNullOrEmpty(packageClass)) {
             if (Strings.isNullOrEmpty(packageFile)) {
-                log.warn("Package class and Package file were not defined for plugin: {}/{}", plugin.getName(), plugin.getPluginId());
+                log.warn("Package class and Package file were not defined for plugin: {}/{}", plugin.getName(), plugin.getId());
                 return null;
             }
             instructionPackage = GlobalUtils.newInstance(TemplateSupportInstructionPackage.class);

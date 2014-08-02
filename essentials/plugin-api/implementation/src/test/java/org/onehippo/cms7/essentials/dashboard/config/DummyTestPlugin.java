@@ -80,14 +80,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public String getPluginId() {
-        return "pluginId";
+    public String getId() {
+        return "id";
     }
 
     @Override
-    public void setPluginId(final String pluginId) {
-
-    }
+    public void setId(final String id) { }
 
     @Override
     public String getPackageFile() {

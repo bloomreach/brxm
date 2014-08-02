@@ -191,7 +191,6 @@
                     $scope.run = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
                             $scope.plugin.installState = 'installing';
-                            $log.debug('signalling state change for plugin ' + $scope.plugin.pluginId);
                             $rootScope.$broadcast('update-plugin-install-state', {
                                 'pluginId': $scope.pluginId,
                                 'state': $scope.plugin.installState
@@ -320,7 +319,7 @@
                     };
                     $scope.installPlugin = function () {
                         $rootScope.pluginsCache = null;
-                        var pluginId = $scope.plugin.pluginId;
+                        var pluginId = $scope.plugin.id;
                         $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
                             // reload because of install state change:
                             $http.get($rootScope.REST.plugins +'plugins/' + pluginId).success(function (data) {

@@ -321,16 +321,16 @@ public class PluginResource extends BaseResource {
     @Path("/configure/list")
     public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
 
-        final RestfulList<PluginRestful> plugins = new RestList<>();
+        final RestfulList<PluginRestful> recentlyInstalledPlugins = new RestList<>();
         final List<PluginRestful> pluginList = getPlugins(servletContext);
-        for (Plugin plugin : pluginList) {
-            final PluginRestful resource = new PluginRestful();
-            resource.setTitle(plugin.getName());
-            resource.setPluginId(plugin.getPluginId());
-            resource.setInstalled(isInstalled(plugin));
-            plugins.add(resource);
+        for (PluginRestful plugin : pluginList) {
+            final PluginRestful recentlyInstalledPlugin = new PluginRestful();
+            recentlyInstalledPlugin.setTitle(plugin.getName());
+            recentlyInstalledPlugin.setId(plugin.getId());
+            recentlyInstalledPlugin.setInstalled(isInstalled(plugin));
+            recentlyInstalledPlugins.add(recentlyInstalledPlugin);
         }
-        return plugins;
+        return recentlyInstalledPlugins;
     }
 
 
@@ -344,7 +344,7 @@ public class PluginResource extends BaseResource {
     public Plugin getPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
         final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
-            if (plugin.getPluginId().equals(pluginId)) {
+            if (plugin.getId().equals(pluginId)) {
                 return plugin;
             }
         }
@@ -363,12 +363,12 @@ public class PluginResource extends BaseResource {
         final PluginRestful resource = new PluginRestful();
         final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
-            if (plugin.getPluginId().equals(pluginId)) {
-                if (Strings.isNullOrEmpty(plugin.getPluginId())) {
+            if (plugin.getId().equals(pluginId)) {
+                if (Strings.isNullOrEmpty(plugin.getId())) {
                     continue;
                 }
                 resource.setTitle(plugin.getName());
-                resource.setPluginId(plugin.getPluginId());
+                resource.setId(plugin.getId());
                 resource.setInstalled(isInstalled(plugin));
                 return resource;
             }
@@ -389,7 +389,7 @@ public class PluginResource extends BaseResource {
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getAllPlugins(servletContext);
         for (PluginRestful plugin : pluginList.getItems()) {
-            final String id = plugin.getPluginId();
+            final String id = plugin.getId();
             if (Strings.isNullOrEmpty(id)) {
                 continue;
             }
@@ -498,7 +498,7 @@ public class PluginResource extends BaseResource {
         final RestfulList<ControllerRestful> controllers = new RestList<>();
         final List<PluginRestful> plugins = getPlugins(servletContext);
         for (Plugin plugin : plugins) {
-            final String pluginLink = plugin.getPluginId();
+            final String pluginLink = plugin.getId();
             if (Strings.isNullOrEmpty(pluginLink)) {
                 continue;
             }
@@ -552,7 +552,7 @@ public class PluginResource extends BaseResource {
             final List<PluginModuleRestful.PrefixedLibrary> libraries = plugin.getLibraries();
 
             final String prefix = plugin.getType();
-            final String pluginId = plugin.getPluginId();
+            final String pluginId = plugin.getId();
             if (libraries != null) {
                 for (PluginModuleRestful.PrefixedLibrary library : libraries) {
                     // prefix libraries by plugin id:
@@ -630,7 +630,7 @@ public class PluginResource extends BaseResource {
 
             // check if recently installed:
             // TODO: move to client?
-            final String pluginId = item.getPluginId();
+            final String pluginId = item.getId();
             final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
             if (document != null && document.getDateInstalled() != null) {
                 final Calendar dateInstalled = document.getDateInstalled();
@@ -648,18 +648,18 @@ public class PluginResource extends BaseResource {
         // Retrieve resource-based installation state of plugin (what's in the WAR).
         String resourceBasedInstallationState = null;
         try (PluginConfigService service = new ResourcePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
             if (document != null) {
                 resourceBasedInstallationState = document.getInstallationState();
             }
         } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
+            log.error("Error reading settings for plugin {} from resource", plugin.getId(), e);
         }
 
         // Retrieve filesystem-based installation state of plugin.
         String installationState = null;
         try (PluginConfigService service = new FilePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
             if (document == null) {
                 installationState = PluginInstallationState.DISCOVERED;
             } else {
@@ -685,7 +685,7 @@ public class PluginResource extends BaseResource {
                 }
             }
         } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
+            log.error("Error reading settings for plugin {} from file", plugin.getId(), e);
         }
 
         plugin.setInstallState(installationState);
@@ -746,13 +746,13 @@ public class PluginResource extends BaseResource {
         }
 
         final List<PluginRestful> plugins = getPlugins(context);
-        for (final PluginRestful next : plugins) {
-            final String pluginId = next.getPluginId();
+        for (final PluginRestful plugin : plugins) {
+            final String pluginId = plugin.getId();
             if (Strings.isNullOrEmpty(pluginId)) {
                 continue;
             }
             if (pluginId.equals(id)) {
-                return next;
+                return plugin;
             }
         }
         return null;
