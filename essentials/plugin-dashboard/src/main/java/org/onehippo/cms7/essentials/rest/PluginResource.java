@@ -170,7 +170,7 @@ public class PluginResource extends BaseResource {
         final List<PluginRestful> plugins = getPlugins(servletContext);
         for (PluginRestful plugin : plugins) {
             final String type = plugin.getType();
-            final boolean toolType = "tools".equals(type);
+            final boolean toolType = "tool".equals(type);
             if (toolType) {
                 systemInfo.incrementTools();
             } else {

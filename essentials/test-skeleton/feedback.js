@@ -56,7 +56,7 @@
                 "description": "The robotstxt plugin adds a special document type to the CMS, allowing webmasters to determine the content of the robots.txt file retrieved by webbots. See <a href=\"http://www.robotstxt.org/\">robotstxt.org</a> for more information on the format and purpose of that file.<p>The robotstxt plugin provides Beans and Components for retrieving the robots.txt-related data from the Hippo repository, and a sample JSP file for rendering that data into the robots.txt file.</p>\n<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://robotstxt.forge.onehippo.org/\" target=\"_blank\">http://robotstxt.forge.onehippo.org/</a></p>",
                 "packageClass": null,
                 "packageFile": "/META-INF/robots_plugin_instructions.xml",
-                "type": "plugins",
+                "type": "feature",
                 "installed": false,
                 "needsInstallation": false,
                 "installState": "boarding",

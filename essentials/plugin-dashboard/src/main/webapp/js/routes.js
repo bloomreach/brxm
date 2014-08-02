@@ -43,7 +43,7 @@
                 .state('tools-id', {
                     url: '/tools/:id',
                     templateUrl: function ($stateParams) {
-                        return 'tools/' + $stateParams.id + '/' + $stateParams.id + '.html';
+                        return 'tool/' + $stateParams.id + '/' + $stateParams.id + '.html';
                     }
                 })
                 .state('home', {
@@ -69,7 +69,7 @@
                 .state('plugin', {
                     url: '/plugins/:id',
                     templateUrl: function ($stateParams) {
-                        return 'plugins/' + $stateParams.id + '/' + $stateParams.id + '.html';
+                        return 'feature/' + $stateParams.id + '/' + $stateParams.id + '.html';
                     }
                 }
             );

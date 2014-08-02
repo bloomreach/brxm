@@ -308,21 +308,14 @@
                 },
                 templateUrl: 'directives/essentials-plugin.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
-                    var displayTypeMap = {
-                        'plugins' : 'feature',
-                        'tools'   : 'tool'
-                    };
-                    $scope.getDisplayType = function() {
-                        return displayTypeMap[$scope.plugin.type];
-                    };
                     $scope.isDiscovered = function() {
-                        return $scope.plugin.type === 'plugins' && $scope.plugin.installState === 'discovered';
+                        return $scope.plugin.type === 'feature' && $scope.plugin.installState === 'discovered';
                     };
                     $scope.isBoarding = function() {
                         return $scope.plugin.installState === 'boarding';
                     };
                     $scope.isOnBoard = function() {
-                        return $scope.plugin.type === 'tools'
+                        return $scope.plugin.type === 'tool'
                                || ($scope.plugin.installState !== 'discovered' && $scope.plugin.installState !== 'boarding');
                     };
                     $scope.installPlugin = function () {

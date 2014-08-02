@@ -78,10 +78,10 @@
                 return  myPath.indexOf(path) != -1;
             };
             $scope.isInstalledFeature = function (plugin) {
-                return plugin.type === 'plugins' && plugin.installState !== 'discovered';
+                return plugin.type === 'feature' && plugin.installState !== 'discovered';
             };
             $scope.isInstalledTool = function (plugin) {
-                return plugin.type === 'tools'; // TODO: handle install state.
+                return plugin.type === 'tool'; // TODO: handle install state.
             };
 
             $scope.showPluginDetail = function (pluginId) {

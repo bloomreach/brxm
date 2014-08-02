@@ -6,7 +6,7 @@
         "introduction": "Content Blocks plugin provides the content/document editors an ability to add multiple pre-configured compound type blocks to a document. The CMS administrator can configure the available content blocks on per document type basis.",
         "name": "Content Blocks",
         "pluginId": "contentBlocks",
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Detailed Content Blocks documentation",
@@ -31,7 +31,7 @@
         "name": "Xinha configuration",
         "pluginId": "xinhaPlugin",
 
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -46,7 +46,7 @@
         "name": "Gallery plugin",
         "pluginId": "galleryPlugin",
 
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -62,7 +62,7 @@
         "pluginId": "beanwriter",
 
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
-        "type": "tools",
+        "type": "tool",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -80,7 +80,7 @@
         "packageClass": "org.onehippo.cms7.essentials.packaging.BasicInstructionPackage",
 
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -97,7 +97,7 @@
         "pluginId": "notImplementedYet",
 
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",

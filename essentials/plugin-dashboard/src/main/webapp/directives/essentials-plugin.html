@@ -20,7 +20,7 @@
     <div class="plugin-tools pull-right">
       <button class="btn btn-primary"
               ng-show="isDiscovered()"
-              ng-click="installPlugin()">Install {{getDisplayType()}}
+              ng-click="installPlugin()">Install {{plugin.type}}
       </button>
       <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
       <span ng-show="isOnBoard()" class="btn btn-info">Installed</span>

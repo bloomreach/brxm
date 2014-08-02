@@ -7,7 +7,7 @@
         "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This Essentials Feature wraps the certified Hippo Forge Content Blocks plugin.</p>",
         "documentationLink": "http://content-blocks.forge.onehippo.org",
         "pluginId": "contentBlocks",
-        "type": "plugins",
+        "type": "feature",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"],
         "vendor": {
@@ -44,7 +44,7 @@
         "parameterServiceClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogParameterService",
         "restClasses": [],
         "pluginId": "blogPlugin",
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -102,7 +102,7 @@
         "pluginId": "taxonomyPlugin",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -165,7 +165,7 @@
     },
     {
         "@type": "plugin",
-        "type": "plugins",
+        "type": "feature",
         "pluginId": "selectionPlugin",
         "name": "Selections",
         "introduction": "With the Selections feature, you can add several kinds of dropdowns, pulldowns and radio groups to your page template.",
@@ -222,7 +222,7 @@
         "pluginId": "ecmTaggingPlugin",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.ecm.TaggingParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.ecm.EcmTaggingResource"],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -257,7 +257,7 @@
         "pluginId": "documentWizardPlugin",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -306,7 +306,7 @@
         "pluginId": "relatedDocumentsPlugin",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -340,7 +340,7 @@
         "pluginId": "seoPlugin",
         "packageFile": "/META-INF/seoPlugin_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -364,7 +364,7 @@
         "introduction": "Manage your project's image sets.",
         "pluginId": "galleryPlugin",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.gallery.GalleryPluginResource"],
-        "type": "tools",
+        "type": "tool",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -387,7 +387,7 @@
         "introduction": "Generate HST Content beans.",
         "pluginId": "beanwriter",
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
-        "type": "tools",
+        "type": "tool",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -413,7 +413,7 @@
         "pluginId": "robotsPlugin",
         "restClasses": [],
         "packageFile": "/META-INF/robots_plugin_instructions.xml",
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -448,7 +448,7 @@
         "pluginId": "pollPlugin",
         "restClasses": [],
         "packageFile": "/META-INF/poll_plugin_instructions.xml",
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -480,7 +480,7 @@
         "pluginId": "searchPlugin",
         "packageFile": "/META-INF/searchPlugin_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -501,7 +501,7 @@
         "pluginId": "imageComponentPlugin",
         "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -523,7 +523,7 @@
         "pluginId": "videoComponentPlugin",
         "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -545,7 +545,7 @@
         "pluginId": "faqPlugin",
         "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -566,7 +566,7 @@
         "pluginId": "bannerPlugin",
         "packageFile": "/META-INF/banner_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -585,7 +585,7 @@
         "pluginId": "menuPlugin",
         "packageFile": "/META-INF/menu_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -604,7 +604,7 @@
         "pluginId": "simpleContent",
         "packageFile": "/META-INF/simpleContent_instructions.xml",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -624,7 +624,7 @@
         "introduction": "Configure your project's site application to have REST endpoints.",
         "pluginId": "restServices",
         "restClasses": ["org.onehippo.cms7.essentials.dashboard.restservices.RestPluginResource"],
-        "type": "tools",
+        "type": "tool",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -649,7 +649,7 @@
         "packageFile": "/META-INF/events_package_instructions.xml",
         "pluginId": "eventsPlugin",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -670,7 +670,7 @@
         "packageFile": "/META-INF/list_content_instructions.xml",
         "pluginId": "listContentPlugin",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -692,7 +692,7 @@
         "packageFile": "/META-INF/news_package_instructions.xml",
         "pluginId": "newsPlugin",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -715,7 +715,7 @@
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.sitemap.SitemapParameterService",
         "pluginId": "sitemapPlugin",
         "restClasses": [],
-        "type": "plugins",
+        "type": "feature",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
