@@ -224,7 +224,7 @@
                                 $rootScope.TOTAL_TOOLS = data.totalTools;
                                 $rootScope.NEEDS_REBUILD = data.needsRebuild;
                                 $rootScope.NEEDS_REBUILD_PLUGINS = data.plugins;
-                                $rootScope.TOTAL_CONFIGURABLE = data.configurablePlugins;
+                                $rootScope.TOTAL_NEEDS_ATTENTION = data.needsRebuild + data.configurablePlugins;
                                 $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
 
                             } else {

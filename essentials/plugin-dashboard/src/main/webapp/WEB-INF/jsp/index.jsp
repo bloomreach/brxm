@@ -83,15 +83,14 @@
           <a href="#/installed-features">
             <i class="fa fa-gears"></i>
             <span>Installed features</span>
-            <span class="badge pull-right alert-success">{{TOTAL_CONFIGURABLE}}</span>
+            <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge pull-right alert-success">{{TOTAL_NEEDS_ATTENTION}}</span>
           </a>
-
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">
             <i class="fa fa-gear"></i>
             <span>Library</span>
-            <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span>
+<!--            <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span> -->
           </a>
 
         </li>
@@ -99,7 +98,7 @@
           <a href="#/tools">
             <i class="fa fa-gavel"></i>
             <span>Tools</span>
-            <span class="badge  pull-right alert-info">{{TOTAL_TOOLS}}</span>
+<!--            <span class="badge  pull-right alert-info">{{TOTAL_TOOLS}}</span> -->
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/build')]">
@@ -107,14 +106,13 @@
             <i ng-hide="NEEDS_REBUILD" class="fa fa-check-square-o"></i>
             <i ng-show="NEEDS_REBUILD" class="fa fa-exclamation-triangle"></i>
             <span>Build</span>
-                        <span ng-show="NEEDS_REBUILD" class="badge pull-right alert-danger">
-                              <i class="fa fa-bell"></i>
-                        </span>
-                        <span ng-hide="NEEDS_REBUILD" class="badge pull-right alert-success">
-                              <i class="fa fa-check"></i>
-                        </span>
+            <span ng-show="NEEDS_REBUILD" class="badge pull-right alert-danger">
+              <i class="fa fa-bell"></i>
+            </span>
+            <span ng-hide="NEEDS_REBUILD" class="badge pull-right alert-success">
+              <i class="fa fa-check"></i>
+            </span>
           </a>
-
         </li>
         <li>
           <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
