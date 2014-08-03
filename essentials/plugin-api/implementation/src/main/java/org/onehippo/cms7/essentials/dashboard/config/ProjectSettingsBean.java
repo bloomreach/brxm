@@ -42,6 +42,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     private String templateLanguage;
     private boolean useSamples;
+    private boolean confirmParams;
 
 
     private Set<String> pluginRepositories = new HashSet<>();
@@ -129,6 +130,15 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         this.useSamples = useSamples;
     }
 
+    @Override
+    public boolean isConfirmParams() {
+        return confirmParams;
+    }
+
+    @Override
+    public void setConfirmParams(final boolean confirmParams) {
+        this.confirmParams = confirmParams;
+    }
 
     @Override
     public Set<String> getPluginRepositories() {

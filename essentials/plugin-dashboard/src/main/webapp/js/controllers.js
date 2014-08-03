@@ -51,6 +51,7 @@
                     // set some defaults
                     $scope.projectSettings.templateLanguage = 'jsp';
                     $scope.projectSettings.useSamples = true;
+                    $scope.projectSettings.confirmParams = false;
                 });
             }
             // initialize

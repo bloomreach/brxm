@@ -52,11 +52,18 @@
                 Add sample content <input type="checkbox" ng-model="projectSettings.useSamples"/>
             </label>
         </div>
+        <div class="form-group">
+            <label>Set-up:</label>
+        </div>
+        <div class="checkbox">
+            <label>
+                Confirm / override settings on a per-feature basis <input type="checkbox" ng-model="projectSettings.confirmParams"/>
+            </label>
+        </div>
         <!--
             //############################################
             //  REPO URLS
             //############################################
-        -->
         <div class="row form-group">
             <label class="col-sm-2 control-label">Setup plugin repository urls:</label>
             <label class="col-sm-6 control-label">
@@ -74,6 +81,7 @@
                 </div>
             </div>
         </div>
+        -->
         <div class="form-group">
             <button class="btn btn-primary pull-right" ng-click="getStarted()">Get started</button>
         </div>
