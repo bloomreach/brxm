@@ -98,8 +98,6 @@ public interface Plugin extends Serializable {
 
     void setRepositories(List<Repository> repositories);
 
-    void setHasGeneralizedSetupParameters(boolean hasSetupParameters);
-    boolean getHasGeneralizedSetupParameters();
     void setHasConfiguration(boolean hasConfiguration);
     boolean getHasConfiguration();
 }

@@ -220,42 +220,13 @@ public class PluginResource extends BaseResource {
             return resource;
         }
         final Map<String, Object> properties = new HashMap<String, Object>(values);
-        final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
-        context.addPlaceholderData(properties);
-        //############################################
-        // EXECUTE SKELETON:
-        //############################################
-        final InstructionPackage commonPackage = new CommonsInstructionPackage();
-        commonPackage.setProperties(properties);
-        getInjector().autowireBean(commonPackage);
-        commonPackage.execute(context);
-        // execute InstructionPackage itself
-        InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
-        if (instructionPackage == null) {
-            return new MessageRestful("Could not execute Installation package: " + myPlugin.getPackageFile(), DisplayEvent.DisplayType.STRONG);
-        }
-        instructionPackage.setProperties(properties);
-        instructionPackage.execute(context);
 
-        // update the plugins installer document
-        try (PluginConfigService service = new FilePluginService(context)) {
-            InstallerDocument document = service.read(pluginId, InstallerDocument.class);
-            if (document == null) {
-                // pre-installed plugins do not yet have an installer document.
-                document = createPluginInstallerDocument(pluginId);
-            }
-            document.setDateAdded(Calendar.getInstance());
-            document.setInstallationState(determineInstallStateAfterSetup(myPlugin));
-            service.write(document);
-            new MessageRestful("Successfully installed " + myPlugin.getName(), DisplayEvent.DisplayType.STRONG);
-        } catch (Exception e) {
-            log.error("Error in processing installer documents", e);
-            return new MessageRestful("There was an error in processing " + myPlugin.getName() + " Please see the error logs for more details");
-        }
-        return new ErrorMessageRestful("Couldn't install " + myPlugin.getName() + " Please see the error logs for more details");
+        final ErrorMessageRestful errorMessage = setupPlugin(myPlugin, properties);
 
+        return errorMessage == null
+                ? new MessageRestful("Successfully installed " + myPlugin.getName(), DisplayEvent.DisplayType.STRONG)
+                : errorMessage;
     }
-
 
     @ApiOperation(
             value = "Saves global project settings",
@@ -345,11 +316,22 @@ public class PluginResource extends BaseResource {
 
                 if (dependenciesNotInstalled.size() == 0 && repositoriesNotInstalled.size() == 0) {
                     final PluginContext context = PluginContextFactory.getContext();
+                    String installState = null;
                     try (PluginConfigService service = new FilePluginService(context)) {
                         InstallerDocument document = createPluginInstallerDocument(id);
-                        document.setInstallationState(determineInstallStateAfterInstallation(plugin, isPackaged));
+                        installState = determineInstallStateAfterInstallation(plugin, isPackaged);
+                        document.setInstallationState(installState);
                         service.write(document);
                     }
+
+                    // Short-circuit the onBoard state if possible.
+                    if (PluginInstallationState.ONBOARD.equals(installState)) {
+                        ErrorMessageRestful errorMessage = setupIfPossible(plugin, context);
+                        if (errorMessage != null) {
+                            return errorMessage;
+                        }
+                    }
+
                     message.setValue("Plugin <a href='#/plugins/" + pluginId + "'>" + plugin.getName() + "</a> successfully installed.");
                     return message;
                 } else {
@@ -381,7 +363,6 @@ public class PluginResource extends BaseResource {
         message.setValue("Plugin was not found and could not be installed");
         return message;
     }
-
 
     @ApiOperation(
             value = "Returns list of project settings like project namespace, project path etc. ",
@@ -541,7 +522,21 @@ public class PluginResource extends BaseResource {
                                 final Collection<String> restClasses, final PluginConfigService service, final PluginContext context) {
         for (PluginRestful item : items) {
             plugins.add(item);
-            populateAndUpdateInstallState(item, context);
+
+            final String installState = determineInstallState(item, context);
+            item.setInstallState(installState);
+
+            // Short-circuit the onBoard state if possible.
+            //
+            // TODO: the use of the initialized flag is a hacky optimization to skip unnecessary tests.
+            // The test should be executed for each plugin upon "initialization", i.e. after a rebuild/restart.
+            // For this, this piece of code should move into a method that clearly indicates that it's doing
+            // initialization (like initializing the dynamic REST endpoints e.g.).
+            if (PluginInstallationState.ONBOARD.equals(installState) && !initialized)
+            {
+                setupIfPossible(item, context); // Ignore error messages
+            }
+
             //############################################
             // collect endpoints
             //############################################
@@ -567,7 +562,7 @@ public class PluginResource extends BaseResource {
         }
     }
 
-    private void populateAndUpdateInstallState(final PluginRestful plugin, final PluginContext context) {
+    private String determineInstallState(final PluginRestful plugin, final PluginContext context) {
 
         // Retrieve resource-based installation state of plugin (what's in the WAR).
         String resourceBasedInstallationState = null;
@@ -581,30 +576,30 @@ public class PluginResource extends BaseResource {
         }
 
         // Retrieve filesystem-based installation state of plugin.
-        String installationState = null;
+        String installState = null;
         try (PluginConfigService service = new FilePluginService(context)) {
             final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
             if (document == null) {
-                installationState = PluginInstallationState.DISCOVERED;
+                installState = PluginInstallationState.DISCOVERED;
             } else {
-                installationState = document.getInstallationState();
+                installState = document.getInstallationState();
 
                 // If we find that both the resource based and the FS-based installation state "need a rebuild"
                 // and are identical, this is a sign that the rebuild did happen, and that the install state can
                 // proceed to the next phase.
                 boolean updated = false;
-                if (PluginInstallationState.BOARDING.equals(installationState)
+                if (PluginInstallationState.BOARDING.equals(installState)
                  && PluginInstallationState.BOARDING.equals(resourceBasedInstallationState)) {
-                    installationState = determineInstallStateAfterInstallation(plugin, true);
+                    installState = determineInstallStateAfterInstallation(plugin, true);
                     updated = true;
-                } else if (PluginInstallationState.INSTALLING.equals(installationState)
+                } else if (PluginInstallationState.INSTALLING.equals(installState)
                         && PluginInstallationState.INSTALLING.equals(resourceBasedInstallationState)) {
-                    installationState = PluginInstallationState.INSTALLED;
+                    installState = PluginInstallationState.INSTALLED;
                     updated = true;
                 }
 
                 if (updated) {
-                    document.setInstallationState(installationState);
+                    document.setInstallationState(installState);
                     service.write(document);
                 }
             }
@@ -612,24 +607,8 @@ public class PluginResource extends BaseResource {
             log.error("Error reading settings for plugin {} from file", plugin.getId(), e);
         }
 
-        plugin.setInstallState(installationState);
-        populatePluginParameters(plugin);
-    }
-
-    private void populatePluginParameters(final PluginRestful plugin) {
-        final String installState = plugin.getInstallState();
-
-        if (installState != null
-            && (installState.equals(PluginInstallationState.ONBOARD)
-             || installState.equals(PluginInstallationState.INSTALLING)
-             || installState.equals(PluginInstallationState.INSTALLED)))
-        {
-            final boolean hasGeneralizedSetup = StringUtils.hasText(plugin.getPackageFile());
-            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-
-            plugin.setHasGeneralizedSetupParameters(hasGeneralizedSetup && params.hasGeneralizedSetupParameters());
-            plugin.setHasConfiguration(params.hasConfiguration());
-        }
+        populatePluginParameters(plugin, installState);
+        return installState;
     }
 
     private String determineInstallStateAfterInstallation(final PluginRestful plugin, final boolean isPackaged) {
@@ -662,6 +641,75 @@ public class PluginResource extends BaseResource {
         }
 
         return installState;
+    }
+
+    private void populatePluginParameters(final PluginRestful plugin, final String installState) {
+        if (installState != null
+                && (installState.equals(PluginInstallationState.ONBOARD)
+                || installState.equals(PluginInstallationState.INSTALLING)
+                || installState.equals(PluginInstallationState.INSTALLED)))
+        {
+            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
+
+            plugin.setHasConfiguration(params.hasConfiguration());
+        }
+    }
+
+    private ErrorMessageRestful setupIfPossible(final PluginRestful plugin, final PluginContext context) {
+        ErrorMessageRestful errorMessage = null;
+
+        if (StringUtils.hasText(plugin.getPackageFile())
+                && (!context.getProjectSettings().isConfirmParams()
+                || !PluginParameterServiceFactory.getParameterService(plugin).hasGeneralizedSetupParameters())) {
+            final Map<String, Object> properties = new HashMap<String, Object>();
+            final ProjectSettings projectSettings = context.getProjectSettings();
+
+            properties.put("sampleData", Boolean.valueOf(projectSettings.isUseSamples()).toString());
+            properties.put("templateName", projectSettings.getTemplateLanguage());
+
+            errorMessage = setupPlugin(plugin, properties);
+        }
+
+        return errorMessage;
+    }
+
+    private ErrorMessageRestful setupPlugin(final PluginRestful plugin, final Map<String, Object> properties) {
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
+        context.addPlaceholderData(properties);
+
+        //############################################
+        // EXECUTE SKELETON:
+        //############################################
+        final InstructionPackage commonPackage = new CommonsInstructionPackage();
+        commonPackage.setProperties(properties);
+        getInjector().autowireBean(commonPackage);
+        commonPackage.execute(context);
+
+        // execute InstructionPackage itself
+        InstructionPackage instructionPackage = instructionPackageInstance(plugin);
+        if (instructionPackage == null) {
+            return new ErrorMessageRestful("Could not execute Installation package: " + plugin.getPackageFile(), DisplayEvent.DisplayType.STRONG);
+        }
+        instructionPackage.setProperties(properties);
+        instructionPackage.execute(context);
+
+        // update the plugins installer document
+        try (PluginConfigService service = new FilePluginService(context)) {
+            final String pluginId = plugin.getId();
+            InstallerDocument document = service.read(pluginId, InstallerDocument.class);
+            if (document == null) {
+                // pre-installed plugins do not yet have an installer document.
+                document = createPluginInstallerDocument(pluginId);
+            }
+            document.setDateAdded(Calendar.getInstance());
+            document.setInstallationState(determineInstallStateAfterSetup(plugin));
+            service.write(document);
+        } catch (Exception e) {
+            log.error("Error in processing installer documents", e);
+            return new ErrorMessageRestful("There was an error in processing " + plugin.getName() + " Please see the error logs for more details");
+        }
+
+        return null; // no error message, signals success.
     }
 
     private PluginRestful getPluginById(final String id, final ServletContext context) {

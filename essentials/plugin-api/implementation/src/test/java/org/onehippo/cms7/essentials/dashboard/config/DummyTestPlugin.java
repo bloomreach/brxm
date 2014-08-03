@@ -111,14 +111,6 @@ public class DummyTestPlugin implements Plugin {
     public void setParameterServiceClass(final String packageClass) { }
 
     @Override
-    public void setHasGeneralizedSetupParameters(final boolean hasGeneralizedSetupParameters) { }
-
-    @Override
-    public boolean getHasGeneralizedSetupParameters() {
-        return true;
-    }
-
-    @Override
     public void setHasConfiguration(final boolean hasConfiguration) { }
 
     @Override

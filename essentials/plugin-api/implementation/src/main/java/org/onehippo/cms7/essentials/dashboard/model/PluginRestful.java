@@ -47,7 +47,6 @@ public class PluginRestful implements Plugin, Restful {
     private String id;
     private String packageClass; // TODO: no longer used?
     private String parameterServiceClass;
-    private boolean hasGeneralizedSetupParameters = true;
     private boolean hasConfiguration = false;
     private String packageFile;
     private String type;
@@ -160,16 +159,6 @@ public class PluginRestful implements Plugin, Restful {
     @Override
     public void setParameterServiceClass(final String parameterServiceClass) {
         this.parameterServiceClass = parameterServiceClass;
-    }
-
-    @Override
-    public void setHasGeneralizedSetupParameters(final boolean hasGeneralizedSetupParameters) {
-        this.hasGeneralizedSetupParameters = hasGeneralizedSetupParameters;
-    }
-
-    @Override
-    public boolean getHasGeneralizedSetupParameters() {
-        return hasGeneralizedSetupParameters;
     }
 
     @Override
