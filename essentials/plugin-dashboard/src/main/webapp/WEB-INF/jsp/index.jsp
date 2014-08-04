@@ -132,7 +132,7 @@
 </div>
 
 <footer class="footer">
-  <p>&copy 1999-2014 Hippo B.V. <span class="project-version">version: ${project.version}</span></p>
+  <p><span class="project-version">version: ${project.version}</span></p>
 </footer>
 
 <!-- Include the loader.js script -->
