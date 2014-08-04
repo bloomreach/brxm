@@ -53,23 +53,6 @@
                         // for now, simply don't accept any moves when the form is invalid
                         return FormStateService.isValid();
                     },
-                    dragStart: function(event) {
-                        var clickedItemId = event.source.nodeScope.$modelValue.id;
-                        if (FormStateService.isDirty()) {
-                            if (FormStateService.isValid()) {
-                                MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
-                                            editItem(clickedItemId);
-                                        },
-                                        function (error) {
-                                            setErrorFeedback(error);
-                                            FormStateService.setValid(false);
-                                        }
-                                );
-                            }
-                        } else {
-                            editItem(clickedItemId);
-                        }
-                    },
                     dropped: function(event) {
                         var source = event.source,
                             sourceNodeScope = source.nodeScope,
@@ -80,6 +63,22 @@
 
                         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
                             MenuService.moveMenuItem(sourceId, destId, dest.index);
+                        } else {
+                            var clickedItemId = sourceNodeScope.$modelValue.id;
+                            if (FormStateService.isDirty()) {
+                                if (FormStateService.isValid()) {
+                                    MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
+                                            editItem(clickedItemId);
+                                        },
+                                        function (error) {
+                                            setErrorFeedback(error);
+                                            FormStateService.setValid(false);
+                                        }
+                                    );
+                                }
+                            } else {
+                                editItem(clickedItemId);
+                            }
                         }
                     }
                 };
