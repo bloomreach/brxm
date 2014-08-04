@@ -18,13 +18,6 @@
     "use strict";
     angular.module('hippo.essentials')
 
-
-        //############################################
-        // PLUGINS CONTROLLER LOADER
-        //############################################
-        .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter) {
-
-        })
         .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
             // just sets a hide screen boolean flag to true
             $scope.addUrl = function () {
@@ -44,7 +37,7 @@
                     $location.path('/library'); // Start in the Library
                 });
 
-            }
+            };
             $scope.setup = function () {
                 $http.get($rootScope.REST.project_settings).success(function (data) {
                     $scope.projectSettings = data;
@@ -53,11 +46,11 @@
                     $scope.projectSettings.useSamples = true;
                     $scope.projectSettings.confirmParams = false;
                 });
-            }
+            };
             // initialize
             $scope.setup();
-
         })
+
         .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
@@ -139,48 +132,22 @@
 
         /*
          //############################################
-         // ON LOAD CONTROLLER
-         //############################################
-         */
-        .controller('homeCtrl', function ($scope, $http, $rootScope) {
-            $scope.plugins = [];
-            $scope.init = function () {
-                $http.get($rootScope.REST.plugins).success(function (data) {
-                    $scope.plugins = [];
-                    var items = data.items;
-                    angular.forEach(items, function (plugin) {
-                        if (plugin.dateInstalled) {
-                            $scope.plugins.push(plugin);
-                        }
-                    });
-                });
-
-            };
-            $scope.init();
-
-        })
-
-        /*
-         //############################################
          // MENU CONTROLLER
          //############################################
          */
         .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
-
-
             $scope.isPageSelected = function (path) {
                 var myPath = $location.path();
-                // stay in plugins for all /plugin paths
-                if (myPath == "/find-plugins" || myPath.indexOf("/plugins") != -1) {
-                    myPath = '/plugins';
+
+                // Map plugin-specific pages to the corresponding plugin-type page
+                if (myPath.slice(0, "/plugins".length) == "/plugins") {
+                    myPath = '/installed-features';
                 }
                 else if (myPath.slice(0, "/tools".length) == "/tools") {
                     myPath = '/tools';
                 }
+
                 return  '#' + myPath == path;
             };
-
-
         }]);
-
 })();

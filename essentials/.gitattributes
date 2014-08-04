@@ -1586,7 +1586,6 @@ plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls.min.js -text
 plugin-dashboard/src/main/webapp/js/loader.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/pages/build.html -text
-plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/pages/installed-features.html -text
 plugin-dashboard/src/main/webapp/pages/introduction.html -text
 plugin-dashboard/src/main/webapp/pages/library.html -text

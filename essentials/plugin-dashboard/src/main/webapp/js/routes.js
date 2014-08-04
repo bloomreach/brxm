@@ -25,40 +25,17 @@
         .config(function ($stateProvider, $routeProvider) {
             $stateProvider
                 .state('index', {
-                    controller: 'homeCtrl',
                     url: '',
-                    templateUrl: 'pages/home.html',
                     resolve: { factory: dispatchToDesiredPage }
-                })
-                .state('tools', {
-                    url: '/tools',
-                    templateUrl: 'pages/tools.html',
-                    controller: 'pluginCtrl'
                 })
                 .state('introduction', {
                     url: '/introduction',
                     templateUrl: 'pages/introduction.html',
                     controller: 'introductionCtrl'
                 })
-                .state('tools-id', {
-                    url: '/tools/:id',
-                    templateUrl: function ($stateParams) {
-                        return 'tool/' + $stateParams.id + '/' + $stateParams.id + '.html';
-                    }
-                })
-                .state('home', {
-                    controller: 'homeCtrl',
-                    url: '/home',
-                    templateUrl: 'pages/home.html'
-                })
                 .state('library', {
                     url: '/library',
                     templateUrl: 'pages/library.html',
-                    controller: 'pluginCtrl'
-                })
-                .state('build', {
-                    url: '/build',
-                    templateUrl: 'pages/build.html',
                     controller: 'pluginCtrl'
                 })
                 .state('installed-features', {
@@ -71,8 +48,23 @@
                     templateUrl: function ($stateParams) {
                         return 'feature/' + $stateParams.id + '/' + $stateParams.id + '.html';
                     }
-                }
-            );
+                })
+                .state('tools', {
+                    url: '/tools',
+                    templateUrl: 'pages/tools.html',
+                    controller: 'pluginCtrl'
+                })
+                .state('tools-id', {
+                    url: '/tools/:id',
+                    templateUrl: function ($stateParams) {
+                        return 'tool/' + $stateParams.id + '/' + $stateParams.id + '.html';
+                    }
+                })
+                .state('build', {
+                    url: '/build',
+                    templateUrl: 'pages/build.html',
+                    controller: 'pluginCtrl'
+                });
         });
 
     var dispatchToDesiredPage = function ($q, $rootScope, $location, $http, $log) {
