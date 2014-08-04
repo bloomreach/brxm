@@ -15,20 +15,6 @@
   -->
 
 <div ng-controller="selectionPluginCtrl">
-  <essentials-simple-install-plugin
-    plugin-id="selectionPlugin"
-    has-no-templates="true"
-    hide-installed-info="true">
-  </essentials-simple-install-plugin>
-
-  <div class="infobox infobox-info" ng-show="plugin.installState === 'installing'">
-    <h3>Next Steps</h3>
-    <p>After the rebuild, you will be able to create Value List documents in the CMS. Go ahead and create some,
-      and fill them with values. Then, come back to the dashboard and create new document type fields, using these
-      value lists.</p>
-  </div>
-
-    <!--Configuration part-->
   <div class="panel panel-default" ng-show="plugin.installState === 'installed'">
     <div class="panel-heading">Selection Plugin Configuration</div>
     <div class="panel-body">

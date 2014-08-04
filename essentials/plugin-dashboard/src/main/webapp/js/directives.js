@@ -171,9 +171,7 @@
                     label: '@',
                     pluginId: '@',
                     hasNoTemplates: '@',
-                    hasSampleData: '@',
-                    hideInstalledInfo: '@',
-                    requireOnBoardState: '@' // use if CMS dependency bootstraps namespace required during installation.
+                    hasSampleData: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $location, $rootScope, $http) {
@@ -188,7 +186,7 @@
                     $scope.$watchCollection("[sampleData, templateName]", function () {
                         $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     });
-                    $scope.run = function () {
+                    $scope.apply = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
                             $scope.plugin.installState = 'installing';
                             $rootScope.$broadcast('update-plugin-install-state', {
