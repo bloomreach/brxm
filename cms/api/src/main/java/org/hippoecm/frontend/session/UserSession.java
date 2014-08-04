@@ -20,6 +20,7 @@ import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 
+import org.apache.wicket.ThreadContext;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
 import org.hippoecm.frontend.observation.IFacetRootsObserver;
@@ -38,8 +39,22 @@ import org.hippoecm.repository.api.WorkflowManager;
 public abstract class UserSession extends WebSession {
     private static final long serialVersionUID = 8123464713164870284L;
 
+    /**
+     * Returns the current session, or if there is no current session, creates one.
+     */
     public static UserSession get() {
-        return (UserSession) org.apache.wicket.Session.get();
+        return get(true);
+    }
+
+    /**
+     * Returns the current session or, if there is no current session and create is true, returns a new session.
+     */
+    public static UserSession get(boolean create) {
+        if (create) {
+            return (UserSession) org.apache.wicket.Session.get();
+        } else {
+            return (UserSession) ThreadContext.getSession();
+        }
     }
 
     public UserSession(Request request) {

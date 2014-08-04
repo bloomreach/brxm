@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.ThreadContext;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.Request;
