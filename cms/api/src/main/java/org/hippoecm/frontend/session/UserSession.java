@@ -43,18 +43,7 @@ public abstract class UserSession extends WebSession {
      * Returns the current session, or if there is no current session, creates one.
      */
     public static UserSession get() {
-        return get(true);
-    }
-
-    /**
-     * Returns the current session or, if there is no current session and create is true, returns a new session.
-     */
-    public static UserSession get(boolean create) {
-        if (create) {
-            return (UserSession) org.apache.wicket.Session.get();
-        } else {
-            return (UserSession) ThreadContext.getSession();
-        }
+        return (UserSession) org.apache.wicket.Session.get();
     }
 
     public UserSession(Request request) {
