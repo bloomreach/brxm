@@ -105,7 +105,6 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
-                    /* settings: '=',*/
                     sampleData: '=',
                     templateName: '=',
                     hasNoTemplates: '@',
@@ -113,15 +112,11 @@
                 },
                 templateUrl: 'directives/essentials-template-settings.html',
                 controller: function ($scope, $rootScope, $http) {
-                    $scope.toggleForm = function () {
-                        $scope.showForm = !$scope.showForm;
-                    };
+                    // initialize fields to system defaults.
                     $http.get($rootScope.REST.project_settings).success(function (data) {
-                        $scope.projectSettings = data;
-                        $scope.templateName = $scope.projectSettings.templateLanguage;
-                        $scope.sampleData = $scope.projectSettings.useSamples;
+                        $scope.templateName = data.templateLanguage;
+                        $scope.sampleData   = data.useSamples;
                     });
-
                 }
             }
         })
@@ -175,12 +170,10 @@
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $location, $rootScope, $http) {
-                    $scope.showForm = false;
 
-                    $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
+                    // create fields. The values don't matter, the template-settings directive will set them for us.
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
-                    $scope.message = {};
 
                     $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     $scope.$watchCollection("[sampleData, templateName]", function () {
@@ -188,7 +181,6 @@
                     });
                     $scope.apply = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                            $scope.plugin.installState = 'installing';
                             $rootScope.$broadcast('update-plugin-install-state', {
                                 'pluginId': $scope.pluginId,
                                 'state': $scope.plugin.installState

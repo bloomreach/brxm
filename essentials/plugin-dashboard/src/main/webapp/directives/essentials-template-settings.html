@@ -14,51 +14,41 @@
   limitations under the License.
   -->
 
-
 <div>
-    <div class="infobox infobox-info">
-        <h4>Current settings:</h4>
-        <p ng-hide="hasNoTemplates">Template language:
-            <strong>{{templateName=='repository'?'repository freemarker template' : templateName +' template'}}</strong>
-        </p>
-        <p ng-show="hasSampleData">Use sample data: <strong>{{sampleData ? "yes": "no"}}</strong></p>
-        <p class="pull-right">
-            <button class="btn btn-info" ng-click="toggleForm()">Change settings</button>
-        </p>
-        <div class="space mb5"/>
-    </div>
-    <div class="infobox infobox-success" ng-show="showForm">
+    <div class="infobox infobox-success">
         <form novalidate name="templateForm">
             <div ng-hide="hasNoTemplates">
                 <div class="form-group">
-                <label>Please select templating language:</label>
+                    <label>Please select templating language:</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="templateName" required value="jsp"/>
+                        JSP template
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="templateName" required value="freemarker"/>
+                        Freemarker template
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="templateName" required value="repository"/>
+                        Repository freemarker template
+                    </label>
+                </div>
             </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="jsp"/>
-                    JSP template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="freemarker"/>
-                    Freemarker template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="repository"/>
-                    Repository freemarker template
-                </label>
-            </div>
-            </div>
-            <div ng-show="hasSampleData" class="form-group">
-                <label> Content: </label>
-            </div>
-            <div ng-show="hasSampleData" class="checkbox">
-                <label>
-                    Add sample content <input type="checkbox" ng-model="sampleData"/>
-                </label>
+            <div ng-show="hasSampleData">
+                <div class="form-group">
+                    <label> Content: </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        Add sample content <input type="checkbox" ng-model="sampleData"/>
+                    </label>
+                </div>
             </div>
         </form>
     </div>
