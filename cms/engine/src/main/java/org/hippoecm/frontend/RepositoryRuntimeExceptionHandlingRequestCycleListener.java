@@ -66,10 +66,10 @@ public class RepositoryRuntimeExceptionHandlingRequestCycleListener extends Abst
         IRequestHandler handler = null;
 
         if (rrEx instanceof InvalidSessionException) {
-            log.error("Creating RequestHandler for InvalidSessionException: {}", rrEx, rrEx);
+            log.error("Creating RequestHandler for InvalidSessionException: {}", rrEx.toString(), rrEx);
             handler = new RenderPageRequestHandler(new PageProvider(WebApplication.get().getHomePage()), RedirectPolicy.AUTO_REDIRECT); 
         } else if (rrEx instanceof RepositoryUnavailableException) {
-            log.error("Creating RequestHandler for RepositoryUnavailableException: {}", rrEx, rrEx);
+            log.error("Creating RequestHandler for RepositoryUnavailableException: {}", rrEx.toString(), rrEx);
             handler = new RenderPageRequestHandler(new PageProvider(NoRepositoryAvailablePage.class), RedirectPolicy.AUTO_REDIRECT);
         }
 
