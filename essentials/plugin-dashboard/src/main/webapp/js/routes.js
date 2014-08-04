@@ -72,8 +72,6 @@
         // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
         var deferred = $q.defer();
 
-        $location.path("/library"); // Start in the library by default.
-
         $http.get($rootScope.REST.packageStatus)
             .success(function (response) {
                 if (response.status) {
@@ -83,10 +81,13 @@
                         .success(function (data) {
                             if (data.installedFeatures > 0) {
                                 $location.path("/installed-features");
+                            } else {
+                                $location.path("/library");
                             }
                             deferred.resolve(true);
                         })
                         .error(function () {
+                            $location.path("/library");
                             deferred.reject();
                         });
                 } else {
@@ -96,6 +97,7 @@
                 }
             })
             .error(function () {
+                $location.path("/library");
                 deferred.reject();
             });
 

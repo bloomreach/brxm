@@ -40,6 +40,11 @@
                 if (!error) {
                     return;
                 }
+                // avoid error messages if pinging fails
+                var url = error.config.url;
+                if (url.substring(url.length-6, url.length) === '/ping/') {
+                    return;
+                }
                 if (error.data) {
                     if (error.data.value) {
                         $rootScope.feedbackMessages.push({type: 'error', message: error.data.value});
