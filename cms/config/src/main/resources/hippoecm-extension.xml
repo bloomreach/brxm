@@ -374,7 +374,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>902.0</sv:value>
+      <sv:value>902.1</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS builtin reports -->
@@ -389,7 +389,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>902.0</sv:value>
+      <sv:value>902.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
       <sv:value>true</sv:value>
@@ -410,7 +410,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>902.0</sv:value>
+      <sv:value>902.3</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS admin perspective -->
@@ -425,7 +425,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>902.0</sv:value>
+      <sv:value>902.4</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS folder views -->
