@@ -123,6 +123,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
      * @return the absolute path
      */
     public String getPath() {
+        checkLiveJcrSession();
         Item item = getObject();
         if (item != null) {
             try {
@@ -146,6 +147,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
      * @return true when the Item exists
      */
     public boolean exists() {
+        checkLiveJcrSession();
         return getObject() != null;
     }
 
@@ -433,5 +435,10 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     private void setUserId() {
         userId = UserSession.get().getJcrSession().getUserID();
+    }
+
+    private void checkLiveJcrSession() {
+        // method below will throw runtime exception in case of non live session
+        UserSession.get().getJcrSession();
     }
 }
