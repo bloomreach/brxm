@@ -23,7 +23,7 @@
                         <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" data-ng-hide="childNodes().length === 0">
                             <span class="fa" data-ng-class="{'fa-caret-down': !collapsed, 'fa-caret-right': collapsed}"></span>
                         </a>
-                        <div class="spacer" data-ng-show="childNodes().length === 0">&nbsp;</div>
+                        <div class="spacer" data-ng-show="childNodes().length === 0">&#9679;</div>
                         {{ item.title }}
                     </div>
                 </div>
