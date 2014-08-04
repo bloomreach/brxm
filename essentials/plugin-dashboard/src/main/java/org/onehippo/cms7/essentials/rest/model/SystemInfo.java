@@ -33,6 +33,7 @@ public class SystemInfo implements Restful {
     private static final long serialVersionUID = 1L;
     private int totalPlugins;
     private int totalTools;
+    private int installedFeatures;
     private int configurablePlugins;
     private boolean needsRebuild;
     private boolean initialized;
@@ -50,6 +51,9 @@ public class SystemInfo implements Restful {
         configurablePlugins++;
     }
 
+    public void incrementInstalledFeatures() {
+        installedFeatures++;
+    }
 
     public int getConfigurablePlugins() {
         return configurablePlugins;
@@ -75,6 +79,14 @@ public class SystemInfo implements Restful {
 
     public void setTotalTools(final int totalTools) {
         this.totalTools = totalTools;
+    }
+
+    public int getInstalledFeatures() {
+        return installedFeatures;
+    }
+
+    public void setInstalledFeatures(final int installedFeatures) {
+        this.installedFeatures = installedFeatures;
     }
 
     public boolean isNeedsRebuild() {

@@ -28,7 +28,7 @@
                     controller: 'homeCtrl',
                     url: '',
                     templateUrl: 'pages/home.html',
-                    resolve: { factory: checkPackInstalled}
+                    resolve: { factory: dispatchToDesiredPage }
                 })
                 .state('tools', {
                     url: '/tools',
@@ -74,30 +74,40 @@
                 }
             );
         });
-    var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
-        $rootScope.checkDone = true;
-        if ($rootScope.packsInstalled) {
-            $log.info("package is installed");
-            return true;
-        } else {
-            var deferred = $q.defer();
-            $http.get($rootScope.REST.packageStatus)
-                .success(function (response) {
-                    $rootScope.packsInstalled = response.status;
-                    deferred.resolve(true);
-                    if (!$rootScope.packsInstalled) {
-                        $location.path("/introduction");
-                    }
 
-                })
-                .error(function () {
-                    deferred.reject();
-                    $rootScope.packsInstalled = false;
+    var dispatchToDesiredPage = function ($q, $rootScope, $location, $http, $log) {
+        // Determine the correct location path to start.
+        // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
+        var deferred = $q.defer();
+
+        $location.path("/library"); // Start in the library by default.
+
+        $http.get($rootScope.REST.packageStatus)
+            .success(function (response) {
+                if (response.status) {
+                    // project setup has happened.
+                    // Do a ping to decide whether to go to library or installed features
+                    $http.get($rootScope.REST.ping)
+                        .success(function (data) {
+                            if (data.installedFeatures > 0) {
+                                $location.path("/installed-features");
+                            }
+                            deferred.resolve(true);
+                        })
+                        .error(function () {
+                            deferred.reject();
+                        });
+                } else {
+                    // project needs setup.
                     $location.path("/introduction");
-                });
-            return deferred.promise;
-        }
-    }
+                    deferred.resolve(true);
+                }
+            })
+            .error(function () {
+                deferred.reject();
+            });
 
+        return deferred.promise;
+    }
 })();
 

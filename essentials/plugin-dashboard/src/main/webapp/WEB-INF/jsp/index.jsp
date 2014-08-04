@@ -79,7 +79,7 @@
   <div class="row-fluid">
     <div class="sidebar-nav">
       <ul class="side-menu" ng-controller="mainMenuCtrl">
-        <li ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
+        <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
           <a href="#/installed-features">
             <i class="fa fa-gears"></i>
             <span>Installed features</span>

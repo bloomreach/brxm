@@ -222,6 +222,7 @@
                                 $timeout(ping, PING_RUNNING_TIMER);
                                 $rootScope.TOTAL_PLUGINS = data.totalPlugins;
                                 $rootScope.TOTAL_TOOLS = data.totalTools;
+                                $rootScope.INSTALLED_FEATURES = data.installedFeatures;
                                 $rootScope.NEEDS_REBUILD = data.needsRebuild;
                                 $rootScope.NEEDS_REBUILD_PLUGINS = data.plugins;
                                 $rootScope.TOTAL_NEEDS_ATTENTION = data.needsRebuild + data.configurablePlugins;
