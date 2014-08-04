@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.richtext.view;
 import java.nio.charset.Charset;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -131,7 +132,8 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
                     return !target.getNode(target.getName()).isNodeType(NT_DELETED);
                 }
             }
-        } catch (ItemNotFoundException ignore) {
+        } catch (ItemNotFoundException|NamespaceException ignored) {
+            log.debug("Ignoring exception while checking that link '{}' exists and assume it does not exist", linkRelPath, ignored);
         } catch (RepositoryException e) {
             log.error("Error while checking internal link existence", e);
         }

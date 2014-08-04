@@ -19,11 +19,17 @@ import java.util.Set;
 
 import org.apache.wicket.mock.MockHomePage;
 import org.apache.wicket.util.tester.WicketTester;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class RichTextProcessorTest {
 
@@ -66,6 +72,21 @@ public class RichTextProcessorTest {
             }
         });
         assertEquals("testing 1 2 3 <img src=\"http://link\"/>", processed);
+    }
+
+    @Test
+    public void mailtoLinksAreExternalLinks() {
+        String text = "<a href=\"mailto:info@onehippo.com\">link</a>";
+
+        final ILinkDecorator linkDecorator = EasyMock.createMock(ILinkDecorator.class);
+        expect(linkDecorator.externalLink(eq("mailto:info@onehippo.com"))).andReturn("href=\"mailto:processed\"");
+
+        replay(linkDecorator);
+
+        String processed = RichTextProcessor.decorateLinkHrefs(text, linkDecorator);
+
+        assertEquals("<a href=\"mailto:processed\">link</a>", processed);
+        verify(linkDecorator);
     }
 
     @Test
