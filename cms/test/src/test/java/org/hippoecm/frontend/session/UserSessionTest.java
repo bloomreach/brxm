@@ -20,13 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-
-import javax.jcr.Session;
 
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.TransientJCrSessionWrapper;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.junit.Test;
 

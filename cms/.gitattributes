@@ -1903,7 +1903,7 @@ engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/SearchingTranslatorPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
 engine/src/main/java/org/hippoecm/frontend/model/JcrSessionModel.java -text
-engine/src/main/java/org/hippoecm/frontend/model/TransientJCrSessionWrapper.java -text
+engine/src/main/java/org/hippoecm/frontend/model/TransientJcrSessionWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/FacetRootsObserver.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/JcrListener.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/JcrObservationManager.java -text

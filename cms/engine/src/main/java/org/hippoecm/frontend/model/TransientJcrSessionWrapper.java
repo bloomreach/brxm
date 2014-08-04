@@ -24,11 +24,11 @@ import javax.jcr.Session;
  * A simple wrapper class of a transient instance variable <code>session</code>: It's purpose is to make sure the transient
  * jcr session in JcrSessionModel gets logged out on serialization
  */
-public class TransientJCrSessionWrapper implements Serializable {
+public class TransientJcrSessionWrapper implements Serializable {
 
     final transient Session session;
 
-    TransientJCrSessionWrapper(Session session) {
+    TransientJcrSessionWrapper(Session session) {
         this.session = session;
     }
 

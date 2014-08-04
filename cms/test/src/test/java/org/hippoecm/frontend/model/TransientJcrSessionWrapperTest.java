@@ -36,7 +36,7 @@ public class TransientJcrSessionWrapperTest extends PluginTest {
     public void assert_serialization_deserialization_TransientJCrSessionWrapper() throws Exception {
 
         Session testSession = server.login("admin", "admin".toCharArray());
-        TransientJCrSessionWrapper wrapper = new TransientJCrSessionWrapper(testSession);
+        TransientJcrSessionWrapper wrapper = new TransientJcrSessionWrapper(testSession);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bos);
@@ -47,7 +47,7 @@ public class TransientJcrSessionWrapperTest extends PluginTest {
         assertFalse(testSession.isLive());
         InputStream bis = new ByteArrayInputStream(bos.toByteArray());
         ObjectInputStream in = new ObjectInputStream(bis);
-        TransientJCrSessionWrapper deserWapper = (TransientJCrSessionWrapper) in.readObject();
+        TransientJcrSessionWrapper deserWapper = (TransientJcrSessionWrapper) in.readObject();
         assertNull(deserWapper.session);
     }
 }

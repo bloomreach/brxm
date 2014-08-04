@@ -183,7 +183,7 @@ public class PluginUserSession extends UserSession {
         if (session == null) {
             Main main = (Main) Application.get();
             if (fallbackCredentials == null) {
-            try {
+                try {
                     main.getRepository(); // side effect of reinitializing fallback credentials
                 } catch (RepositoryException ignored) {
                 }

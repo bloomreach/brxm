@@ -61,7 +61,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     // although only written to, this instance variable is important : It serves to make sure
     // the transientModelObject jcr session gets logged out during serialization
-    private TransientJCrSessionWrapper transientJcrSessionWrapper;
+    private TransientJcrSessionWrapper transientJcrSessionWrapper;
 
     public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
@@ -137,7 +137,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             // there's no sense in continuing
             throw new AbortWithHttpErrorCodeException(503, "Unable to load session");
         }
-        transientJcrSessionWrapper = new TransientJCrSessionWrapper(session);
+        transientJcrSessionWrapper = new TransientJcrSessionWrapper(session);
         return session;
     }
 
