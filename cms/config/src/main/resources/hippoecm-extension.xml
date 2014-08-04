@@ -222,6 +222,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>900.5</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.27.00</sv:value>
+    </sv:property>
   </sv:node>
   <!-- CMS static configuration french translations-->
   <sv:node sv:name="cms-static-fr">
