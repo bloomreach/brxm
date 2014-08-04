@@ -176,10 +176,11 @@ public class PluginResource extends BaseResource {
             }
             final String installState = plugin.getInstallState();
             if (!isTool && !Strings.isNullOrEmpty(installState)) {
-                if (installState.equals("boarding") || installState.equals("installing")) {
+                if (installState.equals(PluginInstallationState.BOARDING)
+                 || installState.equals(PluginInstallationState.INSTALLING)) {
                     systemInfo.addRebuildPlugin(plugin);
                     systemInfo.setNeedsRebuild(true);
-                } else if (installState.equals("onBoard")) {
+                } else if (installState.equals(PluginInstallationState.ONBOARD)) {
                     systemInfo.incrementConfigurablePlugins();
                 }
             }

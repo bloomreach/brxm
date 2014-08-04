@@ -20,5 +20,8 @@ import org.onehippo.cms7.essentials.dashboard.config.DefaultPluginParameterServi
 
 public class SelectionParameterService extends DefaultPluginParameterService {
     @Override
+    public boolean hasGeneralizedSetupParameters() { return false; }
+
+    @Override
     public boolean hasConfiguration() { return true; }
 }
