@@ -69,7 +69,6 @@ public class PluginUserSession extends UserSession {
 
     private static UserCredentials fallbackCredentials;
     private IModel<Session> jcrSessionModel;
-    private transient Session requestSession;
     private transient Session fallbackSession;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
@@ -80,7 +79,6 @@ public class PluginUserSession extends UserSession {
     @SuppressWarnings("unused")
     private String sessionId;
     private int pageId;
-    private boolean clearRequired;
 
 
     public UserCredentials getUserCredentials() {
@@ -92,12 +90,7 @@ public class PluginUserSession extends UserSession {
     }
 
     public static PluginUserSession get() {
-        final PluginUserSession pluginUserSession = (PluginUserSession) UserSession.get();
-        if (pluginUserSession.clearRequired) {
-            pluginUserSession.clear();
-            pluginUserSession.clearRequired = false;
-        }
-        return pluginUserSession;
+        return (PluginUserSession) UserSession.get();
     }
 
     public PluginUserSession(Request request) {
@@ -257,7 +250,6 @@ public class PluginUserSession extends UserSession {
     /**
      * {@link #login()} method invokes this method if there's any <code>UserCredentials</code> object from the request.
      * For example, Web SSO Agent can set a UserCredentials for the user as request attribute.
-     * @return
      */
     protected UserCredentials getUserCredentialsFromRequestAttribute() {
         HttpServletRequest request = ((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest());
@@ -411,13 +403,10 @@ public class PluginUserSession extends UserSession {
 
     public void flush() {
         JcrObservationManager.getInstance().cleanupListeners(this);
-        // do not use UserSession.get() as that creates a user session on threadlocal
-        if (ThreadContext.getSession() == this) {
+        if (Application.exists()) {
             clear();
         } else {
-            log.info("There might be no wicket application attached to current thread. Mark PluginUserSession to be cleared " +
-                    "on next access");
-            clearRequired = true;
+            log.info("There is no wicket application attached to the current thread.");
         }
     }
 
