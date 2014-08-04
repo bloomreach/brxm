@@ -15,6 +15,9 @@
  */
 package org.onehippo.repository.testutils.log4j;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Category;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
@@ -29,6 +32,7 @@ public class StringMatchFilterTest {
         final StringMatchFilter stringMatchFilter = new StringMatchFilter();
         assertEquals(Filter.DENY, stringMatchFilter.decide(new LoggingEvent(null, new Category("test") {}, null, "foobar", null)));
         assertEquals(Filter.NEUTRAL, stringMatchFilter.decide(new LoggingEvent(null, new Category("test") {}, null, "quzquux", null)));
+        assertEquals(Filter.DENY, stringMatchFilter.decide(new LoggingEvent(null, new Category("test") {}, null, "bazbar", null)));
     }
 
 }

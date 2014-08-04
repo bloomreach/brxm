@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.spi.Filter;
@@ -32,11 +34,13 @@ import org.apache.log4j.spi.LoggingEvent;
  * <p>The filter reads lines from a called <code>log4j-filters.txt</code>
  * that is expected to be on the classpath. Each line that does not start with # represents a string to
  * to match the log message to filter against. If the log message contains one
- * of the configured strings it is filtered out. Lines that start with # are treated as comments and ignored</p>
+ * of the configured strings it is filtered out. Lines may also be regular expressions.
+ * Lines that start with # are treated as comments and ignored</p>
  */
 public class StringMatchFilter extends Filter {
 
     private final List<String> stringsToMatch = new ArrayList<String>();
+    private final List<Pattern> patternsToMatch = new ArrayList<>();
 
     public StringMatchFilter() {
         final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("log4j-filters.txt");
@@ -53,9 +57,10 @@ public class StringMatchFilter extends Filter {
                         continue;
                     }
                     stringsToMatch.add(line);
+                    patternsToMatch.add(Pattern.compile(line));
                 }
-            } catch (IOException e) {
-                System.err.println("Error while initializing log4j StringMatchFilter: " + e.toString());
+            } catch (IOException | PatternSyntaxException e) {
+                System.err.println("Error while initializing log4j StringMatchFilter: " + e);
             } finally {
                 IOUtils.closeQuietly(reader);
             }
@@ -81,6 +86,11 @@ public class StringMatchFilter extends Filter {
     private boolean matches(final String msg) {
         for (String s : stringsToMatch) {
             if (msg.contains(s)) {
+                return true;
+            }
+        }
+        for (Pattern pattern : patternsToMatch) {
+            if (pattern.matcher(msg).matches()) {
                 return true;
             }
         }
