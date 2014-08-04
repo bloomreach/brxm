@@ -14,11 +14,13 @@
 #  limitations under the License.
 #
 
-Error initializing content for translation-locale-provider.xml
-Error initializing content for translation-locale-provider_fr.xml
-Error initializing content for translation-locale-provider_it.xml
-Error initializing content for translation-locale-provider_de.xml
-Error initializing content for layout-provider.xml
-Error initializing content for default-editor-factory.xml
-Error initializing content for hippostd-editor-factory.xml
-Error initializing content for translation-hide-translations-folder.xml
+Error initializing content for .*translation-locale-provider.*
+Error initializing content for .*layout-provider.xml.*
+Error initializing content for .*default-editor-factory.xml.*
+Error initializing content for .*hippostd-editor-factory.xml.*
+Error initializing content for .*translation-hide-translations-folder.xml.*
+^Error initializing content for .*cms-validators.*$
+^Error initializing content for .*validatorLoader.xml.*$
+^Error initializing content for .*cms.xml.*$
+^Error initializing content for .*resource-required.*$
+^Error initializing content for .*translation-treenode-icon-service.xml.*$

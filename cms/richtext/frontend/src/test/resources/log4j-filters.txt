@@ -14,21 +14,7 @@
 #  limitations under the License.
 #
 
-Error initializing content for hippostd-html-template.xml
-Error initializing content for system-html-template.xml
-Error initializing content for system-html-template_fr.xml
-configuration as specified by /hippo:configuration/hippo:initialize/system-html-template-fr failed
-Error initializing content for hippostd-html-template_fr.xml
-configuration as specified by /hippo:configuration/hippo:initialize/hippostd-html-template-fr failed
-Error initializing content for system-html-template_it.xml
-configuration as specified by /hippo:configuration/hippo:initialize/system-html-template-it failed
-Error initializing content for hippostd-html-template_de.xml
-configuration as specified by /hippo:configuration/hippo:initialize/hippostd-html-template-de failed
-Error initializing content for hippostd-html-template_it.xml
-configuration as specified by /hippo:configuration/hippo:initialize/hippostd-html-template-it
-Error initializing content for system-html-template_de.xml
-configuration as specified by /hippo:configuration/hippo:initialize/system-html-template-de
-Error initializing content for html-cleaner-service.xml
+Error initializing content for .*hippostd-html-template.*
+Error initializing content for .*system-html-template.*
+Error initializing content for .*html-cleaner-service.xml.*
 illegal mixin type name: editor:editable
-No child node definition for hippo:translation found
-javax.jcr.PathNotFoundException: /hippo:configuration/hippo:frontend/cms
