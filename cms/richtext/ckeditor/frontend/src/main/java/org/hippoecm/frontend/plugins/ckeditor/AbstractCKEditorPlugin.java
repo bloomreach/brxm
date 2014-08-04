@@ -169,7 +169,7 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
         final IModel<ModelType> currentModel = (IModel<ModelType>) getDefaultModel();
 
         return createComparePanel(id, baseModel, currentModel);
-    };
+    }
 
     /**
      * Creates the panel the show in 'compare' mode. It typically displays the differences between the provided
