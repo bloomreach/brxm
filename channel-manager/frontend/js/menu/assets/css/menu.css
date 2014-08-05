@@ -91,9 +91,11 @@
 
 /* --- Panel component --- */
 .l-sidebar {
+    width: 300px;
     height: 434px;
+    overflow-x: hidden;
     overflow-y: auto;
-    margin-right: 4px;
+    padding-right: 3px;
 }
 
 .panel-default {

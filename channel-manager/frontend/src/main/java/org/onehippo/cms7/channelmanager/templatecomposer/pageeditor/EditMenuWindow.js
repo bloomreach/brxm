@@ -24,10 +24,9 @@
             Ext.apply(config, {
                 title: config.resources['edit-menu'],
                 width: 860,
-                minWidth: 790,
                 height: 517,
                 modal: true,
-                resizeHandles: 'e w',
+                resizable: false,
                 iframeUrl: './angular/menu/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
