@@ -248,20 +248,4 @@ public interface HippoSession extends Session {
      */
     void disableVirtualLayers();
 
-    /**
-     * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
-     * The interface of the callback handler that is called when the session is
-     * logged out.
-     * @deprecated
-     */
-    @Deprecated
-    interface CloseCallback {
-        /** Called upon notification of the session is being logged out.
-         * No runtime exception may be thrown.
-         * @deprecated
-         */
-        @Deprecated
-        public void close();
-    }
-
 }
