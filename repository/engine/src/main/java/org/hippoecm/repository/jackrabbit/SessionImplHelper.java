@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +103,6 @@ abstract class SessionImplHelper {
     Subject subject;
     org.apache.jackrabbit.core.SessionImpl sessionImpl;
     SessionContext context;
-    Set<HippoSession.CloseCallback> closeCallbacks = new LinkedHashSet<HippoSession.CloseCallback>();
 
     /**
      * Local namespace mappings. Prefixes as keys and namespace URIs as values.
@@ -122,20 +120,12 @@ abstract class SessionImplHelper {
      * namespace mappings to be carried over to a new session.
      */
     public void logout() {
-        for (HippoSession.CloseCallback callback : closeCallbacks) {
-            callback.close();
-        }
-        closeCallbacks.clear();
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
         localISM.setEnabled(false);
         localISM.clearChangeLog();
         namespaces.clear();
         authorizationQuery = null;
 
-    }
-
-    public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {
-        closeCallbacks.add(callback);
     }
 
     //------------------------------------------------< Namespace handling >--

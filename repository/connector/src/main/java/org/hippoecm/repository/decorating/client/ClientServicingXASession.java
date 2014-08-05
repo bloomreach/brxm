@@ -266,11 +266,6 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     }
 
     @Override
-    public void registerSessionCloseCallback(CloseCallback callback) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) {
         throw new UnsupportedOperationException();
     }

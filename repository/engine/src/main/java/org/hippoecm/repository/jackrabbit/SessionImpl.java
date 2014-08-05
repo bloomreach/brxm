@@ -247,11 +247,6 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     }
 
     @Override
-    public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {
-        helper.registerSessionCloseCallback(callback);
-    }
-
-    @Override
     public AuthorizationQuery getAuthorizationQuery() {
         return helper.getAuthorizationQuery();
     }

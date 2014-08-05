@@ -228,21 +228,6 @@ public interface HippoSession extends Session {
     public User getUser() throws ItemNotFoundException, RepositoryException;
 
     /**
-     * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
-     * This registers a callback at a JCR session, which will be called when the
-     * session is being logged out.  Either by an explicit call of the user
-     * program to the logout method or due to other reasons.  It can be used by
-     * user modules to clean up state.
-     * The session is only available if isLive() returns true, which is not
-     * guaranteed (though is guaranteed in case of a normal logout procedure.
-     * @param callback an object implementing the CloseCallback interface
-     * that will be informed when a session is closed.
-     * @deprecated
-     */
-    @Deprecated
-    public void registerSessionCloseCallback(CloseCallback callback);
-
-    /**
      * Create a new Session that contains the union of access control rules
      * of this Session and the provided session, with the optional addition
      * of custom domain rules.  Those rules will be added to existing domain

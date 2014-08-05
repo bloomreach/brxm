@@ -384,10 +384,6 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public void registerSessionCloseCallback(final CloseCallback callback) {
-    }
-
-    @Override
     public Session createSecurityDelegate(final Session session, final DomainRuleExtension... domainExtensions) throws RepositoryException {
         throw new UnsupportedOperationException();
     }

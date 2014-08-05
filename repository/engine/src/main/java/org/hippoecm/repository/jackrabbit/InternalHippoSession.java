@@ -56,8 +56,6 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     HippoSessionItemStateManager getItemStateManager();
 
-    void registerSessionCloseCallback(HippoSession.CloseCallback callback);
-
     AuthorizationQuery getAuthorizationQuery();
 
     Session createDelegatedSession(InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException;

@@ -498,11 +498,6 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     @Override
-    public void registerSessionCloseCallback(CloseCallback callback) {
-        getInternalHippoSession().registerSessionCloseCallback(callback);
-    }
-
-    @Override
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) throws RepositoryException {
         if (!(super.session instanceof InternalHippoSession)) {
             throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());

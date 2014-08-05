@@ -616,10 +616,6 @@ final public class UpdaterSession implements HippoSession {
         throw new UpdaterException("illegal method");
     }
 
-    public void registerSessionCloseCallback(CloseCallback callback) {
-        throw new UpdaterException("illegal method");
-    }
-
     @Override
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) {
         throw new UpdaterException("illegal method");
