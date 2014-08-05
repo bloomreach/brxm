@@ -91,7 +91,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
 
         YAHOO.hippo.Dom.isValidChildNode = function(node) {
             if (node.nodeType === 1 && (node.prefix === null || node.prefix === undefined || node.prefix === 'html')
-                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
+                    && (!node.getAttribute("id") || node.getAttribute("yui:id") || node.localName.indexOf('wicket:') === 0)) {
                 return true;
             }
             return false;
