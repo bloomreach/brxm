@@ -46,12 +46,33 @@
                     });
                 }
 
+                function selectItem(itemId) {
+                    if (FormStateService.isDirty()) {
+                        if (FormStateService.isValid()) {
+                            MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
+                                    editItem(itemId);
+                                },
+                                function (error) {
+                                    setErrorFeedback(error);
+                                    FormStateService.setValid(false);
+                                }
+                            );
+                        }
+                    } else {
+                        editItem(itemId);
+                    }
+                }
+
                 $scope.callbacks = {
                     accept: function(sourceNodeScope, destNodesScope, destIndex) {
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63
                         // for now, simply don't accept any moves when the form is invalid
                         return FormStateService.isValid();
+                    },
+                    dragStart: function(event) {
+                        var draggedItemId = event.source.nodeScope.$modelValue.id;
+                        selectItem(draggedItemId);
                     },
                     dropped: function(event) {
                         var source = event.source,
@@ -63,23 +84,9 @@
 
                         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
                             MenuService.moveMenuItem(sourceId, destId, dest.index);
-                        } else {
-                            var clickedItemId = sourceNodeScope.$modelValue.id;
-                            if (FormStateService.isDirty()) {
-                                if (FormStateService.isValid()) {
-                                    MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
-                                            editItem(clickedItemId);
-                                        },
-                                        function (error) {
-                                            setErrorFeedback(error);
-                                            FormStateService.setValid(false);
-                                        }
-                                    );
-                                }
-                            } else {
-                                editItem(clickedItemId);
-                            }
                         }
+
+                        selectItem(sourceId);
                     }
                 };
             }
