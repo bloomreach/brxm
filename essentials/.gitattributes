@@ -511,7 +511,6 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-l
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-menu-item.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-page.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-sitemap-item.xml -text
-dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-workspace.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-page.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-workspace.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/icon/component-icon-faq.png -text
