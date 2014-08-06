@@ -44,7 +44,7 @@ public class GalleryWorkflowTest extends RepositoryTestCase {
 
     @Test
     public void testCreateGalleryItem() throws Exception {
-        final GalleryWorkflow wf = new GalleryWorkflowImpl(session, gallery);
+        final GalleryWorkflow wf = new GalleryWorkflowImpl(null, session, gallery);
         final Node galleryItem = wf.createGalleryItem("foo.jpg", "hippogallery:imageset").getNode(session);
 
         assertTrue(isAvailable(galleryItem, "live"));
@@ -57,7 +57,7 @@ public class GalleryWorkflowTest extends RepositoryTestCase {
 
     @Test(expected = WorkflowException.class)
     public void testAttemptToCreateSNSThrowsException() throws Exception {
-        final GalleryWorkflow wf = new GalleryWorkflowImpl(session, gallery);
+        final GalleryWorkflow wf = new GalleryWorkflowImpl(null, session, gallery);
         wf.createGalleryItem("contrail.jpg", "hippogallery:imageset");
         wf.createGalleryItem("contrail.jpg", "hippogallery:imageset");
         final NodeIterator nodes = gallery.getNodes("contrail.jpg");

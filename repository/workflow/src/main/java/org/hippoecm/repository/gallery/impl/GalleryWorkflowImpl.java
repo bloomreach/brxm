@@ -38,13 +38,11 @@ import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_GALLERYTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
 import static org.onehippo.repository.util.JcrConstants.JCR_LAST_MODIFIED;
 import static org.onehippo.repository.util.JcrConstants.JCR_MIME_TYPE;
 import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
-import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 import static org.onehippo.repository.util.JcrConstants.NT_BASE;
 
 
@@ -53,7 +51,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow {
     private Session rootSession;
     private Node subject;
 
-    public GalleryWorkflowImpl(Session rootSession, Node subject) throws RemoteException {
+    public GalleryWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.subject = subject;
         this.rootSession = rootSession;
     }
