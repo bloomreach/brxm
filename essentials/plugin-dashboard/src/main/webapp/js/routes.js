@@ -43,8 +43,8 @@
                     templateUrl: 'pages/installed-features.html',
                     controller: 'pluginCtrl'
                 })
-                .state('plugin', {
-                    url: '/plugins/:id',
+                .state('features', {
+                    url: '/features/:id',
                     templateUrl: function ($stateParams) {
                         return 'feature/' + $stateParams.id + '/' + $stateParams.id + '.html';
                     }
