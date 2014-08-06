@@ -38,7 +38,7 @@ public class GalleryWorkflowTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        gallery = session.getRootNode().addNode("test").addNode("gallery", "hippogallery:stdImageGallery");
+        gallery = session.getRootNode().addNode("test", "hippogallery:stdImageGallery");
         session.save();
     }
 
