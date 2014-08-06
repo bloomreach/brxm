@@ -61,6 +61,7 @@ public abstract class CommonComponent extends BaseHstComponent {
     protected static final String REQUEST_ATTR_PARAM_INFO = "cparam"; // (annotated) Component Parameters
     protected static final String REQUEST_ATTR_QUERY = "query"; // free-text query string
     protected static final String REQUEST_ATTR_CMS_EDIT = "editMode"; // CMS edit mode
+    protected static final String REQUEST_ATTR_LABEL = "label";
 
     /**
      * Request parameters (as submitted in HTTP-GET request).
