@@ -94,6 +94,11 @@ public interface HippoStdNodeType {
     String NT_RELAXED = "hippostd:relaxed";
 
     /**
+     * The hippostd:gallery type
+     */
+    String NT_GALLERY = "hippostd:gallery";
+
+    /**
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */
     String HIPPOSTD_CONTENT = "hippostd:content";
@@ -159,10 +164,15 @@ public interface HippoStdNodeType {
      */
     String HIPPOSTD_DAYOFWEEK = "hippostd:dayofweek";
 
-   /**
+    /**
      * The property in a hippostd:second that contains the number of seconds as an integer according to #java.util.Calendar.
      */
     String HIPPOSTD_SECOND = "hippostd:second";
+
+    /**
+     * The property defining the type of this hippostd:gallery
+     */
+    String HIPPOSTD_GALLERYTYPE = "hippostd:gallerytype";
 
     /**
      * One of the possible values a hippostd:state property can hold, indicating a document variant is to be made available

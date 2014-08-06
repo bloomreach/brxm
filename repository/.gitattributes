@@ -517,6 +517,7 @@ workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/versioning-workflows.xml -text
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
+workflow/src/test/java/org/hippoecm/repository/gallery/GalleryWorkflowTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractWorkflowTaskActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/ActionAndResultActionTest.java -text
