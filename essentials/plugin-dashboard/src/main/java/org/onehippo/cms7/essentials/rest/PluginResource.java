@@ -31,6 +31,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -47,7 +50,9 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
@@ -181,7 +186,7 @@ public class PluginResource extends BaseResource {
             }
             if (!isTool && !Strings.isNullOrEmpty(installState)) {
                 if (installState.equals(PluginInstallationState.BOARDING)
-                 || installState.equals(PluginInstallationState.INSTALLING)) {
+                        || installState.equals(PluginInstallationState.INSTALLING)) {
                     systemInfo.addRebuildPlugin(plugin);
                     systemInfo.setNeedsRebuild(true);
                 } else if (installState.equals(PluginInstallationState.ONBOARD)) {
@@ -537,8 +542,7 @@ public class PluginResource extends BaseResource {
             // The test should be executed for each plugin upon "initialization", i.e. after a rebuild/restart.
             // For this, this piece of code should move into a method that clearly indicates that it's doing
             // initialization (like initializing the dynamic REST endpoints e.g.).
-            if (PluginInstallationState.ONBOARD.equals(installState) && !initialized)
-            {
+            if (PluginInstallationState.ONBOARD.equals(installState) && !initialized) {
                 setupIfPossible(item, context); // Ignore error messages
             }
 
@@ -594,7 +598,7 @@ public class PluginResource extends BaseResource {
                 // proceed to the next phase.
                 boolean updated = false;
                 if (PluginInstallationState.BOARDING.equals(installState)
-                 && PluginInstallationState.BOARDING.equals(resourceBasedInstallationState)) {
+                        && PluginInstallationState.BOARDING.equals(resourceBasedInstallationState)) {
                     installState = determineInstallStateAfterInstallation(plugin, true);
                     updated = true;
                 } else if (PluginInstallationState.INSTALLING.equals(installState)
@@ -652,8 +656,7 @@ public class PluginResource extends BaseResource {
         if (installState != null
                 && (installState.equals(PluginInstallationState.ONBOARD)
                 || installState.equals(PluginInstallationState.INSTALLING)
-                || installState.equals(PluginInstallationState.INSTALLED)))
-        {
+                || installState.equals(PluginInstallationState.INSTALLED))) {
             final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
 
             plugin.setHasConfiguration(params.hasConfiguration());
@@ -681,6 +684,8 @@ public class PluginResource extends BaseResource {
     private ErrorMessageRestful setupPlugin(final PluginRestful plugin, final Map<String, Object> properties) {
         final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
         context.addPlaceholderData(properties);
+
+//        erasePreviewConfiguration();
 
         //############################################
         // EXECUTE SKELETON:
@@ -839,5 +844,40 @@ public class PluginResource extends BaseResource {
         }
     }
 
+    private static String mountId;
 
+    private static String getMountId() {
+        if (mountId == null) {
+            final PluginContext context = PluginContextFactory.getContext();
+            final Session session = context.createSession();
+
+            try {
+                final Node mount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+                mountId = mount.getIdentifier();
+            } catch (RepositoryException ex) {
+                log.warn("Unable to determine ID of hst:mount.", ex);
+            } finally {
+                GlobalUtils.cleanupSession(session);
+            }
+        }
+        return mountId;
+    }
+
+    private static void erasePreviewConfiguration() {
+        String mountId = getMountId();
+        if (mountId != null) {
+            String uri = "http://localhost:8080/site/_rp/" + mountId + "./deletepreview";
+            final WebClient client = WebClient.create(uri);
+
+            final HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+            conduit.getClient().setReceiveTimeout(2000);
+            conduit.getClient().setConnectionTimeout(2000);
+
+            try {
+                client.delete();
+            } catch (Exception e) {
+                log.error("Error deleting preview config at " + uri, e);
+            }
+        }
+    }
 }

@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+{{#repositoryBased}}
+<#include "../../hst:default/hst:templates/imports.ftl">
+{{/repositoryBased}}
+{{#fileBased}}
+<#include "/WEB-INF/freemarker/include/imports.ftl">
+{{/fileBased}}
+<#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +18,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
+<#-- @ftlvariable id="label" type="java.lang.String"-->
+<h1>${label}</h1>
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="homepage-main-content">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/{{namespace}}/homepage-main-content.jsp</sv:value>
-  </sv:property>
-</sv:node>

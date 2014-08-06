@@ -30,8 +30,23 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:containeritemcomponent</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsLabelComponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:iconpath" sv:type="String">
+        <sv:value>images/component-icon-label.png</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:label" sv:type="String">
+        <sv:value>Label</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+        <sv:value>label</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>Home Page - created by Hippo Essentials</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>homepage-main-content{{templateExtension}}</sv:value>
+        <sv:value>label-component{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>
