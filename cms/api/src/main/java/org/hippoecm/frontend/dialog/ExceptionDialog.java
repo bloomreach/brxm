@@ -47,8 +47,7 @@ public class ExceptionDialog extends AbstractDialog {
 
     public ExceptionDialog(Exception exception) {
         this();
-
-        IModel<String> messageModel = getTranslatedException(exception);
+        IModel<String> messageModel = getExceptionTranslation(exception);
         message = messageModel.getObject();
     }
 

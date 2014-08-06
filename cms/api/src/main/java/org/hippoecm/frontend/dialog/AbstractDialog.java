@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -194,12 +193,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             Serializable serializable = message.getMessage();
             if (serializable instanceof Exception) {
                 Exception ex = (Exception) message.getMessage();
-                IModel<String> exceptionModel = getTranslatedException(ex);
+                IModel<String> exceptionModel = getExceptionTranslation(ex);
                 return new ExceptionLabel(id, exceptionModel, ex,
                         ExceptionFeedbackPanel.this.getEscapeModelStrings());
             } else {
                 Label label = new Label(id);
-                label.setDefaultModel(new Model<String>(serializable == null ? "" : serializable.toString()));
+                label.setDefaultModel(new Model<>(serializable == null ? "" : serializable.toString()));
                 label.setEscapeModelStrings(ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
             }
@@ -211,24 +210,23 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
     }
 
-    protected IModel<String> getTranslatedException(final Exception ex) {
+    protected IModel<String> getExceptionTranslation(final Throwable t, final Object... parameters) {
         String key = "exception,type=${type},message=${message}";
-        Map<String, String> details = new HashMap<String, String>();
-        details.put("type", ex.getClass().getName());
-        details.put("message", ex.getMessage());
-        StackTraceElement[] elements = ex.getStackTrace();
+        HashMap<String, String> details = new HashMap<>();
+        details.put("type", t.getClass().getName());
+        details.put("message", t.getMessage());
+        StackTraceElement[] elements = t.getStackTrace();
         if (elements.length > 0) {
             StackTraceElement top = elements[0];
             details.put("clazz", top.getClassName());
             key += ",class=${clazz}";
         }
-        return new StringResourceModel(key, AbstractDialog.this,
-                new Model<Serializable>((Serializable) details), ex.getLocalizedMessage());
+        return new StringResourceModel(key, AbstractDialog.this, new Model<>(details), t.getLocalizedMessage(), parameters);
 
     }
 
     protected PersistentFeedbackMessagesModel fmm;
-    protected FeedbackPanel feedback;
+    protected Component feedback;
     private Component focusComponent;
 
     private LinkedList<ButtonWrapper> buttons;

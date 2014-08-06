@@ -348,34 +348,28 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                         String filename = upload.getClientFileName();
                         String mimetype;
 
-
                         mimetype = upload.getContentType();
                         InputStream istream = upload.getInputStream();
                         WorkflowManager manager = UserSession.get().getWorkflowManager();
                         HippoNode node = null;
+                        String localName = null;
                         try {
                             //Get the selected folder from the folderReference Service
                             Node folderNode = getFolderModel().getObject();
 
                             //TODO replace shortcuts with custom workflow category(?)
-                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
                             String nodeName = getNodeNameCodec().encode(filename);
-                            String localName = getLocalizeCodec().encode(filename);
+                            localName = getLocalizeCodec().encode(filename);
+                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
                             Document document = workflow.createGalleryItem(nodeName, getGalleryType());
                             node = (HippoNode) UserSession.get().getJcrSession().getNodeByIdentifier(document.getIdentity());
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                             if (!node.getLocalizedName().equals(localName)) {
                                 defaultWorkflow.localizeName(localName);
                             }
-                        } catch (WorkflowException ex) {
+                        } catch (WorkflowException | RepositoryException ex) {
                             log.error(ex.getMessage());
-                            error(ex);
-                        } catch (MappingException ex) {
-                            log.error(ex.getMessage());
-                            error(ex);
-                        } catch (RepositoryException ex) {
-                            log.error(ex.getMessage());
-                            error(ex);
+                            error(getExceptionTranslation(ex, localName).getObject());
                         }
                         if (node != null) {
                             try {
@@ -385,15 +379,11 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                                 target.add(uploadField);
                             } catch (RepositoryException ex) {
                                 log.error(ex.getMessage());
-                                error(ex);
+                                error(getExceptionTranslation(ex));
                                 try {
                                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                                     defaultWorkflow.delete();
-                                } catch (WorkflowException e) {
-                                    log.error(e.getMessage());
-                                } catch (MappingException e) {
-                                    log.error(e.getMessage());
-                                } catch (RepositoryException e) {
+                                } catch (WorkflowException | RepositoryException e) {
                                     log.error(e.getMessage());
                                 }
                                 try {
@@ -403,7 +393,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                                 }
                             } catch (GalleryException ex) {
                                 log.error(ex.getMessage());
-                                error(ex);
+                                error(getExceptionTranslation(ex));
                             }
                         }
                     } catch (IOException ex) {
