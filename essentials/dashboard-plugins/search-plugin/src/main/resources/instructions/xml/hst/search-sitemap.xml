@@ -22,4 +22,7 @@
   <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
     <sv:value>hst:pages/search</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:refId" sv:type="String">
+    <sv:value>search</sv:value>
+  </sv:property>
 </sv:node>
