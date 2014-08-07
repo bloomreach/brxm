@@ -20,5 +20,5 @@
   limitations under the License.
 -->
 <#-- @ftlvariable id="label" type="java.lang.String"-->
-<h1>${label}</h1>
+${label}
 

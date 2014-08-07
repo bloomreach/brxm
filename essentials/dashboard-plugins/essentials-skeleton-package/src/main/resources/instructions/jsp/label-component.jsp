@@ -16,4 +16,4 @@
   --%>
 
 <%--@elvariable id="label" type="java.lang.String"--%>
-<h1>${label}</h1>
+${label}
