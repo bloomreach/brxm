@@ -17,19 +17,19 @@
 <html>
 <head>
   <title>Hippo Essentials</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css"/>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css"/>
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/essentials-less/hippo-essentials.css"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css?v=${project.version}"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css?v=${project.version}"/>
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css?v=${project.version}"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/essentials-less/hippo-essentials.css?v=${project.version}"/>
 
 
-  <script src="${pageContext.request.contextPath}/components/jquery/jquery.js"></script>
-  <script src="${pageContext.request.contextPath}/components/angular/angular.js"></script>
-  <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js"></script>
-  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js"></script>
-  <script src="${pageContext.request.contextPath}/components/underscore/underscore.js"></script>
+  <script src="${pageContext.request.contextPath}/components/jquery/jquery.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/underscore/underscore.js?v=${project.version}"></script>
 
-  <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js?v=${project.version}"></script>
 
 
   <%--  NOTE: enable once R&D team upgrades version(s)--%>
@@ -38,24 +38,24 @@
     <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   --%>
-  <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-tpls.min.js"></script>
-  <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
-  <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
-  <script src="${pageContext.request.contextPath}/js/lib/angular-animate.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-tpls.min.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/angular-animate.js?v=${project.version}"></script>
 
-  <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/chosen.js?v=${project.version}"></script>
 
   <%-- HIPPO THEME DEPS --%>
-  <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js"></script>
-  <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js"></script>
-  <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js?v=${project.version}"></script>
 
   <%-- ESSENTIALS --%>
-  <script src="${pageContext.request.contextPath}/js/Essentials.js"></script>
-  <script src="${pageContext.request.contextPath}/js/app.js"></script>
-  <script src="${pageContext.request.contextPath}/js/routes.js"></script>
-  <script src="${pageContext.request.contextPath}/js/directives.js"></script>
-  <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
+  <script src="${pageContext.request.contextPath}/js/Essentials.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/app.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/routes.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/directives.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/controllers.js?v=${project.version}"></script>
 
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
