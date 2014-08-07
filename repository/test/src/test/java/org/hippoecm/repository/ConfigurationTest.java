@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import java.util.Arrays;
+import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,6 +31,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.helpers.NOPLogger;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
+import static org.apache.jackrabbit.JcrConstants.JCR_CREATED;
 import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIMETYPE;
 import static org.apache.jackrabbit.JcrConstants.NT_FILE;
@@ -40,6 +42,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -404,28 +407,38 @@ public class ConfigurationTest extends RepositoryTestCase {
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");
         item.setProperty(HIPPO_STATUS, "pending");
         session.save();
-        final InitializationProcessor processor = new InitializationProcessorImpl();
+        InitializationProcessor processor = new InitializationProcessorImpl();
         processor.processInitializeItems(session);
 
 //        session.exportSystemView("/test", System.out, false, false);
 
         assertTrue(test.hasNode("resources"));
-        final Node resources = test.getNode("resources");
+        Node resources = test.getNode("resources");
+        Calendar created = resources.getProperty(JCR_CREATED).getDate();
         assertTrue(resources.isNodeType(NT_FOLDER));
         assertTrue(resources.hasNode("images"));
-        final Node images = resources.getNode("images");
+        Node images = resources.getNode("images");
         assertTrue(images.isNodeType(NT_FOLDER));
-        final Node javascript = resources.getNode("javascript");
+        Node javascript = resources.getNode("javascript");
         assertTrue(javascript.isNodeType(NT_FOLDER));
         assertTrue(images.hasNode("hippo.png"));
-        final Node png = images.getNode("hippo.png");
+        Node png = images.getNode("hippo.png");
         assertTrue(png.isNodeType(NT_FILE));
-        final Node content = png.getNode(JCR_CONTENT);
+        Node content = png.getNode(JCR_CONTENT);
         assertTrue(content.isNodeType(NT_RESOURCE));
         assertTrue(content.hasProperty(JCR_MIMETYPE));
         assertTrue(content.hasProperty(JCR_DATA));
         assertEquals("image/png", content.getProperty(JCR_MIMETYPE).getString());
 
+        // test reload
+        item.setProperty(HIPPO_RELOADONSTARTUP, true);
+        item.setProperty(HIPPO_STATUS, "pending");
+        session.save();
+        processor.processInitializeItems(session);
+
+        assertTrue(test.hasNode("resources"));
+        resources = test.getNode("resources");
+        assertFalse(created.equals(resources.getProperty(JCR_CREATED).getDate()));
     }
 
 }

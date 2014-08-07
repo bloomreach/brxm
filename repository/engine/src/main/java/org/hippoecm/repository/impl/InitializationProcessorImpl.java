@@ -284,13 +284,26 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
 
         final Node contentRootNode = session.getNode(contentRoot);
-        String contentFolder = item.getProperty(HippoNodeType.HIPPO_CONTENTFOLDER).getString();
+        String contentFolder = item.getProperty(HippoNodeType.HIPPO_CONTENTFOLDER).getString().trim();
         // remove leading and trailing /
         contentFolder = contentFolder.indexOf('/') == 0 && contentFolder.length() > 1 ? contentFolder.substring(1) : contentFolder;
         contentFolder = contentFolder.lastIndexOf('/') == contentFolder.length()-1 ? contentFolder.substring(0, contentFolder.length()-1) : contentFolder;
+        if (contentFolder.isEmpty()) {
+            getLogger().error("Failed to initialize item {}: invalid content folder");
+        }
         final String contentParentFolder = contentFolder.indexOf('/') == -1 ? "" : contentFolder.substring(0, contentFolder.lastIndexOf('/'));
         final String extensionSource = JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_EXTENSIONSOURCE, null);
         if (extensionSource != null && extensionSource.contains(".jar!")) {
+            int index = -1;
+            String contextNodePath = null;
+            if (isReloadable(item)) {
+                final String contentFolderName = contentFolder.indexOf('/') == -1 ? contentFolder : contentFolder.substring(contentFolder.lastIndexOf('/'));
+                contextNodePath = contentRoot.equals("/") ? contentRoot + contentFolderName : contentRoot + "/" + contentFolderName;
+                index = getNodeIndex(session, contextNodePath);
+                if (!removeNode(session, contextNodePath, false)) {
+                    return;
+                }
+            }
             try {
                 final ZipFile zipFile = new ZipFile(getBaseZipFileFromURL(new URL(extensionSource)));
                 final Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -321,6 +334,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
             } catch (IOException | URISyntaxException e) {
                 getLogger().error("Error initializing content folder {} at {}", contentFolder, contentRoot, e);
+            }
+            if (index != -1) {
+                reorderNode(session, contextNodePath, index);
             }
         }
     }
