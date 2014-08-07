@@ -45,8 +45,7 @@ public class StringMatchFilter extends Filter {
     public StringMatchFilter() {
         final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("log4j-filters.txt");
         if (resourceAsStream != null) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
-            try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
@@ -59,10 +58,9 @@ public class StringMatchFilter extends Filter {
                     stringsToMatch.add(line);
                     patternsToMatch.add(Pattern.compile(line));
                 }
-            } catch (IOException | PatternSyntaxException e) {
+            } catch (PatternSyntaxException ignored) {
+            } catch (IOException e) {
                 System.err.println("Error while initializing log4j StringMatchFilter: " + e);
-            } finally {
-                IOUtils.closeQuietly(reader);
             }
         } else {
             System.err.println("StringMatchFilter: Could not find log4j-filters.txt");
