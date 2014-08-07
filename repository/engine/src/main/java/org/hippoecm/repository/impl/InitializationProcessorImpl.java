@@ -34,9 +34,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.jcr.Binary;
 import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -47,14 +50,19 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -63,6 +71,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
+import org.apache.tika.Tika;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -95,6 +104,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_NODETYPESRESOURCE,
             HippoNodeType.HIPPO_NODETYPES,
             HippoNodeType.HIPPO_CONTENTRESOURCE,
+            HippoNodeType.HIPPO_CONTENTFOLDER,
             HippoNodeType.HIPPO_CONTENT,
             HippoNodeType.HIPPO_CONTENTROOT,
             HippoNodeType.HIPPO_CONTENTDELETE,
@@ -115,6 +125,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_TIMESTAMP + " < {})";
 
     private Logger logger;
+
+    private final Tika tika = new Tika();
 
     public InitializationProcessorImpl() {}
 
@@ -220,6 +232,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         processContentFromFile(initializeItem, session, dryRun);
                     }
 
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTFOLDER)) {
+                        processContentFolder(initializeItem, session);
+                    }
+
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
                         processContentFromNode(initializeItem, session, dryRun);
                     }
@@ -254,6 +270,76 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         } catch (RepositoryException ex) {
             getLogger().error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
+    }
+
+    private void processContentFolder(final Node item, final Session session) throws RepositoryException {
+        final String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_CONTENTROOT, "/"));
+        if (contentRoot.startsWith(INIT_PATH)) {
+            getLogger().error("Cannot initialize item {}: bootstrapping content to {} is not supported", item.getName(), INIT_PATH);
+            return;
+        }
+        if (!session.nodeExists(contentRoot)) {
+            getLogger().error("Failed to initialize item {}: content root {} is missing", item.getName(), contentRoot);
+            return;
+        }
+
+        final Node contentRootNode = session.getNode(contentRoot);
+        String contentFolder = item.getProperty(HippoNodeType.HIPPO_CONTENTFOLDER).getString();
+        // remove leading and trailing /
+        contentFolder = contentFolder.indexOf('/') == 0 && contentFolder.length() > 1 ? contentFolder.substring(1) : contentFolder;
+        contentFolder = contentFolder.lastIndexOf('/') == contentFolder.length()-1 ? contentFolder.substring(0, contentFolder.length()-1) : contentFolder;
+        final String contentParentFolder = contentFolder.indexOf('/') == -1 ? "" : contentFolder.substring(0, contentFolder.lastIndexOf('/'));
+        final String extensionSource = JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_EXTENSIONSOURCE, null);
+        if (extensionSource != null && extensionSource.contains(".jar!")) {
+            try {
+                final ZipFile zipFile = new ZipFile(getBaseZipFileFromURL(new URL(extensionSource)));
+                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    final ZipEntry entry = entries.nextElement();
+                    final String entryName = entry.getName();
+                    if (entryName.equals(contentFolder) || entryName.startsWith(contentFolder + "/")) {
+                        final String entryPath = contentFolder.equals("/") ? entryName : entryName.substring(contentParentFolder.length());
+                        final String[] pathElements = entryPath.split("/");
+                        Node parentNode = contentRootNode;
+                        for (int i = 0; i < pathElements.length-1; i++) {
+                            final String pathElement = pathElements[i];
+                            if (parentNode.hasNode(pathElement)) {
+                                parentNode = parentNode.getNode(pathElement);
+                            }
+                            else {
+                                parentNode = createNtFolder(parentNode, pathElement);
+                            }
+                        }
+                        final String name = pathElements.length == 0 ? entryPath : pathElements[pathElements.length - 1];
+                        if (entry.isDirectory()) {
+                            createNtFolder(parentNode, name);
+                        }
+                        else {
+                            createNtFile(parentNode, zipFile, entry, name);
+                        }
+                    }
+                }
+            } catch (IOException | URISyntaxException e) {
+                getLogger().error("Error initializing content folder {} at {}", contentFolder, contentRoot, e);
+            }
+        }
+    }
+
+    private void createNtFile(final Node folderNode, final ZipFile zipFile, final ZipEntry resourceEntry, final String name) throws RepositoryException, IOException {
+        final Node file = folderNode.addNode(name, JcrConstants.NT_FILE);
+        final Node resource = file.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE);
+        final String mimeType = tika.detect(resourceEntry.getName());
+        if (mimeType != null) {
+            resource.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
+        }
+        final Binary data = folderNode.getSession().getValueFactory().createBinary(zipFile.getInputStream(resourceEntry));
+        resource.setProperty(JcrConstants.JCR_DATA, data);
+    }
+
+    private Node createNtFolder(Node parentNode, final String pathElement) throws RepositoryException {
+        parentNode = parentNode.addNode(pathElement, JcrConstants.NT_FOLDER);
+        getLogger().info("Added nt:folder {}", parentNode.getPath());
+        return parentNode;
     }
 
     private void processContentPropSet(final Node node, final Session session, final boolean dryRun) throws RepositoryException {

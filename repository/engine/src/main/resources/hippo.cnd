@@ -123,6 +123,7 @@
 - hippo:nodetypesresource (string)
 - hippo:nodetypes (binary)
 - hippo:contentresource (string)
+- hippo:contentfolder (string)
 - hippo:content (string)
 - hippo:contentroot (string)
 - hippo:contentdelete (string)
