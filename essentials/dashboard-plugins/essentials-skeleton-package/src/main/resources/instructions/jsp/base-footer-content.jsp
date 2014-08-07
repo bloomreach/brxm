@@ -18,6 +18,6 @@
 <div class="row">
   <hr/>
   <div class="text-center">
-    <sub>(&copy;) 2013-2014 <a target="_blank" href="http://www.onehippo.com">Hippo B.V.</a></sub>
+    <sub>(&copy;) 2013-2014</sub>
   </div>
 </div>
