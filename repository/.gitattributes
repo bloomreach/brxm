@@ -231,7 +231,6 @@ engine/src/test/java/org/hippoecm/repository/SearchOnNodeNameTest.java svneol=na
 engine/src/test/java/org/hippoecm/repository/SecurityServiceTest.java -text
 engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/UnlockTest.java -text
-engine/src/test/java/org/hippoecm/repository/impl/InitializationProcessorImplTest.java -text
 engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ExportImportPackageTest.java -text
@@ -323,7 +322,6 @@ test/config/mysql-repository.xml -text
 test/pom.xml svneol=native#text/plain
 test/src/test/fixtures/dump.zip -text
 test/src/test/java/org/hippoecm/repository/CheckoutNodeTest.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/repository/ConfigurationTest.java -text
 test/src/test/java/org/hippoecm/repository/FacetedAuthorizationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationChildNameTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationNamespaceTest.java svneol=native#text/plain
@@ -347,6 +345,7 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationGuid
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationRangesTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSimpleTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSortingTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/impl/InitializationProcessorTest.java -text
 test/src/test/java/org/hippoecm/repository/integration/UpgradeIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/integration/VersioningWorkflowIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupModuleTest.java -text
