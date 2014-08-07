@@ -72,5 +72,27 @@ public final class HstUtils {
         // utility
     }
 
+    public static void erasePreview(final PluginContext context) {
+        final Session session = context.createSession();
+        final String namespace = context.getProjectSettings().getProjectNamespace();
+        final String preview = namespace + "-preview";
 
+        try {
+            final Node configurations = session.getNode("/hst:hst/hst:configurations");
+            if (configurations.hasNode(preview)) {
+                configurations.getNode(preview).remove();
+            }
+
+            final Node channels = session.getNode("/hst:hst/hst:channels");
+            if (channels.hasNode(preview)) {
+                channels.getNode(preview).remove();
+            }
+
+            session.save();
+        } catch (RepositoryException ex) {
+            log.warn("Unable to delete preview configuration", ex);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+    }
 }

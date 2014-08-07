@@ -85,6 +85,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
@@ -685,7 +686,7 @@ public class PluginResource extends BaseResource {
         final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
         context.addPlaceholderData(properties);
 
-//        erasePreviewConfiguration();
+        HstUtils.erasePreview(context);
 
         //############################################
         // EXECUTE SKELETON:
@@ -841,43 +842,6 @@ public class PluginResource extends BaseResource {
             application.addClass(endpointClass);
             log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
 
-        }
-    }
-
-    private static String mountId;
-
-    private static String getMountId() {
-        if (mountId == null) {
-            final PluginContext context = PluginContextFactory.getContext();
-            final Session session = context.createSession();
-
-            try {
-                final Node mount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-                mountId = mount.getIdentifier();
-            } catch (RepositoryException ex) {
-                log.warn("Unable to determine ID of hst:mount.", ex);
-            } finally {
-                GlobalUtils.cleanupSession(session);
-            }
-        }
-        return mountId;
-    }
-
-    private static void erasePreviewConfiguration() {
-        String mountId = getMountId();
-        if (mountId != null) {
-            String uri = "http://localhost:8080/site/_rp/" + mountId + "./deletepreview";
-            final WebClient client = WebClient.create(uri);
-
-            final HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
-            conduit.getClient().setReceiveTimeout(2000);
-            conduit.getClient().setConnectionTimeout(2000);
-
-            try {
-                client.delete();
-            } catch (Exception e) {
-                log.error("Error deleting preview config at " + uri, e);
-            }
         }
     }
 }
