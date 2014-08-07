@@ -31,9 +31,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -50,9 +47,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.apache.cxf.transport.http.HTTPConduit;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
@@ -182,7 +177,7 @@ public class PluginResource extends BaseResource {
                 systemInfo.incrementTools();
             }
             final boolean isFeature = "feature".equals(plugin.getType());
-            if (isFeature && !installState.equals(PluginInstallationState.DISCOVERED)) {
+            if (isFeature && !PluginInstallationState.DISCOVERED.equals(installState)) {
                 systemInfo.incrementInstalledFeatures();
             }
             if (!isTool && !Strings.isNullOrEmpty(installState)) {
