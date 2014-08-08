@@ -6,3 +6,6 @@ src/main/java/org/onehippo/cms7/services/SingletonService.java -text
 src/main/java/org/onehippo/cms7/services/eventbus/HippoEventListener.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/cms7/services/eventbus/Subscribe.java -text
 src/main/java/org/onehippo/cms7/services/googleanalytics/GoogleAnalyticsService.java -text
+src/main/java/org/onehippo/cms7/services/webresources/Content.java -text
+src/main/java/org/onehippo/cms7/services/webresources/File.java -text
+src/main/java/org/onehippo/cms7/services/webresources/WebResourcesService.java -text
