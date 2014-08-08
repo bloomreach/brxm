@@ -30,7 +30,6 @@ import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -63,7 +62,6 @@ public class TaggingResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(TaggingResource.class);
     public static final String MIXIN_NAME = "hippostd:taggable";
-
 
     @POST
     @Path("/")
@@ -128,43 +126,5 @@ public class TaggingResource extends BaseResource {
             GlobalUtils.cleanupSession(session);
         }
         return new ErrorMessageRestful("Error adding tagging fields");
-
-    }
-
-    @PUT
-    @Path("/setup")
-    public MessageRestful setUp() {
-        return doSetUp()
-                ? new MessageRestful("Successfully set up tagging plugin.")
-                : new ErrorMessageRestful("Failed to set up tagging plugin.");
-    }
-
-    /**
-     * Static function prepares for parameter-less automated setup through parameter service.
-     */
-    static boolean doSetUp() {
-        final PluginContext context = PluginContextFactory.getContext();
-        final Session session = context.createSession();
-        boolean isSuccess = false;
-        try {
-            if (!session.nodeExists("/tags")) {
-                final Node rootNode = session.getRootNode();
-                final Node tags = rootNode.addNode("tags", "hippofacnav:facetnavigation");
-                final String rootIdentifier = session.getNode("/content").getIdentifier();
-                tags.setProperty("hippo:docbase", rootIdentifier);
-                tags.setProperty("hippofacnav:facets", new String[]{"hippostd:tags"});
-                tags.setProperty("hippofacnav:limit", 100);
-                session.save();
-                isSuccess = true;
-            } else {
-                log.debug("/tags node already exists");
-            }
-        } catch (RepositoryException e) {
-            log.error("Error setting up /tags facet node", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-
-        return isSuccess;
     }
 }

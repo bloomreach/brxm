@@ -90,7 +90,6 @@ import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
@@ -673,7 +672,7 @@ public class PluginResource extends BaseResource {
     private ErrorMessageRestful setupIfPossible(final PluginRestful plugin, final PluginContext context) {
         ErrorMessageRestful errorMessage = null;
 
-        if (StringUtils.hasText(plugin.getPackageFile())
+        if (hasGeneralizedSetUp(plugin)
                 && (!context.getProjectSettings().isConfirmParams()
                 || !PluginParameterServiceFactory.getParameterService(plugin).hasGeneralizedSetupParameters())) {
             final Map<String, Object> properties = new HashMap<>();

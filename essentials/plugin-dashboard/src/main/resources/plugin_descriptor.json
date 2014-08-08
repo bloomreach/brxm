@@ -221,6 +221,7 @@
         "description": "This Essentials Feature wraps the certified Hippo Forge CMS Tagging Addon.",
         "documentationLink": "http://ecm-tagging.forge.onehippo.org",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
+        "packageClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingInstructionPackage",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"],
         "type": "feature",
         "vendor": {

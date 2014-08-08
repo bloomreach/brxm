@@ -642,6 +642,7 @@ dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/resources/feature/s
 dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/sitemap_instructions.xml -text
 dashboard-plugins/sitemap-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/tagging-plugin/pom.xml -text
+dashboard-plugins/tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/tagging/TaggingInstructionPackage.java -text
 dashboard-plugins/tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/tagging/TaggingParameterService.java -text
 dashboard-plugins/tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/tagging/TaggingResource.java -text
 dashboard-plugins/tagging-plugin/src/main/resources/META-INF/resources/feature/taggingPlugin/taggingPlugin.html -text

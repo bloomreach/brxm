@@ -39,15 +39,6 @@
                 });
             };
 
-            $scope.setup = function() {
-                $http.put(endpointTagging + 'setup').success(function () {
-                    $http.post($rootScope.REST.pluginSetup + $scope.pluginId).success(function () {
-                        $rootScope.pluginsCache = null;
-                        $location.path('/installed-features');
-                    });
-                });
-            };
-
             //############################################
             // INITIALIZE APP:
             //############################################
