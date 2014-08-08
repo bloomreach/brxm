@@ -61,7 +61,7 @@
     <module>image-component-plugin</module>
     <module>video-component-plugin</module>
     <module>faq-component-plugin</module>
-    <module>ecm-tagging-plugin</module>
+    <module>tagging-plugin</module>
     <module>selection-plugin</module>
     <module>gallery-plugin</module>
     <module>sitemap-plugin</module>

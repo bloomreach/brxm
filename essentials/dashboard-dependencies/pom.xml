@@ -77,7 +77,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-ecm-tagging-plugin</artifactId>
+      <artifactId>hippo-essentials-tagging-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
