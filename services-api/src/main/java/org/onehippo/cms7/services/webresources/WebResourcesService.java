@@ -19,6 +19,13 @@ package org.onehippo.cms7.services.webresources;
 import javax.jcr.Binary;
 import javax.jcr.Session;
 
+import org.onehippo.cms7.services.SingletonService;
+import org.onehippo.cms7.services.WhiteboardService;
+
+
+@SingletonService
+@WhiteboardService
+@SuppressWarnings("UnusedDeclaration")
 public interface WebResourcesService {
 
     /**
