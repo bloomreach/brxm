@@ -215,13 +215,13 @@
     },
     {
         "@type": "plugin",
-        "id": "ecmTaggingPlugin",
+        "id": "taggingPlugin",
         "name": "Tagging",
         "introduction": "With the Tagging feature, you can assign tags to your content.",
         "description": "This Essentials Feature wraps the certified Hippo Forge CMS Tagging Addon.",
         "documentationLink": "http://ecm-tagging.forge.onehippo.org",
-        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.ecm.TaggingParameterService",
-        "restClasses": ["org.onehippo.cms7.essentials.plugins.ecm.EcmTaggingResource"],
+        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
+        "restClasses": ["org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"],
         "type": "feature",
         "vendor": {
             "@type": "vendor",
@@ -232,8 +232,8 @@
             {
                 "items": [
                     {
-                        "component": "ecmTaggingPlugin",
-                        "file": "ecmTaggingPlugin.js"
+                        "component": "taggingPlugin",
+                        "file": "taggingPlugin.js"
                     }
                 ]
             }

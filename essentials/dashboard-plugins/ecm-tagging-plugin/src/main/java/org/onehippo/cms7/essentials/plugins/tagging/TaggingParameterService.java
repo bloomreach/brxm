@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.ecm;
+package org.onehippo.cms7.essentials.plugins.tagging;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 

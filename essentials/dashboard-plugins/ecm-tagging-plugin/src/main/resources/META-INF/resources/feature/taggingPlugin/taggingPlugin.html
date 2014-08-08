@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div ng-controller="ecmTaggingPluginCtrl">
+<div ng-controller="taggingPluginCtrl">
   <div class="panel panel-default" ng-show="plugin.installState == 'onBoard'">
     <div class="panel-heading">{{plugin.name}}</div>
     <div class="panel-body">
@@ -31,7 +31,7 @@
   <div class="panel panel-default" ng-show="plugin.installState == 'installed'">
       <div class="panel-heading">{{plugin.name}}</div>
       <div class="panel-body">
-          <form novalidate name="ecmTaggingForm">
+          <form novalidate name="taggingForm">
               <div ng-show="documentTypes.length">
                   <h3>Add Tagging fields to following documents:</h3>
 
@@ -74,7 +74,7 @@
       </div>
       <div class="panel-footer">
           <div class="pull-right">
-              <button ng-disabled="!ecmTaggingForm.$valid" class="btn btn-primary" ng-click="addDocuments()">Add tagging</button>
+              <button ng-disabled="!taggingForm.$valid" class="btn btn-primary" ng-click="addDocuments()">Add tagging</button>
           </div>
           <p class="clearfix">&nbsp;</p>
       </div>

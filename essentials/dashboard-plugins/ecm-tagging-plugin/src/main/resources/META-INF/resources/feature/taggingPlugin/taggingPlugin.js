@@ -17,8 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('ecmTaggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
-            $scope.pluginId = "ecmTaggingPlugin";
+        .controller('taggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
+            $scope.pluginId = "taggingPlugin";
             var endpoint = $rootScope.REST.documents;
             var endpointTagging = $scope.endpoint = $rootScope.REST.dynamic + 'taggingplugin/';
             $scope.widgetCols = 20;

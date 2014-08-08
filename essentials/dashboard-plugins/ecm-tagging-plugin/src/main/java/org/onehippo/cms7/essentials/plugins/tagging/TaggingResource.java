@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.ecm;
+package org.onehippo.cms7.essentials.plugins.tagging;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -59,9 +59,9 @@ import com.google.common.base.Strings;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("taggingplugin")
-public class EcmTaggingResource extends BaseResource {
+public class TaggingResource extends BaseResource {
 
-    private static final Logger log = LoggerFactory.getLogger(EcmTaggingResource.class);
+    private static final Logger log = LoggerFactory.getLogger(TaggingResource.class);
     public static final String MIXIN_NAME = "hippostd:taggable";
 
 
@@ -81,8 +81,8 @@ public class EcmTaggingResource extends BaseResource {
 
             final String prefix = context.getProjectNamespacePrefix();
 
-            final String templateTags = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/ecm-tagging-template-field_tags.xml"));
-            final String templateSuggest = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/ecm-tagging-template-field_tag_suggest.xml"));
+            final String templateTags = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tags.xml"));
+            final String templateSuggest = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tag_suggest.xml"));
 
             if (!Strings.isNullOrEmpty(documents)) {
 
@@ -134,8 +134,18 @@ public class EcmTaggingResource extends BaseResource {
     @PUT
     @Path("/setup")
     public MessageRestful setUp() {
+        return doSetUp()
+                ? new MessageRestful("Successfully set up tagging plugin.")
+                : new ErrorMessageRestful("Failed to set up tagging plugin.");
+    }
+
+    /**
+     * Static function prepares for parameter-less automated setup through parameter service.
+     */
+    static boolean doSetUp() {
         final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
+        boolean isSuccess = false;
         try {
             if (!session.nodeExists("/tags")) {
                 final Node rootNode = session.getRootNode();
@@ -145,6 +155,7 @@ public class EcmTaggingResource extends BaseResource {
                 tags.setProperty("hippofacnav:facets", new String[]{"hippostd:tags"});
                 tags.setProperty("hippofacnav:limit", 100);
                 session.save();
+                isSuccess = true;
             } else {
                 log.debug("/tags node already exists");
             }
@@ -154,6 +165,6 @@ public class EcmTaggingResource extends BaseResource {
             GlobalUtils.cleanupSession(session);
         }
 
-        return new MessageRestful("Successfully set up tagging plugin.");
+        return isSuccess;
     }
 }
