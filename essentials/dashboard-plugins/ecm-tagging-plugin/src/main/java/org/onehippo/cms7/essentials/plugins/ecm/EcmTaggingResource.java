@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -57,7 +58,7 @@ import com.google.common.base.Strings;
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("ecmtaggingyplugin")
+@Path("taggingplugin")
 public class EcmTaggingResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(EcmTaggingResource.class);
@@ -82,18 +83,6 @@ public class EcmTaggingResource extends BaseResource {
 
             final String templateTags = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/ecm-tagging-template-field_tags.xml"));
             final String templateSuggest = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/ecm-tagging-template-field_tag_suggest.xml"));
-            // add facet node:
-            if (!session.nodeExists("/tags")) {
-                final Node rootNode = session.getRootNode();
-                final Node tags = rootNode.addNode("tags", "hippofacnav:facetnavigation");
-                final String rootIdentifier = session.getNode("/content").getIdentifier();
-                tags.setProperty("hippo:docbase", rootIdentifier);
-                tags.setProperty("hippofacnav:facets", new String[]{"hippostd:tags"});
-                tags.setProperty("hippofacnav:limit", 100);
-                session.save();
-            } else {
-                log.info("/tags node already exists");
-            }
 
             if (!Strings.isNullOrEmpty(documents)) {
 
@@ -142,5 +131,29 @@ public class EcmTaggingResource extends BaseResource {
 
     }
 
+    @PUT
+    @Path("/setup")
+    public MessageRestful setUp() {
+        final PluginContext context = PluginContextFactory.getContext();
+        final Session session = context.createSession();
+        try {
+            if (!session.nodeExists("/tags")) {
+                final Node rootNode = session.getRootNode();
+                final Node tags = rootNode.addNode("tags", "hippofacnav:facetnavigation");
+                final String rootIdentifier = session.getNode("/content").getIdentifier();
+                tags.setProperty("hippo:docbase", rootIdentifier);
+                tags.setProperty("hippofacnav:facets", new String[]{"hippostd:tags"});
+                tags.setProperty("hippofacnav:limit", 100);
+                session.save();
+            } else {
+                log.debug("/tags node already exists");
+            }
+        } catch (RepositoryException e) {
+            log.error("Error setting up /tags facet node", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
 
+        return new MessageRestful("Successfully set up tagging plugin.");
+    }
 }

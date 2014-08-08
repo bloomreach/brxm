@@ -169,6 +169,7 @@
                 pluginModules: plugins + '/modules/',
 
                 package_install: plugins + '/install/package',
+                pluginSetup: plugins + '/setup/',
                 save_settings: plugins + '/savesettings',
                 project_settings: plugins + '/projectsettings', // TODO: Why do we also have projectSettings?
 

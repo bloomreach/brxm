@@ -17,10 +17,10 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('ecmTaggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
+        .controller('ecmTaggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
             $scope.pluginId = "ecmTaggingPlugin";
             var endpoint = $rootScope.REST.documents;
-            var endpointEcmTagging = $scope.endpoint = $rootScope.REST.dynamic + 'ecmtaggingyplugin/';
+            var endpointTagging = $scope.endpoint = $rootScope.REST.dynamic + 'taggingplugin/';
             $scope.widgetCols = 20;
             $scope.widgetRows = 2;
             $scope.numberOfSuggestions = 10;
@@ -35,7 +35,16 @@
                 Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
                 Essentials.addPayloadData("widgetCols", $scope.widgetCols, payload);
                 Essentials.addPayloadData("widgetRows", $scope.widgetRows, payload);
-                $http.post(endpointEcmTagging, payload).success(function (data) {
+                $http.post(endpointTagging, payload).success(function (data) {
+                });
+            };
+
+            $scope.setup = function() {
+                $http.put(endpointTagging + 'setup').success(function () {
+                    $http.post($rootScope.REST.pluginSetup + $scope.pluginId).success(function () {
+                        $rootScope.pluginsCache = null;
+                        $location.path('/installed-features');
+                    });
                 });
             };
 

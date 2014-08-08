@@ -234,6 +234,17 @@ public class PluginResource extends BaseResource {
                 : errorMessage;
     }
 
+    @ApiOperation(value = "Signal to the dashboard that the plugin's setup phase has completed.")
+    @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
+    @POST
+    @Path("/setup/{pluginId}")
+    public void signalSetup(@PathParam(PLUGIN_ID) String pluginId, @Context ServletContext servletContext) {
+        final PluginRestful plugin = getPluginById(pluginId, servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
+
+        updateInstallStateAfterSetup(plugin, context);
+    }
+
     @ApiOperation(
             value = "Saves global project settings",
             response = KeyValueRestful.class)
@@ -665,7 +676,7 @@ public class PluginResource extends BaseResource {
         if (StringUtils.hasText(plugin.getPackageFile())
                 && (!context.getProjectSettings().isConfirmParams()
                 || !PluginParameterServiceFactory.getParameterService(plugin).hasGeneralizedSetupParameters())) {
-            final Map<String, Object> properties = new HashMap<String, Object>();
+            final Map<String, Object> properties = new HashMap<>();
             final ProjectSettings projectSettings = context.getProjectSettings();
 
             properties.put("sampleData", Boolean.valueOf(projectSettings.isUseSamples()).toString());
@@ -683,23 +694,24 @@ public class PluginResource extends BaseResource {
 
         HstUtils.erasePreview(context);
 
-        //############################################
-        // EXECUTE SKELETON:
-        //############################################
+        // execute skeleton
         final InstructionPackage commonPackage = new CommonsInstructionPackage();
         commonPackage.setProperties(properties);
         getInjector().autowireBean(commonPackage);
         commonPackage.execute(context);
 
         // execute InstructionPackage itself
-        InstructionPackage instructionPackage = instructionPackageInstance(plugin);
+        final InstructionPackage instructionPackage = instructionPackageInstance(plugin);
         if (instructionPackage == null) {
             return new ErrorMessageRestful("Could not execute Installation package: " + plugin.getPackageFile(), DisplayEvent.DisplayType.STRONG);
         }
         instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
 
-        // update the plugins installer document
+        return updateInstallStateAfterSetup(plugin, context);
+    }
+
+    private ErrorMessageRestful updateInstallStateAfterSetup(final PluginRestful plugin, final PluginContext context) {
         try (PluginConfigService service = new FilePluginService(context)) {
             final String pluginId = plugin.getId();
             InstallerDocument document = service.read(pluginId, InstallerDocument.class);
