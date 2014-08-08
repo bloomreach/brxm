@@ -53,6 +53,7 @@
     <hippo.services.version>1.05.00-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.05.00-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.contenttype.version>1.05.00-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.webresources.version>1.05.00-SNAPSHOT</hippo.services.webresources.version>
     <hippo.utilities.version>1.04.00-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.11.00</forge.content-blocks.version>
@@ -128,6 +129,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-contenttype</artifactId>
         <version>${hippo.services.contenttype.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-webresources</artifactId>
+        <version>${hippo.services.webresources.version}</version>
       </dependency>
 
       <!-- All Hippo Repository artifacts -->
