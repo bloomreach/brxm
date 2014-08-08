@@ -74,6 +74,7 @@
     <hippo.commons.version>1.05.00-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>1.05.00-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.05.00-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.webresources.version>1.05.00-SNAPSHOT</hippo.services.webresources.version>
     <hippo.utilities.version>1.04.00-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
@@ -146,6 +147,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-eventbus</artifactId>
         <version>${hippo.services.eventbus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-webresources</artifactId>
+        <version>${hippo.services.webresources.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
