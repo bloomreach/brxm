@@ -416,7 +416,6 @@ client/src/main/java/org/hippoecm/hst/tag/ParamTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/SetHstBundleTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SetWrapperElementTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SiteMapItemTag.java svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/utils/BeanUtils.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/MessageUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/PropertyUtils.java -text svneol=unset#text/plain
