@@ -181,7 +181,6 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");
         session.save();
         process(null);
-//        session.exportSystemView("/test", System.out, false, false);
 
         assertTrue(test.hasNode("resources"));
         Node resources = test.getNode("resources");
