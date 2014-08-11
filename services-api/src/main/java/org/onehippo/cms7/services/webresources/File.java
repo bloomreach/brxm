@@ -35,18 +35,19 @@ public interface File {
     Content getWorkspace();
 
     /**
-     * @return the most recent checked in version
+     * @return the most recent checked in version, and in case the node is not versionable, the workspace content
      */
     Content getBase();
 
     /**
      * @param versionName the name of the version to fetch
-     * @return the <code>WebResource</code> for <code>versionName</code> and <code>null</code> if no such version present
+     * @return the <code>WebResource</code> for <code>versionName</code> and <code>null</code> if no such version present or
+     * if the content is not versionable
      */
     Content get(String versionName);
 
     /**
-     * @return all versions
+     * @return all versions and empty map in case the content is not versionable
      */
     Map<String, Content> getAll();
 

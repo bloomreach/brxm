@@ -23,7 +23,7 @@ import javax.jcr.Binary;
 public interface Content {
 
     /**
-     * @return the specific version or <code>null</code> in case of no versions present or non versionable content
+     * @return the specific version or <code>null</code> in case of workspace content node
      */
     String getVersion();
 
