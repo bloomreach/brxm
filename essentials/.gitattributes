@@ -690,7 +690,6 @@ ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/HippoEssentials
 ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/HippoEssentialsGeneratorPeer.java -text
 ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/HippoEssentialsProject.java -text
 ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/SettingsData.java -text
-/jar-dependencies.txt -text
 plugin-api/api/pom.xml -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/HippoEssentialsGenerated.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Document.java -text
