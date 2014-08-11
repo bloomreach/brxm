@@ -306,7 +306,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     final ZipEntry entry = entries.nextElement();
                     final String entryName = entry.getName();
                     if (entryName.equals(contentFolder) || entryName.startsWith(contentFolder + "/")) {
-                        String entryPath = contentFolder.equals("/") ? entryName : entryName.substring(contentParentFolder.length()+1);
+                        String entryPath = contentFolder.equals("/") || contentParentFolder.isEmpty() ? entryName : entryName.substring(contentParentFolder.length()+1);
                         final String[] pathElements = entryPath.split("/");
                         Node parentNode = contentRootNode;
                         for (int i = 0; i < pathElements.length-1; i++) {
