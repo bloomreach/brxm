@@ -1300,9 +1300,6 @@ plugin-dashboard/src/main/webapp/components/hippo-theme/dist/css/main.css -text
 plugin-dashboard/src/main/webapp/components/hippo-theme/dist/css/main.min.css -text
 plugin-dashboard/src/main/webapp/components/hippo-theme/dist/js/main.js -text
 plugin-dashboard/src/main/webapp/components/hippo-theme/dist/js/main.min.js -text
-plugin-dashboard/src/main/webapp/components/html5shiv/dist/html5shiv-printshiv.js -text
-plugin-dashboard/src/main/webapp/components/html5shiv/dist/html5shiv.js -text
-plugin-dashboard/src/main/webapp/components/html5shiv/readme.md -text
 plugin-dashboard/src/main/webapp/components/jasmine-jquery/CONTRIBUTING.md -text
 plugin-dashboard/src/main/webapp/components/jasmine-jquery/Gruntfile.js -text
 plugin-dashboard/src/main/webapp/components/jasmine-jquery/MIT.LICENSE -text
