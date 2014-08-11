@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
@@ -27,13 +28,15 @@ import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.scheduling.RepositoryScheduler;
+import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
-public class FormDataCleanupModuleTest extends RepositoryTestCase {
+public class FormDataCleanupJobTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
@@ -50,11 +53,7 @@ public class FormDataCleanupModuleTest extends RepositoryTestCase {
 
     @After
     public void tearDown() throws Exception {
-        HippoServiceRegistry.getService(RepositoryScheduler.class).deleteJob("FormDataCleanup-test", "default");
-        if (session.nodeExists("/formdata")) {
-            session.getNode("/formdata").remove();
-            session.save();
-        }
+        removeNode("/formdata");
         super.tearDown();
     }
 
@@ -90,17 +89,17 @@ public class FormDataCleanupModuleTest extends RepositoryTestCase {
         createFormDataNode(null, now - 65 * 1000);
         assertEquals(2l, getFormdataNodes().getTotalSize());
 
-        FormDataCleanupModule formDataCleanupModule = new FormDataCleanupModule (
-                "FormDataCleanupModule",
-                "/hippo:configuration/hippo:modules/formdatacleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", 1l, "");
+        final FormDataCleanupJob cleanupJob = new FormDataCleanupJob();
+        final RepositoryJobExecutionContext executionContext = createMock(RepositoryJobExecutionContext.class);
+        expect(executionContext.createSystemSession()).andReturn(session.impersonate(new SimpleCredentials("admin", new char[] {})));
+        expect(executionContext.getAttribute("minutestolive")).andReturn("1");
+        expect(executionContext.getAttribute("batchsize")).andReturn("100");
+        expect(executionContext.getAttribute("excludepaths")).andReturn("");
+        replay(executionContext);
 
-        Thread.sleep(2000);
+        cleanupJob.execute(executionContext);
+
         assertEquals(1l, getFormdataNodes().getTotalSize());
-        //quartz scheduler does not really allow running every second, so need to wait about a minute to see the second removal
-        //Thread.sleep(60000);
-        //assertEquals(0l, getFormdataNodes().getTotalSize());
-        formDataCleanupModule.shutdown();
     }
 
     @Test
@@ -114,17 +113,17 @@ public class FormDataCleanupModuleTest extends RepositoryTestCase {
         createFormDataNode("abcd", now - 65 * 1000);
         assertEquals(6l, getFormdataNodes().getTotalSize());
 
-        FormDataCleanupModule formDataCleanupModule = new FormDataCleanupModule(
-                "FormDataCleanupModule",
-                "/hippo:configuration/hippo:modules/formdatacleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", 1l, "/formdata/permanent/|/formdata/abcd|");
+        final FormDataCleanupJob cleanupJob = new FormDataCleanupJob();
+        final RepositoryJobExecutionContext executionContext = createMock(RepositoryJobExecutionContext.class);
+        expect(executionContext.createSystemSession()).andReturn(session.impersonate(new SimpleCredentials("admin", new char[] {})));
+        expect(executionContext.getAttribute("minutestolive")).andReturn("1");
+        expect(executionContext.getAttribute("batchsize")).andReturn("100");
+        expect(executionContext.getAttribute("excludepaths")).andReturn("/formdata/permanent/|/formdata/abcd|");
+        replay(executionContext);
 
-        Thread.sleep(2000);
+        cleanupJob.execute(executionContext);
+
         assertEquals(5l, getFormdataNodes().getTotalSize());
-        //quartz scheduler does not really allow running every second, so need to wait about a minute to see the second removal
-        //Thread.sleep(60000);
-        //assertEquals(4l, getFormdataNodes().getTotalSize());
-        formDataCleanupModule.shutdown();
     }
 
 }
