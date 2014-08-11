@@ -1563,7 +1563,6 @@ plugin-dashboard/src/main/webapp/js/lib/angular-animate.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js -text
-plugin-dashboard/src/main/webapp/js/lib/angular.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/chosen.js -text
 plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls.min.js -text
 plugin-dashboard/src/main/webapp/js/loader.js -text
