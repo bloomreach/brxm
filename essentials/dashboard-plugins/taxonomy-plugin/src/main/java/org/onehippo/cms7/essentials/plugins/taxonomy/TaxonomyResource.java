@@ -63,6 +63,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @version "$Id$"
@@ -76,7 +77,6 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     public static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
-    public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
 
     private static Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
@@ -147,20 +147,25 @@ public class TaxonomyResource extends BaseResource {
                 final String prefix = context.getProjectNamespacePrefix();
                 DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
                 final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
-                if (session.nodeExists(path)) {
-                    final Node node = session.getNode(path);
-                    if (node.hasNode("classifiable")) {
-                        log.info("Taxonomy already added");
-                        continue;
+                    if (session.nodeExists(path)) {
+                        final Node node = session.getNode(path);
+                        if (node.hasNode("classifiable")) {
+                            buildServiceNode(session, prefix, documentName, taxonomyName);
+                            buildTemplateNode(session, prefix, documentName, taxonomyName);
+                            changedDocuments.add(documentName);
+                        }
+                        else{
+                            final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
+                            fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
+                            fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
+                            fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(node));
+                            final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
+                            clusterNode.setProperty("taxonomy.name", taxonomyName);
+                            changedDocuments.add(documentName);
+                        }
+
                     }
-                    final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
-                    fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
-                    fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(node));
-                    final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
-                    clusterNode.setProperty("taxonomy.name", taxonomyName);
-                    changedDocuments.add(documentName);
-                }
+
             }
             if (session.hasPendingChanges()) {
                 session.save();
@@ -177,7 +182,46 @@ public class TaxonomyResource extends BaseResource {
         return new ErrorMessageRestful("Error adding taxonomy fields");
     }
 
+    private void buildTemplateNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
+        final String templatePath = MessageFormat.format(
+                "/hippo:namespaces/{0}/{1}/editor:templates/_default_/{2}", prefix, documentName,taxonomyName);
 
+        String daoName = getDaoName(documentName, taxonomyName);
+        new FrontendPluginBuilder(session,templatePath).setProperties(
+                ImmutableMap.<String,String>builder()
+                        .put("taxonomy.classification.dao", daoName)
+                        .put("mode", "${mode}")
+                        .put("model.compareTo", "${model.compareTo}")
+                        .put("taxonomy.id", "service.taxonomy")
+                        .put("taxonomy.name", taxonomyName)
+                        .put("wicket.id", "${cluster.id}.left.item")
+                        .put("plugin.class", "org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin")
+                        .put("wicket.model", "${wicket.model}")
+                        .build()
+        ).build();
+    }
+
+    private void buildServiceNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
+        final String serviceName = MessageFormat.format("taxonomyclassification{0}",
+                taxonomyName);
+        final String servicePath = MessageFormat.format(
+                "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
+        final String daoName = getDaoName(documentName, taxonomyName);
+        final String fieldPath = MessageFormat.format(
+                "{0}:{1}",prefix,documentName);
+        new FrontendPluginBuilder(session,servicePath).setProperties(
+                ImmutableMap.<String, String>builder()
+                        .put("fieldPath", fieldPath)
+                        .put("taxonomy.classification.dao", daoName)
+                        .put("plugin.class"
+                                , "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
+                        .build()
+        ).build();
+    }
+
+    public static String getDaoName(String docType, String taxonomyName){
+        return MessageFormat.format("taxonomy.classification.{0}.dao", taxonomyName);
+    }
 
 
     /**

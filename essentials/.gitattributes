@@ -651,6 +651,7 @@ dashboard-plugins/tagging-plugin/src/main/resources/META-INF/web-fragment.xml -t
 dashboard-plugins/tagging-plugin/src/main/resources/tagging-template-field_tag_suggest.xml -text
 dashboard-plugins/tagging-plugin/src/main/resources/tagging-template-field_tags.xml -text
 dashboard-plugins/taxonomy-plugin/pom.xml -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/FrontendPluginBuilder.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyParameterService.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyResource.java -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/feature/taxonomyPlugin/taxonomyPlugin.html -text

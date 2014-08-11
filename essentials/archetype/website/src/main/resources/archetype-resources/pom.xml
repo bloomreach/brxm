@@ -62,7 +62,11 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <essentials.version>1.01.05-SNAPSHOT</essentials.version>
+    <hippo.cms.version>2.26.03</hippo.cms.version>
+    <hippo.hst.version>2.28.03</hippo.hst.version>
+    <hippo.repository.version>2.26.03</hippo.repository.version>
+
+    <essentials.version>1.01.04-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.1</jsp-api.version>
@@ -75,7 +79,6 @@
      
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
-    <repo.bootstrap>true</repo.bootstrap>
 
   </properties>
 
@@ -208,13 +211,6 @@
               <Implementation-Build>${buildNumber}</Implementation-Build>
             </manifestEntries>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <configuration>
-          <skipSource>true</skipSource>
         </configuration>
       </plugin>
     </plugins>
