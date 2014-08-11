@@ -19,21 +19,19 @@ package org.onehippo.cms7.essentials.dashboard.services;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
-@Ignore("Needs running hippo repository through RMI")
+//@Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
     @Test
     public void testCreateBeans() throws Exception {
 
-
-
         final TestPluginContext context = getTestContext();
+        context.addPlaceholderData(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS, "true");
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
         context.setUseHippoSession(true);
         context.setHippoRepository(repository);
@@ -49,7 +47,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         testPluginContext.setComponentsPackageName("org.example.components");
         testPluginContext.setBeansPackageName("org.example.beans");
         testPluginContext.setRestPackageName("org.example.rest");
-        testPluginContext.setProjectNamespacePrefix("myaaa");
+        testPluginContext.setProjectNamespacePrefix("betatwo");
 
         return testPluginContext;
     }
