@@ -18,7 +18,6 @@ package org.onehippo.cms7.services.webresources;
 import java.util.Calendar;
 
 import javax.jcr.Binary;
-import javax.jcr.Node;
 
 
 public interface Content {
