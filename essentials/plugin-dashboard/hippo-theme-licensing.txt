@@ -1,0 +1,10 @@
+The plugin-dashboard sources and assembled WAR contain a copy/fork of the Hippo Theme.
+This fork is present under src/main/webapp/components/**. Due to absent of incompatible
+licensing, the following two components are skipped/removed:
+
+  - js-detect-ie (licensing unclear)
+  - html5shiv (GPL2)
+
+They are not used by Essentials. When updaing to a newer version of the Hippo Theme,
+make sure you remove these components from all distributions.
+

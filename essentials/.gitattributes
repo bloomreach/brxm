@@ -942,6 +942,7 @@ plugin-api/implementation/src/test/resources/test_web.xml -text
 plugin-api/implementation/src/test/resources/testnamespace.cnd -text
 plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text
+plugin-dashboard/hippo-theme-licensing.txt -text
 plugin-dashboard/pom.xml -text
 plugin-dashboard/src/main/appended-resources/META-INF/LICENSE -text
 plugin-dashboard/src/main/appended-resources/META-INF/NOTICE -text

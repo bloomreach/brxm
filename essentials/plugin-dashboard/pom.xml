@@ -69,8 +69,40 @@
                 <include>**/*.jsp</include>
               </includes>
             </resource>
+            <!-- redefine again default Hippo LICENSE and NOTICE file handling configuration like as defined
+                 in root cms7-project pom but is 'nullified' again in parent cms7-release pom. -->
+            <resource>
+              <directory>${project.build.directory}/classes</directory>
+              <includes>
+                <include>META-INF/LICENSE</include>
+                <include>META-INF/NOTICE</include>
+                <include>META-INF/DEPENDENCIES</include>
+              </includes>
+              <filtering>false</filtering>
+            </resource>
           </webResources>
+          <packagingExcludes>
+            WEB-INF/classes/META-INF/LICENSE,
+            WEB-INF/classes/META-INF/NOTICE,
+            WEB-INF/classes/META-INF/DEPENDENCIES
+          </packagingExcludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <finalName>dashboard</finalName>
