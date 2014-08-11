@@ -292,7 +292,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             int index = -1;
             String contextNodePath = null;
             if (isReloadable(item)) {
-                final String contentFolderName = contentFolder.indexOf('/') == -1 ? contentFolder : contentFolder.substring(contentFolder.lastIndexOf('/'));
+                final String contentFolderName = contentFolder.indexOf('/') == -1 ? contentFolder : contentFolder.substring(contentFolder.lastIndexOf('/')+1);
                 contextNodePath = contentRoot.equals("/") ? contentRoot + contentFolderName : contentRoot + "/" + contentFolderName;
                 index = getNodeIndex(session, contextNodePath);
                 if (!removeNode(session, contextNodePath, false)) {
@@ -306,7 +306,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     final ZipEntry entry = entries.nextElement();
                     final String entryName = entry.getName();
                     if (entryName.equals(contentFolder) || entryName.startsWith(contentFolder + "/")) {
-                        final String entryPath = contentFolder.equals("/") ? entryName : entryName.substring(contentParentFolder.length());
+                        String entryPath = contentFolder.equals("/") ? entryName : entryName.substring(contentParentFolder.length()+1);
                         final String[] pathElements = entryPath.split("/");
                         Node parentNode = contentRootNode;
                         for (int i = 0; i < pathElements.length-1; i++) {
