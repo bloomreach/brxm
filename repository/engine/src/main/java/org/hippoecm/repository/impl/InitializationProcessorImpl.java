@@ -426,9 +426,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private void processContentFromNode(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Found content configuration");
-        }
+        getLogger().debug("Found content configuration");
 
         Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
         String contentName = "<<internal>>";
@@ -448,9 +446,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     public void processContentFromFile(final Node node, final Session session, final boolean dryRun) throws RepositoryException, IOException {
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Found content resource configuration");
-        }
+        getLogger().debug("Found content resource configuration");
 
         String contentResource = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
         URL contentURL = getResource(node, contentResource);

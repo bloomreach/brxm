@@ -361,6 +361,7 @@ test/src/test/java/org/onehippo/repository/search/SearchTransactionalityTest.jav
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerSimilarityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerTest.java -text
 test/src/test/java/org/onehippo/repository/update/UpdaterExecutorTest.java -text
+test/src/test/resources/foo.xml -text
 test/src/test/resources/hippo.jar -text
 test/src/test/resources/log4j-filters.txt -text
 test/src/test/resources/org/hippoecm/repository/HREPTWO4837Test.xml svneol=native#text/plain

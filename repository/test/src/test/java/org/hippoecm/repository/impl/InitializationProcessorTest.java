@@ -45,7 +45,9 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTFOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTNODENAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
@@ -172,6 +174,31 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         session.save();
         process(null);
         checkPropNode(new String[]{"m", "n", "o", "p"});
+    }
+
+    @Test
+    public void testContentResourceInitialization() throws Exception {
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/foo.xml").toString());
+        item.setProperty(HIPPO_CONTENTROOT, "/test");
+        session.save();
+        process(null);
+
+        assertTrue(test.hasNode("foo"));
+        Node foo = test.getNode("foo");
+        assertTrue(foo.hasProperty("jcr:created"));
+        final Calendar created = foo.getProperty("jcr:created").getDate();
+
+        // test reload
+        item.setProperty(HIPPO_RELOADONSTARTUP, true);
+        item.setProperty(HIPPO_CONTEXTNODENAME, "foo");
+        item.setProperty(HIPPO_STATUS, "pending");
+        session.save();
+        process(null);
+
+        assertTrue(test.hasNode("foo"));
+        foo = test.getNode("foo");
+        assertTrue(foo.hasProperty("jcr:created"));
+        assertFalse(created.equals(foo.getProperty("jcr:created").getDate()));
     }
 
     @Test
