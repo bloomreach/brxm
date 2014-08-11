@@ -943,6 +943,8 @@ plugin-api/implementation/src/test/resources/testnamespace.cnd -text
 plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text
 plugin-dashboard/pom.xml -text
+plugin-dashboard/src/main/appended-resources/META-INF/LICENSE -text
+plugin-dashboard/src/main/appended-resources/META-INF/NOTICE -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
@@ -972,12 +974,6 @@ plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/404.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/500.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
-plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.eot -text
-plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.svg -text
-plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.ttf -text
-plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.woff -text
-plugin-dashboard/src/main/webapp/assets/img/glyphicons-halflings-white.png -text
-plugin-dashboard/src/main/webapp/assets/img/glyphicons-halflings.png -text
 plugin-dashboard/src/main/webapp/components/ExplorerCanvas/bower.json -text
 plugin-dashboard/src/main/webapp/components/ExplorerCanvas/excanvas.js -text
 plugin-dashboard/src/main/webapp/components/ExplorerCanvas/silverlight/excanvas.js -text
@@ -1519,11 +1515,6 @@ plugin-dashboard/src/main/webapp/components/underscore/test/vendor/runner.js -te
 plugin-dashboard/src/main/webapp/components/underscore/underscore-min.js -text
 plugin-dashboard/src/main/webapp/components/underscore/underscore-min.map -text
 plugin-dashboard/src/main/webapp/components/underscore/underscore.js -text
-plugin-dashboard/src/main/webapp/css/bootstrap.css -text
-plugin-dashboard/src/main/webapp/css/chosen-spinner.css -text
-plugin-dashboard/src/main/webapp/css/chosen-sprite.png -text
-plugin-dashboard/src/main/webapp/css/chosen-sprite@2x.png -text
-plugin-dashboard/src/main/webapp/css/chosen.css -text
 plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-menu.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-modal.less -text
@@ -1536,11 +1527,6 @@ plugin-dashboard/src/main/webapp/css/less/essentials-less/space.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/_variables.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/vars.less -text
 plugin-dashboard/src/main/webapp/css/main.css -text
-plugin-dashboard/src/main/webapp/css/media.css -text
-plugin-dashboard/src/main/webapp/css/normalize.css -text
-plugin-dashboard/src/main/webapp/css/print.css -text
-plugin-dashboard/src/main/webapp/css/theme.css -text
-plugin-dashboard/src/main/webapp/css/theme.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
