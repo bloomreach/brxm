@@ -253,6 +253,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         session.refresh(false);
                     } else {
                         initializeItem.setProperty(HippoNodeType.HIPPO_STATUS, "done");
+                        initializeItem.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
                         session.save();
                     }
 
@@ -689,7 +690,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private List<Node> initializeInitializeItem(final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL, final Set<String> reloadItems) throws RepositoryException {
 
-        getLogger().info("Initializing item: " + tempInitItemNode.getName());
+        getLogger().debug("Initializing item: " + tempInitItemNode.getName());
 
         final List<Node> initializeItems = new ArrayList<Node>();
         Node initItemNode = JcrUtils.getNodeIfExists(initializationFolder, tempInitItemNode.getName());
@@ -701,12 +702,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final boolean isReload = initItemNode != null && shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion);
 
         if (isReload) {
-            getLogger().info("Item " + tempInitItemNode.getName() + " needs to be reloaded");
+            getLogger().info("Item {} needs to be reloaded", tempInitItemNode.getName());
             initItemNode.remove();
             initItemNode = null;
         }
 
         if (initItemNode == null) {
+            getLogger().info("Item {} set to status pending", tempInitItemNode.getName());
             initItemNode = initializationFolder.addNode(tempInitItemNode.getName(), HippoNodeType.NT_INITIALIZEITEM);
             initItemNode.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
             initializeItems.add(initItemNode);
@@ -731,8 +733,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 reloadItems.add(initItemNode.getIdentifier());
             }
         }
-
-        initItemNode.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
 
         return initializeItems;
     }
