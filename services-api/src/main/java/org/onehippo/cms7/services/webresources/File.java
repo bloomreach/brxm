@@ -25,7 +25,7 @@ public interface File {
     /**
      * @return the path to the nt:file node
      */
-    Node getNode();
+    String getPath();
 
     String getFileName();
 

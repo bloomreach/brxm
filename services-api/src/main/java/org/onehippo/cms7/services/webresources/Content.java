@@ -23,8 +23,9 @@ import javax.jcr.Node;
 
 public interface Content {
 
-    Node getNode();
-
+    /**
+     * @return the specific version or <code>null</code> in case of no versions present or non versionable content
+     */
     String getVersion();
 
     String getEncoding();
