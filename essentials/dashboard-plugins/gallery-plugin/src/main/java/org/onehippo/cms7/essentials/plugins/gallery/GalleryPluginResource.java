@@ -210,6 +210,7 @@ public class GalleryPluginResource extends BaseResource {
                         }
                     }
                 }
+
                 session.save();
             } catch (RepositoryException e) {
                 log.error("Error creating query nodes", e);

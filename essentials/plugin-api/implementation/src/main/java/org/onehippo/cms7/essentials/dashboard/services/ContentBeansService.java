@@ -269,13 +269,12 @@ public class ContentBeansService {
                 // check if we need to update image sets:
                 final String updateInstruction = (String) context.getPlaceholderData().get(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS);
                 if (Boolean.valueOf(updateInstruction)) {
+                    log.info("updateInstruction {}", updateInstruction);
                     // TODO...implement
                 }
 
             }
             log.info("mySupertypes {}", mySupertypes);
-
-
         }
     }
 
@@ -314,7 +313,6 @@ public class ContentBeansService {
     /**
      * Fetch project content types
      *
-     * @param context instance of PluginContext
      * @return empty collection if no types are found
      * @throws javax.jcr.RepositoryException
      */
