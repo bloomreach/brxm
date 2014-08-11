@@ -16,6 +16,8 @@
   --%>
 
 <%--@elvariable id="document" type="{{beansPackage}}.Blogpost"--%>
+<div class="has-edit-button">
+<hst:cmseditlink hippobean="${document}"/>
 <h1><c:out value="${document.title}"/></h1>
 <h2>by: <c:out value="${document.author}"/></h2>
 <strong>
@@ -25,3 +27,4 @@
 </strong>
 <p><c:out value="${document.introduction}"/></p>
 <div><hst:html hippohtml="${document.content}"/></div>
+</div>

@@ -48,7 +48,7 @@ $ mvn clean install
 ### run archetype
 
 ```shell
-mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.01.04-SNAPSHOT"
+mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.01.05-SNAPSHOT"
 ```
 
 ## Working with Git
@@ -157,7 +157,8 @@ as the default for your project edit the file
 
 ##Copyright and license
 
-Copyright 2013-2014 Hippo B.V under the [Apache 2.0 license](https://github.com/onehippo/essentials/blob/master/LICENSE).
+Copyright 2013-2014 Hippo B.V. 
+Distributed under the [Apache 2.0 license](https://github.com/onehippo/essentials/blob/master/LICENSE).
 
 
 

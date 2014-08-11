@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.0</version>
+    <version>7.9.1</version>
   </parent>
 
   <name>${projectName}</name>
@@ -65,11 +65,7 @@
     <hippo.cms.version>2.26.03</hippo.cms.version>
     <hippo.hst.version>2.28.03</hippo.hst.version>
     <hippo.repository.version>2.26.03</hippo.repository.version>
-    <!--
-    Replace by 11.01.01 once released
-    Delete once 11.0.01 is part of cms
-    -->
-    <forge.taxonomy.version>1.11.01-SNAPSHOT</forge.taxonomy.version>
+
     <essentials.version>1.01.04-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 

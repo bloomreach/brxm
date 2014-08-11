@@ -264,6 +264,57 @@ public final class JavaSourceUtils {
         return classType.getName().getIdentifier();
     }
 
+
+    /**
+     * Add text to class comment (javadoc) node. If text already exists it will not be added
+     * @param content parsed content of an class
+     * @param text text to add
+     * @return rewritten source (with text node added to the javadoc)
+     */
+    @SuppressWarnings("unchecked")
+    public static String addClassJavaDoc(final String content, final String text) {
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(content);
+        final AST ast = unit.getAST();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        Javadoc javadoc = classType.getJavadoc();
+        if (javadoc == null) {
+            javadoc = ast.newJavadoc();
+            TextElement element = ast.newTextElement();
+            element.setText(text);
+            TagElement tag = ast.newTagElement();
+            tag.fragments().add(element);
+            javadoc.tags().add(tag);
+            classType.setJavadoc(javadoc);
+            return JavaSourceUtils.rewrite(unit, ast);
+        } else {
+            // check if text exists
+            final List<TagElement> tags = javadoc.tags();
+            for (TagElement tag : tags) {
+                @SuppressWarnings("rawtypes")
+                final List fragments = tag.fragments();
+                if (fragments != null) {
+                    for (Object fragment : fragments) {
+                        if (fragment instanceof TextElement) {
+                            final TextElement textNode = (TextElement) fragment;
+                            final String existingText = textNode.getText();
+                            if (existingText.equals(text)) {
+                                log.debug("Comment already in there: {}", existingText);
+                                return content;
+                            }
+                        }
+                    }
+                }
+            }
+            final TextElement element = ast.newTextElement();
+            element.setText(text);
+            final TagElement tag = ast.newTagElement();
+            tag.fragments().add(element);
+            javadoc.tags().add(tag);
+            return JavaSourceUtils.rewrite(unit, ast);
+        }
+
+    }
+
     /**
      * Adds {@code HippoEssentialsGenerated} annotation to provided java source file (class level)
      *
@@ -361,11 +412,13 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      */
     public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName, final boolean multiple) {
-        final String returnType = multiple ? "List<Calendar>" : Calendar.class.getSimpleName();
         if (multiple) {
             addImport(path, List.class.getName());
+            addParameterizedMethod(methodName, "List", "Calendar", path, "getChildBeansByName", propertyName);
+        } else {
+
+            addBeanMethodProperty(path, methodName, propertyName, "Calendar");
         }
-        addBeanMethodProperty(path, methodName, propertyName, returnType);
         final String importName = Calendar.class.getName();
         addImport(path, importName);
 
@@ -381,20 +434,18 @@ public final class JavaSourceUtils {
      */
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoHtml(final Path path, final String methodName, final String propertyName, final boolean multiple) {
-        final String returnType = multiple ? "List<HippoHtml>" : "HippoHtml";
         if (multiple) {
             addImport(path, List.class.getName());
+            addParameterizedMethod(methodName, "List", "HippoHtml", path, "getChildBeansByName", propertyName);
+        } else {
+            addSimpleMethod("getHippoHtml", path, methodName, propertyName, "HippoHtml");
         }
-        addSimpleMethod("getHippoHtml", path, methodName, propertyName, returnType);
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoHtml");
     }
 
-    /**
-     * getBean("politie:assetfolder", HippoMirrorBean.class);
-     */
 
     /**
-     * Adds {@code getBean(namespace, HippoMirrorBean.class)} method
+     * Adds {@code getBean(namespace, HippoBean.class)} method
      *
      * @param path         source file path
      * @param methodName   generated method name
@@ -404,12 +455,12 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addTwoArgumentsMethod("getLinkedBeans", "List<HippoMirrorBean>", path, methodName, propertyName);
+            addParameterizedMethod(methodName, "List", "HippoBean", path, "getLinkedBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoMirrorBean", path, methodName, propertyName);
+            addTwoArgumentsMethod("getLinkedBean", "HippoBean", path, methodName, propertyName);
         }
-        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoMirrorBean");
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoBean");
 
 
     }
@@ -425,7 +476,7 @@ public final class JavaSourceUtils {
     public static void addBeanMethodImageLink(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addTwoArgumentsMethod("getLinkedBeans", "HippoGalleryImageSetBean", path, methodName, propertyName);
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageSetBean", path, "getLinkedBeans", propertyName);
         } else {
             addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSetBean", path, methodName, propertyName);
         }
@@ -661,7 +712,6 @@ public final class JavaSourceUtils {
                                 (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getName()) && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName()))
 
                         ) {
-                    log.debug("Skipping annotation: {}", fullyQualifiedName);
                     continue;
                 }
                 @SuppressWarnings(RAWTYPES)
@@ -833,14 +883,12 @@ public final class JavaSourceUtils {
     }
 
 
-
-
-    public static String getPackageName(final Path path){
+    public static String getPackageName(final Path path) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(path);
         final PackageDeclaration myPackage = unit.getPackage();
         if (myPackage != null) {
             final Name name = myPackage.getName();
-            if(name !=null){
+            if (name != null) {
                 return name.getFullyQualifiedName();
             }
 
@@ -949,8 +997,7 @@ public final class JavaSourceUtils {
                     log.debug("Annotation already exists: {}", fullyQualifiedName);
                     return true;
                 }
-            }
-            else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
+            } else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
                 final MarkerAnnotation existing = (MarkerAnnotation) modifier;
                 final MarkerAnnotation newOne = (MarkerAnnotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
@@ -999,12 +1046,55 @@ public final class JavaSourceUtils {
         final TextEdit edits = rewriter.rewriteAST(document, null);
         try {
             edits.apply(document);
-            return formatCode(document);
+            final String formatted = formatCode(document);
+            //log.debug("{}", formatted);
+            return formatted;
         } catch (BadLocationException e) {
             log.error("Error creating HippoBean", e);
         }
 
         return null;
+    }
+
+
+    @SuppressWarnings(UNCHECKED)
+
+    public static void addParameterizedMethod(final String methodName, final String returnType, final String genericsType, final Path path, final String returnMethodName, final String propertyName) {
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        final AST ast = unit.getAST();
+        final MethodDeclaration methodDeclaration = ast.newMethodDeclaration();
+        methodDeclaration.setName(ast.newSimpleName(methodName));
+        final ParameterizedType type = ast.newParameterizedType(ast.newSimpleType(ast.newName(returnType)));
+        type.typeArguments().add(ast.newSimpleType(ast.newSimpleName(genericsType)));
+        methodDeclaration.setReturnType2(type);
+        methodDeclaration.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
+        methodDeclaration.setConstructor(false);
+        final Block body = ast.newBlock();
+        methodDeclaration.setBody(body);
+        final ReturnStatement statement = ast.newReturnStatement();
+        final MethodInvocation expression = ast.newMethodInvocation();
+        expression.setName(ast.newSimpleName(returnMethodName));
+        // arguments
+        final StringLiteral literal = ast.newStringLiteral();
+        literal.setLiteralValue(propertyName);
+        expression.arguments().add(literal);
+        // Class argument
+        TypeLiteral classLiteral = ast.newTypeLiteral();
+
+        classLiteral.setType(ast.newSimpleType(ast.newName(genericsType)));
+        expression.arguments().add(classLiteral);
+        //
+        statement.setExpression(expression);
+        body.statements().add(statement);
+        classType.bodyDeclarations().add(methodDeclaration);
+        // add annotation
+        final MarkerAnnotation generatedAnnotation = ast.newMarkerAnnotation();
+        generatedAnnotation.setTypeName(ast.newName(HippoEssentialsGenerated.class.getSimpleName()));
+        addHippoGeneratedAnnotation(propertyName, unit, methodDeclaration, ast);
+        replaceFile(path, unit, ast);
+
     }
 
     @SuppressWarnings(UNCHECKED)

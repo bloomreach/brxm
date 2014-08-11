@@ -16,25 +16,14 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -50,17 +39,14 @@ import javax.ws.rs.core.MediaType;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
-import org.onehippo.cms7.essentials.rest.model.DocumentRestful;
-import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.services.contenttype.ContentTypes;
-import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
+import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +73,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/")
     public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
-        return fetchDocuments(servletContext, Type.ALL);
+        return ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.ALL);
     }
 
     @ApiOperation(
@@ -96,7 +82,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
-        return fetchDocuments(servletContext, Type.DOCUMENT);
+        return ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.DOCUMENT);
     }
 
     @ApiOperation(
@@ -105,7 +91,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
-        return fetchDocuments(servletContext, Type.COMPOUND);
+        return ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.COMPOUND);
     }
 
 
@@ -118,7 +104,7 @@ public class DocumentResource extends BaseResource {
     @Path("/{docType}")
     public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
         final List<KeyValueRestful> valueLists = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
 
         try {
@@ -153,7 +139,7 @@ public class DocumentResource extends BaseResource {
     @Path("/templatequeries")
     public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
         final List<KeyValueRestful> templateList = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -175,120 +161,4 @@ public class DocumentResource extends BaseResource {
 
         return templateList;
     }
-
-
-    //*************************************************************************************
-    // UTILS
-    //*************************************************************************************
-    private List<DocumentRestful> fetchDocuments(final ServletContext servletContext, final Type type) {
-        final PluginContext context = getContext(servletContext);
-        final String namespacePrefix = context.getProjectNamespacePrefix();
-        final Session session = context.createSession();
-        final Collection<ContentType> projectContentTypes = new HashSet<>();
-        final List<DocumentRestful> documents = new ArrayList<>();
-        try {
-            final ContentTypeService service = new HippoContentTypeService(session);
-            final ContentTypes contentTypes = service.getContentTypes();
-            final SortedMap<String, Set<ContentType>> typesByPrefix = contentTypes.getTypesByPrefix();
-            for (Map.Entry<String, Set<ContentType>> entry : typesByPrefix.entrySet()) {
-                final String key = entry.getKey();
-                final Set<ContentType> value = entry.getValue();
-                if (key.equals(namespacePrefix)) {
-                    projectContentTypes.addAll(value);
-                }
-            }
-            // add extra properties (field locations)
-            for (ContentType doc : projectContentTypes) {
-                Type myType = doc.isCompoundType() ? Type.COMPOUND : Type.DOCUMENT;
-
-                if (type == Type.ALL) {
-                    documents.add(new DocumentRestful(doc));
-                } else if (myType == type) {
-                    documents.add(new DocumentRestful(doc));
-                }
-            }
-            for (DocumentRestful document : documents) {
-                final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_/root", namespacePrefix, document.getName());
-                if (session.nodeExists(path)) {
-                    final Node node = session.getNode(path);
-                    final Set<String> locations = new HashSet<>();
-                    if (node.hasProperty("wicket.extensions")) {
-                        final Value[] values = node.getProperty("wicket.extensions").getValues();
-                        for (Value value : values) {
-                            final String propVal = value.getString();
-                            if (node.hasProperty(propVal)) {
-                                // ".item" suffix produces value usable in document field editor template's wicket.id prop.
-                                locations.add(node.getProperty(propVal).getString() + ".item");
-                            }
-                        }
-                    }
-                    if (locations.isEmpty()) {
-                        locations.add("${cluster.id}.field");
-                    }
-                    document.setFieldLocations(locations);
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error fetching document types", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-        // populate java paths (if found):
-
-
-
-        // sort documents by name:
-        Collections.sort(documents, new DocumentNameComparator());
-        populateBeanPaths(context, documents);
-        return documents;
-    }
-
-    public void populateBeanPaths(final PluginContext context, final List<DocumentRestful> documents){
-        final java.nio.file.Path startDir = context.getBeansPackagePath();
-        final Map<String, java.nio.file.Path> existingBeans = new HashMap<>();
-        final List<java.nio.file.Path> directories = new ArrayList<>();
-        GlobalUtils.populateDirectories(startDir, directories);
-        final String pattern = "*.java";
-        for (java.nio.file.Path directory : directories) {
-            try (final DirectoryStream<java.nio.file.Path> stream = Files.newDirectoryStream(directory, pattern)) {
-                for (java.nio.file.Path path : stream) {
-                    final String nodeJcrType = JavaSourceUtils.getNodeJcrType(path);
-                    if (nodeJcrType != null) {
-                        log.info("nodeJcrType {}", nodeJcrType);
-                        existingBeans.put(nodeJcrType, path);
-                    }
-                }
-            } catch (IOException e) {
-                log.error("Error reading java files", e);
-            }
-        }
-        //
-        for (DocumentRestful document : documents) {
-            final String fullName = document.getFullName();
-            final java.nio.file.Path path = existingBeans.get(fullName);
-            if(path !=null){
-                document.setJavaName(path.toFile().getName());
-                document.setFullPath(path.toString());
-            }
-        }
-    }
-
-
-    public enum Type {
-        ALL,
-        COMPOUND,
-        DOCUMENT,
-        ASSET,
-        GALLERY
-    }
-
-    private static class DocumentNameComparator implements java.util.Comparator<DocumentRestful> {
-        @Override
-        public int compare(final DocumentRestful first, final DocumentRestful second) {
-            String name1 = first.getName();
-            String name2 = second.getName();
-            return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
-        }
-    }
-
 }

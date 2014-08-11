@@ -10,3 +10,14 @@ Apache License Version 2.0. The licenses of some libraries might impose
 different redistribution or general licensing terms than those stated in the
 Apache License. Users and redistributors are hereby requested to verify these
 conditions and agree upon them.
+
+
+========================================================================================================================
+Additional notice information is applicable for the following sub components:
+
+------------------------------------------------------------------------------------------------------------------------
+plugin-dashboard/src/main/webapp/components/hippo-plugins/**
+
+    Hippo Plugins
+    Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+

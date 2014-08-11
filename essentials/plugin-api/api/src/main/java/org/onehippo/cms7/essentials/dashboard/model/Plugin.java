@@ -33,30 +33,21 @@ public interface Plugin extends Serializable {
 
     void setRestClasses(List<String> restClasses);
 
-    boolean isEnabled();
-
-    void setEnabled(boolean enabled);
-
     String getDescription();
 
     void setDescription(String description);
 
+    List<String> getImageUrls();
 
-    boolean isNeedsInstallation();
-
-    void setNeedsInstallation(boolean needsInstallation);
+    void setImageUrls(List<String> imageUrls);
 
     String getInstallState();
 
     void setInstallState(String installState);
 
-    boolean isInstalled();
+    String getId();
 
-    void setInstalled(boolean installed);
-
-    String getPluginId();
-
-    void setPluginId(String pluginId);
+    void setId(String id);
 
     String getPackageFile();
 
@@ -67,6 +58,10 @@ public interface Plugin extends Serializable {
     String getPackageClass();
 
     void setPackageClass(String packageClass);
+
+    String getParameterServiceClass();
+
+    void setParameterServiceClass(String parameterServiceClass);
 
     void setVendor(Vendor vendor);
 
@@ -102,4 +97,7 @@ public interface Plugin extends Serializable {
     List<Repository> getRepositories();
 
     void setRepositories(List<Repository> repositories);
+
+    void setHasConfiguration(boolean hasConfiguration);
+    boolean getHasConfiguration();
 }

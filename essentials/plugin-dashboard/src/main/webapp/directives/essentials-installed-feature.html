@@ -1,0 +1,38 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="plugin plugin-primary">
+    <div class="plugin-header">
+        <h3 class="plugin-title">{{plugin.name}}</h3>
+        <div class="plugin-tools pull-right">
+            <a ng-show="needsRebuild()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+            <a ng-show="needsConfiguration()" class="btn btn-danger" href="#/features/{{plugin.id}}">Needs to be configured</a>
+            <a ng-show="hasConfiguration()" class="btn btn-primary" href="#/features/{{plugin.id}}">Configure</a>
+            <span ng-show="hasNoConfiguration()" class="btn btn-info">Feature installed</span>
+        </div>
+    </div>
+    <div class="plugin-body">
+        <div ng-show="showPlugin" ng-bind-html="plugin.description ? plugin.description:plugin.introduction"></div>
+    </div>
+  <div class="plugin-footer">
+    <div>
+      Provided by: <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a>
+    </div>
+    <div ng-show="plugin.documentationLink" class="pull-right">
+      <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
+    </div>
+  </div>
+</div>

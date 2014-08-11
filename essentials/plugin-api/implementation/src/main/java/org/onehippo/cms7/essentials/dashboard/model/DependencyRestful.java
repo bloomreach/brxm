@@ -34,6 +34,7 @@ public class DependencyRestful implements EssentialsDependency, Restful {
     private String version;
     private String scope;
     private String type;
+    private String targetPom;
 
 
     @Override
@@ -92,6 +93,11 @@ public class DependencyRestful implements EssentialsDependency, Restful {
     }
 
     @Override
+    public void setScope(final String scope) {
+        this.scope = scope;
+    }
+
+    @Override
     public String getType() {
         return type;
     }
@@ -102,13 +108,18 @@ public class DependencyRestful implements EssentialsDependency, Restful {
     }
 
     @Override
-    public void setScope(final String scope) {
-        this.scope = scope;
+    public String getTargetPom() {
+        return targetPom;
     }
 
     @Override
-    public DependencyType getDependencyType() {
-        return DependencyType.typeForName(type);
+    public void setTargetPom(final String targetPom) {
+        this.targetPom = targetPom;
+    }
+
+    @Override
+    public TargetPom getDependencyTargetPom() {
+        return TargetPom.pomForName(targetPom);
 
     }
 
@@ -119,6 +130,7 @@ public class DependencyRestful implements EssentialsDependency, Restful {
         mavenDependency.setGroupId(getGroupId());
         mavenDependency.setVersion(getVersion());
         mavenDependency.setScope(getScope());
+        mavenDependency.setType(getType());
         return mavenDependency;
     }
 
@@ -131,6 +143,7 @@ public class DependencyRestful implements EssentialsDependency, Restful {
         sb.append(", repositoryUrl='").append(repositoryUrl).append('\'');
         sb.append(", version='").append(version).append('\'');
         sb.append(", scope='").append(scope).append('\'');
+        sb.append(", type='").append(type).append('\'');
         sb.append('}');
         return sb.toString();
     }

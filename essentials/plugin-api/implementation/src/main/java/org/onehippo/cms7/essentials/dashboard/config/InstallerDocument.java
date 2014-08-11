@@ -38,6 +38,9 @@ public class InstallerDocument extends BaseDocument {
     // date when the plugin got added to the project
     private Calendar dateAdded;
 
+    // plugin installation state
+    private String installationState;
+
     public String getPluginId() {
         return pluginId;
     }
@@ -63,6 +66,18 @@ public class InstallerDocument extends BaseDocument {
     }
 
     public boolean hasDateAdded() { return dateAdded != null; }
+
+    public String getInstallationState() {
+        return installationState;
+    }
+
+    public void setInstallationState(String installationState) {
+        this.installationState = installationState;
+    }
+
+    public boolean hasInstallationState() {
+        return installationState != null;
+    }
 
     @Override
     public String toString() {

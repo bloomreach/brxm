@@ -37,6 +37,7 @@ import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -141,8 +142,7 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public boolean isEnterpriseProject() {
-        // TODO implement
-        return false;
+        return DependencyUtils.isEnterpriseProject();
     }
 
     @Override

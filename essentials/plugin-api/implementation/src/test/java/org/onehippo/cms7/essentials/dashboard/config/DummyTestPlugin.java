@@ -45,16 +45,6 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-
-    }
-
-    @Override
     public String getDescription() {
         return "test";
     }
@@ -66,14 +56,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public boolean isNeedsInstallation() {
-        return false;
+    public List<String> getImageUrls() {
+        return null;
     }
 
     @Override
-    public void setNeedsInstallation(final boolean needsInstallation) {
-
-    }
+    public void setImageUrls(List<String> imageUrls) { }
 
     @Override
     public String getInstallState() { return "installed"; }
@@ -82,24 +70,12 @@ public class DummyTestPlugin implements Plugin {
     public void setInstallState(final String installState) { }
 
     @Override
-    public boolean isInstalled() {
-        return false;
+    public String getId() {
+        return "id";
     }
 
     @Override
-    public void setInstalled(final boolean installed) {
-
-    }
-
-    @Override
-    public String getPluginId() {
-        return "pluginId";
-    }
-
-    @Override
-    public void setPluginId(final String pluginId) {
-
-    }
+    public void setId(final String id) { }
 
     @Override
     public String getPackageFile() {
@@ -124,6 +100,22 @@ public class DummyTestPlugin implements Plugin {
     @Override
     public void setPackageClass(final String packageClass) {
 
+    }
+
+    @Override
+    public String getParameterServiceClass() {
+        return null;
+    }
+
+    @Override
+    public void setParameterServiceClass(final String packageClass) { }
+
+    @Override
+    public void setHasConfiguration(final boolean hasConfiguration) { }
+
+    @Override
+    public boolean getHasConfiguration() {
+        return false;
     }
 
     @Override

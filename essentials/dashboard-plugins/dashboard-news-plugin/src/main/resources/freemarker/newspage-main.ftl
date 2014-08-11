@@ -22,7 +22,7 @@
 <#-- @ftlvariable name="document" type="{{beansPackage}}.NewsDocument" -->
 <#if document??>
     <@hst.link var="link" hippobean=document/>
-<article>
+<article class="has-edit-button">
     <@hst.cmseditlink hippobean=document/>
     <h3><a href="${link}">${document.title}</a></h3>
     <#if document.date??>

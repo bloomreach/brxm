@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -44,10 +46,12 @@ import static org.junit.Assert.assertTrue;
 public class JavaSourceUtilsTest extends BaseResourceTest {
 
     public static final String CLASS_NAME = "TestExampleClass";
+    public static final String CLASS_DOC_NAME = "TestDocClass";
     public static final String PACKAGE_NAME = "com.foo.bar";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtilsTest.class);
     private String absolutePath = "";
     private Path path;
+    private Path docPath;
     private Path componentFile;
 
     @Override
@@ -58,12 +62,31 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         final String tmpDir = System.getProperty("java.io.tmpdir");
         absolutePath = new File(tmpDir).getAbsolutePath();
         path = JavaSourceUtils.createJavaClass(absolutePath, CLASS_NAME, PACKAGE_NAME, ".txt");
+        docPath = JavaSourceUtils.createJavaClass(absolutePath, CLASS_DOC_NAME, PACKAGE_NAME, ".txt");
     }
-  @Test
+
+
+    @Test
+    public void testInsertComment() throws Exception {
+        final String myHippoBean = JavaSourceUtils.createHippoBean(docPath, "com.foo.bar.doc", "foo:namespace", "MyTesDocBean");
+        assertNotNull(myHippoBean);
+        final String text = "TODO test";
+        final String oneComment = JavaSourceUtils.addClassJavaDoc(myHippoBean, text);
+        final String s = JavaSourceUtils.addClassJavaDoc(oneComment, text);
+        assertTrue(s.contains(text));
+        assertTrue(StringUtils.countMatches(s, text) == 1);
+
+
+    }
+
+
+
+    @Test
     public void testGetPackage() throws Exception {
 
         assertEquals(JavaSourceUtils.getPackageName(path), PACKAGE_NAME);
     }
+
 
     @Test
     public void testJcrType() throws Exception {
@@ -151,6 +174,9 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         super.tearDown();
         if (path != null) {
             Files.deleteIfExists(path);
+        }
+        if (docPath != null) {
+            Files.deleteIfExists(docPath);
         }
         if (componentFile != null) {
             Files.deleteIfExists(componentFile);

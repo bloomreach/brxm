@@ -5,8 +5,7 @@
          appName="HSTSITE"
          userClassNames="org.hippoecm.hst.security.TransientUser"
          roleClassNames="org.hippoecm.hst.security.TransientRole"
-         useContextClassLoader="true"
-         debug="0"/>
+         useContextClassLoader="true"/>
   <Valve className="org.apache.catalina.authenticator.FormAuthenticator" characterEncoding="UTF-8"/>
 
   <!-- JCR Session Pooling Repository provided by HST-2 Core Components -->

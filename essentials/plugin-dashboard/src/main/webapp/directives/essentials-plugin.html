@@ -1,0 +1,44 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="plugin plugin-primary">
+  <div class="plugin-header">
+    <h3 class="plugin-title">{{plugin.name}}</h3>
+    <div class="plugin-tools pull-right">
+      <button class="btn btn-primary"
+              ng-show="isDiscovered()"
+              ng-click="installPlugin()">Install {{plugin.type}}
+      </button>
+      <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+      <span ng-show="isOnBoard()" class="btn btn-info">Installed</span>
+    </div>
+  </div>
+  <div class="plugin-body">
+    <div ng-bind-html="plugin.introduction"></div>
+    <div ng-show="plugin.description" ng-bind-html="plugin.description"></div>
+
+    <!--TODO: These images should go into the carrousel...-->
+    <img ng-repeat="imageUrl in plugin.imageUrls" ng-src="{{imageUrl}}"/>
+  </div>
+  <div class="plugin-footer">
+    <div>
+      Provided by: <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a>
+    </div>
+    <div ng-show="plugin.documentationLink" class="pull-right">
+      <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
+    </div>
+  </div>
+</div>

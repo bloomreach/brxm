@@ -30,11 +30,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FilenameUtils;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
@@ -45,6 +53,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentBean;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentChildNode;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentProperty;
+import org.onehippo.cms7.essentials.dashboard.utils.code.EssentialsGeneratedMethod;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
@@ -89,25 +98,26 @@ public class ContentBeansService {
     public void createBeans() throws RepositoryException {
 
         final Map<String, Path> existing = findExitingBeans();
-        final Iterator<HippoContentBean> iterator = filterMissingBeans(existing);
-        while (iterator.hasNext()) {
-            final HippoContentBean next = iterator.next();
+        final List<HippoContentBean> missingBeans = Lists.newArrayList(filterMissingBeans(existing));
+        final Iterator<HippoContentBean> missingBeanIterator = missingBeans.iterator();
+        for (; missingBeanIterator.hasNext(); ) {
+            final HippoContentBean missingBean = missingBeanIterator.next();
             // check if directly extending compound:
-            final Set<String> superTypes = next.getSuperTypes();
+            final Set<String> superTypes = missingBean.getSuperTypes();
             if (superTypes.size() == 1 && superTypes.iterator().next().equals(BASE_COMPOUND_TYPE)) {
-                createBaseBean(next);
-                iterator.remove();
+                createBaseBean(missingBean);
+                missingBeanIterator.remove();
             } else {
-                final String parent = findExistingParent(next, existing);
+                final String parent = findExistingParent(missingBean, existing);
                 if (parent != null) {
-                    log.debug("found parent: {}, {}", parent, next);
-                    iterator.remove();
-                    createBean(next, existing.get(parent));
+                    log.debug("found parent: {}, {}", parent, missingBean);
+                    missingBeanIterator.remove();
+                    createBean(missingBean, existing.get(parent));
                 }
             }
         }
         // process beans without resolved parent beans
-        processMissing(Lists.newArrayList(iterator));
+        processMissing(missingBeans);
         processProperties();
         // check if still missing(beans that extended missing beans)
         final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(findExitingBeans());
@@ -115,7 +125,7 @@ public class ContentBeansService {
         if (missingBeansDepth < MISSING_DEPTH_MAX && hasNonCreatedBeans) {
             missingBeansDepth++;
             createBeans();
-        }else if(hasNonCreatedBeans){
+        } else if (hasNonCreatedBeans) {
             log.error("Not all beans were created: {}", extendedMissing);
         }
 
@@ -155,9 +165,116 @@ public class ContentBeansService {
     }
 
 
-    private void processMissing(final Iterable<HippoContentBean> missingBeans) {
+    /**
+     * Update image set to new return type (e.g. after image sets are regenerated)
+     * @param path path of java class file
+     * @param oldReturnType e.g HippoGalleryImageSet
+     * @param newReturnType new imageset return type e.g. MyGalleryImageSet
+     */
+    private void updateImageTypes(final Path path, final String oldReturnType, final String newReturnType) {
+        //final String oldImageSetName = "HippoGalleryImageSet"; //oldReturnType
+        final CompilationUnit deleteUnit = JavaSourceUtils.getCompilationUnit(path);
+        final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
+        final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
+        final Map<String, EssentialsGeneratedMethod> deletedMethods = new HashMap<>();
+        deleteUnit.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodDeclaration node) {
+                final String methodName = node.getName().getFullyQualifiedName();
+                final Type type = node.getReturnType2();
+                if (type.isPrimitiveType() || type.isArrayType()) {
+                    return super.visit(node);
+                }
+                EssentialsGeneratedMethod method;
+                if (type.isParameterizedType()) {
+                    ParameterizedType parameterizedType = (ParameterizedType) type;
+
+                    @SuppressWarnings("rawtypes")
+                    final List arg = parameterizedType.typeArguments();
+                    if (arg == null || arg.isEmpty()) {
+                        return super.visit(node);
+                    }
+                    final SimpleType simpleReturnType = (SimpleType) arg.get(0);
+                    final String fullyQualifiedName = simpleReturnType.getName().getFullyQualifiedName();
+                    log.info("fullyQualifiedName {}", fullyQualifiedName);
+                    method = extractMethod(methodName, generatedMethods);
+                    if (method == null) {
+                        return super.visit(node);
+                    }
+                    if (fullyQualifiedName.equals(oldReturnType)) {
+                        node.delete();
+                        method.setMultiType(true);
+                        deletedMethods.put(methodName, method);
+                        return super.visit(node);
+                    }
+
+                } else if (type.isSimpleType()) {
+
+                    ///
+                    final SimpleType simpleType = (SimpleType) type;
+                    final String returnTypeName = simpleType.getName().getFullyQualifiedName();
+                    method = extractMethod(methodName, generatedMethods);
+                    if (method == null) {
+                        return super.visit(node);
+                    }
+                    if (returnTypeName.equals(oldReturnType)) {
+                        node.delete();
+                        deletedMethods.put(methodName, method);
+                        return super.visit(node);
+                    }
+                }
+                return super.visit(node);
+            }
+        });
+
+        if (deletedMethods.size() > 0) {
+            final AST deleteAst = deleteUnit.getAST();
+            final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
+            // reload unit
+            final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(deletedSource);
+            final AST ast = unit.getAST();
+            for (Map.Entry<String, EssentialsGeneratedMethod> entry : deletedMethods.entrySet()) {
+                final EssentialsGeneratedMethod value = entry.getValue();
+                if (value.isMultiType()) {
+                    JavaSourceUtils.addImport(path, List.class.getName());
+                    JavaSourceUtils.addParameterizedMethod(value.getMethodName(), "List", newReturnType, path, "getLinkedBean", value.getInternalName());
+                } else {
+                    JavaSourceUtils.addTwoArgumentsMethod("getLinkedBean", "HippoBean", path, value.getMethodName(), value.getInternalName());
+                }
+
+                final String rewrite = JavaSourceUtils.rewrite(unit, ast);
+                log.info("rewrite {}", rewrite);
+            }
+        }
+
+    }
+
+    private EssentialsGeneratedMethod extractMethod(final String methodName, final Iterable<EssentialsGeneratedMethod> generatedMethods) {
+        for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
+            if (generatedMethod.getMethodName().equals(methodName)) {
+                return generatedMethod;
+            }
+        }
+        return null;
+    }
+
+    private void processMissing(final List<HippoContentBean> missingBeans) {
         for (HippoContentBean missingBean : missingBeans) {
-            log.info("############# >> {}", missingBean);
+            final SortedSet<String> mySupertypes = missingBean.getContentType().getSuperTypes();
+            if (mySupertypes.contains("hippogallery:relaxed")) {
+                final Path javaClass = createJavaClass(missingBean);
+                JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
+                JavaSourceUtils.addExtendsClass(javaClass, "HippoGalleryImageSet");
+                JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
+                // check if we need to update image sets:
+                final String updateInstruction = (String) context.getPlaceholderData().get(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS);
+                if (Boolean.valueOf(updateInstruction)) {
+                    log.info("updateInstruction {}", updateInstruction);
+                    // TODO...implement
+                }
+
+            }
+            log.info("mySupertypes {}", mySupertypes);
         }
     }
 
@@ -196,7 +313,6 @@ public class ContentBeansService {
     /**
      * Fetch project content types
      *
-     * @param context instance of PluginContext
      * @return empty collection if no types are found
      * @throws javax.jcr.RepositoryException
      */
@@ -237,7 +353,6 @@ public class ContentBeansService {
                 for (Path path : stream) {
                     final String nodeJcrType = JavaSourceUtils.getNodeJcrType(path);
                     if (nodeJcrType != null) {
-                        log.info("nodeJcrType {}", nodeJcrType);
                         existingBeans.put(nodeJcrType, path);
                     }
                 }
@@ -347,17 +462,17 @@ public class ContentBeansService {
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
-                // TODO fix creation
-/*                case "hippo:mirror":
-                    methodName = GlobalUtils.createMethodName(name);
-                    JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
-                    existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    break;*/
+
                 case "hippogallerypicker:imagelink":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
+                    existing.add(name);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    log.debug(MSG_ADDED_METHOD, methodName);
+                    break;
+                case "hippo:mirror":
+                    methodName = GlobalUtils.createMethodName(name);
+                    JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
@@ -405,14 +520,16 @@ public class ContentBeansService {
         final String extendsName = FilenameUtils.removeExtension(parentPath.toFile().getName());
         JavaSourceUtils.addExtendsClass(javaClass, extendsName);
         JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
+
     }
 
     private Path createJavaClass(final HippoContentBean bean) {
-         String name = bean.getName();
-        if(name.indexOf(',') !=-1){
+        String name = bean.getName();
+        if (name.indexOf(',') != -1) {
             name = name.split(",")[0];
         }
         final String className = GlobalUtils.createClassName(name);
+        context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(className, ActionType.CREATED_CLASS));
         return JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
     }
 

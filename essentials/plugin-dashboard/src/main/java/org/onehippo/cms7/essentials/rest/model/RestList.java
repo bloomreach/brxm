@@ -29,8 +29,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
 
 /**
  * @version "$Id$"
@@ -50,10 +48,8 @@ public class RestList<T extends Restful> extends RestfulList<T> {
             @JsonSubTypes.Type(ControllerRestful.class),
             @JsonSubTypes.Type(KeyValueRestful.class),
             @JsonSubTypes.Type(PostPayloadRestful.class),
-            @JsonSubTypes.Type(DocumentType.class),
             @JsonSubTypes.Type(TranslationRestful.class),
-            @JsonSubTypes.Type(PropertyRestful.class),
-            @JsonSubTypes.Type(Compounds.class)
+            @JsonSubTypes.Type(PropertyRestful.class)
     })
     @Override
     public List<T> getItems() {

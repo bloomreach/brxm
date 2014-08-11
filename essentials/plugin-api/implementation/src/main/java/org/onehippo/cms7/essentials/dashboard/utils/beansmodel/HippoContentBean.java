@@ -46,6 +46,7 @@ public class HippoContentBean {
             .add("hippostd:tags")
             .build();
     private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
+    private static final Pattern COMMA_SPLITTER = Pattern.compile(",");
     private final ContentType contentType;
     private final PluginContext context;
     private final String prefix;
@@ -61,9 +62,16 @@ public class HippoContentBean {
     public HippoContentBean(final PluginContext context, final ContentType contentType) {
         this.context = context;
         this.contentType = contentType;
-        this.name = contentType.getName();
+
+        final String originalName = contentType.getName();
+        if( originalName.indexOf(',') !=-1){
+            name = COMMA_SPLITTER.split(originalName)[0];
+        }else{
+            name = originalName;
+        }
+
         if (name.indexOf(':') != -1) {
-            final String[] fullName = PREFIX_SPLITTER.split(contentType.getName());
+            final String[] fullName = PREFIX_SPLITTER.split(name);
             this.shortName = fullName[1];
             this.prefix = fullName[0];
         } else {
@@ -176,6 +184,7 @@ public class HippoContentBean {
     public String getName() {
         return name;
     }
+
 
     @Override
     public String toString() {

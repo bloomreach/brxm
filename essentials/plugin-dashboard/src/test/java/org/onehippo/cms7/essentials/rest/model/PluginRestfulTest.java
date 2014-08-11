@@ -20,7 +20,7 @@ import java.util.Calendar;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
@@ -64,7 +64,7 @@ public class PluginRestfulTest {
         final Snapshot snapshots = new SnapshotRestful();
         snapshots.setEnabled(true);
         repository.setSnapshots(snapshots);
-        repository.setType(DependencyType.PROJECT.getName());
+        repository.setTargetPom(TargetPom.PROJECT.getName());
         value.addRepository(repository);
 
         // test json:

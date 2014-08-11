@@ -42,7 +42,6 @@
     <xml action="copy" source="instructions/hst/faq-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- workspace-->
     <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="instructions/hst/faq-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
 
   </instructionSet>
 

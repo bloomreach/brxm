@@ -29,6 +29,7 @@ public class EssentialsGeneratedMethod implements Serializable {
     private String methodName;
     private String returnType;
     private String internalName;
+    private boolean multiType;
     private MethodDeclaration methodDeclaration;
 
     public EssentialsGeneratedMethod(final MethodDeclaration methodDeclaration, final String methodName, final String internalName) {
@@ -71,6 +72,14 @@ public class EssentialsGeneratedMethod implements Serializable {
 
     public void setReturnType(final String returnType) {
         this.returnType = returnType;
+    }
+
+    public boolean isMultiType() {
+        return multiType;
+    }
+
+    public void setMultiType(final boolean multiType) {
+        this.multiType = multiType;
     }
 
     @Override

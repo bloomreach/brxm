@@ -24,7 +24,8 @@
 <#if pageable??>
     <#list pageable.items as item>
         <@hst.link var="link" hippobean=item />
-    <article>
+    <article class="has-edit-button">
+        <@hst.cmseditlink hippobean=item/>
         <h3><a href="${link}">${item.title}</a></h3>
         <#if item.date?? && item.date.time??>
             <p><@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/></p>

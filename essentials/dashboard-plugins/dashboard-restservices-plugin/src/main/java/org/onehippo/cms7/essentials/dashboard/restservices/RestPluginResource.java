@@ -37,6 +37,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -77,7 +78,8 @@ public class RestPluginResource extends BaseResource {
     public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
 
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(getContext(servletContext), "java");
+        final PluginContext context = PluginContextFactory.getContext();
+        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(context, "java");
         for (Map.Entry<String, java.nio.file.Path> bean : hippoBeans.entrySet()) {
             list.add(new KeyValueRestful(bean.getKey(), bean.getValue().toString()));
         }
@@ -89,7 +91,8 @@ public class RestPluginResource extends BaseResource {
     @Path("/mounts")
     public List<MountRestful> getHippoSites(@Context ServletContext servletContext) throws RepositoryException {
 
-        final Set<Node> hstMounts = HstUtils.getHstMounts(getContext(servletContext));
+        final PluginContext context = PluginContextFactory.getContext();
+        final Set<Node> hstMounts = HstUtils.getHstMounts(context);
         final List<MountRestful> list = new ArrayList<>();
         for (Node m : hstMounts) {
             list.add(new MountRestful(m.getIdentifier(), m.getPath(), m.getName()));
@@ -111,7 +114,7 @@ public class RestPluginResource extends BaseResource {
         if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
             return new ErrorMessageRestful("REST service name / type or both were empty");
         }
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
 
         final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
         // TODO: figure out injection part

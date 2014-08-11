@@ -55,10 +55,12 @@
   -->
   <context-param>
     <param-name>hst-beans-annotated-classes</param-name>
-    <param-value>classpath*:${package.replace(".","/")}/beans/**/*.class
-      ,classpath*:org/onehippo/forge/**/*.class</param-value>
+    <param-value>classpath*:${package.replace(".","/")}/**/*.class
+      ,classpath*:org/onehippo/**/*.class
+      ,classpath*:com/onehippo/**/*.class
+      ,classpath*:org/onehippo/forge/**/*.class
+    </param-value>
   </context-param>
-
   <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

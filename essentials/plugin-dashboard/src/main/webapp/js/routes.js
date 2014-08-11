@@ -25,110 +25,83 @@
         .config(function ($stateProvider, $routeProvider) {
             $stateProvider
                 .state('index', {
-                    controller: 'homeCtrl',
                     url: '',
-                    templateUrl: 'pages/home.html',
-                    resolve: { factory: checkPackInstalled}
-                })
-                .state('tools', {
-                    url: '/tools',
-                    templateUrl: 'pages/tools.html',
-                    controller: 'pluginCtrl'
+                    resolve: { factory: dispatchToDesiredPage }
                 })
                 .state('introduction', {
                     url: '/introduction',
                     templateUrl: 'pages/introduction.html',
                     controller: 'introductionCtrl'
                 })
+                .state('library', {
+                    url: '/library',
+                    templateUrl: 'pages/library.html',
+                    controller: 'pluginCtrl'
+                })
+                .state('installed-features', {
+                    url: '/installed-features',
+                    templateUrl: 'pages/installed-features.html',
+                    controller: 'pluginCtrl'
+                })
+                .state('features', {
+                    url: '/features/:id',
+                    templateUrl: function ($stateParams) {
+                        return 'feature/' + $stateParams.id + '/' + $stateParams.id + '.html';
+                    }
+                })
+                .state('tools', {
+                    url: '/tools',
+                    templateUrl: 'pages/tools.html',
+                    controller: 'pluginCtrl'
+                })
                 .state('tools-id', {
                     url: '/tools/:id',
                     templateUrl: function ($stateParams) {
-                        return 'tools/' + $stateParams.id + '/' + $stateParams.id + '.html';
+                        return 'tool/' + $stateParams.id + '/' + $stateParams.id + '.html';
                     }
                 })
-                .state('home', {
-                    controller: 'homeCtrl',
-                    url: '/home',
-                    templateUrl: 'pages/home.html'
-
-                })
-                .state('plugins', {
-                    url: '/plugins',
-                    templateUrl: 'pages/plugins.html',
-                    controller: 'pluginCtrl',
-                    views: {
-                        "submenu": {
-                            templateUrl: 'pages/plugins-menu.html',
-                            controller: 'pluginCtrl'
-                        }, "plugintabs": {
-                            templateUrl: 'pages/plugins-installed-tabs.html',
-                            controller: 'pluginCtrl'
-                        }
-
-                    }
-
-                })
-                .state('find-plugins', {
-                    url: '/find-plugins',
-                    templateUrl: 'pages/find-plugins.html',
-                    controller: 'pluginCtrl',
-                    views: {
-                        "submenu": {
-                            templateUrl: 'pages/plugins-menu-find.html',
-                            controller: 'pluginCtrl'
-                        }, "plugintabs": {
-                            templateUrl: 'pages/plugins-new-tabs.html',
-                            controller: 'pluginCtrl'
-                        }, "plugininstance": {
-                            controller: 'pluginCtrl',
-                            templateUrl: 'pages/find-plugins.html'
-                        }
-                    }
-                }
-            )
-                .state('plugin', {
-                    url: '/plugins/:id',
-                    views: {
-                        "submenu": {
-                            templateUrl: 'pages/plugins-menu-find.html',
-                            controller: 'pluginCtrl'
-                        }, "plugintabs": {
-                            templateUrl: 'pages/plugins-installed-tabs.html',
-                            controller: 'pluginCtrl'
-                        }, "plugininstance": {
-                            url: '/plugins/:id',
-                            templateUrl: function ($stateParams) {
-                                return 'plugins/' + $stateParams.id + '/' + $stateParams.id + '.html';
-                            }
-                        }
-                    }
-                }
-            );
-        });
-    var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
-        $rootScope.checkDone = true;
-        if ($rootScope.packsInstalled) {
-            $log.info("package is installed");
-            return true;
-        } else {
-            var deferred = $q.defer();
-            $http.get($rootScope.REST.packageStatus)
-                .success(function (response) {
-                    $rootScope.packsInstalled = response.status;
-                    deferred.resolve(true);
-                    if (!$rootScope.packsInstalled) {
-                        $location.path("/introduction");
-                    }
-
-                })
-                .error(function () {
-                    deferred.reject();
-                    $rootScope.packsInstalled = false;
-                    $location.path("/introduction");
+                .state('build', {
+                    url: '/build',
+                    templateUrl: 'pages/build.html',
+                    controller: 'pluginCtrl'
                 });
-            return deferred.promise;
-        }
-    }
+        });
 
+    var dispatchToDesiredPage = function ($q, $rootScope, $location, $http, $log) {
+        // Determine the correct location path to start.
+        // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
+        var deferred = $q.defer();
+
+        $http.get($rootScope.REST.packageStatus)
+            .success(function (response) {
+                if (response.status) {
+                    // project setup has happened.
+                    // Do a ping to decide whether to go to library or installed features
+                    $http.get($rootScope.REST.ping)
+                        .success(function (data) {
+                            if (data.installedFeatures > 0) {
+                                $location.path("/installed-features");
+                            } else {
+                                $location.path("/library");
+                            }
+                            deferred.resolve(true);
+                        })
+                        .error(function () {
+                            $location.path("/library");
+                            deferred.reject();
+                        });
+                } else {
+                    // project needs setup.
+                    $location.path("/introduction");
+                    deferred.resolve(true);
+                }
+            })
+            .error(function () {
+                $location.path("/library");
+                deferred.reject();
+            });
+
+        return deferred.promise;
+    }
 })();
 

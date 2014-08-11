@@ -17,31 +17,21 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
-import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -50,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -74,6 +65,13 @@ public class BaseResource {
     }
 
     /**
+     * A plugin has a "generalized setup" when its descriptor specifies either a packageFile or a packageClass.
+     */
+    protected boolean hasGeneralizedSetUp(final Plugin plugin) {
+        return StringUtils.hasText(plugin.getPackageFile()) || StringUtils.hasText(plugin.getPackageClass());
+    }
+
+    /**
      * Instantiate InstructionPackage for plugin.
      *
      * @param plugin Plugin instance
@@ -85,7 +83,7 @@ public class BaseResource {
         InstructionPackage instructionPackage;
         if (Strings.isNullOrEmpty(packageClass)) {
             if (Strings.isNullOrEmpty(packageFile)) {
-                log.warn("Package class and Package file were not defined for plugin: {}/{}", plugin.getName(), plugin.getPluginId());
+                log.warn("Package class and Package file were not defined for plugin: {}/{}", plugin.getName(), plugin.getId());
                 return null;
             }
             instructionPackage = GlobalUtils.newInstance(TemplateSupportInstructionPackage.class);
@@ -97,7 +95,16 @@ public class BaseResource {
         return instructionPackage;
     }
 
-    protected boolean isInstalled(final Plugin plugin) {
+    /**
+     * This function determines by the fact that all dependencies and repositories specified in a plugin's descriptor
+     * are present in the relevant POM files if the plugin was packaged with Essentials, or pulled-in from a marketplace.
+     *
+     * The return value of this function is only valid while the plugin is in its "discovered" installation state.
+     *
+     * @param plugin the plugin under consideration
+     * @return true if the plugin was packages with Essentials, false otherwise.
+     */
+    protected boolean isPackaged(final Plugin plugin) {
         final List<EssentialsDependency> dependencies = plugin.getDependencies();
         for (EssentialsDependency dependency : dependencies) {
             if (!DependencyUtils.hasDependency(dependency)) {
@@ -131,82 +138,6 @@ public class BaseResource {
         return projectRestful;
     }
 
-    protected List<PluginRestful> getPlugins(final ServletContext servletContext) {
-        final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
-        final String json = GlobalUtils.readStreamAsText(stream);
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-
-            @SuppressWarnings("unchecked")
-            final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
-
-            postProcessPlugins(restfulList, servletContext);
-
-            return restfulList.getItems();
-        } catch (IOException e) {
-            log.error("Error parsing plugins", e);
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Post-process the list of available plugins to provide additional, project-specific information to the front-end.
-     *
-     * @param plugins list of plugins.
-     */
-    protected void postProcessPlugins(final RestfulList<PluginRestful> plugins, final ServletContext servletContext) {
-        final PluginContext context = getContext(servletContext);
-
-        for (PluginRestful plugin : plugins.getItems()) {
-            populateInstallState(plugin, context);
-        }
-    }
-
-    protected void populateInstallState(final PluginRestful plugin, final PluginContext context) {
-        boolean boarding = false;
-        boolean onBoard = false;
-        boolean installing = false;
-        boolean installed = false;
-
-        try (PluginConfigService service = new FilePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null) {
-                boarding = document.getDateInstalled() != null;
-                installing = document.getDateAdded() != null;
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
-        }
-
-        try (PluginConfigService service = new ResourcePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null) {
-                onBoard = document.getDateInstalled() != null;
-                installed = document.getDateAdded() != null;
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
-        }
-
-        if (installed) {
-            plugin.setInstallState("installed");
-        } else if (installing) {
-            plugin.setInstallState("installing");
-        } else if (onBoard) {
-            plugin.setInstallState("onBoard");
-        } else if (boarding) {
-            plugin.setInstallState("boarding");
-        } else {
-            plugin.setInstallState("discovered");
-        }
-    }
-
-    public PluginContext getContext(ServletContext servletContext) {
-        final String className = ProjectSetupPlugin.class.getName();
-        return new DefaultPluginContext(new PluginRestful(className));
-    }
-
-
     protected void addRestartInformation(final EventBus eventBus) {
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
 
@@ -237,22 +168,6 @@ public class BaseResource {
     }
 
 
-    protected Plugin getPluginById(final String id, final ServletContext context) {
-        if (Strings.isNullOrEmpty(id)) {
-            return null;
-        }
-        final List<PluginRestful> plugins = getPlugins(context);
-        for (final Plugin next : plugins) {
-            final String pluginId = next.getPluginId();
-            if (Strings.isNullOrEmpty(pluginId)) {
-                continue;
-            }
-            if (pluginId.equals(id)) {
-                return next;
-            }
-        }
-        return null;
-    }
 
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {

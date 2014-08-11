@@ -18,25 +18,6 @@
     "use strict";
     angular.module('hippo.essentials')
 
-        //############################################
-        // MENU DATA
-        //############################################
-        .service('menuService', function () {
-            this.getMenu = function () {
-                return [
-                    {name: "Plugins", link: "#/plugins"},
-                    {name: "Tools", link: "#/tools"}
-                ];
-            };
-
-        })
-
-        //############################################
-        // PLUGINS CONTROLLER LOADER
-        //############################################
-        .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter) {
-
-        })
         .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
             // just sets a hide screen boolean flag to true
             $scope.addUrl = function () {
@@ -46,34 +27,34 @@
             $scope.removeUrl = function (url) {
                 var idx = $scope.projectSettings.pluginRepositories.indexOf(url);
                 if (idx > -1) {
-                     $scope.projectSettings.pluginRepositories.splice(idx, 1);
+                    $scope.projectSettings.pluginRepositories.splice(idx, 1);
                 }
             };
             $scope.getStarted = function () {
                 // mark setup as done...
                 $scope.projectSettings.setupDone = true;
                 $http.post($rootScope.REST.save_settings, $scope.projectSettings).success(function (data) {
-                    window.location = "/essentials";
+                    $location.path('/library'); // Start in the Library
                 });
 
-            }
+            };
             $scope.setup = function () {
                 $http.get($rootScope.REST.project_settings).success(function (data) {
                     $scope.projectSettings = data;
                     // set some defaults
                     $scope.projectSettings.templateLanguage = 'jsp';
                     $scope.projectSettings.useSamples = true;
+                    $scope.projectSettings.confirmParams = false;
                 });
-            }
+            };
             // initialize
             $scope.setup();
-
         })
+
         .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
             $scope.plugins = [];
-            $scope.pluginNeedsInstall = [];
             $scope.selectedPlugin = null;
             $scope.tabs = [
                 {name: "Installed Plugins", link: "/plugins"},
@@ -90,7 +71,12 @@
                 var myPath = $location.path();
                 return  myPath.indexOf(path) != -1;
             };
-
+            $scope.isInstalledFeature = function (plugin) {
+                return plugin.type === 'feature' && plugin.installState !== 'discovered';
+            };
+            $scope.isInstalledTool = function (plugin) {
+                return plugin.type === 'tool'; // TODO: handle install state.
+            };
 
             $scope.showPluginDetail = function (pluginId) {
                 $scope.selectedPlugin = extracted(pluginId);
@@ -106,7 +92,14 @@
                     });
                 }
             };
-
+            // Receive state updates from individual plugins
+            $rootScope.$on('update-plugin-install-state', function(event, data) {
+                angular.forEach($scope.plugins, function (plugin) {
+                    if (plugin.id === data.pluginId) {
+                        plugin.installState = data.state;
+                    }
+                });
+            });
 
             //fetch plugin list
             $scope.init = function () {
@@ -118,42 +111,18 @@
                         var items = data.items;
                         $rootScope.pluginsCache = items;
                         processItems(items);
-                        // fetch remote repositories:
-                        fetchRemote(items)
-                        function fetchRemote(items) {
-
-                            if(!items){
-                                items = [];
-                            }
-                            $http.get($rootScope.REST.plugins  + "remote").success(function (data) {
-                                items.concat(data.items);
-                                var all = items.concat(data.items);
-                                $rootScope.pluginsCache = all;
-                                processItems(items);
-                            });
-                        }
-
-
                     });
-
-
                 }
 
                 function processItems(items) {
                     $scope.plugins = items;
-                    $scope.pluginNeedsInstall = [];
-                    angular.forEach(items, function (obj) {
-                        if (obj.needsInstallation) {
-                            $scope.pluginNeedsInstall.push(obj);
-                        }
-                    });
                 }
             };
             $scope.init();
             function extracted(pluginId) {
                 var sel = null;
                 angular.forEach($scope.plugins, function (selected) {
-                    if (selected.pluginId == pluginId) {
+                    if (selected.id == pluginId) {
                         sel = selected;
                     }
                 });
@@ -163,56 +132,22 @@
 
         /*
          //############################################
-         // ON LOAD CONTROLLER
-         //############################################
-         */
-        .controller('homeCtrl', function ($scope, $http, $rootScope) {
-            $scope.plugins = [];
-            $scope.init = function () {
-                $http.get($rootScope.REST.plugins).success(function (data) {
-                    $scope.plugins = [];
-                    var items = data.items;
-                    angular.forEach(items, function (plugin) {
-                        if (plugin.dateInstalled) {
-                            $scope.plugins.push(plugin);
-                        }
-                    });
-                });
-
-            };
-            $scope.init();
-
-        })
-
-        /*
-         //############################################
          // MENU CONTROLLER
          //############################################
          */
-        .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', 'menuService', function ($scope, $location, $rootScope, menuService) {
-
-            $scope.$watch(function () {
-                return $rootScope.busyLoading;
-            }, function () {
-                $scope.menu = menuService.getMenu();
-            });
-
+        .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
             $scope.isPageSelected = function (path) {
                 var myPath = $location.path();
-                // stay in plugins for all /plugin paths
-                if (myPath == "/find-plugins" || myPath.indexOf("/plugins") != -1) {
-                    myPath = '/plugins';
+
+                // Map plugin-specific pages to the corresponding plugin-type page
+                if (myPath.slice(0, "/plugins".length) == "/plugins") {
+                    myPath = '/installed-features';
                 }
                 else if (myPath.slice(0, "/tools".length) == "/tools") {
                     myPath = '/tools';
                 }
+
                 return  '#' + myPath == path;
             };
-
-            $scope.onMenuClick = function (menuItem) {
-                //
-            };
-
         }]);
-
 })();

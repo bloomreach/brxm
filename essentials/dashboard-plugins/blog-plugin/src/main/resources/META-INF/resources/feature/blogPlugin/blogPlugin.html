@@ -1,0 +1,148 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default" ng-controller="blogPluginCtrl">
+    <div class="panel-heading">Blog plugin</div>
+
+    <div class="panel-body">
+
+        <div class="infobox infobox-warning" ng-show="showBoardingMessage">
+            <h3>Please Rebuild</h3>
+            <p>In order to be able to add this feature to your project, you first need to rebuild it.</p>
+        </div>
+        <div class="infobox infobox-info" ng-show="showRebuildMessage">
+            <h3>Please Rebuild</h3>
+            <p>Installation of
+                <em>{{plugin.name}}</em> is pending. Please rebuild your project to make the changes effective.</p>
+        </div>
+        <div class="infobox infobox-success" ng-show="showInstalledMessage">
+            <h3>Installed</h3>
+            <p>
+                <em>{{plugin.name}}</em> has been installed successfully. The corresponding feature is now available in your Hippo project.
+            </p>
+        </div>
+
+
+        <form novalidate name="blogForm" ng-show="showPlugin">
+            <div>
+                <essentials-template-settings has-sample-data="true" sample-data="sampleData" template-name="templateName"/>
+            </div>
+            <div>
+                <essentials-messages payload="payload"/>
+            </div>
+            <h4>Configuration</h4>
+            <div class="checkbox">
+                <label>
+                    Schedule Blog Importer
+                    <input type="checkbox" ng-model="setupImport"/>
+                </label>
+            </div>
+        </form>
+        <!--
+            //############################################
+            // IMPORTER SETUP
+            //############################################
+        -->
+        <form ng-show="setupImport" class="form-horizontal" novalidate name="importForm">
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="importConfig.active"> Active
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="importConfig.runInstantly"> Run immediately
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-info">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Blogs root directory</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" readonly required ng-model="importConfig.blogsBasePath">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Authors root directory</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" readonly required ng-model="importConfig.authorsBasePath">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Project namespace</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" readonly required ng-model="importConfig.projectNamespace">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Cron expression</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="0 0 6 ? * SUN" required ng-model="importConfig.cronExpression">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Cron description</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/"
+                           ng-model="importConfig.cronExpressionDescription">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Max description length</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" required placeholder="300"
+                           ng-model="importConfig.maxDescriptionLength">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Setup RSS Feeds</label>
+            </div>
+            <div class="form-group" ng-repeat="url in importConfig.urls">
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" required ng-model="url.value" placeholder="URL">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" required ng-model="url.author" placeholder="Author Name">
+                </div>
+                <div class="col-sm-2">
+                    <a ng-show="importConfig.urls.length > 1" ng-click="removeUrl(url)"><span class="glyphicon glyphicon-minus pull-right text-warning">Remove</span></a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-offset-10 col-sm-2 control-label">
+                    <a href="javascript:void(0);" ng-click="addUrl()"><span class="glyphicon glyphicon-plus pull-right text-primary"> Add</span></a>
+                </label>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <div class="input-group">
+              <span class="input-group-btn">
+                <button ng-show="setupImport" ng-disabled="!blogForm.$valid || (setupImport && !importForm.$valid)" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Add Blog support</button>
+              </span>
+        </div>
+    </div>
+</div>
+
+

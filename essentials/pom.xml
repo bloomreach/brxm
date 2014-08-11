@@ -28,13 +28,22 @@
   <description>Hippo Essentials</description>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <artifactId>hippo-essentials</artifactId>
-  <version>1.01.04-SNAPSHOT</version>
+  <version>1.01.05-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
     <notice.project.name>Hippo Essentials</notice.project.name>
+    <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
 
     <!--***START temporary override of versions*** -->
+
+    <!-- These must stay in line with the overrides in the Essentials archetype
+         in order to avoid duplicate JARs in the Essentials WAR.
+         See /home/tjeger/Projects/essentials/essentials/archetype/website/src/main/resources/archetype-resources/pom.xml
+     -->
+    <hippo.cms.version>2.26.03</hippo.cms.version>
+    <hippo.hst.version>2.28.03</hippo.hst.version>
+    <hippo.repository.version>2.26.03</hippo.repository.version>
 
     <!-- ***END temporary override of versions*** -->
 
@@ -46,6 +55,7 @@
     <freemarker.version>2.3.18</freemarker.version>
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
+    <jaxb-api.version>2.2.6</jaxb-api.version>
 
     <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
     <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
@@ -81,6 +91,7 @@
   <modules>
     <module>plugin-api</module>
     <module>dashboard-plugins</module>
+    <module>dashboard-dependencies</module>
     <module>plugin-dashboard</module>
   </modules>
 
@@ -162,6 +173,12 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -180,28 +197,6 @@
         </plugin>
         <!-- redefine again default Hippo LICENSE and NOTICE file handling configuration like as defined
              in root cms7-project pom but is 'nullified' again in parent cms7-release pom. -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <configuration>
-            <webResources>
-              <resource>
-                <directory>${project.build.directory}/classes</directory>
-                <includes>
-                  <include>META-INF/LICENSE</include>
-                  <include>META-INF/NOTICE</include>
-                  <include>META-INF/DEPENDENCIES</include>
-                </includes>
-                <filtering>false</filtering>
-              </resource>
-            </webResources>
-            <packagingExcludes>
-              WEB-INF/classes/META-INF/LICENSE,
-              WEB-INF/classes/META-INF/NOTICE,
-              WEB-INF/classes/META-INF/DEPENDENCIES
-            </packagingExcludes>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-remote-resources-plugin</artifactId>
@@ -282,6 +277,7 @@
                 <!-- exclude IntelliJ Atlassian plugin file -->
                 <exclude>**/atlassian-ide-plugin.xml</exclude>
                 <!-- essentials specific -->
+                <exclude>plugin-dashboard/*.txt</exclude>
                 <exclude>plugin-dashboard/src/main/webapp/components/**</exclude>
                 <exclude>plugin-dashboard/src/main/webapp/js/lib/**</exclude>
                 <exclude>plugin-dashboard/src/main/webapp/docs/rest-api/**</exclude>

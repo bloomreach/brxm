@@ -39,7 +39,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.rest.exc.RestException;
+import org.onehippo.cms7.essentials.dashboard.rest.exc.RestException;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

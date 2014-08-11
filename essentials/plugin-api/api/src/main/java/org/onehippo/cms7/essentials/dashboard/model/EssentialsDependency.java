@@ -45,14 +45,17 @@ public interface EssentialsDependency {
 
     String getScope();
 
+    void setScope(String scope);
+
     String getType();
 
     void setType(String type);
 
-    void setScope(String scope);
+    String getTargetPom();
 
+    void setTargetPom(String targetPom);
 
-    DependencyType getDependencyType();
+    TargetPom getDependencyTargetPom();
 
 
     Dependency createMavenDependency();

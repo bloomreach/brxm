@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -41,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -59,10 +59,8 @@ public class SelectionResource extends BaseResource {
 
     @POST
     @Path("/addfield")
-    public MessageRestful addField(final PostPayloadRestful payloadRestful,
-                                   @Context ServletContext servletContext,
-                                   @Context HttpServletResponse response) {
-        final Session session = getContext(servletContext).createSession();
+    public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+        final Session session = PluginContextFactory.getContext().createSession();
 
         try {
             return addField(session, payloadRestful.getValues(), response);
@@ -76,10 +74,9 @@ public class SelectionResource extends BaseResource {
 
     @GET
     @Path("/fieldsfor/{docType}/")
-    public List<SelectionFieldRestful> getSelectionFields(@Context ServletContext servletContext,
-                                                          @PathParam("docType") String docType) {
+    public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
-        final Session session = getContext(servletContext).createSession();
+        final Session session = PluginContextFactory.getContext().createSession();
 
         try {
             addSelectionFields(fields, docType, session);

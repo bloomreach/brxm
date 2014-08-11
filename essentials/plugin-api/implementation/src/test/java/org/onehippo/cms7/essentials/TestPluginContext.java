@@ -22,7 +22,9 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.HippoRepository;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -43,6 +45,8 @@ public class TestPluginContext extends DefaultPluginContext {
 
     private final MemoryRepository repository;
 
+    private HippoRepository hippoRepository;
+    private boolean useHippoSession;
     public TestPluginContext(final MemoryRepository repository, final Plugin plugin) {
         super(plugin);
         this.repository = repository;
@@ -98,9 +102,28 @@ public class TestPluginContext extends DefaultPluginContext {
         return projectNamespacePrefix;
     }
 
+    public HippoRepository getHippoRepository() {
+        return hippoRepository;
+    }
+
+    public void setHippoRepository(final HippoRepository hippoRepository) {
+        this.hippoRepository = hippoRepository;
+    }
+
+    public boolean isUseHippoSession() {
+        return useHippoSession;
+    }
+
+    public void setUseHippoSession(final boolean useHippoSession) {
+        this.useHippoSession = useHippoSession;
+    }
+
     @Override
     public Session createSession() {
         try {
+            if(useHippoSession){
+                return hippoRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+            }
             return repository.getSession();
         } catch (RepositoryException e) {
             log.error("", e);

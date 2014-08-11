@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -16,99 +16,49 @@
   -->
 
 <html>
-<head>
-    <title>Hippo Essentials test</title>
-    <link rel="stylesheet" href="components/hippo-essentials/plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css"/>
-    <link rel="stylesheet" href="components/hippo-essentials/plugin-dashboard/src/main/webapp/css/hippo-essentials.css"/>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/main.css">
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css">
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/plugin.css">
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/essentials-less/essentials-menu.css">
+    <link rel="stylesheet" href="essentials-header.css">
+    <script src="../plugin-dashboard/src/main/webapp/components/jquery/jquery.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/angular/angular.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-animate.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/angular/angular-sanitize.min.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/chosen/chosen.jquery.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/underscore/underscore.js"></script>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/lib/jquery.ui.min.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls.min.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js"></script>
 
-    <script src="components/angular/angular.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/chosen.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/angular-ui-tree/dist/angular-ui-tree.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/hippo-plugins/dist/js/main.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/components/hippo-theme/dist/js/main.js"></script>
 
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/Essentials.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/app.js"></script>
+    <script src="feedback.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/routes.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/directives.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/controllers.js"></script>
 
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/lib/chosen.jquery.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/lib/chosen.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/lib/ui-sortable.js"></script>
+    <style media="all">
 
-    <link rel="stylesheet" type="text/css" href="components/hippo-essentials/plugin-dashboard/src/main/webapp/css/chosen.css"/>
-    <link rel="stylesheet" type="text/css" href="components/hippo-essentials/plugin-dashboard/src/main/webapp/css/chosen-spinner.css"/>
-
-
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-0.10.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/Essentials.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/app.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/routes.js"></script>
-    <script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/controllers.js"></script>
-
-
+    </style>
 
 </head>
-<body id="container">
+<body ng-app="hippo.essentials">
 
-<!-- LOADER ON HTTP REQUESTS -->
-<div class="busy-loader" ng-show="busyLoading">
-    <img src="components/hippo-essentials/plugin-dashboard/src/main/webapp/images/loader.gif"/>
-</div>
-<!-- ERROR MESSAGES -->
-<div class="alert-danger messages" ng-show="globalError.length > 0">
-    <strong>An error occurred:</strong>
-    <div ng-repeat="message in globalError">
-        {{message}}
-    </div>
-</div>
-<div class="alert-success messages" ng-show="feedbackMessages.length > 0">
-    <div ng-repeat="message in feedbackMessages">
-        <strong>{{message}}</strong>
-    </div>
-</div>
-<%--
-CONTENT
---%>
 
-<div class="container">
-    <div class="row">
-        <h1 class="page-header">
-            <div class="pull-left hippo-header-logo">
-                <a href="/"><img src="components/hippo-essentials/plugin-dashboard/src/main/webapp/images/hippo-logo.png"></a>
-            </div>
-            <div class="text-center">Hippo CMS
-                <small>Essentials</small>
-            </div>
-        </h1>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-            <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
-                <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-                    <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
-                </li>
-                <li>
-                    <a target="API" href="http://localhost:8080/essentials/docs/rest-api/index.html">REST API</a>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="col-sm-9" ng-controller="homeCtrl">
-            <div ui-view="submenu" autoscroll="false"></div>
-            <div ui-view="plugintabs" autoscroll="false"></div>
-            <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
-            <div ui-view autoscroll="false"></div>
-        </div>
-    </div>
-    <div class="row footer">
-        <p class="text-center">
-            (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved
-        </p>
-    </div>
-
-</div>
-
-<!-- Include the loader.js script -->
-<script src="components/hippo-essentials/plugin-dashboard/src/main/webapp/js/loader.js" data-modules="http://localhost:8080/essentials/rest/plugins/modules"></script>
+<footer class="text-center footer">
+    <p>&copy 1999-2014 Hippo B.V.</p>
+</footer>
 
 </body>
 </html>

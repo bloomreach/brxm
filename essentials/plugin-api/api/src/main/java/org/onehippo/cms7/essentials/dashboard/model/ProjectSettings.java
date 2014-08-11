@@ -55,6 +55,10 @@ public interface ProjectSettings extends Document {
 
     void setUseSamples(boolean useSamples);
 
+    boolean isConfirmParams();
+
+    void setConfirmParams(boolean confirmParams);
+
     Set<String> getPluginRepositories();
 
     void setPluginRepositories(Set<String> pluginRepositories);

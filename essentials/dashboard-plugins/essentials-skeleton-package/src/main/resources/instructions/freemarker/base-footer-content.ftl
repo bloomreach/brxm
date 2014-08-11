@@ -25,6 +25,6 @@
 <div class="row">
     <hr/>
     <div class="text-center">
-        <sub>(&copy;) 2014, All Rights Reserved</sub>
+        <sub>(&copy;)2014</sub>
     </div>
 </div>

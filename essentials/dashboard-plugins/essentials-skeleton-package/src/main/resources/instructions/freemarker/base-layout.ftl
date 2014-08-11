@@ -24,6 +24,10 @@
 <head>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="<@hst.link  path="/css/bootstrap.css"/>" type="text/css"/>
+    <@hst.defineObjects/>
+    <#if hstRequest.requestContext.cmsRequest>
+      <link rel="stylesheet" href="<@hst.link  path="/css/cms-request.css"/>" type="text/css"/>
+    </#if>
 <@hst.headContributions categoryIncludes="componentsCss" xhtml=true/>
 <@hst.headContributions categoryIncludes="globalJavascript" xhtml=true/>
 </head>

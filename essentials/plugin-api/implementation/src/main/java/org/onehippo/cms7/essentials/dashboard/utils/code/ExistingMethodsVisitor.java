@@ -46,6 +46,9 @@ public class ExistingMethodsVisitor extends ASTVisitor {
     private List<String> generatedMethodNames = new ArrayList<>();
     private List<MethodDeclaration> getterMethods = new ArrayList<>();
     private List<EssentialsGeneratedMethod> generatedMethods = new ArrayList<>();
+    private List<MethodDeclaration> generatedMethodDeclarations = new ArrayList<>();
+
+
 
     @Override
     public boolean visit(MethodDeclaration node) {
@@ -81,14 +84,20 @@ public class ExistingMethodsVisitor extends ASTVisitor {
                     }
                     final EssentialsGeneratedMethod genMethod = new EssentialsGeneratedMethod(node, identifier, internalName);
                     generatedMethods.add(genMethod);
+                    generatedMethodDeclarations.add(node);
                     internalNames.add(internalName);
                 }
             }
         }
 
+
         return super.visit(node);
     }
 
+
+    public List<MethodDeclaration> getGeneratedMethodDeclarations() {
+        return generatedMethodDeclarations;
+    }
     public List<String> getGeneratedMethodNames() {
         return generatedMethodNames;
     }

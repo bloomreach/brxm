@@ -80,7 +80,7 @@ public class Blogpost extends HippoDocument implements Authors {
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:categories")
-    public List<String> getCategories() {
+    public String[] getCategories() {
         return getProperty(CATEGORIES);
     }
 

@@ -5,7 +5,6 @@
     <#include "/WEB-INF/freemarker/include/imports.ftl">
 {{/fileBased}}
 
-
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -22,5 +21,16 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="document" type="{{beansPackage}}.BaseDocument" -->
-<h1>TITLE</h1>
-
+<@hst.defineObjects/>
+<#if hstRequest.requestContext.cmsRequest>
+  <h5>[Content component]</h5>
+  <sub>
+    This is the rendering template for the generic Content component,
+    which makes the document identified by the requested URL available as
+    'document'.
+    As the content that you wish to display here is not generic, it is up
+    to you to adjust this rendering template to correctly interact with the
+    kind of content you want to display. Multiple instances of the generic
+    content component may require different rendering templates.
+  </sub>
+</#if>

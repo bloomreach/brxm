@@ -57,8 +57,6 @@
                             if (selected) {
                                 $scope.selected = selected;
                                 $scope.selectedPath = selected.id;
-                            } else {
-                                console.log("Nothing selected");
                             }
                         });
                     };
@@ -70,7 +68,6 @@
                     var ModalInstanceCtrl = function ($scope, $modalInstance, endPoint, title, selectedPath) {
                         $scope.title = title;
                         $http.get(endPoint).success(function (data) {
-                            console.log("selectedPath" + selectedPath);
                             $scope.treeItems = data.items;
                         });
                         $scope.ok = function () {
@@ -108,7 +105,6 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
-                    /* settings: '=',*/
                     sampleData: '=',
                     templateName: '=',
                     hasNoTemplates: '@',
@@ -116,15 +112,11 @@
                 },
                 templateUrl: 'directives/essentials-template-settings.html',
                 controller: function ($scope, $rootScope, $http) {
-                    $scope.toggleForm = function () {
-                        $scope.showForm = !$scope.showForm;
-                    };
+                    // initialize fields to system defaults.
                     $http.get($rootScope.REST.project_settings).success(function (data) {
-                        $scope.projectSettings = data;
-                        $scope.templateName = $scope.projectSettings.templateLanguage;
-                        $scope.sampleData = $scope.projectSettings.useSamples;
+                        $scope.templateName = data.templateLanguage;
+                        $scope.sampleData   = data.useSamples;
                     });
-
                 }
             }
         })
@@ -137,9 +129,9 @@
                     helpReference: '=',
                     showHideVariable: '='
                 },
-                templateUrl: 'directives/essentials-help.html' ,
+                templateUrl: 'directives/essentials-help.html',
                 controller: function ($scope) {
-                    $scope.text = $scope.helpText? $scope.helpText: $scope.helpReference;
+                    $scope.text = $scope.helpText ? $scope.helpText : $scope.helpReference;
                 }
             }
         })
@@ -174,30 +166,26 @@
                     label: '@',
                     pluginId: '@',
                     hasNoTemplates: '@',
-                    hasSampleData: '@',
-                    hideInstalledInfo: '@',
-                    requireOnBoardState: '@' // use if CMS dependency bootstraps namespace required during installation.
+                    hasSampleData: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $sce, $log, $rootScope, $http) {
-                    $scope.showForm = false;
+                controller: function ($scope, $sce, $log, $location, $rootScope, $http) {
 
-                    $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
+                    // create fields. The values don't matter, the template-settings directive will set them for us.
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
-                    $scope.message = {};
 
                     $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     $scope.$watchCollection("[sampleData, templateName]", function () {
                         $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     });
-                    $scope.run = function () {
+                    $scope.apply = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                            $scope.plugin.installState = 'installing';
                             $rootScope.$broadcast('update-plugin-install-state', {
                                 'pluginId': $scope.pluginId,
                                 'state': $scope.plugin.installState
                             });
+                            $location.path('/installed-features');
                         });
                     };
                     $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
@@ -218,10 +206,155 @@
                 templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
                     $scope.label = 'CMS Document Type Editor';
-                    $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
+                    $scope.defaultNameSpace = $rootScope.projectSettings.namespace;
+                }
+            }
+        }).directive("essentialsNotifier", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    messages: '='
+                },
+                templateUrl: 'directives/essentials-notifier.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
+                    var promisesQueue = [];
+                    var lastLength = 0;
+                    var ERROR_SHOW_TIME = 3000;
+                    $scope.messages = [];
+
+                    $scope.activeMessages = [];
+                    $scope.archiveMessages = [$scope.messages[0]];
+                    $scope.archiveOpen = false;
+
+                    $scope.$watch('messages', function () {
+                        // don't execute if message count is not changed, e.g. when changing visibility only
+                        if (lastLength == $scope.messages.length) {
+                            return;
+                        }
+                        var date = new Date();
+                        var now = date.toLocaleTimeString();
+                        // cancel all hide promises
+                        angular.forEach(promisesQueue, function (promise) {
+                            $timeout.cancel(promise);
+                        });
+                        promisesQueue = [];
+                        // keep messages which are not older than time showed + ERROR_SHOW_TIME:
+                        /*  var elapsedTime = new Date();
+                         elapsedTime.setSeconds(elapsedTime.getSeconds() + ERROR_SHOW_TIME);
+                         var keepValuesCounter =0;
+                         angular.forEach($scope.activeMessages, function (value) {
+                         if(value.fullDate && value.fullDate.getDate() < elapsedTime){
+                         keepValuesCounter++;
+                         }
+                         });*/
+                        var currentLength = $scope.messages.length;
+                        var startIdx = lastLength;
+                        lastLength = currentLength;
+                        $scope.activeMessages = [];
+                        $scope.activeMessages = $scope.messages.slice(startIdx, currentLength);
+                        $scope.archiveMessages = $scope.messages.slice(0, startIdx);
+                        angular.forEach($scope.messages, function (value) {
+                            value.visible = true;
+                            if (!value.date) {
+                                value.date = now;
+                                value.fullDate = date;
+                            }
+                        });
+                        if ($scope.archiveMessages.length == 0) {
+                            $scope.archiveMessages.push({type: "info", message: 'No archived messages', visible: true, date: now, fullDate: date})
+                        }
+                        // newer messages first:
+                        $scope.archiveMessages.reverse();
+                        if ($scope.activeMessages.length > 1) {
+                            // animate close:
+                            var counter = 1;
+                            var copy = $scope.activeMessages.slice(0);
+                            angular.forEach(copy, function (value) {
+                                if (counter > 1) {
+                                    var promise = $timeout(function () {
+                                        value.visible = false;
+                                        $scope.archiveMessages.unshift(value);
+                                    }, ERROR_SHOW_TIME * counter);
+                                    promisesQueue.push(promise);
+                                }
+                                counter = counter + 0.5;
+                            });
+                        }
+                    }, true);
+
+                    $scope.toggleArchive = function () {
+                        $scope.archiveOpen = !$scope.archiveOpen;
+                    };
+                }
+            }
+        }).directive("essentialsPlugin", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    plugin: '='
+                },
+                templateUrl: 'directives/essentials-plugin.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    $scope.isDiscovered = function() {
+                        return $scope.plugin.type === 'feature' && $scope.plugin.installState === 'discovered';
+                    };
+                    $scope.isBoarding = function() {
+                        return $scope.plugin.installState === 'boarding';
+                    };
+                    $scope.isOnBoard = function() {
+                        return $scope.plugin.type === 'tool'
+                               || ($scope.plugin.installState !== 'discovered' && $scope.plugin.installState !== 'boarding');
+                    };
+                    $scope.installPlugin = function () {
+                        $rootScope.pluginsCache = null;
+                        var pluginId = $scope.plugin.id;
+                        $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
+                            // reload because of install state change:
+                            $http.get($rootScope.REST.plugins +'plugins/' + pluginId).success(function (data) {
+                                $scope.plugin = data;
+                            });
+                        });
+                    };
+                }
+            }
+        }).directive("essentialsInstalledFeature", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    plugin: '='
+                },
+                templateUrl: 'directives/essentials-installed-feature.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    $scope.needsRebuild = function() {
+                        var state = $scope.plugin.installState;
+                        return state === 'boarding' || state === 'installing';
+                    };
+                    $scope.needsConfiguration = function() {
+                        return $scope.plugin.installState === 'onBoard';
+                    };
+                    $scope.hasConfiguration = function() {
+                        return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
+                    };
+                    $scope.hasNoConfiguration = function() {
+                        return $scope.plugin.installState === 'installed' && !$scope.plugin.hasConfiguration;
+                    };
+                }
+            }
+        }).directive("essentialsInstalledTool", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    plugin: '='
+                },
+                templateUrl: 'directives/essentials-installed-tool.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    // empty
                 }
             }
         })
-
 
 })();

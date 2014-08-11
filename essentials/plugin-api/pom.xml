@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>1.01.04-SNAPSHOT</version>
+    <version>1.01.05-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials plugins sdk</name>
@@ -34,22 +34,16 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
     <javax.inject.version>1</javax.inject.version>
-    <spring.version>3.2.6.RELEASE</spring.version>
     <junit.version>4.11</junit.version>
     <maven-model.version>3.2.1</maven-model.version>
     <commons-io.version>2.3</commons-io.version>
     <tika-parsers.version>0.9</tika-parsers.version>
     <core.jdt.version>3.3.0-v_771</core.jdt.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <guava.version>12.0.1</guava.version>
     <jaxb-impl.version>2.2.6</jaxb-impl.version>
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
     <geronimo-jta_1.1_spec.version>1.1.1</geronimo-jta_1.1_spec.version>
     <mustache.version>0.8.13</mustache.version>
-    <spring-test.version>3.2.6.RELEASE</spring-test.version>
-    <jsr311-api.version>1.1.1</jsr311-api.version>
-    <cxf-bundle.version>2.7.8</cxf-bundle.version>
-    <jackson.version>1.9.5</jackson.version>
     <swagger-jaxrs_2.10.version>1.3.0</swagger-jaxrs_2.10.version>
   </properties>
 
@@ -115,7 +109,7 @@
       <dependency>
         <groupId>javax.ws.rs</groupId>
         <artifactId>jsr311-api</artifactId>
-        <version>${jsr311-api.version}</version>
+        <version>${jsr311.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.spullara.mustache.java</groupId>
@@ -178,15 +172,9 @@
         <version>${junit.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${spring-test.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-bundle</artifactId>
-        <version>${cxf-bundle.version}</version>
+        <version>${cxf.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

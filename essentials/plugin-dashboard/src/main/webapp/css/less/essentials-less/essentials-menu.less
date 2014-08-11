@@ -1,0 +1,59 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@side-menu-light-bg: #f4f4f4;
+@side-menu-light-hover-bg: #f9f9f9;
+@side-menu-light-font: #555;
+@side-menu-light-border: #dbdbdb;
+.side-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  > li {
+    margin: 0;
+    padding: 0;
+    > a {
+      padding: 12px 5px 12px 15px;
+      display: block;
+      > .glyphicon {
+        width: 20px;
+      }
+      color: @side-menu-light-font;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid @side-menu-light-border;
+    &:first-of-type {
+      border-top: 1px solid @side-menu-light-border;
+      > a {
+        border-top: 1px solid #fff;
+      }
+    }
+    > a {
+      margin-right: 1px;
+    }
+    > a:hover, &.active > a {
+      color: #222;
+      background: @side-menu-light-hover-bg;
+    }
+
+
+
+}
+}

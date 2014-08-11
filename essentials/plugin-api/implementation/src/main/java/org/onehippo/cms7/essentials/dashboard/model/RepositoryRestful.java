@@ -37,7 +37,7 @@ public class RepositoryRestful implements Repository, Restful {
     private String layout;
     private String url;
     private Snapshot snapshots;
-    private String type;
+    private String targetPom;
 
     @Override
     public String getId() {
@@ -95,20 +95,20 @@ public class RepositoryRestful implements Repository, Restful {
     }
 
     @Override
-    public String getType() {
-        return type;
+    public String getTargetPom() {
+        return targetPom;
     }
 
     @Override
-    public void setType(final String type) {
-        this.type = type;
+    public void setTargetPom(final String targetPom) {
+        this.targetPom = targetPom;
     }
 
     @XmlTransient
     @JsonIgnore
     @Override
-    public DependencyType getDependencyType() {
-        return DependencyType.typeForName(type);
+    public TargetPom getDependencyTargetPom() {
+        return TargetPom.pomForName(targetPom);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class RepositoryRestful implements Repository, Restful {
         sb.append(", layout='").append(layout).append('\'');
         sb.append(", url='").append(url).append('\'');
         sb.append(", snapshots=").append(snapshots);
-        sb.append(", type='").append(type).append('\'');
+        sb.append(", targetPom='").append(targetPom).append('\'');
         sb.append('}');
         return sb.toString();
     }

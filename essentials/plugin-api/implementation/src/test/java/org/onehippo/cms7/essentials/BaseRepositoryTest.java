@@ -53,8 +53,12 @@ public abstract class BaseRepositoryTest extends BaseTest {
         log.info("======================================");
         log.info("setUp()");
         log.info("======================================");
-        super.setUp();
+        projectSetup();
         repository = new MemoryRepository();
+    }
+
+    public void projectSetup() throws Exception {
+        super.setUp();
     }
 
     @Override

@@ -39,6 +39,13 @@ import javax.ws.rs.core.MediaType;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstruction;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -75,7 +82,7 @@ public class GalleryPluginResource extends BaseResource {
     @POST
     @Path("/update")
     public MessageRestful update(final ImageModel payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String myType = payload.getType();
@@ -84,6 +91,8 @@ public class GalleryPluginResource extends BaseResource {
             processTranslations(payload, myType, namespaceNode, false);
             // add processor stuff...
             updateProcessorNode(payload, session, myType);
+            // update sets
+            scheduleImageScript(context);
             session.save();
             return new MessageRestful("Successfully updated image variant: " + myType);
 
@@ -102,7 +111,7 @@ public class GalleryPluginResource extends BaseResource {
     @POST
     @Path("/remove")
     public MessageRestful remove(final ImageModel payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String myType = payload.getType();
@@ -153,15 +162,16 @@ public class GalleryPluginResource extends BaseResource {
         final String imageSetName = values.get("imageSetName");
         final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
         final String imageSetPrefix = values.get("imageSetPrefix");
-        final MessageRestful imageSet = createImageSet(getContext(servletContext), imageSetPrefix, imageSetName, response);
-        if (updateExisting && imageSet.isSuccessMessage()) {
-            final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
+        final MessageRestful imageSet = createImageSet(context, imageSetPrefix, imageSetName, response);
+        if (imageSet.isSuccessMessage()) {
             final Session session = context.createSession();
             try {
                 final String rootDestination = "/hippo:configuration/hippo:queries/hippo:templates";
                 final String newImageNamespace = imageSetPrefix + ':' + imageSetName;
                 // image
-                final String imageName = "new-" + imageSetName + "-image";
+                final String queryMiddleName = imageSetPrefix + '-' + imageSetName;
+                final String imageName = "new-" + queryMiddleName + "-image";
                 final Node imageNode = JcrUtils.copy(session, rootDestination + "/new-image", rootDestination + '/' + imageName);
                 final String oldImageQuery = imageNode.getProperty("jcr:statement").getString();
                 final String newImageQuery = oldImageQuery.replaceAll("new\\-image", imageName);
@@ -169,22 +179,38 @@ public class GalleryPluginResource extends BaseResource {
 
                 //..    imageNode.setProperty("new-image/hippostd:templates/image/image", newImageNamespace);
                 // folder
-                final String folderName = "new-" + imageSetName + "-folder";
-                final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/'+folderName);
+                final String folderName = "new-" + queryMiddleName + "-folder";
+                final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/' + folderName);
                 final String oldFolderQuery = folderNode.getProperty("jcr:statement").getString();
                 final String newFolderQuery = oldFolderQuery.replaceAll("new\\-image\\-folder", folderName);
                 folderNode.setProperty("jcr:statement", newFolderQuery);
                 final Node imageGalleryNode = folderNode.getNode("hippostd:templates").getNode("image gallery");
                 imageGalleryNode.setProperty("hippostd:foldertype", new String[]{folderName});
                 imageGalleryNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
-                // update existing folders:
-                final Query query = session.getWorkspace().getQueryManager().createQuery("//content//element(*, hippogallery:stdImageGallery)", "xpath");
-                final NodeIterator nodes = query.execute().getNodes();
-                while(nodes.hasNext()){
-                    final Node imageFolderNode = nodes.nextNode();
-                    imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
-                    imageFolderNode.setProperty("hippostd:gallerytype", new String[]{imageName});
+                if (updateExisting) {
+                    // update existing folders:
+                    final Query query = session.getWorkspace().getQueryManager().createQuery("//content//element(*, hippogallery:stdImageGallery)", "xpath");
+                    final NodeIterator nodes = query.execute().getNodes();
+                    while (nodes.hasNext()) {
+                        final Node imageFolderNode = nodes.nextNode();
+                        imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
+                        imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
+                    }
+                    // change primary types:
+                    final Query handleQuery = session.getWorkspace().getQueryManager().createQuery("//content/gallery//element(*, hippo:handle)", "xpath");
+                    final NodeIterator handleNodes = handleQuery.execute().getNodes();
+                    while (handleNodes.hasNext()) {
+                        final Node handle = handleNodes.nextNode();
+                        final String name = handle.getName();
+                        if (handle.hasNode(name)) {
+                            final Node myImageNode = handle.getNode(name);
+                            myImageNode.setPrimaryType(newImageNamespace);
+                        } else {
+                            log.warn("handle {}", handle.getPath());
+                        }
+                    }
                 }
+
                 session.save();
             } catch (RepositoryException e) {
                 log.error("Error creating query nodes", e);
@@ -222,7 +248,7 @@ public class GalleryPluginResource extends BaseResource {
 
 
         final ImageModel imageModel = extractBestModel(ourModel);
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final boolean created = GalleryUtils.createImagesetVariant(context, ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
         if (created) {
             // add processor node:
@@ -236,11 +262,27 @@ public class GalleryPluginResource extends BaseResource {
 
                 GlobalUtils.cleanupSession(session);
             }
+            scheduleImageScript(context);
+
 
             return new MessageRestful("Image variant:  " + imageVariantName + " successfully created");
         }
         return createErrorMessage("Failed to create image variant: " + imageVariantName, response);
 
+    }
+
+    public void scheduleImageScript(final PluginContext context) {
+        // schedule updater script  so new variants are created:
+        final XmlInstruction instruction = new XmlInstruction();
+        instruction.setAction(PluginInstruction.COPY);
+        instruction.setSource("image_set_updater.xml");
+        instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
+        final InstructionExecutor executor = new PluginInstructionExecutor();
+        final InstructionSet instructionSet = new PluginInstructionSet();
+        instructionSet.addInstruction(instruction);
+        getInjector().autowireBean(instruction);
+        getInjector().autowireBean(executor);
+        executor.execute(instructionSet, context);
     }
 
     public ImageModel extractBestModel(final GalleryModel ourModel) {
@@ -269,9 +311,9 @@ public class GalleryPluginResource extends BaseResource {
     public List<GalleryModel> fetchExisting(@Context ServletContext servletContext) {
 
         final List<GalleryModel> models = new ArrayList<>();
+        final PluginContext context = PluginContextFactory.getContext();
         try {
-            final List<String> existingImageSets = CndUtils.getNodeTypesOfType(getContext(servletContext), HippoGalleryNodeType.IMAGE_SET, true);
-            final PluginContext context = getContext(servletContext);
+            final List<String> existingImageSets = CndUtils.getNodeTypesOfType(context, HippoGalleryNodeType.IMAGE_SET, true);
 
             for (String existingImageSet : existingImageSets) {
                 final String[] ns = NS_PATTERN.split(existingImageSet);
@@ -321,7 +363,7 @@ public class GalleryPluginResource extends BaseResource {
                     && propName != null
                     && propName.equals(myType)) {
                 // remove
-                aNode.getProperty(HIPPO_PROPERTY).remove();
+                aNode.remove();
             }
         }
         if (justRemove) {
@@ -422,7 +464,7 @@ public class GalleryPluginResource extends BaseResource {
         final String nodeType = prefix + ':' + name;
         try {
 
-            final String uri = GalleryUtils.getGalleryURI(prefix);
+            final String uri = GalleryUtils.getGalleryURI(context, prefix);
             // Check whether node type already exists
             if (CndUtils.nodeTypeExists(context, nodeType)) {
                 if (CndUtils.isNodeOfSuperType(context, nodeType, HippoGalleryNodeType.IMAGE_SET)) {
@@ -451,7 +493,7 @@ public class GalleryPluginResource extends BaseResource {
             CndUtils.registerDocumentType(context, prefix, name, false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
             // copy node:
             GlobalUtils.refreshSession(session, false);
-            final Node imageNode = GalleryUtils.createImagesetNamespace(session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
+            final Node imageNode = GalleryUtils.createImagesetNamespace(context, session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
             session.save();
             log.debug("Created node: {}", imageNode.getPath());
 
