@@ -26,6 +26,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -86,6 +88,8 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
+
 public class InitializationProcessorImpl implements InitializationProcessor {
 
 
@@ -94,7 +98,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
 
     private static final String[] INIT_ITEM_PROPERTIES = new String[] {
-            HippoNodeType.HIPPO_SEQUENCE,
+            HIPPO_SEQUENCE,
             HippoNodeType.HIPPO_NAMESPACE,
             HippoNodeType.HIPPO_NODETYPESRESOURCE,
             HippoNodeType.HIPPO_NODETYPES,
@@ -112,7 +116,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             "SELECT * FROM hipposys:initializeitem " +
                     "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND " +
                     HippoNodeType.HIPPO_STATUS + " = 'pending' " +
-                    "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
+                    "ORDER BY " + HIPPO_SEQUENCE + " ASC";
 
     private final static String GET_OLD_INITIALIZE_ITEMS = "SELECT * FROM hipposys:initializeitem " +
             "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
@@ -140,7 +144,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     "SELECT * FROM hipposys:initializeitem " +
                             "WHERE jcr:path = '/initialize/%' AND " +
                             HippoNodeType.HIPPO_STATUS + " = 'pending' " +
-                            "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC", Query.SQL);
+                            "ORDER BY " + HIPPO_SEQUENCE + " ASC", Query.SQL);
             final NodeIterator nodes = getInitializeItems.execute().getNodes();
             while (nodes.hasNext()) {
                 initializeItems.add(nodes.nextNode());
@@ -167,12 +171,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     @Override
     public void processInitializeItems(Session session) {
         try {
-            final List<Node> initializeItems = new ArrayList<Node>();
+            final List<Node> initializeItems = new ArrayList<>();
             final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
             final NodeIterator nodes = getInitializeItems.execute().getNodes();
             while(nodes.hasNext()) {
                 initializeItems.add(nodes.nextNode());
             }
+            Collections.sort(initializeItems, new InitializeItemComparator());
             processInitializeItems(session, initializeItems, false);
         } catch (RepositoryException ex) {
             getLogger().error(ex.getMessage(), ex);
@@ -253,7 +258,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         session.refresh(false);
                     } else {
                         initializeItem.setProperty(HippoNodeType.HIPPO_STATUS, "done");
-                        initializeItem.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
                         session.save();
                     }
 
@@ -734,6 +738,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
         }
 
+        initItemNode.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
+
         return initializeItems;
     }
 
@@ -1144,6 +1150,25 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         private ContentFileInfo(final String contextNodeName, final String deltaDirective) {
             this.contextNodeName = contextNodeName;
             this.deltaDirective = deltaDirective;
+        }
+    }
+
+    private static class InitializeItemComparator implements Comparator<Node> {
+
+        @Override
+        public int compare(final Node n1, final Node n2) {
+            try {
+                final Double s1 = JcrUtils.getDoubleProperty(n1, HIPPO_SEQUENCE, -1.0);
+                final Double s2 = JcrUtils.getDoubleProperty(n2, HIPPO_SEQUENCE, -1.0);
+                final int result = s1.compareTo(s2);
+                if (result != 0) {
+                    return result;
+                }
+                return n1.getName().compareTo(n2.getName());
+            } catch (RepositoryException e) {
+                log.error("Error comparing initialize item nodes", e);
+            }
+            return 0;
         }
     }
 }
