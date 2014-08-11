@@ -44,11 +44,11 @@ public interface Repository {
 
     void setSnapshots(Snapshot snapshots);
 
-    String getType();
+    String getTargetPom();
 
-    void setType(String type);
+    void setTargetPom(String type);
 
-    DependencyType getDependencyType();
+    TargetPom getDependencyTargetPom();
 
     org.apache.maven.model.Repository createMavenRepository();
 }

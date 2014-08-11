@@ -25,7 +25,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class RobotsInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        final String webXmlPath = ProjectUtils.getWebXmlPath(DependencyType.SITE);
+        final String webXmlPath = ProjectUtils.getWebXmlPath(TargetPom.SITE);
         final WebXml webXml = ProjectUtils.readWebXmlFile(webXmlPath);
         try {
             final String hstBeanContextValue = webXml.getHstBeanContextValue();

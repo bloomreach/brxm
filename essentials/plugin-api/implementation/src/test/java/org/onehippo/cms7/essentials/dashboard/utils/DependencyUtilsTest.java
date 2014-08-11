@@ -22,7 +22,7 @@ import org.apache.maven.model.Dependency;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
@@ -42,10 +42,10 @@ public class DependencyUtilsTest extends BaseResourceTest {
     @Test
     public void testRepositoryAdd() throws Exception {
         final Repository repository = new RepositoryRestful();
-        repository.setType(DependencyType.PROJECT.getName());
+        repository.setTargetPom(TargetPom.PROJECT.getName());
         repository.setUrl("http://maven.onehippo.com/maven2/");
         repository.setId("hippo");
-        assertEquals(DependencyType.PROJECT, repository.getDependencyType());
+        assertEquals(TargetPom.PROJECT, repository.getDependencyTargetPom());
         boolean hasRepo = DependencyUtils.hasRepository(repository);
         assertTrue("Expected hippo maven repository", hasRepo);
         // add new one:
@@ -64,11 +64,11 @@ public class DependencyUtilsTest extends BaseResourceTest {
     public void testHasDependency() throws Exception {
 
         final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setType("cms");
+        dependency.setTargetPom("cms");
         dependency.setArtifactId("hippo-plugins-shared");
         dependency.setVersion("1.01.00-SNAPSHOT");
         dependency.setGroupId("org.onehippo.cms7.essentials");
-        assertEquals(DependencyType.CMS, dependency.getDependencyType());
+        assertEquals(TargetPom.CMS, dependency.getDependencyTargetPom());
         final boolean hasDep = DependencyUtils.hasDependency(dependency);
         assertTrue("Expected hippo-plugins-shared version", hasDep);
 
@@ -77,11 +77,11 @@ public class DependencyUtilsTest extends BaseResourceTest {
     @Test
     public void testAddRemoveDependency() throws Exception {
         final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setType("cms");
+        dependency.setTargetPom("cms");
         dependency.setArtifactId("hippo-plugins-non-existing");
         dependency.setVersion("1.01.00-SNAPSHOT");
         dependency.setGroupId("org.onehippo.cms7.essentials");
-        assertEquals(DependencyType.CMS, dependency.getDependencyType());
+        assertEquals(TargetPom.CMS, dependency.getDependencyTargetPom());
         boolean hasDep = DependencyUtils.hasDependency(dependency);
         assertFalse("Expected no dependency", hasDep);
         // add

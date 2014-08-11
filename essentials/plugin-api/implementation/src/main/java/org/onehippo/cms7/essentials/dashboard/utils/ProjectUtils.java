@@ -38,7 +38,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,8 +169,8 @@ public final class ProjectUtils {
         return getFolder(BOOTSTRAP);
     }
 
-    public static Model getPomModel(DependencyType type) {
-        final String pomPath = getPomPath(type);
+    public static Model getPomModel(TargetPom targetPom) {
+        final String pomPath = getPomPath(targetPom);
         if (Strings.isNullOrEmpty(pomPath)) {
             return null;
         }
@@ -198,16 +198,16 @@ public final class ProjectUtils {
     }
 
     /**
-     * Return full pom.xml file path for given dependency type
+     * Return full pom.xml file path for given dependency targetPom
      *
-     * @param type type of dependency
-     * @return null if type is invalid
+     * @param targetPom targetPom of dependency
+     * @return null if targetPom is invalid
      */
-    public static String getPomPath(DependencyType type) {
-        if (type == null || type == DependencyType.INVALID) {
+    public static String getPomPath(TargetPom targetPom) {
+        if (targetPom == null || targetPom == TargetPom.INVALID) {
             return null;
         }
-        switch (type) {
+        switch (targetPom) {
             case SITE:
                 return getPomForDir(ProjectUtils.getSite());
             case CMS:
@@ -227,15 +227,15 @@ public final class ProjectUtils {
 
     }
 
-    public static String getWebXmlPath(DependencyType type) {
-        if (type == null
-                || type == DependencyType.INVALID
-                || type == DependencyType.BOOTSTRAP
-                || type == DependencyType.BOOTSTRAP_CONFIG
-                || type == DependencyType.BOOTSTRAP_CONTENT) {
+    public static String getWebXmlPath(TargetPom targetPom) {
+        if (targetPom == null
+                || targetPom == TargetPom.INVALID
+                || targetPom == TargetPom.BOOTSTRAP
+                || targetPom == TargetPom.BOOTSTRAP_CONFIG
+                || targetPom == TargetPom.BOOTSTRAP_CONTENT) {
             return null;
         }
-        switch (type) {
+        switch (targetPom) {
             case SITE:
                 return getWebXmlForDir(ProjectUtils.getSite());
             case CMS:

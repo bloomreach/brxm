@@ -21,7 +21,7 @@
                 "groupId": "org.onehippo.forge",
                 "artifactId": "content-blocks",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             }
         ],
         "libraries": [
@@ -56,28 +56,28 @@
                 "groupId": "org.onehippo.forge.properties",
                 "artifactId": "properties-addon-repository",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-repository",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-cms",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.cms7.essentials",
                 "artifactId": "hippo-essentials-blog-plugin",
                 "scope": "compile",
-                "type": "essentials",
+                "targetPom": "essentials",
                 "version": "1.01.05-SNAPSHOT"
             }
 
@@ -124,42 +124,42 @@
                 "groupId": "org.onehippo",
                 "artifactId": "taxonomy-api",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo",
                 "artifactId": "taxonomy-addon-frontend",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo",
                 "artifactId": "taxonomy-addon-repository",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo",
                 "artifactId": "taxonomy-api",
                 "scope": "compile",
-                "type": "site"
+                "targetPom": "site"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo",
                 "artifactId": "taxonomy-hst-api",
                 "scope": "compile",
-                "type": "site"
+                "targetPom": "site"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo",
                 "artifactId": "taxonomy-hstclient",
                 "scope": "compile",
-                "type": "site"
+                "targetPom": "site"
             }
         ]
     },
@@ -192,21 +192,21 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "type": "cms",
+                "targetPom": "cms",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-cms",
                 "scope": "compile"
             },
             {
                 "@type": "dependency",
-                "type": "cms",
+                "targetPom": "cms",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-repository",
                 "scope": "compile"
             },
             {
                 "@type": "dependency",
-                "type": "site",
+                "targetPom": "site",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-hst-client",
                 "scope": "compile"
@@ -245,7 +245,7 @@
                 "groupId": "org.onehippo.forge",
                 "artifactId": "ecm-tagging",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             }
         ]
     },
@@ -280,21 +280,21 @@
                 "groupId": "org.onehippo.forge",
                 "artifactId": "dashboard-document-wizard",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-cms",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-repository",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             }
         ]
     },
@@ -329,7 +329,7 @@
                 "groupId": "org.onehippo.forge",
                 "artifactId": "relateddocs",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             }
         ]
     },
@@ -355,7 +355,7 @@
                 "artifactId": "hst-seo-support",
                 "scope": "compile",
                 "version": "0.02.00",
-                "type": "site"
+                "targetPom": "site"
             }
         ]
     },
@@ -428,14 +428,14 @@
                 "groupId": "org.onehippo.forge.robotstxt",
                 "artifactId": "robotstxt-addon-repository",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.robotstxt",
                 "artifactId": "robotstxt-hst-client",
                 "scope": "compile",
-                "type": "site"
+                "targetPom": "site"
             }
         ]
 
@@ -463,14 +463,14 @@
                 "groupId": "org.onehippo.forge.poll",
                 "artifactId": "poll-addon-repository",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.poll",
                 "artifactId": "poll-hst-client",
                 "scope": "compile",
-                "type": "site"
+                "targetPom": "site"
             }
         ]
     },
@@ -744,21 +744,21 @@
                 "groupId": "org.onehippo.forge.sitemap",
                 "artifactId": "sitemap-content",
                 "scope": "compile",
-                "type": "cms"
+                "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.sitemap",
                 "artifactId": "sitemap-component",
                 "scope": "compile",
-                "type": "site"
+                "targetPom": "site"
             },
             {
                 "@type": "dependency",
                 "groupId": "com.sun.xml.bind",
                 "artifactId": "jaxb-impl",
                 "scope": "compile",
-                "type": "site",
+                "targetPom": "site",
                 "version": "2.1.13"
             }
         ]

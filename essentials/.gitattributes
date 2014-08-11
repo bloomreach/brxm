@@ -709,7 +709,6 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionSet.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionStatus.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DependencyType.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsDependency.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Plugin.java -text
@@ -717,6 +716,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Projec
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Repository.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Restful.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Snapshot.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/TargetPom.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Vendor.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/InstructionPackage.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/MessageGroup.java -text

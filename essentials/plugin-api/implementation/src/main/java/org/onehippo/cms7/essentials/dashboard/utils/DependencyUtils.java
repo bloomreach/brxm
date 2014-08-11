@@ -31,7 +31,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
@@ -59,13 +59,13 @@ public final class DependencyUtils {
      * @return true if tag is added or already exists
      */
     public static boolean addRepository(final Repository repository) {
-        final DependencyType type = repository.getDependencyType();
-        if (type == DependencyType.INVALID) {
+        final TargetPom targetPom = repository.getDependencyTargetPom();
+        if (targetPom == TargetPom.INVALID) {
             return false;
         }
-        final Model model = ProjectUtils.getPomModel(type);
+        final Model model = ProjectUtils.getPomModel(targetPom);
         if (model == null) {
-            log.warn("Pom model was null for type: {}", type);
+            log.warn("Pom model was null for type: {}", targetPom);
             return false;
         }
         if (!hasRepository(repository)) {
@@ -73,7 +73,7 @@ public final class DependencyUtils {
             final org.apache.maven.model.Repository mavenRepository = repository.createMavenRepository();
             model.addRepository(mavenRepository);
             log.debug("Added new maven repository {}", repository);
-            final String pomPath = ProjectUtils.getPomPath(type);
+            final String pomPath = ProjectUtils.getPomPath(targetPom);
             return writePom(pomPath, model);
         }
         return true;
@@ -124,8 +124,8 @@ public final class DependencyUtils {
      * @return true if removed or did not exist, false if dependency was invalid or on IO error
      */
     public static boolean removeDependency(final EssentialsDependency dependency) {
-        final DependencyType type = dependency.getDependencyType();
-        if (type == DependencyType.INVALID) {
+        final TargetPom type = dependency.getDependencyTargetPom();
+        if (type == TargetPom.INVALID) {
             return false;
         }
         final Model model = ProjectUtils.getPomModel(type);
@@ -161,19 +161,19 @@ public final class DependencyUtils {
      */
 
     public static boolean addDependency(final EssentialsDependency dependency) {
-        final DependencyType type = dependency.getDependencyType();
-        if (type == DependencyType.INVALID) {
+        final TargetPom targetPom = dependency.getDependencyTargetPom();
+        if (targetPom == TargetPom.INVALID) {
             return false;
         }
-        final Model model = ProjectUtils.getPomModel(type);
+        final Model model = ProjectUtils.getPomModel(targetPom);
         if (model == null) {
-            log.warn("Pom model was null for type: {}", type);
+            log.warn("Pom model was null for targetPom: {}", targetPom);
             return false;
         }
         if (!hasDependency(dependency)) {
             final Dependency newDependency = dependency.createMavenDependency();
             model.addDependency(newDependency);
-            final String pomPath = ProjectUtils.getPomPath(type);
+            final String pomPath = ProjectUtils.getPomPath(targetPom);
             return writePom(pomPath, model);
         }
         return true;
@@ -187,8 +187,8 @@ public final class DependencyUtils {
      * @return true if provided repository is invalid or when it exists within pom model with same url
      */
     public static boolean hasRepository(final Repository repository) {
-        final DependencyType type = repository.getDependencyType();
-        if (type == DependencyType.INVALID) {
+        final TargetPom type = repository.getDependencyTargetPom();
+        if (type == TargetPom.INVALID) {
             return false;
         }
         final Model model = ProjectUtils.getPomModel(type);
@@ -216,11 +216,11 @@ public final class DependencyUtils {
      * @return
      */
     public static boolean hasDependency(final EssentialsDependency dependency) {
-        final DependencyType type = dependency.getDependencyType();
-        if (type == DependencyType.INVALID) {
+        final TargetPom targetPom = dependency.getDependencyTargetPom();
+        if (targetPom == TargetPom.INVALID) {
             return false;
         }
-        final Model model = ProjectUtils.getPomModel(type);
+        final Model model = ProjectUtils.getPomModel(targetPom);
         final List<Dependency> dependencies = model.getDependencies();
         for (Dependency projectDependency : dependencies) {
             final boolean isSameDependency = isSameDependency(dependency, projectDependency);
@@ -253,26 +253,26 @@ public final class DependencyUtils {
         repository.setId("Hippo Enterprise Maven 2");
         repository.setId("https://maven.onehippo.com/maven2-enterprise");
         addRepository(repository);
-        final Model pomModel = ProjectUtils.getPomModel(DependencyType.PROJECT);
+        final Model pomModel = ProjectUtils.getPomModel(TargetPom.PROJECT);
         if (pomModel != null) {
             final Parent parent = new Parent();
             parent.setArtifactId(ProjectUtils.ENT_GROUP_ID);
             parent.setGroupId(ProjectUtils.ENT_GROUP_ID);
             pomModel.setParent(parent);
             // add indicator:
-            final Model cmsModel = ProjectUtils.getPomModel(DependencyType.CMS);
+            final Model cmsModel = ProjectUtils.getPomModel(TargetPom.CMS);
             final Dependency indicator = new Dependency();
             indicator.setArtifactId("hippo-addon-edition-indicator");
             indicator.setGroupId("com.onehippo.cms7");
             cmsModel.addDependency(indicator);
-            writePom(ProjectUtils.getPomPath(DependencyType.CMS), cmsModel);
-            return writePom(ProjectUtils.getPomPath(DependencyType.PROJECT), pomModel);
+            writePom(ProjectUtils.getPomPath(TargetPom.CMS), cmsModel);
+            return writePom(ProjectUtils.getPomPath(TargetPom.PROJECT), pomModel);
         }
         return false;
     }
 
     public static boolean isEnterpriseProject() {
-        final Model pomModel = ProjectUtils.getPomModel(DependencyType.PROJECT);
+        final Model pomModel = ProjectUtils.getPomModel(TargetPom.PROJECT);
         final Parent parent = pomModel.getParent();
         if (parent == null) {
             return false;

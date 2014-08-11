@@ -21,13 +21,13 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id$"
  */
-public enum DependencyType {
+public enum TargetPom {
 
 
     INVALID(null), SITE("site"), CMS("cms"), BOOTSTRAP("bootstrap"), BOOTSTRAP_CONFIG("config"), BOOTSTRAP_CONTENT("content"), ESSENTIALS("essentials"), PROJECT("project");
     private final String name;
 
-    DependencyType(final String name) {
+    TargetPom(final String name) {
         this.name = name;
     }
 
@@ -44,9 +44,9 @@ public enum DependencyType {
         return sb.toString();
     }
 
-    public static DependencyType typeForName(final String type) {
+    public static TargetPom pomForName(final String type) {
         if (Strings.isNullOrEmpty(type)) {
-            return DependencyType.INVALID;
+            return TargetPom.INVALID;
         }
         if (type.equals(SITE.name)) {
             return SITE;
@@ -63,7 +63,7 @@ public enum DependencyType {
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
         }
-        return DependencyType.INVALID;
+        return TargetPom.INVALID;
 
     }
 }
