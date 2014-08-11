@@ -1574,7 +1574,6 @@ plugin-dashboard/src/main/webapp/docs/rest-api/swagger-ui.js -text
 plugin-dashboard/src/main/webapp/docs/rest-api/swagger-ui.min.js -text
 plugin-dashboard/src/main/webapp/images/favicon.ico -text
 plugin-dashboard/src/main/webapp/images/hippo-logo.png -text
-plugin-dashboard/src/main/webapp/images/loader.gif -text
 plugin-dashboard/src/main/webapp/js/Essentials.js -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
