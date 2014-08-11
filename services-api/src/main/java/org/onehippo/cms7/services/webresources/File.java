@@ -18,8 +18,6 @@ package org.onehippo.cms7.services.webresources;
 
 import java.util.Map;
 
-import javax.jcr.Node;
-
 public interface File {
 
     /**
@@ -30,21 +28,22 @@ public interface File {
     String getFileName();
 
     /**
-     * @return the jcr workspace (trunk) version
+     * @return the jcr workspace (trunk) version of the content
      */
-    Content getWorkspace();
+    Content getTrunk();
 
     /**
-     * @return the most recent checked in version, and in case the node is not versionable, the workspace content
+     * @return the most recent checked in version, or if never checked in yet or in case the node is not versionable,
+     * the workspace content {@link #getTrunk()} is returned
      */
-    Content getBase();
+    Content getTag();
 
     /**
-     * @param versionName the name of the version to fetch
+     * @param versionName the name of the version (tag) to fetch
      * @return the <code>WebResource</code> for <code>versionName</code> and <code>null</code> if no such version present or
      * if the content is not versionable
      */
-    Content get(String versionName);
+    Content getTag(String versionName);
 
     /**
      * @return all versions and empty map in case the content is not versionable
