@@ -25,5 +25,10 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
+    <sv:node sv:name="system">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposched:jobgroup</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 </sv:node>

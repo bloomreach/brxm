@@ -291,9 +291,9 @@ modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNo
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNodeViews.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetSubNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetsAvailableNavigationProvider.java svneol=native#text/plain
-modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupModule.java -text
+modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupJob.java -text
 modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -text
-modules/src/main/resources/eventlogcleanup-module.xml -text
+modules/src/main/resources/eventlogcleanupjob.xml -text
 modules/src/main/resources/hippobroadcast.cnd -text
 modules/src/main/resources/repository-logger-module.xml -text
 modules/src/test/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNavigationEntryCompareTest.java -text svneol=unset#text/plain
@@ -348,7 +348,7 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSort
 test/src/test/java/org/hippoecm/repository/impl/InitializationProcessorTest.java -text
 test/src/test/java/org/hippoecm/repository/integration/UpgradeIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/integration/VersioningWorkflowIntegrationTest.java -text
-test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupModuleTest.java -text
+test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupJobTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/RepositoryLoggerTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/WorkflowLoggerTest.java -text
 test/src/test/java/org/hippoecm/repository/quartz/SchedulerTest.java -text

@@ -18,21 +18,26 @@ package org.hippoecm.repository.logging;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 
-public class EventLogCleanupModuleTest extends RepositoryTestCase {
+public class EventLogCleanupJobTest extends RepositoryTestCase {
 
     private RepositoryLogger eventLogger;
 
@@ -61,7 +66,7 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         super.tearDown();
     }
 
-    protected void logEvent(String userName, String className, String methodName) {
+    private void logEvent(String userName, String className, String methodName) {
         HippoEvent event = new HippoEvent("repository");
         event.user(userName).category("workflow").result("resultValue");
         event.set("className", className).set("methodName", methodName);
@@ -75,12 +80,14 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         logEvent("userName", "className", "methodName");
 
         // run cleanup module with maximum items of 1 and no item timeout
-        EventLogCleanupModule module = new EventLogCleanupModule("/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", 1l, -1l, session, "TestEventLogCleanupMaxItems");
+        EventLogCleanupJob cleanupJob = new EventLogCleanupJob();
+        final RepositoryJobExecutionContext executionContext = createMock(RepositoryJobExecutionContext.class);
+        expect(executionContext.createSystemSession()).andReturn(session.impersonate(new SimpleCredentials("admin", new char[] {})));
+        expect(executionContext.getAttribute("maxitems")).andReturn("1");
+        expect(executionContext.getAttribute("minutestolive")).andReturn("-1");
+        EasyMock.replay(executionContext);
 
-        Thread.sleep(5000);
-
-        module.unscheduleJob();
+        cleanupJob.execute(executionContext);
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // it seems we need to specify an order by clause to get the total size...
@@ -97,12 +104,14 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         logEvent("userName", "className", "methodName");
 
         // run cleanup module with no maximum to the number of items and all items timed out
-        EventLogCleanupModule module = new EventLogCleanupModule("/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", -1l, 0l, session, "TestEventLogCleanupTimeout");
+        EventLogCleanupJob cleanupJob = new EventLogCleanupJob();
+        final RepositoryJobExecutionContext executionContext = createMock(RepositoryJobExecutionContext.class);
+        expect(executionContext.createSystemSession()).andReturn(session.impersonate(new SimpleCredentials("admin", new char[] {})));
+        expect(executionContext.getAttribute("maxitems")).andReturn("-1");
+        expect(executionContext.getAttribute("minutestolive")).andReturn("0");
+        EasyMock.replay(executionContext);
 
-        Thread.sleep(5000);
-
-        module.unscheduleJob();
+        cleanupJob.execute(executionContext);
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // it seems we need to specify an order by clause to get the total size...
