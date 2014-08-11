@@ -5350,12 +5350,6 @@ plugin-dashboard/src/main/webapp/components/jquery/test/unit/.idea
 plugin-dashboard/src/main/webapp/components/jquery/test/unit/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/components/jquery/test/unit/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/components/jquery/test/unit/target
-plugin-dashboard/src/main/webapp/components/js-detect-ie/*.iml
-plugin-dashboard/src/main/webapp/components/js-detect-ie/.DS_Store
-plugin-dashboard/src/main/webapp/components/js-detect-ie/.idea
-plugin-dashboard/src/main/webapp/components/js-detect-ie/atlassian-ide-plugin.xml
-plugin-dashboard/src/main/webapp/components/js-detect-ie/hippo-plugins.iws
-plugin-dashboard/src/main/webapp/components/js-detect-ie/target
 plugin-dashboard/src/main/webapp/components/respond/*.iml
 plugin-dashboard/src/main/webapp/components/respond/.DS_Store
 plugin-dashboard/src/main/webapp/components/respond/.idea

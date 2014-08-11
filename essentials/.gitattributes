@@ -1455,8 +1455,6 @@ plugin-dashboard/src/main/webapp/components/jquery/test/unit/support.js -text
 plugin-dashboard/src/main/webapp/components/jquery/test/unit/traversing.js -text
 plugin-dashboard/src/main/webapp/components/jquery/test/unit/wrap.js -text
 plugin-dashboard/src/main/webapp/components/jquery/test/xhtml.php -text
-plugin-dashboard/src/main/webapp/components/js-detect-ie/README.md -text
-plugin-dashboard/src/main/webapp/components/js-detect-ie/detect-ie.js -text
 plugin-dashboard/src/main/webapp/components/respond/Gruntfile.js -text
 plugin-dashboard/src/main/webapp/components/respond/LICENSE-MIT -text
 plugin-dashboard/src/main/webapp/components/respond/README.md -text
