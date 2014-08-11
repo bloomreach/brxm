@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,15 +29,14 @@
     Wicket.Window.prototype.initialize = function() {
         oldWindowInitialize.apply(this, arguments);
         this.settings.isFullscreen = false;
-    };
 
-    Wicket.Window.prototype.resizeLeftCropArea = function(w, h) {
-        var lca;
-        lca = document.getElementsByClassName('left-crop-area');
-        if (lca.length ===1) {
-            lca[0].style.width = w;
-            lca[0].style.height = h;
-        }
+        this.event = {
+            beforeFullScreen: new YAHOO.util.CustomEvent('beforeFullScreen'),
+            afterFullScreen: new YAHOO.util.CustomEvent('afterFullScreen'),
+            beforeInitScreen: new YAHOO.util.CustomEvent('beforeInitScreen'),
+            afterInitScreen: new YAHOO.util.CustomEvent('afterInitScreen'),
+            resizeFullScreen: new YAHOO.util.CustomEvent('resizeFullScreen')
+        };
     };
 
     Wicket.Window.prototype.onWindowResize = function(e) {
@@ -56,7 +55,9 @@
 
             f.style.height = height + "px";
             f.style.width = width + "px";
-            this.resizeLeftCropArea(w.style.width, w.style.height);
+
+            this.event.resizeFullScreen.fire({w: width, h: height});
+
             this.resizing();
         }
     };
@@ -84,6 +85,12 @@
         if (YAHOO.util.Event) {
             YAHOO.util.Event.removeListener(window, 'resize', this.onWindowResize);
         }
+
+        this.event.beforeFullScreen.unsubscribeAll();
+        this.event.afterFullScreen.unsubscribeAll();
+        this.event.beforeInitScreen.unsubscribeAll();
+        this.event.afterInitScreen.unsubscribeAll();
+        this.event.resizeFullScreen.unsubscribeAll();
     };
 
     Wicket.Window.prototype.toggleFullscreen = function() {
@@ -94,7 +101,8 @@
 
         if (this.isFullscreen) {
             //go small
-
+            this.event.beforeInitScreen.fire();
+            
             w.className = this.oldWClassname;
 
             w.style.width = this.oldWWidth;
@@ -107,14 +115,17 @@
             f.style.top = this.oldCTop;
             f.style.left = this.oldCLeft;
 
-            this.resizeLeftCropArea(w.style.width, w.style.height);
+            this.event.afterInitScreen.fire();
+
             this.resizing();
             this.isFullscreen = false;
         } else {
             //go fullscreen
+            this.event.beforeFullScreen.fire();
+            
             this.oldWClassname = w.className;
             w.className = w.className + ' ' + 'modal_fullscreen';
-
+            
             //save previous dimensions
             this.oldWWidth = w.style.width;
             this.oldWHeight = w.style.height;
@@ -125,7 +136,8 @@
             this.oldCHeight = f.style.height;
             this.oldCTop = f.style.top;
             this.oldCLeft = f.style.left;
-
+            
+            //calculate new dimensions
             width  = Wicket.Window.getViewportWidth();
             height = Wicket.Window.getViewportHeight();
 
@@ -134,11 +146,12 @@
             w.style.top = "0";
             w.style.left = "0";
 
-            f.style.height = height + "px";
             f.style.width = width + "px";
+            f.style.height = height + "px";
             f.className = 'modal_fullscreen_content';
 
-            this.resizeLeftCropArea(w.style.width, w.style.height);
+            this.event.afterFullScreen.fire({w: width, h: height});
+
             this.resizing();
             this.isFullscreen = true;
         }

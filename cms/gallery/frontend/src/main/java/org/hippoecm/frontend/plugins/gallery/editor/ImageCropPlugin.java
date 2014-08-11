@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageCropPlugin extends RenderPlugin {
-
+public class ImageCropPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,8 +73,8 @@ public class ImageCropPlugin extends RenderPlugin {
 
         //Get dimensions of this thumbnail variant
         try {
-            Dimension thumbnailDimension = processor.getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
-            Node originalImageNode = ((Node) getModelObject()).getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            Dimension thumbnailDimension = processor.getDesiredResourceDimension(jcrImageNodeModel.getObject());
+            Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             Dimension originalImageDimension = new Dimension(
                     (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                     (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
@@ -97,7 +96,10 @@ public class ImageCropPlugin extends RenderPlugin {
         cropButton.setVisible("edit".equals(mode) && !isOriginal);
 
         if ("edit".equals(mode)) {
-            if (!isOriginal && !areExceptionsThrown && !isOriginalImageWidthSmallerThanThumbWidth && !isOriginalImageHeightSmallerThanThumbHeight) {
+            if (!isOriginal && !areExceptionsThrown 
+                    && !isOriginalImageWidthSmallerThanThumbWidth 
+                    && !isOriginalImageHeightSmallerThanThumbHeight) {
+
                 cropButton.add(new AjaxEventBehavior("onclick") {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
@@ -107,16 +109,21 @@ public class ImageCropPlugin extends RenderPlugin {
                 });
             }
 
-            cropButton.add(new AttributeAppender("class", new Model<String>(
-                    (isOriginal || areExceptionsThrown || isOriginalImageWidthSmallerThanThumbWidth || isOriginalImageHeightSmallerThanThumbHeight) ? "crop-button inactive" : "crop-button active"
-            ), " "));
+            String cropButtonClass = isOriginal 
+                    || areExceptionsThrown 
+                    || isOriginalImageWidthSmallerThanThumbWidth 
+                    || isOriginalImageHeightSmallerThanThumbHeight 
+                    ? "crop-button inactive" : "crop-button active";
+            
+            cropButton.add(new AttributeAppender("class", Model.of(cropButtonClass), " "));
+
             String buttonTipProperty =
                     areExceptionsThrown ? "crop-button-tip-inactive-error" :
                             isOriginalImageWidthSmallerThanThumbWidth ? "crop-button-tip-inactive-width" :
                                     isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :
                                             "crop-button-tip";
 
-            cropButton.add(new AttributeAppender("title", new Model<String>(new StringResourceModel(buttonTipProperty, this, null).getString()), ""));
+            cropButton.add(new AttributeAppender("title", new StringResourceModel(buttonTipProperty, this, null), " "));
         }
 
         add(cropButton);

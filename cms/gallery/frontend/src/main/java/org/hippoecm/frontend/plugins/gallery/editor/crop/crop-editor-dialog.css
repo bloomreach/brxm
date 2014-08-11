@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 .left-crop-area {
   float: left;
-  width: 580px;
+  width: 590px;
   height: 470px;
   overflow: auto;
   margin:5px;
@@ -31,8 +31,7 @@
   border-left: 1px solid #999999;
   max-width: 216px;
   width: 216px;
-  padding: 5px;
-  padding-left:12px;
+  padding: 5px 5px 5px 12px;
   margin: 5px 0;
   min-height: 454px;  
   height: 454px;
@@ -69,10 +68,8 @@
 
 .yui-resize-status {
     background-color: #FFEE69;
-    border-color: #D4C237 #A6982B #A6982B;
-    border-right: 1px solid #A6982B;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid #A6982B;
+    border-top-color: #D4C237;
     color: #000000;
     z-index:100000;
 }
@@ -100,7 +97,7 @@
 }
 
 .modal_fullscreen .left-crop-area {
-    overflow: hidden;
+    overflow: auto;
     width: auto;
     height: auto;
 }
