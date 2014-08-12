@@ -26,6 +26,9 @@
     <sv:value>50000</sv:value>
     <sv:value>-1</sv:value>
   </sv:property>
+  <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
   <sv:property sv:name="hipposched:repositoryJobClass" sv:type="String">
     <sv:value>org.hippoecm.repository.logging.EventLogCleanupJob</sv:value>
   </sv:property>
