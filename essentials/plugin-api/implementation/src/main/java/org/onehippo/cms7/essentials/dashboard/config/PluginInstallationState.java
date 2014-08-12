@@ -16,10 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-public interface PluginInstallationState {
-    public final String DISCOVERED = "discovered";
-    public final String BOARDING = "boarding";
-    public final String ONBOARD = "onBoard";
-    public final String INSTALLING = "installing";
-    public final String INSTALLED = "installed";
+public class PluginInstallationState {
+    public static final String DISCOVERED = "discovered";
+    public static final String BOARDING = "boarding";
+    public static final String ONBOARD = "onBoard";
+    public static final String INSTALLING = "installing";
+    public static final String INSTALLED = "installed";
+
+    private PluginInstallationState() {
+    }
 }
