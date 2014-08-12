@@ -1219,12 +1219,11 @@ brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/plugins/brokenlinks
 brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/plugins/brokenlinkslist/BrokenLinksListPanel_de.properties -text
 brokenlinks/pom.xml svneol=native#text/plain
 brokenlinks/repository/pom.xml svneol=native#text/plain
-brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/BrokenLinksCheckerDaemonModule.java -text
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/BrokenLinksCheckingJob.java -text
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/GlobCompiler.java -text
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/LinkURIUtils.java -text
 brokenlinks/repository/src/main/resources/brokenlinks-authorization.xml -text
-brokenlinks/repository/src/main/resources/brokenlinks-config.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks-job.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-reports_de.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-workflows.xml svneol=native#text/plain
