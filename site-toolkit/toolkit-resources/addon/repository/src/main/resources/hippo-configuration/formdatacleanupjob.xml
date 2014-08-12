@@ -45,6 +45,9 @@
       <sv:property sv:name="hipposched:cronExpression" sv:type="String">
         <sv:value>0 14 4 * * ?</sv:value>
       </sv:property>
+      <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>
