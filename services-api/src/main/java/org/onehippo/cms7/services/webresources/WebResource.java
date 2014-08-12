@@ -79,10 +79,10 @@ public interface WebResource {
     Content getContent(String revisionId) throws RevisionNotFoundException;
 
     /**
-     * Removes this web resource and its revision history. If this web resource does not exist anymore, nothing happens.
-     * @return <code>true</code> when this web resource did exist and has been removed, or <code>false</code> if
-     * this web resource had already been removed.
+     * Removes this web resource.
+     * @throws {@link WebResourceException} in case the delete did not occur, for example because the resource is not there any more,
+     * insufficient authorization, locking, etc
      */
-    boolean delete();
+    void delete();
 
 }
