@@ -32,6 +32,9 @@
     <sv:value>/content/documents</sv:value>
     <sv:value></sv:value>
   </sv:property>
+  <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
   <sv:property sv:name="hipposched:repositoryJobClass" sv:type="String">
     <sv:value>org.onehippo.cms7.brokenlinks.BrokenLinksCheckingJob</sv:value>
   </sv:property>
@@ -48,9 +51,6 @@
       </sv:property>
       <sv:property sv:name="hipposched:cronExpression" sv:type="String">
         <sv:value>0 0 2 * * ?</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
