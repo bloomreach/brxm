@@ -70,16 +70,17 @@ public interface WebResource {
     List<String> getRevisionIds();
 
     /**
-     * @param revisionId the ID of the revision to return.
-     * @return a revision of the content of this web resource.
+     * @return the ID of the most recently created revision, or <code>null</code> if no revision has been created yet.
      */
-    Content getRevision(String revisionId) throws RevisionNotFoundException;
+    String getLatestRevisionId();
 
     /**
-     * @return the most recently created revision of the content of this web resource, or the current content if no
-     * revisions have been created yet.
+     * @param revisionId the ID of the revision to return. When the revision ID is <code>null</code>, this call is
+     *                   identical to {@link #getContent()}.
+     * @return a revision of the content of this web resource, or the current working version of the content when the
+     * revision ID is null.
      */
-    Content getLatestRevision();
+    Content getContent(String revisionId) throws RevisionNotFoundException;
 
     /**
      * Removes this web resource and its revision history. If this web resource does not exist anymore, nothing happens.
