@@ -15,7 +15,7 @@
   -->
 
 <div class="panel panel-default" ng-controller="blogPluginCtrl">
-    <div class="panel-heading">Blog plugin testing</div>
+    <div class="panel-heading">Blog</div>
 
     <div class="panel-body">
 
@@ -39,13 +39,14 @@
 
 
         <form novalidate name="blogForm" ng-show="showPlugin">
-            <div>
-                <essentials-template-settings has-sample-data="true" sample-data="sampleData" template-name="templateName"/>
-            </div>
-            <div>
-                <essentials-messages payload="payload"/>
-            </div>
-            <h4>Configuration</h4>
+            <!--    <div>
+                    <essentials-template-settings has-sample-data="true" sample-data="sampleData" template-name="templateName"/>
+                </div>
+                <div>
+                    <essentials-messages payload="payload"/>
+                </div>
+            -->
+            <h4>RSS feed import configuration</h4>
             <div class="checkbox">
                 <label>
                     Schedule Blog Importer
@@ -144,7 +145,7 @@
     <div class="panel-footer">
         <div class="input-group">
               <span class="input-group-btn">
-                <button ng-show="setupImport" ng-disabled="!blogForm.$valid || (setupImport && !importForm.$valid)" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Add Blog support</button>
+                <button ng-show="setupImport" ng-disabled="!blogForm.$valid || (setupImport && !importForm.$valid)" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Schedule RSS imports</button>
               </span>
         </div>
     </div>
