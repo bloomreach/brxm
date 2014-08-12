@@ -43,6 +43,9 @@
       <sv:property sv:name="hipposched:cronExpression" sv:type="String">
         <sv:value>0 0 3 * * ?</sv:value>
       </sv:property>
+      <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>
