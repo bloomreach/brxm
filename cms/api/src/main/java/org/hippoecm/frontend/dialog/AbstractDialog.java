@@ -226,7 +226,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected PersistentFeedbackMessagesModel fmm;
-    protected Component feedback;
+    protected FeedbackPanel feedback;
     private Component focusComponent;
 
     private LinkedList<ButtonWrapper> buttons;
