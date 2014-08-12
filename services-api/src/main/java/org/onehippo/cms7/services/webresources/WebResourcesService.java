@@ -16,49 +16,19 @@
 
 package org.onehippo.cms7.services.webresources;
 
+import java.util.List;
+
 import javax.jcr.Binary;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.cms7.services.WhiteboardService;
 
-
 @SingletonService
 @WhiteboardService
 @SuppressWarnings("UnusedDeclaration")
 public interface WebResourcesService {
 
-    /**
-     * @param absPath the absolute path to the nt:file node
-     * @return the jcr workspace (trunk) version
-     */
-    File get(Session session, String absPath);
-
-    // TODO checkin method
-
-
-    // TODO how should create work?
-    // boolean create(Session session, String absPath, Binary binary);
-
-    /**
-     * @param absPath to a jcr node of type jcr:content
-     * @param binary the binary to store
-     * @return true when the content of the nt:file node got changed as a result of this method. This might not be needed
-     * in case for example the MD5 of the <code>binary</code> is the same as the already present binary
-     */
-    boolean update(Session session, String absPath, Binary binary);
-
-    /**
-     *
-     * @param session
-     * @param absPath
-     * @return
-     */
-    boolean delete(Session session, String absPath);
-
-    /**
-     * @param absPath to a jcr node of type nt:file
-     */
-    void restore(Session session, String absPath, String versionName);
+    WebResources get(Session session);
 
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,24 @@
  */
 package org.onehippo.cms7.services.webresources;
 
-import java.util.Calendar;
+/**
+ * TODO: write Javadoc
+ */
+public class WebResourceException extends RuntimeException {
 
-public interface Content {
+    public WebResourceException() {
+        super();
+    }
 
-    /**
-     * @return the specific version or <code>null</code> in case of workspace content node
-     */
-    String getRevisionId();
+    public WebResourceException(final String message) {
+        super(message);
+    }
 
-    String getEncoding();
+    public WebResourceException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
-    Calendar getLastModified();
-
-    String getMimeType();
-
-    /**
-     * @return returns a md5 or sha-1 kind of hash for the binary, useful for checking whether two binaries are (very likely)
-     * equal or for cache-busting purposes
-     */
-    String getHash();
-
-    Binary getBinary();
-
+    public WebResourceException(final Throwable cause) {
+        super(cause);
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,19 @@
  */
 package org.onehippo.cms7.services.webresources;
 
-import java.util.Calendar;
+import java.io.InputStream;
 
-public interface Content {
+/**
+ * TODO: write Javadoc
+ */
+public interface Binary {
 
-    /**
-     * @return the specific version or <code>null</code> in case of workspace content node
-     */
-    String getRevisionId();
+    InputStream getStream();
 
-    String getEncoding();
+    int read(byte[] bytes, long l) throws java.io.IOException;
 
-    Calendar getLastModified();
+    long getSize();
 
-    String getMimeType();
-
-    /**
-     * @return returns a md5 or sha-1 kind of hash for the binary, useful for checking whether two binaries are (very likely)
-     * equal or for cache-busting purposes
-     */
-    String getHash();
-
-    Binary getBinary();
+    void dispose();
 
 }
