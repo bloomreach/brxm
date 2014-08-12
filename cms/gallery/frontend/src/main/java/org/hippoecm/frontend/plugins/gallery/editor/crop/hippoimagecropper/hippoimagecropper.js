@@ -61,6 +61,10 @@ if (!YAHOO.hippo.ImageCropper) {
                 this.minimumHeight = this.thumbnailHeight;
             }
 
+            // Set the max preview width and height (used to determine the scaling of the preview container/image)
+            this.maxPreviewWidth = 200;
+            this.maxPreviewHeight = 300;
+
             var lca = Dom.getElementsByClassName('left-crop-area', 'div');
             this.leftCropArea = lca.length === 1 ? lca[0] : null;
 
@@ -73,6 +77,7 @@ if (!YAHOO.hippo.ImageCropper) {
         YAHOO.extend(YAHOO.hippo.ImageCropper, YAHOO.hippo.Widget, {
 
             render: function() {
+                var scalingFactor;
                 if (this.previewVisible) {
                     this.previewImage = Dom.getFirstChild(this.imagePreviewContainerId);
                     this.previewContainer = Dom.get(this.imagePreviewContainerId);
@@ -80,6 +85,10 @@ if (!YAHOO.hippo.ImageCropper) {
                     //initial values
                     Dom.setStyle(this.previewImage, 'top',  '-' + this.initialX + 'px');
                     Dom.setStyle(this.previewImage, 'left', '-' + this.initialY + 'px');
+
+                    scalingFactor = this.determinePreviewScalingFactor(this.thumbnailWidth, this.thumbnailHeight);
+                    Dom.setStyle(this.previewImage, 'width',  Math.floor(scalingFactor * this.originalImageWidth) + 'px');
+                    Dom.setStyle(this.previewImage, 'height', Math.floor(scalingFactor * this.originalImageHeight) + 'px');
                 }
                 this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
 
@@ -156,27 +165,47 @@ if (!YAHOO.hippo.ImageCropper) {
             },
 
             updatePreviewImage : function(coords) {
-                var scalingFactor = 1, previewContainerWidth, previewContainerHeight;
+                var targetScalingFactor = 1, scalingFactor,
+                    previewImageWidth, previewImageHeight,
+                    previewContainerWidth, previewContainerHeight;
+
                 if (this.fixedDimension === 'both') {
                     // Since the ratio is fixed, both height and width change by the same percentage
-                    scalingFactor = this.thumbnailWidth / coords.width;
-                    previewContainerWidth = this.thumbnailWidth;
-                    previewContainerHeight = this.thumbnailHeight;
+                    targetScalingFactor = this.thumbnailWidth / coords.width;
+                    previewImageWidth = this.thumbnailWidth;
+                    previewImageHeight = this.thumbnailHeight;
                 } else if (this.fixedDimension === 'width') {
-                    scalingFactor = this.thumbnailWidth / coords.width;
-                    previewContainerWidth = this.thumbnailWidth;
-                    previewContainerHeight = Math.floor(scalingFactor * coords.height);
+                    targetScalingFactor = this.thumbnailWidth / coords.width;
+                    previewImageWidth = this.thumbnailWidth;
+                    previewImageHeight = Math.floor(targetScalingFactor * coords.height);
                 } else if (this.fixedDimension === 'height') {
-                    scalingFactor = this.thumbnailHeight / coords.height;
-                    previewContainerWidth = Math.floor(scalingFactor * coords.width);
-                    previewContainerHeight = this.thumbnailHeight;
+                    targetScalingFactor = this.thumbnailHeight / coords.height;
+                    previewImageWidth = Math.floor(targetScalingFactor * coords.width);
+                    previewImageHeight = this.thumbnailHeight;
                 }
-                this.updatePreviewLabel(previewContainerWidth, previewContainerHeight);
+
+                // Check for scaling to max preview width
+                scalingFactor = this.determinePreviewScalingFactor(coords.width, coords.height);
+                if (scalingFactor < targetScalingFactor) {
+                    previewContainerWidth = Math.floor(scalingFactor * coords.width);
+                    previewContainerHeight = Math.floor(scalingFactor * coords.height);
+                } else {
+                    scalingFactor = targetScalingFactor;
+                    previewContainerWidth = previewImageWidth;
+                    previewContainerHeight = previewImageHeight;
+                }
+
+                this.updatePreviewLabel(previewImageWidth, previewImageHeight);
 
                 if (this.previewVisible && this.previewImage !== null) {
+                    this.updatePreviewImageDimensions(coords, previewContainerWidth, previewContainerHeight, scalingFactor);
+                }
+            },
+
+            updatePreviewImageDimensions : function(coords, previewWidth, previewHeight, scalingFactor) {
                     // set the preview box dimensions
-                    Dom.setStyle(this.previewContainer, 'width',  previewContainerWidth + 'px');
-                    Dom.setStyle(this.previewContainer, 'height', previewContainerHeight + 'px');
+                Dom.setStyle(this.previewContainer, 'width',  previewWidth + 'px');
+                Dom.setStyle(this.previewContainer, 'height', previewHeight + 'px');
 
                     var w = Math.floor(this.originalImageWidth  * scalingFactor),
                             h = Math.floor(this.originalImageHeight * scalingFactor),
@@ -187,6 +216,23 @@ if (!YAHOO.hippo.ImageCropper) {
                     Dom.setStyle(this.previewImage, 'left',  '-' + y + 'px');
                     Dom.setStyle(this.previewImage, 'width',  w + 'px');
                     Dom.setStyle(this.previewImage, 'height', h + 'px');
+            },
+
+            determinePreviewScalingFactor : function(previewWidth, previewHeight) {
+                var widthBasedScaling = 1, heightBasedScaling = 1;
+
+                if (previewWidth > this.maxPreviewWidth) {
+                    widthBasedScaling = this.maxPreviewWidth / previewWidth;
+                }
+
+                if (previewHeight > this.maxPreviewHeight) {
+                    heightBasedScaling = this.maxPreviewHeight / previewHeight;
+                }
+
+                if (heightBasedScaling < widthBasedScaling) {
+                    return heightBasedScaling;
+                } else {
+                    return widthBasedScaling;
                 }
             },
             

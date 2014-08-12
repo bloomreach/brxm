@@ -66,7 +66,10 @@ import net.sf.json.JSONObject;
  */
 public class ImageCropEditorDialog extends AbstractDialog<Node> {
 
-    Logger log = LoggerFactory.getLogger(ImageCropEditorDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageCropEditorDialog.class);
+
+    private static final int MAX_PREVIEW_WIDTH = 200;
+    private static final int MAX_PREVIEW_HEIGHT = 300;
 
     @SuppressWarnings("unused")
     private String region;
@@ -110,8 +113,12 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         	configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
             thumbnailDimension = handleZeroValueInDimension(originalImageDimension, configuredDimension);
 
-            imagePreviewContainer.add(new AttributeAppender("style", Model.of("height:" + thumbnailDimension.getHeight() + "px"), ";"));
-            imagePreviewContainer.add(new AttributeAppender("style", Model.of("width:" + thumbnailDimension.getWidth() + "px"), ";"));
+            final double previewCropFactor = determinePreviewScalingFactor(thumbnailDimension.getWidth(), thumbnailDimension.getHeight());
+            final double previewWidth = Math.floor(previewCropFactor * thumbnailDimension.getWidth());
+            final double previewHeight = Math.floor(previewCropFactor * thumbnailDimension.getHeight());
+
+            imagePreviewContainer.add(new AttributeAppender("style", Model.of("width:" + previewWidth + "px"), ";"));
+            imagePreviewContainer.add(new AttributeAppender("style", Model.of("height:" + previewHeight + "px"), ";"));
 
         } catch (RepositoryException | GalleryException e) {
             log.error("Cannot retrieve thumbnail dimensions", e);
@@ -150,6 +157,37 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                 new StringResourceModel("preview-description-enabled", this, null) :
                 new StringResourceModel("preview-description-disabled", this, null))
         );
+    }
+
+    /**
+     * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
+     * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
+     * @param previewWidth width of preview image
+     * @param previewHeight height of preview image
+     * @return the scaling factor of the preview image
+     */
+    private double determinePreviewScalingFactor(final double previewWidth, final double previewHeight) {
+
+        final double widthBasedScaling;
+        if (previewWidth > MAX_PREVIEW_WIDTH) {
+            widthBasedScaling = MAX_PREVIEW_WIDTH / previewWidth;
+        } else {
+            widthBasedScaling = 1D;
+        }
+
+        final double heightBasedScaling;
+
+        if (previewHeight > MAX_PREVIEW_HEIGHT) {
+            heightBasedScaling = MAX_PREVIEW_HEIGHT / previewHeight;
+        } else {
+            heightBasedScaling = 1D;
+        }
+
+        if (heightBasedScaling < widthBasedScaling) {
+            return heightBasedScaling;
+        } else {
+            return widthBasedScaling;
+        }
     }
 
     @Override
