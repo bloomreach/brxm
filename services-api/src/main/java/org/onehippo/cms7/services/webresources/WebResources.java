@@ -18,31 +18,32 @@ package org.onehippo.cms7.services.webresources;
 import javax.jcr.Binary;
 
 /**
- * A collection of web resources, i.e. binary data objects. Each web resource is identified by a path relative to the
- * web resources root. Paths start with a slash and consist of elements separated by slashes (e.g. "/css/style.css").
+ * A collection of web resources, i.e. binary data objects. Each web resource is identified by an absolute path
+ * starting at the web resources root. Paths start with a slash and consist of elements separated by slashes
+ * (e.g. "/css/style.css").
  */
 public interface WebResources {
 
     /**
-     * @param path the path to the web resource, relative to the web resources root. The path must start with a slash.
+     * @param absPath the absolute path to the web resource, starting at the web resources root. The path must start with a slash.
      * @return whether a web resource exists at the given path.
      */
-    boolean exists(String path);
+    boolean exists(String absPath);
 
     /**
-     * @param path the path to the web resource, relative to the web resources root. The path must start with a slash.
+     * @param absPath the absolute path to the web resource, starting at the web resources root. The path must start with a slash.
      * @return the web resource located at the given path.
      * @throws WebResourceNotFoundException if no web resource exists at the given path.
      */
-    WebResource get(String path) throws WebResourceNotFoundException;
+    WebResource get(String absPath) throws WebResourceNotFoundException;
 
     /**
      * Creates a new web resource at the given location.
-     * @param path the path to the web resource, relative to the web resources root. The path must start with a slash.
+     * @param absPath the absolute path to the web resource, starting at the web resources root. The path must start with a slash.
      * @param content the content of the new web resource.
      * @return the created web resource.
      * @throws WebResourceAlreadyExistsException if another web resource already exists at the given location.
      */
-    WebResource create(String path, Binary content) throws WebResourceAlreadyExistsException;
+    WebResource create(String absPath, Binary content) throws WebResourceAlreadyExistsException;
 
 }

@@ -26,7 +26,7 @@ import java.util.List;
 public interface WebResource {
 
     /**
-     * @return the path to this web resource, relative to to web resources root location.
+     * @return the absolute path to this web resource, starting at web resources root.
      * The path always starts with a slash, and the path elements are also separated by slashes.
      */
     String getPath();
