@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="EventLogCleanupJob" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="EventLogCleanup" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposched:repositoryjob</sv:value>
   </sv:property>
