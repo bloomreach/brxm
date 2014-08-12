@@ -16,9 +16,17 @@
 package org.onehippo.cms7.services.webresources;
 
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+
+/**
+ * A web resource contains binary data that can be revisioned. There is always a current working version of the content.
+ * There can be zero or more revisions of the content. Each revision is identified by an ID that is unique within
+ * the revision history of this web resource.
+ */
 public interface WebResource {
 
     /**
@@ -33,53 +41,51 @@ public interface WebResource {
     String getName();
 
     /**
-     *
-     * @return
+     * @return the current content of this web resource. Use {@link #createRevision()} to create a revision
+     * of the content.
      */
-    List<String> getRevisionIds();
+    Content getContent();
 
     /**
-     * @return the jcr workspace (trunk) version of the content
+     * Updates the content of this web resource.
+     * @param binary the binary data to store.
+     * @return whether the content actually changed (e.g. the new binary data differs from the existing
+     * binary data)
+     * @throws java.lang.IllegalArgumentException if the given binary is <code>null</code>.
      */
-    Content getCurrent();
+    boolean setContent(Binary binary);
 
     /**
-     * @return the most recent checked in version, or if never checked in yet or in case the node is not versionable,
-     * the workspace content {@link #getTrunk()} is returned
-     */
-    Content getLatestRevision();
-
-    /**
-     * @param versionName the name of the version (tag) to fetch
-     * @return the <code>WebResource</code> for <code>versionName</code> and <code>null</code> if no such version present or
-     * if the content is not versionable
-     */
-    Content getRevision(String revisionId) throws RevisionNotFoundException;
-
-    /**
-     * Creates a new revision of this web resource.
+     * Creates a new revision of this web resource's content. Afterwards the current content will have been added to the
+     * revision history, and the latest revision and the current content will be identical.
      * @return the ID of the created revision.
+     * @throws WebResourceException when an error occurs.
      */
     String createRevision();
 
     /**
-     * @param binary the binary to store
-     * @return true when the content of the nt:file node got changed as a result of this method. This might not be needed
-     * in case for example the MD5 of the <code>binary</code> is the same as the already present binary
+     * @return all revision IDs of this web resource's content. If no revisions exist yet, an empty list will be returned.
+     * Revision IDs are unique within the revision history of a web resource.
      */
-    boolean update(Binary binary);
+    List<String> getRevisionIds();
 
     /**
-     *
-     * @param session
-     * @param absPath
-     * @return
+     * @param revisionId the ID of the revision to return.
+     * @return a revision of the content of this web resource.
+     */
+    Content getRevision(String revisionId) throws RevisionNotFoundException;
+
+    /**
+     * @return the most recently created revision of the content of this web resource, or the current content if no
+     * revisions have been created yet.
+     */
+    Content getLatestRevision();
+
+    /**
+     * Removes this web resource and its revision history. If this web resource does not exist anymore, nothing happens.
+     * @return <code>true</code> when this web resource did exist and has been removed, or <code>false</code> if
+     * this web resource had already been removed.
      */
     boolean delete();
-
-    /**
-     * @param revisionId the ID of the revision to restore.
-     */
-    void restore(String revisionId);
 
 }

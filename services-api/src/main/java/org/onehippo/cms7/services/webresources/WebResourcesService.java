@@ -29,6 +29,11 @@ import org.onehippo.cms7.services.WhiteboardService;
 @SuppressWarnings("UnusedDeclaration")
 public interface WebResourcesService {
 
-    WebResources get(Session session);
+    /**
+     * Creates a web resources implementation based on JCR.
+     * @param session the JCR session used to access web resources.
+     * @return a JCR-based web resources implementation.
+     */
+    WebResources getJcrWebResources(Session session);
 
 }

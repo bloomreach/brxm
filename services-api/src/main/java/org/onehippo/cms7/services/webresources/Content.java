@@ -17,25 +17,41 @@ package org.onehippo.cms7.services.webresources;
 
 import java.util.Calendar;
 
+/**
+ * The content of a web resource.
+ */
 public interface Content {
 
     /**
-     * @return the specific version or <code>null</code> in case of workspace content node
+     * @return the revision ID of this content, or <code>null</code> when this content is not revisioned.
      */
     String getRevisionId();
 
+    /**
+     * @return the encoding of this content.
+     */
     String getEncoding();
 
+    /**
+     * @return the last time this content has changed.
+     */
     Calendar getLastModified();
 
+    /**
+     * @return the MIME type of this content.
+     */
     String getMimeType();
 
     /**
-     * @return returns a md5 or sha-1 kind of hash for the binary, useful for checking whether two binaries are (very likely)
-     * equal or for cache-busting purposes
+     * @return a unique hash value of this content based on its binary data. Content with the same binary data will
+     * always return the same hash. It is extremely unlikely that content with different binary data returns the same
+     * hash.
      */
     String getHash();
 
+    /**
+     * @return the binary data of this content.
+     */
     Binary getBinary();
 
 }

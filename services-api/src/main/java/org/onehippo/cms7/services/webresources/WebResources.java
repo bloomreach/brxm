@@ -19,22 +19,31 @@ import javax.jcr.Binary;
 import javax.jcr.Session;
 
 /**
- *
+ * A collection of web resources, i.e. binary data objects. Each web resource is identified by a path relative to the
+ * web resources root. Paths start with a slash and consist of elements separated by slashes (e.g. "/css/style.css").
  */
 public interface WebResources {
 
     /**
-     * @param path
-     * @return
+     * @param path the path to the web resource, relative to the web resources root. The path must start with a slash.
+     * @return whether a web resource exists at the given path.
      */
     boolean exists(String path);
 
     /**
-     * @param path the path to the resource absolute path to the nt:file node
-     * @return the jcr workspace (trunk) version
+     * @param path the path to the web resource, relative to the web resources root. The path must start with a slash.
+     * @return the web resource located at the given path.
+     * @throws WebResourceNotFoundException if no web resource exists at the given path.
      */
-    WebResource get(String path);
+    WebResource get(String path) throws WebResourceNotFoundException;
 
-    WebResource create(String path, Binary content);
+    /**
+     * Creates a new web resource at the given location.
+     * @param path the path to the web resource, relative to the web resources root. The path must start with a slash.
+     * @param content the content of the new web resource.
+     * @return the created web resource.
+     * @throws WebResourceAlreadyExistsException if another web resource already exists at the given location.
+     */
+    WebResource create(String path, Binary content) throws WebResourceAlreadyExistsException;
 
 }
