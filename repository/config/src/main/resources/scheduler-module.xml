@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
   </sv:property>
   <sv:node sv:name="hippo:moduleconfig">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
+      <sv:value>hipposched:jobregistry</sv:value>
     </sv:property>
     <sv:node sv:name="system">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
