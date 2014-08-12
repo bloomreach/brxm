@@ -16,11 +16,7 @@
 package org.onehippo.cms7.services.webresources;
 
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-
-import javax.jcr.Node;
 
 /**
  * A web resource contains binary data that can be revisioned. There is always a current working version of the content.

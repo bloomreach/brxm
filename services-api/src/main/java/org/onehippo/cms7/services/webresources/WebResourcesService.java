@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.services.webresources;
 
-import java.util.List;
-
-import javax.jcr.Binary;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.services.SingletonService;

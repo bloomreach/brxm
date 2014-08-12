@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.webresources;
 
 import javax.jcr.Binary;
-import javax.jcr.Session;
 
 /**
  * A collection of web resources, i.e. binary data objects. Each web resource is identified by a path relative to the
