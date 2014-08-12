@@ -28,6 +28,9 @@
     <sv:value>1440</sv:value>
     <sv:value>/formdata/permanent/</sv:value>
   </sv:property>
+  <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
   <sv:property sv:name="hipposched:repositoryJobClass" sv:type="String">
     <sv:value>org.onehippo.cms7.hst.toolkit.addon.formdata.FormDataCleanupJob</sv:value>
   </sv:property>
