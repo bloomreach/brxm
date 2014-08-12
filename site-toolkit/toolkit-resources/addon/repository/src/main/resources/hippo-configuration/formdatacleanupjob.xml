@@ -35,7 +35,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposched:triggers</sv:value>
     </sv:property>
-    <sv:node sv:name="FormDataCleanupTrigger">
+    <sv:node sv:name="nightly">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposched:crontrigger</sv:value>
       </sv:property>
