@@ -38,7 +38,9 @@ import org.slf4j.LoggerFactory;
  * by implementing {@link #getRepositoryJobInfo(Node)} and {@link #getRepositoryJobTrigger(Node, RepositoryJobInfo)}.
  * Also, they can return false in {@link #isSchedulerEnabled(Node)} when the scheduled job should be disabled.
  * </p>
+ * @deprecated deprecated since 2.28.00, register a repository job with the repository scheduler directly using configuration
  */
+@Deprecated
 public abstract class AbstractReconfigurableSchedulingDaemonModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractReconfigurableSchedulingDaemonModule.class);
