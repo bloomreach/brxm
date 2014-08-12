@@ -95,7 +95,7 @@
     height: 434px;
     overflow-x: hidden;
     overflow-y: auto;
-    padding-right: 3px;
+    padding: 2px;
 }
 
 .panel-default {
