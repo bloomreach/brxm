@@ -19,18 +19,22 @@ package org.onehippo.cms7.essentials.plugins.relateddocuments;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 
 public class RelatedDocumentsParameterService implements PluginParameterService {
+    @Override
     public boolean hasSetup() {
         return false;
     }
 
+    @Override
     public boolean hasGeneralizedSetupParameters() {
         return false;
     }
 
+    @Override
     public boolean doesSetupRequireRebuild() {
         return false;
     }
 
+    @Override
     public boolean hasConfiguration() {
         return true;
     }

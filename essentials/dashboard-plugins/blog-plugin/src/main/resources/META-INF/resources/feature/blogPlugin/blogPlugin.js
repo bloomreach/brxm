@@ -108,9 +108,9 @@
                 $scope.plugin = p;
                 if (p) {
                     $scope.showRebuildMessage = p.installState === 'installing';
-                    $scope.showInstalledMessage = p.installState === 'installed';
+                    $scope.showPlugin = p.installState === 'installed';
                     $scope.showBoardingMessage = p.installState === 'boarding';
-                    $scope.showPlugin = p.installed && !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
+                    //$scope.showPlugin = p.installed && !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
                 }
             });
 

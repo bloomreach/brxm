@@ -15,7 +15,7 @@
   -->
 
 <div class="panel panel-default" ng-controller="blogPluginCtrl">
-    <div class="panel-heading">Blog plugin</div>
+    <div class="panel-heading">Blog plugin testing</div>
 
     <div class="panel-body">
 
@@ -28,12 +28,14 @@
             <p>Installation of
                 <em>{{plugin.name}}</em> is pending. Please rebuild your project to make the changes effective.</p>
         </div>
+        <!--
         <div class="infobox infobox-success" ng-show="showInstalledMessage">
             <h3>Installed</h3>
             <p>
                 <em>{{plugin.name}}</em> has been installed successfully. The corresponding feature is now available in your Hippo project.
             </p>
         </div>
+        -->
 
 
         <form novalidate name="blogForm" ng-show="showPlugin">
@@ -116,19 +118,22 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label">Setup RSS Feeds</label>
+                <label class="col-sm-4 control-label">Setup RSS Feeds:</label>
             </div>
+
             <div class="form-group" ng-repeat="url in importConfig.urls">
-                <div class="col-sm-6">
+                <label class="col-sm-4 control-label"></label>
+                <div class="col-sm-3">
                     <input type="text" class="form-control" required ng-model="url.value" placeholder="URL">
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <input type="text" class="form-control" required ng-model="url.author" placeholder="Author Name">
                 </div>
                 <div class="col-sm-2">
                     <a ng-show="importConfig.urls.length > 1" ng-click="removeUrl(url)"><span class="glyphicon glyphicon-minus pull-right text-warning">Remove</span></a>
                 </div>
             </div>
+
             <div class="form-group">
                 <label class="col-sm-offset-10 col-sm-2 control-label">
                     <a href="javascript:void(0);" ng-click="addUrl()"><span class="glyphicon glyphicon-plus pull-right text-primary"> Add</span></a>
