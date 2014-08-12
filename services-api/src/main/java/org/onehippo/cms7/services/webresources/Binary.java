@@ -49,7 +49,7 @@ public interface Binary {
      * @throws java.lang.IllegalArgumentException if offset is negative or {@link #dispose()} has already been called.
      * @throws WebResourceException if another error occurs.
      */
-    int read(byte[] buffer, long l) throws java.io.IOException;
+    int read(byte[] buffer, long position) throws java.io.IOException;
 
     /**
      * @return the size of this binary in bytes.
