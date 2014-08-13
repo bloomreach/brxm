@@ -16,7 +16,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="infobox infobox-info" ng-hide="REBUILD_PLUGINS">
+        <div class="alert alert-info" ng-hide="REBUILD_PLUGINS">
             There are no changes at this moment that require project rebuild.
         </div>
         <div ng-show="REBUILD_PLUGINS">
@@ -40,7 +40,7 @@
             the features you installed.
         </p>
 
-        <div class="infobox infobox-info">
+        <div class="alert alert-info">
             You don't need to do this for every single feature you add to the project, rebuilding once after you added
             a batch of features is sufficient.
         </div>
@@ -52,7 +52,7 @@ mvn verify</pre>
     <pre>
 mvn -Pcargo.run -Drepo.path=storage</pre>
 
-        <div class="infobox infobox-info">
+        <div class="alert alert-info">
             <p>By default, the repository content is stored in the directory target/storage. This has the effect that,
                 when you run mvn clean, the repository content, along with all changes and additions you made during
                 development, is erased. To avoid accidents in this area, it is a best practice to specify a different

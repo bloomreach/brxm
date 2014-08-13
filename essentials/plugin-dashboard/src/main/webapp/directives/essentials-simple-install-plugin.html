@@ -17,7 +17,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">{{plugin.name}}</div>
     <div class="panel-body">
-      <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
+      <div class="alert alert-info" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
       <div ng-hide="hasNoTemplates && !sample">
         <essentials-template-settings
             has-no-templates="{{hasNoTemplates}}"
