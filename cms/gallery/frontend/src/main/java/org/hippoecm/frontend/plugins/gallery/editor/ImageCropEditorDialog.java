@@ -239,14 +239,11 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                     (int) dimension.getWidth(), (int) dimension.getHeight(), hints, highQuality);
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail);
 
-            Node cropped = getModelObject();
-
-            InputStream is = new ByteArrayInputStream(bytes.toByteArray());
-            Binary croppedBinary = ResourceHelper.getValueFactory(cropped).createBinary(is);
-            cropped.getProperty(JcrConstants.JCR_DATA).setValue(croppedBinary);
+            final Node cropped = getModelObject();
+            cropped.setProperty(JcrConstants.JCR_DATA, newBinaryFromBytes(cropped, bytes));
             cropped.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
-            cropped.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).setValue(dimension.getWidth());
-            cropped.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).setValue(dimension.getHeight());
+            cropped.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, dimension.getWidth());
+            cropped.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, dimension.getHeight());
 
         } catch (GalleryException | IOException | RepositoryException ex) {
             log.error("Unable to create thumbnail image", ex);
@@ -281,5 +278,10 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             normalized.setSize(width, thumbnailDimension.height);
         }
         return normalized;    	
+    }
+
+    private Binary newBinaryFromBytes(final Node node, final ByteArrayOutputStream baos) throws RepositoryException {
+        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+        return ResourceHelper.getValueFactory(node).createBinary(is);
     }
 }
