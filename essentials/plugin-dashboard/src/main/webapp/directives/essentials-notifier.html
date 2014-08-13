@@ -14,41 +14,24 @@
   limitations under the License.
   -->
 
-<div class="feedback" ng-show="activeMessages.length">
-    <div class="feedback-active feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
-        <div ng-switch-when="info" class="info">
-            <i class="fa fa-info"></i> {{message.date}}
-            <div class="feedback-message" ng-bind-html="message.message"></div>
+<div class="log">
+    <div class="alert alert-default">
+        <div ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
+            <p>{{messages.length}}: <span class="fa fa-exclamation"></span>
+                <a href="#" ng-click="toggleArchive()">
+                    <span class="feedback-message" ng-bind-html="message.message"></span>
+                    <span class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span></a>
+            </p>
+
         </div>
-        <div ng-switch-when="error" class="error">
-            <i class="fa fa-bell"></i> {{message.date}}
-            <div class="feedback-message" ng-bind-html="message.message"></div>
+        <div class="log-messages" ng-repeat="message in archiveMessages" ng-show="archiveOpen" ng-switch="message.type">
+            <p ng-switch-when="info" class="bg-success">{{message.date}}: <span ng-bind-html="message.message"></span>
+            </p>
+            <p ng-switch-when="error" class="bg-danger">{{message.date}}: <span ng-bind-html="message.message"></span>
+            </p>
+            <p ng-switch-when="warning" class="bg-warning">{{message.date}}:
+                <span ng-bind-html="message.message"></span></p>
         </div>
-        <div ng-switch-when="warning" class="warning">
-            <i class="fa fa-warning"></i> {{message.date}}
-            <div class="feedback-message" ng-bind-html="message.message"></div>
-        </div>
-    </div>
-    <div class="feedback-archive-container" ng-show="archiveOpen">
-        <ul class="feedback-archive" ng-repeat="message in archiveMessages" ng-switch="message.type">
-            <li ng-switch-when="info" class="info">
-                <i class="fa fa-info"></i> {{message.date}}
-                <div class="feedback-message" ng-bind-html="message.message"></div>
-            </li>
-            <li ng-switch-when="error" class="error">
-                <i class="fa fa-bell"></i> {{message.date}}
-                <div class="feedback-message" ng-bind-html="message.message"></div>
-            </li>
-            <li ng-switch-when="warning" class="warning">
-                <i class="fa fa-warning"></i> {{message.date}}
-                <div class="feedback-message" ng-bind-html="message.message"></div>
-            </li>
-        </ul>
-    </div>
-    <div class="feedback-button">
-        <i ng-class="archiveOpen ?'glyphicon glyphicon-resize-small':'glyphicon glyphicon-resize-full'" ng-click="toggleArchive()"></i>
-    </div>
-    <div class="feedback-indicator">
-        <span class="badge">{{messages.length}}</span>
     </div>
 </div>
+
