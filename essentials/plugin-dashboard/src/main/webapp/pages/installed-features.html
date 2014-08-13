@@ -15,7 +15,9 @@
   -->
 
 <div class="row">
-    <div ng-repeat="plugin in plugins | filter:isInstalledFeature | orderBy:'name'">
-          <essentials-installed-feature plugin="plugin"></essentials-installed-feature>
+    <div class="col-lg-12">
+        <div ng-repeat="plugin in plugins | filter:isInstalledFeature | orderBy:'name'">
+            <essentials-installed-feature plugin="plugin"></essentials-installed-feature>
+        </div>
     </div>
 </div>

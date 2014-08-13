@@ -14,98 +14,100 @@
   limitations under the License.
   -->
 <div class="row" ng-controller="introductionCtrl">
-  <h2>Welcome to Hippo Essentials</h2>
-  <p>
-    Hippo Essentials makes it easier to setup a Hippo project. With Essentials, you can browse the Essentials
-    feature library and install extra functionality in your new Hippo project. To get some basic understanding
-    about Essentials and how to use it, check the
-    <a href="http://www.onehippo.org/library/essentials/hippo-developer-essentials.html">documentation</a>.
-  </p>
-  <h3>Important Notes</h3>
-  <ul>
-    <li>
-      Please note that while you are using Essentials, it might be necessary to rebuild your project several times.
-      This is caused by the fact that the plugins need to be integrated into both the Essentials application and your
-      project.
-    </li>
-    <li>
-      Please note that if Essentials encounters a preview HST configuration in your repository, it will be deleted
-      automatically and you will loose your pending changes. Such a preview configuration is the result of changes
-      made in the document template composer that you forgot to publish.
-    </li>
-  </ul>
+    <div class="col-lg-12">
+        <h2>Welcome to Hippo Essentials</h2>
+        <p>
+            Hippo Essentials makes it easier to setup a Hippo project. With Essentials, you can browse the Essentials
+            feature library and install extra functionality in your new Hippo project. To get some basic understanding
+            about Essentials and how to use it, check the
+            <a href="http://www.onehippo.org/library/essentials/hippo-developer-essentials.html">documentation</a>.
+        </p>
+        <h3>Important Notes</h3>
+        <ul>
+            <li>
+                Please note that while you are using Essentials, it might be necessary to rebuild your project several times.
+                This is caused by the fact that the plugins need to be integrated into both the Essentials application and your
+                project.
+            </li>
+            <li>
+                Please note that if Essentials encounters a preview HST configuration in your repository, it will be deleted
+                automatically and you will loose your pending changes. Such a preview configuration is the result of changes
+                made in the document template composer that you forgot to publish.
+            </li>
+        </ul>
 
-  <form name="settingsForm" novalidate>
-    <h3>Essentials default settings</h3>
-    <p>
-      Essentials will apply several settings by default. You can set these settings below. It is advised to select
-      <em>add sample content</em> to get started.
-    </p>
-    <div class="form-group">
-      <label>Please select templating language:</label>
-    </div>
-    <div class="radio">
-      <label>
-        <input type="radio" ng-model="projectSettings.templateLanguage" required value="jsp"/> JSP template
-      </label>
-    </div>
-    <div class="radio">
-      <label>
-        <input type="radio" ng-model="projectSettings.templateLanguage" required value="freemarker"/> Freemarker template
-      </label>
-    </div>
-    <div class="radio">
-      <label>
-        <input type="radio" ng-model="projectSettings.templateLanguage" required value="repository"/> Repository stored freemarker template
-      </label>
-    </div>
-    <div class="form-group">
-      <label> Content: </label>
-    </div>
-    <div class="checkbox">
-      <label>
-        Add sample content <input type="checkbox" ng-model="projectSettings.useSamples"/>
-      </label>
-    </div>
-
-    <h3>Essentials work process</h3>
-    <p>
-      If you want to be able adjust above settings on a per-feature basis, check this box. This will, however,
-      result in more user interaction needed during your work process.
-    </p>
-    <div class="checkbox">
-      <label>
-        Confirm / override settings on a per-feature basis <input type="checkbox" ng-model="projectSettings.confirmParams"/>
-      </label>
-    </div>
-        <!--
-            //############################################
-            //  REPO URLS
-            //############################################
-        <div class="row form-group">
-            <label class="col-sm-2 control-label">Setup plugin repository urls:</label>
-            <label class="col-sm-6 control-label">
-                <button class="btn btn-success glyphicon glyphicon-plus" ng-click="addUrl()">Add repository url</button>
-            </label>
-        </div>
-        <div class="row" ng-repeat="url in projectSettings.pluginRepositories track by $index">
+        <form name="settingsForm" novalidate>
+            <h3>Essentials default settings</h3>
+            <p>
+                Essentials will apply several settings by default. You can set these settings below. It is advised to select
+                <em>add sample content</em> to get started.
+            </p>
             <div class="form-group">
-                <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control"  ng-model="projectSettings.pluginRepositories[$index]">
-                </div>
-                <div class="col-sm-2">
-                    <button class="btn btn-danger glyphicon glyphicon-minus pull-right"  ng-click="removeUrl(url)">Remove url</button>
+                <label>Please select templating language:</label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="projectSettings.templateLanguage" required value="jsp"/> JSP template
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="projectSettings.templateLanguage" required value="freemarker"/> Freemarker template
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="projectSettings.templateLanguage" required value="repository"/> Repository stored freemarker template
+                </label>
+            </div>
+            <div class="form-group">
+                <label> Content: </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    Add sample content <input type="checkbox" ng-model="projectSettings.useSamples"/>
+                </label>
+            </div>
+
+            <h3>Essentials work process</h3>
+            <p>
+                If you want to be able adjust above settings on a per-feature basis, check this box. This will, however,
+                result in more user interaction needed during your work process.
+            </p>
+            <div class="checkbox">
+                <label>
+                    Confirm / override settings on a per-feature basis
+                    <input type="checkbox" ng-model="projectSettings.confirmParams"/>
+                </label>
+            </div>
+            <!--
+                //############################################
+                //  REPO URLS
+                //############################################
+            <div class="row form-group">
+                <label class="col-sm-2 control-label">Setup plugin repository urls:</label>
+                <label class="col-sm-6 control-label">
+                    <button class="btn btn-success glyphicon glyphicon-plus" ng-click="addUrl()">Add repository url</button>
+                </label>
+            </div>
+            <div class="row" ng-repeat="url in projectSettings.pluginRepositories track by $index">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control"  ng-model="projectSettings.pluginRepositories[$index]">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-danger glyphicon glyphicon-minus pull-right"  ng-click="removeUrl(url)">Remove url</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        -->
-    <div class="form-group">
-      <button class="btn btn-primary pull-right" ng-click="getStarted()">Get started</button>
+            -->
+            <div class="form-group">
+                <button class="btn btn-primary pull-right" ng-click="getStarted()">Get started</button>
+            </div>
+        </form>
+        <p>Copyright 2013-2014 Hippo B.V.. Distributed under the
+            <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.</p>
     </div>
-  </form>
-
-  <p>Copyright 2013-2014 Hippo B.V.. Distributed under the
-    <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.</p>
 </div>
 
