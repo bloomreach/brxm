@@ -14,17 +14,44 @@
   limitations under the License.
   -->
 
-<div class="plugin plugin-primary">
-    <div class="plugin-header">
-        <h3 class="plugin-title">{{plugin.name}}</h3>
-        <div class="plugin-tools pull-right">
-            <a class="btn btn-primary" href="#/tools/{{plugin.id}}">Use {{plugin.name}}</a>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{plugin.name}}
+    </div>
+    <div class="panel-body">
+        <!--Start html code of feature block-->
+        <div class="feature-block">
+            <div class="well">
+                <div class="feature-heading">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="media">
+                                <a href="#" class="pull-left">
+                                    <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
+                                </a>
+                                <div class="media-body">
+                                    <h4>{{plugin.introduction}}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <a class="btn btn-primary" href="#/tools/{{plugin.id}}">Use {{plugin.name}}</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-description" ng-hide="showDescription">
+                    <div ng-show="showPlugin" ng-bind-html="plugin.description ? plugin.description:plugin.introduction"></div>
+                </div>
+
+            </div>
         </div>
-    </div>
-    <div class="plugin-body">
-        <div ng-show="showPlugin" ng-bind-html="plugin.description ? plugin.description:plugin.introduction"></div>
-    </div>
-    <div class="plugin-footer">
-        Provided by: <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a>
+        <div class="plugin-footer">
+            <div>
+                Provided by: <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a>
+            </div>
+            <div ng-show="plugin.documentationLink" class="pull-right">
+                <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
+            </div>
+        </div>
     </div>
 </div>
