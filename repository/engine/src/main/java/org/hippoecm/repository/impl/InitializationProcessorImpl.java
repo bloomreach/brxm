@@ -623,7 +623,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final Node initItemNode = session.getNodeByIdentifier(reloadItem);
             final String contextNodeName = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTEXTNODENAME, null));
             final String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/"));
-            for (Node downStreamItem : getDownstreamItems(session, contentRoot, contextNodeName)) {
+            for (Node downStreamItem : resolveDownstreamItems(session, contentRoot, contextNodeName)) {
                 getLogger().info("Marking item {} pending because downstream from {}", new Object[] { downStreamItem.getName(), initItemNode.getName() });
                 downStreamItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
                 initializeItems.add(downStreamItem);
@@ -802,7 +802,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return null;
     }
 
-    public Iterable<Node> getDownstreamItems(final Session session, final String contentRoot, final String contextNodeName) throws RepositoryException {
+    Iterable<Node> resolveDownstreamItems(final Session session, final String contentRoot, final String contextNodeName) throws RepositoryException {
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
                         "jcr:path = '/hippo:configuration/hippo:initialize/%' AND " +
@@ -821,7 +821,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return downStreamItems;
     }
 
-    public ContentFileInfo readContentFileInfo(final Node item) {
+    ContentFileInfo readContentFileInfo(final Node item) {
         try {
             final String contentResource = StringUtils.trim(item.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
             if (contentResource.endsWith(".zip") || contentResource.endsWith(".jar")) {
@@ -1108,11 +1108,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return new File(URI.create(file));
     }
 
-    private boolean isReloadable(Node node) throws RepositoryException {
-        if (JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_RELOADONSTARTUP, false)) {
-            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_DELTADIRECTIVE, null));
+    private boolean isReloadable(Node item) throws RepositoryException {
+        if (JcrUtils.getBooleanProperty(item, HippoNodeType.HIPPO_RELOADONSTARTUP, false)) {
+            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(item, HippoNodeType.HIPPOSYS_DELTADIRECTIVE, null));
             if (deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"))) {
-                getLogger().error("Cannot reload initialize item {} because it is a combine or overlay delta", node.getName());
+                getLogger().error("Cannot reload initialize item {} because it is a combine or overlay delta", item.getName());
                 return false;
             }
             return true;
@@ -1138,10 +1138,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return log;
     }
 
-    private static class ContentFileInfo {
+    static class ContentFileInfo {
 
-        private final String contextNodeName;
-        private final String deltaDirective;
+        final String contextNodeName;
+        final String deltaDirective;
 
         private ContentFileInfo(final String contextNodeName, final String deltaDirective) {
             this.contextNodeName = contextNodeName;

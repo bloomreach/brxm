@@ -18,6 +18,7 @@ package org.hippoecm.repository.impl;
 import java.io.File;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -51,8 +52,10 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTNODENAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
+import static org.hippoecm.repository.impl.InitializationProcessorImpl.ContentFileInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class InitializationProcessorTest extends RepositoryTestCase {
@@ -238,6 +241,54 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertFalse(created.equals(resources.getProperty(JCR_CREATED).getDate()));
     }
 
+    @Test
+    public void testResolveDownstreamItems() throws Exception {
+        item.setProperty(HIPPO_CONTENTROOT, "/");
+        item.setProperty(HIPPO_CONTEXTNODENAME, "foo");
+        session.save();
+
+        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/", "foo").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        item.setProperty(HIPPO_CONTENTROOT, "/foo");
+        item.setProperty(HIPPO_CONTEXTNODENAME, "bar");
+        session.save();
+
+        downstreamItems = processor.resolveDownstreamItems(session, "/", "foo").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        item.setProperty(HIPPO_CONTENTROOT, "/");
+        item.setProperty(HIPPO_CONTEXTNODENAME, "foobar");
+        session.save();
+
+        downstreamItems = processor.resolveDownstreamItems(session, "/", "foo").iterator();
+        assertFalse(downstreamItems.hasNext());
+    }
+
+    @Test
+    public void testReadContentFileInfo() throws Exception {
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/foo.xml").toString());
+        session.save();
+
+        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        ContentFileInfo contentFileInfo = processor.readContentFileInfo(item);
+
+        assertEquals("foo", contentFileInfo.contextNodeName);
+        assertNull(contentFileInfo.deltaDirective);
+
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/delta.xml").toString());
+        session.save();
+
+        contentFileInfo = processor.readContentFileInfo(item);
+
+        assertEquals("foo", contentFileInfo.contextNodeName);
+        assertEquals("combine", contentFileInfo.deltaDirective);
+    }
 
     /*
      * REPO-969: It works fine when the file: URL is on non-Windows system,
