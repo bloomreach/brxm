@@ -31,7 +31,8 @@
                 });
                 var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
                 Essentials.addPayloadData("taxonomies", selectedTaxonomyNames.join(','), payload);
-                $http.post(endpointTaxonomy + 'add', payload).success(function (data) {
+                $http.post(endpointTaxonomy + 'add', payload).success(function () {
+                    $scope.fieldsAdded = true;
                     updateDocumentTypes();
                 });
             };
@@ -44,6 +45,10 @@
                 $http.post(endpointTaxonomy + 'taxonomies/add', taxonomy).success(function () {
                     loadTaxonomies();
                 });
+            };
+
+            $scope.haveTaxonomyFields = function() {
+                return $scope.typesWithTaxonomyField > 0;
             };
             //############################################
             // INITIALIZE APP:
@@ -63,6 +68,8 @@
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.plugin = plugin;
             });
+            $scope.typesWithTaxonomyField = 0;
+            $scope.fieldsAdded = false;
             $scope.taxonomies = [];
             loadTaxonomies();
             //############################################
@@ -93,13 +100,17 @@
                     // reset to avoid inadvertent double adding of taxonomies
                     delete docType.selectedTaxonomy;
                     docType.checked = false;
+                    $scope.typesWithTaxonomyField = 0;
 
                     // update list of per-document used taxonomies
                     $http.get(endpointTaxonomy + 'taxonomies/' + docType.name).success(function (taxonomies) {
                         docType.taxonomies = taxonomies;
                         docType.taxonomiesString = taxonomies.join(', ');
+                        docType.hasTaxonomyFields = !!docType.taxonomiesString;
                         if (!docType.taxonomiesString) {
                             docType.taxonomiesString = 'none';
+                        } else {
+                            $scope.typesWithTaxonomyField++;
                         }
                     });
                 });
