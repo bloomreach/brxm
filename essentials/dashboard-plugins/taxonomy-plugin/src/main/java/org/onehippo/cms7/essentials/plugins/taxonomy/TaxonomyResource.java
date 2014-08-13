@@ -49,7 +49,6 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
@@ -91,7 +90,7 @@ public class TaxonomyResource extends BaseResource {
      */
     @POST
     @Path("/")
-    public MessageRestful createTaxonomy(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public MessageRestful createTaxonomy(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
         final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
         try {
@@ -110,7 +109,7 @@ public class TaxonomyResource extends BaseResource {
             if (!Strings.isNullOrEmpty(taxonomyName)) {
                 final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
                 if (taxonomiesNode.hasNode(taxonomyName)) {
-                    return new ErrorMessageRestful("Taxonomy with name: " + taxonomyName + " already exists");
+                    return createErrorMessage("Taxonomy with name: " + taxonomyName + " already exists", response);
                 }
                 addTaxonomyNode(session, taxonomiesNode, taxonomyName, locales);
 
@@ -121,7 +120,7 @@ public class TaxonomyResource extends BaseResource {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return new ErrorMessageRestful("Failed to create taxonomy");
+        return createErrorMessage("Failed to create taxonomy", response);
     }
 
     /**
@@ -179,7 +178,7 @@ public class TaxonomyResource extends BaseResource {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return new ErrorMessageRestful("Error adding taxonomy fields");
+        return createErrorMessage("Error adding taxonomy fields", response);
     }
 
     private void buildTemplateNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
