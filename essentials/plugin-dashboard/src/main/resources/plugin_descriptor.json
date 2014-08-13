@@ -752,14 +752,6 @@
                 "artifactId": "sitemap-component",
                 "scope": "compile",
                 "targetPom": "site"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "com.sun.xml.bind",
-                "artifactId": "jaxb-impl",
-                "scope": "compile",
-                "targetPom": "site",
-                "version": "2.1.13"
             }
         ]
     }
