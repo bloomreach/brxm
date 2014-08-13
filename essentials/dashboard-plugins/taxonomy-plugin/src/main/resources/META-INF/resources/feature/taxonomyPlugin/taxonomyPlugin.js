@@ -30,7 +30,7 @@
                 var documents = $filter('filter')($scope.documentTypes, {checked: true});
                 angular.forEach(documents, function (value) {
                     selectedDocumentNames.push(value.name);
-                    selectedTaxonomyNames.push(value.selectedTaxonomy.key);
+                    selectedTaxonomyNames.push(value.selectedTaxonomy.name);
                 });
                 var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
                 Essentials.addPayloadData("taxonomies", selectedTaxonomyNames.join(','), payload);
