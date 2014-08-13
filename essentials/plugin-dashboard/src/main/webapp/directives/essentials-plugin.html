@@ -44,10 +44,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="feature-description">
+                <div class="feature-description" ng-hide="showDescription">
                     <div ng-show="plugin.description" ng-bind-html="plugin.description"></div>
                 </div>
+                <div class="feature-description-long" ng-show="showDescription">
+                    <div ng-show="plugin.description" ng-bind-html="plugin.description"></div>
+                    <carousel>
+                        <slide ng-repeat="imageUrl in plugin.imageUrls" active="slide.active">
+                            <img ng-src="{{imageUrl}}" style="margin:auto;">
 
+                        </slide>
+                    </carousel>
+
+                </div>
             </div>
         </div>
     </div>

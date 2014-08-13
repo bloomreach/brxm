@@ -297,6 +297,10 @@
                 },
                 templateUrl: 'directives/essentials-plugin.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    $scope.showDescription = false;
+                    $scope.toggleDescription = function () {
+                        $scope.showDescription = !$scope.showDescription;
+                    };
                     $scope.isDiscovered = function() {
                         return $scope.plugin.type === 'feature' && $scope.plugin.installState === 'discovered';
                     };
