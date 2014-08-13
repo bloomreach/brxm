@@ -18,7 +18,7 @@
     <div class="alert alert-default">
         <div ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
             <p>{{messages.length}}: <span class="fa fa-exclamation"></span>
-                <a href="#" ng-click="toggleArchive()">
+                <a ng-click="toggleArchive()">
                     <span class="feedback-message" ng-bind-html="message.message"></span>
                     <span class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span></a>
             </p>
