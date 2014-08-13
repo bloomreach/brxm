@@ -19,11 +19,12 @@
     angular.module('hippo.essentials')
         .controller('taggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
             $scope.pluginId = "taggingPlugin";
-            var endpoint = $rootScope.REST.documents;
+            var endpointDocuments = $rootScope.REST.documents;
             var endpointTagging = $scope.endpoint = $rootScope.REST.dynamic + 'taggingplugin/';
             $scope.widgetCols = 20;
             $scope.widgetRows = 2;
             $scope.numberOfSuggestions = 10;
+            $scope.fieldsAdded = false;
 
             $scope.addDocuments = function () {
                 var documents = $filter('filter')($scope.documentTypes, {checked: true});
@@ -36,16 +37,22 @@
                 Essentials.addPayloadData("widgetCols", $scope.widgetCols, payload);
                 Essentials.addPayloadData("widgetRows", $scope.widgetRows, payload);
                 $http.post(endpointTagging, payload).success(function (data) {
+                    $scope.fieldsAdded = true;
                 });
             };
 
             //############################################
             // INITIALIZE APP:
             //############################################
-            $http.get(endpoint).success(function (data) {
-                $scope.documentTypes = data;
+            $http.get(endpointDocuments).success(function (docTypes) {
+                // Filter out basedocument
+                $scope.documentTypes = [];
+                angular.forEach(docTypes, function(docType) {
+                    if (docType.name !== 'basedocument') {
+                        $scope.documentTypes.push(docType);
+                    }
+                });
             });
-            //
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.plugin = plugin;
