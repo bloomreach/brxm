@@ -125,7 +125,7 @@
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.impl.InitializationProcessorImpl">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 
