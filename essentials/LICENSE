@@ -206,29 +206,6 @@ and license terms may apply. Your use of the code for these sub-components is al
 as described below:
 
 ------------------------------------------------------------------------------------------------------------------------
-dashboard-plugins/banner-plugin/src/main/resources/images/*
-dashboard-plugins/blog-plugin/src/main/resources/images/*
-dashboard-plugins/dashboard-events-plugin/src/main/resources/images/*
-dashboard-plugins/dashboard-list-content-plugin/src/main/resources/images/*
-dashboard-plugins/dashboard-news-plugin/src/main/resources/images/component-icon-news.png
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/icons/*
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/*
-dashboard-plugins/faq-component-plugin/src/main/resources/instructions/icon/*
-dashboard-plugins/image-component-plugin/src/main/resources/instructions/images/*
-dashboard-plugins/menu-plugin/src/main/resources/images/*
-dashboard-plugins/seo-plugin/src/main/resources/instructions/component-icon-seo.png
-dashboard-plugins/simple-content/src/main/resources/images/*
-dashboard-plugins/video-component-plugin/src/main/resources/instructions/images/*
-
-    These icons have been included from, or are based on, the URL
-
-        http://www.icojam.com/blog/?p=177
-
-    which declares the following License terms:
-
-    These icons are free to use in any kind of commercial or non-commercial project unlimited times.
-
-------------------------------------------------------------------------------------------------------------------------
 plugin-dashboard/src/main/webapp/components/angular/*
 plugin-dashboard/src/main/webapp/components/angular-mocks/*
 plugin-dashboard/src/main/webapp/js/lib/angular-animate*
