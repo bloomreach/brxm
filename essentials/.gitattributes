@@ -654,6 +654,7 @@ dashboard-plugins/taxonomy-plugin/pom.xml -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/FrontendPluginBuilder.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyParameterService.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyResource.java -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyRestful.java -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/feature/taxonomyPlugin/taxonomyPlugin.html -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/feature/taxonomyPlugin/taxonomyPlugin.js -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/web-fragment.xml -text

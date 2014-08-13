@@ -17,6 +17,23 @@
     <div class="panel panel-default">
         <div class="panel-heading">{{plugin.name}}</div>
         <div class="panel-body">
+            <div ng-show="taxonomies.length">
+              <h3>Current Taxonomies</h3>
+              <table class="table table-hover">
+                <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Locales</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="taxonomy in taxonomies">
+                    <td>{{taxonomy.name}}</td>
+                    <td>{{taxonomy.localesString}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div>
                 <form novalidate name="taxonomyForm">
                     <h3>Create new taxonomy:</h3>
@@ -63,7 +80,7 @@
                                         ng-selected="doc.selectedTaxonomy"
                                         ng-required="doc.checked"
                                         required
-                                        ng-options="option.key for option in taxonomies">
+                                        ng-options="taxonomy.name for taxonomy in taxonomies">
                                     <option value=""></option>
                                 </select>
                             </td>

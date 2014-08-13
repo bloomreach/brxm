@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.servlet.ServletContext;
@@ -49,7 +50,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
@@ -232,8 +232,8 @@ public class TaxonomyResource extends BaseResource {
      */
     @GET
     @Path("/taxonomies")
-    public List<KeyValueRestful> getTaxonomies(@Context ServletContext servletContext) {
-        final List<KeyValueRestful> taxonomies = new ArrayList<>();
+    public List<TaxonomyRestful> getTaxonomies(@Context ServletContext servletContext) {
+        final List<TaxonomyRestful> taxonomies = new ArrayList<>();
         final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
 
@@ -243,20 +243,24 @@ public class TaxonomyResource extends BaseResource {
             final NodeIterator nodes = xpath.execute().getNodes();
             while (nodes.hasNext()) {
                 final Node node = nodes.nextNode();
-                final String path = node.getPath();
-                taxonomies.add(new KeyValueRestful(node.getName(), path));
+                final TaxonomyRestful taxonomy  = new TaxonomyRestful();
+                taxonomy.setName(node.getName());
+                taxonomy.setPath(node.getPath());
+                final Value[] localeValues = node.getProperty(HIPPOTAXONOMY_LOCALES).getValues();
+                final String[] locales = new String[localeValues.length];
+                for (int i = 0; i < locales.length; i++) {
+                    locales[i] = localeValues[i].getString();
+                }
+                taxonomy.setLocales(locales);
+                taxonomies.add(taxonomy);
             }
         } catch (RepositoryException e) {
             log.error("Error fetching taxonomies", e);
-
         } finally {
             GlobalUtils.cleanupSession(session);
         }
 
-
         return taxonomies;
-
-
     }
 
 

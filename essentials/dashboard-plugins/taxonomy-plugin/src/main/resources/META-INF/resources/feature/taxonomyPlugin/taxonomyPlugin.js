@@ -22,15 +22,6 @@
             var endpoint = $rootScope.REST.documents;
             var endpointTaxonomy = $scope.endpoint = $rootScope.REST.dynamic + 'taxonomyplugin/';
             var endpointDocument = endpointTaxonomy + "add";
-            $scope.locales = [
-                {name: "en"},
-                {name: "fr"},
-                {name: "de"},
-                {name: "es"},
-                {name: "it"},
-                {name: "nl"}
-            ];
-            $scope.taxonomyName = null;
             $scope.taxonomies = [];
             $scope.addDocuments = function () {
 
@@ -49,10 +40,9 @@
             };
 
             $scope.addTaxonomy = function () {
-
                 var payload = Essentials.addPayloadData("locales", extractLocales($scope.locales), null);
                 Essentials.addPayloadData("taxonomyName", $scope.taxonomyName, payload);
-                $http.post(endpointTaxonomy, payload).success(function (data) {
+                $http.post(endpointTaxonomy, payload).success(function () {
                     loadTaxonomies();
                 });
             };
@@ -71,11 +61,26 @@
             // HELPERS
             //############################################
             function loadTaxonomies() {
+                $scope.locales = [
+                    {name: "en"},
+                    {name: "fr"},
+                    {name: "de"},
+                    {name: "es"},
+                    {name: "it"},
+                    {name: "nl"}
+                ];
+                $scope.taxonomyName = null;
+
                 $http.get(endpointTaxonomy + "taxonomies/").success(function (data) {
                     $scope.taxonomies = data;
+
+                    angular.forEach(data, function (taxonomy) {
+                        taxonomy.localesString = taxonomy.locales.join(', ');
+                    });
                 });
             }
 
+            // Make CSV string of checked Locales
             function extractLocales(l) {
                 var loc = $filter('filter')(l, {checked: true});
                 var locales = [];
