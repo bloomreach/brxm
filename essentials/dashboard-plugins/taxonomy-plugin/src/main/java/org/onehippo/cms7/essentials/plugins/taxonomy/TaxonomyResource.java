@@ -37,6 +37,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -75,153 +76,11 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
     public static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     public static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
+    private static final String FIELDPATH = "fieldPath";
+    private static final String ADDITIONAL_SERVICE_PREFIX = "taxonomyclassification";
+    private static final String TAXONOMY_FIELD_MARKER = "essentials-taxonomy-name";
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
-
-
-    private static Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
-
-
-    /**
-     * Adds taxonomy  to {@code /content/taxonomies/} node.
-     *
-     * @param payloadRestful payload data
-     * @param servletContext servlet context
-     * @return message or an error message in case of error
-     */
-    @POST
-    @Path("/")
-    public MessageRestful createTaxonomy(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
-        final Session session = context.createSession();
-        try {
-            final Map<String, String> values = payloadRestful.getValues();
-            final String taxonomyName = values.get("taxonomyName");
-            final String localeString = values.get("locales");
-            final String[] locales;
-            if (Strings.isNullOrEmpty(localeString)) {
-                locales = new String[]{"en"};
-            } else {
-                final Splitter splitter = Splitter.on(",").omitEmptyStrings().trimResults();
-                final Iterable<String> iterable = splitter.split(localeString);
-                final List<String> strings = Lists.newArrayList(iterable);
-                locales = strings.toArray(new String[strings.size()]);
-            }
-            if (!Strings.isNullOrEmpty(taxonomyName)) {
-                final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
-                if (taxonomiesNode.hasNode(taxonomyName)) {
-                    return createErrorMessage("Taxonomy with name: " + taxonomyName + " already exists", response);
-                }
-                addTaxonomyNode(session, taxonomiesNode, taxonomyName, locales);
-
-                return new MessageRestful("Successfully added taxonomy: " + taxonomyName);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error adding taxonomy", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-        return createErrorMessage("Failed to create taxonomy", response);
-    }
-
-    /**
-     * Adds taxonomy  to a document
-     *
-     * @param payloadRestful payload data
-     * @param servletContext servlet context
-     * @return message or an error message in case of error
-     */
-    @POST
-    @Path("/add")
-    public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
-        final Session session = context.createSession();
-        try {
-            final Map<String, String> values = payloadRestful.getValues();
-            final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
-            final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
-            final Collection<String> changedDocuments = new HashSet<>();
-            for (int i = 0; i < documentNames.length; i++) {
-                final String documentName = documentNames[i];
-                final String taxonomyName = taxonomyNames[i];
-                final String prefix = context.getProjectNamespacePrefix();
-                DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
-                final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
-                    if (session.nodeExists(path)) {
-                        final Node node = session.getNode(path);
-                        if (node.hasNode("classifiable")) {
-                            buildServiceNode(session, prefix, documentName, taxonomyName);
-                            buildTemplateNode(session, prefix, documentName, taxonomyName);
-                            changedDocuments.add(documentName);
-                        }
-                        else{
-                            final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
-                            fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
-                            fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                            fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(node));
-                            final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
-                            clusterNode.setProperty("taxonomy.name", taxonomyName);
-                            changedDocuments.add(documentName);
-                        }
-
-                    }
-
-            }
-            if (session.hasPendingChanges()) {
-                session.save();
-            }
-            if (changedDocuments.size() > 0) {
-                return new MessageRestful("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
-            }
-            return createErrorMessage("No taxonomy fields were added, field(s) already exist", response);
-        } catch (RepositoryException e) {
-            log.error("Error adding taxonomy to a document", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-        return createErrorMessage("Error adding taxonomy fields", response);
-    }
-
-    private void buildTemplateNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
-        final String templatePath = MessageFormat.format(
-                "/hippo:namespaces/{0}/{1}/editor:templates/_default_/{2}", prefix, documentName,taxonomyName);
-
-        String daoName = getDaoName(documentName, taxonomyName);
-        new FrontendPluginBuilder(session,templatePath).setProperties(
-                ImmutableMap.<String,String>builder()
-                        .put("taxonomy.classification.dao", daoName)
-                        .put("mode", "${mode}")
-                        .put("model.compareTo", "${model.compareTo}")
-                        .put("taxonomy.id", "service.taxonomy")
-                        .put("taxonomy.name", taxonomyName)
-                        .put("wicket.id", "${cluster.id}.left.item")
-                        .put("plugin.class", "org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin")
-                        .put("wicket.model", "${wicket.model}")
-                        .build()
-        ).build();
-    }
-
-    private void buildServiceNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
-        final String serviceName = MessageFormat.format("taxonomyclassification{0}",
-                taxonomyName);
-        final String servicePath = MessageFormat.format(
-                "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
-        final String daoName = getDaoName(documentName, taxonomyName);
-        final String fieldPath = MessageFormat.format(
-                "{0}:{1}",prefix,documentName);
-        new FrontendPluginBuilder(session,servicePath).setProperties(
-                ImmutableMap.<String, String>builder()
-                        .put("fieldPath", fieldPath)
-                        .put("taxonomy.classification.dao", daoName)
-                        .put("plugin.class"
-                                , "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
-                        .build()
-        ).build();
-    }
-
-    public static String getDaoName(String docType, String taxonomyName){
-        return MessageFormat.format("taxonomy.classification.{0}.dao", taxonomyName);
-    }
-
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
     /**
      * Returns list of taxonomies found under {@code /content/taxonomies/} node.
@@ -262,6 +121,218 @@ public class TaxonomyResource extends BaseResource {
         return taxonomies;
     }
 
+    @GET
+    @Path("taxonomies/{document-name}")
+    public List<String> getTaxonomyFields(@PathParam("document-name") final String documentName) {
+        List<String> fields = new ArrayList<>();
+
+        final PluginContext context = PluginContextFactory.getContext();
+        final String prefix = context.getProjectNamespacePrefix();
+        final Session session = context.createSession();
+        try {
+            final String editorTemplatePath =
+                    MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
+            if (session.nodeExists(editorTemplatePath)) {
+                final Node editorTemplateNode = session.getNode(editorTemplatePath);
+                final NodeIterator it = editorTemplateNode.getNodes();
+                while (it.hasNext()) {
+                    final Node field = it.nextNode();
+                    if (field.hasProperty(TAXONOMY_FIELD_MARKER)) {
+                        fields.add(field.getProperty(TAXONOMY_FIELD_MARKER).getString());
+                    }
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error("Problem checking taxonomy fields for document " + documentName, ex);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        return fields;
+    }
+
+    /**
+     * Adds taxonomy to {@code /content/taxonomies/} node.
+     *
+     * @param taxonomyRestful taxonomy data
+     * @param response servlet response
+     * @return message or an error message in case of error
+     */
+    @POST
+    @Path("/taxonomies/add")
+    public MessageRestful createTaxonomy(final TaxonomyRestful taxonomyRestful, @Context HttpServletResponse response) {
+        final PluginContext context = PluginContextFactory.getContext();
+        final Session session = context.createSession();
+        try {
+            final String taxonomyName = taxonomyRestful.getName();
+            String[] locales = taxonomyRestful.getLocales();
+            if (locales == null || locales.length == 0) {
+                locales = new String[]{"en"};
+            }
+            if (!Strings.isNullOrEmpty(taxonomyName)) {
+                final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
+                if (taxonomiesNode.hasNode(taxonomyName)) {
+                    return createErrorMessage("Taxonomy with name: " + taxonomyName + " already exists", response);
+                }
+                addTaxonomyNode(session, taxonomiesNode, taxonomyName, locales);
+
+                return new MessageRestful("Successfully added taxonomy: " + taxonomyName);
+            }
+        } catch (RepositoryException e) {
+            log.error("Error adding taxonomy", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+        return createErrorMessage("Failed to create taxonomy", response);
+    }
+
+    /**
+     * Adds taxonomy  to a document
+     *
+     * @param payloadRestful payload data
+     * @param servletContext servlet context
+     * @return message or an error message in case of error
+     */
+    @POST
+    @Path("/add")
+    public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
+        final PluginContext context = PluginContextFactory.getContext();
+        final Session session = context.createSession();
+        try {
+            final Map<String, String> values = payloadRestful.getValues();
+            final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
+            final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
+            final Collection<String> changedDocuments = new HashSet<>();
+            for (int i = 0; i < documentNames.length; i++) {
+                final String documentName = documentNames[i];
+                final String taxonomyName = taxonomyNames[i];
+                final String prefix = context.getProjectNamespacePrefix();
+                DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
+                final String editorTemplatePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
+                if (!session.nodeExists(editorTemplatePath)) {
+                    return createErrorMessage("Document type '" + documentName + "' not suitable for adding taxonomy field", response);
+                }
+
+                final Node editorTemplateNode = session.getNode(editorTemplatePath);
+                if (!editorTemplateNode.hasNode("classifiable")) {
+                    // create first taxonomy field
+                    final Node fieldNode = editorTemplateNode.addNode("classifiable", "frontend:plugin");
+                    fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
+                    fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
+                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(editorTemplateNode));
+                    final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
+                    clusterNode.setProperty("taxonomy.name", taxonomyName);
+                    markAsTaxonomyField(fieldNode, taxonomyName);
+// This functionality appears not robust enough, not allowed for now
+//                } else if (!hasSecondTaxonomyField(session, prefix, documentName)) {
+//                    // create second taxonomy field
+//                    buildServiceNode(session, prefix, documentName, taxonomyName);
+//                    buildTemplateNode(session, prefix, documentName, taxonomyName);
+//                } else {
+//                    // more than 2 taxonomy fields are currently not supported.
+//                    return createErrorMessage("Document type '" + documentName
+//                            + "' already has the maximum supported number of 2 taxonomy fields.", response);
+                } else {
+                    return createErrorMessage("For now, this feature allows only 1 taxonomy max per document type.",
+                            response);
+                }
+                changedDocuments.add(documentName);
+            }
+            if (session.hasPendingChanges()) {
+                session.save();
+            }
+            if (changedDocuments.size() > 0) {
+                return new MessageRestful("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
+            }
+            return createErrorMessage("No taxonomy fields were added", response);
+        } catch (RepositoryException e) {
+            log.error("Error adding taxonomy to a document", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+        return createErrorMessage("Error adding taxonomy fields", response);
+    }
+
+    /**
+     * Note that the taxonomy plugin has a very intricate way of configuring taxonomy fields.
+     * To avoid this complexity when checking which document type uses which taxonomies,
+     * this plugin marks taxonomy fields by adding a plugin-specific property. That property
+     * has no other function than to convey information to the plugin.
+     */
+    private void markAsTaxonomyField(final Node fieldNode, final String taxonomyName) {
+        try {
+            fieldNode.setProperty(TAXONOMY_FIELD_MARKER, taxonomyName);
+        } catch (RepositoryException ex) {
+            log.error("Error marking a taxonomy field.", ex);
+        }
+    }
+
+    private boolean hasSecondTaxonomyField(final Session session, final String prefix, final String documentName) {
+        try {
+            final Node servicesNode = session.getNode("/hippo:configuration/hippo:frontend/cms/cms-services");
+            final NodeIterator it = servicesNode.getNodes();
+            while (it.hasNext()) {
+                final Node serviceNode = it.nextNode();
+                if (serviceNode.getName().startsWith(ADDITIONAL_SERVICE_PREFIX)
+                    && serviceNode.hasProperty(FIELDPATH)) {
+                    final String documentType = serviceNode.getProperty(FIELDPATH).getString();
+                    if (documentType.equals(makeFieldPath(prefix, documentName))) {
+                        return true;
+                    }
+                }
+            }
+
+        } catch (RepositoryException ex) {
+            log.error("Repository exception when checking the existence of a second taxonomy field", ex);
+            return true;
+        }
+        return false;
+    }
+
+    private void buildTemplateNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
+        final String templatePath = MessageFormat.format(
+                "/hippo:namespaces/{0}/{1}/editor:templates/_default_/{2}", prefix, documentName, taxonomyName);
+
+        String daoName = getDaoName(documentName, taxonomyName);
+        final Node fieldNode = new FrontendPluginBuilder(session, templatePath).setProperties(
+                ImmutableMap.<String, String>builder()
+                        .put("taxonomy.classification.dao", daoName)
+                        .put("mode", "${mode}")
+                        .put("model.compareTo", "${model.compareTo}")
+                        .put("taxonomy.id", "service.taxonomy")
+                        .put("taxonomy.name", taxonomyName)
+                        .put("wicket.id", "${cluster.id}.left.item")
+                        .put("plugin.class", "org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin")
+                        .put("wicket.model", "${wicket.model}")
+                        .build()
+        ).build();
+        if (fieldNode != null) {
+            markAsTaxonomyField(fieldNode, taxonomyName);
+        }
+    }
+
+    private void buildServiceNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
+        final String serviceName = MessageFormat.format("{0}{1}", ADDITIONAL_SERVICE_PREFIX, taxonomyName);
+        final String servicePath = MessageFormat.format(
+                "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
+        final String daoName = getDaoName(documentName, taxonomyName);
+        final String fieldPath = makeFieldPath(prefix, documentName);
+        new FrontendPluginBuilder(session,servicePath).setProperties(
+                ImmutableMap.<String, String>builder()
+                        .put(FIELDPATH, fieldPath)
+                        .put("taxonomy.classification.dao", daoName)
+                        .put("plugin.class", "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
+                        .build()
+        ).build();
+    }
+
+    private String makeFieldPath(final String prefix, final String documentName) {
+        return MessageFormat.format("{0}:{1}", prefix, documentName);
+    }
+
+    public static String getDaoName(String docType, String taxonomyName){
+        return MessageFormat.format("taxonomy.classification.{0}.dao", taxonomyName);
+    }
 
     private Node createOrGetTaxonomyContainer(final Session session) {
         Node taxonomiesNode = null;
@@ -302,14 +373,11 @@ public class TaxonomyResource extends BaseResource {
 
     private boolean hasTaxonomyContainer(final Session session) {
         try {
-            return session.itemExists("/content/taxonomies") && session.getNode("/content/taxonomies").getPrimaryNodeType().getName().equals("hippotaxonomy:container");
+            return session.itemExists("/content/taxonomies")
+                    && session.getNode("/content/taxonomies").getPrimaryNodeType().getName().equals("hippotaxonomy:container");
         } catch (RepositoryException e) {
             log.error("Error: {}", e);
         }
         return false;
     }
-
-
-
-
 }

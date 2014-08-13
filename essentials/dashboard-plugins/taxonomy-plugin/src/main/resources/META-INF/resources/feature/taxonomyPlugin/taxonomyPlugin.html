@@ -58,13 +58,14 @@
             </div>
             <form novalidate name="documentsForm">
                 <div ng-show="documentTypes.length && taxonomies.length">
-                    <h3>Or add taxonomy to following documents:</h3>
+                    <h3>Add taxonomy to following documents:</h3>
                     <table class="table table-hover">
                         <thead>
                         <tr>
                             <th></th>
                             <th>Document</th>
                             <th>Taxonomy name</th>
+                            <th>Already used taxonomies</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -83,6 +84,9 @@
                                         ng-options="taxonomy.name for taxonomy in taxonomies">
                                     <option value=""></option>
                                 </select>
+                            </td>
+                            <td>
+                              {{doc.taxonomiesString}}
                             </td>
                         </tr>
                         </tbody>

@@ -19,12 +19,9 @@
     angular.module('hippo.essentials')
         .controller('taxonomyPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             $scope.pluginId = "taxonomyPlugin";
-            var endpoint = $rootScope.REST.documents;
+            var endpointDocuments = $rootScope.REST.documents;
             var endpointTaxonomy = $scope.endpoint = $rootScope.REST.dynamic + 'taxonomyplugin/';
-            var endpointDocument = endpointTaxonomy + "add";
-            $scope.taxonomies = [];
             $scope.addDocuments = function () {
-
                 var selectedDocumentNames = [];
                 var selectedTaxonomyNames = [];
                 var documents = $filter('filter')($scope.documentTypes, {checked: true});
@@ -34,28 +31,39 @@
                 });
                 var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
                 Essentials.addPayloadData("taxonomies", selectedTaxonomyNames.join(','), payload);
-                $http.post(endpointDocument, payload).success(function (data) {
-                    //
+                $http.post(endpointTaxonomy + 'add', payload).success(function (data) {
+                    updateDocumentTypes();
                 });
             };
 
             $scope.addTaxonomy = function () {
-                var payload = Essentials.addPayloadData("locales", extractLocales($scope.locales), null);
-                Essentials.addPayloadData("taxonomyName", $scope.taxonomyName, payload);
-                $http.post(endpointTaxonomy, payload).success(function () {
+                var taxonomy = {
+                    name: $scope.taxonomyName,
+                    locales: extractLocales($scope.locales)
+                };
+                $http.post(endpointTaxonomy + 'taxonomies/add', taxonomy).success(function () {
                     loadTaxonomies();
                 });
             };
             //############################################
             // INITIALIZE APP:
             //############################################
-            $http.get(endpoint).success(function (data) {
-                $scope.documentTypes = data;
+            $http.get(endpointDocuments).success(function (data) {
+                // Filter out basedocument
+                $scope.documentTypes = [];
+                angular.forEach(data, function(docType) {
+                    if (docType.name !== 'basedocument') {
+                        $scope.documentTypes.push(docType);
+                    }
+                });
+
+                updateDocumentTypes();
             });
             //
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.plugin = plugin;
             });
+            $scope.taxonomies = [];
             loadTaxonomies();
             //############################################
             // HELPERS
@@ -71,7 +79,7 @@
                 ];
                 $scope.taxonomyName = null;
 
-                $http.get(endpointTaxonomy + "taxonomies/").success(function (data) {
+                $http.get(endpointTaxonomy + "taxonomies").success(function (data) {
                     $scope.taxonomies = data;
 
                     angular.forEach(data, function (taxonomy) {
@@ -80,19 +88,31 @@
                 });
             }
 
-            // Make CSV string of checked Locales
+            function updateDocumentTypes() {
+                angular.forEach($scope.documentTypes, function (docType) {
+                    // reset to avoid inadvertent double adding of taxonomies
+                    delete docType.selectedTaxonomy;
+                    docType.checked = false;
+
+                    // update list of per-document used taxonomies
+                    $http.get(endpointTaxonomy + 'taxonomies/' + docType.name).success(function (taxonomies) {
+                        docType.taxonomies = taxonomies;
+                        docType.taxonomiesString = taxonomies.join(', ');
+                        if (!docType.taxonomiesString) {
+                            docType.taxonomiesString = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Make string array of checked Locales
             function extractLocales(l) {
                 var loc = $filter('filter')(l, {checked: true});
                 var locales = [];
-                if (loc.length == 0) {
-                    locales.push('en');
-                } else {
-                    angular.forEach(loc, function (value) {
-                        locales.push(value.name);
-                    });
-                }
-                return locales.join(',');
+                angular.forEach(loc, function (value) {
+                    locales.push(value.name);
+                });
+                return locales;
             }
-
         })
 })();
