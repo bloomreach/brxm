@@ -80,9 +80,9 @@ public interface WebResource {
 
     /**
      * Removes this web resource.
-     * @throws {@link WebResourceException} in case the delete did not occur, for example because the resource is not there any more,
+     * @throws WebResourceException in case the delete did not occur, for example because the resource is not there any more,
      * insufficient authorization, locking, etc
      */
-    void delete();
+    void delete() throws WebResourceException;
 
 }
