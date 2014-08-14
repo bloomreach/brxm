@@ -14,49 +14,45 @@
   limitations under the License.
   -->
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        {{plugin.name}}
-    </div>
-    <div class="panel-body">
-        <!--Start html code of feature block-->
-        <div class="feature-block">
-            <div class="well">
-                <div class="feature-heading">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="media">
-                                <a href="#" class="pull-left">
-                                    <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
-                                </a>
-                                <div class="media-body">
-                                    <h4>{{plugin.introduction}}</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 text-right">
-                            <button class="btn btn-primary"
-                                    ng-show="isDiscovered()"
-                                    ng-click="installPlugin()">Install {{plugin.type}}
-                            </button>
-                            <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
-                            <span ng-show="isOnBoard()" class="btn btn-info">Installed</span>
+<div class="feature-block">
+    <div class="well">
+        <div class="feature-heading">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="media">
+                        <a href="#" class="pull-left">
+                            <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
+                        </a>
+                        <div class="media-body">
+                            <h4>{{plugin.name}}</h4>
+                            <p>{{plugin.type}}, developed by <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a></p>
                         </div>
                     </div>
                 </div>
-                <div class="feature-description" ng-hide="showDescription">
-                    <div ng-show="plugin.description" ng-bind-html="plugin.description"></div>
+                <div class="col-sm-6 text-right">
+                    <button class="btn btn-primary"
+                            ng-show="isDiscovered()"
+                            ng-click="installPlugin()">Install {{plugin.type}}
+                    </button>
+                    <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+                    <span ng-show="isOnBoard()" class="btn btn-default">Installed</span>
                 </div>
-                <div class="feature-description-long" ng-show="showDescription">
-                    <div ng-show="plugin.description" ng-bind-html="plugin.description"></div>
-                    <carousel>
-                        <slide ng-repeat="imageUrl in plugin.imageUrls" active="slide.active">
-                            <img ng-src="{{imageUrl}}" style="margin:auto;">
-
-                        </slide>
-                    </carousel>
-
-                </div>
+            </div>
+        </div>
+        <div class="feature-description">
+            <div class="feature-description-short" ng-hide="showDescription">
+                <div ng-bind-html="plugin.introduction"></div>
+                <a ng-show="plugin.description || plugin.imageUrls.length"
+                   data-ng-click="toggleDescription()">Read more...</a>
+            </div>
+            <div class="feature-description-long" ng-show="showDescription">
+                <div ng-bind-html="plugin.introduction"></div>
+                <div ng-bind-html="plugin.description"></div>
+                <carousel ng-show="plugin.imageUrls.length">
+                    <slide ng-repeat="imageUrl in plugin.imageUrls" active="slide.active">
+                        <img ng-src="{{imageUrl}}" style="margin:auto;">
+                    </slide>
+                </carousel>
             </div>
         </div>
     </div>
