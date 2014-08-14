@@ -758,15 +758,19 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private boolean shouldReload(final Node temp, final Node existing, final String moduleVersion, final String existingModuleVersion, final String itemVersion, final String existingItemVersion) throws RepositoryException {
         if (!isReloadable(temp)) {
+            getLogger().debug("Item {} is not reloadable", temp.getName());
             return false;
         }
         if (itemVersion != null && !isNewerVersion(itemVersion, existingItemVersion)) {
+            getLogger().debug("Version {} of item {} is not newer than previously bootstrapped version {}", itemVersion, temp.getName(), existingItemVersion);
             return false;
         }
         if (itemVersion == null && !isNewerVersion(moduleVersion, existingModuleVersion)) {
+            getLogger().debug("Module version {} of item {} is not newer than previously bootstrapped version {}", moduleVersion, temp.getName(), existingModuleVersion);
             return false;
         }
         if (existing.hasProperty(HippoNodeType.HIPPO_STATUS) && existing.getProperty(HippoNodeType.HIPPO_STATUS).getString().equals("disabled")) {
+            getLogger().debug("Item {} is disabled", temp.getName());
             return false;
         }
         return true;

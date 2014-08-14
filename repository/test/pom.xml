@@ -117,7 +117,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>

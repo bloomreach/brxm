@@ -103,10 +103,8 @@ public class ModuleManager {
                         log.warn("Cannot register {}: not a DaemonModule", moduleName);
                     }
                 } catch (ClassNotFoundException e) {
-                    log.error("Cannot start module {} of class {}: class not found", moduleName, className);
-                } catch (IllegalAccessException e) {
-                    log.error("Failed to create daemon module {}: " + e, moduleName);
-                } catch (InstantiationException e) {
+                    log.error("Cannot register module {} of class {}: class not found", moduleName, className);
+                } catch (IllegalAccessException | InstantiationException e) {
                     log.error("Failed to create daemon module {}: " + e, moduleName);
                 }
 
