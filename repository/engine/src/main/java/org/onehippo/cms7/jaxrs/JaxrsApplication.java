@@ -32,16 +32,19 @@ import org.onehippo.cms7.services.jaxrs.JaxrsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class consumes the {@link JaxrsService}s and exposes them as resources in a JAX-RS application.
+ */
 @Provider
-public class CXFApplication extends Application {
+public class JaxrsApplication extends Application {
 
-    private static final Logger log = LoggerFactory.getLogger(CXFApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(JaxrsApplication.class);
 
     private Set<Object> dummySingletons = new HashSet<Object>(Arrays.asList(new DummyService()));
     private Set<Object> singletons;
     private volatile int version = -1;
 
-    public CXFApplication() {
+    public JaxrsApplication() {
     }
 
     @Override
