@@ -17,20 +17,17 @@
 <div class="log">
     <div class="alert alert-default">
         <div ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
-            <p>{{messages.length}}: <span class="fa fa-exclamation"></span>
+            <p>{{messages.length}}:
                 <a ng-click="toggleArchive()">
                     <span class="feedback-message" ng-bind-html="message.message"></span>
-                    <span class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span></a>
+                    <span class="fa" ng-class="{'fa-chevron-down': !archiveOpen, 'fa-chevron-up': archiveOpen}"></span></a>
             </p>
-
         </div>
-        <div class="log-messages" ng-repeat="message in archiveMessages" ng-show="archiveOpen" ng-switch="message.type">
-            <p ng-switch-when="info" class="bg-success">{{message.date}}: <span ng-bind-html="message.message"></span>
+        <div class="log-messages" ng-show="archiveOpen">
+            <p ng-repeat="message in archiveMessages"
+               ng-class="{'bg-success': message.type === 'info', 'bg-danger': message.type === 'error', 'bg-warning': message.type === 'warning'}">
+                {{message.date}}: <span ng-bind-html="message.message"></span>
             </p>
-            <p ng-switch-when="error" class="bg-danger">{{message.date}}: <span ng-bind-html="message.message"></span>
-            </p>
-            <p ng-switch-when="warning" class="bg-warning">{{message.date}}:
-                <span ng-bind-html="message.message"></span></p>
         </div>
     </div>
 </div>

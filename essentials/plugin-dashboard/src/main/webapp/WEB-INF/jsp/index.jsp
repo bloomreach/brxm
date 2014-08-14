@@ -69,21 +69,18 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="badge notification-badge">18</span>
+      <span class="badge notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
       <a class="navbar-brand" href="#">Hippo Essentials</a>
       <%--<p class="navbar-text pull-left">
         version: ${project.version}
       </p>--%>
-      <div ng-show="NEEDS_REBUILD" class="navbar-text navbar-icons">
+      <div class="navbar-text navbar-icons">
         <a href="#/build" class="navbar-link">
-          <span class="fa fa-refresh"></span> System needs a rebuild
-        </a>
-        <a href="#/build" class="navbar-link">
-         <span  class="fa-stack">
-                            <span class="fa fa-circle fa-stack-2x fa-white"></span>
-                            <span class="fa fa-bell-o fa-stack-1x fa-danger"></span>
-         </span>
-
+          <span class="fa fa-refresh"></span> Rebuild
+          <span ng-show="NEEDS_REBUILD" class="fa-stack">
+            <span class="fa fa-circle fa-stack-2x fa-white"></span>
+            <span class="fa fa-bell-o fa-stack-1x fa-danger"></span>
+          </span>
         </a>
       </div>
     </div>
@@ -92,44 +89,28 @@
 
 <div class="navbar-collapse sidebar-navbar-collapse collapse ng-scope" ng-controller="mainMenuCtrl">
   <ul class="nav navbar-nav">
+    <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
+      <a href="#/library">
+        <i class="fa fa-cubes fa-2x fa-fw fa-middle"></i>
+        <span>Library</span>
+      </a>
+    </li>
     <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
       <a href="#/installed-features">
-        <i class="fa fa-gears fa-2x fa-fw fa-middle"></i>
+        <i class="fa fa-dropbox fa-2x fa-fw fa-middle"></i>
         <span>Installed features</span>
         <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge pull-right alert-success">{{TOTAL_NEEDS_ATTENTION}}</span>
       </a>
     </li>
-    <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
-      <a href="#/library">
-        <i class="fa fa-gear fa-2x fa-fw fa-middle"></i>
-        <span>Library</span>
-        <!--            <span class="badge pull-right alert-info">{{TOTAL_PLUGINS}}</span> -->
-      </a>
-
-    </li>
     <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
       <a href="#/tools">
-        <i class="fa fa-gavel fa-2x fa-fw fa-middle"></i>
+        <i class="fa fa-wrench fa-2x fa-fw fa-middle"></i>
         <span>Tools</span>
-        <!--            <span class="badge  pull-right alert-info">{{TOTAL_TOOLS}}</span> -->
-      </a>
-    </li>
-    <li ng-class="{true:'active', false:''}[isPageSelected('#/build')]">
-      <a href="#/build">
-        <i ng-hide="NEEDS_REBUILD" class="fa fa-check-square-o fa-2x fa-fw fa-middle"></i>
-        <i ng-show="NEEDS_REBUILD" class="fa fa-exclamation-triangle fa-2x fa-fw fa-middle"></i>
-        <span>Build</span>
-            <span ng-show="NEEDS_REBUILD" class="badge pull-right alert-danger">
-              <i class="fa fa-bell"></i>
-            </span>
-            <span ng-hide="NEEDS_REBUILD" class="badge pull-right alert-success">
-              <i class="fa fa-check"></i>
-            </span>
       </a>
     </li>
     <li>
       <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
-        <i class="fa fa-external-link fa-2x fa-fw fa-middle"></i>
+        <i class="fa fa-pencil fa-2x fa-fw fa-middle"></i>
         <span>Feedback</span></a>
     </li>
   </ul>

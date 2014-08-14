@@ -27,6 +27,7 @@
             $scope.baseCmsNamespaceUrl = "http://localhost:8080/cms?path=";
             $scope.providers = [];
             $scope.providerMap = {};
+            $scope.fieldsModified = false;
 
             $scope.selectChange = function () {
                 angular.forEach($scope.documentTypes, function (docType, key) {
@@ -65,6 +66,8 @@
                 angular.forEach(payload.documentTypes.items, function (docType) {
                     if (docType.providers && docType.providers.providerNames) {
                         delete docType.providers.providerNames;
+                        delete docType.prefix;
+                        delete docType.name;
                     }
                     var providers = docType.providers.items;
                     angular.forEach(providers, function (provider) {
@@ -75,7 +78,8 @@
                 });
 
                 $http.post(restEndpoint + 'compounds/contentblocks/create', payload).success(function (data) {
-                    // ignore
+                    $scope.fieldsModified = true;
+                    loadDocumentTypes();
                 });
             };
 
@@ -87,7 +91,6 @@
             $scope.init = function () {
                 loadProviders();
                 loadDocumentTypes();
-
             };
             $scope.init();
                 
@@ -107,6 +110,9 @@
                 $http.get(restEndpoint).success(function (data) {
                     $scope.documentTypes = data.items;
                     angular.forEach($scope.documentTypes, function (docType) {
+                        var parts = docType.value.split(':');
+                        docType.prefix = parts[0];
+                        docType.name = parts[1];
                         docType.providers.providerNames = [];
                         angular.forEach(docType.providers.items, function (provider) {
                             docType.providers.providerNames.push($scope.providerMap[provider.key]);

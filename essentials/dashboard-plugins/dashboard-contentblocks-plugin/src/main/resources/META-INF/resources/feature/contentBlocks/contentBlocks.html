@@ -17,7 +17,7 @@
 <div class="panel panel-default" ng-controller="contentBlocksCtrl">
     <div class="panel-heading">Content Blocks</div>
     <div class="panel-body">
-        <div class="infobox infobox-success"><p>{{introMessage}}</p>
+        <div class="alert alert-success"><p>{{introMessage}}</p>
             <p ng-bind-html="deliberatelyTrustDangerousSnippet"></p></div>
         <h4>Available Content Blocks</h4>
         <div class="alert-warning" ng-hide="providers.length > 0">
@@ -49,7 +49,11 @@
                 <tbody>
                 <tr ng-repeat="docType in documentTypes">
                     <td>
-                        <a target="_cms" href="{{baseCmsNamespaceUrl}}/hippo:namespaces/{{docType.value | splitString:':':0}}/{{docType.key}}">{{docType.key}}</a>
+                      <essentials-cms-document-type-deep-link
+                          name-space="{{docType.prefix}}"
+                          document-name="{{docType.name}}"
+                          label="{{docType.key}}">
+                      </essentials-cms-document-type-deep-link>
                     </td>
                     <td>
                         <select
@@ -66,6 +70,13 @@
                 </tr>
                 </tbody>
             </table>
+            <div ng-show="fieldsModified" class="alert alert-info">
+              <p>You have modified one or more document types, and may want to update your document
+                type beans now. The BeanWriter tool is currently not capable of dealing with Contnt Blocks
+                provider fields correctly, so you'll need to do this manually, in your project sources.</p>
+              <p>Also, you may want to move the new fields to the desired position in the CMS Document Type
+                Editor (Use above document type links).</p>
+            </div>
             <div class="pull-right">
                 <button class="btn btn-primary" ng-click="saveBlocksConfiguration()">Save</button>
             </div>
