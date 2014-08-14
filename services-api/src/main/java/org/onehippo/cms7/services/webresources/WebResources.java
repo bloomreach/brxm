@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.services.webresources;
 
-import javax.jcr.Binary;
-
 /**
  * A collection of web resources, i.e. binary data objects. Each web resource is identified by an absolute path
  * starting at the web resources root. Paths start with a slash and consist of elements separated by slashes
