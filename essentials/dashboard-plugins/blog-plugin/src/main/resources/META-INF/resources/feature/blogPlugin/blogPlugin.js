@@ -20,6 +20,9 @@
         .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             $scope.templateName = 'jsp';
             $scope.setupImport = false;
+            $scope.hasSampleData = true;
+            $scope.hasNoTemplates = false;
+            $scope.showTemplateSettings = false;
             $scope.importConfig = {
                 'active': true,
                 'cronExpression': '0 0 6 ? * SUN',
@@ -95,12 +98,22 @@
             };
             $scope.init = function () {
                 $http.get($rootScope.REST.projectSettings).success(function (data) {
-                    $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
-                    $scope.projectSettings = data;
-                    $scope.importConfig.blogsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog';
-                    $scope.importConfig.authorsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog' + '/authors';
-                    $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
+
+                    var settings = Essentials.keyValueAsDict(data.items);
+                    $scope.importConfig.blogsBasePath = '/content/documents/' + settings.namespace + '/blog';
+                    $scope.importConfig.authorsBasePath = '/content/documents/' + settings.namespace + '/blog' + '/authors';
+                    $scope.importConfig.projectNamespace = settings.namespace;
+
                 });
+
+                $http.get($rootScope.REST.project_settings).success(function (data) {
+                    $scope.projectSettings = data;
+                    // set some defaults
+                    $scope.templateLanguage = data.templateLanguage;
+                    $scope.useSamples = data.useSamples;
+                    $scope.confirmParams = data.confirmParams;
+                });
+
 
             };
             // check install state

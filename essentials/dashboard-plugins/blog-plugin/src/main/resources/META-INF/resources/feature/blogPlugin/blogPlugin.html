@@ -39,6 +39,15 @@
 
 
         <form novalidate name="blogForm" ng-show="showPlugin">
+            <div ng-show="confirmParams">
+                <essentials-template-settings
+                        has-no-templates="{{hasNoTemplates}}"
+                        has-sample-data="{{hasSampleData}}"
+                        sample-data="sampleData"
+                        template-name="templateName">
+                </essentials-template-settings>
+
+            </div>
             <!--    <div>
                     <essentials-template-settings has-sample-data="true" sample-data="sampleData" template-name="templateName"/>
                 </div>
