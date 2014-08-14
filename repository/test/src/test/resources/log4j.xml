@@ -124,10 +124,6 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.hippoecm.repository.impl.InitializationProcessorImpl">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
 
   <root>
     <level value="warn"/>
