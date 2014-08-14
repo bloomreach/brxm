@@ -104,6 +104,11 @@
             //fetch plugin list
             $scope.init = function () {
 
+                // Retrieve project settings
+                $http.get($rootScope.REST.project_settings).success(function (data) {
+                    $rootScope.projectSettings = data;
+                });
+
                 if ($rootScope.pluginsCache) {
                     processItems($rootScope.pluginsCache);
                 } else {

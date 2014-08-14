@@ -1526,6 +1526,7 @@ plugin-dashboard/src/main/webapp/css/less/hippo-theme/_variables.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/vars.less -text
 plugin-dashboard/src/main/webapp/css/main.css -text
 plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-feature-footer.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-installed-feature.html -text

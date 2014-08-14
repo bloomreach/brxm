@@ -367,6 +367,44 @@
                     // empty
                 }
             }
+        }).directive("essentialsFeatureFooter", function () {
+            return {
+                replace: true,
+                restrict: 'E',
+                scope: {
+                    plugin: '='
+                },
+                templateUrl: 'directives/essentials-feature-footer.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    $scope.init = function() {
+                        var payload = {
+                            values: {
+                                pluginId: $scope.plugin.id,
+                                sampleData: $rootScope.projectSettings.useSamples,
+                                templateName: $rootScope.projectSettings.templateLanguage
+                            }
+                        };
+                        $http.post($rootScope.REST.packageMessages, payload).success(function (data){
+                            // If there are no messages, the backend sends a single "no messages" message
+                            // with the group not set. Filter those out.
+                            if (data.items.length > 1 || data.items[0].group) {
+                                $scope.messages = data.items;
+                            }
+                        });
+                        $scope.showChanges = false;
+                    };
+                    $scope.toggleChanges = function() {
+                        $scope.showChanges = !$scope.showChanges;
+                    };
+                    $scope.isCreateFile          = function (message) { return message.group === 'FILE_CREATE'; };
+                    $scope.isRegisterDocument    = function (message) { return message.group === 'DOCUMENT_REGISTER'; };
+                    $scope.isCreateXmlNode       = function (message) { return message.group === 'XML_NODE_CREATE'; };
+                    $scope.isCreateXmlFolderNode = function (message) { return message.group === 'XML_NODE_FOLDER_CREATE'; };
+                    $scope.isExecute             = function (message) { return message.group === 'EXECUTE'; };
+
+                    $scope.init();
+                }
+            }
         })
 
 })();
