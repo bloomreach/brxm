@@ -258,7 +258,6 @@
 
             };
 
-
             $rootScope.initData();
         })
 

@@ -221,6 +221,7 @@
                     var promisesQueue = [];
                     var lastLength = 0;
                     var ERROR_SHOW_TIME = 3000;
+                    $scope.visible = true;
                     $scope.messages = [];
 
                     $scope.activeMessages = [];
@@ -286,6 +287,13 @@
                     $scope.toggleArchive = function () {
                         $scope.archiveOpen = !$scope.archiveOpen;
                     };
+                    $scope.hide = function() {
+                        $scope.visible = false;
+                        $rootScope.$broadcast('hide-messages');
+                    };
+                    $rootScope.$on('show-messages', function() {
+                        $scope.visible = true;
+                    });
                 }
             }
         }).directive("essentialsPlugin", function () {

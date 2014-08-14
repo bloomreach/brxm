@@ -14,8 +14,12 @@
   limitations under the License.
   -->
 
-<div class="log">
+<div class="log" ng-show="visible">
     <div class="alert alert-default">
+        <button class="close" type="button" ng-click="hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
         <div ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
             <p>{{messages.length}}:
                 <a ng-click="toggleArchive()">

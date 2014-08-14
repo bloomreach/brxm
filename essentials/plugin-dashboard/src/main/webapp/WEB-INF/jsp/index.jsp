@@ -60,7 +60,7 @@
 <body id="container" ng-cloak ng-class="feedbackMessages.length ? 'body-push':''">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
 
-<div class="hippo-navbar navbar navbar-default">
+<div class="hippo-navbar navbar navbar-default" ng-controller="navbarCtrl">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
@@ -71,9 +71,7 @@
       </button>
       <span class="badge notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
       <a class="navbar-brand" href="#">Hippo Essentials</a>
-      <%--<p class="navbar-text pull-left">
-        version: ${project.version}
-      </p>--%>
+      <p class="navbar-text pull-left">{{getPageTitle()}}</p>
       <div class="navbar-text navbar-icons">
         <a href="#/build" class="navbar-link">
           <span class="fa fa-refresh"></span> Rebuild
@@ -81,6 +79,10 @@
             <span class="fa fa-circle fa-stack-2x fa-white"></span>
             <span class="fa fa-bell-o fa-stack-1x fa-danger"></span>
           </span>
+        </a>
+        <a ng-click="showMessages()" ng-show="feedbackMessages.length && showMessagesNavbarLink">
+          <span class="fa fa-info-circle"></span>
+          <span class="badge pull-right alert-info">{{feedbackMessages.length}}</span>
         </a>
       </div>
     </div>
@@ -91,7 +93,7 @@
   <ul class="nav navbar-nav">
     <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
       <a href="#/library">
-        <i class="fa fa-cubes fa-2x fa-fw fa-middle"></i>
+        <i class="fa fa-shopping-cart fa-2x fa-fw fa-middle"></i>
         <span>Library</span>
       </a>
     </li>
