@@ -774,7 +774,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 return false;
             }
         }
-        if (existing.hasProperty(HippoNodeType.HIPPO_STATUS) && existing.getProperty(HippoNodeType.HIPPO_STATUS).getString().equals("disabled")) {
+        if ("disabled".equals(JcrUtils.getStringProperty(existing, HippoNodeType.HIPPO_STATUS, null))) {
             getLogger().debug("Item {} is disabled", temp.getName());
             return false;
         }
