@@ -183,7 +183,7 @@
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
                             $rootScope.$broadcast('update-plugin-install-state', {
                                 'pluginId': $scope.pluginId,
-                                'state': $scope.plugin.installState
+                                'state': 'installing'
                             });
                             $location.path('/installed-features');
                         });

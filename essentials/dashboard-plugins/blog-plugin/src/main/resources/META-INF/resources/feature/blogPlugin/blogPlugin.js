@@ -18,11 +18,7 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.templateName = 'jsp';
             $scope.setupImport = false;
-            $scope.hasSampleData = true;
-            $scope.hasNoTemplates = false;
-            $scope.showTemplateSettings = false;
             $scope.importConfig = {
                 'active': true,
                 'cronExpression': '0 0 6 ? * SUN',
@@ -36,16 +32,10 @@
             $scope.pluginId = "blogPlugin";
             $scope.sampleData = true;
             $scope.templateName = 'jsp';
-            $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
-            $scope.$watchCollection("[sampleData, templateName]", function () {
-                $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
-            });
-            $scope.run = function () {
-                $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                });
-            };
 
-
+            // TODO: Check if the use of the package_install service here is correct. We separated the setup phase
+            // (handled by the dashboard) from the configuration phase (here), and if the setup phase used different
+            // parameters from the global project settings (why would it?), this may go wrong. Needs to be tested.
             $scope.execute = function () {
                 var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
                 Essentials.addPayloadData("sampleData", $scope.sampleData, payload);
@@ -97,8 +87,12 @@
                 }
             };
             $scope.init = function () {
-                $http.get($rootScope.REST.projectSettings).success(function (data) {
+                // retrieve plugin data
+                $http.get($rootScope.REST.plugins + "plugins/" + $scope.pluginId).success(function (p) {
+                    $scope.plugin = p;
+                });
 
+                $http.get($rootScope.REST.projectSettings).success(function (data) {
                     var settings = Essentials.keyValueAsDict(data.items);
                     $scope.importConfig.blogsBasePath = '/content/documents/' + settings.namespace + '/blog';
                     $scope.importConfig.authorsBasePath = '/content/documents/' + settings.namespace + '/blog' + '/authors';
@@ -111,22 +105,8 @@
                     // set some defaults
                     $scope.templateLanguage = data.templateLanguage;
                     $scope.useSamples = data.useSamples;
-                    $scope.confirmParams = data.confirmParams;
                 });
-
-
             };
-            // check install state
-            $http.get($rootScope.REST.plugins + "plugins/" + $scope.pluginId).success(function (p) {
-                $scope.plugin = p;
-                if (p) {
-                    $scope.showRebuildMessage = p.installState === 'installing';
-                    $scope.showPlugin = p.installState === 'installed';
-                    $scope.showBoardingMessage = p.installState === 'boarding';
-                    //$scope.showPlugin = p.installed && !($scope.showRebuildMessage || $scope.showInstalledMessage || $scope.showBoardingMessage);
-                }
-            });
-
 
             $scope.init();
         })
