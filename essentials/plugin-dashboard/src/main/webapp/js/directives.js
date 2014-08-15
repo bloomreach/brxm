@@ -407,7 +407,6 @@
                     $scope.messagesLoaded = false; // Flag for lazy loading
                     $scope.showChanges = false;
                     $scope.hasMessages = !!$scope.plugin.packageFile;
-                    $log.info('plugin ', $scope.plugin.name, ' has messages ', $scope.hasMessages);
                 }
             }
         })

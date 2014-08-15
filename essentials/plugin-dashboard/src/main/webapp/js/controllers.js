@@ -178,7 +178,8 @@
                     '/introduction': 'Setup',
                     '/library': 'Library',
                     '/installed-features': 'Installed features',
-                    '/tools': 'Tools'
+                    '/tools': 'Tools',
+                    '/build': 'Rebuild'
                 };
 
                 return  pageMap[myPath];
