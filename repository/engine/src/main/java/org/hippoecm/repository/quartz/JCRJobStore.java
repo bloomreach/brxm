@@ -146,35 +146,7 @@ public class JCRJobStore implements JobStore {
                 final Node moduleConfig = session.getNode(jobStorePath);
                 for (Node groupNode : new NodeIterable(moduleConfig.getNodes())) {
                     for (Node jobNode : new NodeIterable(groupNode.getNodes())) {
-                        final boolean jobEnabled = JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true);
-                        if (jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
-                            for (Node triggerNode : new NodeIterable(jobNode.getNode(HIPPOSCHED_TRIGGERS).getNodes())) {
-                                final boolean triggerEnabled = JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
-                                if (!triggerNode.isLocked()) {
-                                    if (jobEnabled && triggerEnabled) {
-                                        OperableTrigger trigger = getOperableTrigger(triggerNode, null);
-                                        if (trigger != null) {
-                                            final Date nextFireTime = trigger.computeFirstFireTime(new BaseCalendar());
-                                            if (nextFireTime != null) {
-                                                final java.util.Calendar currentFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, null);
-                                                if (currentFireTime == null || nextFireTime.getTime() != currentFireTime.getTime().getTime()) {
-                                                    log.info("Initializing trigger {}", triggerNode.getPath());
-                                                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, dateToCalendar(nextFireTime));
-                                                    changes = true;
-                                                }
-                                            } else {
-                                                log.warn("No fire time for manually added trigger {}", triggerNode.getPath());
-                                            }
-                                        }
-                                    }
-                                    if ((!jobEnabled || !triggerEnabled) && triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME)) {
-                                        log.info("Disabling trigger {}", triggerNode.getPath());
-                                        triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
-                                        changes = true;
-                                    }
-                                }
-                            }
-                        }
+                        changes = initializeTriggersOfJob(jobNode);
                     }
                 }
             }
@@ -200,6 +172,48 @@ public class JCRJobStore implements JobStore {
         } catch (RepositoryException e) {
             log.error("Failed to initialize triggers", e);
         }
+    }
+
+    private boolean initializeTriggersOfJob(final Node jobNode) throws RepositoryException {
+        boolean changes = false;
+
+        final boolean jobEnabled = JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true);
+        if (jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
+            for (Node triggerNode : new NodeIterable(jobNode.getNode(HIPPOSCHED_TRIGGERS).getNodes())) {
+                final boolean triggerEnabled = JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
+                if (!triggerNode.isLocked()) {
+                    if (jobEnabled && triggerEnabled) {
+                        changes = initializeTrigger(triggerNode);
+                    }
+                    if ((!jobEnabled || !triggerEnabled) && triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME)) {
+                        log.info("Disabling trigger {}", triggerNode.getPath());
+                        triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
+                        changes = true;
+                    }
+                }
+            }
+        }
+        return changes;
+    }
+
+    private boolean initializeTrigger(final Node triggerNode) throws RepositoryException {
+        boolean changes = false;
+
+        final OperableTrigger trigger = getOperableTrigger(triggerNode, null);
+        if (trigger != null) {
+            final Date nextFireTime = trigger.computeFirstFireTime(new BaseCalendar());
+            if (nextFireTime != null) {
+                final java.util.Calendar currentFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, null);
+                if (currentFireTime == null || nextFireTime.getTime() != currentFireTime.getTime().getTime()) {
+                    log.info("Initializing trigger {}", triggerNode.getPath());
+                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, dateToCalendar(nextFireTime));
+                    changes = true;
+                }
+            } else {
+                log.warn("No fire time for manually added trigger {}", triggerNode.getPath());
+            }
+        }
+        return changes;
     }
 
     @Override
