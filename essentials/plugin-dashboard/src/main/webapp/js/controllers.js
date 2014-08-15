@@ -72,7 +72,13 @@
                 return  myPath.indexOf(path) != -1;
             };
             $scope.isInstalledFeature = function (plugin) {
-                return plugin.type === 'feature' && plugin.installState !== 'discovered';
+                return plugin.type === 'feature'
+                        && plugin.installState === 'installed';
+            };
+            $scope.isInstalledFeatureAndRequiresAttention = function (plugin) {
+                return plugin.type === 'feature'
+                        && plugin.installState !== 'discovered'
+                        && plugin.installState !== 'installed';
             };
             $scope.isInstalledTool = function (plugin) {
                 return plugin.type === 'tool'; // TODO: handle install state.
