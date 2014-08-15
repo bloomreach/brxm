@@ -43,8 +43,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.utils.TagUtils.getQueryString;
+import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
 /**
  * Abstract supporting class for Hst Link tags
@@ -147,13 +151,13 @@ public class HstLinkTag extends ParamContainerTag {
                     hippoBean = (HippoBean) identifiableContentBean;
                 } else {
                     // TOOD enable custom linkrewriters
-                    writeOrSetVar(identifiableContentBean.getIdentifier());
+                    writeOrSetVar(identifiableContentBean.getIdentifier(), var, pageContext, scope);
                     return EVAL_PAGE;
                 }
             }
 
             if(linkForAttributeSet) {
-                if(this.link == null && this.path == null && hippoBean == null && siteMapItemRefId == null) {
+                if(link == null && path == null && hippoBean == null && siteMapItemRefId == null) {
                     String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
                     if(dispatcher == null) {
                         log.info("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
@@ -165,38 +169,16 @@ public class HstLinkTag extends ParamContainerTag {
             } else {
                 // hst link for current URL requested
                 if(reqContext != null && reqContext.getResolvedSiteMapItem() != null) {
-                    this.path = reqContext.getResolvedSiteMapItem().getPathInfo();
+                    path = reqContext.getResolvedSiteMapItem().getPathInfo();
                 }
             }
 
 
            if(reqContext == null) {
-               if(this.path != null) {
+               if(path != null) {
                    log.debug("Although there is not HstRequestContext, a link for path='{}' is created similar to how the c:url tag would do it", path);
-                   if(!path.equals("") && !path.startsWith("/")) {
-                       path = "/" + path;
-                   }
-                   if (!parametersMap.isEmpty()) {
-                       try {
-                            String queryString = getQueryString(HstRequestUtils.getCharacterEncoding(servletRequest));
-                            path += queryString;
-                       } catch (UnsupportedEncodingException e) {
-                            throw new JspException(e);
-                       }
-
-                   }
-                   ResolvedVirtualHost host = (ResolvedVirtualHost)servletRequest.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
-                   if(host != null) {
-                       if(host.getVirtualHost().isContextPathInUrl()) {
-                           writeOrSetVar(servletRequest.getContextPath() + path);
-                       } else {
-                           // skip the contextPath
-                           writeOrSetVar(path);
-                       }
-                   } else {
-                       log.info("There is no VirtualHost on the request. Link will include the contextPath as we cannot do a lookup in a virtual host whether the contextPath should be included or not.");
-                       writeOrSetVar(servletRequest.getContextPath() + path);
-                   }
+                   String pathInfo = TagUtils.createPathInfoWithoutRequestContext(path, parametersMap, removedParametersList, servletRequest);
+                   writeOrSetVar(pathInfo, var, pageContext, scope);
                    return EVAL_PAGE;
                }
 
@@ -224,38 +206,38 @@ public class HstLinkTag extends ParamContainerTag {
                    log.info("Cannot resolve mount with alias '{}' (type '{}') for current request. Cannot create a link for '{}'. Return page not found Link for current Mount",
                                new String[] { mountAlias, mountType, path });
                    Mount requestedMount = reqContext.getResolvedMount().getMount();
-                   this.link = reqContext.getHstLinkCreator().create(HstSiteMapUtils.getPath(requestedMount, requestedMount.getPageNotFound()), requestedMount);
+                   link = reqContext.getHstLinkCreator().create(HstSiteMapUtils.getPath(requestedMount, requestedMount.getPageNotFound()), requestedMount);
                }
            } else {
                mount = reqContext.getResolvedMount().getMount();
            }
 
-           if(this.link == null && hippoBean != null) {
+           if(link == null && hippoBean != null) {
                 if(hippoBean.getNode() == null) {
                     log.info("Cannot get a link for a detached node");
                     return EVAL_PAGE;
                 }
                 if(mountAliasOrTypeSet) {
-                    this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), mount);
+                    link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), mount);
                 }
                 else if(canonical) {
-                    this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext, preferSiteMapItem);
+                    link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext, preferSiteMapItem);
                 } else {
-                    this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext, preferSiteMapItem, fallback, navigationStateful);
+                    link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext, preferSiteMapItem, fallback, navigationStateful);
                 }
             }
 
-            if(this.link == null && this.path != null) {
+            if(link == null && path != null) {
                 VirtualHost virtualHost = reqContext.getVirtualHost();
-                boolean containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(this.path));
-                this.link = reqContext.getHstLinkCreator().create(this.path, mount, containerResource);
+                boolean containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(path));
+                link = reqContext.getHstLinkCreator().create(path, mount, containerResource);
             }
 
-            if(this.link == null && this.siteMapItemRefId != null) {
-                this.link = reqContext.getHstLinkCreator().createByRefId(siteMapItemRefId, mount);
+            if(link == null && this.siteMapItemRefId != null) {
+                link = reqContext.getHstLinkCreator().createByRefId(siteMapItemRefId, mount);
             }
 
-            if(this.link == null) {
+            if(link == null) {
                 log.info("Unable to rewrite link. Return EVAL_PAGE");
                 return EVAL_PAGE;
             }
@@ -264,7 +246,7 @@ public class HstLinkTag extends ParamContainerTag {
                 link.setSubPath(subPath);
             }
 
-            String urlString = this.link.toUrlForm(reqContext , fullyQualified);
+            String urlString = link.toUrlForm(reqContext , fullyQualified);
 
             try {
                 if (navigationStateful) {
@@ -294,14 +276,14 @@ public class HstLinkTag extends ParamContainerTag {
                         urlString += queryString.toString();
                     }
                 } else if (!parametersMap.isEmpty()) {
-                    String queryString = getQueryString(reqContext.getBaseURL().getCharacterEncoding());
+                    String queryString = getQueryString(reqContext.getBaseURL().getCharacterEncoding(), parametersMap, removedParametersList);
                     urlString += queryString;
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new JspException("UnsupportedEncodingException on the base url", e);
             }
 
-            writeOrSetVar(urlString);
+            writeOrSetVar(urlString, var, pageContext, scope);
 
             return EVAL_PAGE;
         } finally {
@@ -309,56 +291,6 @@ public class HstLinkTag extends ParamContainerTag {
         }
     }
 
-   
-
-    private String getQueryString(String characterEncoding) throws UnsupportedEncodingException {
-        boolean firstParamDone = false;
-        StringBuilder queryString = new StringBuilder();
-        for (Entry<String, List<String>> entry : parametersMap.entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                String name = entry.getKey();
-                if(removedParametersList.contains(name)) {
-                    // set to null by hst:param tag, thus skip
-                    continue;
-                }
-                if (entry.getValue() != null) {
-                    for (String value : entry.getValue()) {
-                        if(value != null) {
-                            queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, characterEncoding));
-                            firstParamDone = true;
-                        }
-                    }
-                }
-            }
-        }
-        return queryString.toString();
-    }
-
-    
-    private void writeOrSetVar(String url) throws JspException {
-        if (var == null) {
-               try {               
-                   JspWriter writer = pageContext.getOut();
-                   writer.print(url);
-               } catch (IOException ioe) {
-                   throw new JspException(
-                       "ResourceURL-Tag Exception: cannot write to the output writer.");
-               }
-           } 
-           else {
-               int varScope = PageContext.PAGE_SCOPE;
-               if (this.scope != null) {
-                   if ("request".equals(this.scope)) {
-                       varScope = PageContext.REQUEST_SCOPE;
-                   } else if ("session".equals(this.scope)) {
-                       varScope = PageContext.SESSION_SCOPE;
-                   } else if ("application".equals(this.scope)) {
-                       varScope = PageContext.APPLICATION_SCOPE;
-                   }
-               }
-               pageContext.setAttribute(var, url, varScope);
-           }
-    }
 
     @Override
     protected void cleanup() {
@@ -411,7 +343,7 @@ public class HstLinkTag extends ParamContainerTag {
     }
     
     public String getPath(){
-        return this.path;
+        return path;
     }
     
     public String getSubPath(){

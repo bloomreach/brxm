@@ -385,6 +385,36 @@
   </tag>
 
   <tag>
+    <description>This tag creates links to webresources. If you do not
+      specify the 'var' attribute, the output is directly written. Otherwise, the value is stored in the var attribute.
+      A webresource tag can only create links if there is a sitemap item that contains hst:refId = 'WEB-RESOURCES-SITEMAP-ITEM'
+      and hst:namedPipeline = 'WebResourcePipeline', and the sitemap item is not allowed to have wildcards in its path (thus
+      in its own name or one of its ancestors)
+    </description>
+    <name>webresource</name>
+    <tag-class>org.hippoecm.hst.tag.HstWebResourceTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstWebResourceTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the link tag</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A webresource path, starting with a / and relative to the webresources root</description>
+      <name>path</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+         <hst:webresource var="html4shiv" path="/js/html5shiv.js"/>
+     ]]></example>
+  </tag>
+
+  <tag>
     <description>This sitemapitem tag can nested into a hst link tag to provide a preferred sitemap item to create the
       link for. You can define the preferred sitemap item by choosing one (no more) of these attributes: preferItem,
       preferItemId, or preferPath. Optionally add a fallback attr which is a boolean true or false. Default fallback is

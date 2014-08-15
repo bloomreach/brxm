@@ -31,11 +31,9 @@ public abstract class ParamContainerTag extends TagSupport {
        
     private static final long serialVersionUID = 1L;
 
-    protected Map<String, List<String>> parametersMap = 
-        new HashMap<String, List<String>>();
+    protected Map<String, List<String>> parametersMap = new HashMap<>();
 
-    protected List<String> removedParametersList = 
-        new ArrayList<String>();
+    protected List<String> removedParametersList =  new ArrayList<>();
 
 
     protected void cleanup() {

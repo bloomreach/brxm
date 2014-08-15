@@ -182,6 +182,11 @@
     <property name="valveName" value="notFoundValve" />
   </bean>
 
+
+  <bean id="webResourceValve" parent="abstractValve" class="org.hippoecm.hst.core.container.WebResourceValve">
+    <property name="valveName" value="webResourceValve" />
+  </bean>
+
   <!-- Pipelines -->
 
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
@@ -238,6 +243,27 @@
                 <ref bean="jcrSessionStatefulConcurrencyValve" />
                 <ref bean="siteMenusResolvingValve" />
                 <ref bean="filterChainInvokingValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="cleanupValve" />
+                <ref bean="diagnosticReportingValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+
+        <entry key="WebResourcePipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="webResourceValve" />
               </list>
             </property>
             <property name="cleanupValves">
