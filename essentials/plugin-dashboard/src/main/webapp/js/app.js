@@ -230,8 +230,7 @@
                                 $rootScope.TOTAL_TOOLS = data.totalTools;
                                 $rootScope.INSTALLED_FEATURES = data.installedFeatures;
                                 $rootScope.NEEDS_REBUILD = data.needsRebuild;
-                                $rootScope.NEEDS_REBUILD_PLUGINS = data.plugins;
-                                $rootScope.TOTAL_NEEDS_ATTENTION = data.needsRebuild + data.configurablePlugins;
+                                $rootScope.TOTAL_NEEDS_ATTENTION = data.rebuildPlugins.length + data.configurablePlugins;
                                 $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
 
                             } else {
