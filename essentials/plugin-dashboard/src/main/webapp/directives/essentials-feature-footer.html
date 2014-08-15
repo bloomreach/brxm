@@ -1,4 +1,4 @@
-<div class="feature-changes" ng-show="plugin.documentationLink || messages.length">
+<div class="feature-changes" ng-show="plugin.documentationLink || hasMessages">
   <!--
     Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -21,7 +21,7 @@
       <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
     </span>
 
-    <span class="feature-control pull-left" ng-show="messages.length">
+    <span class="feature-control pull-left" ng-show="hasMessages">
       <span class="fa" ng-class="{'fa-chevron-right': !showChanges, 'fa-chevron-down': showChanges}"></span>
       <a ng-click="toggleChanges()">Changes made by this feature</a>
     </span>
