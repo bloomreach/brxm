@@ -48,11 +48,27 @@
             <div class="feature-description-long" ng-show="showDescription">
                 <div ng-bind-html="plugin.introduction"></div>
                 <div ng-bind-html="plugin.description"></div>
-                <carousel ng-show="plugin.imageUrls.length">
-                    <slide ng-repeat="imageUrl in plugin.imageUrls" active="slide.active">
-                        <img ng-src="{{imageUrl}}" style="margin:auto;">
-                    </slide>
-                </carousel>
+                <div id="#plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel" ng-show="plugin.imageUrls.length">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
+                            <img src="{{imageUrl}}" alt="">
+                        </li>
+                    </ol>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        <div class="item" ng-repeat="imageUrl in plugin.imageUrls">
+                            <img src="{{imageUrl}}" alt="" >
+                        </div>
+                    </div>
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
             </div>
         </div>
         <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
