@@ -5501,6 +5501,12 @@ plugin-dashboard/src/main/webapp/images/.DS_Store
 plugin-dashboard/src/main/webapp/images/.idea
 plugin-dashboard/src/main/webapp/images/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/images/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/images/screenshots/*.iml
+plugin-dashboard/src/main/webapp/images/screenshots/.DS_Store
+plugin-dashboard/src/main/webapp/images/screenshots/.idea
+plugin-dashboard/src/main/webapp/images/screenshots/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/images/screenshots/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/images/screenshots/target
 plugin-dashboard/src/main/webapp/images/target
 plugin-dashboard/src/main/webapp/js/*.iml
 plugin-dashboard/src/main/webapp/js/.DS_Store
