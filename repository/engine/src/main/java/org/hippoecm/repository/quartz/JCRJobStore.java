@@ -183,7 +183,7 @@ public class JCRJobStore implements JobStore {
                 final boolean triggerEnabled = JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
                 if (!triggerNode.isLocked()) {
                     if (jobEnabled && triggerEnabled) {
-                        changes = initializeTrigger(triggerNode);
+                        changes |= initializeTrigger(triggerNode);
                     }
                     if ((!jobEnabled || !triggerEnabled) && triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME)) {
                         log.info("Disabling trigger {}", triggerNode.getPath());
