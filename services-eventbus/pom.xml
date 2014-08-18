@@ -64,13 +64,13 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-commons</artifactId>
-      <version>1.04.01</version>
+      <version>${hippo.commons.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
-      <version>1.04.01</version>
+      <version>${hippo.services.version}</version>
     </dependency>
 
     <dependency>
