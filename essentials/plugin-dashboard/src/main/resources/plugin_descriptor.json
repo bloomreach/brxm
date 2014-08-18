@@ -77,16 +77,7 @@
                 "artifactId": "selectionplugins-addon-cms",
                 "scope": "compile",
                 "targetPom": "cms"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.cms7.essentials",
-                "artifactId": "hippo-essentials-blog-plugin",
-                "scope": "compile",
-                "targetPom": "essentials",
-                "version": "1.01.05-SNAPSHOT"
             }
-
         ],
         "libraries": [
             {
