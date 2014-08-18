@@ -44,6 +44,7 @@
     <hippo.cms.version>2.26.03</hippo.cms.version>
     <hippo.hst.version>2.28.03</hippo.hst.version>
     <hippo.repository.version>2.26.03</hippo.repository.version>
+    <maven.plugin.release.version>2.5</maven.plugin.release.version>
 
     <!-- ***END temporary override of versions*** -->
 
