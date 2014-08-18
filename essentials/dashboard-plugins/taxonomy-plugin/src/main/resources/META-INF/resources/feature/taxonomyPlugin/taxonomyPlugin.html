@@ -77,15 +77,13 @@
                             </td>
                             <td>{{doc.name}}</td>
                             <td class="{{documentsForm.taxonomyField.$invalid ? 'danger':''}}">
-                                <select class=" chosen-select pull-right" name="taxonomyField" chosen
-                                        style="width:120px;margin-left: 20px;"
-                                        ng-model="doc.selectedTaxonomy"
-                                        ng-selected="doc.selectedTaxonomy"
-                                        ng-required="doc.checked"
-                                        required
-                                        ng-options="taxonomy.name for taxonomy in taxonomies">
-                                    <option value=""></option>
-                                </select>
+                                <select hippo.theme.select-box
+                                      name="taxonomyField" ng-required="doc.checked"
+                                      ng-model="doc.selectedTaxonomy"
+                                      no-results-text="No Taxonomies found"
+                                      ng-options="taxonomy.name for taxonomy in taxonomies"
+                                      data-options="taxonomies"
+                                      data-placeholder="Select a taxonomy"></select>
                             </td>
                             <td>
                               {{doc.taxonomiesString}}
