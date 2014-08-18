@@ -42,6 +42,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,14 +139,9 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
             UserSession session = UserSession.get();
             Query query = session.getQueryManager().createQuery(QUERY_SECURITY_PROVIDERS, Query.XPATH);
             QueryResult result = query.execute();
-            Node node = null;
 
-            for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
-                node = nodeIt.nextNode();
-
-                if (node != null) {
-                    providers.add(node.getName());
-                }
+            for (Node node : new NodeIterable(result.getNodes())) {
+                providers.add(node.getName());
             }
         } catch (RepositoryException e) {
             log.error("Failed to query all the available security provider names.", e);
