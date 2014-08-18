@@ -31,13 +31,11 @@
     <!-- skeleton-->
     <file action="copy" source="instructions/jsp/base-layout.jsp" target="{{jspRoot}}/{{namespace}}/base-layout.jsp"/>
     <file action="copy" source="instructions/jsp/base-top-menu.jsp" target="{{jspRoot}}/{{namespace}}/base-top-menu.jsp"/>
-    <file action="copy" source="instructions/jsp/base-footer-content.jsp" target="{{jspRoot}}/{{namespace}}/base-footer-content.jsp"/>
     <file action="copy" source="instructions/jsp/label-component.jsp" target="{{jspRoot}}/hstdefault/label-component.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/templates/base-footer-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/label-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
@@ -48,13 +46,11 @@
      <!-- skeleton -->
     <freemarker action="copy" source="instructions/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
-    <freemarker action="copy" source="instructions/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer-content.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/label-component.ftl" target="{{freemarkerRoot}}/hstdefault/label-component.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/templates/base-footer-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/label-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 

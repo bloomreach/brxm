@@ -34,12 +34,21 @@
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.vBox</sv:value>
     </sv:property>
-    <sv:node sv:name="content">
+    <sv:node sv:name="label">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:containeritemcomponent</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsLabelComponent</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+        <sv:value>label</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>&lt;hr/&gt;&lt;div class="text-center"&gt;&lt;sub&gt;(&amp;copy;)2014&lt;/sub&gt;&lt;/div&gt;</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>base-footer-content{{templateExtension}}</sv:value>
+        <sv:value>label-component{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

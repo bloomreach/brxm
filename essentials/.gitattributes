@@ -451,7 +451,6 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bo
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/cms-request.css -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-footer-content.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-layout.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-top-menu.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/imports.ftl -text
@@ -461,7 +460,6 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/ic
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/essentials-edit-component.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-footer-content.jsp -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-layout.jsp -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-top-menu.jsp -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/imports.jsp -text
@@ -473,8 +471,6 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xm
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/pages/base.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/pages/homepage.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/sitemap/root.xml -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/templates/base-footer-content-freemarker.xml -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/templates/base-footer-content-jsp.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/templates/base-layout-freemarker.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/templates/base-layout-jsp.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/templates/base-top-menu-freemarker.xml -text
