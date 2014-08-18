@@ -53,13 +53,13 @@
                     <!-- Indicators -->
                     <ol class="carousel-indicators">
                         <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
-                            <img src="{{imageUrl}}" alt="" style="max-height:90px;">
+                            <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
                         </li>
                     </ol>
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner">
                         <div ng-class="$index==0 ? 'item active' :'item'" ng-repeat="imageUrl in plugin.imageUrls">
-                            <img src="{{imageUrl}}" alt="">
+                            <img ng-src="{{imageUrl}}" alt="">
                         </div>
                     </div>
                     <!-- Controls -->
