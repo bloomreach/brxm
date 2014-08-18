@@ -15,7 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
@@ -35,6 +39,9 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.convert.ConversionException;
+import org.apache.wicket.util.convert.IConverter;
+import org.apache.wicket.util.convert.converter.DateConverter;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
@@ -51,6 +58,7 @@ class PropertyValueEditor extends DataView {
     private static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
 
     private JcrPropertyModel propertyModel;
+    private final DateConverter dateConverter = new ISO8601DateConverter();
 
     PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
         super(id, dataProvider);
@@ -79,7 +87,15 @@ class PropertyValueEditor extends DataView {
                 if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
                     item.add(new BinaryEditor("value", propertyModel));
                 } else if (propertyModel.getProperty().getDefinition().isProtected()) {
-                    item.add(new Label("value", valueModel));
+                    item.add(new Label("value", valueModel) {
+                        @Override
+                        public IConverter getConverter(final Class type) {
+                            if (type.equals(Date.class)) {
+                                return dateConverter;
+                            }
+                            return super.getConverter(type);
+                        }
+                    });
                 } else if (propertyModel.getProperty().getType() == PropertyType.BOOLEAN) {
                     item.add(new BooleanFieldWidget("value", valueModel));
                 } else {
@@ -155,4 +171,11 @@ class PropertyValueEditor extends DataView {
         }
     }
 
+    private static class ISO8601DateConverter extends DateConverter {
+        private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
+        @Override
+        public DateFormat getDateFormat(Locale locale) {
+            return dateFormat;
+        }
+    }
 }
