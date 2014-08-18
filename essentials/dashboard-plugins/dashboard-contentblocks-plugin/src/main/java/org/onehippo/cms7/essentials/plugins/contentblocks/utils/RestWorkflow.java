@@ -22,21 +22,12 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
-import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.ws.rs.core.Response;
 
@@ -80,8 +71,8 @@ public class RestWorkflow {
 
     }
 
-    public boolean addContentBlockCompound(final String name) {
-
+    public String addContentBlockCompound(final String name) {
+        String errorMsg = null;
         try {
             // register namespace:
             CndUtils.registerDocumentType(context, namespace, name, true, false, "hippo:compound", "hippostd:relaxed");
@@ -100,34 +91,18 @@ public class RestWorkflow {
             log.debug("After Processing template:  {}", template);
             session.importXML("/hippo:namespaces/" + namespace, IOUtils.toInputStream(template), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
-            return true;
-        } catch (AccessDeniedException | ConstraintViolationException | LockException | ReferentialIntegrityException | InvalidItemStateException | InvalidSerializedDataException e) {
-            log.error("Error in rest workflow: {}", e);
-            throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
-        } catch (ItemExistsException e) {
-            String msg = "Item with name " + namespace + ':' + name + "already exists: ";
-            log.error(msg, e);
-            throw new RestException(msg, Response.Status.INTERNAL_SERVER_ERROR, e);
-        } catch (NamespaceException e) {
-            log.error("namespace exception in rest workflow: {}", e);
-            throw new RestException("Namespace exception in rest workflow: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
-        } catch (PathNotFoundException e) {
-            log.error("Path not found", e);
-            throw new RestException("Path not found", Response.Status.INTERNAL_SERVER_ERROR, e);
-        } catch (NoSuchNodeTypeException e) {
-            log.error("Node not found in rest workflow: {}", e);
-            throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
         } catch (NodeTypeExistsException e) {
-            log.error("Error in rest workflow: {}", e);
-            throw new RestException("Node already exists: ", Response.Status.INTERNAL_SERVER_ERROR, e);
-        } catch (RepositoryException e) {
-            log.error("Error in rest workflow: {}", e);
+            errorMsg = "Node type " + namespace + ':' + name + " already exists.";
+            log.error(errorMsg);
+        } catch (ItemExistsException e) {
+            errorMsg = "Item with name " + namespace + ':' + name + " already exists: ";
+            log.error(errorMsg);
+        } catch (RepositoryException | IOException e) {
+            log.error("Error adding compound type: {}", e);
             throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
-        } catch (IOException e) {
-            log.error("Template error in rest workflow: {}", e);
-            throw new RestException("Template error in rest workflow: ", Response.Status.INTERNAL_SERVER_ERROR, e);
         }
 
+        return errorMsg;
     }
 
 

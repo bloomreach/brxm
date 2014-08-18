@@ -29,6 +29,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -147,7 +148,8 @@ public class ContentBlocksResource extends BaseResource {
 
     @PUT
     @Path("/compounds/create/{name}")
-    public MessageRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) {
+    public MessageRestful createCompound(@PathParam("name") String name, @Context HttpServletResponse response) {
+        MessageRestful feedback;
         if (Strings.isNullOrEmpty(name)) {
             throw new RestException("Content block name was empty", Response.Status.NOT_ACCEPTABLE);
         }
@@ -155,11 +157,17 @@ public class ContentBlocksResource extends BaseResource {
         try {
             final PluginContext context = PluginContextFactory.getContext();
             final RestWorkflow workflow = new RestWorkflow(session, context);
-            workflow.addContentBlockCompound(name);
-            return new MessageRestful("Successfully created compound with name: " + name);
+
+            String message = workflow.addContentBlockCompound(name);
+            if (message == null) {
+                feedback = new MessageRestful("Successfully created compound with name: " + name);
+            } else {
+                feedback = createErrorMessage(message, response);
+            }
         } finally {
             GlobalUtils.cleanupSession(session);
         }
+        return feedback;
     }
 
     @DELETE
