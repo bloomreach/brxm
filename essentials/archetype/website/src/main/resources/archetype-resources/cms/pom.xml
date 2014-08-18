@@ -1,25 +1,22 @@
 #set( $dollar = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>${groupId}</groupId>
     <artifactId>${rootArtifactId}</artifactId>
     <version>${version}</version>
   </parent>
-
-  <name>${projectName} CMS</name>
-  <description>${projectName} CMS</description>
   <artifactId>${artifactId}-cms</artifactId>
   <packaging>war</packaging>
-
+  <name>${projectName} CMS</name>
+  <description>${projectName} CMS</description>
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-components-cms-plugin-library</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api</artifactId>
@@ -29,49 +26,41 @@
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
     </dependency>
- 
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-frontend</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-repository</artifactId>
     </dependency>
-
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-bootstrap-configuration</artifactId>
       <version>${dollar}{project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-bootstrap-content</artifactId>
       <version>${dollar}{project.version}</version>
     </dependency>
-
-    <!--  Gallery picker dependency -->
     <dependency>
       <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
       <artifactId>gallerypicker</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.wicket</groupId>
           <artifactId>wicket</artifactId>
+          <groupId>org.apache.wicket</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -88,14 +77,11 @@
       <artifactId>properties-addon-repository</artifactId>
       <version>2.08.00</version>
     </dependency>
-
   </dependencies>
-
   <build>
     <finalName>cms</finalName>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <archive>
@@ -137,5 +123,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

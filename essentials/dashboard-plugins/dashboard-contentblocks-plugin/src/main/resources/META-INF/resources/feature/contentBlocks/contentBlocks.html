@@ -64,16 +64,11 @@
                       </essentials-cms-document-type-deep-link>
                     </td>
                     <td>
-                        <select
-                                chosen
-                                style="width:100%"
-                                ng-model="docType.providers.providerNames"
-                                ng-selected="docType.providers.providerNames"
-                                ng-options="c.key for c in providers"
-                                ng-change="selectChange()"
-                                multiple
-                                >
-                        </select>
+                        <select hippo.theme.select-box ng-model="docType.providers.providerNames"
+                              no-results-text="No Providers available"
+                              ng-options="c.key for c in providers" multiple="multiple"
+                              data-options="providers"
+                              data-placeholder="Select Providers"></select>
                     </td>
                 </tr>
                 </tbody>

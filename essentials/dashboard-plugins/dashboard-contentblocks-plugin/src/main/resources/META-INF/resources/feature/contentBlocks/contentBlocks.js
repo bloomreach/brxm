@@ -29,16 +29,6 @@
             $scope.providerMap = {};
             $scope.fieldsModified = false;
 
-            $scope.selectChange = function () {
-                angular.forEach($scope.documentTypes, function (docType, key) {
-                    docType.providers.items = [];
-                    angular.forEach(docType.providers.providerNames, function (providerItem, key) {
-                        $log.info($scope.providerMap[providerItem.key]);
-                        $log.info(docType.providers.items.push($scope.providerMap[providerItem.key]));
-                    });
-                });
-            };
-
             // delete a provider
             $scope.onDeleteProvider = function (provider) {
                 $http.delete(restEndpoint + 'compounds/delete/' + provider.key).success(function (data) {
@@ -62,19 +52,21 @@
             $scope.saveBlocksConfiguration = function () {
                 var payload = {"documentTypes": {"items": []}};
                 payload.documentTypes.items = $scope.documentTypes;
-                // delete providerNames, path properties, not mapped on the backend:
                 angular.forEach(payload.documentTypes.items, function (docType) {
-                    if (docType.providers && docType.providers.providerNames) {
-                        delete docType.providers.providerNames;
-                        delete docType.prefix;
-                        delete docType.name;
-                    }
-                    var providers = docType.providers.items;
-                    angular.forEach(providers, function (provider) {
-                        if (provider.path) {
-                            delete provider.path;
-                        }
+                    // populate new providers
+                    docType.providers.items = [];
+                    angular.forEach(docType.providers.providerNames, function (newProvider) {
+                        var provider = $scope.providerMap[newProvider.key];
+                        docType.providers.items.push({
+                            key: newProvider.key,
+                            value: newProvider.value
+                        });
                     });
+
+                    // clean-up front-end-only attributes
+                    delete docType.providers.providerNames;
+                    delete docType.prefix;
+                    delete docType.name;
                 });
 
                 $http.post(restEndpoint + 'compounds/contentblocks/create', payload).success(function (data) {

@@ -19,7 +19,6 @@
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css?v=${project.version}"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css?v=${project.version}"/>
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css?v=${project.version}"/>
   <script src="${pageContext.request.contextPath}/components/jquery/jquery.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js?v=${project.version}"></script>
