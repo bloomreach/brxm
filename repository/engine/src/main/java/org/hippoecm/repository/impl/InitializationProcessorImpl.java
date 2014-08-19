@@ -107,6 +107,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_CONTENT,
             HippoNodeType.HIPPO_CONTENTROOT,
             HippoNodeType.HIPPO_CONTENTDELETE,
+            HippoNodeType.HIPPO_CONTENTPROPDELETE,
             HippoNodeType.HIPPO_CONTENTPROPSET,
             HippoNodeType.HIPPO_CONTENTPROPADD,
             HippoNodeType.HIPPO_RELOADONSTARTUP,
