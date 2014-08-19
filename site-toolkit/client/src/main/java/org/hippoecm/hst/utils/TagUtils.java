@@ -27,11 +27,17 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
+import com.google.common.base.Predicate;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
+
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.FluentIterable.from;
 
 public class TagUtils {
 
@@ -128,27 +134,26 @@ public class TagUtils {
         }
     }
 
-    public static String getQueryString(String characterEncoding,
+    public static String getQueryString(final String characterEncoding,
                                         final Map<String, List<String>> parametersMap,
                                         final List<String> removedParametersList) throws UnsupportedEncodingException {
-        boolean firstParamDone = false;
-        StringBuilder queryString = new StringBuilder();
-        for (Map.Entry<String, List<String>> entry : parametersMap.entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                String name = entry.getKey();
-                if(removedParametersList.contains(name)) {
-                    // set to null by hst:param tag, thus skip
-                    continue;
-                }
-                if (entry.getValue() != null) {
-                    for (String value : entry.getValue()) {
-                        if(value != null) {
-                            queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, characterEncoding));
-                            firstParamDone = true;
-                        }
+        final Iterable<String> retainedKeys = from(parametersMap.keySet())
+                .filter(new Predicate<String>() {
+                    @Override
+                    public boolean apply(final String paramKey) {
+                        // Only retain keys not in the removedParametersList that have a non-empty parameter value list
+                        return !removedParametersList.contains(paramKey) && CollectionUtils.isNotEmpty(parametersMap.get(paramKey));
                     }
-                }
+                });
+        final StringBuilder queryString = new StringBuilder();
+        for (String key : retainedKeys) {
+            final List<String> values = parametersMap.get(key);
+            for (String value : from(values).filter(notNull())) {
+                queryString.append('&').append(key).append('=').append(URLEncoder.encode(value, characterEncoding));
             }
+        }
+        if (queryString.length() > 0) {
+            queryString.replace(0, 1, "?");
         }
         return queryString.toString();
     }

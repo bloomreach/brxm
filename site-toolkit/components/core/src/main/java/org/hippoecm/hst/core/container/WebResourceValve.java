@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -38,7 +39,8 @@ import org.slf4j.LoggerFactory;
 public class WebResourceValve extends AbstractBaseOrderableValve {
 
     private static final Logger log = LoggerFactory.getLogger(WebResourceValve.class);
-    public static final int ONE_YEAR_MILLESECONDS = 1000 * 60 * 60 * 24 * 365;
+    private static final long ONE_YEAR_SECONDS = TimeUnit.SECONDS.convert(365L, TimeUnit.DAYS);
+    private static final long ONE_YEAR_MILLISECONDS = TimeUnit.MILLISECONDS.convert(ONE_YEAR_SECONDS, TimeUnit.SECONDS);
 
     @Override
     public void invoke(final ValveContext context) throws ContainerException {
@@ -49,8 +51,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
         if (service == null) {
             log.error("Missing service for '{}'. Cannot serve webresource.", WebResourcesService.class.getName());
-            throw new ContainerException("Missing service for '"+WebResourcesService.class.getName()+"'. Cannot serve webresource.",
-                    new Throwable());
+            throw new ContainerException("Missing service for '" + WebResourcesService.class.getName() + "'. Cannot serve webresource.");
         }
 
         try {
@@ -106,10 +107,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         response.setHeader("Content-Length", Long.toString(content.getBinary().getSize()));
         response.setContentType(content.getMimeType());
         // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
-        final long expires = System.currentTimeMillis() + ONE_YEAR_MILLESECONDS;
-        if (expires > 0) {
-            response.setDateHeader("Expires", expires + System.currentTimeMillis());
-            response.setHeader("Cache-Control", "max-age=" + (expires / 1000L));
-        }
+        response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
+        response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);
     }
 }
