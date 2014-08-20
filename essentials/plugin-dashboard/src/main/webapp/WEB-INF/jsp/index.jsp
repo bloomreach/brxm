@@ -20,6 +20,9 @@
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css?v=${project.version}"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css?v=${project.version}"/>
+  <script type="application/javascript">
+    window.SERVER_URL = '<%=request.getServerName()+':'+request.getServerPort()%>';
+  </script>
   <script src="${pageContext.request.contextPath}/components/jquery/jquery.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js?v=${project.version}"></script>
@@ -130,7 +133,7 @@
   </div>
 </div>
 <!-- Include the loader.js script -->
-<script src="${pageContext.request.contextPath}/js/loader.js" data-modules="http://localhost:8080/essentials/rest/plugins/modules"></script>
+<script src="${pageContext.request.contextPath}/js/loader.js" data-modules="http://<%=request.getServerName()+':'+request.getServerPort()%>/essentials/rest/plugins/modules"></script>
 
 </body>
 </html>

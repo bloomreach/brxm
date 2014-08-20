@@ -142,8 +142,8 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
-            $rootScope.applicationUrl = 'http://localhost:8080/essentials';
-            var root = 'http://localhost:8080/essentials/rest';
+            $rootScope.applicationUrl = 'http://'+ window.SERVER_URL+'/essentials';
+            var root = 'http://' + window.SERVER_URL +'/essentials/rest';
             var plugins = root + "/plugins";
 
             /* TODO generate this server side ?*/
