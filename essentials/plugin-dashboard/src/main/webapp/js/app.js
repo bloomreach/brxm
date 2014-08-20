@@ -112,10 +112,15 @@
         .run(function ($rootScope, $location, $log, $http, $timeout, $templateCache, modalService) {
             $rootScope.$on('$stateChangeStart',
                 function (event, toState, toParams, fromState, fromParams) {
-
+                    // when showing introduction, we want to hide some items:
+                    $rootScope.INTRODUCTION_DISPLAYED = false;
                     if (toState && toState.url) {
                         // disbale caching of pages:
                         $templateCache.remove(toState.url);
+                        // if introduction, hide menu:
+                        if (toState.url.indexOf('/introduction') != -1) {
+                            $rootScope.INTRODUCTION_DISPLAYED = true;
+                        }
                         if (toState.url.indexOf('/tools') != -1) {
                             $rootScope.mainHeader = 'Tools';
                         }

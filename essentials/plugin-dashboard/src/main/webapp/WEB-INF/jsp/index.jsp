@@ -57,7 +57,7 @@
 <body id="container" ng-cloak ng-class="feedbackMessages.length ? 'body-push':''">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
 
-<div class="hippo-navbar navbar navbar-default" ng-controller="navbarCtrl">
+<div class="hippo-navbar navbar navbar-default" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
@@ -86,8 +86,8 @@
   </div>
 </div>
 
-<div class="navbar-collapse sidebar-navbar-collapse collapse ng-scope" ng-controller="mainMenuCtrl">
-  <ul class="nav navbar-nav">
+<div class="navbar-collapse sidebar-navbar-collapse collapse ng-scope" ng-controller="mainMenuCtrl" ng-hide="INTRODUCTION_DISPLAYED">
+  <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
     <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
       <a href="#/library">
         <i class="fa fa-shopping-cart fa-2x fa-fw fa-middle"></i>
