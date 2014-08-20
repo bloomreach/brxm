@@ -681,7 +681,7 @@
         "@type": "plugin",
         "id": "listContentPlugin",
         "name": "List and Content",
-        "introduction": "This essentials feature installs two new components in the document template editor: \"Generic List\" and \"Generic Content\". With these components you can add paginated lists and content items in your template. You will need to edit the page rendering templates (JSP or Freemarker) to use these features.",
+        "introduction": "This essentials feature installs two new components in the document template editor: \"Generic List\" and \"Generic Content\". With these components you can add paginated lists and content items in your template. You will need to edit the page rendering templates (JSP or FreeMarker) to use these features.",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/list-component.html",
         "packageFile": "/META-INF/list_content_instructions.xml",
         "restClasses": [],
