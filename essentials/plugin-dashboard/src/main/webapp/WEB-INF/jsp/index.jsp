@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
 <%--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
