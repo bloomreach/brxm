@@ -24,12 +24,12 @@
     })();
  * </pre>
  *
- * Note that dependencies are missing (['ngRoute', 'localytics.directives'] etc.)
+ * Note that dependencies are missing (['ngRoute', etc.)
  *
  */
 (function () {
     "use strict";
-    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'ngAnimate', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING

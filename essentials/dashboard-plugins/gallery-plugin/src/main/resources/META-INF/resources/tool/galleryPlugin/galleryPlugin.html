@@ -46,16 +46,18 @@
         <div ng-show="imageSets.length">
             <form novalidate name="imageSetFrom">
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">Edit existing image set:</label>
-                    <div class="col-sm-8">
-                        <select
-                                name="imageSetName"
-                                class="chosen-select" chosen
-                                style="width:200px;margin-left: 20px;"
+                    <label class="col-sm-4 control-label">Edit existing image set</label>
+                    <div class="col-sm-4">
+
+
+                        <select hippo.theme.select-box
                                 ng-model="selectedImageSet"
-                                ng-change="onSelectedImageSetChange()"
-                                ng-options="option.name for option in imageSets">
-                            <option value=""></option>
+                                options="values"
+                                no-results-text="No results found for"
+                                ng-options="option.name for option in imageSets"
+                                data-options="imageSets"
+                                data-placeholder="Select existing image set"
+                                >
                         </select>
                     </div>
                 </div>
@@ -76,11 +78,14 @@
                         <label class="col-sm-4 control-label">Edit existing image variant:</label>
                         <div class="col-sm-4">
                             <select
+                                    hippo.theme.select-box
                                     name="selectedImageModel"
-                                    class="chosen-select" chosen
-                                    style="width:200px;margin-left: 20px;"
+                                    class="chosen-select"
                                     ng-model="selectedImageModel"
-                                    ng-options="option.name for option in selectedImageSet.models">
+                                    ng-options="option.name for option in selectedImageSet.models"
+                                    data-options="selectedImageSet.models"
+                                    data-placeholder="Select existing variant"
+                                    >
                                 <option value=""></option>
                             </select>
                         </div>
@@ -129,11 +134,11 @@
                         <div class="clearfix"></div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Upscale:</label>
-                            <div class="col-sm-8">
-                                <select class="chosen-select" chosen
+                            <div class="col-sm-4">
+                                <select class="chosen-select" hippo.theme.select-box
                                         ng-model="selectedImageModel.upscaling"
                                         ng-options="v.value as v.description for v in upscalingValues"
-                                        style="width: 240px;">
+                                        >
                                     <option value=""></option>
                                 </select>
                             </div>
@@ -141,11 +146,11 @@
                         <div class="clearfix"></div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Speed vs Quality</label>
-                            <div class="col-sm-8">
-                                <select class="chosen-select" chosen
+                            <div class="col-sm-4">
+                                <select class="chosen-select" hippo.theme.select-box
                                         ng-model="selectedImageModel.optimize"
                                         ng-options="o.value as o.description for o in optimizeValues"
-                                        style="width: 240px;">
+                                        >
                                     <option value=""></option>
                                 </select>
                             </div>
@@ -153,11 +158,11 @@
                         <div class="clearfix"></div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">JPEG Quality</label>
-                            <div class="col-sm-8">
-                                <select class="chosen-select" chosen
+                            <div class="col-sm-4">
+                                <select class="chosen-select" hippo.theme.select-box
                                         ng-model="selectedImageModel.compression"
                                         ng-options="c.value as c.description for c in compressionValues"
-                                        style="width: 240px;">
+                                        >
                                     <option value=""></option>
                                 </select>
                             </div>

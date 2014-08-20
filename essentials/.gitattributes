@@ -1509,17 +1509,6 @@ plugin-dashboard/src/main/webapp/components/underscore/test/vendor/runner.js -te
 plugin-dashboard/src/main/webapp/components/underscore/underscore-min.js -text
 plugin-dashboard/src/main/webapp/components/underscore/underscore-min.map -text
 plugin-dashboard/src/main/webapp/components/underscore/underscore.js -text
-plugin-dashboard/src/main/webapp/css/essentials-less/hippo-essentials.css -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-menu.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-modal.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/essentials-variables.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/hippo-essentials.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/infobox.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/messages.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/plugin.less -text
-plugin-dashboard/src/main/webapp/css/less/essentials-less/space.less -text
-plugin-dashboard/src/main/webapp/css/less/hippo-theme/_variables.less -text
-plugin-dashboard/src/main/webapp/css/less/hippo-theme/vars.less -text
 plugin-dashboard/src/main/webapp/css/main.css -text
 plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-feature-footer.html -text
@@ -1578,7 +1567,6 @@ plugin-dashboard/src/main/webapp/js/lib/angular-animate.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js -text
-plugin-dashboard/src/main/webapp/js/lib/chosen.js -text
 plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls.min.js -text
 plugin-dashboard/src/main/webapp/js/loader.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
@@ -1592,9 +1580,3 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRes
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/RestListTest.java -text
 plugin-dashboard/src/test/resources/log4j.xml -text
 /pom.xml -text
-test-skeleton/.bowerrc -text
-test-skeleton/bower.json -text
-test-skeleton/feedback.js -text
-test-skeleton/index.html -text
-test-skeleton/package.json -text
-test-skeleton/readme.md -text

@@ -39,8 +39,6 @@
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-animate.js?v=${project.version}"></script>
 
-  <script src="${pageContext.request.contextPath}/js/lib/chosen.js?v=${project.version}"></script>
-
   <%-- HIPPO THEME DEPS --%>
   <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js?v=${project.version}"></script>
