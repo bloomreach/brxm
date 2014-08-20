@@ -41,10 +41,6 @@
             $scope.setup = function () {
                 $http.get($rootScope.REST.project_settings).success(function (data) {
                     $scope.projectSettings = data;
-                    // set some defaults
-                    $scope.projectSettings.templateLanguage = 'jsp';
-                    $scope.projectSettings.useSamples = true;
-                    $scope.projectSettings.confirmParams = false;
                 });
             };
             // initialize
