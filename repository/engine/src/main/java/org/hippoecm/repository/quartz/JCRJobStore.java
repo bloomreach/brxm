@@ -147,7 +147,7 @@ public class JCRJobStore implements JobStore {
                 final Node moduleConfig = session.getNode(jobStorePath);
                 for (Node groupNode : new NodeIterable(moduleConfig.getNodes())) {
                     for (Node jobNode : new NodeIterable(groupNode.getNodes())) {
-                        changes = initializeTriggersOfJob(jobNode);
+                        changes |= initializeTriggersOfJob(jobNode);
                     }
                 }
             }
