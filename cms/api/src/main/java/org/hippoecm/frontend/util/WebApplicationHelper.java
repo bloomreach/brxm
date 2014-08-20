@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -105,7 +104,7 @@ public class WebApplicationHelper {
     private static String calculateApplicationHash() {
         try {
             final MessageDigest md5 = MessageDigest.getInstance("MD5");
-            final List<File> jarFiles = getAllJarFiles();
+            final List<File> jarFiles = getAllWebAppJarFiles();
             for (File jarFile : jarFiles) {
                 md5.update(String.valueOf(jarFile.lastModified()).getBytes());
             }
@@ -119,22 +118,24 @@ public class WebApplicationHelper {
         return String.valueOf(System.currentTimeMillis());
     }
 
-    private static List<File> getAllJarFiles() throws IOException {
+    private static List<File> getAllWebAppJarFiles() throws IOException {
         List<File> jarFiles = new ArrayList<>();
         Enumeration<URL> manifests = Thread.currentThread().getContextClassLoader().getResources("META-INF/MANIFEST.MF");
         while (manifests.hasMoreElements()) {
             final URL manifest = manifests.nextElement();
-            try {
-                final File baseJarFile = getBaseJarFileFromURL(manifest);
-                if (baseJarFile != null) {
-                    jarFiles.add(baseJarFile);
-                } else {
-                    final String msg = String.format("Manifest %s does not seem to be inside a jar", manifest.getFile());
-                    getLogger(WebApplicationHelper.class).debug(msg);
+            if (manifest.getFile().contains("WEB-INF/lib")) {
+                try {
+                    final File baseJarFile = getBaseJarFileFromURL(manifest);
+                    if (baseJarFile != null) {
+                        jarFiles.add(baseJarFile);
+                    } else {
+                        final String msg = String.format("Manifest %s does not seem to be inside a jar", manifest.getFile());
+                        getLogger(WebApplicationHelper.class).debug(msg);
+                    }
+                } catch (URISyntaxException e) {
+                    final String msg = String.format("Failed to get jar file from manifest %s", manifest.getFile());
+                    getLogger(WebApplicationHelper.class).error(msg, e);
                 }
-            } catch (URISyntaxException e) {
-                final String msg = String.format("Failed to get jar file from manifest %s", manifest.getFile());
-                getLogger(WebApplicationHelper.class).error(msg, e);
             }
         }
         Collections.sort(jarFiles, new Comparator<File>() {
