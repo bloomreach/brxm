@@ -59,13 +59,6 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.properties",
-                "artifactId": "properties-addon-repository",
-                "scope": "compile",
-                "targetPom": "cms"
-            },
-            {
-                "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-repository",
                 "scope": "compile",
