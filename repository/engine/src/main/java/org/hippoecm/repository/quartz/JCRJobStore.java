@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.lock.Lock;
@@ -542,11 +543,16 @@ public class JCRJobStore implements JobStore {
                     }
                     if (lock(session, triggerNode.getPath())) {
                         try {
-                            startLockKeepAlive(session, triggerNode.getIdentifier());
-                            if (triggers == null) {
-                                triggers = new ArrayList<>();
+                            // double check nextFireTime now that we have a lock
+                            if (isPendingTrigger(triggerNode, noLaterThan)) {
+                                startLockKeepAlive(session, triggerNode.getIdentifier());
+                                if (triggers == null) {
+                                    triggers = new ArrayList<>();
+                                }
+                                triggers.add(createTriggerFromNode(triggerNode));
+                            } else {
+                                unlock(session, triggerNode.getPath());
                             }
-                            triggers.add(createTriggerFromNode(triggerNode));
                         } catch (RepositoryException e) {
                             log.error("Failed to recreate trigger for job " + jobNode.getPath(), e);
                             stopLockKeepAlive(triggerNode.getIdentifier());
@@ -561,6 +567,11 @@ public class JCRJobStore implements JobStore {
         }
         return triggers == null ? Collections.<OperableTrigger>emptyList() : triggers;
 
+    }
+
+    private boolean isPendingTrigger(final Node triggerNode, final long noLaterThan) throws RepositoryException {
+        final java.util.Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, null);
+        return nextFireTime != null && nextFireTime.compareTo(dateToCalendar(new Date(noLaterThan))) <= 0;
     }
 
     @Override
@@ -709,6 +720,8 @@ public class JCRJobStore implements JobStore {
     }
 
     private static NodeIterable getPendingTriggers(Session session, long noLaterThan) {
+        // make sure the index is up to date
+        refreshSession(session);
         try {
             final java.util.Calendar cal = dateToCalendar(new Date(noLaterThan));
             final QueryManager qMgr = session.getWorkspace().getQueryManager();
