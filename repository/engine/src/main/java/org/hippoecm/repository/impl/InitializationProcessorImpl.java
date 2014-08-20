@@ -97,7 +97,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
 
-    private static final String[] INIT_ITEM_PROPERTIES = new String[] {
+    private static final String[] INIT_ITEM_PROPERTIES = {
             HIPPO_SEQUENCE,
             HippoNodeType.HIPPO_NAMESPACE,
             HippoNodeType.HIPPO_NODETYPESRESOURCE,
