@@ -45,6 +45,8 @@
     <#include "/WEB-INF/freemarker/include/pagination.ftl">
 {{/fileBased}}
     </#if>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
 </#if>
-
 

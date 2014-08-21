@@ -35,8 +35,7 @@
     </div>
     </#list>
 
-    <#if editMode && (document == null)>
-    <img src="<@hst.link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
-    </#if>
 </div>
+<#elseif editMode>
+  <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
 </#if>

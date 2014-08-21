@@ -26,7 +26,7 @@
     <xml action="copy" source="instructions/xml/faq-list-document.xml" target="/hippo:namespaces/{{namespace}}"/>
     <file action="copy" source="instructions/java/FaqDocument.txt" target="{{beansFolder}}/FaqDocument.java"/>
     <file action="copy" source="instructions/java/FaqListDocument.txt" target="{{beansFolder}}/FaqListDocument.java"/>
-    <file action="copy" source="instructions/icon/component-icon-faq.png" binary="true" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
+    <file action="copy" source="instructions/images/faq.png" binary="true" target="{{imagesRoot}}/essentials/catalog-component-icons/faq.png"/>
     <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-document-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>

@@ -24,4 +24,6 @@
 <div class="row">
     <a href="<@hst.link hippobean=document.link />"><img src="<@hst.link hippobean=document.image />" alt="${document.title}"/></a>
 </div>
+<#elseif editMode>
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
 </#if>

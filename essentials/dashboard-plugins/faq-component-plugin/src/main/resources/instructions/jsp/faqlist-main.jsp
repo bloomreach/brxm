@@ -26,7 +26,8 @@
     <hst:html hippohtml="${faq.answer}"/>
   </div>
 </c:forEach>
+  <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${editMode && (document eq null)}">
-  <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/faq.png'/>"> Click to edit FAQ
 </c:if>
 </div>

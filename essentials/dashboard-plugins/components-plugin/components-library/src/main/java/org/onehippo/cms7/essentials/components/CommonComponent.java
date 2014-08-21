@@ -74,7 +74,7 @@ public abstract class CommonComponent extends BaseHstComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
+        setEditMode(request);
     }
 
     public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass) {
@@ -225,4 +225,7 @@ public abstract class CommonComponent extends BaseHstComponent {
         return SearchInputParsingUtils.parse(query, false);
     }
 
+    protected void setEditMode(final HstRequest request) {
+        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
+    }
 }

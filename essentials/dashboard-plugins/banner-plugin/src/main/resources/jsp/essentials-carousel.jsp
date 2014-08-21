@@ -52,8 +52,9 @@
     </c:if>
   </div>
 </c:if>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${editMode && (pageable eq null || pageable.total lt 1)}">
-  <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Banner
 </c:if>
 <style type="text/css">
   /* Carousel base class */

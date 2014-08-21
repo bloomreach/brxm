@@ -20,5 +20,9 @@
   limitations under the License.
 -->
 <#-- @ftlvariable id="label" type="java.lang.String"-->
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#if editMode && !label?has_content>
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/label.png'/>"> Click to edit Label
+</#if>
 ${label}
 

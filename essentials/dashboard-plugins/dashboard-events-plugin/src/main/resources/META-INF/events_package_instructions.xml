@@ -49,7 +49,7 @@
     <xml action="copy" source="xml/hst/pages/eventslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/component-icon-events.png" target="{{siteWebRoot}}/images/component-icon-events.png"/>
+    <file action="copy" binary="true" source="images/events-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/events-list.png"/>
   </instructionSet>
 
 

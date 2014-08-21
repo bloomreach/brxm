@@ -16,4 +16,8 @@
   --%>
 
 <%--@elvariable id="label" type="java.lang.String"--%>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode && empty label}">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/label.png'/>"> Click to edit Label
+</c:if>
 ${label}

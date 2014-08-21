@@ -155,8 +155,8 @@ dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-freemar
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-jsp.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/banner-catalog-item.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/carousel-catalog-item.xml -text
-dashboard-plugins/banner-plugin/src/main/resources/images/component-icon-banner.png -text
-dashboard-plugins/banner-plugin/src/main/resources/images/component-icon-carousel.png -text
+dashboard-plugins/banner-plugin/src/main/resources/images/banner.png -text
+dashboard-plugins/banner-plugin/src/main/resources/images/carousel.png -text
 dashboard-plugins/banner-plugin/src/main/resources/java/Banner.txt -text
 dashboard-plugins/banner-plugin/src/main/resources/jsp/essentials-banner.jsp -text
 dashboard-plugins/banner-plugin/src/main/resources/jsp/essentials-carousel.jsp -text
@@ -342,7 +342,7 @@ dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/web-fragme
 dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventslist-main-eventslist.ftl -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventspage-main.ftl -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/icons/new-folder-16.png -text
-dashboard-plugins/dashboard-events-plugin/src/main/resources/images/component-icon-events.png -text
+dashboard-plugins/dashboard-events-plugin/src/main/resources/images/events-list.png -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/java/EventsDocument.txt -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/jsp/eventslist-main-eventslist.jsp -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/jsp/eventspage-main.jsp -text
@@ -456,8 +456,8 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/fr
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/imports.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/label-component.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/pagination.ftl -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/icons/component-icon-label.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/essentials-edit-component.png -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/label.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-layout.jsp -text
@@ -501,7 +501,7 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-p
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-sitemap-item.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-page.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-workspace.xml -text
-dashboard-plugins/faq-component-plugin/src/main/resources/instructions/icon/component-icon-faq.png -text
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/images/faq.png -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/FaqDocument.txt -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/FaqListDocument.txt -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/faq-main.jsp -text

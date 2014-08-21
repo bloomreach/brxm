@@ -23,7 +23,7 @@
     <sv:value>org.onehippo.cms7.essentials.components.EssentialsLabelComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-label.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/label.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Label</sv:value>

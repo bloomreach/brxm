@@ -26,7 +26,7 @@
     <sv:value>Banner</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-banner.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/banner.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>essentials-banner{{templateExtension}}</sv:value>
