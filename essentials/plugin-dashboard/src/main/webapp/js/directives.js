@@ -313,11 +313,12 @@
                         return $scope.plugin.type === 'feature' && $scope.plugin.installState === 'discovered';
                     };
                     $scope.isBoarding = function() {
-                        return $scope.plugin.installState === 'boarding';
+                        return $scope.plugin.installState === 'boarding' || $scope.plugin.installState === 'installing';
                     };
                     $scope.isOnBoard = function() {
                         return $scope.plugin.type === 'tool'
-                               || ($scope.plugin.installState !== 'discovered' && $scope.plugin.installState !== 'boarding');
+                               || $scope.plugin.installState === 'onBoard'
+                               || $scope.plugin.installState === 'installed';
                     };
                     $scope.installPlugin = function () {
                         $rootScope.pluginsCache = null;
@@ -349,9 +350,6 @@
                     };
                     $scope.hasConfiguration = function() {
                         return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
-                    };
-                    $scope.hasNoConfiguration = function() {
-                        return $scope.plugin.installState === 'installed' && !$scope.plugin.hasConfiguration;
                     };
                 }
             }
