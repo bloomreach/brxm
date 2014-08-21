@@ -24,6 +24,13 @@
   //############################################
   -->
 
+  <instructionSet>
+    <folder template="instructions/content/administration-folder.xml" path="/content/documents/administration"/>
+    <folder template="instructions/content/labels-folder.xml" path="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/pagination.xml" target="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/homepage.xml" target="/content/documents/administration/labels"/>
+  </instructionSet>
+
   <instructionSet group="jsp">
     <!-- include-->
     <file action="copy" source="instructions/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>

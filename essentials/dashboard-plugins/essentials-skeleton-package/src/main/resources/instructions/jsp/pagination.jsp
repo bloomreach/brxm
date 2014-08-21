@@ -1,3 +1,4 @@
+<%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
@@ -16,8 +17,9 @@
   --%>
 
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<hst:setBundle basename="essentials.pagination"/>
 <ul class="pagination">
-  <li class="disabled"><a href="#">${pageable.total} document(s)</a></li>
+  <li class="disabled"><a href="#">${pageable.total}&nbsp;<fmt:message key="results.indication"/></a></li>
   <c:forEach var="pageNr" items="${pageable.pageNumbersArray}" varStatus="index">
     <hst:renderURL var="pageUrl">
       <hst:param name="page" value="${pageNr}"/>
@@ -28,7 +30,7 @@
         <hst:param name="page" value="${pageable.previousPage}"/>
         <hst:param name="pageSize" value="${pageable.pageSize}"/>
       </hst:renderURL>
-      <li><a href="${pageUrlPrevious}">previous</a></li>
+      <li><a href="${pageUrlPrevious}"><fmt:message key="page.previous"/></a></li>
     </c:if>
     <c:choose>
       <c:when test="${pageable.currentPage eq pageNr}">
@@ -43,7 +45,7 @@
         <hst:param name="page" value="${pageable.nextPage}"/>
         <hst:param name="pageSize" value="${pageable.pageSize}"/>
       </hst:renderURL>
-      <li><a href="${pageUrlNext}">next</a></li>
+      <li><a href="${pageUrlNext}"><fmt:message key="page.next"/></a></li>
     </c:if>
   </c:forEach>
 </ul>
