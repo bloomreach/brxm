@@ -184,6 +184,8 @@ dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml 
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/feature/blogPlugin/blogPlugin.html -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/feature/blogPlugin/blogPlugin.js -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/content/blog-labels.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/content/facet-labels.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/blog-author-posts.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/blog-author.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/blog-detail.ftl -text
@@ -448,10 +450,10 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bo
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/administration-folder.xml -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/global.xml -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/homepage.xml -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/global-labels.xml -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/homepage-labels.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/labels-folder.xml -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/pagination.xml -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/pagination-label.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/cms-request.css -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-footer.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-layout.ftl -text
@@ -581,6 +583,7 @@ dashboard-plugins/search-plugin/pom.xml -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/feature/searchPlugin/searchPlugin.html -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instructions.xml -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/search-plugin/src/main/resources/instructions/content/search-labels.xml -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/freemarker/search-box.ftl -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/freemarker/search-main.ftl -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/images/search-box.png -text
