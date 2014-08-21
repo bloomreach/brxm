@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -16,11 +15,11 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="label-component">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/hstdefault/label-component.ftl</sv:value>
-  </sv:property>
+<sv:node sv:name="base-footer" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+        <sv:value>freemarker/{{namespace}}/base-footer.ftl</sv:value>
+    </sv:property>
 </sv:node>
