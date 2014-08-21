@@ -8,16 +8,13 @@
   <title>404 error</title>
 </head>
 <body>
-<h2>It looks like you haven't configured your site yet.</h2>
+<h2>Welcome to Hippo</h2>
 <p>
-  Hippo Essentials makes it easier to setup a Hippo project.</p>
-<p>With Essentials, you can browse the Essentials
-  feature library and install extra functionality in your new Hippo project.</p>
-<p>To get some basic understanding about Essentials and how to use it, check the
-  <a href="http://www.onehippo.org/library/essentials/hippo-developer-essentials.html">documentation</a>.</p>
+  It appears that you just created an empty Hippo project from the archetype. There is nothing to
+  show on the site yet. We recommend you use Hippo Essentials to start developing your project.
 </p>
 <h3>
-  <a href="http://<%=request.getServerName() +':' + request.getServerPort()+"/essentials"%>">Start Hippo Essentials</a>
+  <a href="http://<%=request.getServerName() + ':' + request.getServerPort() + "/essentials"%>">Go to Hippo Essentials</a>
 </h3>
 </body>
 </html>
