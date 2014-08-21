@@ -348,7 +348,7 @@ public class PluginResource extends BaseResource {
                         }
                     }
 
-                    message.setValue("Plugin <a href='#/plugins/" + pluginId + "'>" + plugin.getName() + "</a> successfully installed.");
+                    message.setValue("Plugin <strong>" + plugin.getName() + "</strong> successfully installed.");
                     return message;
                 } else {
                     final StringBuilder builder = new StringBuilder();
