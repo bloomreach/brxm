@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import com.google.common.base.Strings;
+
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -33,10 +35,12 @@ public class EssentialsBlogComponent extends EssentialsListComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        // TODO implement
-        log.info("**** BLOG COMPONENT ****");
+        final EssentialsBlogComponentInfo paramInfo = getComponentParametersInfo(request);
+        final String documentTypes = paramInfo.getDocumentTypes();
+        if (Strings.isNullOrEmpty(documentTypes)) {
+            setEditMode(request);
+            return;
+        }
         super.doBeforeRender(request, response);
-
     }
-
 }

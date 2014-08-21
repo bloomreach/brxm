@@ -23,10 +23,10 @@
     <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogAuthorPostsComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
-    <sv:value>Blog posts by author</sv:value>
+    <sv:value>Blogposts by Author</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-author.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/blogposts-by-author.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>blog-author-posts{{templateExtension}}</sv:value>

@@ -36,8 +36,7 @@
   <@hst.cmseditmenu menu=menu/>
 <#else>
   <#if editMode>
-    <img src="<hst:link path='/images/essentials-edit-component.png' />"
-         alt="Configure valid menu in component parameters"
-         title="Configure valid menu in component parameters">
+    <h5>[Menu Component]</h5>
+    <sub>Click to edit Menu</sub>
   </#if>
 </#if>

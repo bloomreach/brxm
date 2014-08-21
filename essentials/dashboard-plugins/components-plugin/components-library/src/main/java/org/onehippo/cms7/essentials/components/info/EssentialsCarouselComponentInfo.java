@@ -28,8 +28,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 @FieldGroupList({
         @FieldGroup(
                 titleKey = "carousel.documents",
-                value = {"document1", "document2", "document3", "document4", "document5",
-                        "document6", "document7", "document8", "document9", "document10"}
+                value = {"document1", "document2", "document3", "document4", "document5", "document6"}
         ),
         @FieldGroup(
                 titleKey = "carousel.settings",
@@ -98,5 +97,4 @@ public interface EssentialsCarouselComponentInfo {
     @Parameter(name = "document6", required = false, displayName = "Carousel item 6")
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem6();
-
 }

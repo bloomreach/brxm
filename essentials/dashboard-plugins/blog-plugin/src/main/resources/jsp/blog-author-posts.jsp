@@ -18,8 +18,8 @@
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="author" type="{{beansPackage}}.Author"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
-<div class="panel panel-default">
-  <c:if test="${(pageable ne null)}">
+<c:if test="${(pageable ne null)}">
+  <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">More by ${author.fullName}</h3>
     </div>
@@ -38,5 +38,9 @@
         </div>
       </c:otherwise>
     </c:choose>
-  </c:if>
-</div>
+  </div>
+</c:if>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode and pageable eq null}">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/blogposts-by-author.png'/>"> Click to edit Blogposts by Author
+</c:if>
