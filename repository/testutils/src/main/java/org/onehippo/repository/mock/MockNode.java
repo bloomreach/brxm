@@ -21,10 +21,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +47,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.lock.Lock;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -52,10 +55,13 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
+import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Localized;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,8 +97,9 @@ public class MockNode extends MockItem implements HippoNode {
     private String identifier;
     private final Map<String, MockProperty> properties;
     private final Map<String, List<MockNode>> children;
-    private Set<String> mixins;
+    private final Set<String> mixins;
     private String primaryItemName;
+    private boolean isCheckedOut = true;
 
     public MockNode(String name) {
         this(name, null);
@@ -102,19 +109,53 @@ public class MockNode extends MockItem implements HippoNode {
         super(name);
 
         this.identifier = UUID.randomUUID().toString();
-        this.properties = new HashMap<String, MockProperty>();
-        this.children = new HashMap<String, List<MockNode>>();
+        this.properties = new HashMap<>();
+        this.children = new LinkedHashMap<>();
+        this.mixins = new HashSet<>();
         this.primaryItemName = null;
 
         if (primaryTypeName != null) {
-            setPrimaryType(primaryTypeName);
+            try {
+                setPrimaryType(primaryTypeName);
+            } catch (RepositoryException e) {
+                throw new IllegalStateException("Cannot create MockNode", e);
+            }
         }
     }
 
+    public MockNode(String name, String primaryTypeName, final MockNode original) throws RepositoryException {
+        this(name, primaryTypeName);
+        copyProperties(original);
+        copyChildren(original);
+        copyMixins(original);
+    }
+
+    public MockNode(MockNode original) throws RepositoryException {
+        this(original.getName(), original.primaryItemName, original);
+    }
+
+    private void copyProperties(MockNode original) throws RepositoryException {
+        for (Map.Entry<String, MockProperty> propEntry : original.properties.entrySet()) {
+            final MockProperty property = new MockProperty(propEntry.getValue());
+            property.setParent(this);
+            properties.put(propEntry.getKey(), property);
+        }
+    }
+
+    private void copyChildren(final MockNode original) throws RepositoryException {
+        for (List<MockNode> sameNameSiblings : original.children.values()) {
+            for (MockNode child : sameNameSiblings) {
+                addNode(new MockNode(child));
+            }
+        }
+    }
+
+    private void copyMixins(final MockNode original) {
+        this.mixins.addAll(original.mixins);
+    }
+
     public static MockNode root() {
-        MockNode root = new MockNode("");
-        root.setPrimaryType("rep:root");
-        return root;
+        return new MockNode("", "rep:root");
     }
 
     public static boolean isDefaultSameNameSiblingSupported() {
@@ -133,7 +174,9 @@ public class MockNode extends MockItem implements HippoNode {
         this.sameNameSiblingSupported = sameNameSiblingSupported;
     }
 
-    public void addNode(MockNode child) throws ConstraintViolationException {
+    public void addNode(MockNode child) throws RepositoryException {
+        validateCheckedOut();
+
         child.setParent(this);
         String childName = child.getName();
         List<MockNode> childList = children.get(childName);
@@ -156,16 +199,14 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public Node addNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException, ConstraintViolationException {
-        return addMockNode(relPath, primaryNodeTypeName);
-    }
+    public MockNode addNode(final String relPath, final String primaryNodeTypeName) throws RepositoryException {
+        validateCheckedOut();
 
-    public MockNode addMockNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException, ConstraintViolationException {
         final String[] pathElements = relPath.split("/");
         MockNode parent = this;
 
         for (int i = 0; i < pathElements.length - 1; i++) {
-            parent = parent.getMockNode(pathElements[i]);
+            parent = parent.getNode(pathElements[i]);
         }
 
         final MockNode child = new MockNode(pathElements[pathElements.length - 1]);
@@ -175,13 +216,23 @@ public class MockNode extends MockItem implements HippoNode {
         return child;
     }
 
+    /**
+     * @deprecated use {@link #addNode(String, String)} instead.
+     */
+    @Deprecated
+    public MockNode addMockNode(final String relPath, final String primaryNodeTypeName) throws RepositoryException {
+        return addNode(relPath, primaryNodeTypeName);
+    }
+
     @Override
     public NodeType getPrimaryNodeType() throws RepositoryException {
         return primaryType;
     }
 
     @Override
-    public void setPrimaryType(final String nodeTypeName) {
+    public void setPrimaryType(final String nodeTypeName) throws RepositoryException {
+        validateCheckedOut();
+
         this.primaryType = new MockNodeType(nodeTypeName);
         this.primaryType.setPrimaryItemName(primaryItemName);
     }
@@ -191,7 +242,8 @@ public class MockNode extends MockItem implements HippoNode {
         return true;
     }
 
-    void removeProperty(String name) {
+    void removeProperty(String name) throws RepositoryException {
+        validateCheckedOut();
         MockProperty removed = properties.remove(name);
         if (removed != null) {
             removed.setParent(null);
@@ -199,8 +251,9 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public void remove() {
-        final MockNode parent = getMockParent();
+    public void remove() throws RepositoryException {
+        validateCheckedOut();
+        final MockNode parent = getParentOrNull();
         if (parent != null) {
             List<MockNode> childList = parent.children.get(getName());
             if (childList != null) {
@@ -258,7 +311,7 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public Property getProperty(String relPath) throws PathNotFoundException {
+    public MockProperty getProperty(String relPath) throws PathNotFoundException {
         if (relPath == null) {
             throw new IllegalArgumentException("Non-null relative path is required.");
         }
@@ -290,11 +343,12 @@ public class MockNode extends MockItem implements HippoNode {
 
             return properties.get(relPath);
         } else {
-            return getMockNode(nodeRelPath).getProperty(propName);
+            return getNode(nodeRelPath).getProperty(propName);
         }
     }
 
-    private MockProperty getPropertyOrAddNew(final String name, final int type) {
+    private MockProperty getPropertyOrAddNew(final String name, final int type) throws RepositoryException {
+        validateCheckedOut();
         MockProperty property = properties.get(name);
         if (property == null) {
             property = new MockProperty(name, type);
@@ -321,18 +375,14 @@ public class MockNode extends MockItem implements HippoNode {
     @Override
     public boolean hasNode(final String relPath) {
         try {
-            return (getMockNode(relPath) != null);
+            return (getNode(relPath) != null);
         } catch (PathNotFoundException e) {
             return false;
         }
     }
 
     @Override
-    public Node getNode(final String relPath) throws PathNotFoundException {
-        return getMockNode(relPath);
-    }
-
-    MockNode getMockNode(final String relPath) throws PathNotFoundException {
+    public MockNode getNode(final String relPath) throws PathNotFoundException {
         if (relPath == null) {
             throw new IllegalArgumentException("Non-null relative path is required.");
         }
@@ -384,7 +434,15 @@ public class MockNode extends MockItem implements HippoNode {
         }
 
         MockNode child = childList.get(nodeIndex - 1);
-        return child.getMockNode(subRelPath);
+        return child.getNode(subRelPath);
+    }
+
+    /**
+     * @deprecated use {@link #getNode(String)} instead.
+     */
+    @Deprecated
+    MockNode getMockNode(final String relPath) throws PathNotFoundException {
+        return getNode(relPath);
     }
 
     @Override
@@ -403,7 +461,7 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public boolean isNodeType(final String nodeTypeName) {
-        return primaryType != null && primaryType.isNodeType(nodeTypeName) || (mixins != null && mixins.contains(nodeTypeName));
+        return primaryType != null && primaryType.isNodeType(nodeTypeName) || mixins.contains(nodeTypeName);
     }
 
     @Override
@@ -608,7 +666,7 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public Node getCanonicalNode() throws ItemNotFoundException, RepositoryException {
+    public MockNode getCanonicalNode() throws ItemNotFoundException, RepositoryException {
         return this;
     }
 
@@ -631,8 +689,6 @@ public class MockNode extends MockItem implements HippoNode {
     public Map<Localized, String> getLocalizedNames() throws RepositoryException {
         return Collections.emptyMap();
     }
-
-    // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
     public PropertyIterator getReferences() {
@@ -660,20 +716,19 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public void addMixin(final String mixinName) {
+    public void addMixin(final String mixinName) throws RepositoryException {
         if (mixinName != null) {
-            if (mixins == null) {
-                mixins = new HashSet<>();
-            }
             mixins.add(mixinName);
+
+            if (mixinName.equals(JcrConstants.MIX_VERSIONABLE)) {
+                checkout();
+            }
         }
     }
 
     @Override
     public void removeMixin(final String mixinName) {
-        if (mixinName != null && mixins != null) {
-            mixins.remove(mixinName);
-        }
+        mixins.remove(mixinName);
     }
 
     @Override
@@ -687,13 +742,21 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public Version checkin() {
-        throw new UnsupportedOperationException();
+    public MockVersion checkin() throws RepositoryException {
+        final MockVersionManager versionManager = getSession().getWorkspace().getVersionManager();
+        final MockVersion version = versionManager.checkin(getPath());
+        setProperty(JcrConstants.JCR_IS_CHECKED_OUT, false);
+        this.isCheckedOut = false;
+        return version;
     }
 
     @Override
-    public void checkout() {
-        throw new UnsupportedOperationException();
+    public void checkout() throws RepositoryException {
+        if (!mixins.contains(JcrConstants.MIX_VERSIONABLE)) {
+            throw new UnsupportedRepositoryOperationException("Node " + getPath() + " is not versionable");
+        }
+        this.isCheckedOut = true;
+        setProperty(JcrConstants.JCR_IS_CHECKED_OUT, true);
     }
 
     @Override
@@ -737,8 +800,17 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public boolean isCheckedOut() {
-        throw new UnsupportedOperationException();
+    public boolean isCheckedOut() throws RepositoryException {
+        return isCheckedOut;
+    }
+
+    private void validateCheckedOut() throws RepositoryException {
+        if (!isCheckedOut()) {
+            throw new VersionException("Node " + getPath() + " is checked in");
+        }
+        if (!isRootNode()) {
+            getParentOrNull().validateCheckedOut();
+        }
     }
 
     @Override

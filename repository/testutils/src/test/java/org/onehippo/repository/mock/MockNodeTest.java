@@ -44,13 +44,18 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionIterator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.junit.Test;
+import org.onehippo.repository.util.JcrConstants;
 
 public class MockNodeTest {
 
@@ -64,6 +69,29 @@ public class MockNodeTest {
         assertFalse(empty.hasProperties());
         assertFalse(empty.getProperties().hasNext());
         assertEquals(0, empty.getDepth());
+    }
+
+    @Test
+    public void copyConstructor() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.setProperty("testProp", "foo");
+        node.addMixin("testMixin");
+
+        MockNode copy = new MockNode("copy", "newPrimaryType", node);
+        copy.setParent(node.getParent());
+        assertEquals("copy", copy.getName());
+        assertEquals("newPrimaryType", copy.getPrimaryNodeType().getName());
+        assertEquals("foo", copy.getProperty("testProp").getString());
+        assertTrue(copy.isNodeType("testMixin"));
+
+        // updating the original node should not affect the copy
+        node.setProperty("testProp", "newValue");
+        assertEquals("foo", copy.getProperty("testProp").getString());
+
+        // removing a property from the copy should not affect the original node
+        copy.removeProperty("testProp");
+        assertFalse(copy.hasProperty("testProp"));
+        assertTrue(node.hasProperty("testProp"));
     }
 
     @Test
@@ -309,7 +337,7 @@ public class MockNodeTest {
     }
 
     @Test
-    public void nodeTypeMatchesPrimaryType() {
+    public void nodeTypeMatchesPrimaryType() throws RepositoryException {
         MockNode node = new MockNode("test");
         node.setPrimaryType("my:type");
         assertTrue("Node should be of type equal to its primary type", node.isNodeType("my:type"));
@@ -329,6 +357,7 @@ public class MockNodeTest {
         assertEquals("Child node should have been added", 1, root.getNodes().getSize());
 
         child.remove();
+        assertFalse("Root should not have the removed node as a child", root.hasNode("child"));
         assertEquals("Removed child should no longer exist", 0, root.getNodes().getSize());
         assertNoParent("Removed child should not have a parent", child);
     }
@@ -424,13 +453,13 @@ public class MockNodeTest {
     @Test
     public void snsNodesSupportedByDefault() throws RepositoryException {
         MockNode root = MockNode.root();
-        MockNode folder1 = root.addMockNode("folder1", "nt:unstructured");
-        MockNode folder2 = folder1.addMockNode("folder2", "nt:unstructured");
-        folder2 = folder1.addMockNode("folder2", "nt:unstructured");
-        MockNode sns1 = folder2.addMockNode("sns", "un:unstructured");
+        MockNode folder1 = root.addNode("folder1", "nt:unstructured");
+        MockNode folder2 = folder1.addNode("folder2", "nt:unstructured");
+        folder2 = folder1.addNode("folder2", "nt:unstructured");
+        MockNode sns1 = folder2.addNode("sns", "un:unstructured");
         assertEquals("sns", sns1.getName());
         assertEquals("/folder1/folder2[2]/sns", sns1.getPath());
-        MockNode sns2 = folder2.addMockNode("sns", "un:unstructured");
+        MockNode sns2 = folder2.addNode("sns", "un:unstructured");
         assertEquals("sns", sns2.getName());
         assertEquals("/folder1/folder2[2]/sns[2]", sns2.getPath());
         assertNotSame(sns1, sns2);
@@ -440,12 +469,12 @@ public class MockNodeTest {
     @Test
     public void snsNodesSupportingDisabled() throws RepositoryException {
         MockNode root = MockNode.root();
-        MockNode folder1 = root.addMockNode("folder1", "nt:unstructured");
+        MockNode folder1 = root.addNode("folder1", "nt:unstructured");
         folder1.setSameNameSiblingSupported(false);
-        MockNode folder2 = folder1.addMockNode("folder2", "nt:unstructured");
+        MockNode folder2 = folder1.addNode("folder2", "nt:unstructured");
 
         try {
-            folder2 = folder1.addMockNode("folder2", "nt:unstructured");
+            folder2 = folder1.addNode("folder2", "nt:unstructured");
             fail("SNS node disabled.");
         } catch (ConstraintViolationException e) {
             // as expected.
@@ -455,12 +484,12 @@ public class MockNodeTest {
     @Test
     public void getNodesWithNamePattern() throws RepositoryException {
         MockNode root = MockNode.root();
-        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
-        MockNode handle = folder.addMockNode("document1", "nt:unstructured");
-        handle.addMockNode("document1", "nt:unstructured");
-        handle.addMockNode("document1", "nt:unstructured");
-        handle.addMockNode("document1", "nt:unstructured");
-        handle.addMockNode("hippo:request", "nt:unstructured");
+        MockNode folder = root.addNode("folder1", "nt:unstructured");
+        MockNode handle = folder.addNode("document1", "nt:unstructured");
+        handle.addNode("document1", "nt:unstructured");
+        handle.addNode("document1", "nt:unstructured");
+        handle.addNode("document1", "nt:unstructured");
+        handle.addNode("hippo:request", "nt:unstructured");
 
         Set<String> variantPaths = new HashSet<String>();
         NodeIterator nodeIt = handle.getNodes("document*");
@@ -506,7 +535,7 @@ public class MockNodeTest {
     @Test
     public void getPropertiesWithNamePattern() throws RepositoryException {
         MockNode root = MockNode.root();
-        MockNode node = root.addMockNode("node1", "nt:unstructured");
+        MockNode node = root.addNode("node1", "nt:unstructured");
         node.setProperty("prop1", "value1");
         node.setProperty("prop2", "value2");
         node.setProperty("hippo:holder", "editor");
@@ -552,7 +581,7 @@ public class MockNodeTest {
     @Test
     public void testVariousTypesOfProperties() throws RepositoryException, IOException {
         MockNode root = MockNode.root();
-        MockNode node = root.addMockNode("node1", "nt:unstructured");
+        MockNode node = root.addNode("node1", "nt:unstructured");
 
         Calendar now = Calendar.getInstance();
         byte[] binaryData = new byte[1];
@@ -614,14 +643,14 @@ public class MockNodeTest {
     @Test
     public void testGetNodeWithRelPath() throws Exception {
         MockNode root = MockNode.root();
-        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
-        folder.addMockNode("node1", "nt:unstructured");
-        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
-        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        MockNode folder = root.addNode("folder1", "nt:unstructured");
+        folder.addNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addNode("node21", "nt:unstructured");
         node21.setProperty("tag", "node21");
-        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22 = node2.addNode("node22", "nt:unstructured");
         node22.setProperty("tag", "node22");
-        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22sns = node2.addNode("node22", "nt:unstructured");
         node22sns.setProperty("tag", "node22sns");
 
         assertNotNull(root.getNode("folder1"));
@@ -640,14 +669,14 @@ public class MockNodeTest {
     @Test
     public void testHasNodeWithRelPath() throws Exception {
         MockNode root = MockNode.root();
-        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
-        folder.addMockNode("node1", "nt:unstructured");
-        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
-        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        MockNode folder = root.addNode("folder1", "nt:unstructured");
+        folder.addNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addNode("node21", "nt:unstructured");
         node21.setProperty("tag", "node21");
-        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22 = node2.addNode("node22", "nt:unstructured");
         node22.setProperty("tag", "node22");
-        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22sns = node2.addNode("node22", "nt:unstructured");
         node22sns.setProperty("tag", "node22sns");
 
         assertTrue(root.hasNode("folder1"));
@@ -662,14 +691,14 @@ public class MockNodeTest {
     @Test
     public void testGetPropertyWithRelPath() throws Exception {
         MockNode root = MockNode.root();
-        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
-        folder.addMockNode("node1", "nt:unstructured");
-        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
-        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        MockNode folder = root.addNode("folder1", "nt:unstructured");
+        folder.addNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addNode("node21", "nt:unstructured");
         node21.setProperty("tag", "node21");
-        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22 = node2.addNode("node22", "nt:unstructured");
         node22.setProperty("tag", "node22");
-        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22sns = node2.addNode("node22", "nt:unstructured");
         node22sns.setProperty("tag", "node22sns");
 
         assertEquals("node21", folder.getProperty("node2/node21/tag").getString());
@@ -681,20 +710,169 @@ public class MockNodeTest {
     @Test
     public void testHasPropertyWithRelPath() throws Exception {
         MockNode root = MockNode.root();
-        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
-        folder.addMockNode("node1", "nt:unstructured");
-        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
-        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        MockNode folder = root.addNode("folder1", "nt:unstructured");
+        folder.addNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addNode("node21", "nt:unstructured");
         node21.setProperty("tag", "node21");
-        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22 = node2.addNode("node22", "nt:unstructured");
         node22.setProperty("tag", "node22");
-        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        MockNode node22sns = node2.addNode("node22", "nt:unstructured");
         node22sns.setProperty("tag", "node22sns");
 
         assertTrue(folder.hasProperty("node2/node21/tag"));
         assertTrue(folder.hasProperty("node2/node22/tag"));
         assertTrue(folder.hasProperty("node2/node22[1]/tag"));
         assertTrue(folder.hasProperty("node2/node22[2]/tag"));
+    }
+
+    @Test(expected = UnsupportedRepositoryOperationException.class)
+    public void checkinNonVersionableNode() throws RepositoryException {
+        MockNode.root().checkin();
+    }
+
+    @Test
+    public void checkinVersionableNode() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+
+        assertTrue(node.isCheckedOut());
+        assertTrue(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
+
+        node.checkin();
+        assertFalse(node.isCheckedOut());
+        assertFalse(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
+    }
+
+    @Test
+    public void cannotModifyCheckedInNode() throws RepositoryException {
+        final MockNode node = MockNode.root().addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+        node.setProperty("test", "foo");
+        node.addNode("child", "nt:unstructured");
+        node.checkin();
+
+        assertVersionException(new Code() {
+            public void execute() throws RepositoryException {
+                node.setProperty("test", "bar");
+            }
+        });
+        assertVersionException(new Code() {
+            public void execute() throws RepositoryException {
+                node.getProperty("test").remove();
+            }
+        });
+        assertVersionException(new Code() {
+            public void execute() throws RepositoryException {
+                node.addNode("foo", "nt:unstructured");
+            }
+        });
+        assertVersionException(new Code() {
+            public void execute() throws RepositoryException {
+                node.getNode("child").remove();
+            }
+        });
+        assertVersionException(new Code() {
+            public void execute() throws RepositoryException {
+                node.remove();
+            }
+        });
+        assertVersionException(new Code() {
+            public void execute() throws RepositoryException {
+                node.setPrimaryType("bar");
+            }
+        });
+    }
+
+    @Test(expected = UnsupportedRepositoryOperationException.class)
+    public void checkoutNonVersionableNode() throws RepositoryException {
+        MockNode.root().checkout();
+    }
+
+    @Test
+    public void checkoutCheckedInNode() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+        node.checkin();
+        node.checkout();
+
+        assertTrue(node.isCheckedOut());
+        assertTrue(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
+    }
+
+    @Test
+    public void canModifyCheckedOutNode() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        final MockNode node = root.addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+        node.checkin();
+        node.checkout();
+
+        node.setProperty("testProp", "bar");
+        assertTrue(node.hasProperty("testProp"));
+        final Property test = node.getProperty("testProp");
+        assertEquals("bar", test.getString());
+        test.remove();
+        assertFalse(node.hasProperty("test"));
+
+        assertFalse(node.hasNode("foo"));
+        node.addNode("foo", "nt:unstructured");
+        assertTrue(node.hasNode("foo"));
+
+        assertTrue(root.hasNode("test"));
+        node.remove();
+        assertFalse(root.hasNode("test"));
+    }
+
+    @Test
+    public void getRootVersion() throws RepositoryException, InterruptedException {
+        final MockNode node = MockNode.root().addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+
+        final MockVersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final MockVersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
+        final Version rootVersion = versionHistory.getRootVersion();
+        final Node frozenNode = rootVersion.getFrozenNode();
+
+        assertEquals(node.getIdentifier(), frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+    }
+
+    @Test
+    public void getAllVersions() throws RepositoryException, InterruptedException {
+        final MockNode node = MockNode.root().addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+        node.setProperty("testProp", "a");
+        node.checkin();
+        node.checkout();
+        node.setProperty("testProp", "b");
+        node.checkin();
+
+        final MockVersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final MockVersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
+        final VersionIterator allVersions = versionHistory.getAllVersions();
+
+        assertEquals(2, allVersions.getSize());
+
+        final Version a = allVersions.nextVersion();
+        assertEquals("b", a.getFrozenNode().getProperty("testProp").getString());
+
+        final Version b = allVersions.nextVersion();
+        assertEquals("a", b.getFrozenNode().getProperty("testProp").getString());
+    }
+
+    @Test
+    public void getVersion() throws RepositoryException {
+        final MockNode node = MockNode.root().addNode("test", "nt:base");
+        node.addMixin("mix:versionable");
+        node.setProperty("testProp", "a");
+        node.checkin();
+
+        final MockVersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final MockVersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
+
+        final Version version = versionHistory.getVersion("1.0");
+
+        assertEquals("a", version.getFrozenNode().getProperty("testProp").getString());
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {
@@ -704,6 +882,18 @@ public class MockNodeTest {
         } catch (ItemNotFoundException expected) {
             // everything is fine
         }
+    }
+
+    private static void assertVersionException(Code code) throws RepositoryException {
+        try {
+            code.execute();
+            fail("Expected a VersionException to be thrown");
+        } catch (VersionException expected) {
+        }
+    }
+
+    private interface Code {
+        public void execute() throws RepositoryException;
     }
 
 }

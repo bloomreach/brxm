@@ -61,7 +61,7 @@ public class DocumentHandleTest extends BaseDocumentWorkflowTest {
     public void initDocumentHandle() throws Exception {
 
         // create handle with publication request
-        MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handle = MockNode.root().addNode("test", HippoNodeType.NT_HANDLE);
         addRequest(handle, HippoStdPubWfNodeType.PUBLISH, true);
         DocumentHandleWorkflowContext workflowContext = new DocumentHandleWorkflowContext("test", new MockWorkflowContext("testuser"));
         DocumentHandle dh = new DocumentHandle(handle);

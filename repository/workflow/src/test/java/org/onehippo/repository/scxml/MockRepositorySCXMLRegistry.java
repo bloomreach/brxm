@@ -21,20 +21,20 @@ import org.onehippo.repository.mock.MockNode;
 public class MockRepositorySCXMLRegistry extends RepositorySCXMLRegistry {
 
     public MockNode createConfigNode() throws Exception {
-        MockNode scxmlConfigNode = MockNode.root().addMockNode("hippo:moduleconfig", "nt:unstructured");
-        scxmlConfigNode.addMockNode(SCXML_DEFINITIONS, SCXML_DEFINITIONS);
+        MockNode scxmlConfigNode = MockNode.root().addNode("hippo:moduleconfig", "nt:unstructured");
+        scxmlConfigNode.addNode(SCXML_DEFINITIONS, SCXML_DEFINITIONS);
         return scxmlConfigNode;
     }
 
     public MockNode addScxmlNode(MockNode configNode, String name, String source) throws Exception {
         MockNode scxmlDefsNode = (MockNode) configNode.getNode(SCXML_DEFINITIONS);
-        MockNode scxmlDefNode = scxmlDefsNode.addMockNode(name, NT_SCXML);
+        MockNode scxmlDefNode = scxmlDefsNode.addNode(name, NT_SCXML);
         scxmlDefNode.setProperty(SCXML_SOURCE, source);
         return scxmlDefNode;
     }
 
     public MockNode addCustomAction(MockNode scxmlDefNode, String namespace, String actionName, String className) throws Exception {
-        MockNode actionNode = scxmlDefNode.addMockNode(actionName, SCXML_ACTION);
+        MockNode actionNode = scxmlDefNode.addNode(actionName, SCXML_ACTION);
         actionNode.setProperty(SCXML_ACTION_NAMESPACE, namespace);
         actionNode.setProperty(SCXML_ACTION_CLASSNAME, className);
         return actionNode;

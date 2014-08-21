@@ -48,6 +48,14 @@ public class MockProperty extends MockItem implements Property {
         this.values = new ArrayList<MockValue>();
     }
 
+    MockProperty(MockProperty original) throws RepositoryException {
+        this(original.getName(), original.type);
+
+        for (MockValue originalValue : original.values) {
+            values.add(new MockValue(originalValue));
+        }
+    }
+
     @Override
     public void setValue(final Value value) throws RepositoryException {
         values.clear();
@@ -120,7 +128,7 @@ public class MockProperty extends MockItem implements Property {
     @Override
     public void remove() throws RepositoryException {
         String name = getName();
-        getMockParent().removeProperty(name);
+        getParent().removeProperty(name);
     }
 
     @Override
@@ -171,7 +179,7 @@ public class MockProperty extends MockItem implements Property {
     @Override
     public void setValue(final boolean value) {
         this.values.clear();
-        this.values.add(new MockValue(PropertyType.DECIMAL, Boolean.toString(value)));
+        this.values.add(new MockValue(PropertyType.BOOLEAN, Boolean.toString(value)));
         multiple = false;
     }
 

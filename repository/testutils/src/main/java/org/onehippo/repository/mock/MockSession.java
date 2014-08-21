@@ -57,8 +57,6 @@ import org.xml.sax.SAXException;
  */
 public class MockSession implements HippoSession {
 
-
-
     private final MockNode root;
 
     public MockSession(MockNode root) {
@@ -66,7 +64,7 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public Node getRootNode() {
+    public MockNode getRootNode() {
         return root;
     }
 
@@ -76,11 +74,11 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public Item getItem(final String absPath) throws RepositoryException {
+    public MockItem getItem(final String absPath) throws RepositoryException {
         if (!absPath.startsWith("/")) {
             throw new IllegalArgumentException("Expected an absolute path");
         }
-        Item item = getRootNode();
+        MockItem item = getRootNode();
         for (String element : absPath.split("/")) {
             if (element.isEmpty()) {
                 continue;
@@ -88,7 +86,7 @@ public class MockSession implements HippoSession {
             if (!item.isNode()) {
                 throw new PathNotFoundException("No such item: " + absPath);
             }
-            Node node = (Node) item;
+            MockNode node = (MockNode) item;
             if (node.hasNode(element)) {
                 item = node.getNode(element);
             } else if (node.hasProperty(element)) {
@@ -101,12 +99,12 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public Node getNode(final String absPath) throws RepositoryException {
+    public MockNode getNode(final String absPath) throws RepositoryException {
         Item item = getItem(absPath);
         if (!item.isNode()) {
             throw new PathNotFoundException("No such node: " + absPath);
         }
-        return (Node) item;
+        return (MockNode) item;
     }
 
     @Override
@@ -226,15 +224,15 @@ public class MockSession implements HippoSession {
         return new MockValueFactory();
     }
 
+    @Override
+    public MockWorkspace getWorkspace() {
+        return new MockWorkspace(this);
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
     public Repository getRepository() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Workspace getWorkspace() {
         throw new UnsupportedOperationException();
     }
 

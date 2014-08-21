@@ -23,22 +23,33 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.onehippo.repository.util.JcrConstants;
+
 /**
  * Mock version of a {@link Version}.
- * Current limitation: all Version specific methods throw an {@link UnsupportedOperationException}
  */
 public class MockVersion extends MockNode implements Version {
-    public MockVersion(final String name) {
+
+    private final MockVersionHistory history;
+
+    public MockVersion(final String name, final MockVersionHistory history) throws RepositoryException {
         super(name);
+        this.history = history;
     }
 
-    public MockVersion(final String name, final String primaryTypeName) {
+    public MockVersion(final String name, final String primaryTypeName, final MockVersionHistory history) throws RepositoryException {
         super(name, primaryTypeName);
+        this.history = history;
     }
 
     @Override
     public VersionHistory getContainingHistory() throws RepositoryException {
-        throw new UnsupportedOperationException();
+        return history;
+    }
+
+    @Override
+    public Node getFrozenNode() throws RepositoryException {
+        return getNode(JcrConstants.JCR_FROZEN_NODE);
     }
 
     @Override
@@ -63,11 +74,6 @@ public class MockVersion extends MockNode implements Version {
 
     @Override
     public Version[] getPredecessors() throws RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Node getFrozenNode() throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 }

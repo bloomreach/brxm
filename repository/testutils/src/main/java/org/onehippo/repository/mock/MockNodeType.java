@@ -34,6 +34,11 @@ public class MockNodeType implements NodeType {
         this.name = name;
     }
 
+    public MockNodeType(final MockNodeType original) {
+        this.name = original.name;
+        this.primaryItemName = original.primaryItemName;
+    }
+
     @Override
     public String getName() {
         return name;

@@ -58,14 +58,14 @@ public abstract class MockItem implements Item {
     }
 
     @Override
-    public Node getParent() throws ItemNotFoundException {
+    public MockNode getParent() throws ItemNotFoundException {
         if (isRootNode()) {
             throw new ItemNotFoundException("A root node does not have a parent");
         }
         return parent;
     }
 
-    MockNode getMockParent() {
+    MockNode getParentOrNull() {
         return parent;
     }
 
@@ -101,7 +101,7 @@ public abstract class MockItem implements Item {
     }
 
     @Override
-    public Session getSession() throws RepositoryException {
+    public MockSession getSession() throws RepositoryException {
         MockNode root = getRootNode();
         return new MockSession(root);
     }
@@ -119,7 +119,7 @@ public abstract class MockItem implements Item {
         MockNode cursor = parent;
         while (cursor != null) {
             depth += 1;
-            cursor = cursor.getMockParent();
+            cursor = cursor.getParentOrNull();
         }
         return depth;
     }

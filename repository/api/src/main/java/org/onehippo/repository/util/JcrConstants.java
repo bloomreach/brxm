@@ -36,6 +36,7 @@ public final class JcrConstants {
     public static final String NT_FILE = "nt:file";
     public static final String NT_RESOURCE = "nt:resource";
     public static final String NT_VERSION = "nt:version";
+    public static final String NT_VERSION_HISTORY = "nt:versionHistory";
     public static final String NT_FROZEN_NODE = "nt:frozenNode";
 
 
@@ -63,6 +64,7 @@ public final class JcrConstants {
     public static final String JCR_MIME_TYPE = "jcr:mimeType";
     public static final String JCR_DATA = "jcr:data";
     public static final String JCR_LAST_MODIFIED = "jcr:lastModified";
+    public static final String JCR_CREATED = "jcr:created";
 
     public static final String JCR_CONTENT = "jcr:content";
 
