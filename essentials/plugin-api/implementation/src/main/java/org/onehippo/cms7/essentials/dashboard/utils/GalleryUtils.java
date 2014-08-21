@@ -29,6 +29,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
@@ -153,6 +154,21 @@ public final class GalleryUtils {
         HippoNodeUtils.setSupertype(imageNode, HIPPOGALLERY_IMAGE_SET, HIPPOGALLERY_RELAXED);
         HippoNodeUtils.setUri(imageNode, getGalleryURI(context, prefix));
         HippoNodeUtils.setNodeType(imageNode, getImagesetName(prefix, name));
+        // add default height and width (otherwise error is thrown within template editor)
+        final Node originalImage = imageNode.getNode("hipposysedit:prototypes/hipposysedit:prototype/hippogallery:original");
+        originalImage.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, 0L);
+        originalImage.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, 0L);
+        // change translation nodes:
+        final NodeIterator translationNodes = imageNode.getNodes("hippo:translation");
+        while(translationNodes.hasNext()){
+            final Node translation = translationNodes.nextNode();
+            // skip normal properties
+            if(translation.hasProperty("hippo:property")){
+                continue;
+            }
+            translation.setProperty("hippo:message", name);
+        }
+
         return imageNode;
     }
 
