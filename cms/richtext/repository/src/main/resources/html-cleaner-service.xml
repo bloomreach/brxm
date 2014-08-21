@@ -271,6 +271,7 @@
         <sv:value>colspan</sv:value>
         <sv:value>rowspan</sv:value>
         <sv:value>valign</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="th">
@@ -282,11 +283,15 @@
         <sv:value>colspan</sv:value>
         <sv:value>rowspan</sv:value>
         <sv:value>valign</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="tr">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="u">
