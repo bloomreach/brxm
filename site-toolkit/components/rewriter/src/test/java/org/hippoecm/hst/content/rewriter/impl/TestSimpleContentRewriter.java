@@ -74,6 +74,14 @@ public class TestSimpleContentRewriter {
             "<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==\" alt=\"Red dot\">\n" +
             "</div>";
 
+    private static final String SIMPLE_CONTENT_WITH_EXTERNS = 
+            "<div>\n" + 
+            "<h1>Hello, World!</h1>\n" + 
+            "<p>Test</p>\n" + 
+            "<a href=\"http://www.onehippo.org/external/foo/bar?a=b\">Foo2</a>\n" +
+            "<img src=\"http://upload.wikimedia.org/wikipedia/commons/3/31/Red-dot-5px.png\" alt=\"Red dot\"/>\n" +
+            "</div>";
+
     private Node node;
     private HstRequestContext requestContext;
     private Mount mount;
@@ -147,4 +155,27 @@ public class TestSimpleContentRewriter {
         assertEquals(CONTENT_WITH_NON_INTERNAL_IMAGES, html);
     }
 
+    @Test
+    public void testSimpleLinkRewriting() throws Exception {
+        ContentRewriter<String> rewriter = new SimpleContentRewriter() {
+            @Override
+            protected String rewriteDocumentLink(String path, Node node, HstRequestContext requestContext, Mount mount) {
+                if (isExternal(path)) {
+                    return "javascript:openPopup('" + path + "');";
+                }
+                return super.rewriteDocumentLink(path, node, requestContext, mount);
+            }
+            @Override
+            protected String rewriteBinaryLink(String path, Node node, HstRequestContext requestContext, Mount mount) {
+                if (isExternal(path)) {
+                    return "javascript:openPopup('" + path + "');";
+                }
+                return super.rewriteBinaryLink(path, node, requestContext, mount);
+            }
+        };
+
+        String html = rewriter.rewrite(SIMPLE_CONTENT_WITH_EXTERNS, node, requestContext, mount);
+        assertTrue(html.contains("href=\"javascript:openPopup('http://www.onehippo.org/external/foo/bar?a=b');\""));
+        assertTrue(html.contains("src=\"javascript:openPopup('http://upload.wikimedia.org/wikipedia/commons/3/31/Red-dot-5px.png');\""));
+    }
 }

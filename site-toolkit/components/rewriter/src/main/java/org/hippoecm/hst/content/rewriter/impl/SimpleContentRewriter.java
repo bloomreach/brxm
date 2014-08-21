@@ -91,6 +91,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         // only create if really needed
         StringBuilder sb = null;
         int globalOffset = 0;
+        String documentLinkHref = null;
+
         while (rewrittenHtml.indexOf(LINK_TAG, globalOffset) > -1) {
             int offset = rewrittenHtml.indexOf(LINK_TAG, globalOffset);
 
@@ -114,30 +116,12 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
 
                     offset = endTag;
                     sb.append(rewrittenHtml.substring(globalOffset, hrefIndexStart));
-                    
-                    if(isExternal(documentPath)) {
-                        sb.append(documentPath);
-                    } else {
-                        String queryString = StringUtils.substringAfter(documentPath, "?");
-                        boolean hasQueryString = !StringUtils.isEmpty(queryString); 
-                        if (hasQueryString) {
-                            documentPath = StringUtils.substringBefore(documentPath, "?");
-                        }
-                        
-                        HstLink href = getDocumentLink(documentPath,node, requestContext, targetMount);
-                        if (href != null && href.getPath() != null) {
-                            sb.append(href.toUrlForm(requestContext, isFullyQualifiedLinks()));
-                        } else {
-                            log.debug("could not resolve internal document link for '{}'. Return page not found link", documentPath);
-                            HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
-                            sb.append(notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
-                        }
-                        
-                        if (hasQueryString) {
-                            sb.append('?').append(queryString);
-                        }
+
+                    documentLinkHref = rewriteDocumentLink(documentPath, node, requestContext, targetMount);
+                    if (documentLinkHref != null) {
+                        sb.append(documentLinkHref);
                     }
-                    
+
                     sb.append(rewrittenHtml.substring(hrefIndexEnd, endTag));
                     appended = true;
                 }
@@ -155,6 +139,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         }
 
         globalOffset = 0;
+        String binaryLinkSrc = null;
+
         while (rewrittenHtml.indexOf(IMG_TAG, globalOffset) > -1) {
             int offset = rewrittenHtml.indexOf(IMG_TAG, globalOffset);
 
@@ -178,20 +164,12 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     
                     offset = endTag;
                     sb.append(rewrittenHtml.substring(globalOffset, srcIndexStart));
-                   
-                    if(isExternal(srcPath)) {
-                        sb.append(srcPath);
-                    } else {
-                        HstLink binaryLink = getBinaryLink(srcPath, node, requestContext, targetMount);
-                        if (binaryLink != null && binaryLink.getPath() != null) {
-                            sb.append(binaryLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
-                        } else {
-                            log.debug("could not resolve internal binary link for '{}'. Return page not found link", srcPath);
-                            HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
-                            sb.append(notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
-                        }
+
+                    binaryLinkSrc = rewriteBinaryLink(srcPath, node, requestContext, targetMount);
+                    if (binaryLinkSrc != null) {
+                        sb.append(binaryLinkSrc);
                     }
-                    
+
                     sb.append(rewrittenHtml.substring(srcIndexEnd, endTag));
                     appended = true;
                 }
@@ -225,11 +203,79 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         }
     }
 
+    /**
+     * Rewrites document link in <code>href</code> attribute of anchor tag.
+     * @param documentLinkHref
+     * @param node
+     * @param requestContext
+     * @param targetMount
+     * @return
+     */
+    protected String rewriteDocumentLink(String documentLinkHref, Node node, HstRequestContext requestContext, Mount targetMount) {
+        if (StringUtils.isEmpty(documentLinkHref)) {
+            return documentLinkHref;
+        }
+
+        if (isExternal(documentLinkHref)) {
+            return documentLinkHref;
+        } else {
+            String queryString = StringUtils.substringAfter(documentLinkHref, "?");
+            boolean hasQueryString = !StringUtils.isEmpty(queryString);
+
+            if (hasQueryString) {
+                documentLinkHref = StringUtils.substringBefore(documentLinkHref, "?");
+            }
+
+            HstLink href = getDocumentLink(documentLinkHref, node, requestContext, targetMount);
+
+            if (href != null && href.getPath() != null) {
+                documentLinkHref = href.toUrlForm(requestContext, isFullyQualifiedLinks());
+            } else {
+                log.debug("could not resolve internal document link for '{}'. Return page not found link", documentLinkHref);
+                HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
+                documentLinkHref = notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks());
+            }
+
+            if (hasQueryString) {
+                return new StringBuilder(documentLinkHref).append('?').append(queryString).toString();
+            } else {
+                return documentLinkHref;
+            }
+        }
+    }
+
+    /**
+     * Rewrites binary link in <code>src</code> attribute of <code>img</code> tag.
+     * @param binaryLinkSrc
+     * @param node
+     * @param requestContext
+     * @param targetMount
+     * @return
+     */
+    protected String rewriteBinaryLink(String binaryLinkSrc, Node node, HstRequestContext requestContext, Mount targetMount) {
+        if (StringUtils.isEmpty(binaryLinkSrc)) {
+            return binaryLinkSrc;
+        }
+
+        if (isExternal(binaryLinkSrc)) {
+            return binaryLinkSrc;
+        } else {
+            HstLink binaryLink = getBinaryLink(binaryLinkSrc, node, requestContext, targetMount);
+
+            if (binaryLink != null && binaryLink.getPath() != null) {
+                return binaryLink.toUrlForm(requestContext, isFullyQualifiedLinks());
+            } else {
+                log.debug("could not resolve internal binary link for '{}'. Return page not found link", binaryLinkSrc);
+                HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
+                return notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks());
+            }
+        }
+    }
+
     protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         return getLink(path, node, requestContext, targetMount);
     }
-    
-    
+
     protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         // Instead of adding an extr boolean argument to the getLink(...) method to indicate whether a binaryLink
         // is rewritten or not, we use a 'rewritingBinaryLink' flag to indicate this. This is for historical 
