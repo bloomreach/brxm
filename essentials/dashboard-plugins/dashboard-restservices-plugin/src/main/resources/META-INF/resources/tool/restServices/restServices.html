@@ -70,7 +70,7 @@
                                             <li ng-repeat="doc in documentTypes" style="cursor: move; height: 28px; padding-top: 2px" class="list-group-item">
                                                 <span style="padding-right: 20px; cursor: default"><input type="checkbox" ng-checked="checked(doc)" name="myDocument" checked="{{doc.checked}}" ng-model="doc.checked"/></span>
                                                 {{doc.name}}
-                                                <span style="padding-left: 40px; cursor: default" class="pull-right">{{doc.endpoint}}</span>
+                                                <span style="padding-left: 40px; cursor: default" class="pull-right"><a target="_blank" href="{{doc.endpoint}}">{{doc.endpoint}}</a></span>
                                             </li>
                                         </ul>
                                     </div>
