@@ -65,7 +65,7 @@
   </instructionSet>
 
   <instructionSet group="sampleData">
-    <xml action="copy" source="instructions/hst/faqlist-workspace-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers/faqlist"/>
+    <xml action="copy" source="instructions/hst/faqlist-workspace-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers/faqlist/main"/>
     <xml action="copy" source="instructions/xml/faq-sample.xml" target="/content/documents/{{namespace}}"/>
   </instructionSet>
 
