@@ -22,40 +22,8 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>f0386648-9086-4a9e-af3a-1debdc09036b</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.vBox</sv:value>
     </sv:property>
-    <sv:node sv:name="faq">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>02df397d-84c8-44ee-bd74-82803d2047ff</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:iconpath" sv:type="String">
-        <sv:value>images/component-icon-faq.png</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Faq</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>document</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>faq/about-faq</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>faqlist-main</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>

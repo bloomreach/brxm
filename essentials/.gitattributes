@@ -500,6 +500,7 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-m
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-page.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-sitemap-item.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-page.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-workspace-content.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faqlist-workspace.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/images/faq.png -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/FaqDocument.txt -text
