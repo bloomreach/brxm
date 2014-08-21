@@ -25,7 +25,6 @@
 
   <name>CMS Translation Repository</name>
   <description>Hippo CMS Translation configuration, workflow and virtual provider</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-translation-repository</artifactId>
   <packaging>jar</packaging>
 
@@ -39,31 +38,18 @@
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-provider</artifactId>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-api</artifactId>
-      <version>${jackrabbit.version}</version>
-      <scope>provided</scope>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-utilities</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-common</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>hippo</groupId>
-      <artifactId>htmlcleaner</artifactId>
-      <version>${hippo.htmlcleaner.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>

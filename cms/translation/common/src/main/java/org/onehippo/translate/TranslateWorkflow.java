@@ -20,13 +20,12 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface TranslateWorkflow extends Workflow {
 
-    public void translate(String language, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void translate(String sourceLanguage, String targetLanguage, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
 }

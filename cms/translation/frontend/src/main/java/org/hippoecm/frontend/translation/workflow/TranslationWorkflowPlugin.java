@@ -82,9 +82,15 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.translate.TranslateWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public final class TranslationWorkflowPlugin extends RenderPlugin {
 
@@ -170,17 +176,15 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
 
         private void load() {
-            availableLocales = new LinkedList<HippoLocale>();
+            availableLocales = new LinkedList<>();
             for (String language : getAvailableLanguages()) {
                 availableLocales.add(localeProvider.getLocale(language));
             }
             Collections.sort(availableLocales, new Comparator<HippoLocale>() {
-
                 @Override
                 public int compare(HippoLocale o1, HippoLocale o2) {
                     return o1.getDisplayName(getLocale()).compareTo(o2.getDisplayName(getLocale()));
                 }
-
             });
         }
 
@@ -313,43 +317,26 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             this.name = docTranslation.getNamefr();
             this.url = docTranslation.getUrlfr();
 
-            Document translation = workflow.addTranslation(language, url);
+            Document translatedDocument = workflow.addTranslation(language, url);
+            Document translatedVariant = getTranslatedVariant(translatedDocument);
+
             try {
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 if (autoTranslateContent) {
-                    Workflow translateWorkflow = manager.getWorkflow("translate", translation);
+                    Workflow translateWorkflow = manager.getWorkflow("translate", translatedVariant);
                     if (translateWorkflow instanceof TranslateWorkflow) {
                         Set<String> plainTextFields = new TreeSet<String>();
                         Set<String> richTextFields = new TreeSet<String>();
                         Set<String> allTextFields = new TreeSet<String>();
                         String primaryNodeTypeName = session.getNodeByIdentifier(
-                                translation.getIdentity()).getPrimaryNodeType().getName();
+                                translatedVariant.getIdentity()).getPrimaryNodeType().getName();
                         collectFields(null, primaryNodeTypeName, plainTextFields, richTextFields);
                         allTextFields.addAll(plainTextFields);
                         allTextFields.addAll(richTextFields);
-                        ((TranslateWorkflow) translateWorkflow).translate(language, allTextFields);
-                        try {
-                            // FIXME: the validation or automatic correction of content ought to be a repository/workflow action.  But the configration
-                            // needed for htmlcleaner isn't available cleanly outside of the cms.  Additionally the infrastructure for repository-side
-                            // validation has been scoped out or abandoned.
-                            IHtmlCleanerService cmsSpecificCleaner = getPluginContext().getService(
-                                    IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
-                            if (cmsSpecificCleaner != null && false == true) {
-                                Node node = session.getNodeByIdentifier(translation.getIdentity());
-                                node.refresh(false);
-                                for (String field : richTextFields) {
-                                    Property property = node.getProperty(field);
-                                    property.setValue(cmsSpecificCleaner.clean(property.getString()));
-                                }
-                                node.save();
-                            }
-                        } catch (Exception ex) {
-                            // we're skipping any exception here deliberately, because the htmlcleaner throws
-                            // undeclared exceptions and we do not want any feedback on this.
-                        }
+                        ((TranslateWorkflow) translateWorkflow).translate(languageModel.getObject(), language, allTextFields);
                     }
                 }
-                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translation);
+                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translatedDocument);
                 if (name != null && !url.equals(name)) {
                     String localized = getLocalizeCodec().encode(name);
                     defaultWorkflow.localizeName(localized);
@@ -357,7 +344,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             } finally {
                 IBrowseService<JcrNodeModel> browser = getBrowserService();
                 if (browser != null) {
-                    browser.browse(new JcrNodeModel(session.getNodeByUUID(translation.getIdentity())));
+                    browser.browse(new JcrNodeModel(session.getNodeByIdentifier(translatedDocument.getIdentity())));
                 } else {
                     log.warn(
                             "Cannot open newly created document - configured browser.id " + getPluginConfig().getString(
@@ -365,6 +352,22 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 }
             }
             return null;
+        }
+
+        private Document getTranslatedVariant(final Document translatedDocument) throws RepositoryException {
+            final Node translatedNode = translatedDocument.getNode(UserSession.get().getJcrSession());
+            if (translatedNode.isNodeType(NT_HANDLE)) {
+                Node variant = null;
+                for (Node node : new NodeIterable(translatedNode.getNodes(translatedNode.getName()))) {
+                    variant = node;
+                    final String state = JcrUtils.getStringProperty(translatedNode, HIPPOSTD_STATE, null);
+                    if (UNPUBLISHED.equals(state)) {
+                        break;
+                    }
+                }
+                return variant != null ? new Document(variant) : null;
+            }
+            return translatedDocument;
         }
 
         @Override
@@ -379,7 +382,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 if (docNode instanceof HippoNode) {
                     name = ((HippoNode) docNode).getLocalizedName();
                 }
-                folders = new LinkedList<FolderTranslation>();
+                folders = new LinkedList<>();
                 Node handle = docNode.getParent();
                 FolderTranslation docTranslation = JcrFolderTranslationFactory.createFolderTranslation(handle, null);
                 folders.add(docTranslation);
@@ -389,15 +392,11 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 IModel<Boolean> autoTranslateModel = null;
                 autoTranslateContent = false;
                 WorkflowManager manager = ((HippoWorkspace) docNode.getSession().getWorkspace()).getWorkflowManager();
-                WorkflowDescriptor translateWorkflow = manager.getWorkflowDescriptor("translate", docNode);
-                if (translateWorkflow != null) {
-                    for (Class<Workflow> workflowInterface : translateWorkflow.getInterfaces()) {
-                        if (TranslateWorkflow.class.isAssignableFrom(workflowInterface)) {
-                            autoTranslateModel = new PropertyModel<Boolean>(TranslationAction.this,
-                                                                            "autoTranslateContent");
-                            autoTranslateContent = false; // default when translation is available
-                        }
-                    }
+                WorkflowDescriptor workflow = manager.getWorkflowDescriptor("translate", docNode);
+                final Serializable available = workflow.hints().get("translate");
+                if (available != null && (Boolean) available) {
+                    autoTranslateModel = new PropertyModel<>(TranslationAction.this, "autoTranslateContent");
+                    autoTranslateContent = false; // default when translation is available
                 }
 
                 ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
@@ -663,12 +662,8 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             try {
                 TranslationWorkflow translationWorkflow = (TranslationWorkflow) manager.getWorkflow(descriptor);
                 return (Set<String>) translationWorkflow.hints().get("available");
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage(), ex);
-            } catch (RemoteException ex) {
-                log.error(ex.getMessage(), ex);
-            } catch (WorkflowException ex) {
-                log.error(ex.getMessage(), ex);
+            } catch (RepositoryException | RemoteException | WorkflowException ex) {
+                log.error("Failed to retrieve available languages", ex);
             }
         }
         return Collections.emptySet();
