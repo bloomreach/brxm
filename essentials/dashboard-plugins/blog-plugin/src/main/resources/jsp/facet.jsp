@@ -18,18 +18,18 @@
 <%--@elvariable id="facets" type="org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean"--%>
 <%--@elvariable id="facetLimit" type="java.lang.Integer"--%>
 <%--@elvariable id="query" type="java.lang.String"--%>
-<form action="<hst:actionURL />" method="get">
-  <div class="row form-group">
-    <div class="col-xs-8">
-      <input type="search" value="<c:out value="${query}"/>" name="query" class="form-control" placeholder="Search blog posts">
-
-    </div>
-    <div class="col-xs-4">
-      <button type="submit" class="btn btn-primary pull-right">Search</button>
-    </div>
-  </div>
-</form>
 <c:if test="${facets ne null}">
+  <form action="<hst:actionURL />" method="get">
+    <div class="row form-group">
+      <div class="col-xs-8">
+        <input type="search" value="<c:out value="${query}"/>" name="query" class="form-control" placeholder="Search blog posts">
+
+      </div>
+      <div class="col-xs-4">
+        <button type="submit" class="btn btn-primary pull-right">Search</button>
+      </div>
+    </div>
+  </form>
   <c:set var="facetLimit" value="50"/>
   <ul class="nav nav-list">
     <c:forEach var="facetvalue" items="${facets.folders}">
@@ -72,4 +72,8 @@
 
     </c:forEach>
   </ul>
+</c:if>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode and facets eq null}">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/facets.png'/>"> Click to edit Facets
 </c:if>

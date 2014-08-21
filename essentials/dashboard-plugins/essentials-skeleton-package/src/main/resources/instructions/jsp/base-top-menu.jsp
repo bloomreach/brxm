@@ -39,9 +39,8 @@
   <%--Placeholder reminding us to configure a valid menu in the component parameters--%>
   <c:otherwise>
     <c:if test="${editMode}">
-      <img src="<hst:link path='/images/essentials-edit-component.png' />"
-           alt="Configure valid menu in component parameters"
-           title="Configure valid menu in component parameters">
+      <h5>[Menu Component]</h5>
+      <sub>Click to edit Menu</sub>
     </c:if>
   </c:otherwise>
 </c:choose>

@@ -213,9 +213,9 @@ dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/bloglistdetail.xm
 dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/bloglistsidebar.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/blogpagedetail.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/blogpagesidebar.xml -text
-dashboard-plugins/blog-plugin/src/main/resources/images/component-icon-author.png -text
-dashboard-plugins/blog-plugin/src/main/resources/images/component-icon-blog.png -text
-dashboard-plugins/blog-plugin/src/main/resources/images/component-icon-facets.png -text
+dashboard-plugins/blog-plugin/src/main/resources/images/blog-list.png -text
+dashboard-plugins/blog-plugin/src/main/resources/images/blogposts-by-author.png -text
+dashboard-plugins/blog-plugin/src/main/resources/images/facets.png -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
@@ -456,7 +456,6 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/fr
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/imports.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/label-component.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/pagination.ftl -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/essentials-edit-component.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/label.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text

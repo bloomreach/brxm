@@ -26,7 +26,7 @@
     <sv:value>Facets</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-facets.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/facets.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>blog-facet{{templateExtension}}</sv:value>

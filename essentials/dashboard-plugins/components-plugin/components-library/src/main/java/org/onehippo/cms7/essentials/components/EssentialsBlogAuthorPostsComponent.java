@@ -49,7 +49,6 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        log.info("**** BLOG AUTHOR COMPONENT ****");
         final HstRequestContext context = request.getRequestContext();
         final HippoBean document = context.getContentBean();
         if (document instanceof Authors) {
@@ -91,6 +90,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
             }
         }
+        setEditMode(request);
     }
 
     private Class<? extends HippoBean> getPrimaryType(final HstRequestContext context, final HippoBean document) {

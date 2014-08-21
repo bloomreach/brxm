@@ -23,8 +23,8 @@
 <#-- @ftlvariable name="author" type="{{beansPackage}}.Author" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 
-<div class="panel panel-default">
 <#if pageable??>
+<div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">More by ${author.fullName}</h3>
     </div>
@@ -40,5 +40,8 @@
             <p>No other posts found.</p>
         </div>
     </#if>
-</#if>
 </div>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/blogposts-by-author.png'/>"> Click to edit Blogposts by Author
+</#if>
