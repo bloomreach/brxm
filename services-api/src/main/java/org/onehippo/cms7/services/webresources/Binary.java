@@ -34,24 +34,6 @@ public interface Binary {
     InputStream getStream();
 
     /**
-     * Reads successive bytes from the specified <code>position</code>
-     * in this binary into the passed byte array until either the byte
-     * array is full or the end of the <code>Binary</code> is encountered.
-     *
-     * @param buffer the buffer into which the data is read.
-     * @param position the position in this binary from which to start reading bytes.
-     *
-     * @return the number of bytes read into the buffer, or -1 if there is no
-     * more data because the end of the Binary has been reached.
-     *
-     * @throws java.io.IOException if an I/O error occurs.
-     * @throws java.lang.NullPointerException if b is null.
-     * @throws java.lang.IllegalArgumentException if offset is negative or {@link #dispose()} has already been called.
-     * @throws WebResourceException if another error occurs.
-     */
-    int read(byte[] buffer, long position) throws java.io.IOException;
-
-    /**
      * @return the size of this binary in bytes.
      * @throws java.lang.IllegalStateException if {@link #dispose()} has already been called.
      * @throws WebResourceException if another error occurs.

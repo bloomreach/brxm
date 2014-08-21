@@ -16,7 +16,7 @@
 package org.onehippo.cms7.services.webresources;
 
 
-import java.util.List;
+import java.util.Calendar;
 
 /**
  * A web resource contains binary data that can be revisioned. There is always a current working version of the content.
@@ -37,52 +37,25 @@ public interface WebResource {
     String getName();
 
     /**
-     * @return the current content of this web resource. Use {@link #createRevision()} to create a revision
-     * of the content.
+     * @return the encoding of this content.
      */
-    Content getContent();
+    String getEncoding();
 
     /**
-     * Updates the content of this web resource.
-     * @param binary the binary data to store.
-     * @return whether the content actually changed (e.g. the new binary data differs from the existing
-     * binary data)
-     * @throws java.lang.IllegalArgumentException if the given binary is <code>null</code>.
+     * @return the last time this content has changed.
      */
-    boolean setContent(Binary binary);
+    Calendar getLastModified();
 
     /**
-     * Creates a new revision of this web resource's content. Afterwards the current content will have been added to the
-     * revision history, and the latest revision and the current content will be identical.
-     * @return the ID of the created revision.
-     * @throws WebResourceException when an error occurs.
+     * @return the MIME type of this content.
      */
-    String createRevision();
+    String getMimeType();
 
     /**
-     * @return all revision IDs of this web resource's content. If no revisions exist yet, an empty list will be returned.
-     * Revision IDs are unique within the revision history of a web resource.
+     * @return the binary data of this content.
      */
-    List<String> getRevisionIds();
+    Binary getBinary();
 
-    /**
-     * @return the ID of the most recently created revision, or <code>null</code> if no revision has been created yet.
-     */
-    String getLatestRevisionId();
-
-    /**
-     * @param revisionId the ID of the revision to return. When the revision ID is <code>null</code>, this call is
-     *                   identical to {@link #getContent()}.
-     * @return a revision of the content of this web resource, or the current working version of the content when the
-     * revision ID is null.
-     */
-    Content getContent(String revisionId) throws RevisionNotFoundException;
-
-    /**
-     * Removes this web resource.
-     * @throws WebResourceException in case the delete did not occur, for example because the resource is not there any more,
-     * insufficient authorization, locking, etc
-     */
-    void delete() throws WebResourceException;
+    String getChecksum();
 
 }

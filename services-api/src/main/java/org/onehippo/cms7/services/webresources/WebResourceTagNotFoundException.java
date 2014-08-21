@@ -18,21 +18,21 @@ package org.onehippo.cms7.services.webresources;
 /**
  * TODO: write Javadoc
  */
-public class RevisionNotFoundException extends WebResourceException {
+public class WebResourceTagNotFoundException extends WebResourceException {
 
-    public RevisionNotFoundException() {
+    public WebResourceTagNotFoundException() {
         super();
     }
 
-    public RevisionNotFoundException(final String message) {
+    public WebResourceTagNotFoundException(final String message) {
         super(message);
     }
 
-    public RevisionNotFoundException(final String message, final Throwable cause) {
+    public WebResourceTagNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public RevisionNotFoundException(final Throwable cause) {
+    public WebResourceTagNotFoundException(final Throwable cause) {
         super(cause);
     }
 }

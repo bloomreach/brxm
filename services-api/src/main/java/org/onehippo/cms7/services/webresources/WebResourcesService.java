@@ -29,8 +29,10 @@ public interface WebResourcesService {
     /**
      * Creates a web resources implementation based on JCR.
      * @param session the JCR session used to access web resources.
-     * @return a JCR-based web resources implementation.
+     * @param bundleName the name of the web resources bundle.
+     * @return a JCR-based web resources implementation for <code>bundleName</code>.
+     * @throw WebResourceException if the {@link WebResourceBundle} for <code>bundleName</code> cannot be found
      */
-    WebResources getJcrWebResources(Session session);
+    WebResourceBundle getJcrWebResourceBundle(Session session, String bundleName);
 
 }
