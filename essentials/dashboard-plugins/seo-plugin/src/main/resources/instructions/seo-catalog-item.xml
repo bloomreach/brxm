@@ -26,7 +26,7 @@
     <sv:value>SEO</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-seo.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/seo.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value/>

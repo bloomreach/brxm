@@ -20,7 +20,7 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<#if pageable??>
+<#if pageable?? && pageable.items?has_content>
   <#list pageable.items as item>
     <#if item.title??>
       <@hst.link var="link" hippobean=item />
@@ -33,10 +33,15 @@
       </article>
     </#if>
   </#list>
+  <#if pageable.showPagination??>
 {{#repositoryBased}}
     <#include "../../hst:default/hst:templates/pagination.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/pagination.ftl">
 {{/fileBased}}
+  </#if>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-list.png'/>"> Click to edit Generic List
 </#if>

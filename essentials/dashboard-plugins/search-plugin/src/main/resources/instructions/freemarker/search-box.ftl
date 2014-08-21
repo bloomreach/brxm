@@ -19,7 +19,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<#-- @ftlvariable name="query" type="java.lang.String" -->
 <form class="navbar-form" role="search" action="<@hst.link siteMapItemRefId="search" />" method="get">
     <div class="input-group">
         <input type="text" class="form-control" placeholder="Search" name="query">

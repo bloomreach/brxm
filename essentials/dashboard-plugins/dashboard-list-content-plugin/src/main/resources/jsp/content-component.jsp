@@ -16,9 +16,9 @@
   --%>
 
 <%--@elvariable id="document" type="{{beansPackage}}.BaseDocument"--%>
-<hst:defineObjects/>
-<c:if test="${hstRequest.requestContext.cmsRequest}">
-  <h5>[Content component]</h5>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode}">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/generic-content.png'/>">
   <sub>
     This is the rendering template for the generic Content component,
     which makes the document identified by the requested URL available as

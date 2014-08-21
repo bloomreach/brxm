@@ -372,8 +372,8 @@ dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/reso
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/freemarker/content-component.ftl -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/freemarker/list-component.ftl -text
-dashboard-plugins/dashboard-list-content-plugin/src/main/resources/images/component-icon-content.png -text
-dashboard-plugins/dashboard-list-content-plugin/src/main/resources/images/component-icon-list.png -text
+dashboard-plugins/dashboard-list-content-plugin/src/main/resources/images/generic-content.png -text
+dashboard-plugins/dashboard-list-content-plugin/src/main/resources/images/generic-list.png -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/jsp/content-component.jsp -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/jsp/list-component.jsp -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/xml/hst/catalog/content.xml -text
@@ -391,7 +391,7 @@ dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/web-fragment
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newslist-main-newslist.ftl -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newspage-main.ftl -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/icons/new-folder-16.png -text
-dashboard-plugins/dashboard-news-plugin/src/main/resources/images/component-icon-news.png -text
+dashboard-plugins/dashboard-news-plugin/src/main/resources/images/news-list.png -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/java/NewsDocument.txt -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/jsp/newslist-main-newslist.jsp -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/jsp/newspage-main.jsp -text
@@ -526,7 +526,7 @@ dashboard-plugins/image-component-plugin/src/main/resources/META-INF/imageCompon
 dashboard-plugins/image-component-plugin/src/main/resources/META-INF/resources/feature/imageComponentPlugin/imageComponentPlugin.html -text
 dashboard-plugins/image-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/image-component-plugin/src/main/resources/instructions/freemarker/image-component.ftl -text
-dashboard-plugins/image-component-plugin/src/main/resources/instructions/images/component-icon-image.png -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/images/image.png -text
 dashboard-plugins/image-component-plugin/src/main/resources/instructions/jsp/image-component.jsp -text
 dashboard-plugins/image-component-plugin/src/main/resources/instructions/xml/hst/image-component-catalog.xml -text
 dashboard-plugins/image-component-plugin/src/main/resources/instructions/xml/hst/image-component-freemarker.xml -text
@@ -539,7 +539,7 @@ dashboard-plugins/menu-plugin/src/main/resources/freemarker/essentials-menu.ftl 
 dashboard-plugins/menu-plugin/src/main/resources/hst/catalog/menu-catalog-item.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/hst/menu-template-freemarker.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/hst/menu-template-jsp.xml -text
-dashboard-plugins/menu-plugin/src/main/resources/images/component-icon-menu.png -text
+dashboard-plugins/menu-plugin/src/main/resources/images/menu.png -text
 dashboard-plugins/menu-plugin/src/main/resources/jsp/essentials-menu.jsp -text
 dashboard-plugins/menu-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/menu/MenuInstructionPackageTest.java -text
 dashboard-plugins/menu-plugin/src/test/resources/log4j.xml -text
@@ -577,7 +577,7 @@ dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instruc
 dashboard-plugins/search-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/freemarker/search-box.ftl -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/freemarker/search-main.ftl -text
-dashboard-plugins/search-plugin/src/main/resources/instructions/images/component-icon-search.png -text
+dashboard-plugins/search-plugin/src/main/resources/instructions/images/search-box.png -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/jsp/search-box.jsp -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/jsp/search-main.jsp -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-box-freemarker.xml -text
@@ -605,8 +605,8 @@ dashboard-plugins/seo-plugin/pom.xml -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/resources/feature/seoPlugin/seoPlugin.html -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/seoPlugin_instructions.xml -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/seo-plugin/src/main/resources/instructions/component-icon-seo.png -text
 dashboard-plugins/seo-plugin/src/main/resources/instructions/seo-catalog-item.xml -text
+dashboard-plugins/seo-plugin/src/main/resources/instructions/seo.png -text
 dashboard-plugins/seo-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/simple-content/pom.xml -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/resources/feature/simpleContent/simpleContent.html -text
@@ -627,7 +627,7 @@ dashboard-plugins/simple-content/src/main/resources/hst/template-content-jsp.xml
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-freemarker.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-jsp.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/workspace/contentlist.xml -text
-dashboard-plugins/simple-content/src/main/resources/images/component-icon-simplecontent.png -text
+dashboard-plugins/simple-content/src/main/resources/images/simple-content.png -text
 dashboard-plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
 dashboard-plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -text
 dashboard-plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
@@ -660,7 +660,7 @@ dashboard-plugins/video-component-plugin/src/main/resources/META-INF/resources/f
 dashboard-plugins/video-component-plugin/src/main/resources/META-INF/videoComponentPlugin_instructions.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/freemarker/video-component.ftl -text
-dashboard-plugins/video-component-plugin/src/main/resources/instructions/images/component-icon-video.png -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/images/video.png -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/java/Video.txt -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/jsp/video-component.jsp -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/content/video.xml -text

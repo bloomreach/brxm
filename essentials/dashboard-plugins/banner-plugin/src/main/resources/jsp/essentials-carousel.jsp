@@ -51,38 +51,37 @@
       <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
     </c:if>
   </div>
-</c:if>
+  <style type="text/css">
+    /* Carousel base class */
+    .carousel {
+      height: ${cparam.carouselHeight}px;
+      /*width: ${cparam.carouselWidth}px;*/
+      margin-bottom: 60px;
+    }
+
+    /* Since positioning the image, we need to help out the caption */
+    .carousel-caption {
+      z-index: 10;
+    }
+
+    /* Declare heights because of positioning of img element */
+    .carousel .item {
+      height: ${cparam.carouselHeight}px;
+      background-color: ${cparam.carouselBackgroundColor};
+    }
+    /* center images*/
+    .carousel-inner > .item > img {
+      margin: 0 auto;
+    }
+  </style>
+
+  <hst:headContribution category="componentsJavascript">
+    <script type="text/javascript" src="<hst:link path="/js/jquery-2.1.0.min.js"/>"></script>
+    </hst:headContribution>
+    <hst:headContribution category="componentsJavascript">
+      <script type="text/javascript" src="<hst:link path="/js/bootstrap.min.js"/>"></script>
+  </hst:headContribution></c:if>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${editMode && (pageable eq null || pageable.total lt 1)}">
-  <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Banner
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
 </c:if>
-<style type="text/css">
-  /* Carousel base class */
-  .carousel {
-    height: ${cparam.carouselHeight}px;
-    /*width: ${cparam.carouselWidth}px;*/
-    margin-bottom: 60px;
-  }
-
-  /* Since positioning the image, we need to help out the caption */
-  .carousel-caption {
-    z-index: 10;
-  }
-
-  /* Declare heights because of positioning of img element */
-  .carousel .item {
-    height: ${cparam.carouselHeight}px;
-    background-color: ${cparam.carouselBackgroundColor};
-  }
-  /* center images*/
-  .carousel-inner > .item > img {
-    margin: 0 auto;
-  }
-</style>
-
-<hst:headContribution category="componentsJavascript">
-  <script type="text/javascript" src="<hst:link path="/js/jquery-2.1.0.min.js"/>"></script>
-</hst:headContribution>
-<hst:headContribution category="componentsJavascript">
-  <script type="text/javascript" src="<hst:link path="/js/bootstrap.min.js"/>"></script>
-</hst:headContribution>

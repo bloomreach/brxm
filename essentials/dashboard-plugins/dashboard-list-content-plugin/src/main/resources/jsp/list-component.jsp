@@ -28,4 +28,10 @@
     </article>
   </c:if>
 </c:forEach>
-<%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
+<c:if test="${pageable.showPagination}">
+  <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
+</c:if>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode and empty pageable}">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/generic-list.png'/>"> Click to edit Generic List
+</c:if>

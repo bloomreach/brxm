@@ -21,7 +21,7 @@
 -->
 <#-- @ftlvariable name="item" type="{{beansPackage}}.EventsDocument" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<#if pageable??>
+<#if pageable?? && pageable.items?has_content>
     <#list pageable.items as item>
         <@hst.link var="link" hippobean=item />
     <article class="has-edit-button">

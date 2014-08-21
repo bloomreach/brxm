@@ -40,8 +40,8 @@
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="xml/hst/catalog/content.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/component-icon-list.png" target="{{siteWebRoot}}/images/component-icon-list.png"/>
-    <file action="copy" binary="true" source="images/component-icon-content.png" target="{{siteWebRoot}}/images/component-icon-content.png"/>
+    <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
+    <file action="copy" binary="true" source="images/generic-content.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-content.png"/>
   </instructionSet>
 
 

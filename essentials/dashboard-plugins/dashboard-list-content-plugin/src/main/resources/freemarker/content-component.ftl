@@ -21,9 +21,9 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="document" type="{{beansPackage}}.BaseDocument" -->
-<@hst.defineObjects/>
-<#if hstRequest.requestContext.cmsRequest>
-  <h5>[Content component]</h5>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#if editMode>
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-content.png'/>">
   <sub>
     This is the rendering template for the generic Content component,
     which makes the document identified by the requested URL available as

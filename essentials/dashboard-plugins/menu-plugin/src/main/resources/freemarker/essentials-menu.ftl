@@ -31,4 +31,7 @@
     </#list>
 </ul>
 <@hst.cmseditmenu menu=menu/>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+<img src="<@hst.link path="/images/essentials/catalog-component-icons/menu.png" />"> Click to edit Menu
 </#if>

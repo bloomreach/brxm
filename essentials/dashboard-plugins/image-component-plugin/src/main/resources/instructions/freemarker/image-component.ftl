@@ -23,9 +23,8 @@
 <#if document??>
 <@hst.link var="img" hippobean=document.original/>
     <img src="${img}" title="${document.fileName}" alt="${document.fileName}"/>
-</#if>
-<#if editMode && document??>
-    <@hst.link var="placholderLink" path="/images/essentials-edit-component.png" />
-    <img src="${placholderLink}" alt="Edit image component settings">
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/image.png" />"> Click to edit Image
 </#if>
 

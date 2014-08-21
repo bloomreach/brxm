@@ -26,7 +26,7 @@
     <sv:value>Video</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-video.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/video.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>video-component{{templateExtension}}</sv:value>

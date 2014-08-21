@@ -62,7 +62,7 @@
   <instructionSet>
 
     <xml action="copy" source="xml/hst/catalog/newslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/component-icon-news.png" target="{{siteWebRoot}}/images/component-icon-news.png"/>
+    <file action="copy" binary="true" source="images/news-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/news-list.png"/>
   </instructionSet>
 
 

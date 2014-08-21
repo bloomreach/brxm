@@ -16,7 +16,7 @@
   --%>
 
 <%--@elvariable id="menu" type="org.hippoecm.hst.core.sitemenu.HstSiteMenu"--%>
-<c:if test="${not empty menu.siteMenuItems}">
+<c:if test="${not empty menu}">
   <ul class="nav nav-pills">
     <c:forEach var="item" items="${menu.siteMenuItems}">
       <c:choose>
@@ -29,5 +29,9 @@
       </c:choose>
     </c:forEach>
   </ul>
+  <hst:cmseditmenu menu="${menu}"/>
 </c:if>
-<hst:cmseditmenu menu="${menu}"/>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode && empty menu}">
+  <img src="<hst:link path='/images/essentials/catalog-component-icons/menu.png'/>"> Click to edit Menu
+</c:if>

@@ -48,7 +48,6 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
         final EssentialsEventsComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentTypes = paramInfo.getDocumentTypes();
         if (Strings.isNullOrEmpty(documentTypes)) {
-            log.warn("No events document type(s) are defined.");
             setEditMode(request);
             return;
         }

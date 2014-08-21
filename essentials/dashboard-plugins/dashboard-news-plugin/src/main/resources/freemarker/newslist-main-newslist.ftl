@@ -21,7 +21,7 @@
 -->
 <#-- @ftlvariable name="item" type="{{beansPackage}}.NewsDocument" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<#if pageable??>
+<#if pageable?? && pageable.items?has_content>
     <#list pageable.items as item>
         <@hst.link var="link" hippobean=item />
     <article class="has-edit-button">
@@ -42,6 +42,9 @@
     <#include "/WEB-INF/freemarker/include/pagination.ftl">
 {{/fileBased}}
     </#if>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/news-list.png'/>"> Click to edit News List
 </#if>
 
 

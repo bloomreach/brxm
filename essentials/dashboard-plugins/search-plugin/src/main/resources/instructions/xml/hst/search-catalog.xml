@@ -20,10 +20,10 @@
     <sv:value>hst:containeritemcomponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
-    <sv:value>Search box</sv:value>
+    <sv:value>Search Box</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-search.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/search-box.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>search-box{{templateExtension}}</sv:value>

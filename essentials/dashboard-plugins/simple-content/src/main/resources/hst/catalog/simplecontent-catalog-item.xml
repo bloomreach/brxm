@@ -23,10 +23,10 @@
     <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
-    <sv:value>Simple content</sv:value>
+    <sv:value>Simple Content</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-simplecontent.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/simple-content.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>contentpage-main{{templateExtension}}</sv:value>

@@ -22,21 +22,21 @@
     <xml action="copy" source="instructions/xml/hst/search-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="instructions/xml/hst/search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="instructions/xml/hst/search-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <file action="copy" binary="true" source="instructions/images/component-icon-search.png" target="{{siteWebRoot}}/images/component-icon-search.png"/>
+    <file action="copy" binary="true" source="instructions/images/search-box.png" target="{{imagesRoot}}/essentials/catalog-component-icons/search-box.png"/>
   </instructionSet>
   <instructionSet group="jsp">
-    <file action="copy" source="instructions/jsp/search-box.jsp" target="{{jspRoot}}/{{namespace}}/search-box.jsp"/>
+    <file action="copy" source="instructions/jsp/search-box.jsp" target="{{jspRoot}}/hstdefault/search-box.jsp"/>
     <file action="copy" source="instructions/jsp/search-main.jsp" target="{{jspRoot}}/{{namespace}}/search-main.jsp"/>
-    <xml action="copy" source="instructions/xml/hst/search-box-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/search-box-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/search-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="instructions/freemarker/search-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-main.ftl"/>
-    <freemarker action="copy" source="instructions/freemarker/search-box.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-box.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/search-box.ftl" target="{{freemarkerRoot}}/hstdefault/search-box.ftl"/>
     </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/xml/hst/search-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/search-box-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/search-box-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 </instructions>
 

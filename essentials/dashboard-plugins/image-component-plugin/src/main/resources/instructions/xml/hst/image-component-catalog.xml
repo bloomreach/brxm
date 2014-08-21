@@ -26,7 +26,7 @@
     <sv:value>Image</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-image.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/image.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>image-component{{templateExtension}}</sv:value>

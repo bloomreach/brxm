@@ -48,7 +48,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
         final EssentialsNewsComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentTypes = paramInfo.getDocumentTypes();
         if(Strings.isNullOrEmpty(documentTypes)){
-            log.warn("No news document type(s) are defined.");
+            setEditMode(request);
             return;
         }
         super.doBeforeRender(request, response);

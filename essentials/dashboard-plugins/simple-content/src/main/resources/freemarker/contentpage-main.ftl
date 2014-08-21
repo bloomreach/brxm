@@ -37,4 +37,7 @@
     </#if>
     <@hst.html hippohtml=document.content/>
   </article>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+  <img src="<@hst.link path="/images/essentials/catalog-component-icons/simple-content.png" />"> Click to edit Simple Content
 </#if>

@@ -31,6 +31,6 @@
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/catalog/menu-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/component-icon-menu.png" target="{{siteWebRoot}}/images/component-icon-menu.png"/>
+    <file action="copy" binary="true" source="images/menu.png" target="{{imagesRoot}}/essentials/catalog-component-icons/menu.png"/>
   </instructionSet>
 </instructions>
