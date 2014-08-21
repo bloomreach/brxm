@@ -460,6 +460,7 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/im
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/label.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/ErrorPage404.jsp -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-layout.jsp -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-top-menu.jsp -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/imports.jsp -text
