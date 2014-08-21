@@ -347,8 +347,8 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationRang
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSimpleTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSortingTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/impl/InitializationProcessorTest.java -text
+test/src/test/java/org/hippoecm/repository/integration/DocumentWorkflowVersioningIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/integration/UpgradeIntegrationTest.java -text
-test/src/test/java/org/hippoecm/repository/integration/VersioningWorkflowIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupJobTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/RepositoryLoggerTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/WorkflowLoggerTest.java -text
