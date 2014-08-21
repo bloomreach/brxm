@@ -18,10 +18,11 @@
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="author" type="{{beansPackage}}.Author"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<hst:setBundle basename="essentials.blog"/>
 <c:if test="${(pageable ne null)}">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">More by ${author.fullName}</h3>
+      <h3 class="panel-title"><fmt:message key="blog.moreby"/>&nbsp;${author.fullName}</h3>
     </div>
     <c:choose>
       <c:when test="${pageable.total gt 0}">
@@ -34,7 +35,7 @@
       </c:when>
       <c:otherwise>
         <div class="panel-body">
-          <p>No other posts found.</p>
+          <p><fmt:message key="blog.notfound"/></p>
         </div>
       </c:otherwise>
     </c:choose>

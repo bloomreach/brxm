@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
+<%--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +13,11 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+  --%>
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="label-component">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/hstdefault/label-component.ftl</sv:value>
-  </sv:property>
-</sv:node>
+<hst:setBundle basename="essentials.homepage"/>
+<div>
+  <h1><fmt:message key="homepage.title"/></h1>
+  <p><fmt:message key="homepage.text"/></p>
+</div>
+<hst:include ref="container"/>

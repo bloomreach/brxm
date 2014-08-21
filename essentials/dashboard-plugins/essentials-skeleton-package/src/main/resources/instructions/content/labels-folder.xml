@@ -15,11 +15,17 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="label-component">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="{{name}}">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
+    <sv:value>hippostd:folder</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/hstdefault/label-component.jsp</sv:value>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippo:translated</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+    <sv:value>new-document</sv:value>
+    <sv:value>new-folder</sv:value>
   </sv:property>
 </sv:node>

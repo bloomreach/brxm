@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<sv:node sv:name="blog" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+        <sv:value>hippo:translated</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:translation">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value/>
+        </sv:property>
+        <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Blog</sv:value>
+        </sv:property>
+    </sv:node>
+    <sv:node sv:name="blog">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>resourcebundle:resourcebundle</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+            <sv:value>live</sv:value>
+            <sv:value>preview</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+            <sv:value>blog</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>live</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+            <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+            <sv:value>2014-08-21T22:52:25.399+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+            <sv:value>2014-08-21T22:58:03.243+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+            <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+            <sv:value>2014-08-21T22:58:05.602+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:id" sv:type="String">
+            <sv:value>e63b153b-6be1-4947-85e5-b1f7b092d929</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+            <sv:value>document-type-locale</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="resourcebundle:descriptions" sv:type="String">
+            <sv:value>Header used in "more blogs from same author", prefix to the author name.</sv:value>
+            <sv:value>Message displayed when no other blogs from same author were found.</sv:value>
+        </sv:property>
+        <sv:property sv:name="resourcebundle:id" sv:type="String">
+            <sv:value>essentials.blog</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="resourcebundle:keys" sv:type="String">
+            <sv:value>blog.moreby</sv:value>
+            <sv:value>blog.notfound</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="resourcebundle:messages" sv:type="String">
+            <sv:value>More by</sv:value>
+            <sv:value>No other posts found.</sv:value>
+        </sv:property>
+    </sv:node>
+</sv:node>

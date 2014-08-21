@@ -37,9 +37,6 @@
         </c:if>
       </c:otherwise>
     </c:choose>
-    <c:if test="${pageable.total == 0}">
-      <h3>No results for: <c:out value="${query}"/></h3>
-    </c:if>
   </c:when>
   <c:otherwise>
     <h3>Please fill in a search term.</h3>

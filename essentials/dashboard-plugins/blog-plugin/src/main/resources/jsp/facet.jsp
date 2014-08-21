@@ -18,15 +18,16 @@
 <%--@elvariable id="facets" type="org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean"--%>
 <%--@elvariable id="facetLimit" type="java.lang.Integer"--%>
 <%--@elvariable id="query" type="java.lang.String"--%>
+<hst:setBundle basename="essentials.facets"/>
 <c:if test="${facets ne null}">
   <form action="<hst:actionURL />" method="get">
     <div class="row form-group">
       <div class="col-xs-8">
-        <input type="search" value="<c:out value="${query}"/>" name="query" class="form-control" placeholder="Search blog posts">
+        <input type="search" value="<c:out value="${query}"/>" name="query" class="form-control" placeholder="<fmt:message key='facets.placeholder'/>">
 
       </div>
       <div class="col-xs-4">
-        <button type="submit" class="btn btn-primary pull-right">Search</button>
+        <button type="submit" class="btn btn-primary pull-right"><fmt:message key='facets.searchbutton'/></button>
       </div>
     </div>
   </form>
@@ -42,7 +43,7 @@
                   <c:when test="${item.leaf and item.count gt 0}">
                     <hst:facetnavigationlink remove="${item}" current="${facets}" var="removeLink"/>
                     <li class="active">
-                      <a href="${removeLink}">${item.name}&nbsp;<span class="alert-danger">remove</span></a>
+                      <a href="${removeLink}">${item.name}&nbsp;<span class="alert-danger"><fmt:message key='facets.remove'/></span></a>
                     </li>
                   </c:when>
                   <c:otherwise>

@@ -1,8 +1,8 @@
 {{#repositoryBased}}
-<#include "../../hst:default/hst:templates/imports.ftl">
+    <#include "../../hst:default/hst:templates/imports.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
-<#include "/WEB-INF/freemarker/include/imports.ftl">
+    <#include "/WEB-INF/freemarker/include/imports.ftl">
 {{/fileBased}}
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
@@ -19,10 +19,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<#-- @ftlvariable id="label" type="java.lang.String"-->
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
-<#if editMode && !label?has_content>
-  <img src="<@hst.link path='/images/essentials/catalog-component-icons/label.png'/>"> Click to edit Label
-</#if>
-${label}
 
+<@hst.setBundle basename="essentials.global"/>
+<hr></hr>
+<div class="text-center">
+  <sub><@fmt.message key="footer.text"/></sub>
+</div>
+<@hst.include ref="container"/>

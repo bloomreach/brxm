@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+{{#repositoryBased}}
+    <#include "../../hst:default/hst:templates/imports.ftl">
+{{/repositoryBased}}
+{{#fileBased}}
+    <#include "/WEB-INF/freemarker/include/imports.ftl">
+{{/fileBased}}
+<#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +18,11 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
 
-<sv:node sv:name="homepage" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:containercomponentfolder</sv:value>
-  </sv:property>
-  <sv:node sv:name="main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponent</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.vBox</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+<@hst.setBundle basename="essentials.homepage"/>
+<div>
+  <h1><@fmt.message key="homepage.title"/></h1>
+  <p><@fmt.message key="homepage.text"/></p>
+</div>
+<@hst.include ref="container"/>

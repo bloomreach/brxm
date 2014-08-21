@@ -23,10 +23,11 @@
 <#-- @ftlvariable name="author" type="{{beansPackage}}.Author" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 
+<@hst.setBundle basename="essentials.blog"/>
 <#if pageable??>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">More by ${author.fullName}</h3>
+        <h3 class="panel-title"><@fmt.message key="blog.moreby"/>&nbsp;${author.fullName}</h3>
     </div>
     <#if pagebale?? && pageable.total > 0>
         <div class="panel-body">
@@ -37,7 +38,7 @@
         </div>
     <#else>
         <div class="panel-body">
-            <p>No other posts found.</p>
+            <p><fmt:message key="blog.notfound"/></p>
         </div>
     </#if>
 </div>
