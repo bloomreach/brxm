@@ -24,25 +24,22 @@
     <!-- folder doc queries-->
     <xml action="copy" source="config/new-content-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="config/new-content-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+  </instructionSet>
+
+  <instructionSet group="sampleData">
     <xml action="copy" source="data/sample-content_entry.xml" target="/content/documents/{{namespace}}"/>
   </instructionSet>
 
   <!-- HST CONFIG-->
   <instructionSet>
-
-
     <xml action="copy" source="hst/workspace/contentlist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="hst/content-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/content-list-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-
-
     <xml action="copy" source="hst/menu/content-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
     <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/simple-content.png" target="{{imagesRoot}}/essentials/catalog-component-icons/simple-content.png"/>
-
   </instructionSet>
-
 
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
@@ -51,7 +48,6 @@
     <xml action="copy" source="hst/template-content-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/{{namespace}}/contentlist-main-contentlist.jsp"/>
   </instructionSet>
-
 
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
