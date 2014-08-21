@@ -17,22 +17,9 @@
 
 <sv:node sv:name="seo" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:containeritemcomponent</sv:value>
+    <sv:value>hst:template</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.forge.seo.support.SEOHelperComponent</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:label" sv:type="String">
-    <sv:value>SEO</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/seo.png</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>seo{{templateExtension}}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:xtype" sv:type="String">
-    <sv:value>HST.Item</sv:value>
+  <sv:property sv:name="hst:renderpath" sv:type="String">
+    <sv:value>jsp/hstdefault/seo.jsp</sv:value>
   </sv:property>
 </sv:node>
-
