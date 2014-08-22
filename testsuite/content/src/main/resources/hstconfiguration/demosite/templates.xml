@@ -1,76 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:templates">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:templates</sv:value>
+  </sv:property>
+  <sv:node sv:name="homepage.ftl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:templates</sv:value>
+      <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:node sv:name="homepage.ftl">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:script" sv:type="String">
-          <sv:value>&lt;#assign
-            hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
-            &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
-            &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html 
-            hippohtml=document.html/&gt;
-            &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;
-            &lt;p&gt;Example mount property fetched through hst component: '${testParamFromMount!}'&lt;/p&gt;
-            &lt;#if "${document.resource!}" != ""&gt;
-            &lt;@hst.link var="resource"
-            hippobean=document.resource /&gt; &lt;#if
-            "${resource!}" != ""&gt; &lt;a
-            href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
-            &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;&lt;/div&gt; 
-            
-            &lt;div class="bannersHome"&gt; 
-            &lt;@hst.include ref="banners-div"/&gt; &lt;/div&gt; 
-            &lt;div class="bannersHome"&gt;
-            &lt;@hst.include ref="banners-table"/&gt; &lt;/div&gt; 
-            &lt;div class="bannersHome"&gt;
-            &lt;@hst.include ref="banners-ol"/&gt; &lt;/div&gt; 
-            &lt;div class="bannersHome"&gt;
-            &lt;@hst.include ref="banners-ul"/&gt; &lt;/div&gt; 
-            
-            &lt;div style="border-width: 4px; border-style: solid; border-color: red; "&gt;
-            &lt;p&gt; Apart from this text, this container should be EMPTY as the banners should be skipped 
-            by ExampleComponentWindowFilter due to parameter ExampleComponentWindowFilter.hide = true&lt;/p&gt;
-            &lt;@hst.include ref="container-with-skipped-banners"/&gt; &lt;/div&gt; 
-            
-            &lt;hr/&gt;
-            &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
-            var="imageset" hippobean=image
-            mount="restapi-gallery" /&gt; &lt;@hst.link var="original"
-            hippobean=image subPath="original"
-            mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
-            hippobean=image subPath="thumbnail"
-            mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
-            target="_blank"
-            href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;
-            Thumbnail : &lt;a target="_blank"
-            href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&lt;/p&gt;
-            &lt;p&gt; Original : &lt;a target="_blank"
-            href="${original}"&gt;${original}&lt;/a&gt;&lt;/p&gt;
-            &lt;br/&gt;
-            &lt;br/&gt;
-            &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
-            &lt;p
-            style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
-        </sv:property>
-    </sv:node>
+    <sv:property sv:name="hst:script" sv:type="String">
+      <sv:value>&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#13;
+&#13;
+  &lt;div class="yui-u"&gt;&#13;
+&#13;
+    &lt;h1&gt;${document.title}&lt;/h1&gt;&#13;
+    &lt;p&gt;${document.summary}&lt;/p&gt;&#13;
+    &lt;@hst.html hippohtml=document.html/&gt;&#13;
+&#13;
+    &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;&#13;
+    &lt;p&gt;Example mount property fetched through hst component: '${testParamFromMount!}'&lt;/p&gt;&#13;
+&#13;
+    &lt;#if "${document.resource!}" != ""&gt;&#13;
+      &lt;@hst.link var="resource" hippobean=document.resource /&gt; &#13;
+      &lt;#if "${resource!}" != ""&gt; &#13;
+        &lt;a href="${resource}"&gt;${document.resource.name}&lt;/a&gt;&#13;
+      &lt;/#if&gt; &#13;
+    &lt;/#if&gt; &#13;
+&#13;
+    &lt;div&gt; &#13;
+      &lt;@hst.include ref="todolist"/&gt;&#13;
+    &lt;/div&gt; &#13;
+&#13;
+    &lt;div class="bannersHome"&gt; &#13;
+      &lt;@hst.include ref="banners-div"/&gt; &#13;
+    &lt;/div&gt; &#13;
+    &#13;
+    &lt;div class="bannersHome"&gt;&#13;
+      &lt;@hst.include ref="banners-table"/&gt; &#13;
+    &lt;/div&gt; &#13;
+&#13;
+    &lt;div class="bannersHome"&gt;&#13;
+      &lt;@hst.include ref="banners-ol"/&gt; &#13;
+    &lt;/div&gt; &#13;
+&#13;
+    &lt;div class="bannersHome"&gt;&#13;
+      &lt;@hst.include ref="banners-ul"/&gt; &#13;
+    &lt;/div&gt; &#13;
+&#13;
+    &lt;div style="border-width: 4px; border-style: solid; border-color: red; "&gt;&#13;
+      &lt;p&gt;&#13;
+        Apart from this text, this container should be EMPTY as the banners should be skipped &#13;
+        by ExampleComponentWindowFilter due to parameter ExampleComponentWindowFilter.hide = true&#13;
+      &lt;/p&gt;&#13;
+      &lt;@hst.include ref="container-with-skipped-banners"/&gt; &#13;
+    &lt;/div&gt; &#13;
+&#13;
+    &lt;hr/&gt;&#13;
+    &#13;
+    &lt;p&gt;Dummy Example REST links &lt;/p&gt; &#13;
+    &lt;@hst.link var="imageset" hippobean=image mount="restapi-gallery" /&gt; &#13;
+    &lt;@hst.link var="original" hippobean=image subPath="original" mount="restapi-gallery"/&gt; &#13;
+    &lt;@hst.link var="thumbnail" hippobean=image subPath="thumbnail" mount="restapi-gallery"/&gt; &#13;
+    &#13;
+    &lt;p&gt; &#13;
+      ImageSet : &#13;
+      &lt;a target="_blank" href="${imageset}"&gt;${imageset}&lt;/a&gt;&#13;
+    &lt;/p&gt; &#13;
+    &#13;
+    &lt;p&gt;&#13;
+      Thumbnail : &#13;
+      &lt;a target="_blank" href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&#13;
+    &lt;/p&gt;&#13;
+    &#13;
+    &lt;p&gt; &#13;
+      Original : &#13;
+      &lt;a target="_blank" href="${original}"&gt;${original}&lt;/a&gt;&#13;
+    &lt;/p&gt;&#13;
+    &#13;
+    &lt;br/&gt;&#13;
+    &lt;br/&gt;&#13;
+    &#13;
+    &lt;div style="color:red"&gt;&#13;
+      Note: this page is loaded by a repository freemarker template, &#13;
+      see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &#13;
+    &lt;/div&gt;&#13;
+&#13;
+    &lt;p style="height: 30em;"&gt; &lt;/p&gt; &#13;
+  &#13;
+  &lt;/div&gt;</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
