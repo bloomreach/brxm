@@ -25,38 +25,115 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
- * Component that displays a CodeMirror panel which gives a nice syntax highlighting for Groovy.
+ * Component that displays a CodeMirror panel which gives a nice syntax highlighting for Groovy, etc.
+ * The default language mode is groovy.
+ * You can override {@link #renderHeadForCustomModes(IHeaderResponse)} and {@link #getEditorMode()}
+ * to use other language mode.
  */
 public class CodeMirrorEditor extends TextArea<String> {
 
-    private static final JavaScriptResourceReference CODEMIRROR_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "lib/codemirror.js");
-    private static final JavaScriptResourceReference GROOVY_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/groovy/groovy.js");
+    private static final long serialVersionUID = 1L;
+
+    /** A mime type of CodeMirror Groovy Editor Mode */
+    public static final String MIME_TYPE_GROOVY = "text/x-groovy";
+
+    /** A mime type of CodeMirror XML Editor Mode */
+    public static final String MIME_TYPE_XML = "application/xml";
+
+    /** A mime type of CodeMirror JavaScript Editor Mode */
+    public static final String MIME_TYPE_JAVASCRIPT = "text/javascript";
+
+    /** A mime type of CodeMirror CSS Editor Mode */
+    public static final String MIME_TYPE_CSS = "text/css";
+
+    /** A mime type of CodeMirror HTMLMIXED Editor Mode */
+    public static final String MIME_TYPE_HTML = "text/html";
+
+    /** Built-in Groovy CodeMirror mode */
+    public static final JavaScriptResourceReference GROOVY_MODE_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/groovy/groovy.js");
+
+    /** Built-in XML CodeMirror mode */
+    public static final JavaScriptResourceReference XML_MODE_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/xml/xml.js");
+
+    /** Built-in JavaScript CodeMirror mode */
+    public static final JavaScriptResourceReference JAVASCRIPT_MODE_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/javascript/javascript.js");
+
+    /** Built-in CSS CodeMirror mode */
+    public static final JavaScriptResourceReference CSS_MODE_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/css/css.js");
+
+    /** Built-in HTML MIXED CodeMirror mode */
+    public static final JavaScriptResourceReference HTML_MIXED_MODE_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/htmlmixed/htmlmixed.js");
+
+    /** CodeMirror skin */
     private static final CssResourceReference CODEMIRROR_SKIN = new CssResourceReference(CodeMirrorEditor.class, "lib/codemirror.css");
+
+    /** CodeMirror JavaScript */
+    private static final JavaScriptResourceReference CODEMIRROR_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "lib/codemirror.js");
+
+    /** Built-in Eclipse CodeMirror skin */
     private static final CssResourceReference ECLIPSE_SKIN = new CssResourceReference(CodeMirrorEditor.class, "theme/eclipse.css");
-    private String markupId;
+
     private String editorName;
 
     public CodeMirrorEditor(final String id, final String editorName, final IModel<String> model) {
         super(id, model);
         this.editorName = editorName;
         setOutputMarkupId(true);
-        markupId = getMarkupId();
     }
 
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(JavaScriptHeaderItem.forReference(CODEMIRROR_JS));
-        response.render(JavaScriptHeaderItem.forReference(GROOVY_JS));
         response.render(CssHeaderItem.forReference(CODEMIRROR_SKIN));
-        response.render(CssHeaderItem.forReference(ECLIPSE_SKIN));
+        renderHeadForCustomSkins(response);
+        response.render(JavaScriptHeaderItem.forReference(CODEMIRROR_JS));
+        renderHeadForCustomModes(response);
         response.render(OnLoadHeaderItem.forScript(getJavaScriptForEditor()));
     }
 
-    private String getJavaScriptForEditor() {
-        return "var cm = CodeMirror.fromTextArea(document.getElementById('" + markupId + "'), " +
-                "{lineNumbers: true, matchBrackets: true, mode: \"text/x-groovy\", " +
-                "onChange: function(cm) { cm.save(); }, editorName: \"" + editorName + "\"});\n";
+    /**
+     * Renders head elements for custom CodeMirror skins.
+     * By default, it renders {@link #ECLIPSE_SKIN}.
+     * @param response
+     */
+    protected void renderHeadForCustomSkins(final IHeaderResponse response) {
+        response.render(CssHeaderItem.forReference(ECLIPSE_SKIN));
+    }
+
+    /**
+     * Renders head elements for custom mode.
+     * By default, it renders {@link #GROOVY_MODE_JS}.
+     * @param response
+     */
+    protected void renderHeadForCustomModes(final IHeaderResponse response) {
+        response.render(JavaScriptHeaderItem.forReference(GROOVY_MODE_JS));
+    }
+
+    /**
+     * Returns the CodeMirror editor name (in JavaScript context).
+     * @return
+     */
+    protected String getEditorName() {
+        return editorName;
+    }
+
+    /**
+     * Returns the MIME Type to be associated with a CodeMirror editor mode.
+     * By default, it returns {@link #MIME_TYPE_GROOVY}.
+     * @return
+     */
+    protected String getEditorMode() {
+        return MIME_TYPE_GROOVY;
+    }
+
+    /**
+     * Returns CodeMirror instance loading JavaScript statements.
+     * @return
+     */
+    protected String getJavaScriptForEditor() {
+        return "var cm = CodeMirror.fromTextArea(document.getElementById('" + getMarkupId() + "'), " +
+                "{lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", " +
+                "onChange: function(cm) { cm.save(); }, editorName: \"" + getEditorName() + "\"});\n";
     }
 }

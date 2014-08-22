@@ -155,6 +155,10 @@
             <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
           </excludes>
           <predefinedVars>
             Hippo,
