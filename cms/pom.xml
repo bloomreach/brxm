@@ -482,6 +482,10 @@
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriteParam.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
                 <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
