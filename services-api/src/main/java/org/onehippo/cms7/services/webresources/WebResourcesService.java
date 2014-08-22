@@ -33,6 +33,6 @@ public interface WebResourcesService {
      * @return a JCR-based web resources implementation for <code>bundleName</code>.
      * @throw WebResourceException if the {@link WebResourceBundle} for <code>bundleName</code> cannot be found
      */
-    WebResourceBundle getJcrWebResourceBundle(Session session, String bundleName);
+    WebResourceBundle getJcrWebResourceBundle(Session session, String bundleName) throws WebResourceException;
 
 }

@@ -68,23 +68,23 @@ public interface WebResourceBundle {
     void delete(String absPath) throws WebResourceException;
 
     /**e
-     * @param absPath the absolute path to the web resource, starting at the web resources root. The path must start with a slash.
-     * @return the latest tagged {@link WebResourceBundle} or in case not yet tagged or tagging is not supported, return
-     * <code>null</code>
+     * @return the latest tagName or in case not yet tagged or tagging is not supported, return <code>null</code>
      */
-    WebResource getLatestTag(String absPath);
+    String getLatestTagName() throws WebResourceException;
 
     /**
      * @return The immutable {@link java.util.List} ordered list of tag names for this {@link WebResourceBundle} or empty List in case
      * there are no tags for this {@link WebResourceBundle} or tagging is not supported (for this {@link WebResourceBundle})
      */
-    List<String> getTagNames();
+    List<String> getTagNames() throws WebResourceException;
 
     /**
-     * @param absPath the absolute path to the web resource, starting at the web resources root. The path must start with a slash.
-     * @param tagName the  {@link WebResource} for tagName
-     * @return the web resource <b>tag</b> located at the given path for <code>tag</code>.
-     * @throws WebResourceNotFoundException if no web resource exists at the given path for <code>tag</code>.
+     * @param absPath the absolute path to the web resource, starting at the web resources root. The path must start
+     *                with a slash when not <code>null</code>.
+     * @param tagName the  {@link WebResource} for tagName. When <code>tagName</code> is null, the head
+     *                {@link org.onehippo.cms7.services.webresources.WebResource} is returned, the same as {@link #get(String)}
+     * @return the web resource <b>tag</b> located at the given path for <code>tagName</code>.
+     * @throws WebResourceNotFoundException if no web resource exists at the given path for <code>tagName</code>.
      */
     WebResource get(String absPath, String tagName) throws WebResourceNotFoundException, WebResourceTagNotFoundException;
 
