@@ -36,7 +36,7 @@
                             ng-click="installPlugin()">Install {{plugin.type}}
                     </button>
                     <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
-                    <a ng-show="isOnBoard()" class="btn btn-default" href="#/installed-features">Installed</a>
+                    <a ng-show="isOnBoard()" class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
                 </div>
             </div>
         </div>
