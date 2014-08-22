@@ -53,9 +53,11 @@ public class PropertiesEditor extends DataView {
 
     public PropertiesEditor(String id, IDataProvider model) {
         super(id, model);
+
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
-        
+
         String namespace = ((NodeEditor.NamespacePropertiesProvider) model).getNamespace();
+
         if (namespace.equals(NodeEditor.NONE_LABEL)) {
             namespacePrefix = StringUtils.EMPTY;
         } else {
@@ -66,6 +68,7 @@ public class PropertiesEditor extends DataView {
     @Override
     protected void populateItem(Item item) {
         JcrPropertyModel model = (JcrPropertyModel) item.getModel();
+
         try {
             final AjaxLink deleteLink = deleteLink("delete", model);
             item.add(deleteLink);
@@ -80,20 +83,43 @@ public class PropertiesEditor extends DataView {
             WebMarkupContainer valuesContainer = new WebMarkupContainer("values-container");
             valuesContainer.setOutputMarkupId(true);
             item.add(valuesContainer);
-            valuesContainer.add(new PropertyValueEditor("values", model));
+
+            valuesContainer.add(createPropertyValueEditor("values", model));
 
             final AjaxLink addLink = addLink("add", model, valuesContainer);
             addLink.add(new AttributeModifier("title", getString("property.value.add")));
             item.add(addLink);
 
             addLink.add(new Image("add-icon", new PackageResourceReference(PropertiesEditor.class, "list-add-16.png")));
-            
+
             PropertyDefinition definition = model.getProperty().getDefinition();
             addLink.setVisible(definition.isMultiple() && !definition.isProtected());
-
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
+    }
+
+    /**
+     * Creates {@link PropertyValueEditor} for a property.
+     * @param id
+     * @param model
+     * @return
+     * @throws RepositoryException 
+     */
+    protected PropertyValueEditor createPropertyValueEditor(final String id, final JcrPropertyModel model) throws RepositoryException {
+
+        // NOTES:
+        // - Creates custom propertyValueEditor for freemarker template source.
+        // - For now, it's hard-coded only for Freemarker templates, but maybe someday we can improve it to read
+        //   from plugin configurations if we want to support more custom propertyEditors (e.g, css, js, etc.).
+
+        Property prop = model.getProperty();
+
+        if ("hst:script".equals(prop.getName()) && prop.getParent().isNodeType("hst:template")) {
+            return new FreemarkerCodeMirrorPropertyValueEditor(id, model);
+        }
+
+        return new PropertyValueEditor(id, model);
     }
 
     // privates
@@ -115,12 +141,15 @@ public class PropertiesEditor extends DataView {
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }
+
                 NodeEditor editor = findParent(NodeEditor.class);
                 target.add(editor);
             }
         };
+
         deleteLink.add(new Image("remove-icon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
         deleteLink.add(new AttributeModifier("title", getString("property.remove")));
+
         return deleteLink;
     }
 

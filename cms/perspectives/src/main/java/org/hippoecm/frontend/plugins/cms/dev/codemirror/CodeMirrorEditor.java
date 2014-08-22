@@ -128,12 +128,44 @@ public class CodeMirrorEditor extends TextArea<String> {
     }
 
     /**
+     * Flags whether or not the <code>onchange</code> event should be triggered to
+     * the original (TextArea) element.
+     * <P>
+     * In a normal html form where users are required to click on save or submit button,
+     * this option is not necessary.
+     * However, if you have to capture <code>onchange</code> event to update server-side status
+     * through AJAX code like Wicket AJAX component does, then you'll probably need to turn this on.
+     * </P>
+     * @return
+     */
+    protected boolean isChangeEventTriggeringEnabled() {
+        return false;
+    }
+
+    /**
      * Returns CodeMirror instance loading JavaScript statements.
      * @return
      */
     protected String getJavaScriptForEditor() {
-        return "var cm = CodeMirror.fromTextArea(document.getElementById('" + getMarkupId() + "'), " +
-                "{lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", " +
-                "onChange: function(cm) { cm.save(); }, editorName: \"" + getEditorName() + "\"});\n";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("var cm = CodeMirror.fromTextArea(document.getElementById('" + getMarkupId() + "'), " +
+        "{ lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", " +
+        "onChange: function(cm) { cm.save(); ");
+
+        if (isChangeEventTriggeringEnabled()) {
+            sb.append("var ta = document.getElementById('" + getMarkupId() + "'); " +
+            "if ('createEvent' in document) { " +
+            "var evt = document.createEvent('HTMLEvents'); " +
+            "evt.initEvent('change', false, true); " +
+            "ta.dispatchEvent(evt); " +
+            "} else { " +
+            "ta.fireEvent('onchange'); " +
+            "} ");
+        }
+
+        sb.append("}, editorName: \"" + getEditorName() + "\"});\n");
+
+        return sb.toString();
     }
 }

@@ -39,13 +39,11 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converter.DateConverter;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
@@ -56,6 +54,8 @@ class PropertyValueEditor extends DataView {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
+
+    protected static final int TEXT_AREA_MAX_COLUMNS = 100;
 
     private JcrPropertyModel propertyModel;
     private final DateConverter dateConverter = new ISO8601DateConverter();
@@ -68,74 +68,11 @@ class PropertyValueEditor extends DataView {
 
     @Override
     protected void populateItem(Item item) {
-        EditorPlugin plugin = findParent(EditorPlugin.class);
-        IPluginContext context = plugin.getPluginContext();
-        List<ValueEditorFactory> factoryList = context.getServices(ValueEditorFactory.SERVICE_ID, ValueEditorFactory.class);
         try {
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
+            Component valueEditor = createValueEditor(valueModel);
 
-            Component valueEditor = null;
-            for (ValueEditorFactory factory : factoryList) {
-                if (factory.canEdit(valueModel)) {
-                    valueEditor = factory.createEditor("value", valueModel);
-                    item.add(valueEditor);
-                    break;
-                }
-            }
-
-            if (valueEditor == null) {
-                if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
-                    item.add(new BinaryEditor("value", propertyModel));
-                } else if (propertyModel.getProperty().getDefinition().isProtected()) {
-                    item.add(new Label("value", valueModel) {
-                        @Override
-                        public IConverter getConverter(final Class type) {
-                            if (type.equals(Date.class)) {
-                                return dateConverter;
-                            }
-                            return super.getConverter(type);
-                        }
-                    });
-                } else if (propertyModel.getProperty().getType() == PropertyType.BOOLEAN) {
-                    item.add(new BooleanFieldWidget("value", valueModel));
-                } else {
-                    StringConverter stringModel = new StringConverter(valueModel);
-                    String asString = stringModel.getObject();
-                    final int textAreaMaxColumns = 100;
-                    if (asString.contains("\n")) {
-                        TextAreaWidget editor = new TextAreaWidget("value", stringModel);
-                        String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
-                        int rowCount = lines.length;
-                        int columnCount = 1;
-                        for (String line : lines) {
-                            int length = line.length();
-                            if (length > columnCount) {
-                                if (length > textAreaMaxColumns) {
-                                    columnCount = textAreaMaxColumns;
-                                    rowCount += (length / textAreaMaxColumns) + 1;
-                                } else {
-                                    columnCount = length;
-                                }
-                            }
-                        }
-                        editor.setCols(String.valueOf(columnCount + 1));
-                        editor.setRows(String.valueOf(rowCount + 1));
-                        item.add(editor);
-
-                    } else if (asString.length() > textAreaMaxColumns) {
-                        TextAreaWidget editor = new TextAreaWidget("value", stringModel);
-                        editor.setCols(String.valueOf(textAreaMaxColumns));
-                        editor.setRows(String.valueOf((asString.length() / 80)));
-                        item.add(editor);
-
-                    } else {
-                        TextAreaWidget editor = new TextAreaWidget("value", stringModel);
-                        editor.setCols(String.valueOf(textAreaMaxColumns));
-                        editor.setRows("1");
-                        item.add(editor);
-                    }
-                }
-            }
+            item.add(valueEditor);
 
             final AjaxLink removeLink = new AjaxLink("remove") {
                 private static final long serialVersionUID = 1L;
@@ -150,15 +87,18 @@ class PropertyValueEditor extends DataView {
                     } catch (RepositoryException e) {
                         log.error(e.getMessage());
                     }
+
                     NodeEditor editor = findParent(NodeEditor.class);
+
                     if (editor != null) {
                         target.add(editor);
                     }
                 }
             };
+
             removeLink.add(new Image("remove-icon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
             removeLink.add(new AttributeModifier("title", getString("property.value.remove")));
-            
+
             PropertyDefinition definition = propertyModel.getProperty().getDefinition();
             removeLink.setVisible(definition.isMultiple() && !definition.isProtected());
 
@@ -168,6 +108,90 @@ class PropertyValueEditor extends DataView {
             log.error(e.getMessage());
             item.add(new Label("value", e.getClass().getName() + ":" + e.getMessage()));
             item.add(new Label("remove", ""));
+        }
+    }
+
+    /**
+     * Finds {@link EditorPlugin} containing this from ancestor components.
+     * @return
+     */
+    protected EditorPlugin getEditorPlugin() {
+        EditorPlugin plugin = findParent(EditorPlugin.class);
+        return plugin;
+    }
+
+    /**
+     * Creates property value editing component.
+     * @param valueModel
+     * @return
+     * @throws RepositoryException
+     */
+    protected Component createValueEditor(final JcrPropertyValueModel valueModel) throws RepositoryException {
+        List<ValueEditorFactory> factoryList = getEditorPlugin().getPluginContext().getServices(ValueEditorFactory.SERVICE_ID, ValueEditorFactory.class);
+
+        for (ValueEditorFactory factory : factoryList) {
+            if (factory.canEdit(valueModel)) {
+                return factory.createEditor("value", valueModel);
+            }
+        }
+
+        if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
+            return new BinaryEditor("value", propertyModel);
+        }
+        else if (propertyModel.getProperty().getDefinition().isProtected()) {
+            return new Label("value", valueModel) {
+                @Override
+                public IConverter getConverter(final Class type) {
+                    if (type.equals(Date.class)) {
+                        return dateConverter;
+                    }
+
+                    return super.getConverter(type);
+                }
+            };
+        }
+        else if (propertyModel.getProperty().getType() == PropertyType.BOOLEAN) {
+            return new BooleanFieldWidget("value", valueModel);
+        }
+        else {
+            StringConverter stringModel = new StringConverter(valueModel);
+            String asString = stringModel.getObject();
+
+            if (asString.contains("\n")) {
+                TextAreaWidget editor = new TextAreaWidget("value", stringModel);
+                String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
+                int rowCount = lines.length;
+                int columnCount = 1;
+
+                for (String line : lines) {
+                    int length = line.length();
+
+                    if (length > columnCount) {
+                        if (length > TEXT_AREA_MAX_COLUMNS) {
+                            columnCount = TEXT_AREA_MAX_COLUMNS;
+                            rowCount += (length / TEXT_AREA_MAX_COLUMNS) + 1;
+                        } else {
+                            columnCount = length;
+                        }
+                    }
+                }
+
+                editor.setCols(String.valueOf(columnCount + 1));
+                editor.setRows(String.valueOf(rowCount + 1));
+                return editor;
+            }
+            else if (asString.length() > TEXT_AREA_MAX_COLUMNS) {
+                TextAreaWidget editor = new TextAreaWidget("value", stringModel);
+                editor.setCols(String.valueOf(TEXT_AREA_MAX_COLUMNS));
+                editor.setRows(String.valueOf((asString.length() / 80)));
+                return editor;
+            }
+            else {
+                TextAreaWidget editor = new TextAreaWidget("value", stringModel);
+                editor.setCols(String.valueOf(TEXT_AREA_MAX_COLUMNS));
+                editor.setRows("1");
+                return editor;
+            }
         }
     }
 
