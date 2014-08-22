@@ -453,7 +453,7 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/co
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/global-labels.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/homepage-labels.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/labels-folder.xml -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/pagination-label.xml -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/content/pagination-labels.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/cms-request.css -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-footer.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-layout.ftl -text
