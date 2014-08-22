@@ -26,11 +26,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.Binary;
-import org.onehippo.cms7.services.webresources.Content;
 import org.onehippo.cms7.services.webresources.WebResource;
+import org.onehippo.cms7.services.webresources.WebResourceBundle;
 import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.slf4j.Logger;
@@ -41,6 +44,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
     private static final Logger log = LoggerFactory.getLogger(WebResourceValve.class);
     private static final long ONE_YEAR_SECONDS = TimeUnit.SECONDS.convert(365L, TimeUnit.DAYS);
     private static final long ONE_YEAR_MILLISECONDS = TimeUnit.MILLISECONDS.convert(ONE_YEAR_SECONDS, TimeUnit.SECONDS);
+
 
     @Override
     public void invoke(final ValveContext context) throws ContainerException {
@@ -56,30 +60,44 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
 
         try {
             final Session session = requestContext.getSession();
-            final WebResource webResource = service.getJcrWebResources(session).get("/" + requestContext.getResolvedSiteMapItem().getRelativeContentPath());
+            final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+            final ChannelInfo channelInfo = resolvedMount.getMount().getChannelInfo();
 
-            final String version = request.getParameter("version");
-            final Content content;
-            if (StringUtils.isNotBlank(version)) {
-                content = webResource.getContent(version);
-                log.debug("Serving binary content for '{}' and version '{}'", webResource.getPath(), version);
-            } else {
-                content = webResource.getContent();
-                // hash must be correct otherwise we do not serve trunk!
-                if (content.getHash() != null) {
-                    log.debug("Checking hash equality ");
-                    final String hash = request.getParameter("hash");
-                    if (StringUtils.isBlank(hash) || !hash.equals(content.getHash())) {
-                        log.info("Web resource's content '{}' hash does not match request hash.", webResource.getPath());
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        return;
-                    }
-                    log.debug("Serving binary content for '{}' and hash '{}'", webResource.getPath(), hash);
-                }
+            final Channel channel = resolvedMount.getMount().getChannel();
+            if (channel == null) {
+                String msg = String.format("Cannot serve web resource for mount '%s' because it does not have a " +
+                        "channel configuration.", resolvedMount.getMount());
+                throw new WebResourceException(msg);
             }
 
-            setHeaders(response, content);
-            final Binary binary = content.getBinary();
+            final String bundleName;
+            if (StringUtils.isNotBlank(channelInfo.getWebResourceBundleName())) {
+                bundleName = channelInfo.getWebResourceBundleName();
+            } else {
+                bundleName = channel.getId();
+            }
+
+
+            final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
+
+            String contentPath = "/" + requestContext.getResolvedSiteMapItem().getRelativeContentPath();
+            String version = requestContext.getResolvedSiteMapItem().getParameter("version");
+            if (version == null) {
+                String msg = String.format("Cannot serve web resource '%s' for mount '%s' because sitemap item" +
+                        "'%s' does not contain version param.",  contentPath,
+                        resolvedMount.getMount(), requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getQualifiedId());
+                throw new WebResourceException(msg);
+            }
+
+            final WebResource webResource;
+            if (version.equals(webResourceBundle.getChecksum())) {
+                webResource = webResourceBundle.get(contentPath);
+            } else  {
+                webResource = webResourceBundle.get(contentPath, version);
+            }
+
+            setHeaders(response, webResource);
+            final Binary binary = webResource.getBinary();
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copy(binary.getStream(), outputStream);
             outputStream.flush();
@@ -102,10 +120,10 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
     }
 
 
-    public static void setHeaders(HttpServletResponse response, Content content) throws RepositoryException {
+    public static void setHeaders(final HttpServletResponse response, final WebResource webResource) throws RepositoryException {
         // no need for ETag since expires 1 year
-        response.setHeader("Content-Length", Long.toString(content.getBinary().getSize()));
-        response.setContentType(content.getMimeType());
+        response.setHeader("Content-Length", Long.toString(webResource.getBinary().getSize()));
+        response.setContentType(webResource.getMimeType());
         // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
         response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
         response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);

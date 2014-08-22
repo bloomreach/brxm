@@ -26,18 +26,19 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import com.google.common.collect.ImmutableList;
-
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.webresources.Content;
-import org.onehippo.cms7.services.webresources.WebResource;
+import org.onehippo.cms7.services.webresources.WebResourceBundle;
 import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.slf4j.Logger;
@@ -90,6 +91,7 @@ public class HstWebResourceTag extends ParamContainerTag {
             HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
 
             final String webResourcePath = PathUtils.normalizePath(path);
+
             final HstSite hstSite;
             if (reqContext == null ||
                     (hstSite = reqContext.getResolvedMount().getMount().getHstSite()) == null ||
@@ -101,76 +103,87 @@ public class HstWebResourceTag extends ParamContainerTag {
                 return EVAL_PAGE;
             }
 
-            final HstSiteMapItem webResourceItem = hstSite.getSiteMap().getSiteMapItemByRefId(WEB_RESOURCES_SITEMAP_ITEM_ID);
+            final HstSiteMapItem webResourceSiteMapItem = hstSite.getSiteMap().getSiteMapItemByRefId(WEB_RESOURCES_SITEMAP_ITEM_ID);
 
-            if (webResourceItem == null ||
-                    !WEB_RESOURCE_NAMED_PIPELINE_NAME.equals(webResourceItem.getNamedPipeline())){
+            if (webResourceSiteMapItem == null ||
+                    !WEB_RESOURCE_NAMED_PIPELINE_NAME.equals(webResourceSiteMapItem.getNamedPipeline())){
                 log.warn("Cannot create webresource link for site '{}' because it does not have a sitemap " +
-                        "that contains a sitemap item with properties '{} = {}' and '{} = {}'",
+                                "that contains a sitemap item with properties '{} = {}' and '{} = {}'",
                         hstSite.getConfigurationPath(), HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID, WEB_RESOURCES_SITEMAP_ITEM_ID,
                         HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE, WEB_RESOURCE_NAMED_PIPELINE_NAME);
                 return EVAL_PAGE;
             }
 
-            // check whether no wildcards presents in webResourceItem or ancestor
-            HstSiteMapItem current = webResourceItem;
-            StringBuilder fullWebResourcesPath = new StringBuilder();
+            // check whether no wildcards presents in webResourceSiteMapItem or ancestor
+            HstSiteMapItem current = webResourceSiteMapItem;
+            StringBuilder webResourcesPrefix = new StringBuilder("/");
             while (current != null) {
                 if (current.containsAny() || current.containsWildCard() ||
                         current.isAny() || current.isWildCard()) {
                     log.warn("Cannot create webresource link for site '{}' because the sitemap item " +
                                     "for the webresources '{}' contains wildcards (or one of its parents).",
-                            hstSite.getConfigurationPath(), webResourceItem.getQualifiedId());
+                            hstSite.getConfigurationPath(), webResourceSiteMapItem.getQualifiedId());
                     return EVAL_PAGE;
                 }
-                fullWebResourcesPath.insert(0, current.getValue()).insert(0, "/");
+                webResourcesPrefix.insert(0, current.getValue()).insert(0, "/");
                 current = current.getParentItem();
             }
-
-            final String fullWebResourcePath = fullWebResourcesPath.append("/").append(webResourcePath).toString();
 
             WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
             if (service == null) {
                 log.error("Missing service for '{}'. Cannot create webresource url.", WebResourcesService.class.getName());
                 return EVAL_PAGE;
             }
+
+            final ResolvedMount resolvedMount = reqContext.getResolvedMount();
             try {
                 final Session session = reqContext.getSession();
-                final WebResource webResource = service.getJcrWebResources(session).get(path);
-
-                Content content;
-                if (reqContext.isCmsRequest() || reqContext.getResolvedMount().getMount().isPreview()) {
-                    content = webResource.getContent();
-                } else {
-                    content = webResource.getContent(webResource.getLatestRevisionId());
+                final Channel channel = resolvedMount.getMount().getChannel();
+                if (channel == null) {
+                    log.warn("Cannot create web resource URLs for mount '{}' because it does not have a " +
+                            "channel configuration.", resolvedMount.getMount());
+                    return EVAL_PAGE;
                 }
 
-                if (content.getRevisionId() == null) {
-                    // include cache busting and make sure visitors cannot guess url of css/js of trunk
-                    final String hash = content.getHash();
-                    if (hash != null) {
-                        parametersMap.put("hash", ImmutableList.of(hash));
+                String bundleName = channel.getId();
+                String bundleVersion = null;
+                final ChannelInfo channelInfo = resolvedMount.getMount().getChannelInfo();
+                if (channelInfo != null) {
+                    if (StringUtils.isNotBlank(channelInfo.getWebResourceBundleName())) {
+                        bundleName = channelInfo.getWebResourceBundleName();
                     }
-                } else {
-                    // possibly a version is already set explicitly through ParamTag. In that case we skip it
-                    if (!parametersMap.containsKey("version")) {
-                        parametersMap.put("version", ImmutableList.of(content.getRevisionId()));
+                    if (StringUtils.isNotBlank(channelInfo.getWebResourceBundleVersion())) {
+                        bundleVersion = channelInfo.getWebResourceBundleVersion();
                     }
                 }
 
+                try {
+                    final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
+                    final String latestTagName =  webResourceBundle.getLatestTagName();
+                    if (bundleVersion != null) {
+                        webResourcesPrefix.append(bundleVersion);
+                    } else if (reqContext.isCmsRequest()
+                            || resolvedMount.getMount().isPreview()
+                            || latestTagName == null) {
+                        webResourcesPrefix.append(webResourceBundle.getChecksum());
+                    } else {
+                        webResourcesPrefix.append(latestTagName);
+                    }
+                } catch (WebResourceException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Cannot find webresource bundle '{}'", bundleName, e);
+                    } else {
+                        log.info("Cannot find webresource bundle '{}' : {}", bundleName, e.toString());
+                    }
+                    return EVAL_PAGE;
+                }
             } catch (RepositoryException e) {
                 log.error("Exception while trying to retrieve the node path for the edit location", e);
                 return EVAL_PAGE;
-            } catch (WebResourceException e) {
-                if (log.isDebugEnabled()) {
-                    log.info("Cannot create resource link '{}'", fullWebResourcePath, e);
-                } else {
-                    log.info("Cannot create resource link '{}' : cause '{}'", fullWebResourcePath, e.toString());
-                }
-                return EVAL_PAGE;
             }
 
-            HstLink link = reqContext.getHstLinkCreator().create(fullWebResourcePath, reqContext.getResolvedMount().getMount(), true);
+            final String fullWebResourcePath = webResourcesPrefix.append("/").append(webResourcePath).toString();
+            HstLink link = reqContext.getHstLinkCreator().create(fullWebResourcePath, resolvedMount.getMount(), true);
             String urlString = link.toUrlForm(reqContext, false);
 
             try {
@@ -217,14 +230,9 @@ public class HstWebResourceTag extends ParamContainerTag {
         return var;
     }
 
-    public String getPath() {
-        return this.path;
-    }
-
     public void setPath(String path) {
         this.path = path;
     }
-
 
     /**
      * Sets the var property.
