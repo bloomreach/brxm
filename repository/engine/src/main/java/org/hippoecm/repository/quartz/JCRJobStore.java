@@ -31,20 +31,20 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
+import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.spi.Event;
 import org.apache.jackrabbit.util.ISO8601;
+import org.hippoecm.repository.api.SynchronousEventListener;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
@@ -72,6 +72,7 @@ import org.quartz.spi.TriggerFiredResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRONEXPRESSION;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRON_TRIGGER;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_DATA;
@@ -83,6 +84,9 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_R
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SIMPLE_TRIGGER;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_STARTTIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
+import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
+import static org.quartz.SimpleTrigger.REPEAT_INDEFINITELY;
 
 
 public class JCRJobStore implements JobStore {
@@ -96,6 +100,8 @@ public class JCRJobStore implements JobStore {
 
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private Map<String, Future<?>> keepAlives = Collections.synchronizedMap(new HashMap<String, Future<?>>());
+
+    private EventListener listener;
 
     public JCRJobStore() {
         this(TWO_MINUTES, null);
@@ -123,15 +129,51 @@ public class JCRJobStore implements JobStore {
         }
         initializeTriggers();
         try {
-            getSession().getWorkspace().getObservationManager().addEventListener(new EventListener() {
+            getSession().getWorkspace().getObservationManager()
+                    .addEventListener(listener = new SynchronousEventListener() {
                 @Override
                 public void onEvent(final EventIterator events) {
-                    initializeTriggers();
+                    if (hasTriggerUpdateEvents(events)) {
+                        initializeTriggers();
+                    }
                 }
-            }, Event.ALL_TYPES, jobStorePath, true, null, null, true);
+
+            }, ALL_EVENTS, jobStorePath, true, null, null, true);
         } catch (RepositoryException e) {
             log.error("Failed to register event listener for initializing triggers", e);
         }
+    }
+
+    /**
+     * True if either a hipposched property was added, removed or changed,
+     * or a node event came in.
+     */
+    static boolean hasTriggerUpdateEvents(final EventIterator events) {
+        while (events.hasNext()) {
+            final Event event = events.nextEvent();
+            if (JcrUtils.isPropertyEvent(event)) {
+                try {
+                    final String propertyName = substringAfterLast(event.getPath(), "/");
+                    if (isTriggerUpdateProperty(propertyName)) {
+                        return true;
+                    }
+                } catch (RepositoryException ignore) {
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isTriggerUpdateProperty(final String propertyName) {
+        switch (propertyName) {
+            case HIPPOSCHED_ENABLED:
+            case HIPPOSCHED_STARTTIME:
+            case HIPPOSCHED_ENDTIME:
+            case HIPPOSCHED_REPEATINTERVAL:
+            case HIPPOSCHED_CRONEXPRESSION:
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -231,6 +273,12 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public void shutdown() {
+        if (listener != null) {
+            try {
+                session.getWorkspace().getObservationManager().removeEventListener(listener);
+            } catch (RepositoryException ignore) {
+            }
+        }
     }
 
     @Override
@@ -251,13 +299,13 @@ public class JCRJobStore implements JobStore {
     @Override
     public void storeJobAndTrigger(final JobDetail newJob, final OperableTrigger newTrigger)
             throws ObjectAlreadyExistsException, JobPersistenceException {
-        if (!(newJob instanceof JCRJobDetail)) {
-            throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
+        if (!(newJob instanceof RepositoryJobDetail)) {
+            throw new JobPersistenceException("JobDetail must be of type RepositoryJobDetail");
         }
         if (!(newTrigger instanceof SimpleTrigger) && !(newTrigger instanceof CronTrigger)) {
             throw new JobPersistenceException("Cannot store trigger of type " + newTrigger.getClass().getName());
         }
-        final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
+        final RepositoryJobDetail jobDetail = (RepositoryJobDetail) newJob;
         final Session session = getSession();
         synchronized(session) {
             try {
@@ -612,9 +660,11 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public void triggeredJobComplete(final OperableTrigger trigger, final JobDetail jobDetail, final Trigger.CompletedExecutionInstruction triggerInstCode) {
-        if (!(jobDetail instanceof JCRJobDetail)) {
-            log.warn("JobDetail must be of type JCRJobDetail");
+        if (!(jobDetail instanceof RepositoryJobDetail)) {
+            log.warn("JobDetail must be of type RepositoryJobDetail");
+            return;
         }
+        RepositoryJobDetail repositoryJobDetail = (RepositoryJobDetail) jobDetail;
         final Session session = getSession();
         synchronized (session) {
             try {
@@ -625,23 +675,40 @@ public class JCRJobStore implements JobStore {
                 if(nextFire != null) {
                     final java.util.Calendar nextFireTime = dateToCalendar(nextFire);
                     triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
+                    if (trigger instanceof SimpleTrigger) {
+                        updateRepeatCount((SimpleTrigger) trigger, triggerNode);
+                    }
                     session.save();
                     unlock(session, triggerNode.getPath());
                 } else {
-                    final String jobIdentifier = ((JCRJobDetail) jobDetail).getIdentifier();
+                    final String jobIdentifier = repositoryJobDetail.getIdentifier();
                     final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
-                    JcrUtils.ensureIsCheckedOut(jobNode.getParent());
-                    jobNode.remove();
-                    session.save();
+                    if (removeAfterLastFireTime(jobNode)) {
+                        JcrUtils.ensureIsCheckedOut(jobNode.getParent());
+                        jobNode.remove();
+                        session.save();
+                    }
                 }
             } catch (ItemNotFoundException e) {
                 log.info("Trigger no longer exists: " + trigger.getKey().getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
-                log.error("Failed to finalize job: " + ((JCRJobDetail) jobDetail).getIdentifier(), e);
+                log.error("Failed to finalize job: " + repositoryJobDetail.getIdentifier(), e);
             }
         }
 
+    }
+
+    private void updateRepeatCount(final SimpleTrigger trigger, final Node triggerNode) throws RepositoryException {
+        final int repeatCount = trigger.getRepeatCount();
+        if (repeatCount != REPEAT_INDEFINITELY) {
+            final int newRepeatCount = repeatCount -1;
+            triggerNode.setProperty(HIPPOSCHED_REPEATCOUNT, newRepeatCount);
+        }
+    }
+
+    private boolean removeAfterLastFireTime(final Node jobNode) throws RepositoryException {
+        return jobNode.isNodeType(HIPPOSCHED_WORKFLOW_JOB);
     }
 
     @Override

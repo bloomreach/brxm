@@ -41,6 +41,10 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.repository.util.JcrConstants;
 
+import static javax.jcr.observation.Event.PROPERTY_ADDED;
+import static javax.jcr.observation.Event.PROPERTY_CHANGED;
+import static javax.jcr.observation.Event.PROPERTY_REMOVED;
+
 /**
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
  */
@@ -50,7 +54,7 @@ public class JcrUtils {
 
 
     public static final int ALL_EVENTS = Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED
-            | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
+            | PROPERTY_ADDED | PROPERTY_CHANGED | PROPERTY_REMOVED;
 
     /**
      * Get the node at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such node exists.
@@ -826,6 +830,10 @@ public class JcrUtils {
      */
     public static Iterable<Property> getProperties(Node node) throws RepositoryException {
         return new PropertyIterable(node.getProperties());
+    }
+
+    public static boolean isPropertyEvent(final Event event) {
+        return event.getType() == PROPERTY_REMOVED || event.getType() == PROPERTY_ADDED || event.getType() == PROPERTY_CHANGED;
     }
 
     private static boolean isAutoCreatedNode(final String childName, Node parent) throws RepositoryException {

@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
+import org.quartz.impl.JobDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_A
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_VALUES;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS;
 
-class RepositoryJobDetail extends JCRJobDetail {
+class RepositoryJobDetail extends JobDetailImpl {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryJobDetail.class);
 
@@ -39,7 +40,7 @@ class RepositoryJobDetail extends JCRJobDetail {
     private final Map<String, String> attributes = new HashMap<String, String>();
 
     RepositoryJobDetail(final Node jobNode, final RepositoryJobInfo info) throws RepositoryException {
-        super(jobNode, RepositoryJobJob.class);
+        super(jobNode.getIdentifier(), RepositoryJobJob.class);
         this.repositoryJobClassName = info.getJobClass().getName();
         for (String attributeName : info.getAttributeNames()) {
             attributes.put(attributeName, info.getAttribute(attributeName));
@@ -47,7 +48,7 @@ class RepositoryJobDetail extends JCRJobDetail {
     }
 
     RepositoryJobDetail(final Node jobNode) throws RepositoryException {
-        super(jobNode, RepositoryJobJob.class);
+        super(jobNode.getIdentifier(), RepositoryJobJob.class);
         repositoryJobClassName = jobNode.getProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS).getString();
         if (jobNode.hasProperty(HIPPOSCHED_ATTRIBUTE_NAMES)) {
             final Value[] nameValues = jobNode.getProperty(HIPPOSCHED_ATTRIBUTE_NAMES).getValues();
@@ -71,6 +72,10 @@ class RepositoryJobDetail extends JCRJobDetail {
         }
     }
 
+    public String getIdentifier() {
+        return getName();
+    }
+
     public String getRepositoryJobClassName() {
         return repositoryJobClassName;
     }
@@ -78,4 +83,5 @@ class RepositoryJobDetail extends JCRJobDetail {
     public Map<String, String> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
+
 }
