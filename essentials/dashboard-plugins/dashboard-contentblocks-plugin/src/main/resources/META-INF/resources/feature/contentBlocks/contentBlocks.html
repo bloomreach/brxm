@@ -15,33 +15,50 @@
   -->
 
 <div class="panel panel-default" ng-controller="contentBlocksCtrl">
-    <div class="panel-heading">Content Blocks</div>
+    <div class="panel-heading"><h3>Content Blocks</h3></div>
     <div class="panel-body">
-        <div class="alert alert-success"><p>{{introMessage}}</p>
-            <p ng-bind-html="deliberatelyTrustDangerousSnippet"></p></div>
+        <p>The Content Blocks feature provides support for adding <em>content blocks fields</em> to your document types.
+            A content block field is a collection of different (potentially complex) field types from which the content
+            authors may choose, and it is represented by a <em>provider</em>. A provider is a specialized compound field
+            which holds together all choices of the content blocks field.
+        </p>
+        <p>This configuration screen allows you to create new (empty) providers, and associate them with your document
+            types. After creating a new provider, you want to add field choices to it in the CMS Document Type
+            Editor in order to make it a meaningful provider. You can click on the provider's link to get there.
+        </p>
+        <p>When you associate a provider with one of your document types, the corresponding content blocks field will
+            be created at the default location for new fields. You can move the content blocks field to the desired
+            position in (again) the CMS Document Type Editor. You can click on the document type's link to get there.
+        </p>
+        <p class="alert alert-info">Note that both the creation of a new provider and associating providers with
+            document types will require an update of your content beans. The BeanWriter tool is currently not capable of
+            dealing with Content Blocks fields correctly, so you'll need to do this manually, in your project sources.
+        </p>
+        <p>You can find more detailed documentation for the
+            <a target="_blank" href="http://content-blocks.forge.onehippo.org">Content Blocks plugin in the Hippo Forge</a>.
+        </p>
         <h4>Available Providers</h4>
         <div class="alert-warning" ng-hide="providers.length > 0">
             <p><strong>No providers found</strong></p>
         </div>
-        <div class="alert-warning" ng-show="providers.length > 0">
-            <p><strong>Note:</strong> If you delete a provider, its definition will be deleted from the
-            <em>hippo:namespaces</em> part of the repository. The corresponding CND entry, however, cannot be deleted,
-            as it constitutes a backwards incompatible CND change. In order to get rid of a provider completely,
-            you'll need to manually erase its entry in the CND bootstrap resource, and rebuild a clean repository
-            (remove your <em>storage</em> folder).
-            </p>
-        </div>
         <ul ng-show="providers.length > 0" class="list-group">
             <li class="list-group-item essentials-group-item" ng-repeat="provider in providers">
-                <span class="badge"><a href="" ng-click="onDeleteProvider(provider)">X</a></span>
-                <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
+                <a href="{{baseCmsNamespaceUrl}}{{provider.repositoryPath}}" target="_blank">{{provider.translatedName}} </a>
             </li>
         </ul>
+        <h4>Create new Provider</h4>
         <form novalidate name="providerForm">
             <div class="input-group">
-                <input type="text" class="form-control" ng-model="providerInput" ng-required="true"/>
+                <input type="text"
+                       class="form-control"
+                       ng-model="newProviderName"
+                       ng-required="true"
+                       placeholder="Enter provider name"/>
                 <span class="input-group-btn">
-                    <button ng-disabled="!providerForm.$valid" class="btn btn-primary" type="submit" ng-click="onAddProvider(providerInput)">Add new</button>
+                    <button ng-disabled="!providerForm.$valid"
+                            class="btn btn-primary"
+                            type="submit"
+                            ng-click="createProvider()">Create</button>
                 </span>
             </div>
         </form>
@@ -59,29 +76,22 @@
                     <td>
                       <essentials-cms-document-type-deep-link
                           name-space="{{docType.prefix}}"
-                          document-name="{{docType.name}}"
-                          label="{{docType.key}}">
+                          document-name="{{docType.nodeName}}"
+                          label="{{docType.translatedName}}">
                       </essentials-cms-document-type-deep-link>
                     </td>
                     <td>
-                        <select hippo.theme.select-box ng-model="docType.providers.providerNames"
+                        <select hippo.theme.select-box ng-model="docType.providers"
                               no-results-text="No Providers available"
-                              ng-options="c.key for c in providers" multiple="multiple"
+                              ng-options="p.translatedName for p in providers" multiple="multiple"
                               data-options="providers"
                               data-placeholder="Select Providers"></select>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            <div ng-show="fieldsModified" class="alert alert-info">
-              <p>You have modified one or more document types, and may want to update your document
-                type beans now. The BeanWriter tool is currently not capable of dealing with Content Blocks
-                provider fields correctly, so you'll need to do this manually, in your project sources.</p>
-              <p>Also, you may want to move the new fields to the desired position in the CMS Document Type
-                Editor (Use above document type links).</p>
-            </div>
             <div class="pull-right">
-                <button class="btn btn-primary" ng-click="saveBlocksConfiguration()">Save</button>
+                <button class="btn btn-primary" ng-click="update()">Save</button>
             </div>
             <p class="clearfix">&nbsp;</p>
         </div>
