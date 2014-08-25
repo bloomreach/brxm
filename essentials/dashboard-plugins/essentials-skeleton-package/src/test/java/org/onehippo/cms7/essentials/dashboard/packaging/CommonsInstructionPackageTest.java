@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.packaging;
 
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
@@ -32,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 public class CommonsInstructionPackageTest extends BaseRepositoryTest{
 
 
-    public static final int INSTRUCTIONS_SIZE = 6;
+    public static final int INSTRUCTIONS_SIZE = 7;
 
     @Test
     public void testGroupNames() throws Exception {
@@ -41,7 +40,7 @@ public class CommonsInstructionPackageTest extends BaseRepositoryTest{
         injector.autowireBean(instructionPackage);
         final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        Assert.assertTrue(instructionSets.size() == INSTRUCTIONS_SIZE);
+        assertEquals(instructionSets.size(), INSTRUCTIONS_SIZE);
         instructionPackage.execute(getContext());
     }
 
