@@ -21,65 +21,69 @@
         .controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             var restEndpoint = $rootScope.REST.dynamic + 'contentblocks/';
 
-            $scope.deliberatelyTrustDangerousSnippet = $sce.trustAsHtml('<a target="_blank" href="http://content-blocks.forge.onehippo.org">Detailed documentation</a>');
-            $scope.introMessage = "Content Blocks plugin provides the content/document editor an ability to add multiple pre-configured compound type blocks to a document. You can configure the available content blocks on per document type basis.";
-            $scope.providerInput = "";
             $scope.baseCmsNamespaceUrl = "http://localhost:8080/cms?path=";
             $scope.providers = [];
             $scope.providerMap = {};
-            $scope.fieldsModified = false;
+            $scope.documentTypes = [];
 
-            // delete a provider
-            $scope.onDeleteProvider = function (provider) {
-                $http.delete(restEndpoint + 'compounds/delete/' + provider.key).success(function (data) {
-                    // reload providers, we deleted one:
-                    loadProviders();
+            $scope.newProviderName = "";
+            $scope.createProvider = function () {
+                $http.put(restEndpoint + 'providers/' + $scope.newProviderName).success(function (data) {
+                    loadProviders(); // reload providers after adding one
                 });
+                $scope.newProviderName = "";
             };
 
-            // create a provider
-            $scope.onAddProvider = function (providerName) {
-                $scope.providerInput = "";
-                $http.put(restEndpoint + 'compounds/create/' + providerName, providerName).success(function (data) {
-                    // reload providers, we added new one:
-                    loadProviders();
-                });
-            };
-
-            /**
-             * called on document save
-             */
-            $scope.saveBlocksConfiguration = function () {
-                var payload = {"documentTypes": {"items": []}};
-                payload.documentTypes.items = $scope.documentTypes;
-                angular.forEach(payload.documentTypes.items, function (docType) {
-                    // populate new providers
-                    docType.providers.items = [];
-                    angular.forEach(docType.providers.providerNames, function (newProvider) {
-                        var provider = $scope.providerMap[newProvider.key];
-                        docType.providers.items.push({
-                            key: newProvider.key,
-                            value: newProvider.value
+            $scope.update = function () {
+                // per document type, compare the current providers (which may have been adjusted)
+                // with the originally loaded providers. If there are differences, some providers
+                // will have to be added or removed.
+                var actionableDocuments = [];
+                angular.forEach($scope.documentTypes, function(docType) {
+                    var actionableProviders = [];
+                    angular.forEach(docType.providers, function(savedProvider) {
+                        var isAdded = true;
+                        angular.forEach(docType.providerActions, function(loadedProvider) {
+                            if (savedProvider.name === loadedProvider.name) {
+                                isAdded = false; // docType already had this provider.
+                            }
                         });
+                        if (isAdded) {
+                            actionableProviders.push({
+                                "name": savedProvider.name,
+                                "add": true
+                            });
+                        }
                     });
-
-                    // clean-up front-end-only attributes
-                    delete docType.providers.providerNames;
-                    delete docType.prefix;
-                    delete docType.name;
+                    angular.forEach(docType.providerActions, function(loadedProvider) {
+                        var isDeleted = true;
+                        angular.forEach(docType.providers, function(savedProvider) {
+                            if (loadedProvider.name === savedProvider.name) {
+                                isDeleted = false; // docType still has this provider
+                            }
+                        })
+                        if (isDeleted) {
+                            actionableProviders.push({
+                                "name": loadedProvider.name,
+                                "add": false
+                            })
+                        }
+                    });
+                    if (actionableProviders.length) {
+                        actionableDocuments.push({
+                            "name": docType.name,
+                            "providerActions": actionableProviders
+                        });
+                    }
                 });
 
-                $http.post(restEndpoint + 'compounds/contentblocks/create', payload).success(function (data) {
-                    $scope.fieldsModified = true;
-                    loadDocumentTypes();
-                });
+                if (actionableDocuments.length) {
+                    $http.post(restEndpoint + 'update', { "documentTypes": actionableDocuments }).success(function() {
+                        loadDocumentTypes();
+                    });
+                }
             };
 
-            // helper function for deep-linking into the CMS document type editor.
-            $scope.splitString = function (string, nb) {
-                $scope.array = string.split(',');
-                return $scope.result = $scope.array[nb];
-            };
             $scope.init = function () {
                 loadProviders();
                 loadDocumentTypes();
@@ -88,26 +92,36 @@
                 
             // Helper functions
             function loadProviders() {
-                $http.get(restEndpoint + 'compounds').success(function (data) {
+                $http.get(restEndpoint + 'providers').success(function (data) {
                     $scope.providers = data.items;
-                    
+
                     // (re-)initialize the provider map
                     $scope.providerMap = {};
-                    angular.forEach($scope.providers, function (provider, key) {
-                        $scope.providerMap[provider.key] = provider;
+                    angular.forEach($scope.providers, function (provider) {
+                        $scope.providerMap[provider.name] = provider;
+                    });
+
+                    // replace the provider links
+                    angular.forEach($scope.documentTypes, function(docType) {
+                        var newProviders = [];
+                        angular.forEach(docType.providers, function(provider) {
+                            newProviders.push($scope.providerMap[provider.name]);
+                        });
+                        docType.providers = newProviders;
                     });
                 });
             }
             function loadDocumentTypes() {
                 $http.get(restEndpoint).success(function (data) {
-                    $scope.documentTypes = data.items;
+                    $scope.documentTypes = data.documentTypes;
                     angular.forEach($scope.documentTypes, function (docType) {
-                        var parts = docType.value.split(':');
+                        // prepare document types for displaying in the UI.
+                        var parts = docType.name.split(':');
                         docType.prefix = parts[0];
-                        docType.name = parts[1];
-                        docType.providers.providerNames = [];
-                        angular.forEach(docType.providers.items, function (provider) {
-                            docType.providers.providerNames.push($scope.providerMap[provider.key]);
+                        docType.nodeName = parts[1];
+                        docType.providers = [];
+                        angular.forEach(docType.providerActions, function(provider) {
+                            docType.providers.push($scope.providerMap[provider.name]);
                         });
                     });
                 });

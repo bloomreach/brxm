@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks;
+package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
-import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
+public class ProviderActionRestful implements Restful {
+    private String name; // full (name-spaced) name of provider compound
+    private boolean add; // flag indicating that the provider shall be added or removed from document type
 
-/**
- * @version "$Id$"
- */
-public class AllDocumentMatcher implements JcrMatcher {
+    public String getName() {
+        return name;
+    }
 
-    @Override
-    public boolean matches(final Node node) throws RepositoryException {
-        return true;
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public boolean isAdd() {
+        return add;
+    }
+
+    public void setAdd(final boolean add) {
+        this.add = add;
     }
 }
