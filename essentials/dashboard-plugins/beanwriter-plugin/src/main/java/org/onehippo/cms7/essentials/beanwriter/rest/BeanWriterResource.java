@@ -78,6 +78,7 @@ public class BeanWriterResource extends BaseResource {
             eventBus.post(new RebuildEvent("Beanwriter", "HST Beans changed, project rebuild needed"));
         }
 
+
         return messages;
     }
 }

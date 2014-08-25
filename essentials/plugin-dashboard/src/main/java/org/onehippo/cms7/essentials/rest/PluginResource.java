@@ -828,10 +828,12 @@ public class PluginResource extends BaseResource {
 
     private void registerEndpoints(final Collection<String> restClasses) {
         if (!initialized && !restClasses.isEmpty()) {
+            //eventBus.register(rebuildListener);
             initialized = true;
             final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
             final Bus bus = BusFactory.getDefaultBus();
             application = new DynamicRestPointsApplication();
+            getInjector().autowireBean(application);
             addClasses(restClasses);
             // register:
             final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();

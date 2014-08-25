@@ -43,6 +43,15 @@ public class RestServlet extends CXFServlet {
         final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
         final JAXRSServerFactoryBean bean = delegate.createEndpoint(new EndpointsRestApplication(), JAXRSServerFactoryBean.class);
         final Bus bus = getBus();
+/*
+
+        final BindingFactoryManager manager = bus.getExtension(BindingFactoryManager.class);
+        try {
+            manager.getBindingFactory(JAXRSBindingFactory.JAXRS_BINDING_ID);
+        } catch (Throwable b) {
+            manager.registerBindingFactory(JAXRSBindingFactory.JAXRS_BINDING_ID, new JAXRSBindingFactory(bus));
+        }
+*/
         bean.setBus(bus);
         final Server server = bean.create();
         server.start();

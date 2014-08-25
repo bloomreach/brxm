@@ -19,7 +19,9 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 import java.io.File;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
@@ -35,6 +37,7 @@ import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructi
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -52,11 +55,13 @@ public class BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(BaseResource.class);
 
+    @Singleton
     @Inject
     private AutowireCapableBeanFactory injector;
 
+    @Singleton
+    @Inject
     private ApplicationContext applicationContext;
-
 
 
     public MessageRestful createErrorMessage(final String message, final HttpServletResponse response) {
@@ -98,7 +103,7 @@ public class BaseResource {
     /**
      * This function determines by the fact that all dependencies and repositories specified in a plugin's descriptor
      * are present in the relevant POM files if the plugin was packaged with Essentials, or pulled-in from a marketplace.
-     *
+     * <p/>
      * The return value of this function is only valid while the plugin is in its "discovered" installation state.
      *
      * @param plugin the plugin under consideration
@@ -111,7 +116,7 @@ public class BaseResource {
                 return false;
             }
         }
-        final List<Repository>  repositories = plugin.getRepositories();
+        final List<Repository> repositories = plugin.getRepositories();
         for (Repository repository : repositories) {
             if (!DependencyUtils.hasRepository(repository)) {
                 return false;
@@ -168,15 +173,28 @@ public class BaseResource {
     }
 
 
-
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {
             if (applicationContext == null) {
-                applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+                if (ApplicationModule.getApplicationContextRef() == null) {
+                    // NOTE just a hack, avoids NPE, because it will inject beans, however, it is outside of current spring context :(
+                    applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+                } else {
+                    // TODO check if we can use  ContextLoader.getCurrentWebApplicationContext();
+                    applicationContext = ApplicationModule.getApplicationContextRef();
+                }
             }
             injector = applicationContext.getAutowireCapableBeanFactory();
         }
         return injector;
 
+    }
+
+
+    @PostConstruct
+    public void init() {
+        if (getInjector() != null) {
+            injector.autowireBean(this);
+        }
     }
 }

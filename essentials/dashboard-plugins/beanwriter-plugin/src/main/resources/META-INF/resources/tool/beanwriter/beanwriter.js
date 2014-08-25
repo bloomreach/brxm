@@ -22,7 +22,7 @@
                 $scope.resultMessages = [];
                 $scope.runBeanWriter = function () {
                     $http.post($scope.endpoint).success(function (data) {
-                        $scope.resultMessages = data;
+                        //$scope.resultMessages = data;
                     });
                 };
             })

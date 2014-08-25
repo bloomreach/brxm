@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +45,7 @@ public class ApplicationModule {
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
 
-    private final transient EventBus eventBus = new EventBus("Essentials Event Bus");
+    private static final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
 
     @Inject
@@ -55,20 +56,25 @@ public class ApplicationModule {
     private ValidationEventListener validationEventListener;
     @Inject
     private InstructionsEventListener instructionsEventListener;
+    @Inject
+    private RebuildProjectEventListener rebuildProjectEventListener;
 
-    private volatile boolean initialized = false;
+    private static volatile boolean initialized = false;
 
     @Inject
     private ApplicationContext applicationContext;
+    private static ApplicationContext applicationContextRef;
+
 
     @Bean(name = "eventBus")
     @Singleton
     public EventBus getEventBus() {
         if (!initialized) {
+            applicationContextRef = applicationContext;
+            eventBus.register(rebuildProjectEventListener);
             eventBus.register(loggingPluginEventListener);
             eventBus.register(memoryPluginEventListener);
             eventBus.register(validationEventListener);
-            eventBus.register(instructionsEventListener);
             eventBus.register(instructionsEventListener);
             initialized = true;
         }
@@ -77,5 +83,8 @@ public class ApplicationModule {
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
+    }
+    public static ApplicationContext getApplicationContextRef() {
+        return applicationContextRef;
     }
 }

@@ -45,6 +45,7 @@ public class RebuildProjectEventListener implements PluginEventListener<RebuildE
         if (events.size() == MAX_ITEMS) {
             events.remove(0);
         }
+        events.add(event);
 
     }
 
