@@ -23,7 +23,7 @@
 
     <span class="feature-control pull-left" ng-show="hasMessages">
       <span class="fa" ng-class="{'fa-chevron-right': !showChanges, 'fa-chevron-down': showChanges}"></span>
-      <a ng-click="toggleChanges()">Changes made by this feature</a>
+      <a href="#" ng-click="toggleChanges($event)">Changes made by this feature</a>
     </span>
   </div>
   <div class="log-messages" ng-show="showChanges">

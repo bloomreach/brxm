@@ -43,8 +43,8 @@
         <div class="feature-description">
             <div class="feature-description-short" ng-hide="showDescription">
                 <div ng-bind-html="plugin.introduction"></div>
-                <a ng-show="plugin.description || plugin.imageUrls.length"
-                   data-ng-click="toggleDescription()">Read more...</a>
+                <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
+                   data-ng-click="toggleDescription($event)">Read more</a>
             </div>
             <div class="feature-description-long" ng-show="showDescription">
                 <div ng-bind-html="plugin.introduction"></div>
