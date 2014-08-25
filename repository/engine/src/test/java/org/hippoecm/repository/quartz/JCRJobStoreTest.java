@@ -108,16 +108,14 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testTriggeredJobCompleteSimpleAndRemove() throws Exception {
+    public void testCompletedWorkflowJobIsRemoved() throws Exception {
         final String jobNodePath = testTriggeredJobCompleteSimple(HIPPOSCHED_WORKFLOW_JOB);
-        // when the job was completed and the trigger doesn't have a next fire time, the job should be deleted
         assertFalse(session.nodeExists(jobNodePath));
     }
 
     @Test
-    public void testTriggeredJobCompleteSimpleDontRemove() throws Exception {
+    public void testCompletedRepositoryJobIsNotRemoved() throws Exception {
         final String jobNodePath = testTriggeredJobCompleteSimple(HIPPOSCHED_REPOSITORY_JOB);
-        // when the job was completed and the trigger doesn't have a next fire time, the job should still be there
         assertTrue(session.nodeExists(jobNodePath));
     }
 
