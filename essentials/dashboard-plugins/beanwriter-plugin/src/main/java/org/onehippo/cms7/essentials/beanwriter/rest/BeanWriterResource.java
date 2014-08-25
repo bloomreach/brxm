@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.beanwriter.rest;
 
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,7 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
@@ -39,6 +40,7 @@ import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 
 import com.google.common.collect.Multimap;
+import com.google.common.eventbus.EventBus;
 
 
 /**
@@ -49,6 +51,9 @@ import com.google.common.collect.Multimap;
 @Path("beanwriter/")
 public class BeanWriterResource extends BaseResource {
 
+
+    @Inject
+    private EventBus eventBus;
 
     @POST
     public RestfulList<MessageRestful> runBeanWriter(@Context ServletContext servletContext) throws Exception {
@@ -70,12 +75,7 @@ public class BeanWriterResource extends BaseResource {
         if (messages.getItems().size() == 0) {
             messages.add(new MessageRestful("All beans were up to date"));
         } else {
-            messages.add(new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG));
-
-            messages.add(new MessageRestful(
-                    "mvn clean package\n" +
-                            "mvn -P cargo.run", DisplayEvent.DisplayType.PRE
-            ));
+            eventBus.post(new RebuildEvent("Beanwriter", "HST Beans changed, project rebuild needed"));
         }
 
         return messages;

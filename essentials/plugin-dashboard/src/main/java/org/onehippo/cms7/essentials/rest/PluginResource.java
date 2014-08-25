@@ -61,7 +61,9 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
@@ -141,6 +143,9 @@ public class PluginResource extends BaseResource {
     @Inject
     private MemoryPluginEventListener listener;
 
+    @Inject
+    private RebuildProjectEventListener rebuildListener;
+
 
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
@@ -189,6 +194,14 @@ public class PluginResource extends BaseResource {
                 }
             }
         }
+        // check if we have external rebuild events:
+        final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
+        for (RebuildEvent rebuildEvent : rebuildEvents) {
+            systemInfo.setNeedsRebuild(true);
+            systemInfo.addRebuildPlugin(new PluginRestful(rebuildEvent.getPluginName()));
+        }
+
+
         return systemInfo;
 
 
