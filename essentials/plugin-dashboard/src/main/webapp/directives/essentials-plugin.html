@@ -41,16 +41,18 @@
             </div>
         </div>
         <div class="feature-description">
-            <div class="feature-description-short" ng-hide="showDescription">
-              <div class="col-sm-12 col-md-10 col-lg-8" ng-bind-html="plugin.introduction"></div>
-              <div class="clearfix"></div>
-              <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
-                 data-ng-click="toggleDescription($event)">Read more</a>
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short" ng-hide="showDescription">
+                  <div ng-bind-html="plugin.introduction"></div>
+                  <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
+                     data-ng-click="toggleDescription($event)">Read more</a>
+                </div>
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription">
+                    <div ng-bind-html="plugin.introduction"></div>
+                    <div ng-bind-html="plugin.description"></div>
+                </div>
             </div>
-            <div class="feature-description-long" ng-show="showDescription">
-                <div class="col-sm-12 col-md-10 col-lg-8" ng-bind-html="plugin.introduction"></div>
-                <div class="col-sm-12 col-md-10 col-lg-8" ng-bind-html="plugin.description"></div>
-                <div class="clearfix"></div>
+            <div ng-show="showDescription">
                 <div id="plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel" ng-show="plugin.imageUrls.length">
                     <!-- Indicators -->
                     <ol class="carousel-indicators">
@@ -73,6 +75,7 @@
                     </a>
                 </div>
             </div>
+            <a href="#" ng-show="showDescription" data-ng-click="toggleDescription($event)">Read less</a>
         </div>
         <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
     </div>
