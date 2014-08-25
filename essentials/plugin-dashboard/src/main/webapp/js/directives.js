@@ -306,7 +306,8 @@
                 templateUrl: 'directives/essentials-plugin.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
                     $scope.showDescription = false;
-                    $scope.toggleDescription = function () {
+                    $scope.toggleDescription = function ($event) {
+                        $event.preventDefault();
                         $scope.showDescription = !$scope.showDescription;
                     };
                     $scope.isDiscovered = function() {
@@ -374,7 +375,8 @@
                 },
                 templateUrl: 'directives/essentials-feature-footer.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
-                    $scope.toggleChanges = function() {
+                    $scope.toggleChanges = function($event) {
+                        $event.preventDefault();
                         $scope.showChanges = !$scope.showChanges;
 
                         // Lazy-loading messages
