@@ -266,15 +266,8 @@ public class ContentBeansService {
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
                 JavaSourceUtils.addExtendsClass(javaClass, "HippoGalleryImageSet");
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
-                // check if we need to update image sets:
-                final String updateInstruction = (String) context.getPlaceholderData().get(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS);
-                if (Boolean.valueOf(updateInstruction)) {
-                    log.info("updateInstruction {}", updateInstruction);
-                    // TODO...implement
-                }
-
+                addMethods(missingBean, javaClass, new ArrayList<String>());
             }
-            log.info("mySupertypes {}", mySupertypes);
         }
     }
 
@@ -477,7 +470,16 @@ public class ContentBeansService {
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
+                case "hippogallery:image":
+                    methodName = GlobalUtils.createMethodName(name);
+                    JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
+                    existing.add(name);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    log.debug(MSG_ADDED_METHOD, methodName);
+                    break;
                 default:
+
+
                     log.error("ERROR {}", child);
                     /*methodName = GlobalUtils.createMethodName(name);
                     // check if project namespace

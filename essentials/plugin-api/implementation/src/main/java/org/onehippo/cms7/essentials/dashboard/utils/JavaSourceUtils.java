@@ -466,6 +466,27 @@ public final class JavaSourceUtils {
     }
 
     /**
+     * Adds {@code getBean(namespace, HippoGalleryImageBean.class)} method
+     *
+     * @param path         source file path
+     * @param methodName   generated method name
+     * @param propertyName name of the property
+     * @param multiple     is multiple property
+     */
+    @SuppressWarnings(UNCHECKED)
+    public static void addBeanMethodHippoImage(final Path path, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getLinkedBeans", propertyName);
+            addImport(path, List.class.getName());
+        } else {
+            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageBean", path, methodName, propertyName);
+        }
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
+
+
+    }
+
+    /**
      * Adds {@code getLinkedBean(namespace, HippoGalleryImageSetBean.class)} method
      *
      * @param path         source file path
