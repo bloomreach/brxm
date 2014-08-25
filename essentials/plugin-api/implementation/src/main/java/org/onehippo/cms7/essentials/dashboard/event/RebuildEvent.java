@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-(function () {
-    "use strict";
-    angular.module('hippo.essentials')
-            .controller('beanWriterCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-                $scope.endpoint = $rootScope.REST.dynamic + 'beanwriter/';
-                $scope.resultMessages = [];
-                $scope.runBeanWriter = function () {
-                    $http.post($scope.endpoint).success(function (data) {
-                        //$scope.resultMessages = data;
-                    });
-                };
-            })
-})();
+package org.onehippo.cms7.essentials.dashboard.event;
+
+/**
+ * @version "$Id$"
+ */
+public class RebuildEvent extends MessageEvent {
+
+    private static final long serialVersionUID = 1L;
+
+    private final String pluginName;
+
+    public RebuildEvent(final String pluginName, final String message) {
+        super(message);
+        this.pluginName = pluginName;
+    }
+
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    @Override
+    public DisplayLocation getDisplayLocation() {
+        return DisplayLocation.SYSTEM;
+    }
+}
