@@ -109,20 +109,20 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testTriggeredJobCompleteSimpleAndRemove() throws Exception {
-        final String jobNodePath = testTriggeredJobCompleteSimple(true);
+        final String jobNodePath = testTriggeredJobCompleteSimple(HIPPOSCHED_WORKFLOW_JOB);
         // when the job was completed and the trigger doesn't have a next fire time, the job should be deleted
         assertFalse(session.nodeExists(jobNodePath));
     }
 
     @Test
     public void testTriggeredJobCompleteSimpleDontRemove() throws Exception {
-        final String jobNodePath = testTriggeredJobCompleteSimple(false);
+        final String jobNodePath = testTriggeredJobCompleteSimple(HIPPOSCHED_REPOSITORY_JOB);
         // when the job was completed and the trigger doesn't have a next fire time, the job should still be there
         assertTrue(session.nodeExists(jobNodePath));
     }
 
-    private String testTriggeredJobCompleteSimple(final Boolean workflowJob) throws RepositoryException, JobPersistenceException {
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, workflowJob ? HIPPOSCHED_WORKFLOW_JOB : HIPPOSCHED_REPOSITORY_JOB);
+    private String testTriggeredJobCompleteSimple(final String type) throws RepositoryException, JobPersistenceException {
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, type);
         final String jobNodePath = jobNode.getPath();
         final JobDetail jobDetail = store.retrieveJob(new JobKey(jobNode.getIdentifier()));
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
