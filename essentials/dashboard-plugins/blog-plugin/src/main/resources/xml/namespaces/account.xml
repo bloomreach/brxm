@@ -181,7 +181,7 @@
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
           <sv:property sv:name="source" sv:type="String">
-            <sv:value>/content/documents/administration/account-types</sv:value>
+            <sv:value>/content/documents/{{namespace}}/blog/account-types</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
