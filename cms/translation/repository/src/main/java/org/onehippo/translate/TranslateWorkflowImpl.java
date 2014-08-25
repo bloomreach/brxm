@@ -80,21 +80,23 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
         }
     }
 
+    @Override
     public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException {
         if (googleKey != null) {
             return AVAILABLE_HINTS;
         }
         return Collections.emptyMap();
     }
-    
+
+    @Override
     public void translate(String sourceLanguage, String targetLanguage, Set<String> fields) throws WorkflowException, RepositoryException, RemoteException {
         for (TranslatedProperty property : getPropertiesToTranslate(fields)) {
-            property.translate(targetLanguage, sourceLanguage);
+            property.translate(sourceLanguage, targetLanguage);
         }
         session.save();
     }
 
-    protected void translate(List<String> texts, String targetLanguage, String sourceLanguage) throws WorkflowException, RepositoryException {
+    protected void translate(String sourceLanguage, String targetLanguage, List<String> texts) throws WorkflowException, RepositoryException {
         try {
             final String parameters = createParamters(texts, targetLanguage, sourceLanguage);
             if (log.isDebugEnabled()) {
@@ -192,10 +194,10 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
             this.property = property;
         }
 
-        private void translate(final String targetLanguage, final String sourceLanguage) throws RepositoryException, WorkflowException {
+        private void translate(final String sourceLanguage, final String targetLanguage) throws RepositoryException, WorkflowException {
             List<String> values = getValues();
             if (!values.isEmpty()) {
-                TranslateWorkflowImpl.this.translate(values, targetLanguage, sourceLanguage);
+                TranslateWorkflowImpl.this.translate(sourceLanguage, targetLanguage, values);
                 setValues(values);
             }
         }
