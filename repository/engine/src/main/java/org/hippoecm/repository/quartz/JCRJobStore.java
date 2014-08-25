@@ -275,7 +275,7 @@ public class JCRJobStore implements JobStore {
     public void shutdown() {
         if (listener != null) {
             try {
-                session.getWorkspace().getObservationManager().removeEventListener(listener);
+                getSession().getWorkspace().getObservationManager().removeEventListener(listener);
             } catch (RepositoryException ignore) {
             }
         }
