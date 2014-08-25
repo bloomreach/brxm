@@ -25,6 +25,7 @@
         <p>This configuration screen allows you to create new (empty) providers, and associate them with your document
             types. After creating a new provider, you want to add field choices to it in the CMS Document Type
             Editor in order to make it a meaningful provider. You can click on the provider's link to get there.
+            Beware that field choices of type <em>compound</em> are currently supported.
         </p>
         <p>When you associate a provider with one of your document types, the corresponding content blocks field will
             be created at the default location for new fields. You can move the content blocks field to the desired
@@ -43,7 +44,7 @@
         </div>
         <ul ng-show="providers.length > 0" class="list-group">
             <li class="list-group-item essentials-group-item" ng-repeat="provider in providers">
-                <a href="{{baseCmsNamespaceUrl}}{{provider.repositoryPath}}" target="_blank">{{provider.translatedName}} </a>
+                <a href="{{baseCmsNamespaceUrl}}{{provider.repositoryPath}}" target="_blank">{{provider.translatedName}}</a>
             </li>
         </ul>
         <h4>Create new Provider</h4>
