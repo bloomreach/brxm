@@ -41,6 +41,10 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.repository.util.JcrConstants;
 
+import static javax.jcr.observation.Event.NODE_ADDED;
+import static javax.jcr.observation.Event.NODE_MOVED;
+import static javax.jcr.observation.Event.NODE_REMOVED;
+import static javax.jcr.observation.Event.PERSIST;
 import static javax.jcr.observation.Event.PROPERTY_ADDED;
 import static javax.jcr.observation.Event.PROPERTY_CHANGED;
 import static javax.jcr.observation.Event.PROPERTY_REMOVED;
@@ -51,10 +55,8 @@ import static javax.jcr.observation.Event.PROPERTY_REMOVED;
 public class JcrUtils {
 
 
-
-
-    public static final int ALL_EVENTS = Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED
-            | PROPERTY_ADDED | PROPERTY_CHANGED | PROPERTY_REMOVED;
+    public static final int ALL_EVENTS = NODE_ADDED | NODE_REMOVED | NODE_MOVED
+            | PROPERTY_ADDED | PROPERTY_CHANGED | PROPERTY_REMOVED | PERSIST;
 
     /**
      * Get the node at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such node exists.
