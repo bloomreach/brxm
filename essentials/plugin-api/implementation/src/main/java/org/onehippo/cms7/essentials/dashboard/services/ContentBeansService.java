@@ -412,7 +412,7 @@ public class ContentBeansService {
                     break;
                 case "Boolean":
                     methodName = GlobalUtils.createMethodName(name);
-                    JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
+                    JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
