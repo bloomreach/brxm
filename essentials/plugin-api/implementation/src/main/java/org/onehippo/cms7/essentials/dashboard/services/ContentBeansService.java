@@ -54,6 +54,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentBean;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentChildNode;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentProperty;
+import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
 import org.onehippo.cms7.essentials.dashboard.utils.code.EssentialsGeneratedMethod;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.onehippo.cms7.services.contenttype.ContentType;
@@ -84,7 +85,7 @@ public class ContentBeansService {
 
     private final Set<HippoContentBean> contentBeans;
     /**
-     * How many loops we run (beans extending none exising beans)
+     * How many loops we run (beans extending none existing beans)
      */
     private static final int MISSING_DEPTH_MAX = 5;
     private int missingBeansDepth = 0;
@@ -491,6 +492,24 @@ public class ContentBeansService {
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 default:
+                    // check if project type is used:
+                    final String prefix = child.getPrefix();
+                    if (prefix.equals(context.getProjectNamespacePrefix())) {
+                        final Map<String, Path> existingBeans = findExitingBeans();
+                        for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
+                            final Path myBeanPath = entry.getValue();
+                            final HippoEssentialsGeneratedObject a = JavaSourceUtils.getHippoGeneratedAnnotation(myBeanPath);
+                            if (a != null && a.getInternalName().equals(type)) {
+                                final String packageName = JavaSourceUtils.getPackageName(myBeanPath);
+                                final String className = JavaSourceUtils.getClassName(myBeanPath);
+                                methodName = GlobalUtils.createMethodName(name);
+                                final String importPath = String.format("%s.%s", packageName, className);
+                                JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importPath, methodName, name, multiple);
+                                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                                return;
+                            }
+                        }
+                    }
                     final String message = String.format("TODO: Beanwriter: Failed to create getter for node type: %s", type);
                     JavaSourceUtils.addClassJavaDoc(beanPath, message);
                     log.warn(message);

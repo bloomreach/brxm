@@ -500,6 +500,19 @@ public final class JavaSourceUtils {
 
     }
 
+    public static void addBeanMethodInternalType(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
+            addImport(path, List.class.getName());
+        } else {
+            addTwoArgumentsMethod("getChildBeansByName", className, path, methodName, propertyName);
+        }
+        addImport(path, importPath);
+
+
+    }
+
+
     /**
      * Adds {@code getLinkedBean(namespace, HippoGalleryImageSetBean.class)} method
      *
