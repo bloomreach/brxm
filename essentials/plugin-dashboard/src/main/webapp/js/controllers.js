@@ -143,6 +143,7 @@
          //############################################
          */
         .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
+            $rootScope.addLogClass = true;
             $scope.isPageSelected = function (path) {
                 var myPath = $location.path();
 
@@ -182,6 +183,7 @@
             };
             $rootScope.$on('hide-messages', function() {
                 $scope.showMessagesNavbarLink = true;
+                $rootScope.addLogClass = !$rootScope.addLogClass;
             });
             $scope.showMessages = function() {
                 $scope.showMessagesNavbarLink = false;

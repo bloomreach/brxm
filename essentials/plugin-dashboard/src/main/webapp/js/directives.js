@@ -220,7 +220,7 @@
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
                     var promisesQueue = [];
                     var lastLength = 0;
-                    var ERROR_SHOW_TIME = 3000;
+                    var ERROR_SHOW_TIME = 1000;
                     $scope.visible = true;
                     $scope.messages = [];
 

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -435,7 +434,8 @@ public class ContentBeansService {
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
                 default:
-                    final String message = MessageFormat.format("TODO: Beanwriter: Couldn't create getter for property: {0} of type: {1}", property.getName(), property.getType());
+
+                    final String message = String.format("TODO: Beanwriter: Failed to create getter for property: %s of type: %s", property.getName(), type);
                     JavaSourceUtils.addClassJavaDoc(beanPath, message);
                     log.warn(message);
                     break;
@@ -491,7 +491,7 @@ public class ContentBeansService {
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 default:
-                    final String message = MessageFormat.format("TODO: Beanwriter: Couldn't create getter for node type: {0}", type);
+                    final String message = String.format("TODO: Beanwriter: Failed to create getter for node type: %s", type);
                     JavaSourceUtils.addClassJavaDoc(beanPath, message);
                     log.warn(message);
                     break;

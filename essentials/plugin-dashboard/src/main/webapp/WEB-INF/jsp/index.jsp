@@ -58,7 +58,7 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container"  ng-cloak ng-class="{'log-visible':feedbackMessages.length}">
+<body id="container"  ng-cloak ng-class="{'log-visible':feedbackMessages.length && addLogClass}">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
 
 
