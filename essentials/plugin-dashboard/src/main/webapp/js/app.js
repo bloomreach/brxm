@@ -42,7 +42,7 @@
                 }
                 // avoid error messages if pinging fails
                 var url = error.config.url;
-                if (url.substring(url.length-6, url.length) === '/ping/') {
+                if (url.substring(url.length - 6, url.length) === '/ping/') {
                     return;
                 }
                 if (error.data) {
@@ -54,7 +54,14 @@
                 }
                 else if (error.status) {
                     $rootScope.feedbackMessages.push({type: 'error', message: error.status});
-                } else {
+                } else if (data.data && data.data.items) {
+                    angular.forEach(data.data.items, function (v) {
+                        if (value.successMessage) {
+                            $rootScope.feedbackMessages.push({type: 'error', message: v.value});
+                        }
+                    });
+                }
+                else {
                     $rootScope.feedbackMessages.push({type: 'error', message: error});
                 }
 
@@ -64,7 +71,15 @@
                 if (!data) {
                     return;
                 }
-                if (data.data && data.data.successMessage) {
+                if (data.data && data.data.items) {
+                    var items = data.data.items;
+                    angular.forEach(items, function (v) {
+                        if (v.successMessage) {
+                            $rootScope.feedbackMessages.push({type: 'info', message: v.value});
+                        }
+                    });
+                }
+                else if (data.data && data.data.successMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
                 } else if (data.successMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.successMessage.value});
@@ -142,8 +157,8 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
-            $rootScope.applicationUrl = 'http://'+ window.SERVER_URL+'/essentials';
-            var root = 'http://' + window.SERVER_URL +'/essentials/rest';
+            $rootScope.applicationUrl = 'http://' + window.SERVER_URL + '/essentials';
+            var root = 'http://' + window.SERVER_URL + '/essentials/rest';
             var plugins = root + "/plugins";
 
             /* TODO generate this server side ?*/

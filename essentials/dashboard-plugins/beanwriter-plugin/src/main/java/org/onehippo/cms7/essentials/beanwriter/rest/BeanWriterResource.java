@@ -62,7 +62,7 @@ public class BeanWriterResource extends BaseResource {
         //############################################
         // USE SERVICES
         //############################################
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
+        final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
         contentBeansService.createBeans();
         // inject project settings:
         final RestfulList<MessageRestful> messages = new MyRestList();

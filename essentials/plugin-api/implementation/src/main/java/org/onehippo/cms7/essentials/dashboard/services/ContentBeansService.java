@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
@@ -65,6 +66,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -86,9 +88,11 @@ public class ContentBeansService {
      */
     private static final int MISSING_DEPTH_MAX = 5;
     private int missingBeansDepth = 0;
+    final EventBus eventBus;
 
-    public ContentBeansService(final PluginContext context) {
+    public ContentBeansService(final PluginContext context, final EventBus eventBus) {
         this.context = context;
+        this.eventBus = eventBus;
         this.baseSupertype = context.getProjectNamespacePrefix() + ':' + "basedocument";
         this.contentBeans = getContentBeans();
 
@@ -394,13 +398,16 @@ public class ContentBeansService {
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
+                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
+
                 case "Date":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
+                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
                 case "Boolean":
                     methodName = GlobalUtils.createMethodName(name);
@@ -408,6 +415,7 @@ public class ContentBeansService {
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
+                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
                 case "Long":
                     methodName = GlobalUtils.createMethodName(name);
@@ -415,6 +423,7 @@ public class ContentBeansService {
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
+                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
                 case "Double":
                     methodName = GlobalUtils.createMethodName(name);
@@ -422,6 +431,7 @@ public class ContentBeansService {
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
+                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
                 default:
                     log.error("ERROR {}", property);

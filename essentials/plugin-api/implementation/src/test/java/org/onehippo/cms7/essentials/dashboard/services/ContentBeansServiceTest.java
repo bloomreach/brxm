@@ -24,6 +24,8 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
+import com.google.common.eventbus.EventBus;
+
 //@Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
@@ -37,7 +39,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         context.setHippoRepository(repository);
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");
 
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
+        final ContentBeansService contentBeansService = new ContentBeansService(context, new EventBus("Test"));
         contentBeansService.createBeans();
     }
 
