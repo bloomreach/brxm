@@ -51,6 +51,8 @@ public class FreemarkerTextAreaWidget extends CodeMirrorTextAreaWidget {
 
         public FreemarkerCodeMirrorEditor(String id, String editorName, IModel<String> model) {
             super(id, editorName, model);
+            setEditorMode(MIME_TYPE_HTML);
+            setChangeEventTriggeringEnabled(true);
         }
 
         @Override
@@ -59,17 +61,6 @@ public class FreemarkerTextAreaWidget extends CodeMirrorTextAreaWidget {
             response.render(JavaScriptHeaderItem.forReference(JAVASCRIPT_MODE_JS));
             response.render(JavaScriptHeaderItem.forReference(CSS_MODE_JS));
             response.render(JavaScriptHeaderItem.forReference(HTML_MIXED_MODE_JS));
-        }
-
-        @Override
-        protected String getEditorMode() {
-            String editorMode = MIME_TYPE_HTML;
-            return editorMode;
-        }
-
-        @Override
-        protected boolean isChangeEventTriggeringEnabled() {
-            return true;
         }
     }
 

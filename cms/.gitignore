@@ -159,6 +159,7 @@ editor/repository/tm.out.1
 editor/repository/tm.out.lck
 editor/repository/tmlog.lck
 editor/repository/wdbp-error-log.txt
+editor/repository/workspaces
 editor/target
 editor/test/*.tmp
 editor/test/.classpath
@@ -258,6 +259,7 @@ google-analytics/target
 gotolink/.classpath
 gotolink/.project
 gotolink/.settings
+gotolink/WEB-INF
 gotolink/hippo-cms-gotolink.iml
 gotolink/target
 /hippo-cms.iml

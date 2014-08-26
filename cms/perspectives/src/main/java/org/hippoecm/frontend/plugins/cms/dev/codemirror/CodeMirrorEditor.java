@@ -74,6 +74,9 @@ public class CodeMirrorEditor extends TextArea<String> {
     private static final CssResourceReference ECLIPSE_SKIN = new CssResourceReference(CodeMirrorEditor.class, "theme/eclipse.css");
 
     private String editorName;
+    private String editorMode = MIME_TYPE_GROOVY;
+    private boolean readOnly;
+    private boolean changeEventTriggeringEnabled;
 
     public CodeMirrorEditor(final String id, final String editorName, final IModel<String> model) {
         super(id, model);
@@ -90,6 +93,58 @@ public class CodeMirrorEditor extends TextArea<String> {
         response.render(JavaScriptHeaderItem.forReference(CODEMIRROR_JS));
         renderHeadForCustomModes(response);
         response.render(OnLoadHeaderItem.forScript(getJavaScriptForEditor()));
+    }
+
+    /**
+     * Returns the CodeMirror editor name (in JavaScript context).
+     * @return
+     */
+    public String getEditorName() {
+        return editorName;
+    }
+
+    /**
+     * Returns the MIME Type to be associated with a CodeMirror editor mode.
+     * By default, it returns {@link #MIME_TYPE_GROOVY}.
+     * @return
+     */
+    public String getEditorMode() {
+        return editorMode;
+    }
+
+    public void setEditorMode(String editorMode) {
+        this.editorMode = editorMode;
+    }
+
+    /**
+     * Returns true if the editor should be read-only.
+     * @return
+     */
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /**
+     * Flags whether or not the <code>onchange</code> event should be triggered to
+     * the original (TextArea) element.
+     * <P>
+     * In a normal html form where users are required to click on save or submit button,
+     * this option is not necessary.
+     * However, if you have to capture <code>onchange</code> event to update server-side status
+     * through AJAX code like Wicket AJAX component does, then you'll probably need to turn this on.
+     * </P>
+     * @return
+     */
+    public boolean isChangeEventTriggeringEnabled() {
+        return changeEventTriggeringEnabled;
+    }
+
+    public void setChangeEventTriggeringEnabled(boolean changeEventTriggeringEnabled) {
+        this.changeEventTriggeringEnabled = changeEventTriggeringEnabled;
     }
 
     /**
@@ -111,47 +166,20 @@ public class CodeMirrorEditor extends TextArea<String> {
     }
 
     /**
-     * Returns the CodeMirror editor name (in JavaScript context).
-     * @return
-     */
-    protected String getEditorName() {
-        return editorName;
-    }
-
-    /**
-     * Returns the MIME Type to be associated with a CodeMirror editor mode.
-     * By default, it returns {@link #MIME_TYPE_GROOVY}.
-     * @return
-     */
-    protected String getEditorMode() {
-        return MIME_TYPE_GROOVY;
-    }
-
-    /**
-     * Flags whether or not the <code>onchange</code> event should be triggered to
-     * the original (TextArea) element.
-     * <P>
-     * In a normal html form where users are required to click on save or submit button,
-     * this option is not necessary.
-     * However, if you have to capture <code>onchange</code> event to update server-side status
-     * through AJAX code like Wicket AJAX component does, then you'll probably need to turn this on.
-     * </P>
-     * @return
-     */
-    protected boolean isChangeEventTriggeringEnabled() {
-        return false;
-    }
-
-    /**
      * Returns CodeMirror instance loading JavaScript statements.
      * @return
      */
     protected String getJavaScriptForEditor() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("var cm = CodeMirror.fromTextArea(document.getElementById('" + getMarkupId() + "'), " +
-        "{ lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", " +
-        "onChange: function(cm) { cm.save(); ");
+        sb.append("var cm = CodeMirror.fromTextArea(document.getElementById('" + getMarkupId() + "'), ");
+        sb.append("{ lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", ");
+
+        if (isReadOnly()) {
+            sb.append("readOnly: true, ");
+        }
+
+        sb.append("onChange: function(cm) { cm.save(); ");
 
         if (isChangeEventTriggeringEnabled()) {
             sb.append("var ta = document.getElementById('" + getMarkupId() + "'); " +

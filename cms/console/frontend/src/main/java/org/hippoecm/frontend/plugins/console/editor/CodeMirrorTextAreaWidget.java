@@ -59,12 +59,9 @@ public class CodeMirrorTextAreaWidget extends TextAreaWidget {
      * @return
      */
     protected CodeMirrorEditor createEditor(final IModel<String> model) {
-        return new CodeMirrorEditor("widget", "code-editor", model) {
-            @Override
-            protected boolean isChangeEventTriggeringEnabled() {
-                return true;
-            }
-        };
+        CodeMirrorEditor editor = new CodeMirrorEditor("widget", "code-editor", model);
+        editor.setChangeEventTriggeringEnabled(true);
+        return editor;
     }
 
 }
