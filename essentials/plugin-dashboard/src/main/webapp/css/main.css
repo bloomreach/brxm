@@ -7455,7 +7455,7 @@ button.close {
   margin-bottom: 20px;
 }
 .feature-block:last-child {
-  margin-bottom: 0;
+  /*margin-bottom: 0;*/
 }
 .feature-changes {
   margin-top: 10px;
