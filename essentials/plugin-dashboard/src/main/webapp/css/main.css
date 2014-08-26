@@ -7451,6 +7451,12 @@ button.close {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+.feature-block {
+  margin-bottom: 20px;
+}
+.feature-block:last-child {
+  margin-bottom: 0;
+}
 .feature-changes {
   margin-top: 10px;
   border-top: 1px solid #e3e3e3;
