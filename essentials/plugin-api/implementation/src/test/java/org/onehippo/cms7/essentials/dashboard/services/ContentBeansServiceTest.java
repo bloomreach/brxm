@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.services;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
@@ -26,7 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.eventbus.EventBus;
 
-//@Ignore("Needs running hippo repository through RMI")
+@Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
     @Test
