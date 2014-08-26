@@ -180,8 +180,8 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         triggerNode.setProperty(HIPPOSCHED_STARTTIME, startTime);
         session.save();
         assertTrue(listener.hasTriggerUpdateEvents);
-
         listener.waitForEvents();
+        listener.reset();
         // added trigger should have gotten a next fire time property
         assertTrue(triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME));
         Calendar nextFireTime = triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).getDate();
@@ -192,6 +192,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         session.save();
         assertTrue(listener.hasTriggerUpdateEvents);
         listener.waitForEvents();
+        listener.reset();
         assertFalse(nextFireTime.equals(triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).getDate()));
 
         // setting the next fire time does not update the trigger
@@ -234,7 +235,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         @Override
         public void onEvent(final EventIterator events) {
             eventsArrived = true;
-            hasTriggerUpdateEvents = JCRJobStore.hasTriggerUpdateEvents(events);
+            hasTriggerUpdateEvents |= JCRJobStore.hasTriggerUpdateEvents(events);
         }
 
         private void waitForEvents() {
@@ -243,12 +244,16 @@ public class JCRJobStoreTest extends RepositoryTestCase {
             while (!eventsArrived && count++ < 50) {
                 try {
                     Thread.sleep(10l);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignore) {
                 }
             }
             if (count == 50) {
                 throw new AssertionError("Expected events did not arrive");
             }
+        }
+
+        private void reset() {
+            hasTriggerUpdateEvents = false;
         }
     }
 }
