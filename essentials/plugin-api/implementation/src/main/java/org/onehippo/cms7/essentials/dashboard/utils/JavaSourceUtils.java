@@ -267,10 +267,24 @@ public final class JavaSourceUtils {
 
     /**
      * Add text to class comment (javadoc) node. If text already exists it will not be added
-     * @param content parsed content of an class
-     * @param text text to add
+     *
+     * @param path path of of an class
+     * @param text    text to add
      * @return rewritten source (with text node added to the javadoc)
      */
+    @SuppressWarnings("unchecked")
+    public static void addClassJavaDoc(final Path path, final String text) {
+        final CompilationUnit unit = getCompilationUnit(path);
+        final String code = addClassJavaDoc(unit.toString(), text);
+        GlobalUtils.writeToFile(formatCode(code), path);
+    }
+
+        /**
+         * Add text to class comment (javadoc) node. If text already exists it will not be added
+         * @param content parsed content of an class
+         * @param text text to add
+         * @return rewritten source (with text node added to the javadoc)
+         */
     @SuppressWarnings("unchecked")
     public static String addClassJavaDoc(final String content, final String text) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(content);
@@ -1067,9 +1081,8 @@ public final class JavaSourceUtils {
         final TextEdit edits = rewriter.rewriteAST(document, null);
         try {
             edits.apply(document);
-            final String formatted = formatCode(document);
             //log.debug("{}", formatted);
-            return formatted;
+            return formatCode(document);
         } catch (BadLocationException e) {
             log.error("Error creating HippoBean", e);
         }

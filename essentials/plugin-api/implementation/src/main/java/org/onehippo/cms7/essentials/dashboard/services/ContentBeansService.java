@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -434,7 +435,9 @@ public class ContentBeansService {
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
                 default:
-                    log.error("ERROR {}", property);
+                    final String message = MessageFormat.format("TODO: Beanwriter: Couldn't create getter for property: {0} of type: {1}", property.getName(), property.getType());
+                    JavaSourceUtils.addClassJavaDoc(beanPath, message);
+                    log.warn(message);
                     break;
             }
         }
@@ -488,29 +491,9 @@ public class ContentBeansService {
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 default:
-
-
-                    log.error("ERROR {}", child);
-                    /*methodName = GlobalUtils.createMethodName(name);
-                    // check if project namespace
-                    if (type.startsWith(bean.getNamespace())) {
-                        for (MemoryBean memoryBean : memoryBeans) {
-                            if (memoryBean.getPrefixedName().equals(type)) {
-                                final String beanName = FilenameUtils.removeExtension(memoryBean.getBeanPath().toFile().getName());
-                                if (multiple) {
-                                    JavaSourceUtils.addImport(beanPath, "java.util.List");
-                                    JavaSourceUtils.addTwoArgumentsMethod("getBeans", String.format("List<%s>", beanName), beanPath, methodName, name);
-                                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                                } else {
-                                    JavaSourceUtils.addTwoArgumentsMethod("getBean", beanName, beanPath, methodName, name);
-                                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                                }
-                                existing.add(name);
-                            }
-                        }
-                    } else {
-                        log.error("####### FAILED to add [{}] method for type", type);
-                    }*/
+                    final String message = MessageFormat.format("TODO: Beanwriter: Couldn't create getter for node type: {0}", type);
+                    JavaSourceUtils.addClassJavaDoc(beanPath, message);
+                    log.warn(message);
                     break;
             }
 
