@@ -32,6 +32,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 public class MessageRestful implements Restful {
 
     private boolean successMessage = true;
+    private boolean globalMessage = true;
 
     public boolean isSuccessMessage() {
         return successMessage;
@@ -77,6 +78,14 @@ public class MessageRestful implements Restful {
         this.displayType = displayType;
     }
 
+
+    public boolean isGlobalMessage() {
+        return globalMessage;
+    }
+
+    public void setGlobalMessage(final boolean globalMessage) {
+        this.globalMessage = globalMessage;
+    }
 
     public MessageGroup getGroup() {
         return group;

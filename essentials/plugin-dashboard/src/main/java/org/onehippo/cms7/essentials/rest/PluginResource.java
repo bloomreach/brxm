@@ -537,6 +537,7 @@ public class PluginResource extends BaseResource {
         for (Map.Entry<MessageGroup, MessageRestful> entry : entries) {
             final MessageRestful value = entry.getValue();
             value.setGroup(entry.getKey());
+            value.setGlobalMessage(false);
             list.add(value);
         }
         return list;

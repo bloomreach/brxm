@@ -74,14 +74,14 @@
                 if (data.data && data.data.items) {
                     var items = data.data.items;
                     angular.forEach(items, function (v) {
-                        if (v.successMessage) {
+                        if (v.successMessage && v.globalMessage) {
                             $rootScope.feedbackMessages.push({type: 'info', message: v.value});
                         }
                     });
                 }
-                else if (data.data && data.data.successMessage) {
+                else if (data.data && data.data.successMessage && data.data.globalMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
-                } else if (data.successMessage) {
+                } else if (data.successMessage && data.globalMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.successMessage.value});
                 }
 

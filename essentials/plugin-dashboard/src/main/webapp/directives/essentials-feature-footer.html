@@ -27,15 +27,10 @@
     </span>
   </div>
   <div class="log-messages" ng-show="showChanges">
-    <p ng-repeat="message in messages | filter: isCreateFile"
-       class="alert-info">{{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isRegisterDocument"
-       class="alert-success">{{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isCreateXmlNode"
-       class="alert-warning">{{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isCreateXmlFolderNode"
-       class="alert-danger">{{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isExecute"
-       class="alert-success">{{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isCreateFile"><span class="fa fa-fw fa-flag fa-file fa-success"></span>{{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isRegisterDocument"><span class="fa fa-fw fa-flag fa-file-text-o fa-info"></span>{{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isCreateXmlNode"><span class="fa fa-fw fa-flag fa-plus-square fa-warning"></span>{{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isCreateXmlFolderNode"><span class="fa fa-fw fa-flag fa-folder-open-o fa-success"></span>{{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isExecute"><span class="fa fa-fw fa-flag fa-plus-circle fa-warning"></span>{{message.value}}</p>
   </div>
 </div>
