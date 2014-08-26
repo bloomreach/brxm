@@ -88,6 +88,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     @Test
     public void testAcquireNextTrigger() throws Exception {
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        listener.reset();
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
         assertNotNull(triggers);
         assertFalse(triggers.isEmpty());
@@ -99,6 +100,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     @Test
     public void testAcquireNextTriggerAndRelease() throws Exception {
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        listener.reset();
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
         assumeNotNull(triggers);
         assumeTrue(!triggers.isEmpty());
