@@ -14,69 +14,77 @@
   limitations under the License.
   -->
 
-<div class="feature-block">
-    <div class="well">
-        <div class="feature-heading">
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="media">
-                        <a href="#" class="pull-left">
-                            <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
-                        </a>
-                        <div class="media-body">
-                            <h4>{{plugin.name}}</h4>
-                            <p>{{plugin.type}}, developed by
-                                <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a></p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{plugin.name}}
+    </div>
+    <div class="panel-body">
+        <div class="feature-block">
+            <div class="well">
+                <div class="feature-heading">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="media">
+                                <a href="#" class="pull-left">
+                                    <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
+                                </a>
+                                <div class="media-body">
+                                    <h4>{{plugin.name}}</h4>
+                                    <p>{{plugin.type}}, developed by
+                                        <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <button class="btn btn-primary"
+                                    ng-show="isDiscovered()"
+                                    ng-click="installPlugin()">Install {{plugin.type}}
+                            </button>
+                            <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+                            <a ng-show="isOnBoard()" class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-6 text-right">
-                    <button class="btn btn-primary"
-                            ng-show="isDiscovered()"
-                            ng-click="installPlugin()">Install {{plugin.type}}
-                    </button>
-                    <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
-                    <a ng-show="isOnBoard()" class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
-                </div>
-            </div>
-        </div>
-        <div class="feature-description">
-            <div class="row">
-                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short" ng-hide="showDescription">
-                  <div ng-bind-html="plugin.introduction"></div>
-                  <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
-                     data-ng-click="toggleDescription($event)">Read more</a>
-                </div>
-                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription">
-                    <div ng-bind-html="plugin.introduction"></div>
-                    <div ng-bind-html="plugin.description"></div>
-                </div>
-            </div>
-            <div ng-show="showDescription">
-                <div id="plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel" ng-show="plugin.imageUrls.length">
-                    <!-- Indicators -->
-                    <ol class="carousel-indicators">
-                        <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
-                            <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
-                        </li>
-                    </ol>
-                    <!-- Wrapper for slides -->
-                    <div class="carousel-inner">
-                        <div ng-class="$index==0 ? 'item active' :'item'" ng-repeat="imageUrl in plugin.imageUrls">
-                            <img ng-src="{{imageUrl}}" alt="">
+                <div class="feature-description">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short" ng-hide="showDescription">
+                            <div ng-bind-html="plugin.introduction"></div>
+                            <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
+                               data-ng-click="toggleDescription($event)">Read more</a>
+                        </div>
+                        <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription">
+                            <div ng-bind-html="plugin.introduction"></div>
+                            <div ng-bind-html="plugin.description"></div>
                         </div>
                     </div>
-                    <!-- Controls -->
-                    <a class="left carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="prev">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                    </a>
-                    <a class="right carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="next">
-                        <span class="glyphicon glyphicon-chevron-right"></span>
-                    </a>
+                    <div ng-show="showDescription">
+                        <div id="plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel" ng-show="plugin.imageUrls.length">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
+                                    <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
+                                </li>
+                            </ol>
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+                                <div ng-class="$index==0 ? 'item active' :'item'" ng-repeat="imageUrl in plugin.imageUrls">
+                                    <img ng-src="{{imageUrl}}" alt="">
+                                </div>
+                            </div>
+                            <!-- Controls -->
+                            <a class="left carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                            <a class="right carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="#" ng-show="showDescription" data-ng-click="toggleDescription($event)">Read less</a>
                 </div>
+                <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
             </div>
-            <a href="#" ng-show="showDescription" data-ng-click="toggleDescription($event)">Read less</a>
         </div>
-        <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
     </div>
 </div>
