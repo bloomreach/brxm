@@ -14,7 +14,11 @@
   limitations under the License.
   -->
 
-<div class="log" ng-show="visible">
+<div class="log-top alert alert-info" ng-show="visible" ng-class="{'log-visible': visible}">
+    <button type="button" class="close" data-dismiss="alert" ng-click="hide()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
     <div class="alert alert-default">
         <button class="close" type="button" ng-click="hide()">
             <span aria-hidden="true">&times;</span>
@@ -35,4 +39,6 @@
         </div>
     </div>
 </div>
+
+
 
