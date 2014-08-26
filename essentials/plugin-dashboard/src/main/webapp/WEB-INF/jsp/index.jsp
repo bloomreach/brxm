@@ -64,7 +64,7 @@
 <div class="hippo-navbar navbar navbar-default navbar-fixed-top" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
   <div class="container-fluid">
     <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -72,14 +72,15 @@
       </button>
       <span class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
       <a class="navbar-brand" href="#">Hippo Essentials</a>
-      <p class="navbar-text navbar-title">{{getPageTitle()}}</p>
+      <p class="navbar-text navbar-title">
+        {{getPageTitle()}}
+      </p>
       <div class="navbar-text navbar-icons">
         <a href="#/build" class="navbar-link">
-          <span class="fa fa-refresh"></span> Rebuild
-          <span ng-show="NEEDS_REBUILD" class="fa-stack">
-            <span class="fa fa-circle fa-stack-2x fa-white"></span>
-            <span class="fa fa-bell-o fa-stack-1x fa-danger"></span>
-          </span>
+          <span class="fa fa-refresh"></span> <span class="hidden-xs">Rebuild</span>
+        </a>
+        <a href="#/build" class="navbar-link">
+          <span ng-show="NEEDS_REBUILD" class="fa fa-bell-o fa-danger"></span>
         </a>
         <a ng-click="showMessages()" ng-show="feedbackMessages.length && showMessagesNavbarLink">
           <span class="fa fa-info-circle"></span>
