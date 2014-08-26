@@ -40,7 +40,7 @@
         "id": "blogPlugin",
         "name": "Blog",
         "introduction": "With Blog, you add complete Blog functionality to your project. This Feature will be installed as a  set of drag-and-drop components in the document template editor. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
-        "description": "<ul><li>This Essentials feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocuments&gt; and blog/authors/&lt;authors&gt;. On root level in the CMS, the entry ‘administration’ is created.</li><li>Several drag-and-drop components are added to the Document template editor: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
+        "description": "<ul><li>This Essentials feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocuments&gt; and blog/authors/&lt;authors&gt;. On root level in the CMS, the entry 'administration' is created.</li><li>Several drag-and-drop components are added to the Document template editor: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
         "imageUrls": [
             "http://localhost:8080/essentials/images/screenshots/blog-overview.png",
             "http://localhost:8080/essentials/images/screenshots/blog-detail.png",
@@ -513,7 +513,7 @@
         "id": "videoComponentPlugin",
         "name": "Videos",
         "introduction": "The Video feature adds a new drag-and-drop component in the document template editor, enabling you to add video in your document template.",
-        "description": "The feature adds the new document type ‘video’ to the project. You can choose to include a sample video when you configure the feature in Essentials. The feature uses youtube video links instead of the video itself.",
+        "description": "The feature adds the new document type 'video' to the project. You can choose to include a sample video when you configure the feature in Essentials. The feature uses youtube video links instead of the video itself.",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/video-component.html",
         "imageUrls": [
             "http://localhost:8080/essentials/images/screenshots/video.png"
@@ -539,7 +539,7 @@
         "id": "faqPlugin",
         "name": "FAQ",
         "introduction": "With FAQ, you add complete FAQ section to your project. This Feature will be installed as a drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This Essentials feature installs two new document types: ‘faqdocument’ and ‘faqlistdocument’ in the CMS.</li><li>A structured document tree is created in the project: faq/about FAQ items</li><li>A drag-and-drop component ‘Faq’ is added to the Document template editor.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
+        "description": "<ul><li>This Essentials feature installs two new document types: 'faqdocument' and 'faqlistdocument' in the CMS.</li><li>A structured document tree is created in the project: faq/about FAQ items</li><li>A drag-and-drop component 'Faq' is added to the Document template editor.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
         "imageUrls": [
             "http://localhost:8080/essentials/images/screenshots/faq-list.png",
             "http://localhost:8080/essentials/images/screenshots/faq-detail.png"
@@ -564,7 +564,7 @@
         "@type": "plugin",
         "id": "bannerPlugin",
         "name": "Banners",
-        "introduction": "With Banner, you add banners to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a ‘Banner’ document type and some sample banner documents and images will be installed.",
+        "introduction": "With Banner, you add banners to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/document-component.html",
         "imageUrls": [
             "http://localhost:8080/essentials/images/screenshots/banner-homepage.png",
@@ -654,7 +654,7 @@
         "id": "eventsPlugin",
         "name": "Events",
         "introduction": "With Events, you can easily integrate events functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This Essentials feature installs a new document type ‘eventsdocument’ in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocuments&gt;</li><li>A drag-and-drop component ‘events list’ is added to the Document template editor. This events list component can be configured.</li><li>Some sample events articles are installed and a page (with corresponding menu entry) with an example eventslist is created.</li></ul>",
+        "description": "<ul><li>This Essentials feature installs a new document type 'eventsdocument' in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocuments&gt;</li><li>A drag-and-drop component 'events list' is added to the Document template editor. This events list component can be configured.</li><li>Some sample events articles are installed and a page (with corresponding menu entry) with an example eventslist is created.</li></ul>",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/events-component.html",
         "imageUrls": [
             "http://localhost:8080/essentials/images/screenshots/events-overview.png",
@@ -704,7 +704,7 @@
         "id": "newsPlugin",
         "name": "News",
         "introduction": "With News, you can easily integrate news functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This Essentials feature installs a new document type ‘newsdocument’ in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component ‘newslist’ is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>",
+        "description": "<ul><li>This Essentials feature installs a new document type 'newsdocument' in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component 'newslist' is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/news-component.html",
         "imageUrls": [
                 "http://localhost:8080/essentials/images/screenshots/news-overview.png",
