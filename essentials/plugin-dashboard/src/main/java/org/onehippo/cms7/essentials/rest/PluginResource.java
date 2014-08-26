@@ -198,7 +198,18 @@ public class PluginResource extends BaseResource {
         final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
         for (RebuildEvent rebuildEvent : rebuildEvents) {
             systemInfo.setNeedsRebuild(true);
-            systemInfo.addRebuildPlugin(new PluginRestful(rebuildEvent.getPluginName()));
+            final List<Plugin> rebuildPlugins = systemInfo.getRebuildPlugins();
+            // skip duplicate names:
+            boolean containsPlugin = false;
+            final String pluginName = rebuildEvent.getPluginName();
+            for (Plugin rebuildPlugin : rebuildPlugins) {
+                if(rebuildPlugin.getName().equals(pluginName)){
+                    containsPlugin = true;
+                }
+            }
+            if(!containsPlugin){
+                systemInfo.addRebuildPlugin(new PluginRestful(pluginName));
+            }
         }
 
 
