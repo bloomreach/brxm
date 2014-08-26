@@ -74,8 +74,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('../components/font-awesome/fonts/fontawesome-webfont.eot?v=4.0.3');
-  src: url('../components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+  src: url('../components/font-awesome/fonts/fontawesome-webfont.eot?v=4.1.0');
+  src: url('../components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.1.0') format('embedded-opentype'), url('../components/font-awesome/fonts/fontawesome-webfont.woff?v=4.1.0') format('woff'), url('../components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.1.0') format('truetype'), url('../components/font-awesome/fonts/fontawesome-webfont.svg?v=4.1.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -6275,15 +6275,24 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
  * limitations under the License.
  */
 body {
-  background: #dadada;
   position: relative;
+  padding-top: 50px;
 }
-.components-container {
-  background: #FFFFFF;
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+.container-has-hippo-navbar {
+  height: 100%;
+  overflow: auto;
+  padding-top: 15px;
 }
 .anchor {
   display: block;
   visibility: hidden;
+  position: relative;
+  top: -50px;
 }
 .navbar-icons {
   float: right;
@@ -6300,9 +6309,27 @@ body {
 .hippo-navbar {
   margin-bottom: 0;
 }
-@media (max-width: 767px) {
-  .hippo-navbar .navbar-brand {
-    display: none;
+.hippo-navbar .navbar-title {
+  float: left;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+  height: 20px;
+  position: absolute;
+  width: 200px;
+  left: 50%;
+  margin-left: -100px;
+  text-align: center;
+  padding: 0;
+}
+.hippo-navbar .navbar-title:hover,
+.hippo-navbar .navbar-title:focus {
+  text-decoration: none;
+}
+@media (min-width: 768px) {
+  .navbar > .container .hippo-navbar .navbar-title,
+  .navbar > .container-fluid .hippo-navbar .navbar-title {
+    margin-left: -15px;
   }
 }
 .hippo-navbar .navbar-toggle {
@@ -6314,29 +6341,37 @@ body {
   left: 45px;
   top: 5px;
 }
-@media (min-width: 768px) {
-  .hippo-navbar .notification-badge {
+@media (max-width: 767px) {
+  .navbar-brand {
     display: none;
   }
 }
 @media (min-width: 768px) {
-  .components-container {
+  .hippo-navbar ~ .container-has-hippo-navbar {
     margin-left: 200px;
-  }
-  .hippo-navbar {
-    margin-bottom: 0;
   }
   .navbar-header {
     width: 100%;
   }
-  .sidebar-navbar-collapse {
-    float: left;
+  .hippo-navbar .navbar-collapse.collapse {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    height: 100% !important;
+    max-height: none;
     width: 200px;
     padding: 0;
+    background: #f8f8f8;
   }
-  .sidebar-navbar-collapse ul,
-  .sidebar-navbar-collapse li {
+  .hippo-navbar .navbar-collapse.collapse ul,
+  .hippo-navbar .navbar-collapse.collapse li {
     float: none;
+  }
+  .hippo-navbar .notification-badge {
+    display: none;
+  }
+  .anchor {
+    top: 0;
   }
 }
 .breadcrumb {
@@ -6611,6 +6646,36 @@ a.list-group-item.active > .badge,
 }
 .nav-pills > li > a > .badge {
   margin-left: 3px;
+}
+/*!
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.badge-primary {
+  background-color: #f4764c;
+}
+.badge-info {
+  background-color: #5bc0de;
+}
+.badge-warning {
+  background-color: #f0ad4e;
+}
+.badge-success {
+  background-color: #5cb85c;
+}
+.badge-danger {
+  background-color: #d9534f;
 }
 .jumbotron {
   padding: 30px;
@@ -7387,7 +7452,9 @@ button.close {
  * limitations under the License.
  */
 .feature-changes {
+  margin-top: 10px;
   border-top: 1px solid #e3e3e3;
+  padding-top: 20px;
 }
 .feature-changes-controls:before,
 .feature-changes-controls:after {
@@ -7405,12 +7472,11 @@ button.close {
 .feature-changes-controls:after {
   clear: both;
 }
-.feature-control {
+.feature-changes .log-messages {
   padding: 5px 0;
 }
-.feature-changes-messages p {
-  padding: 5px;
-  margin: 0;
+.feature-block .well {
+  margin-bottom: 0;
 }
 /*!
  * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
@@ -7427,15 +7493,51 @@ button.close {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.log .alert {
+.log-top {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-height: 33%;
+  overflow: auto;
+  z-index: 1040;
+}
+.log-top.alert {
   margin-bottom: 0;
 }
-.log-messages {
-  padding: 5px 0;
+.log-top.alert .close {
+  position: fixed;
+  top: 15px;
+  right: 15px;
 }
-.log-messages p {
-  padding: 5px;
-  margin: 0;
+.log-top.alert.alert-open p {
+  margin: 0 0 10px;
+}
+.log-top.alert:hover {
+  cursor: pointer;
+}
+.log-messages p:last-child {
+  margin-bottom: 0;
+}
+.log-visible {
+  padding-top: 102px;
+}
+.log-visible .log-top {
+  display: block;
+}
+.log-visible .hippo-navbar {
+  top: 52px;
+}
+@media (min-width: 768px) {
+  .log-visible .hippo-navbar .navbar-collapse.collapse {
+    top: 102px;
+  }
+}
+@media (min-width: 768px) {
+  .log-top.alert-open .close {
+    right: 25px;
+  }
 }
 .modal-open {
   overflow: hidden;
@@ -7963,6 +8065,21 @@ button.close {
  */
 .carousel-indicators li img {
   display: none;
+}
+.carousel-inner > .item > img {
+  width: 100%;
+}
+.carousel-control.left {
+  background-image: -webkit-linear-gradient(left, color-stop(rgba(0, 0, 0, 0.3) 0%), color-stop(rgba(0, 0, 0, 0.0001) 100%));
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.0001) 100%);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d000000', endColorstr='#00000000', GradientType=1);
+}
+.carousel-control.right {
+  background-image: -webkit-linear-gradient(left, color-stop(rgba(0, 0, 0, 0.0001) 0%), color-stop(rgba(0, 0, 0, 0.3) 100%));
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.3) 100%);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#4d000000', GradientType=1);
 }
 @media (min-width: 480px) {
   .carousel {

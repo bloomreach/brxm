@@ -14,7 +14,11 @@
   limitations under the License.
   -->
 
-<div class="log" ng-show="visible">
+<div class="log-top alert alert-info" ng-show="visible">
+    <button type="button" class="close" data-dismiss="alert" ng-click="hide()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
     <div class="alert alert-default">
         <button class="close" type="button" ng-click="hide()">
             <span aria-hidden="true">&times;</span>
@@ -35,4 +39,26 @@
         </div>
     </div>
 </div>
+<!--<div class="log-top alert alert-info" ng-class="{'alert-open': showErrors}" ng-controller="ErrorCtrl" ng-click="toggleErrors($event)">
+
+
+    <p>15:55:46 - <span class="fa fa-fw fa-exclamation fa-danger"></span> Interesting error message
+        <span class="fa" ng-class="{'fa-chevron-right': !showErrors, 'fa-chevron-down': showErrors}"></span></p>
+
+    <div class="log-messages ng-hide" ng-show="showErrors">
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation fa-danger"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-check-square-o fa-success"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-flag fa-warning"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+        <p>15:55:46 - <span class="fa fa-fw fa-exclamation"></span> Interesting error message</p>
+    </div>
+</div>-->
+
 

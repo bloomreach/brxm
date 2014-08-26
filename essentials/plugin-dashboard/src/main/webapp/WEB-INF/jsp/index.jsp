@@ -58,21 +58,21 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container" ng-cloak ng-class="feedbackMessages.length ? 'body-push':''">
+<body id="container" ng-cloak ng-class="feedbackMessages.length ? 'showLog':''">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
 
-<div class="hippo-navbar navbar navbar-default" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
+<div class="hippo-navbar navbar navbar-default navbar-fixed-top" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
   <div class="container-fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="badge notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
+      <span class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
       <a class="navbar-brand" href="#">Hippo Essentials</a>
-      <p class="navbar-text pull-left">{{getPageTitle()}}</p>
+      <p class="navbar-text navbar-title">{{getPageTitle()}}</p>
       <div class="navbar-text navbar-icons">
         <a href="#/build" class="navbar-link">
           <span class="fa fa-refresh"></span> Rebuild
@@ -87,39 +87,41 @@
         </a>
       </div>
     </div>
+
+    <div class="navbar-collapse collapse ng-scope" ng-controller="mainMenuCtrl" ng-hide="INTRODUCTION_DISPLAYED">
+      <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
+          <a href="#/library">
+            <i class="fa fa-shopping-cart fa-2x fa-fw fa-middle"></i>
+            <span>Library</span>
+          </a>
+        </li>
+        <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
+          <a href="#/installed-features">
+            <i class="fa fa-dropbox fa-2x fa-fw fa-middle"></i>
+            <span>Installed features</span>
+            <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge pull-right alert-success">{{TOTAL_NEEDS_ATTENTION}}</span>
+          </a>
+        </li>
+        <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
+          <a href="#/tools">
+            <i class="fa fa-wrench fa-2x fa-fw fa-middle"></i>
+            <span>Tools</span>
+          </a>
+        </li>
+        <li>
+          <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
+            <i class="fa fa-pencil fa-2x fa-fw fa-middle"></i>
+            <span>Feedback</span></a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<div class="navbar-collapse sidebar-navbar-collapse collapse ng-scope" ng-controller="mainMenuCtrl" ng-hide="INTRODUCTION_DISPLAYED">
-  <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
-    <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
-      <a href="#/library">
-        <i class="fa fa-shopping-cart fa-2x fa-fw fa-middle"></i>
-        <span>Library</span>
-      </a>
-    </li>
-    <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
-      <a href="#/installed-features">
-        <i class="fa fa-dropbox fa-2x fa-fw fa-middle"></i>
-        <span>Installed features</span>
-        <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge pull-right alert-success">{{TOTAL_NEEDS_ATTENTION}}</span>
-      </a>
-    </li>
-    <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
-      <a href="#/tools">
-        <i class="fa fa-wrench fa-2x fa-fw fa-middle"></i>
-        <span>Tools</span>
-      </a>
-    </li>
-    <li>
-      <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
-        <i class="fa fa-pencil fa-2x fa-fw fa-middle"></i>
-        <span>Feedback</span></a>
-    </li>
-  </ul>
-</div>
 
-<div class="container-fluid components-container">
+
+<div class="container-fluid container-has-hippo-navbar">
   <div class="row">
     <div class="col-lg-12" ui-view autoscroll="false">
     </div>
