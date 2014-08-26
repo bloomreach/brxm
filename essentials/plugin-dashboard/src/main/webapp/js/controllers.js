@@ -187,6 +187,7 @@
             });
             $scope.showMessages = function() {
                 $scope.showMessagesNavbarLink = false;
+                $rootScope.addLogClass = true;
                 $rootScope.$broadcast('show-messages');
             };
             $scope.showMessagesNavbarLink = false;
