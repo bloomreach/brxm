@@ -58,8 +58,9 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container" ng-cloak ng-class="feedbackMessages.length ? 'showLog':''">
+<body id="container"  ng-cloak ng-class="{'log-visible':feedbackMessages.length}">
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
+
 
 <div class="hippo-navbar navbar navbar-default navbar-fixed-top" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
   <div class="container-fluid">
@@ -71,7 +72,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
-      <a class="navbar-brand" href="#">Hippo Essentials</a>
+      <a class="navbar-brand" href="#">Hippo Essentials {{}}</a>
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>
