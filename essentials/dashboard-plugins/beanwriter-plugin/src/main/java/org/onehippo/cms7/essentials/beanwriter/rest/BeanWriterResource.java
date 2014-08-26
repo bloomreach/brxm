@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
+import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
@@ -70,14 +71,22 @@ public class BeanWriterResource extends BaseResource {
         final Collection<Object> objects = pluginContextData.get(BeanWriterUtils.CONTEXT_DATA_KEY);
         for (Object object : objects) {
             final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
-            messages.add(new MessageRestful(entry.getMessage()));
+            final ActionType actionType = entry.getActionType();
+            if (actionType == ActionType.CREATED_METHOD) {
+                messages.add(new MessageRestful(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName())));
+            } else if(actionType==ActionType.CREATED_CLASS){
+                messages.add(new MessageRestful(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath())));
+            } else {
+                messages.add(new MessageRestful(entry.getMessage()));
+            }
         }
         if (messages.getItems().size() == 0) {
             messages.add(new MessageRestful("All beans were up to date"));
         } else {
-            eventBus.post(new RebuildEvent("Beanwriter", "HST Beans changed, project rebuild needed"));
+            final String message = "HST Beans changed, project rebuild needed";
+            eventBus.post(new RebuildEvent("Beanwriter", message));
+            messages.add(new MessageRestful(message));
         }
-
 
         return messages;
     }

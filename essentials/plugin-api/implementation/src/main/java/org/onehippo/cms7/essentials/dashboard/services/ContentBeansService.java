@@ -496,9 +496,7 @@ public class ContentBeansService {
                     log.warn(message);
                     break;
             }
-
         }
-
 
     }
 
@@ -524,8 +522,10 @@ public class ContentBeansService {
             name = name.split(",")[0];
         }
         final String className = GlobalUtils.createClassName(name);
-        context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(className, ActionType.CREATED_CLASS));
-        return JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
+        final Path path = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
+        context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
+
+        return path;
     }
 
 

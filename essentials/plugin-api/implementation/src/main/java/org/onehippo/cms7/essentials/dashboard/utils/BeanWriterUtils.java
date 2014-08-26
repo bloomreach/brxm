@@ -248,7 +248,7 @@ public final class BeanWriterUtils {
                     JavaSourceUtils.addExtendsClass(javaClass, extendsName);
                     JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
                     memoryBean.setBeanPath(javaClass);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(ActionType.CREATED_CLASS, javaClass.toString(),javaClass.getFileName().toString()));
                 }
 
             } else {
@@ -262,7 +262,7 @@ public final class BeanWriterUtils {
                     JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
                     JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
                     memoryBean.setBeanPath(javaClass);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(ActionType.CREATED_CLASS, javaClass.toString(), javaClass.getFileName().toString()));
                 }
             }
         }

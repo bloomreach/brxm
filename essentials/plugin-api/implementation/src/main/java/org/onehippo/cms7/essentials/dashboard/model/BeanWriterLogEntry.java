@@ -23,11 +23,12 @@ public class BeanWriterLogEntry {
 
     private String beanName;
     private String methodName;
+    private String beanPath;
     private ActionType actionType;
 
 
-    public BeanWriterLogEntry(final ActionType actionType) {
 
+    public BeanWriterLogEntry(final ActionType actionType) {
         this.actionType = actionType;
     }
 
@@ -40,6 +41,20 @@ public class BeanWriterLogEntry {
         this.beanName = beanName;
         this.methodName = methodName;
         this.actionType = actionType;
+    }
+
+    public BeanWriterLogEntry(final ActionType actionType, final String beanPath, final String beanName) {
+        this.actionType = actionType;
+        this.beanPath = beanPath;
+        this.beanName = beanName;
+    }
+
+    public String getBeanPath() {
+        return beanPath;
+    }
+
+    public void setBeanPath(final String beanPath) {
+        this.beanPath = beanPath;
     }
 
     public String getBeanName() {
