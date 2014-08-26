@@ -15,29 +15,31 @@
   -->
 
 <div class="feature-block">
-    <div class="feature-heading">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="media">
-                    <a href="#" class="pull-left">
-                        <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
-                    </a>
-                    <div class="media-body">
-                        <h4>{{plugin.name}}</h4>
+    <div class="well">
+        <div class="feature-heading">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="media">
+                        <a href="#" class="pull-left">
+                            <img class="media-object" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" alt="">
+                        </a>
+                        <div class="media-body">
+                            <h4>{{plugin.name}}</h4>
+                        </div>
                     </div>
                 </div>
+                <div class="col-xs-6 text-right">
+                    <a ng-show="needsRebuild()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+                    <a ng-show="needsConfiguration()" class="btn btn-danger" href="#/features/{{plugin.id}}">Needs to be configured</a>
+                    <a ng-show="hasConfiguration()" class="btn btn-primary" href="#/features/{{plugin.id}}">Configure</a>
+                </div>
             </div>
-            <div class="col-xs-6 text-right">
-                <a ng-show="needsRebuild()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
-                <a ng-show="needsConfiguration()" class="btn btn-danger" href="#/features/{{plugin.id}}">Needs to be configured</a>
-                <a ng-show="hasConfiguration()" class="btn btn-primary" href="#/features/{{plugin.id}}">Configure</a>
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-8">
+                    <p ng-bind-html="plugin.introduction"></p>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-8">
-                <p ng-bind-html="plugin.introduction"></p>
-            </div>
-        </div>
+        <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
     </div>
-    <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
 </div>
