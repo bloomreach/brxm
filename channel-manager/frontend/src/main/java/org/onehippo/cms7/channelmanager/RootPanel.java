@@ -145,7 +145,10 @@ public class RootPanel extends ExtPanel {
 
         add(channelManagerCard);
 
-        pageEditor = new PageEditor(context, pageEditorConfig, composerRestMountPath, hstConfigEditor, this.channelStoreFuture);
+        // default contextpath just needs to be one of the available contextpaths for which a hst site webapp is available
+        final String defaultContextPath = liveRestProxyServices.isEmpty() ? "" : liveRestProxyServices.keySet().iterator().next();
+        pageEditor = new PageEditor(context, pageEditorConfig,
+                defaultContextPath, composerRestMountPath, hstConfigEditor, this.channelStoreFuture);
         add(pageEditor);
 
         // card 2: HST config editor

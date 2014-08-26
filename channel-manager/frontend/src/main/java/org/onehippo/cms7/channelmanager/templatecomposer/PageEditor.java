@@ -135,7 +135,7 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private String contextPath = "/site";
+    private String contextPath = "";
 
     @ExtProperty
     private String cmsPreviewPrefix;
@@ -192,14 +192,15 @@ public class PageEditor extends ExtPanel {
     private List<ToolbarPlugin> toolbarPlugins;
 
     public PageEditor(final IPluginContext context, final IPluginConfig config,
-                      final String composerRestMountPath, final HstConfigEditor hstConfigEditor,
-                      final ExtStoreFuture<Object> channelStoreFuture) {
+                      final String defaultContextPath, final String composerRestMountPath,
+                      final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.context = context;
         this.channelStoreFuture = channelStoreFuture;
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
         this.composerRestMountPath = composerRestMountPath;
+        contextPath = defaultContextPath;
         String variantsPath = null;
         if (config != null) {
             variantsPath = config.getString("variantsPath");
