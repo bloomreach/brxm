@@ -22,6 +22,7 @@
             '_hippo.channel.IFrameService',
             function(IFrame) {
                 var config = {
+                    // default configuration for local development without cms
                     apiUrlPrefix: 'http://localhost:8080/site/_rp',
                     locale: 'en',
                     antiCache: new Date().getTime()
