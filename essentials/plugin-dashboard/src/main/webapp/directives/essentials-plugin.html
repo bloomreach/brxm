@@ -43,36 +43,38 @@
         <div class="feature-description">
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short" ng-hide="showDescription">
-                    <div ng-bind-html="plugin.introduction"></div>
+                    <p ng-bind-html="plugin.introduction"></p>
                     <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
                        data-ng-click="toggleDescription($event)">Read more</a>
                 </div>
                 <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription">
-                    <div ng-bind-html="plugin.introduction"></div>
-                    <div ng-bind-html="plugin.description"></div>
+                    <p ng-bind-html="plugin.introduction"></p>
+                    <p ng-bind-html="plugin.description"></p>
                 </div>
             </div>
-            <div ng-show="showDescription">
-                <div id="plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel" ng-show="plugin.imageUrls.length">
-                    <!-- Indicators -->
-                    <ol class="carousel-indicators">
-                        <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
-                            <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
-                        </li>
-                    </ol>
-                    <!-- Wrapper for slides -->
-                    <div class="carousel-inner">
-                        <div ng-class="$index==0 ? 'item active' :'item'" ng-repeat="imageUrl in plugin.imageUrls">
-                            <img ng-src="{{imageUrl}}" alt="">
+            <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length" style="max-width: 720px">
+                <div class="panel-body">
+                    <div id="plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
+                                <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
+                            </li>
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner">
+                            <div ng-class="$index==0 ? 'item active' :'item'" ng-repeat="imageUrl in plugin.imageUrls">
+                                <img ng-src="{{imageUrl}}" alt="">
+                            </div>
                         </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                        </a>
+                        <a class="right carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
                     </div>
-                    <!-- Controls -->
-                    <a class="left carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="prev">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                    </a>
-                    <a class="right carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="next">
-                        <span class="glyphicon glyphicon-chevron-right"></span>
-                    </a>
                 </div>
             </div>
             <a href="#" ng-show="showDescription" data-ng-click="toggleDescription($event)">Read less</a>

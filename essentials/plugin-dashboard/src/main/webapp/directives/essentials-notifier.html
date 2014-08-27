@@ -14,12 +14,12 @@
   limitations under the License.
   -->
 
-<div class="log-top alert alert-info" ng-show="visible" ng-class="{'alert-open': visible}">
+<div class="log-top alert alert-info" ng-show="visible" ng-class="{'alert-open': archiveOpen}" ng-click="toggleArchive()">
     <button type="button" class="close"  ng-click="hide()">
         <span aria-hidden="true">&times;</span>
         <span class="sr-only">Close</span>
     </button>
-    <p ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type" ng-click="toggleArchive()">
+    <p ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
         {{message.date}} - <span class="fa fa-fw"
               ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}">
 
