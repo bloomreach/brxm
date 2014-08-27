@@ -28,8 +28,7 @@ public interface EssentialsImageComponentInfo {
     @JcrPath(
             isRelative = true,
             pickerConfiguration = "cms-pickers/images",
-            pickerSelectableNodeTypes = {"hippogallery:imageset"},
-            pickerInitialPath = "/content/gallery"
+            pickerSelectableNodeTypes = {"hippogallery:imageset"}
     )
     String getDocument();
 

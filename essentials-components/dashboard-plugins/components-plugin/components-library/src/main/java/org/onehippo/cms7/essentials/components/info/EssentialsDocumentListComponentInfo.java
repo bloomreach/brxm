@@ -39,8 +39,7 @@ public interface EssentialsDocumentListComponentInfo extends EssentialsPageable,
     @JcrPath(
             isRelative = true,
             pickerConfiguration = "cms-pickers/documents",
-            pickerSelectableNodeTypes = {"hippostd:folder"},
-            pickerInitialPath = "/content/documents"
+            pickerSelectableNodeTypes = {"hippostd:folder"}
     )
     String getPath();
 
