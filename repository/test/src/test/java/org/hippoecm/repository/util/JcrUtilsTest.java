@@ -17,9 +17,11 @@ package org.hippoecm.repository.util;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -28,49 +30,55 @@ import static junit.framework.Assert.assertTrue;
 
 public class JcrUtilsTest extends RepositoryTestCase {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void copyToDescendantFails() throws Exception {
+    private Node node;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
         final String[] content = new String[] {
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
         build(content, session);
-        final Node node = session.getNode("/test/node");
+        node = session.getNode("/test/node");
+    }
+
+    @Test
+    public void getMultipleStringProperty() throws RepositoryException {
+        node.setProperty("testProp", new String[]{"foo", "bar"});
+
+        final String[] prop = JcrUtils.getMultipleStringProperty(node, "testProp", null);
+        assertEquals(2, prop.length);
+        assertEquals("foo", prop[0]);
+        assertEquals("bar", prop[1]);
+    }
+
+    @Test
+    public void getMultipleStringPropertyDefaultValue() throws RepositoryException {
+        final String[] prop = JcrUtils.getMultipleStringProperty(node, "noSuchProperty", new String[]{"defaultValue"});
+        assertEquals(1, prop.length);
+        assertEquals("defaultValue", prop[0]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void copyToDescendantFails() throws Exception {
         JcrUtils.copy(session, "/test/node", "/test/node/foo");
     }
 
     @Test
     public void copyToSiblingSucceeds() throws Exception {
-        final String[] content = new String[]{
-                "/test", "nt:unstructured",
-                "/test/node", "nt:unstructured"
-        };
-        build(content, session);
-        final Node node = session.getNode("/test/node");
         JcrUtils.copy(session, "/test/node", "/test/foo");
         assertTrue(session.nodeExists("/test/foo"));
     }
 
     @Test
     public void copyToSiblingWithSameNamePrefixSucceeds() throws Exception {
-        final String[] content = new String[]{
-                "/test", "nt:unstructured",
-                "/test/node", "nt:unstructured"
-        };
-        build(content, session);
-        final Node node = session.getNode("/test/node");
         JcrUtils.copy(session, "/test/node", "/test/node-foo");
         assertTrue(session.nodeExists("/test/node-foo"));
     }
 
     @Test
     public void testCopyNodeWithAutoCreatedChildNode() throws Exception {
-        final String[] content = new String[] {
-                "/test", "nt:unstructured",
-                "/test/node", "nt:unstructured"
-        };
-        build(content, session);
-        final Node node = session.getNode("/test/node");
         node.addMixin("hippotranslation:translated");
         node.setProperty("hippotranslation:locale", "nl");
         node.setProperty("hippotranslation:id", "1");
@@ -85,12 +93,6 @@ public class JcrUtilsTest extends RepositoryTestCase {
 
     @Test
     public void testCopyNodeWithProtectedProperty() throws Exception {
-        final String[] content = new String[] {
-                "/test", "nt:unstructured",
-                "/test/node", "nt:unstructured"
-        };
-        build(content, session);
-        final Node node = session.getNode("/test/node");
         node.addMixin("mix:referenceable");
         session.save();
 
@@ -102,11 +104,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
 
     @Test
     public void testMultiValuedPropertyCopied() throws Exception {
-        build(new String[] {
-                "/test", "nt:unstructured",
-                "/test/node", "hippo:testrelaxed",
-        }, session);
-        Node node = session.getNode("/test/node");
+        node.setPrimaryType("hippo:testrelaxed");
         node.setProperty("string", new Value[0], PropertyType.STRING);
         node.setProperty("double", new Value[0], PropertyType.DOUBLE);
         session.save();

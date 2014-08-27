@@ -135,6 +135,30 @@ public class JcrUtils {
     }
 
     /**
+     * Returns the multiple string property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
+     * if no such property exists.
+     *
+     * @param baseNode     existing node that should be the base for the relative path
+     * @param relPath      relative path to the property to get
+     * @param defaultValue default value to return when the property does not exist
+     * @return the multiple string property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
+     *         if no such property exists
+     * @throws RepositoryException in case of exception accessing the Repository
+     */
+    public static String[] getMultipleStringProperty(final Node baseNode, final String relPath, final String[] defaultValue) throws RepositoryException {
+        try {
+            final Value[] values = baseNode.getProperty(relPath).getValues();
+            final String[] result = new String[values.length];
+            for (int i = 0; i < values.length; i++) {
+                result[i] = values[i].getString();
+            }
+            return result;
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
      * Returns the long property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
      * if no such property exists.
      *
@@ -869,6 +893,5 @@ public class JcrUtils {
             throw new ValueFormatException(ex);
         }
     }
-
 
 }
