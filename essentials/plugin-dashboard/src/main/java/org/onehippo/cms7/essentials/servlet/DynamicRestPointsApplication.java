@@ -19,15 +19,8 @@ package org.onehippo.cms7.essentials.servlet;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
-
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -36,30 +29,9 @@ import com.google.common.eventbus.EventBus;
 @ApplicationPath("/dynamic")
 public class DynamicRestPointsApplication extends Application {
 
-    @Singleton
-    @Inject
-    private EventBus eventBus;
-
-
-    @Singleton
-    @Inject
-    private AutowireCapableBeanFactory injector;
-
-    @Singleton
-    @Inject
-    private ApplicationContext applicationContext;
-
-
     private final Set<Class<?>> classes = new HashSet<>();
 
-    @Override
-    public Set<Object> getSingletons() {
-        final Set<Object> singletons = new HashSet<>();
-        singletons.add(eventBus);
-        singletons.add(injector);
-        singletons.add(applicationContext);
-        return singletons;
-    }
+
     @Override
     public Set<Class<?>> getClasses() {
         return classes;
