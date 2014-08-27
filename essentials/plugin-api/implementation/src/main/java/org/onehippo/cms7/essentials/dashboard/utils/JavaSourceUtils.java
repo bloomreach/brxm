@@ -505,7 +505,7 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getChildBeansByName", className, path, methodName, propertyName);
+            addTwoArgumentsMethod("getBean", className, path, methodName, propertyName);
         }
         addImport(path, importPath);
 
