@@ -100,7 +100,7 @@
           <a href="#/installed-features">
             <i class="fa fa-dropbox fa-2x fa-fw fa-middle"></i>
             <span>Installed features</span>
-            <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge pull-right alert-danger">{{TOTAL_NEEDS_ATTENTION}}</span>
+            <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-danger" style="position:fixed">{{TOTAL_NEEDS_ATTENTION}}</span>
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
