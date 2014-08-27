@@ -56,6 +56,16 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
+    public void setIcon(final String icon) {
+
+    }
+
+    @Override
     public List<String> getImageUrls() {
         return null;
     }

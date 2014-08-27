@@ -47,6 +47,7 @@
             "http://localhost:8080/essentials/images/screenshots/blog-cms-blog.png",
             "http://localhost:8080/essentials/images/screenshots/blog-cms-author.png"
         ],
+        "icon" : "/essentials/images/icons/blog-icon.png",
         "packageFile": "/META-INF/blog_instructions.xml",
         "parameterServiceClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogParameterService",
         "restClasses": [],

@@ -27,6 +27,8 @@ import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 
+import com.google.common.base.Strings;
+
 /**
  * @version "$Id$"
  */
@@ -52,6 +54,7 @@ public class PluginRestful implements Plugin, Restful {
     private String type;
     private boolean installed;
     private String installState;
+    private String icon;
     private Calendar dateInstalled;
     private String documentationLink;
     private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
@@ -316,6 +319,19 @@ public class PluginRestful implements Plugin, Restful {
             return new ArrayList<>();
         }
         return repositories;
+    }
+
+    @Override
+    public String getIcon() {
+        if(Strings.isNullOrEmpty(icon)){
+            return "/essentials/images/icons/missing-icon.png";
+        }
+        return icon;
+    }
+
+    @Override
+    public void setIcon(final String icon) {
+        this.icon = icon;
     }
 
     @Override

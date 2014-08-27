@@ -37,6 +37,10 @@ public interface Plugin extends Serializable {
 
     void setDescription(String description);
 
+    String getIcon();
+
+    void  setIcon(String icon);
+
     List<String> getImageUrls();
 
     void setImageUrls(List<String> imageUrls);
