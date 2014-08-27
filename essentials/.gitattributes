@@ -464,7 +464,6 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/fr
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/homepage-main.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/imports.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/pagination.ftl -text
-dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/label.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/ErrorPage404.jsp -text
@@ -531,7 +530,6 @@ dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tool/gall
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/gallery-plugin/src/main/resources/image_set_updater.xml -text
 dashboard-plugins/gallery-plugin/src/test/resources/log4j.xml -text
-dashboard-plugins/icons/onebit/license.txt -text
 dashboard-plugins/image-component-plugin/pom.xml -text
 dashboard-plugins/image-component-plugin/src/main/resources/META-INF/imageComponentPlugin_instructions.xml -text
 dashboard-plugins/image-component-plugin/src/main/resources/META-INF/resources/feature/imageComponentPlugin/imageComponentPlugin.html -text
