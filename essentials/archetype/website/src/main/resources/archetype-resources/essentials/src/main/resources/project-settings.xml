@@ -6,6 +6,6 @@
   <selectedComponentsPackage>${package}.components</selectedComponentsPackage>
   <selectedRestPackage>${package}.rest</selectedRestPackage>
   <setupDone>false</setupDone>
-  <templateLanguage>jsp</templateLanguage>
+  <templateLanguage>freemarker</templateLanguage>
   <useSamples>true</useSamples>
 </project>

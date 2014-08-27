@@ -28,8 +28,7 @@ public interface EssentialsDocumentComponentInfo {
     @JcrPath(
             isRelative = true,
             pickerConfiguration = "cms-pickers/documents",
-            pickerSelectableNodeTypes = {"hippo:document"},
-            pickerInitialPath = "/content/documents"
+            pickerSelectableNodeTypes = {"hippo:document"}
     )
     String getDocument();
 

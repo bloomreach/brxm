@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -48,7 +49,7 @@ public class EssentialsFacetsComponent extends CommonComponent {
         final String queryParam = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
         final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(context, facetPath, queryParam);
         if (hippoFacetNavigationBean == null) {
-            log.warn("Facet navigation bean for facet path: {} was null", facetPath);
+            log.warn("Can't find facet navigation bean for facet path '{}'.", facetPath);
             return;
         }
 
@@ -64,10 +65,12 @@ public class EssentialsFacetsComponent extends CommonComponent {
         }
         ResolvedSiteMapItem resolvedSiteMapItem = context.getResolvedSiteMapItem();
         String resolvedContentPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
-        HippoFacetNavigationBean resolvedContentBean = context.getSiteContentBaseBean().getBean(resolvedContentPath, HippoFacetNavigationBean.class);
         String parsedQuery = cleanupSearchQuery(query);
         HippoFacetNavigationBean facNavBean;
-        if (resolvedContentBean != null) {
+        if (!StringUtils.isBlank(resolvedContentPath)
+                && !resolvedContentPath.startsWith("/")
+                && context.getSiteContentBaseBean().getBean(resolvedContentPath, HippoFacetNavigationBean.class) != null)
+        {
             facNavBean = ContentBeanUtils.getFacetNavigationBean(resolvedContentPath, parsedQuery);
         } else {
             facNavBean = ContentBeanUtils.getFacetNavigationBean(path, parsedQuery);
