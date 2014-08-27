@@ -95,7 +95,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
             PropertyId id = new PropertyId(node.getNodeId(), propName);
             if (isHippoPath(propName)) {
                 addHippoPath(doc, id);
-            } else if (isFacet(propName)) {
+            }
+            if (isFacet(propName)) {
                 addFacetValues(doc, id, propName);
             }
         }
