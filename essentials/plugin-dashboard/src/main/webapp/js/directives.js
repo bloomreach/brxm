@@ -217,7 +217,7 @@
                     messages: '='
                 },
                 templateUrl: 'directives/essentials-notifier.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout, $document) {
                     var promisesQueue = [];
                     var lastLength = 0;
                     var ERROR_SHOW_TIME = 1000;
@@ -284,8 +284,9 @@
                         }
                     }, true);
 
-                    $scope.toggleArchive = function () {
+                    $scope.toggleArchive = function ($event) {
                         $scope.archiveOpen = !$scope.archiveOpen;
+                        $event.stopPropagation();
                     };
                     $scope.hide = function() {
                         $scope.visible = false;
@@ -294,6 +295,17 @@
                     $rootScope.$on('show-messages', function() {
                         $scope.visible = true;
                     });
+                    $scope.toggleErrors = function ($event) {
+                        $event.stopPropagation();
+                        $scope.showErrors = !$scope.showErrors;
+                    };
+
+                    $document.bind('click', function () {
+                        $scope.archiveOpen = false;
+                        $scope.$apply();
+                    });
+
+
                 }
             }
         }).directive("essentialsPlugin", function () {
