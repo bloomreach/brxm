@@ -46,7 +46,18 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     /**
      * External URL resources which are not generated from the repository resources.
      */
-    protected static final String[] EXTERNALS = { "http:", "https:", "webdav:", "ftp:", "mailto:", "#", "callto:", "data:", "$" };
+    protected static final String[] EXTERNALS = { 
+        "http:", 
+        "https:", 
+        "webdav:", 
+        "ftp:", 
+        "mailto:", 
+        "#", 
+        "callto:", 
+        "data:", 
+        "tel:", 
+        "sms:", 
+        "$" };
 
     protected static final String LINK_TAG = "<a";
     protected static final String IMG_TAG = "<img";
