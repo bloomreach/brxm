@@ -28,7 +28,6 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -210,28 +209,24 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
     public void setFullyQualified(boolean fullyQualified) {
         this.fullyQualified = fullyQualified;
     }
-    
+
     /**
      * Copies the parameters from map to the BaseURL.
      * @param url BaseURL
      * @return void
      */
     protected void setUrlParameters(HstURL url) {
-        for(String key : parametersMap.keySet()) {
-            
-            List<String> valueList = parametersMap.get(key);
-        
-            String[] valueArray = valueList.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-            
-            url.setParameter(key, valueArray);
-        }
-        
         for (String key : removedParametersList) {
             url.setParameter(key, (String) null);
         }
+
+        for(String key : parametersMap.keySet()) {
+            List<String> valueList = parametersMap.get(key);
+            String[] valueArray = valueList.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+            url.setParameter(key, valueArray);
+        }
     }
-    
-    
+
     /**
      * @return the url
      */
