@@ -75,19 +75,20 @@
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${default.repository.maxActive}"/>
             <property name="maxIdle" value="${default.repository.maxIdle}"/>
-            <property name="minIdle" value="0"/>
-            <property name="initialSize" value="0"/>
-            <property name="maxWait" value="10000"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-            <property name="numTestsPerEvictionRun" value="1"/>
-            <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="true"/>
+            <property name="minIdle" value="${default.repository.minIdle}"/>
+            <property name="initialSize" value="${default.repository.initialSize}"/>
+            <property name="maxWait" value="${default.repository.maxWait}"/>
+            <property name="whenExhaustedAction" value="${default.repository.whenExhaustedAction}"/>
+            <property name="testOnBorrow" value="${default.repository.testOnBorrow}"/>
+            <property name="testOnReturn" value="${default.repository.testOnReturn}"/>
+            <property name="testWhileIdle" value="${default.repository.testWhileIdle}"/>
+            <property name="timeBetweenEvictionRunsMillis" value="${default.repository.timeBetweenEvictionRunsMillis}"/>
+            <property name="numTestsPerEvictionRun" value="${default.repository.numTestsPerEvictionRun}"/>
+            <property name="minEvictableIdleTimeMillis" value="${default.repository.minEvictableIdleTimeMillis}"/>
+            <property name="refreshOnPassivate" value="${default.repository.refreshOnPassivate}"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
-            <property name="maxTimeToLiveMillis" value="3600000"/>
+            <property name="maxTimeToLiveMillis" value="${default.repository.maxTimeToLiveMillis}"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.preview">
@@ -102,20 +103,21 @@
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${preview.repository.maxActive}"/>
             <property name="maxIdle" value="${preview.repository.maxIdle}"/>
-            <property name="minIdle" value="0"/>
-            <property name="initialSize" value="0"/>
-            <property name="maxWait" value="10000"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-            <property name="numTestsPerEvictionRun" value="1"/>
+            <property name="minIdle" value="${preview.repository.minIdle}"/>
+            <property name="initialSize" value="${preview.repository.initialSize}"/>
+            <property name="maxWait" value="${preview.repository.maxWait}"/>
+            <property name="whenExhaustedAction" value="${preview.repository.whenExhaustedAction}"/>
+            <property name="testOnBorrow" value="${preview.repository.testOnBorrow}"/>
+            <property name="testOnReturn" value="${preview.repository.testOnReturn}"/>
+            <property name="testWhileIdle" value="${preview.repository.testWhileIdle}"/>
+            <property name="timeBetweenEvictionRunsMillis" value="${preview.repository.timeBetweenEvictionRunsMillis}"/>
+            <property name="numTestsPerEvictionRun" value="${preview.repository.numTestsPerEvictionRun}"/>
             <!-- after 5 min unused, we evict preview sessions -->
-            <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="true"/>
+            <property name="minEvictableIdleTimeMillis" value="${preview.repository.minEvictableIdleTimeMillis}"/>
+            <property name="refreshOnPassivate" value="${preview.repository.refreshOnPassivate}"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
-            <property name="maxTimeToLiveMillis" value="3600000"/>
+            <property name="maxTimeToLiveMillis" value="${preview.repository.maxTimeToLiveMillis}"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.writable">
@@ -130,20 +132,21 @@
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${writable.repository.maxActive}"/>
             <property name="maxIdle" value="${writable.repository.maxIdle}"/>
-            <property name="minIdle" value="0"/>
-            <property name="initialSize" value="0"/>
-            <property name="maxWait" value="10000"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-            <property name="numTestsPerEvictionRun" value="1"/>
+            <property name="minIdle" value="${writable.repository.minIdle}"/>
+            <property name="initialSize" value="${writable.repository.initialSize}"/>
+            <property name="maxWait" value="${writable.repository.maxWait}"/>
+            <property name="whenExhaustedAction" value="${writable.repository.whenExhaustedAction}"/>
+            <property name="testOnBorrow" value="${writable.repository.testOnBorrow}"/>
+            <property name="testOnReturn" value="${writable.repository.testOnReturn}"/>
+            <property name="testWhileIdle" value="${writable.repository.testWhileIdle}"/>
+            <property name="timeBetweenEvictionRunsMillis" value="${writable.repository.timeBetweenEvictionRunsMillis}"/>
+            <property name="numTestsPerEvictionRun" value="${writable.repository.numTestsPerEvictionRun}"/>
             <!-- after 5 min unused, we evict writable sessions -->
-            <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="true"/>
+            <property name="minEvictableIdleTimeMillis" value="${writable.repository.minEvictableIdleTimeMillis}"/>
+            <property name="refreshOnPassivate" value="${writable.repository.refreshOnPassivate}"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
-            <property name="maxTimeToLiveMillis" value="3600000"/>
+            <property name="maxTimeToLiveMillis" value="${writable.repository.maxTimeToLiveMillis}"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.hstconfigreader">
@@ -158,20 +161,21 @@
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${hstconfigreader.repository.maxActive}"/>
             <property name="maxIdle" value="${hstconfigreader.repository.maxIdle}"/>
-            <property name="minIdle" value="0"/>
-            <property name="initialSize" value="0"/>
-            <property name="maxWait" value="10000"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-            <property name="numTestsPerEvictionRun" value="1"/>
+            <property name="minIdle" value="${hstconfigreader.repository.minIdle}"/>
+            <property name="initialSize" value="${hstconfigreader.repository.initialSize}"/>
+            <property name="maxWait" value="${hstconfigreader.repository.maxWait}"/>
+            <property name="whenExhaustedAction" value="${hstconfigreader.repository.whenExhaustedAction}"/>
+            <property name="testOnBorrow" value="${hstconfigreader.repository.testOnBorrow}"/>
+            <property name="testOnReturn" value="${hstconfigreader.repository.testOnReturn}"/>
+            <property name="testWhileIdle" value="${hstconfigreader.repository.testWhileIdle}"/>
+            <property name="timeBetweenEvictionRunsMillis" value="${hstconfigreader.repository.timeBetweenEvictionRunsMillis}"/>
+            <property name="numTestsPerEvictionRun" value="${hstconfigreader.repository.numTestsPerEvictionRun}"/>
             <!-- after 5 min unused, we evict config reader sessions -->
-            <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="true"/>
+            <property name="minEvictableIdleTimeMillis" value="${hstconfigreader.repository.minEvictableIdleTimeMillis}"/>
+            <property name="refreshOnPassivate" value="${hstconfigreader.repository.refreshOnPassivate}"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
-            <property name="maxTimeToLiveMillis" value="3600000"/>
+            <property name="maxTimeToLiveMillis" value="${hstconfigreader.repository.maxTimeToLiveMillis}"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.binaries">
@@ -186,20 +190,21 @@
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${binaries.repository.maxActive}"/>
             <property name="maxIdle" value="${binaries.repository.maxIdle}"/>
-            <property name="minIdle" value="0"/>
-            <property name="initialSize" value="0"/>
-            <property name="maxWait" value="10000"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-            <property name="numTestsPerEvictionRun" value="1"/>
+            <property name="minIdle" value="${binaries.repository.minIdle}"/>
+            <property name="initialSize" value="${binaries.repository.initialSize}"/>
+            <property name="maxWait" value="${binaries.repository.maxWait}"/>
+            <property name="whenExhaustedAction" value="${binaries.repository.whenExhaustedAction}"/>
+            <property name="testOnBorrow" value="${binaries.repository.testOnBorrow}"/>
+            <property name="testOnReturn" value="${binaries.repository.testOnReturn}"/>
+            <property name="testWhileIdle" value="${binaries.repository.testWhileIdle}"/>
+            <property name="timeBetweenEvictionRunsMillis" value="${binaries.repository.timeBetweenEvictionRunsMillis}"/>
+            <property name="numTestsPerEvictionRun" value="${binaries.repository.numTestsPerEvictionRun}"/>
             <!-- after 5 min unused, we evict binaries sessions -->
-            <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="true"/>
+            <property name="minEvictableIdleTimeMillis" value="${binaries.repository.minEvictableIdleTimeMillis}"/>
+            <property name="refreshOnPassivate" value="${binaries.repository.refreshOnPassivate}"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
-            <property name="maxTimeToLiveMillis" value="3600000"/>
+            <property name="maxTimeToLiveMillis" value="${binaries.repository.maxTimeToLiveMillis}"/>
           </bean>
         </entry>
       </map>
@@ -223,11 +228,12 @@
         <entry key="maxActive" value="${disposable.repository.maxActive}"/>
         <entry key="maxIdle" value="${disposable.repository.maxIdle}"/>
         <entry key="minIdle" value="${disposable.repository.minIdle}"/>
-        <entry key="initialSize" value="0"/>
+        <entry key="initialSize" value="${disposable.repository.initialSize}"/>
         <entry key="maxWait" value="${disposable.repository.maxWait}"/>
-        <entry key="testOnBorrow" value="true"/>
-        <entry key="testOnReturn" value="false"/>
-        <entry key="testWhileIdle" value="false"/>
+        <entry key="whenExhaustedAction" value="${disposable.repository.whenExhaustedAction}"/>
+        <entry key="testOnBorrow" value="${disposable.repository.testOnBorrow}"/>
+        <entry key="testOnReturn" value="${disposable.repository.testOnReturn}"/>
+        <entry key="testWhileIdle" value="${disposable.repository.testWhileIdle}"/>
         <!-- check every 10 seconds for eviction -->
         <entry key="timeBetweenEvictionRunsMillis" value="${disposable.repository.timeBetweenEvictionRunsMillis}"/>
         <entry key="numTestsPerEvictionRun" value="${disposable.repository.numTestsPerEvictionRun}"/>

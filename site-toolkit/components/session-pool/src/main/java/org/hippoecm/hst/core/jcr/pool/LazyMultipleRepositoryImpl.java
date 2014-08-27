@@ -79,11 +79,18 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     public synchronized void setPoolingRepositoryFactory(BasicPoolingRepositoryFactory poolingRepositoryFactory) {
         this.poolingRepositoryFactory = poolingRepositoryFactory;
     }
-    
+
+    public Map<String, String> getDefaultConfigMap() {
+        if (defaultConfigMap == null) {
+            return Collections.emptyMap();
+        }
+        return Collections.unmodifiableMap(defaultConfigMap);
+    }
+
     public synchronized void setDefaultConfigMap(Map<String, String> defaultConfigMap) {
         this.defaultConfigMap = trimWhiteSpaceValues(defaultConfigMap);
     }
-    
+
     public void setPooledSessionLifecycleManagementActive(boolean pooledSessionLifecycleManagementActive) {
         this.pooledSessionLifecycleManagementActive = pooledSessionLifecycleManagementActive;
     }

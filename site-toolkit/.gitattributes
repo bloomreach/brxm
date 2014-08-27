@@ -775,6 +775,7 @@ components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescript
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManagerWithAddonModules.java -text
+components/core/src/test/java/org/hippoecm/hst/site/container/TestSystemDefaultSessionPoolConfigurations.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/session/SessionIdStoringApplicationListener.java -text
 components/core/src/test/java/org/hippoecm/hst/site/content/ObjectConverterFactoryBeanTest.java -text
 components/core/src/test/java/org/hippoecm/hst/site/content/beans/NewsArticleBean.java -text
@@ -830,6 +831,7 @@ components/core/src/test/resources/org/hippoecm/hst/core/container/TestContainer
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestDefaultPipeline.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestFactoryComponentInstanceCreation.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestPageCachingValve.xml -text
+components/core/src/test/resources/org/hippoecm/hst/site/container/TestSystemDefaultSessionPoolConfigurations.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/AbstractTestConfigurations.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
