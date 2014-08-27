@@ -21,6 +21,8 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
@@ -28,6 +30,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -52,6 +55,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         super(context, config);
 
         final IModel<String> displayModel = getDisplayModel();
+        final IModel<String> linkedNodePathModel = getLinkedNodePathModel();
 
         mode = config.getString("mode", "view");
         if ("edit".equals(mode)) {
@@ -87,7 +91,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                     });
                 }
             };
-            add(new ClearableDialogLink("docbase", displayModel, dialogFactory, getDialogService()) {
+            ClearableDialogLink dialogLink = new ClearableDialogLink("docbase", displayModel, dialogFactory, getDialogService()) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -106,9 +110,13 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                     // Checking for string literals ain't pretty. It's probably better to create a better display model.
                     return !getEmptyLinkText().equals(displayModel.getObject());
                 }
-            });
+            };
+            dialogLink.add(new AttributeModifier("title", linkedNodePathModel));
+            add(dialogLink);
         } else {
-            add(new Label("docbase", displayModel));
+            Label docbaseLabel = new Label("docbase", displayModel);
+            docbaseLabel.add(new AttributeModifier("title", linkedNodePathModel));
+            add(docbaseLabel);
         }
         setOutputMarkupId(true);
     }
@@ -121,12 +129,16 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
             protected String load() {
                 Node node = MirrorTemplatePlugin.this.getModelObject();
                 try {
-                    if (node != null && node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                        String docbaseUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                        if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
-                            return getEmptyLinkText();
+                    Node linkedNode = getLinkedNode(node);
+                    if (linkedNode != null) {
+                        String nodeCaption = null;
+                        if (linkedNode.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                            nodeCaption = new NodeTranslator(new JcrNodeModel(linkedNode)).getNodeName().getObject();
                         }
-                        return node.getSession().getNodeByUUID(docbaseUUID).getPath();
+                        if (StringUtils.isBlank(nodeCaption)) {
+                            nodeCaption = linkedNode.getPath();
+                        }
+                        return nodeCaption;
                     }
                 } catch (ValueFormatException e) {
                     log.warn("Invalid value format for docbase " + e.getMessage());
@@ -144,6 +156,34 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         };
     }
 
+    protected IModel<String> getLinkedNodePathModel() {
+        return new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                Node node = MirrorTemplatePlugin.this.getModelObject();
+                try {
+                    Node linkedNode = getLinkedNode(node);
+                    if (linkedNode != null) {
+                        return linkedNode.getPath();
+                    }
+                } catch (ValueFormatException e) {
+                    log.warn("Invalid value format for docbase " + e.getMessage());
+                    log.debug("Invalid value format for docbase ", e);
+                } catch (PathNotFoundException e) {
+                    log.warn("Docbase not found " + e.getMessage());
+                    log.debug("Docbase not found ", e);
+                } catch (ItemNotFoundException e) {
+                    log.info("Docbase " + e.getMessage() + " could not be dereferenced");
+                } catch (RepositoryException e) {
+                    log.error("Invalid docbase " + e.getMessage(), e);
+                }
+                return "";
+            }
+        };
+    }
+
     protected String getEmptyLinkText() {
         return EMPTY_LINK_TEXT;
     }
@@ -152,5 +192,19 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         return new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(((JcrNodeModel) getModel())
                 .getItemModel().getPath()
                 + "/hippo:docbase"));
+    }
+
+    private Node getLinkedNode(Node mirrorNode) throws RepositoryException {
+        if (mirrorNode == null) {
+            return null;
+        }
+        if (mirrorNode != null && mirrorNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+            String docbaseUUID = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            if (StringUtils.isEmpty(docbaseUUID) || docbaseUUID.startsWith("cafebabe-")) {
+                return null;
+            }
+            return mirrorNode.getSession().getNodeByIdentifier(docbaseUUID);
+        }
+        return null;
     }
 }
