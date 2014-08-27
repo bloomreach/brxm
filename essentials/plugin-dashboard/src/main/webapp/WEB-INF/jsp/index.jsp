@@ -78,14 +78,12 @@
       </p>
       <div class="navbar-text navbar-icons">
         <a href="#/build" class="navbar-link">
-          <span class="fa fa-refresh"></span> <span class="hidden-xs">Rebuild</span>
+          <span class="fa fa-refresh"></span>
+          <span class="hidden-xs">Rebuild</span>
+          <span class="fa fa-bell-o fa-danger" ng-show="NEEDS_REBUILD"></span>
         </a>
-        <a href="#/build" class="navbar-link">
-          <span ng-show="NEEDS_REBUILD" class="fa fa-bell-o fa-danger"></span>
-        </a>
-        <a ng-click="showMessages()" ng-show="feedbackMessages.length && showMessagesNavbarLink">
-          <span class="fa fa-info-circle"></span>
-          <span class="badge pull-right alert-info">{{feedbackMessages.length}}</span>
+        <a href="#" ng-click="showMessages($event)" ng-show="feedbackMessages.length && showMessagesNavbarLink">
+          <span class="fa fa-info-circle"></span><span class="badge badge-info">{{feedbackMessages.length}}</span>
         </a>
       </div>
     </div>

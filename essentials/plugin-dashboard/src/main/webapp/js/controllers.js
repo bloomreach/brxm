@@ -185,7 +185,8 @@
                 $scope.showMessagesNavbarLink = true;
                 $rootScope.addLogClass = !$rootScope.addLogClass;
             });
-            $scope.showMessages = function() {
+            $scope.showMessages = function($event) {
+                $event.preventDefault();
                 $scope.showMessagesNavbarLink = false;
                 $rootScope.addLogClass = true;
                 $rootScope.$broadcast('show-messages');
