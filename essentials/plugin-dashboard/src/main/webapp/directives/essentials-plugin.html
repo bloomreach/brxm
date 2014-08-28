@@ -54,10 +54,10 @@
             </div>
             <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length" style="max-width: 720px">
                 <div class="panel-body">
-                    <div id="plugincarousel{{plugin.name}}" class="carousel slide" data-ride="carousel">
+                    <div id="plugincarousel{{plugin.id}}" class="carousel slide" data-ride="carousel">
                         <!-- Indicators -->
                         <ol class="carousel-indicators">
-                            <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.name}}" data-slide-to="{{$index}}">
+                            <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.id}}" data-slide-to="{{$index}}">
                                 <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
                             </li>
                         </ol>
@@ -68,10 +68,10 @@
                             </div>
                         </div>
                         <!-- Controls -->
-                        <a class="left carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="prev">
+                        <a class="left carousel-control" href="#plugincarousel{{plugin.id}}" role="button" data-slide="prev">
                             <span class="glyphicon glyphicon-chevron-left"></span>
                         </a>
-                        <a class="right carousel-control" href="#plugincarousel{{plugin.name}}" role="button" data-slide="next">
+                        <a class="right carousel-control" href="#plugincarousel{{plugin.id}}" role="button" data-slide="next">
                             <span class="glyphicon glyphicon-chevron-right"></span>
                         </a>
                     </div>
