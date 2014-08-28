@@ -7,6 +7,9 @@
         "icon" : "/essentials/images/icons/content-blocks.png",
         "introduction": "With Content Blocks, the content- and document editor can add multiple pre-configured compound type blocks to a document.",
         "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This Essentials Feature wraps the certified Hippo Forge Content Blocks plugin.</p>",
+        "imageUrls": [
+            "/essentials/images/screenshots/contentblocks01.png"
+        ],
         "documentationLink": "http://content-blocks.forge.onehippo.org",
         "type": "feature",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksParameterService",
@@ -44,10 +47,10 @@
         "introduction": "With Blog, you add complete Blog functionality to your project. This Feature will be installed as a  set of drag-and-drop components in the document template editor. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
         "description": "<ul><li>This Essentials feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocuments&gt; and blog/authors/&lt;authors&gt;. On root level in the CMS, the entry 'administration' is created.</li><li>Several drag-and-drop components are added to the Document template editor: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
         "imageUrls": [
-            "/essentials/images/screenshots/blog-overview.png",
-            "/essentials/images/screenshots/blog-detail.png",
-            "/essentials/images/screenshots/blog-cms-blog.png",
-            "/essentials/images/screenshots/blog-cms-author.png"
+            "/essentials/images/screenshots/blog01.png",
+            "/essentials/images/screenshots/blog02.png",
+            "/essentials/images/screenshots/blog04.png",
+            "/essentials/images/screenshots/blog06.png"
         ],
         "packageFile": "/META-INF/blog_instructions.xml",
         "parameterServiceClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogParameterService",
@@ -251,6 +254,9 @@
         "icon" : "/essentials/images/icons/documents-wizard.png",
         "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Hippo CMS while working in another part of the CMS.",
         "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This Essentials Feature wraps the certified Hippo Dashboard Document Wizard.",
+        "imageUrls": [
+            "/essentials/images/screenshots/documentwizard01.png"
+        ],
         "documentationLink": "http://documentwizard.forge.onehippo.org",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"],
@@ -505,6 +511,10 @@
         "name": "Images",
         "icon" : "/essentials/images/icons/images.png",
         "introduction": "With Images, you can easily place single images in your document template. This Feature will be installed as a drag-and-drop component in the document template editor. You can select in the CMS what image from the repository needs to be shown.",
+        "imageUrls": [
+            "/essentials/images/screenshots/image01.png",
+            "/essentials/images/screenshots/image02.png"
+        ],
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/image-component.html",
         "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
         "restClasses": [],
@@ -557,8 +567,10 @@
         "introduction": "With FAQ, you add complete FAQ section to your project. This Feature will be installed as a drag-and-drop component in the document template editor.",
         "description": "<ul><li>This Essentials feature installs two new document types: 'faqdocument' and 'faqlistdocument' in the CMS.</li><li>A structured document tree is created in the project: faq/about FAQ items</li><li>A drag-and-drop component 'Faq' is added to the Document template editor.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
         "imageUrls": [
-            "/essentials/images/screenshots/faq-list.png",
-            "/essentials/images/screenshots/faq-detail.png"
+            "/essentials/images/screenshots/faq01.png",
+            "/essentials/images/screenshots/faq02.png",
+            "/essentials/images/screenshots/faq03.png",
+            "/essentials/images/screenshots/faq04.png"
         ],
         "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
         "restClasses": [],
@@ -584,8 +596,10 @@
         "introduction": "With Banner, you add banners to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/document-component.html",
         "imageUrls": [
-            "/essentials/images/screenshots/banner-homepage.png",
-            "/essentials/images/screenshots/carousel-dialog.png"
+            "/essentials/images/screenshots/banner01.png",
+            "/essentials/images/screenshots/banner02.png",
+            "/essentials/images/screenshots/banner03.png",
+            "/essentials/images/screenshots/banner04.png"
         ],
         "packageFile": "/META-INF/banner_instructions.xml",
         "restClasses": [],
@@ -607,6 +621,9 @@
         "name": "Menus",
         "icon" : "/essentials/images/icons/menu.png",
         "introduction": "With Menus, you add a customizable menu in the document template editor. It will be available as drag-and-drop component for you to add to your template.",
+        "imageUrls": [
+            "/essentials/images/screenshots/menu01.png"
+        ],
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/menu-component.html",
         "packageFile": "/META-INF/menu_instructions.xml",
         "restClasses": [],
@@ -678,9 +695,9 @@
         "description": "<ul><li>This Essentials feature installs a new document type 'eventsdocument' in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocuments&gt;</li><li>A drag-and-drop component 'events list' is added to the Document template editor. This events list component can be configured.</li><li>Some sample events articles are installed and a page (with corresponding menu entry) with an example eventslist is created.</li></ul>",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/events-component.html",
         "imageUrls": [
-            "/essentials/images/screenshots/events-overview.png",
-            "/essentials/images/screenshots/events-detail.png",
-            "/essentials/images/screenshots/events-cms.png"
+            "/essentials/images/screenshots/events01.png",
+            "/essentials/images/screenshots/events02.png",
+            "/essentials/images/screenshots/events03.png"
         ],
         "packageFile": "/META-INF/events_package_instructions.xml",
         "restClasses": [],
@@ -704,6 +721,10 @@
         "name": "List and Content",
         "icon" : "/essentials/images/icons/bundle.png",
         "introduction": "This essentials feature installs two new components in the document template editor: \"Generic List\" and \"Generic Content\". With these components you can add paginated lists and content items in your template. You will need to edit the page rendering templates (JSP or FreeMarker) to use these features.",
+        "imageUrls": [
+            "/essentials/images/screenshots/genericlistcontent01.png",
+            "/essentials/images/screenshots/genericlistcontent02.png"
+        ],
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/list-component.html",
         "packageFile": "/META-INF/list_content_instructions.xml",
         "restClasses": [],
@@ -730,9 +751,10 @@
         "description": "<ul><li>This Essentials feature installs a new document type 'newsdocument' in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component 'newslist' is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/news-component.html",
         "imageUrls": [
-                "/essentials/images/screenshots/news-overview.png",
-                "/essentials/images/screenshots/news-detail.png",
-                "/essentials/images/screenshots/news-cms.png"
+                "/essentials/images/screenshots/news01.png",
+                "/essentials/images/screenshots/news02.png",
+                "/essentials/images/screenshots/news03.png",
+                "/essentials/images/screenshots/news04.png"
         ],
         "packageFile": "/META-INF/news_package_instructions.xml",
         "restClasses": [],
