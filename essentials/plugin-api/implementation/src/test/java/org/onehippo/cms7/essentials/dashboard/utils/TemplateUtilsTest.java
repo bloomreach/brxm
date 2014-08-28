@@ -40,10 +40,9 @@ import static org.junit.Assert.assertTrue;
  */
 public class TemplateUtilsTest extends BaseTest {
 
-    public static final int EXPECTED_PROPERTY_SIZE = 7;
     public static final String BEAN_REF = "com.test.MyBean";
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
-    private List<MemoryBean> memoryBeans;
+
 
     @Override
     @Before
@@ -72,22 +71,6 @@ public class TemplateUtilsTest extends BaseTest {
         log.info("{}", result);
     }
 
-    @Test
-    public void testParseBeanProperties() throws Exception {
-        assertTrue(memoryBeans != null);
-        for (MemoryBean memoryBean : memoryBeans) {
-            final Path beanPath = memoryBean.getBeanPath();
-            if (beanPath != null && memoryBean.getName().equals("newsdocument")) {
-                final List<TemplateUtils.PropertyWrapper> propertyWrappers = TemplateUtils.parseBeanProperties(beanPath);
-                final int size = propertyWrappers.size();
-                assertEquals(String.format("Expected %d methods but got, %d", EXPECTED_PROPERTY_SIZE, size), EXPECTED_PROPERTY_SIZE, size);
-                for (TemplateUtils.PropertyWrapper propertyWrapper : propertyWrappers) {
-                    final String propertyExpression = propertyWrapper.getFormattedJspProperty("document");
-                    assertNotEquals(String.format("Expected property expression to be populated: %s", propertyWrapper.getPropertyName()), "", propertyExpression);
-                }
-            }
-        }
-    }
 
     @Test
     public void testParsing() throws Exception {
@@ -146,7 +129,7 @@ public class TemplateUtilsTest extends BaseTest {
     private void populateExistingBeans() {
         final PluginContext context = getContext();
         context.setProjectNamespacePrefix(HIPPOPLUGINS_NAMESPACE);
-        memoryBeans = BeanWriterUtils.buildBeansGraph(getProjectRoot(), context, "txt");
+
 
     }
 

@@ -64,16 +64,10 @@ public final class BeanWriterUtils {
             .build();
 
 
-
-
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
-    public static final String HIPPOSYSEDIT_PATH = "hipposysedit:path";
-    public static final String HIPPOSYSEDIT_TYPE = "hipposysedit:type";
+
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
-    public static final Set<String> EXPOSABLE_BUILT_IN_PROPERTIES = new ImmutableSet.Builder<String>()
-            .add("hippostd:tags")
-            .build();
 
     private BeanWriterUtils() {
     }
@@ -104,41 +98,6 @@ public final class BeanWriterUtils {
      * @param sourceExtension extension used for source files e.g. {@code "java"}
      * @return a list of MemoryBeans or empty list if nothing is found
      */
-    public static List<MemoryBean> buildBeansGraph(final Path directory, PluginContext context, final String sourceExtension) {
-        final List<XmlNode> templateDocuments = XmlUtils.findTemplateDocuments(directory, context);
-        final String projectNamespacePrefix = context.getProjectNamespacePrefix();
-        final List<MemoryBean> beans = new ArrayList<>();
-        for (XmlNode templateDocument : templateDocuments) {
-            MemoryBean bean = processXmlTemplate(templateDocument, projectNamespacePrefix);
-            beans.add(bean);
-        }
-        // we need to annotate existing beans before we start processing
-        BeanWriterUtils.annotateExistingBeans(context, sourceExtension);
-        final List<Path> existing = BeanWriterUtils.findExitingBeans(context, sourceExtension);
-        final Collection<HippoEssentialsGeneratedObject> generatedObjectList = new ArrayList<>();
-        for (Path path : existing) {
-            final HippoEssentialsGeneratedObject generatedObject = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-            if (generatedObject != null) {
-                generatedObjectList.add(generatedObject);
-            }
-        }
-        BeanWriterUtils.processSuperTypes(beans, generatedObjectList);
-        return beans;
-
-    }
-
-    public static void processSuperTypes(final Iterable<MemoryBean> allBeans, final Iterable<HippoEssentialsGeneratedObject> descriptors) {
-        for (HippoEssentialsGeneratedObject descriptor : descriptors) {
-            for (MemoryBean myBean : allBeans) {
-                final String fullName = myBean.getPrefixedName();
-                if (fullName.equals(descriptor.getInternalName())) {
-                    myBean.setBeanPath(descriptor.getFilePath());
-                }
-            }
-        }
-
-    }
-
 
 
     public static Map<String, Path> mapExitingBeanNames(final PluginContext context, final String sourceFileExtension) {
@@ -181,125 +140,5 @@ public final class BeanWriterUtils {
 
     }
 
-    /**
-     * Adds {@code org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated} annotation (if missing) to the existing beans
-     *
-     * @param context             plugin context instance
-     * @param sourceFileExtension file extension, e.g. {@code "java"}
-     * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated
-     */
-    public static void annotateExistingBeans(final PluginContext context, final String sourceFileExtension) {
-        final List<Path> existingBeans = findExitingBeans(context, sourceFileExtension);
-        for (Path path : existingBeans) {
-            if (!JavaSourceUtils.hasHippoEssentialsAnnotation(path)) {
-                JavaSourceUtils.addHippoGeneratedBeanAnnotation(path);
-            }
-        }
 
-    }
-
-
-
-
-    //############################################
-    //  private methods
-    //############################################
-
-
-
-    private static void processKid(final MemoryBean bean, final XmlNode templateDocument, final NodeOrProperty nodeOrProperty, final String projectNamespacePrefix) {
-        final String name = nodeOrProperty.getName();
-        if (Strings.isNullOrEmpty(name)) {
-            return;
-        }
-        // check if we have hipposysedit:path
-        final XmlProperty pathProp = nodeOrProperty.getPropertyForName(HIPPOSYSEDIT_PATH);
-        final XmlProperty typeProp = nodeOrProperty.getPropertyForName(HIPPOSYSEDIT_TYPE);
-
-        if (pathProp != null && typeProp != null) {
-            final String myType = typeProp.getSingleValue();
-            final String myName = pathProp.getSingleValue();
-            if (canAddProperty(projectNamespacePrefix, myName)) {
-                addBeanPropertyForType(bean, nodeOrProperty, myName, myType);
-            }
-        }
-
-        // add all project & built in types:
-        if (canAddProperty(projectNamespacePrefix, name)) {
-            addBeanProperty(bean, templateDocument, nodeOrProperty, name);
-        }
-
-        final Collection<NodeOrProperty> childNodes = nodeOrProperty.getXmlNodeOrXmlProperty();
-        for (NodeOrProperty childNode : childNodes) {
-            String aName = childNode.getName();
-            if (canAddProperty(projectNamespacePrefix, aName)) {
-                addBeanProperty(bean, templateDocument, childNode, aName);
-            }
-            processKid(bean, templateDocument, childNode, projectNamespacePrefix);
-        }
-    }
-
-    private static boolean canAddProperty(final String projectNamespacePrefix, final String name) {
-        if (Strings.isNullOrEmpty(name)) {
-            return false;
-        }
-        return name.startsWith(projectNamespacePrefix) || EXPOSABLE_BUILT_IN_PROPERTIES.contains(name);
-    }
-
-    private static void addBeanPropertyForType(final MemoryBean bean, final NodeOrProperty nodeOrProperty, final String name, final String type) {
-        final MemoryProperty property = new MemoryProperty(bean);
-        property.setName(name);
-        property.setType(type);
-        property.setMultiple(nodeOrProperty.getMultiple());
-        bean.addProperty(property);
-    }
-
-    private static void addBeanProperty(final MemoryBean bean, final XmlNode templateDocument, final NodeOrProperty nodeOrProperty, final String name) {
-        final MemoryProperty property = new MemoryProperty(bean);
-        property.setName(name);
-        property.setMultiple(nodeOrProperty.getMultiple());
-        // find a right type:
-
-        XmlProperty typeProperty = null;
-        final Collection<XmlNode> subnodesByName = templateDocument.getTemplates();
-        for (XmlNode node : subnodesByName) {
-            final Collection<XmlProperty> properties = node.getProperties();
-            for (XmlProperty xmlProperty : properties) {
-                if (xmlProperty.getName().equals(HIPPOSYSEDIT_TYPE) && name.equals(xmlProperty.getSingleValue())) {
-                    typeProperty = node.getXmlPropertyByName(HIPPOSYSEDIT_TYPE);
-                    break;
-                }
-            }
-        }
-
-        if (typeProperty != null) {
-            property.setType(typeProperty.getSingleValue());
-        } else {
-            log.debug("Missing typeProperty for bean: {}", name);
-        }
-        // check if property is already there:
-        final List<MemoryProperty> properties = bean.getProperties();
-        for (MemoryProperty memoryProperty : properties) {
-            if (memoryProperty.getName().equals(property.getName())) {
-                log.debug("Property already exists: {}", memoryProperty.getName());
-                return;
-            }
-        }
-
-
-        bean.addProperty(property);
-    }
-
-    public static MemoryBean processXmlTemplate(final XmlNode templateDocument, final String projectNamespacePrefix) {
-        final String name = templateDocument.getName();
-        final MemoryBean bean = new MemoryBean(name, projectNamespacePrefix);
-        final Collection<String> values = templateDocument.getSupertypeProperty().getValues();
-        bean.setSuperTypeValues(new HashSet<>(values));
-        final Collection<XmlNode> xmlNodeOrXmlProperty = templateDocument.getNodeTypes();
-        for (NodeOrProperty nodeOrProperty : xmlNodeOrXmlProperty) {
-            processKid(bean, templateDocument, nodeOrProperty, projectNamespacePrefix);
-        }
-        return bean;
-
-    }
 }
