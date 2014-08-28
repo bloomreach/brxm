@@ -124,7 +124,7 @@
 //############################################
 // RUN
 //############################################
-        .run(function ($rootScope, $location, $log, $http, $timeout, $templateCache, modalService) {
+        .run(function ($rootScope, $location, $log, $http, $timeout, $templateCache, modalService, pluginTypeFilter) {
             $rootScope.$on('$stateChangeStart',
                 function (event, toState, toParams, fromState, fromParams) {
                     // when showing introduction, we want to hide some items:
@@ -254,7 +254,7 @@
                                 $rootScope.TOTAL_TOOLS = data.totalTools;
                                 $rootScope.INSTALLED_FEATURES = data.installedFeatures;
                                 $rootScope.NEEDS_REBUILD = data.needsRebuild;
-                                $rootScope.TOTAL_NEEDS_ATTENTION = data.rebuildPlugins.length + data.configurablePlugins;
+                                $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(data.rebuildPlugins, "feature").length + data.configurablePlugins;
                                 $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
 
                             } else {
@@ -306,7 +306,7 @@
      * Filter plugins for given group type
      */
         .filter('pluginType', function () {
-            return function (name, plugins) {
+            return function (plugins, name) {
                 var retVal = [];
                 angular.forEach(plugins, function (plugin) {
                     if (plugin.type == name) {

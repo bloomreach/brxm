@@ -208,7 +208,9 @@ public class PluginResource extends BaseResource {
                 }
             }
             if(!containsPlugin){
-                systemInfo.addRebuildPlugin(new PluginRestful(pluginName));
+                final Plugin plugin = new PluginRestful(pluginName);
+                plugin.setType(rebuildEvent.getPluginType());
+                systemInfo.addRebuildPlugin(plugin);
             }
         }
 

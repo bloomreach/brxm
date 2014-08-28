@@ -67,7 +67,7 @@ public class BeanWriterResource extends BaseResource {
             messages.add(new MessageRestful("All beans were up to date"));
         } else {
             final String message = "HST Beans changed, project rebuild needed";
-            eventBus.post(new RebuildEvent("Beanwriter", message));
+            eventBus.post(new RebuildEvent("Beanwriter", "tool", message));
             messages.add(new MessageRestful(message));
         }
 
