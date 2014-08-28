@@ -279,6 +279,9 @@ public class JCRJobStore implements JobStore {
             } catch (RepositoryException ignore) {
             }
         }
+        if (executorService != null) {
+            executorService.shutdown();
+        }
     }
 
     @Override
