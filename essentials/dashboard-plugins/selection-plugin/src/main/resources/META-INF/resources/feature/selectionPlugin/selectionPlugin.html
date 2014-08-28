@@ -16,17 +16,17 @@
 
 <div ng-controller="selectionPluginCtrl">
     <div class="panel panel-default" ng-show="plugin.installState === 'installed'">
-        <div class="panel-heading"><h3>Selection Plugin Configuration</h3></div>
+        <div class="panel-heading"><h3>Selections Configuration</h3></div>
         <div class="panel-body">
 
             <h4>Add selection fields to document types</h4>
 
             <div ng-hide="documentTypes.length && valueLists.length">
-                <p>You have successfully installed the selection plugin, which makes it possible to create selection fields
+                <p>You have successfully installed the selections feature, which makes it possible to create selection fields
                     in your document types, using value lists created and maintained in the CMS.</p>
                 <p>It appears that you have not yet created a value list in the CMS, or that you have no document types
                     to create selection fields. Make sure you have the desired document types in place (by adding the
-                    appropriate plugins to your project or creating them yourself in the CMS document type editor, and that
+                    appropriate features to your project or creating them yourself in the CMS document type editor, and that
                     you have created the desired value lists in the CMS.</p>
             </div>
             <div ng-show="documentTypes.length && valueLists.length">
