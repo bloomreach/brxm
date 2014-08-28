@@ -54,6 +54,7 @@
                        class="form-control"
                        ng-model="newProviderName"
                        ng-required="true"
+                       ng-pattern="/^[a-zA-Z]{2,}$/"
                        placeholder="Enter provider name"/>
                 <span class="input-group-btn">
                     <button ng-disabled="!providerForm.$valid"

@@ -137,5 +137,52 @@
 <!-- Include the loader.js script -->
 <script src="${pageContext.request.contextPath}/js/loader.js" data-modules="http://<%=request.getServerName()+':'+request.getServerPort()%>/essentials/rest/plugins/modules"></script>
 
+
+<style type="text/css">
+  input.ng-invalid,
+  input.ng-invalid-minlength {
+    background-color: #e7484c;
+    color: #fff;
+  }
+
+  select.ng-invalid + div.chosen-container {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    border: 2px solid #e7484c;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  }
+
+  input:focus.ng-invalid,
+  input:focus.ng-invalid-minlength {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    border: 3px solid #e7484c;
+  }
+
+  input.ng-valid,
+  input:focus.ng-valid {
+    background-color: #fff;
+    color: #000;
+  }
+
+  [ng\:cloak],
+  [ng-cloak],
+  [data-ng-cloak],
+  [x-ng-cloak],
+  .ng-cloak,
+  .x-ng-cloak,
+  .ng-hide {
+    display: none !important;
+  }
+
+  ng\:form {
+    display: block;
+  }
+
+  div.chosen-container[style] {
+    min-width: 100px;
+  }
+</style>
 </body>
 </html>
