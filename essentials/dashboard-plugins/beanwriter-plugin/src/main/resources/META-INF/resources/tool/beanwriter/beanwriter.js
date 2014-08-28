@@ -17,13 +17,18 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-            .controller('beanWriterCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-                $scope.endpoint = $rootScope.REST.dynamic + 'beanwriter/';
-                $scope.resultMessages = [];
-                $scope.runBeanWriter = function () {
-                    $http.post($scope.endpoint).success(function (data) {
-                        //$scope.resultMessages = data;
-                    });
-                };
-            })
+        .controller('beanWriterCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+            $scope.endpoint = $rootScope.REST.dynamic + 'beanwriter/';
+            $scope.resultMessages = [];
+            $scope.selectedImageSet = 'HippoGalleryImageSet';
+            $scope.runBeanWriter = function () {
+                var payload = Essentials.addPayloadData("imageSet", $scope.selectedImageSet, null);
+                $http.post($scope.endpoint, payload).success(function (data) {
+                });
+            };
+
+            $http.get($scope.endpoint + "imagesets").success(function (data) {
+                $scope.imageSets = data;
+            });
+        })
 })();

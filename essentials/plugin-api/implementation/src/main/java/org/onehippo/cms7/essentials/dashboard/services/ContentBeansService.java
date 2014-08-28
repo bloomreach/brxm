@@ -68,6 +68,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -83,7 +84,8 @@ public class ContentBeansService {
     private static final String BASE_TYPE = "hippo:document";
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
     public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
-    public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
+    public static final String CONTEXT_BEAN_DATA = BeanWriterUtils.class.getName();
+    public static final String CONTEXT_BEAN_IMAGE_SET = BeanWriterUtils.class.getName() + "imageset";
 
     private final Set<HippoContentBean> contentBeans;
     /**
@@ -400,7 +402,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
@@ -409,7 +411,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
@@ -417,7 +419,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
@@ -425,7 +427,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodLong(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
@@ -433,7 +435,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodDouble(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
                     break;
@@ -469,29 +471,36 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
 
                 case "hippogallerypicker:imagelink":
                     methodName = GlobalUtils.createMethodName(name);
-                    JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
+                    final Path path = extractPath();
+                    if (path == null) {
+                        JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
+                    } else {
+                        final String className = JavaSourceUtils.getClassName(path);
+                        final String importName = JavaSourceUtils.getImportName(path);
+                        JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importName, methodName, name, multiple);
+                    }
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 case "hippo:mirror":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 case "hippogallery:image":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 default:
@@ -507,7 +516,7 @@ public class ContentBeansService {
                                 methodName = GlobalUtils.createMethodName(name);
                                 final String importPath = JavaSourceUtils.getImportName(myBeanPath);
                                 JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importPath, methodName, name, multiple);
-                                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                                 return;
                             }
                         }
@@ -519,6 +528,36 @@ public class ContentBeansService {
             }
         }
 
+    }
+
+    private Path extractPath() {
+        final Multimap<String, Object> pluginContextData = context.getPluginContextData();
+        final Collection<Object> data = pluginContextData.get(CONTEXT_BEAN_IMAGE_SET);
+        Path path = null;
+        if (data != null && data.size() == 1) {
+            final Object next = data.iterator().next();
+            if (next instanceof Path) {
+                path = (Path) next;
+            }
+        }
+        return path;
+    }
+
+
+    public Map<String, Path> getExistingImageTypes() {
+        final Map<String, Path> existing = findExitingBeans();
+        final Map<String, Path> imageTypes = new HashMap<>();
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET, null);
+        for (Path path : existing.values()) {
+            final String myClass = JavaSourceUtils.getClassName(path);
+            final String extendsClass = JavaSourceUtils.getExtendsClass(path);
+            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET)) {
+                imageTypes.put(myClass, path);
+            }
+
+        }
+        return imageTypes;
     }
 
     public void convertImageMethods(final String newImageNamespace) {
@@ -533,11 +572,11 @@ public class ContentBeansService {
             if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET)) {
                 imageTypes.put(myClass, JavaSourceUtils.getImportName(path));
             }
-            if(annotation !=null && newImageNamespace.equals(annotation.getInternalName())){
+            if (annotation != null && newImageNamespace.equals(annotation.getInternalName())) {
                 newReturnType = myClass;
             }
         }
-        if(Strings.isNullOrEmpty(newReturnType)){
+        if (Strings.isNullOrEmpty(newReturnType)) {
             log.warn("Could not find return type for image set namespace: {}", newImageNamespace);
             return;
         }
@@ -572,7 +611,7 @@ public class ContentBeansService {
             public boolean visit(MethodDeclaration node) {
                 final String methodName = node.getName().getFullyQualifiedName();
                 final Type type = node.getReturnType2();
-               if (type.isSimpleType()) {
+                if (type.isSimpleType()) {
 
                     ///
                     final SimpleType simpleType = (SimpleType) type;
@@ -590,7 +629,7 @@ public class ContentBeansService {
                 return super.visit(node);
             }
         });
-        if(deletedMethods.size() > 0){
+        if (deletedMethods.size() > 0) {
             final AST deleteAst = deleteUnit.getAST();
             final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
             GlobalUtils.writeToFile(deletedSource, path);
@@ -599,7 +638,7 @@ public class ContentBeansService {
                 // Add replacement methods:
                 JavaSourceUtils.addBeanMethodInternalType(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
                 log.debug("Replaced old method: {} with new return type: {}", oldMethod.getMethodName(), newReturnType);
-                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));
+                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));
             }
         }
     }
@@ -628,7 +667,7 @@ public class ContentBeansService {
         }
         final String className = GlobalUtils.createClassName(name);
         final Path path = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
-        context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
+        context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
 
         return path;
     }

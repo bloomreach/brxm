@@ -16,9 +16,13 @@
 
 package org.onehippo.cms7.essentials.beanwriter.rest;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,11 +35,13 @@ import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
 
@@ -52,15 +58,27 @@ public class BeanWriterResource extends BaseResource {
     private EventBus eventBus;
 
     @POST
-    public RestfulList<MessageRestful> runBeanWriter(@Context ServletContext servletContext) throws Exception {
+    public RestfulList<MessageRestful> runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         //############################################
         // USE SERVICES
         //############################################
+        final Map<String, String> values = payload.getValues();
+        final String imageSet = values.get("imageSet");
         final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
+        // check if we are using custom image set:
+        if (!Strings.isNullOrEmpty(imageSet) || !imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET)) {
+            final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
+            final java.nio.file.Path path = existingImageTypes.get(imageSet);
+            if (path != null) {
+                context.addPluginContextData(ContentBeansService.CONTEXT_BEAN_IMAGE_SET, path);
+            }
+        }
+        // create beans
         contentBeansService.createBeans();
-        // inject project settings:
+
+
         final RestfulList<MessageRestful> messages = new MyRestList();
         BeanWriterUtils.populateBeanwriterMessages(context, messages);
         if (messages.getItems().size() == 0) {
@@ -73,5 +91,17 @@ public class BeanWriterResource extends BaseResource {
 
         return messages;
     }
+
+
+    @GET
+    @Path("/imagesets")
+    public Set<String> getImageSets(@Context ServletContext servletContext) throws Exception {
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
+        final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
+        final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
+        return existingImageTypes.keySet();
+    }
+
 
 }

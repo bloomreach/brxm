@@ -203,9 +203,9 @@ public final class JavaSourceUtils {
         final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
         final Type superclassType = classType.getSuperclassType();
         if (superclassType == null) {
-           return null;
+            return null;
         }
-        if(superclassType.isSimpleType()){
+        if (superclassType.isSimpleType()) {
             return ((SimpleType) superclassType).getName().getFullyQualifiedName();
         }
         // TODO add complex (wildcard etc types)
@@ -285,7 +285,7 @@ public final class JavaSourceUtils {
      * Add text to class comment (javadoc) node. If text already exists it will not be added
      *
      * @param path path of of an class
-     * @param text    text to add
+     * @param text text to add
      * @return rewritten source (with text node added to the javadoc)
      */
     @SuppressWarnings("unchecked")
@@ -295,12 +295,13 @@ public final class JavaSourceUtils {
         GlobalUtils.writeToFile(formatCode(code), path);
     }
 
-        /**
-         * Add text to class comment (javadoc) node. If text already exists it will not be added
-         * @param content parsed content of an class
-         * @param text text to add
-         * @return rewritten source (with text node added to the javadoc)
-         */
+    /**
+     * Add text to class comment (javadoc) node. If text already exists it will not be added
+     *
+     * @param content parsed content of an class
+     * @param text    text to add
+     * @return rewritten source (with text node added to the javadoc)
+     */
     @SuppressWarnings("unchecked")
     public static String addClassJavaDoc(final String content, final String text) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(content);
@@ -524,8 +525,6 @@ public final class JavaSourceUtils {
             addTwoArgumentsMethod("getBean", className, path, methodName, propertyName);
         }
         addImport(path, importPath);
-
-
     }
 
 
@@ -950,12 +949,13 @@ public final class JavaSourceUtils {
     public static String getImportName(final Path path) {
         final String packageName = JavaSourceUtils.getPackageName(path);
         final String className = JavaSourceUtils.getClassName(path);
-        if(Strings.isNullOrEmpty(packageName)) {
+        if (Strings.isNullOrEmpty(packageName)) {
             return className;
         }
 
         return String.format("%s.%s", packageName, className);
     }
+
     public static String getPackageName(final Path path) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(path);
         final PackageDeclaration myPackage = unit.getPackage();
