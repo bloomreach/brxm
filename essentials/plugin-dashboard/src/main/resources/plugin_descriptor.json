@@ -95,6 +95,9 @@
         "icon" : "/essentials/images/icons/taxonomy.png",
         "introduction": "With the Taxonomy feature you can add extra meta data to your documents to categorize them.",
         "description": "This Essentials Feature wraps the certified Hippo Forge Taxonomy Plugin.",
+        "imageUrls": [
+            "/essentials/images/screenshots/taxonomy01.png"
+        ],
         "documentationLink": "http://taxonomy.forge.onehippo.org",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"],
@@ -166,6 +169,9 @@
         "icon" : "/essentials/images/icons/selections.png",
         "introduction": "With the Selections feature, you can add several kinds of dropdowns, pulldowns and radio groups to your page template.",
         "description": "This Essentials Feature wraps the certified Hippo Forge Selection Plugin.",
+        "imageUrls": [
+            "/essentials/images/screenshots/selections01.png"
+        ],
         "documentationLink": "http://selection.forge.onehippo.org",
         "packageFile": "/META-INF/selectionPlugin_instructions.xml",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.selection.SelectionParameterService",
@@ -217,6 +223,9 @@
         "icon" : "/essentials/images/icons/tagging.png",
         "introduction": "With the Tagging feature, you can assign tags to your content.",
         "description": "This Essentials Feature wraps the certified Hippo Forge CMS Tagging Addon.",
+        "imageUrls": [
+            "/essentials/images/screenshots/tagging01.png"
+        ],
         "documentationLink": "http://ecm-tagging.forge.onehippo.org",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
         "packageClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingInstructionPackage",
@@ -307,6 +316,9 @@
         "icon" : "/essentials/images/icons/related-documents.png",
         "introduction": "With the Related Documents feature, you can pick documents that are related to the currently edited document in the Hippo CMS.",
         "description": "<p>The feature can also create a list of suggested documents that you might want to pick, based on a matching metadata search.</p><p>This Essentials Feature wraps the certified Hippo Forge Related Documents plugin.</p>",
+        "imageUrls": [
+            "/essentials/images/screenshots/relateddocuments01.png"
+        ],
         "documentationLink": "http://relateddocs.forge.onehippo.org",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
@@ -342,6 +354,9 @@
         "name": "Search engine optimization",
         "icon" : "/essentials/images/icons/seo.png",
         "introduction": "<p>Search engine optimization adds SEO support to your Hippo project. You can easily add head elements contributions in your HTML, that can improve search results and help users find relevant documents.</p><p>This Essentials Feature wraps the Hippo HST SEO Support Components.</p>",
+        "imageUrls": [
+            "/essentials/images/screenshots/seo01.png"
+        ],
         "documentationLink": "http://hst-seo-support.forge.onehippo.org",
         "packageFile": "/META-INF/seoPlugin_instructions.xml",
         "restClasses": [],
@@ -418,6 +433,10 @@
         "icon" : "/essentials/images/icons/robotstxt.png",
         "introduction": "With the Robots.txt Essentials feature you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
         "description": "Besides the component, a sample JSP file for rendering that data into the robots.txt file. This Essentials Feature wraps the certified Hippo Forge Robots.txt Generator.",
+        "imageUrls": [
+            "/essentials/images/screenshots/robots01.png",
+            "/essentials/images/screenshots/robots02.png"
+        ],
         "documentationLink": "http://robotstxt.forge.onehippo.org",
         "restClasses": [],
         "packageFile": "/META-INF/robots_plugin_instructions.xml",
@@ -454,6 +473,11 @@
         "icon" : "/essentials/images/icons/polls.png",
         "introduction": "With Polls, you add functionality for creating and showing polls and storing and accessing the acquired poll data.",
         "description": "The poll feature wraps the Hippo Forge Poll Plugin. It provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class that contains the following functionality:<ul><li>Search the current active poll document in a parameterized repository location</li><li>Provide a bean for this active poll upon request from the view layer</li><li>Vote on a poll, storing the votes in repository outside the document tree in /polldata</li><li>Cookies are used to prevent voting multiple times</li></ul>",
+        "imageUrls": [
+            "/essentials/images/screenshots/poll01.png",
+            "/essentials/images/screenshots/poll02.png",
+            "/essentials/images/screenshots/poll03.png"
+        ],
         "documentationLink": "http://poll.forge.onehippo.org",
         "restClasses": [],
         "packageFile": "/META-INF/poll_plugin_instructions.xml",
@@ -488,6 +512,10 @@
         "name": "Search",
         "icon" : "/essentials/images/icons/search.png",
         "introduction": "This Essentials feature adds search functionality to your site by providing a search box in the form of a document template component that can be dragged-and-dropped into your template.",
+        "imageUrls": [
+            "/essentials/images/screenshots/search01.png",
+            "/essentials/images/screenshots/search02.png"
+        ],
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/search-component.html",
         "packageFile": "/META-INF/searchPlugin_instructions.xml",
         "restClasses": [],
@@ -539,10 +567,12 @@
         "icon" : "/essentials/images/icons/videos.png",
         "introduction": "The Video feature adds a new drag-and-drop component in the document template editor, enabling you to add video in your document template.",
         "description": "The feature adds the new document type 'video' to the project. You can choose to include a sample video when you configure the feature in Essentials. The feature uses youtube video links instead of the video itself.",
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/video-component.html",
         "imageUrls": [
-            "/essentials/images/screenshots/video.png"
+            "/essentials/images/screenshots/video01.png",
+            "/essentials/images/screenshots/video02.png",
+            "/essentials/images/screenshots/video03.png"
         ],
+        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/video-component.html",
         "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -645,6 +675,9 @@
         "name": "Simple content",
         "icon" : "/essentials/images/icons/simple-content.png",
         "introduction": "The Simple content feature adds a new drag-and-drop component to the document template editor (with the name \"Simple content\"). In the CMS, you can configure this component by selecting a single document to be shown in your template.",
+        "imageUrls": [
+            "/essentials/images/screenshots/simplecontent01.png"
+        ],
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/document-component.html",
         "packageFile": "/META-INF/simpleContent_instructions.xml",
         "restClasses": [],
