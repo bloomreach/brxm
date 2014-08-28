@@ -124,6 +124,27 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_TIMESTAMP + " IS NULL OR " +
             HippoNodeType.HIPPO_TIMESTAMP + " < {})";
 
+    private static final Double NO_HIPPO_SEQUENCE = new Double(-1.0);
+
+    private static final Comparator<Node> initializeItemComparator = new Comparator<Node>() {
+
+        @Override
+        public int compare(final Node n1, final Node n2) {
+            try {
+                final Double s1 = JcrUtils.getDoubleProperty(n1, HIPPO_SEQUENCE, NO_HIPPO_SEQUENCE);
+                final Double s2 = JcrUtils.getDoubleProperty(n2, HIPPO_SEQUENCE, NO_HIPPO_SEQUENCE);
+                final int result = s1.compareTo(s2);
+                if (result != 0) {
+                    return result;
+                }
+                return n1.getName().compareTo(n2.getName());
+            } catch (RepositoryException e) {
+                log.error("Error comparing initialize item nodes", e);
+            }
+            return 0;
+        }
+    };
+
     private Logger logger;
 
     private final Tika tika = new Tika();
@@ -178,7 +199,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             while(nodes.hasNext()) {
                 initializeItems.add(nodes.nextNode());
             }
-            Collections.sort(initializeItems, new InitializeItemComparator());
             processInitializeItems(session, initializeItems, false);
         } catch (RepositoryException ex) {
             getLogger().error(ex.getMessage(), ex);
@@ -196,7 +216,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private void processInitializeItems(Session session, List<Node> initializeItems, boolean dryRun) {
-
+        Collections.sort(initializeItems, initializeItemComparator);
         try {
             if (session == null || !session.isLive()) {
                 getLogger().warn("Unable to refresh initialize nodes, no session available");
@@ -1156,25 +1176,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         private ContentFileInfo(final String contextNodeName, final String deltaDirective) {
             this.contextNodeName = contextNodeName;
             this.deltaDirective = deltaDirective;
-        }
-    }
-
-    private static class InitializeItemComparator implements Comparator<Node> {
-
-        @Override
-        public int compare(final Node n1, final Node n2) {
-            try {
-                final Double s1 = JcrUtils.getDoubleProperty(n1, HIPPO_SEQUENCE, -1.0);
-                final Double s2 = JcrUtils.getDoubleProperty(n2, HIPPO_SEQUENCE, -1.0);
-                final int result = s1.compareTo(s2);
-                if (result != 0) {
-                    return result;
-                }
-                return n1.getName().compareTo(n2.getName());
-            } catch (RepositoryException e) {
-                log.error("Error comparing initialize item nodes", e);
-            }
-            return 0;
         }
     }
 }
