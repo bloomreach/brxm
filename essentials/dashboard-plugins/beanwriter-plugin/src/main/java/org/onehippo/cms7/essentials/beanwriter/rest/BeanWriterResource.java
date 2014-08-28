@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.beanwriter.rest;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -30,8 +28,6 @@ import javax.ws.rs.core.MediaType;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.model.ActionType;
-import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -40,7 +36,6 @@ import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 
-import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 
 
@@ -67,20 +62,7 @@ public class BeanWriterResource extends BaseResource {
         contentBeansService.createBeans();
         // inject project settings:
         final RestfulList<MessageRestful> messages = new MyRestList();
-        final Multimap<String, Object> pluginContextData = context.getPluginContextData();
-        final Collection<Object> objects = pluginContextData.get(BeanWriterUtils.CONTEXT_DATA_KEY);
-        for (Object object : objects) {
-            final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
-            final ActionType actionType = entry.getActionType();
-            if (actionType == ActionType.CREATED_METHOD || actionType == ActionType.MODIFIED_METHOD) {
-                messages.add(new MessageRestful(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName())));
-            }
-            else if (actionType == ActionType.CREATED_CLASS) {
-                messages.add(new MessageRestful(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath())));
-            } else {
-                messages.add(new MessageRestful(entry.getMessage()));
-            }
-        }
+        BeanWriterUtils.populateBeanwriterMessages(context, messages);
         if (messages.getItems().size() == 0) {
             messages.add(new MessageRestful("All beans were up to date"));
         } else {
@@ -91,4 +73,5 @@ public class BeanWriterResource extends BaseResource {
 
         return messages;
     }
+
 }

@@ -50,7 +50,9 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
+import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GalleryUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -163,7 +165,7 @@ public class GalleryPluginResource extends BaseResource {
      */
     @POST
     @Path("/create")
-    public MessageRestful create(final PostPayloadRestful payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
+    public RestfulList<MessageRestful> create(final PostPayloadRestful payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
         final Map<String, String> values = payload.getValues();
         final String imageSetName = values.get("imageSetName");
         final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
@@ -171,6 +173,8 @@ public class GalleryPluginResource extends BaseResource {
         final String imageSetPrefix = values.get("imageSetPrefix");
         final PluginContext context = PluginContextFactory.getContext();
         final MessageRestful imageSet = createImageSet(context, imageSetPrefix, imageSetName, response);
+        final RestfulList<MessageRestful> messages = new RestfulList<>();
+
         final Session session = context.createSession();
         final String queryMiddleName = imageSetPrefix + '-' + imageSetName;
         final String newImageNamespace = imageSetPrefix + ':' + imageSetName;
@@ -218,6 +222,9 @@ public class GalleryPluginResource extends BaseResource {
                     final ContentBeansService beansService = new ContentBeansService(context, eventBus);
                     beansService.createBeans();
                     beansService.convertImageMethods(newImageNamespace);
+                    // add beanwriter messages
+                    BeanWriterUtils.populateBeanwriterMessages(context, messages);
+
                 } else {
                     // just create a new folder for new image types:
                     final String absPath = "/content/gallery/" + context.getProjectNamespacePrefix();
@@ -226,7 +233,7 @@ public class GalleryPluginResource extends BaseResource {
                         final Node imageFolderNode = galleryRoot.addNode(imageSetName,"hippogallery:stdImageGallery");
                         imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
                         imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
-
+                        messages.add(new MessageRestful("Successfully created image folder: " +  absPath));
                     }
 
 
@@ -242,7 +249,8 @@ public class GalleryPluginResource extends BaseResource {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return imageSet;
+        messages.add(imageSet);
+        return messages;
     }
 
     /**

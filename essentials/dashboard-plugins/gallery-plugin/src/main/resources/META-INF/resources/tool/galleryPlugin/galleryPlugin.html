@@ -19,6 +19,10 @@
         Gallery manager
     </div>
     <div class="panel-body">
+        <div ng-show="showBeanrewriterMessage" class="alert alert-info">
+            <p>You have changed image sets and may want to update your HST image set beans now.
+                You can use the <a href="/essentials/#/tools/beanwriter">BeanWriter tool</a> for this.</p>
+        </div>
         <div><p>Create a custom image set</p>
 
             <form novalidate name="newImageSetForm">

@@ -262,9 +262,6 @@
                                 value.fullDate = date;
                             }
                         });
-                        if ($scope.archiveMessages.length == 0) {
-                            $scope.archiveMessages.push({type: "info", message: 'No archived messages', visible: true, date: now, fullDate: date})
-                        }
                         // newer messages first:
                         $scope.archiveMessages.reverse();
                         if ($scope.activeMessages.length > 1) {

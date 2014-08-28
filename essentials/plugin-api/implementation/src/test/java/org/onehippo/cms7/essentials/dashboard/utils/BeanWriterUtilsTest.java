@@ -135,7 +135,7 @@ public class BeanWriterUtilsTest extends BaseResourceTest {
                 assertTrue("Expected bean path to be none null:" + namespaced, memoryBean.getBeanPath() != null);
             }
         }
-        BeanWriterUtils.addMissingMethods(context, memoryBeans, ".txt");
+
 
     }
 

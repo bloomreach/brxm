@@ -35,6 +35,7 @@
             });
         };
 
+
         $scope.resetSelections = function () {
             $scope.selectedImageModel = null;
             $scope.selectedImageSet = null;
@@ -83,12 +84,14 @@
             }
             $http.post(endpoint + "/remove", variant).success(function () {
                 loadImageSets(true);
+                $scope.showBeanrewriterMessage = true;
             });
         };
         $scope.save = function () {
             // save only saves translations, advanced settings and height/width:
             $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
                 loadImageSets(false);
+                $scope.showBeanrewriterMessage = true;
             });
 
 
