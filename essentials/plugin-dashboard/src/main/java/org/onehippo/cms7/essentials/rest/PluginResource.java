@@ -671,15 +671,16 @@ public class PluginResource extends BaseResource {
     }
 
     private String determineInstallStateAfterSetup(final PluginRestful plugin) {
-        String installState;
+        String installState = plugin.getInstallState();
 
-        final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-        if (params.doesSetupRequireRebuild()) {
-            installState = PluginInstallationState.INSTALLING;
-        } else {
-            installState = PluginInstallationState.INSTALLED;
+        if (!PluginInstallationState.INSTALLED.equals(installState)) {
+            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
+            if (params.doesSetupRequireRebuild()) {
+                installState = PluginInstallationState.INSTALLING;
+            } else {
+                installState = PluginInstallationState.INSTALLED;
+            }
         }
-
         return installState;
     }
 
