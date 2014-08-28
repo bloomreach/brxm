@@ -78,6 +78,12 @@ public class CodeMirrorEditor extends TextArea<String> {
     private boolean readOnly;
     private boolean changeEventTriggeringEnabled;
 
+    public CodeMirrorEditor(final String id, final String editorName) {
+        super(id);
+        this.editorName = editorName;
+        setOutputMarkupId(true);
+    }
+
     public CodeMirrorEditor(final String id, final String editorName, final IModel<String> model) {
         super(id, model);
         this.editorName = editorName;
