@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Before;
@@ -175,7 +177,9 @@ public class ChannelPropertyMapperTest extends RepositoryTestCase {
     public void testUnsupportedReturnType() {
         try {
             List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoUnsupportedReturnType.class);
-            assertTrue(definitions.isEmpty());
+            List<String> propDefNamesFromChannelInfo = getPropDefNamesFromChannelInfo();
+            // assert only the prop def names from channel info are present and not any from TestInfoUnsupportedReturnType
+            assertEquals(definitions.size(), propDefNamesFromChannelInfo.size());
         } catch (Throwable e) {
             fail("Unsupported return type should be ignored and not throw exception");
         }
@@ -198,11 +202,16 @@ public class ChannelPropertyMapperTest extends RepositoryTestCase {
     
     @Test
     public void defaultValuesTests() throws RepositoryException {
+        List<String> ignorePropDefNameList = getPropDefNamesFromChannelInfo();
+
         List<HstPropertyDefinition> defaultsMissing = ChannelInfoClassProcessor.getProperties(TestInfoDefaultValuesMissing.class);
         List<HstPropertyDefinition> defaultsPresent = ChannelInfoClassProcessor.getProperties(TestInfoDefaultValuesPresent.class);
         List<HstPropertyDefinition> defaultsWrongFormat = ChannelInfoClassProcessor.getProperties(TestInfoDefaultValuesPresentButWrongFormat.class);
 
         for (HstPropertyDefinition propDef : defaultsMissing) {
+            if (ignorePropDefNameList.contains(propDef.getName())) {
+                continue;
+            }
             if ("integer".equals(propDef.getName())){
                 assertEquals("Default for integer should be 0", 0, propDef.getDefaultValue());
             } else if ("boolean".equals(propDef.getName())){
@@ -210,6 +219,8 @@ public class ChannelPropertyMapperTest extends RepositoryTestCase {
                 assertFalse("Default for boolean should be false", (Boolean)propDef.getDefaultValue());
             } else if ("double".equals(propDef.getName())){
                 assertEquals("Default for double should be 0", 0D, propDef.getDefaultValue());
+            } else if ("string".equals(propDef.getName())){
+                assertEquals("Default for string should be ''", StringUtils.EMPTY, propDef.getDefaultValue());
             } else if ("calendar".equals(propDef.getName())){
                 assertTrue("Default for calendar should instance of type Calendar", propDef.getDefaultValue() instanceof Calendar);
                 long diffInMs = (System.currentTimeMillis() - ((Calendar)propDef.getDefaultValue()).getTimeInMillis());
@@ -222,6 +233,9 @@ public class ChannelPropertyMapperTest extends RepositoryTestCase {
         }
 
         for (HstPropertyDefinition propDef : defaultsPresent) {
+            if (ignorePropDefNameList.contains(propDef.getName())) {
+                continue;
+            }
             if ("integer".equals(propDef.getName())){
                 // because the annotation has : @Parameter(name = "integer", defaultValue = "3")
                 assertEquals( 3, propDef.getDefaultValue());
@@ -242,6 +256,9 @@ public class ChannelPropertyMapperTest extends RepositoryTestCase {
         }
 
         for (HstPropertyDefinition propDef : defaultsWrongFormat) {
+            if (ignorePropDefNameList.contains(propDef.getName())) {
+                continue;
+            }
             if ("integer".equals(propDef.getName())){
                 assertEquals("Wrong format and default for integer should be 0", 0, propDef.getDefaultValue());
             } else if ("boolean".equals(propDef.getName())){
@@ -259,6 +276,15 @@ public class ChannelPropertyMapperTest extends RepositoryTestCase {
             }
         }
 
+    }
+
+    private List<String> getPropDefNamesFromChannelInfo() {
+        List<String> propDefNamesFromChannelInfoList = new ArrayList<>();
+        List<HstPropertyDefinition> channelInfoProps = ChannelInfoClassProcessor.getProperties(ChannelInfo.class);
+        for (HstPropertyDefinition ignorePropDefName : channelInfoProps) {
+            propDefNamesFromChannelInfoList.add(ignorePropDefName.getName());
+        }
+        return propDefNamesFromChannelInfoList;
     }
 
 }
