@@ -56,12 +56,17 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
     @SuppressWarnings("unchecked")
     public <T extends HippoCompoundBean> T getHippoCompound(String relPath, Class<T> beanMappingClass) {
         HippoBean compound = getBean(relPath, HippoCompoundBean.class);
-        if(compound != null && beanMappingClass.isAssignableFrom(compound.getClass())) {
-            return (T)compound;
-        } else {
-            log.debug("Cannot return compound of type '"+beanMappingClass.getName()+"' for relPath '{}' at '{}' because the compound is of type '"+compound.getClass().getName()+"'", relPath, this.getPath());
+        if (compound == null) {
+            log.debug("Cannot return compound of type '{}' for relPath '{}' at '{}'", beanMappingClass.getName(), relPath, this.getPath());
+            return null;
         }
-        return null;
+        if (beanMappingClass.isAssignableFrom(compound.getClass())) {
+            return (T) compound;
+        } else {
+            log.debug("Cannot return compound of type '{}' for relPath '{}' at '{}' because the compound is of type '{}'",
+                    beanMappingClass.getName(), relPath, this.getPath(), compound.getClass().getName());
+            return null;
+        }
     }
 
     @Override
