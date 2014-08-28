@@ -959,6 +959,7 @@ plugin-dashboard/hippo-theme-licensing.txt -text
 plugin-dashboard/pom.xml -text
 plugin-dashboard/src/main/appended-resources/META-INF/LICENSE -text
 plugin-dashboard/src/main/appended-resources/META-INF/NOTICE -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/filters/NoCacheFilter.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
