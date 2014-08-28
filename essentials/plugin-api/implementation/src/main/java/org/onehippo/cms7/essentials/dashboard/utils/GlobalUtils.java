@@ -171,10 +171,13 @@ public final class GlobalUtils {
         return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    public static String createClassName(final String name) {
-        if (Strings.isNullOrEmpty(name) || name.trim().equals(":")) {
+    public static String createClassName(final String input) {
+        if (Strings.isNullOrEmpty(input) || input.trim().equals(":")) {
             return EssentialConst.INVALID_CLASS_NAME;
         }
+
+        // remove all spaces:
+        final String name = input.replaceAll("\\s","");
         final int index = name.indexOf(':');
         if (index == -1 || index == name.length() - 1) {
             return capitalize(name.replace(':', ' ').trim());
