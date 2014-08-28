@@ -39,9 +39,11 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         context.setUseHippoSession(true);
         context.setHippoRepository(repository);
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");
-
         final ContentBeansService contentBeansService = new ContentBeansService(context, new EventBus("Test"));
         contentBeansService.createBeans();
+        contentBeansService.convertImageMethods("testproject:testasasasas");
+
+
     }
 
     private TestPluginContext getTestContext() {

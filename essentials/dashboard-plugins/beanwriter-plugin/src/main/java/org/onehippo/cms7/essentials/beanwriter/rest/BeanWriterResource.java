@@ -72,9 +72,10 @@ public class BeanWriterResource extends BaseResource {
         for (Object object : objects) {
             final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
             final ActionType actionType = entry.getActionType();
-            if (actionType == ActionType.CREATED_METHOD) {
+            if (actionType == ActionType.CREATED_METHOD || actionType == ActionType.MODIFIED_METHOD) {
                 messages.add(new MessageRestful(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName())));
-            } else if(actionType==ActionType.CREATED_CLASS){
+            }
+            else if (actionType == ActionType.CREATED_CLASS) {
                 messages.add(new MessageRestful(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath())));
             } else {
                 messages.add(new MessageRestful(entry.getMessage()));

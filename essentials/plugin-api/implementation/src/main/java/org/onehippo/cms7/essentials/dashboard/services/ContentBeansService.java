@@ -65,6 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
@@ -74,6 +75,7 @@ import com.google.common.eventbus.EventBus;
  */
 public class ContentBeansService {
 
+    public static final String HIPPO_GALLERY_IMAGE_SET = "HippoGalleryImageSet";
     private static Logger log = LoggerFactory.getLogger(ContentBeansService.class);
 
     private final PluginContext context;
@@ -172,7 +174,8 @@ public class ContentBeansService {
 
     /**
      * Update image set to new return type (e.g. after image sets are regenerated)
-     * @param path path of java class file
+     *
+     * @param path          path of java class file
      * @param oldReturnType e.g HippoGalleryImageSet
      * @param newReturnType new imageset return type e.g. MyGalleryImageSet
      */
@@ -269,7 +272,7 @@ public class ContentBeansService {
             if (mySupertypes.contains("hippogallery:relaxed")) {
                 final Path javaClass = createJavaClass(missingBean);
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
-                JavaSourceUtils.addExtendsClass(javaClass, "HippoGalleryImageSet");
+                JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET);
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
                 addMethods(missingBean, javaClass, new ArrayList<String>());
             }
@@ -500,10 +503,9 @@ public class ContentBeansService {
                             final Path myBeanPath = entry.getValue();
                             final HippoEssentialsGeneratedObject a = JavaSourceUtils.getHippoGeneratedAnnotation(myBeanPath);
                             if (a != null && a.getInternalName().equals(type)) {
-                                final String packageName = JavaSourceUtils.getPackageName(myBeanPath);
                                 final String className = JavaSourceUtils.getClassName(myBeanPath);
                                 methodName = GlobalUtils.createMethodName(name);
-                                final String importPath = String.format("%s.%s", packageName, className);
+                                final String importPath = JavaSourceUtils.getImportName(myBeanPath);
                                 JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importPath, methodName, name, multiple);
                                 context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                                 return;
@@ -518,6 +520,90 @@ public class ContentBeansService {
         }
 
     }
+
+    public void convertImageMethods(final String newImageNamespace) {
+        final Map<String, Path> existing = findExitingBeans();
+        final Map<String, String> imageTypes = new HashMap<>();
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
+        String newReturnType = null;
+        for (Path path : existing.values()) {
+            final String myClass = JavaSourceUtils.getClassName(path);
+            final String extendsClass = JavaSourceUtils.getExtendsClass(path);
+            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET)) {
+                imageTypes.put(myClass, JavaSourceUtils.getImportName(path));
+            }
+            if(annotation !=null && newImageNamespace.equals(annotation.getInternalName())){
+                newReturnType = myClass;
+            }
+        }
+        if(Strings.isNullOrEmpty(newReturnType)){
+            log.warn("Could not find return type for image set namespace: {}", newImageNamespace);
+            return;
+        }
+        log.info("Converting existing image beans to new type: {}", newReturnType);
+        for (Map.Entry<String, Path> entry : existing.entrySet()) {
+            final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(entry.getValue());
+            final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
+            for (EssentialsGeneratedMethod m : generatedMethods) {
+                final Type type = m.getMethodDeclaration().getReturnType2();
+                if (type.isSimpleType()) {
+                    SimpleType simpleType = (SimpleType) type;
+                    final String returnType = simpleType.getName().getFullyQualifiedName();
+                    // check if image type and different than new return type
+                    if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
+                        //
+                        log.info("Found image type: {}", returnType);
+                        updateImageMethod(entry.getValue(), returnType, newReturnType, imageTypes.get(newReturnType));
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement) {
+        final CompilationUnit deleteUnit = JavaSourceUtils.getCompilationUnit(path);
+        final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
+        final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
+        final Map<String, EssentialsGeneratedMethod> deletedMethods = new HashMap<>();
+
+        deleteUnit.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodDeclaration node) {
+                final String methodName = node.getName().getFullyQualifiedName();
+                final Type type = node.getReturnType2();
+               if (type.isSimpleType()) {
+
+                    ///
+                    final SimpleType simpleType = (SimpleType) type;
+                    final String returnTypeName = simpleType.getName().getFullyQualifiedName();
+                    EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
+                    if (method == null) {
+                        return super.visit(node);
+                    }
+                    if (returnTypeName.equals(oldReturnType)) {
+                        node.delete();
+                        deletedMethods.put(method.getMethodName(), method);
+                        return super.visit(node);
+                    }
+                }
+                return super.visit(node);
+            }
+        });
+        if(deletedMethods.size() > 0){
+            final AST deleteAst = deleteUnit.getAST();
+            final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
+            GlobalUtils.writeToFile(deletedSource, path);
+            for (Map.Entry<String, EssentialsGeneratedMethod> entry : deletedMethods.entrySet()) {
+                final EssentialsGeneratedMethod oldMethod = entry.getValue();
+                // Add replacement methods:
+                JavaSourceUtils.addBeanMethodInternalType(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+                log.debug("Replaced old method: {} with new return type: {}", oldMethod.getMethodName(), newReturnType);
+                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));
+            }
+        }
+    }
+
 
     /**
      * Create a bean for giving parent bean path

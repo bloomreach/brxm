@@ -197,6 +197,22 @@ public final class JavaSourceUtils {
         }
     }
 
+    public static String getExtendsClass(final Path path) {
+
+        final CompilationUnit unit = getCompilationUnit(path);
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        final Type superclassType = classType.getSuperclassType();
+        if (superclassType == null) {
+           return null;
+        }
+        if(superclassType.isSimpleType()){
+            return ((SimpleType) superclassType).getName().getFullyQualifiedName();
+        }
+        // TODO add complex (wildcard etc types)
+        return null;
+
+    }
+
     /**
      * Writes a component
      *
@@ -931,6 +947,15 @@ public final class JavaSourceUtils {
     }
 
 
+    public static String getImportName(final Path path) {
+        final String packageName = JavaSourceUtils.getPackageName(path);
+        final String className = JavaSourceUtils.getClassName(path);
+        if(Strings.isNullOrEmpty(packageName)) {
+            return className;
+        }
+
+        return String.format("%s.%s", packageName, className);
+    }
     public static String getPackageName(final Path path) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(path);
         final PackageDeclaration myPackage = unit.getPackage();

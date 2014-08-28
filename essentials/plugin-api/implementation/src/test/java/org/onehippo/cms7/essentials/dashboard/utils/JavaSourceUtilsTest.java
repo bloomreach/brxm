@@ -75,6 +75,11 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         final String s = JavaSourceUtils.addClassJavaDoc(oneComment, text);
         assertTrue(s.contains(text));
         assertTrue(StringUtils.countMatches(s, text) == 1);
+        // add extends keyword:
+        JavaSourceUtils.addExtendsClass(docPath, "HippoGalleryImageSet");
+        JavaSourceUtils.addImport(docPath, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
+        final String extendsClass = JavaSourceUtils.getExtendsClass(docPath);
+        assertEquals("HippoGalleryImageSet", extendsClass);
 
 
     }

@@ -132,6 +132,10 @@
                     if (toState && toState.url) {
                         // disbale caching of pages:
                         $templateCache.remove(toState.url);
+                        if(toState.templateUrl){
+                            $templateCache.remove(toState.templateUrl)
+                        };
+
                         // if introduction, hide menu:
                         if (toState.url.indexOf('/introduction') != -1) {
                             $rootScope.INTRODUCTION_DISPLAYED = true;

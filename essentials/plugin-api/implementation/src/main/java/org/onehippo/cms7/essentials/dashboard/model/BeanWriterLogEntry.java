@@ -27,7 +27,6 @@ public class BeanWriterLogEntry {
     private ActionType actionType;
 
 
-
     public BeanWriterLogEntry(final ActionType actionType) {
         this.actionType = actionType;
     }
@@ -86,7 +85,9 @@ public class BeanWriterLogEntry {
         if (actionType == ActionType.CREATED_CLASS) {
             return "Created HST bean: " + getBeanName();
         } else if (actionType == ActionType.CREATED_METHOD) {
-            return "Created Method: " + getMethodName();
+            return "Created method: " + getMethodName();
+        } else if (actionType == ActionType.MODIFIED_METHOD) {
+            return "Re-created method: " + getMethodName();
         }
 
         return actionType.toString();
