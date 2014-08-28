@@ -93,20 +93,16 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     @Override
     public boolean checkExists(final String jobName, final String groupName) throws RepositoryException {
-        synchronized (session) {
-            return getJobNode(jobName, groupName) != null;
-        }
+        return getJobNode(jobName, groupName) != null;
     }
 
     @Override
     public void executeJob(final String jobName, String groupName) throws RepositoryException {
-        synchronized (session) {
-            final Node jobNode = getJobNode(jobName, groupName);
-            if (jobNode == null) {
-                throw new RepositoryException("No such job: " + getGroupName(groupName) + "/" + jobName);
-            }
-            executeJob(jobNode.getIdentifier());
+        final Node jobNode = getJobNode(jobName, groupName);
+        if (jobNode == null) {
+            throw new RepositoryException("No such job: " + getGroupName(groupName) + "/" + jobName);
         }
+        executeJob(jobNode.getIdentifier());
     }
 
     @Override
@@ -171,10 +167,12 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     }
 
     private Node getJobNode(final String jobName, final String groupName) throws RepositoryException {
-        final Node moduleConfig = session.getNode(SchedulerModule.getModuleConfigPath());
-        final Node groupNode = JcrUtils.getNodeIfExists(moduleConfig, getGroupName(groupName));
-        if (groupNode != null) {
-            return JcrUtils.getNodeIfExists(groupNode, jobName);
+        synchronized (session) {
+            final Node moduleConfig = session.getNode(SchedulerModule.getModuleConfigPath());
+            final Node groupNode = JcrUtils.getNodeIfExists(moduleConfig, getGroupName(groupName));
+            if (groupNode != null) {
+                return JcrUtils.getNodeIfExists(groupNode, jobName);
+            }
         }
         return null;
     }
