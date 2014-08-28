@@ -235,6 +235,11 @@ public class GalleryPluginResource extends BaseResource {
                         imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
                         messages.add(new MessageRestful("Successfully created image folder: " +  absPath));
                     }
+                    // update HST beans, create new ones and *do not* update image sets:
+                    final ContentBeansService beansService = new ContentBeansService(context, eventBus);
+                    beansService.createBeans();
+                    // add beanwriter messages
+                    BeanWriterUtils.populateBeanwriterMessages(context, messages);
 
 
                 }
