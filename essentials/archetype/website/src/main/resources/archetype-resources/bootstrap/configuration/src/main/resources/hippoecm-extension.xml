@@ -1,9 +1,9 @@
 #set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
-#set($hyphen = '-')
-#set($empty = '')
-<?xml version="1.0" encoding="UTF-8"?>
+  #set( $symbol_dollar = '$' )
+  #set( $symbol_escape = '\' )
+  #set($hyphen = '-')
+  #set($empty = '')
+  <?xml version="1.0" encoding="UTF-8"?>
 <sv:node xmlns:ae="http://www.onehippo.org/jcr/autoexport/1.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" ae:id="${rootArtifactId}" sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
@@ -37,7 +37,7 @@
       <sv:value>/hippo:configuration/hippo:modules</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30000.1</sv:value>
+      <sv:value>30011</sv:value>
     </sv:property>
   </sv:node>
 
@@ -47,7 +47,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30050</sv:value>
+      <sv:value>30000.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.onehippo.org/${rootArtifactId.replace($hyphen,$empty)}/nt/1.0</sv:value>
@@ -383,7 +383,7 @@
     </sv:property>
   </sv:node>
 
-   <!-- Blueprints -->
+  <!-- Blueprints -->
   <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-hst-blueprints-${rootArtifactId.replace($hyphen,$empty)}-subsite">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
