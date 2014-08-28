@@ -786,10 +786,10 @@ public class JCRJobStore implements JobStore {
         return trigger;
     }
 
-    private static NodeIterable getPendingTriggers(Session session, long noLaterThan) {
-        // make sure the index is up to date
-        refreshSession(session);
+    private NodeIterable getPendingTriggers(final Session session, long noLaterThan) {
         try {
+            session.refresh(true);
+            // make sure the index is up to date
             final java.util.Calendar cal = dateToCalendar(new Date(noLaterThan));
             final QueryManager qMgr = session.getWorkspace().getQueryManager();
             final Query query = qMgr.createQuery(

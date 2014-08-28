@@ -60,10 +60,12 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     @Override
     public void scheduleJob(final RepositoryJobInfo jobInfo, final RepositoryJobTrigger trigger) throws RepositoryException {
-        try {
-            scheduler.scheduleJob(createQuartzJobDetail(jobInfo), createQuartzTrigger(trigger));
-        } catch (SchedulerException e) {
-            throw new RepositoryException(e);
+        synchronized (session) {
+            try {
+                scheduler.scheduleJob(createQuartzJobDetail(jobInfo), createQuartzTrigger(trigger));
+            } catch (SchedulerException e) {
+                throw new RepositoryException(e);
+            }
         }
     }
 
@@ -91,16 +93,20 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     @Override
     public boolean checkExists(final String jobName, final String groupName) throws RepositoryException {
-        return getJobNode(jobName, groupName) != null;
+        synchronized (session) {
+            return getJobNode(jobName, groupName) != null;
+        }
     }
 
     @Override
     public void executeJob(final String jobName, String groupName) throws RepositoryException {
-        final Node jobNode = getJobNode(jobName, groupName);
-        if (jobNode == null) {
-            throw new RepositoryException("No such job: " + getGroupName(groupName) + "/" + jobName);
+        synchronized (session) {
+            final Node jobNode = getJobNode(jobName, groupName);
+            if (jobNode == null) {
+                throw new RepositoryException("No such job: " + getGroupName(groupName) + "/" + jobName);
+            }
+            executeJob(jobNode.getIdentifier());
         }
-        executeJob(jobNode.getIdentifier());
     }
 
     @Override
@@ -112,7 +118,6 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         } catch (SchedulerException | InstantiationException | IllegalAccessException e) {
             throw new RepositoryException(e);
         }
-
     }
 
     private Trigger createQuartzTrigger(final RepositoryJobTrigger trigger) throws RepositoryException {
