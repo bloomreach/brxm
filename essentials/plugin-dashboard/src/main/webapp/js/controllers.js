@@ -33,7 +33,7 @@
             $scope.getStarted = function () {
                 // mark setup as done...
                 $scope.projectSettings.setupDone = true;
-                $http.post($rootScope.REST.save_settings, $scope.projectSettings).success(function (data) {
+                $http.post($rootScope.REST.save_settings, $scope.projectSettings).success(function () {
                     $location.path('/library'); // Start in the Library
                 });
 
@@ -88,7 +88,7 @@
                 $rootScope.pluginsCache = null;
                 $scope.selectedPlugin = extracted(pluginId);
                 if ($scope.selectedPlugin) {
-                    $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
+                    $http.post($rootScope.REST.pluginInstall + pluginId).success(function () {
                         // we'll get error message or
                         $scope.init();
                     });
@@ -164,7 +164,7 @@
                 var myPath = $location.path();
 
                 // Map plugin-specific pages to the corresponding plugin-type page
-                if (myPath.slice(0, "/plugins".length) == "/plugins") {
+                if (myPath.slice(0, "/features".length) == "/features") {
                     myPath = '/installed-features';
                 }
                 else if (myPath.slice(0, "/tools".length) == "/tools") {

@@ -72,7 +72,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
-      <a class="navbar-brand" href="#">Hippo Essentials {{}}</a>
+      <a class="navbar-brand" href="#">Hippo Essentials</a>
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>

@@ -15,12 +15,11 @@
   -->
 
 <div class="panel panel-default" ng-controller="documentWizardCtrl">
-    <div class="panel-heading">{{plugin.name}}</div>
+    <div class="panel-heading"><h3>{{plugin.name}}</h3></div>
     <div class="panel-body">
-        <h3>Create document wizard shortcut:</h3>
+        <h4>Create document wizard shortcut:</h4>
         <div>
             <form class="form-horizontal" novalidate name="wizardForm">
-
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Shortcut name:</label>
                     <div class="col-sm-8">
@@ -39,7 +38,6 @@
                         <input ng-required="true" name="nameLabel" type="text" ng-model="nameLabel"/>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Select target folder:</label>
                     <div class="col-sm-5">
@@ -53,14 +51,11 @@
                                 selected="selectedFolderItem"
                                 end-point="http://localhost:8080/essentials/rest/jcrbrowser/folders"/>
                     </div>
-
                 </div>
-
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Document type:</label>
                     <div class="col-sm-4">
                         <select name="selectedDocument" hippo.theme.select-box
-
                                 ng-model="selectedDocument"
                                 ng-selected="selectedDocument"
                                 ng-required="true"
@@ -68,7 +63,6 @@
                                 data-options="documentTypes"
                                 data-placeholder="Document type"
                                 >
-
                         </select>
                     </div>
                 </div>
@@ -76,14 +70,12 @@
                     <label class="col-sm-4 control-label">Document query name:</label>
                     <div class="col-sm-4">
                         <select name="documentQuery" hippo.theme.select-box
-
                                 ng-model="documentQuery"
                                 ng-required="false"
                                 ng-options="option.key for option in queries | orderBy:documentFirstSorting"
                                 data-options="queries"
                                 data-placeholder="Document query name"
                                 >
-
                         </select>
                     </div>
                 </div>
@@ -91,7 +83,6 @@
                     <label class="col-sm-4 control-label">Type:</label>
                     <div class="col-sm-4">
                         <select name="classificationType" hippo.theme.select-box
-
                                 ng-model="classificationType"
                                 ng-selected="classificationType"
                                 ng-required="true"
@@ -99,7 +90,6 @@
                                 data-options="classificationTypes"
                                 data-placeholder="Type"
                                 >
-
                         </select>
                     </div>
                 </div>
@@ -108,7 +98,6 @@
                     <div class="col-sm-8">
                         <input ng-required="classificationType == 'date'" name="dateLabel" type="text" ng-model="dateLabel"/>
                     </div>
-
                 </div>
                 <div ng-show="classificationType == 'list'" class="form-group">
                     <label class="col-sm-4 control-label">Value list document:</label>
