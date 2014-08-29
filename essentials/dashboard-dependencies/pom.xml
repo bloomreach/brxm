@@ -67,7 +67,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-dashboard-contentblocks-plugin</artifactId>
+      <artifactId>hippo-essentials-contentblocks-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

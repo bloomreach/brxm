@@ -43,11 +43,11 @@
     <module>menu-plugin</module>
     <module>simple-content</module>
     <module>search-plugin</module>
-    <module>dashboard-news-plugin</module>
+    <module>news-plugin</module>
     <module>dashboard-events-plugin</module>
     <module>essentials-skeleton-package</module>
     <module>restservices-plugin</module>
-    <module>dashboard-contentblocks-plugin</module>
+    <module>contentblocks-plugin</module>
     <module>dashboard-list-content-plugin</module>
     <module>components-plugin</module>
     <module>beanwriter-plugin</module>
