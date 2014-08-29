@@ -117,7 +117,7 @@
   font-weight: bold;
   background-image: url("images/icons/dialog-information-32.png");
   background-repeat: no-repeat;
-  background-position: 10px 5px;
+  background-position: 10px center;
   padding-left: 70px;
   min-height: 35px;
   padding-top: 8px;

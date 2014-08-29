@@ -182,16 +182,29 @@ body.hippo-root #doc3 {
   background-color: #fff8d5;
   margin-bottom: 15px;
   font-weight: bold;
-  background-image: url("images/icons/dialog-information-32.png");
-  background-repeat: no-repeat;
-  background-position: 10px 5px;
-  padding-left: 70px;
-  min-height: 35px;
-  padding-top: 8px;
+  padding:8px;
+  word-wrap: break-word;
 }
 
 .hippo-modal-feedback ul li {
-  list-style-type: disc
+  list-style-type: none;
+  padding-left:40px;
+  min-height: 35px;
+  margin: 5px;
+}
+
+
+.hippo-modal-feedback ul li.feedbackPanelERROR {
+  background-image: url("images/icons/dialog-error-32.png");
+  background-repeat: no-repeat;
+  background-position: 0px center;
+
+}
+
+.hippo-modal-feedback ul li.feedbackPanelINFO {
+    background-image: url("images/icons/dialog-information-32.png");
+    background-repeat: no-repeat;
+    background-position: 0px center;
 }
 
 /* Wicket Ajaxloader */
@@ -214,6 +227,8 @@ body.hippo-root #doc3 {
   background: transparent;
   top: auto;
 }
+
+.hippo-window
 
 /* Header */
 /* ================================================ */
@@ -933,7 +948,7 @@ span.hippo-toolbar-menu-item-button {
   font-weight: bold;
   background-image: url("images/icons/dialog-information-32.png");
   background-repeat: no-repeat;
-  background-position: 10px 5px;
+  background-position: 10px center;
   padding-left: 70px;
   min-height: 35px;
   padding-top: 8px;
@@ -1984,10 +1999,6 @@ span.down-16 {
   padding-top: 2px;
 }
 
-li.feedbackPanelERROR {
-  margin: 5px;
-}
-
 table.hippo-defaultcontent td {
   vertical-align: top;
 }
@@ -2046,7 +2057,7 @@ table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
 .hippo-revision-help {
   background-image: url("images/icons/dialog-information-32.png");
   background-repeat: no-repeat;
-  background-position: 10px 5px;
+  background-position: 10px center;
   padding-left: 70px;
   padding-top: 8px;
   min-height: 35px;
