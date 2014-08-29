@@ -24,6 +24,7 @@ import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.services.contenttype.ContentType;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -45,11 +46,25 @@ public class DocumentRestful implements Restful {
 
     public DocumentRestful(final ContentType contentType) {
         this.fullName = extractFullName(contentType.getName());
-        this.prefix = contentType.getPrefix();
+        this.prefix = extractPrefix(contentType.getPrefix(), fullName);
         this.mixin = contentType.isMixin();
         this.compoundType = contentType.isCompoundType();
         this.superTypes = contentType.getSuperTypes();
         this.name = extractName(fullName);
+    }
+
+    private String extractPrefix(final String prefix, final String name) {
+        if(!Strings.isNullOrEmpty(prefix)){
+            return prefix;
+        }
+        if(Strings.isNullOrEmpty(name)){
+            return null;
+        }
+        final int idx = name.indexOf(':');
+        if (idx != -1) {
+            return name.substring(0, idx);
+        }
+        return name;
     }
 
     public String getJavaName() {
