@@ -517,6 +517,16 @@ public final class JavaSourceUtils {
 
     }
 
+    public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getChildBeansByName", propertyName);
+            addImport(path, List.class.getName());
+        } else {
+            addTwoArgumentsMethod("getBean", "HippoGalleryImageSet", path, methodName, propertyName);
+        }
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
+    }
+
     public static void addBeanMethodInternalType(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
@@ -539,12 +549,13 @@ public final class JavaSourceUtils {
     public static void addBeanMethodImageLink(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageSetBean", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getLinkedBeans", propertyName);
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSetBean", path, methodName, propertyName);
+            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
         }
 
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
 
     /**

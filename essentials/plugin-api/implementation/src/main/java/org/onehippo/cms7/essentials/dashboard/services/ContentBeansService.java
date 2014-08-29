@@ -640,7 +640,13 @@ public class ContentBeansService {
             for (Map.Entry<String, EssentialsGeneratedMethod> entry : deletedMethods.entrySet()) {
                 final EssentialsGeneratedMethod oldMethod = entry.getValue();
                 // Add replacement methods:
-                JavaSourceUtils.addBeanMethodInternalType(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+                if (newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_CLASS) || newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)) {
+                    JavaSourceUtils.addBeanMethodHippoImageSet(path, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+                } else {
+                    JavaSourceUtils.addBeanMethodInternalType(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+                }
+
+
                 log.debug("Replaced old method: {} with new return type: {}", oldMethod.getMethodName(), newReturnType);
                 context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));
             }

@@ -19,7 +19,7 @@
         <span aria-hidden="true">&times;</span>
         <span class="sr-only">Close</span>
     </button>
-    <p ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
+    <p class="feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
         {{message.date}} - <span class="fa fa-fw"
               ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}">
 

@@ -183,6 +183,35 @@
   div.chosen-container[style] {
     min-width: 100px;
   }
+
+  .feedbackanimation.ng-enter {
+    -webkit-animation: feedback_sequence 1s linear;
+    -moz-transition: feedback_sequence 1s linear;
+    -o-transition: feedback_sequence 1s linear;
+    animation: feedback_sequence 1s linear;
+  }
+
+  .feedbackanimation.ng-enter.ng-enter-active {
+    opacity: 1;
+  }
+
+  @-webkit-keyframes feedback_sequence {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes feedback_sequence {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 </style>
 </body>
 </html>
