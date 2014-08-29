@@ -93,7 +93,7 @@
     <module>plugin-api</module>
     <module>dashboard-plugins</module>
     <module>dashboard-dependencies</module>
-    <module>plugin-dashboard</module>
+    <module>dashboard</module>
   </modules>
 
 
