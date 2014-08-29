@@ -27,7 +27,7 @@
 
   <name>Hippo Essentials REST services plugin</name>
   <description>Hippo Essentials REST services plugin</description>
-  <artifactId>hippo-dashboard-restservices-plugin</artifactId>
+  <artifactId>hippo-essentials-restservices-plugin</artifactId>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
