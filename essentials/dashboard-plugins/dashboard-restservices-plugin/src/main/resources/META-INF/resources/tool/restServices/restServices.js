@@ -26,28 +26,27 @@
             $scope.showDocuments = false;
             $scope.documentTypes = [];
 
-
+            $scope.onChangeRestName = function () {
+                updateEndPoints();
+            };
             $scope.onChangeType = function (restType) {
                 $scope.restType = restType;
                 if (restType == 'plain') {
                     // fetch documents:
                     $http.get($rootScope.REST.documents).success(function (data) {
                         $scope.documentTypes = [];
-                        angular.forEach(data, function (value) {
-                            if (value.fullPath) {
-                                $scope.documentTypes.push(value);
+                        angular.forEach(data, function (docType) {
+                            if (docType.fullPath) {
+                                $scope.documentTypes.push(docType);
                             }
                         });
-
+                        updateEndPoints();
                     });
                 } else {
                     $scope.documentTypes = [];
                 }
             };
             $scope.checked = function (item) {
-                if (item.checked && item.javaName) {
-                    item.endpoint = "http://localhost:8080/site/" + $scope.restName + "/" + item.javaName.split('.')[0] + '/';
-                }
                 var valid = checkValid();
                 if (!valid) {
                 } else {
@@ -95,6 +94,13 @@
                 });
                 return valid;
             }
-
+            function updateEndPoints() {
+                angular.forEach($scope.documentTypes, function (docType) {
+                    if (docType.javaName) {
+                        docType.endpoint = "http://localhost:8080/site/"
+                                + $scope.restName + "/" + docType.javaName.split('.')[0] + '/';
+                    }
+                });
+            }
         })
 })();
