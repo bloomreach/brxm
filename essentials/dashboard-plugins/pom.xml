@@ -39,36 +39,35 @@
   </properties>
 
   <modules>
-    <module>blog-plugin</module>
-    <module>menu-plugin</module>
-    <module>simple-content</module>
-    <module>search-plugin</module>
-    <module>news-plugin</module>
-    <module>dashboard-events-plugin</module>
-    <module>essentials-skeleton-package</module>
-    <module>restservices-plugin</module>
-    <module>contentblocks-plugin</module>
-    <module>dashboard-list-content-plugin</module>
-    <module>components-plugin</module>
-    <module>beanwriter-plugin</module>
     <module>banner-plugin</module>
-    <module>robots-plugin</module>
-    <module>poll-plugin</module>
-    <module>taxonomy-plugin</module>
+    <module>beanwriter-plugin</module>
+    <module>blog-plugin</module>
+    <module>components-plugin</module>
+    <module>contentblocks-plugin</module>
     <module>document-wizard-plugin</module>
-    <module>related-documents-plugin</module>
-    <module>seo-plugin</module>
-    <module>image-component-plugin</module>
-    <module>video-component-plugin</module>
+    <module>essentials-skeleton-package</module>
+    <module>events-plugin</module>
     <module>faq-component-plugin</module>
-    <module>tagging-plugin</module>
-    <module>selection-plugin</module>
     <module>gallery-plugin</module>
+    <module>image-component-plugin</module>
+    <module>list-content-plugin</module>
+    <module>menu-plugin</module>
+    <module>news-plugin</module>
+    <module>poll-plugin</module>
+    <module>related-documents-plugin</module>
+    <module>restservices-plugin</module>
+    <module>robots-plugin</module>
+    <module>search-plugin</module>
+    <module>selection-plugin</module>
+    <module>seo-plugin</module>
+    <module>simple-content</module>
     <module>sitemap-plugin</module>
+    <module>tagging-plugin</module>
+    <module>taxonomy-plugin</module>
+    <module>video-component-plugin</module>
   </modules>
+
   <dependencyManagement>
-
-
     <dependencies>
       <!-- PLUGIN API -->
       <dependency>
