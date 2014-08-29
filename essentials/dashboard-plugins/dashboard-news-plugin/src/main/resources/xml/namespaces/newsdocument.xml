@@ -129,7 +129,7 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-          <sv:value>true</sv:value>
+          <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -145,6 +145,9 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>Date</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hipposysedit:validators" sv:type="String">
+          <sv:value>required</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="image">
