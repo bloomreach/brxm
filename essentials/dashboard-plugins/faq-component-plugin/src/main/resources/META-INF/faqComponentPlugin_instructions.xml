@@ -20,8 +20,8 @@
 
 
   <instructionSet>
-    <cnd documentType="faqdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
-    <cnd documentType="faqlistdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
+    <cnd documentType="faqdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <cnd documentType="faqlistdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="instructions/xml/faq-document.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="instructions/xml/faq-list-document.xml" target="/hippo:namespaces/{{namespace}}"/>
     <file action="copy" source="instructions/java/FaqDocument.txt" target="{{beansFolder}}/FaqDocument.java"/>

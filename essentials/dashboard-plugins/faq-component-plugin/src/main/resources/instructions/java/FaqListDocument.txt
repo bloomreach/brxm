@@ -30,11 +30,6 @@ public class FaqListDocument extends BaseDocument {
 		return getProperty("{{namespace}}:title");
 	}
 
-	@HippoEssentialsGenerated(internalName = "hippostd:tags")
-	public String[] getTags() {
-		return getProperty("hippostd:tags");
-	}
-
 	@HippoEssentialsGenerated(internalName = "{{namespace}}:description")
 	public HippoHtml getDescription() {
 		return getHippoHtml("{{namespace}}:description");
