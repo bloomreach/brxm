@@ -16,40 +16,42 @@
 
 <div class="panel panel-default" ng-controller="galleryPluginCtrl">
     <div class="panel-heading">
-        Gallery manager
+        <h3>Gallery manager</h3>
     </div>
     <div class="panel-body">
         <div ng-show="showBeanrewriterMessage" class="alert alert-info">
             <p>You have changed image sets and may want to update your HST image set beans now.
                 You can use the <a href="/essentials/#/tools/beanwriter">BeanWriter tool</a> for this.</p>
         </div>
-        <div><p>Create a custom image set</p>
+        <div><h4>Create Custom Image Set</h4>
 
             <form novalidate name="newImageSetForm">
                 <essentials-help help-reference="help.imageSet" show-hide-variable="myHelp"></essentials-help>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Imageset name:</label>
                     <div class="col-sm-4">
-                        <input ng-model="imageSetName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="myimageset"/>
+                        <input class="form-control" ng-model="imageSetName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="myimageset"/>
                     </div>
                     <div class="col-sm-4">
                         <input type="checkbox" ng-model="updateExisting"/> Update existing image sets and regenarate HST beans
                     </div>
                 </div>
                 <div class="form-group">
-                    <button ng-disabled="!newImageSetForm.$valid" class="btn btn-success pull-right" ng-click="addImageSet()">Create new image set</button>
+                    <div class="col-xs-12">
+                        <button ng-disabled="!newImageSetForm.$valid" class="btn btn-success pull-right" ng-click="addImageSet()">Create new image set</button>
+                    </div>
                 </div>
             </form>
         </div>
 
         <div class="clearfix"></div>
         <div ng-show="imageSets.length">
+            <h4>Edit Image Set</h4>
+
             <form novalidate name="imageSetFrom">
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">Edit existing image set</label>
+                    <label class="col-sm-4 control-label">Select image set</label>
                     <div class="col-sm-4">
-
-
                         <select hippo.theme.select-box
                                 ng-model="selectedImageSet"
                                 no-results-text="No results found for"
@@ -62,19 +64,20 @@
                 </div>
                 <div class="clearfix"></div>
                 <div ng-show="selectedImageSet">
+                    <h5>Add Image Variant</h5>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Add new image variant:</label>
-
-                        <div class="col-sm-6">
-                            <input ng-model="imageVariantName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="bigimage"/>
+                        <label class="col-sm-4 control-label">Variant name:</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" ng-model="imageVariantName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="bigimage"/>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <button ng-disabled="!imageVariantName" class="btn btn-success pull-right" type="button" ng-click="addImageVariant()">Add new image variant</button>
                         </div>
                     </div>
 
+                    <h5>Edit Image Variant</h5>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Edit existing image variant:</label>
+                        <label class="col-sm-4 control-label">Select image variant:</label>
                         <div class="col-sm-4">
                             <select
                                     hippo.theme.select-box
@@ -108,7 +111,8 @@
                             </div>
                         </div>
                         <div class="clearfix"></div>
-                        <!--  TRANSLATIONS -->
+
+                        <h5>Translations</h5>
                         <div ng-show="selectedImageModel" class="col-sm-12" ng-repeat="translation in selectedImageModel.translations">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">{{translation.language}}</label>

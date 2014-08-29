@@ -31,19 +31,9 @@
             Essentials.addPayloadData("imageSetName", $scope.imageSetName, payload);
             Essentials.addPayloadData("updateExisting", $scope.updateExisting, payload);
             $http.post(endpoint + "/create", payload).success(function () {
-                loadImageSets(true);
+                loadImageSets($scope.imageSetPrefix + ':' + $scope.imageSetName);
+                $scope.imageSetName = null;
             });
-        };
-
-
-        $scope.resetSelections = function () {
-            $scope.selectedImageModel = null;
-            $scope.selectedImageSet = null;
-            $scope.imageVariantName = null;
-        };
-
-        $scope.onSelectedImageSetChange = function () {
-            $scope.selectedImageModel = null;
         };
 
         $scope.addImageVariant = function () {
@@ -60,7 +50,19 @@
             var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
             Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
             $http.post(endpoint + "/addvariant", payload).success(function (data) {
-                loadImageSets(true);
+                loadImageSets($scope.selectedImageSet.name, $scope.imageVariantName);
+                $scope.imageVariantName = null;
+            });
+        };
+
+        $scope.removeImageVariant = function (variant) {
+            if (variant.readOnly) {
+                displayError("Cannot remove " + variant.name + " because it is required");
+                return;
+            }
+            $http.post(endpoint + "/remove", variant).success(function () {
+                loadImageSets($scope.selectedImageSet.name);
+                $scope.showBeanrewriterMessage = true;
             });
         };
 
@@ -77,36 +79,40 @@
             var idx = $scope.selectedImageModel.translations.indexOf(translation);
             $scope.selectedImageModel.translations.splice(idx, 1);
         };
-        $scope.removeImageVariant = function (variant) {
-            if (variant.readOnly) {
-                displayError("Cannot remove " + variant.name + " because it is required");
-                return;
-            }
-            $http.post(endpoint + "/remove", variant).success(function () {
-                loadImageSets(true);
-                $scope.showBeanrewriterMessage = true;
-            });
-        };
+
         $scope.save = function () {
             // save only saves translations, advanced settings and height/width:
             $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
-                loadImageSets(false);
+                loadImageSets($scope.selectedImageSet.name);
+                $scope.selectedImageModel = null;
                 $scope.showBeanrewriterMessage = true;
             });
-
-
         };
 
         $scope.init = function () {
-            loadImageSets(true);
+            loadImageSets();
         };
 
-        function loadImageSets(reset) {
+        function loadImageSets(selectedImageSetName, selectedImageVariantName) {
             $http.get(endpoint).success(function (data) {
-                if (reset) {
-                    $scope.resetSelections();
-                }
                 $scope.imageSets = data;
+                if (selectedImageSetName) {
+                    $scope.selectedImageSet = null;
+                    angular.forEach($scope.imageSets, function(imageSet) {
+                        if (imageSet.name === selectedImageSetName) {
+                            $scope.selectedImageSet = imageSet;
+
+                            if (selectedImageVariantName) {
+                                $scope.selectedImageModel = null;
+                                angular.forEach(imageSet.models, function(variant) {
+                                    if (variant.name === selectedImageVariantName) {
+                                        $scope.selectedImageModel = variant;
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
             });
         }
 
@@ -165,7 +171,5 @@
             " All variants of an image are together called an image set, and can be seen in the image gallery in the CMS." +
             " Read more about imagesets here: <a target='_blank' href='http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>" +
             "http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html</a>"}
-
-
     })
 }());
