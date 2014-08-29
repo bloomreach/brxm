@@ -17,10 +17,13 @@ package org.onehippo.repository.mock;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Calendar;
 
 import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
@@ -97,9 +100,43 @@ public class MockSessionTest {
 
         byte[] data = new byte[10];
         data[3] = 42;
+
         Binary binary = factory.createBinary(new ByteArrayInputStream(data));
+
         assertEquals(data.length, binary.getSize());
         IOUtils.contentEquals(new ByteArrayInputStream(data), binary.getStream());
+    }
+
+    @Test
+    public void valueFactoryCanCreateBinaryValues() throws RepositoryException, IOException {
+        MockSession session = new MockSession(MockNode.root());
+        MockValueFactory factory = session.getValueFactory();
+
+        byte[] data = new byte[10];
+        data[3] = 42;
+
+        MockValue value = factory.createValue(new ByteArrayInputStream(data));
+
+        assertEquals(PropertyType.BINARY, value.getType());
+
+        final Binary binary = value.getBinary();
+        assertEquals(data.length, binary.getSize());
+        IOUtils.contentEquals(new ByteArrayInputStream(data), binary.getStream());
+    }
+
+    @Test
+    public void valueFactoryCanCreateValues() throws RepositoryException {
+        MockSession session = new MockSession(MockNode.root());
+        MockValueFactory factory = session.getValueFactory();
+
+        assertEquals("foo", factory.createValue("foo").getString());
+        assertEquals(true, factory.createValue(true).getBoolean());
+        assertEquals(42, factory.createValue(42).getLong());
+        assertEquals(3.14, factory.createValue(3.14).getDouble(), 0);
+        assertEquals(BigDecimal.TEN, factory.createValue(BigDecimal.TEN).getDecimal());
+
+        final Calendar now = Calendar.getInstance();
+        assertEquals(now.getTime(), factory.createValue(now).getDate().getTime());
     }
 
     private MockNode createRootFooBarMockNode() throws RepositoryException {

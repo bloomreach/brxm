@@ -22,10 +22,14 @@ import java.util.Calendar;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.util.ISO8601;
 
 /**
  * Mocked value factory. It only supports {@link #createBinary(java.io.InputStream)}.
@@ -33,59 +37,66 @@ import javax.jcr.ValueFormatException;
 public class MockValueFactory implements ValueFactory {
 
     @Override
-    public Binary createBinary(final InputStream stream) throws RepositoryException {
+    public MockBinary createBinary(final InputStream stream) throws RepositoryException {
         try {
             return new MockBinary(stream);
         } catch (IOException e) {
             throw new RepositoryException("Cannot create mock binary", e);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
     }
 
-    // REMAINING METHODS ARE NOT IMPLEMENTED
-
     @Override
     public Value createValue(final String value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(value);
     }
 
     @Override
     public Value createValue(final String value, final int type) throws ValueFormatException {
-        throw new UnsupportedOperationException();
+        return new MockValue(type, value);
     }
 
     @Override
     public Value createValue(final long value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(PropertyType.LONG, Long.toString(value));
     }
 
     @Override
     public Value createValue(final double value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(PropertyType.DOUBLE, Double.toString(value));
     }
 
     @Override
     public Value createValue(final BigDecimal value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(PropertyType.DECIMAL, value.toString());
     }
 
     @Override
     public Value createValue(final boolean value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(PropertyType.BOOLEAN, Boolean.toString(value));
     }
 
     @Override
     public Value createValue(final Calendar value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(PropertyType.DATE, ISO8601.format(value));
     }
 
     @Override
-    public Value createValue(final InputStream value) {
-        throw new UnsupportedOperationException();
+    public MockValue createValue(final InputStream stream) {
+        try {
+            Binary binary = createBinary(stream);
+            return new MockValue(binary);
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Error while creating value from input stream", e);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     @Override
     public Value createValue(final Binary value) {
-        throw new UnsupportedOperationException();
+        return new MockValue(value);
     }
 
     @Override

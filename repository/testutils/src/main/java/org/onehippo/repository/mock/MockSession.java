@@ -220,7 +220,7 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public ValueFactory getValueFactory() {
+    public MockValueFactory getValueFactory() {
         return new MockValueFactory();
     }
 
