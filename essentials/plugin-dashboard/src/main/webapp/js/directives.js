@@ -371,8 +371,10 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-installed-tool.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
-                    // empty
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
+                    $scope.useTool = function () {
+                        $location.path('/tools/' + $scope.plugin.id);
+                    };
                 }
             }
         }).directive("essentialsFeatureFooter", function () {
