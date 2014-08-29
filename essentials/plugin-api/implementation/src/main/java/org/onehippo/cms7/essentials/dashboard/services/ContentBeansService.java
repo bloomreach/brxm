@@ -275,7 +275,7 @@ public class ContentBeansService {
             if (mySupertypes.contains("hippogallery:relaxed")) {
                 final Path javaClass = createJavaClass(missingBean);
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
-                JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET_BEAN);
+                JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET_CLASS);
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
                 addMethods(missingBean, javaClass, new ArrayList<String>());
             }
