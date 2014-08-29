@@ -20,7 +20,7 @@
         .controller('beanWriterCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             $scope.endpoint = $rootScope.REST.dynamic + 'beanwriter/';
             $scope.resultMessages = [];
-            $scope.selectedImageSet = 'HippoGalleryImageSetBean';
+            $scope.selectedImageSet = 'HippoGalleryImageSet';
             $scope.updateImageMethods = false;
             $scope.runBeanWriter = function () {
                 var payload = Essentials.addPayloadData("imageSet", $scope.selectedImageSet, null);

@@ -74,7 +74,8 @@ public class BeanWriterResource extends BaseResource {
         final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
         // check if we are using custom image set:
         java.nio.file.Path path = null;
-        if (!Strings.isNullOrEmpty(imageSet) || !imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN)) {
+        final boolean hippoStandardType = imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN) || imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_CLASS);
+        if (!Strings.isNullOrEmpty(imageSet) || !hippoStandardType) {
             final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
             path = existingImageTypes.get(imageSet);
             if (path != null) {
@@ -94,7 +95,7 @@ public class BeanWriterResource extends BaseResource {
                     contentBeansService.convertImageMethods(annotation.getInternalName());
                 }
             }
-            else if(imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN)){
+            else if(hippoStandardType){
                 contentBeansService.convertImageMethods(imageSet);
             }
         }

@@ -82,7 +82,6 @@ public class ContentBeansService {
 
     private final PluginContext context;
     private final String baseSupertype;
-    private static final String BASE_TYPE = "hippo:document";
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
     public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
     public static final String CONTEXT_BEAN_DATA = BeanWriterUtils.class.getName();
@@ -174,91 +173,6 @@ public class ContentBeansService {
         }
     }
 
-
-    /**
-     * Update image set to new return type (e.g. after image sets are regenerated)
-     *
-     * @param path          path of java class file
-     * @param oldReturnType e.g HippoGalleryImageSet
-     * @param newReturnType new imageset return type e.g. MyGalleryImageSet
-     */
-    private void updateImageTypes(final Path path, final String oldReturnType, final String newReturnType) {
-        //final String oldImageSetName = "HippoGalleryImageSet"; //oldReturnType
-        final CompilationUnit deleteUnit = JavaSourceUtils.getCompilationUnit(path);
-        final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
-        final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
-        final Map<String, EssentialsGeneratedMethod> deletedMethods = new HashMap<>();
-        deleteUnit.accept(new ASTVisitor() {
-            @Override
-            public boolean visit(MethodDeclaration node) {
-                final String methodName = node.getName().getFullyQualifiedName();
-                final Type type = node.getReturnType2();
-                if (type.isPrimitiveType() || type.isArrayType()) {
-                    return super.visit(node);
-                }
-                EssentialsGeneratedMethod method;
-                if (type.isParameterizedType()) {
-                    ParameterizedType parameterizedType = (ParameterizedType) type;
-
-                    @SuppressWarnings("rawtypes")
-                    final List arg = parameterizedType.typeArguments();
-                    if (arg == null || arg.isEmpty()) {
-                        return super.visit(node);
-                    }
-                    final SimpleType simpleReturnType = (SimpleType) arg.get(0);
-                    final String fullyQualifiedName = simpleReturnType.getName().getFullyQualifiedName();
-                    log.info("fullyQualifiedName {}", fullyQualifiedName);
-                    method = extractMethod(methodName, generatedMethods);
-                    if (method == null) {
-                        return super.visit(node);
-                    }
-                    if (fullyQualifiedName.equals(oldReturnType)) {
-                        node.delete();
-                        method.setMultiType(true);
-                        deletedMethods.put(methodName, method);
-                        return super.visit(node);
-                    }
-
-                } else if (type.isSimpleType()) {
-
-                    ///
-                    final SimpleType simpleType = (SimpleType) type;
-                    final String returnTypeName = simpleType.getName().getFullyQualifiedName();
-                    method = extractMethod(methodName, generatedMethods);
-                    if (method == null) {
-                        return super.visit(node);
-                    }
-                    if (returnTypeName.equals(oldReturnType)) {
-                        node.delete();
-                        deletedMethods.put(methodName, method);
-                        return super.visit(node);
-                    }
-                }
-                return super.visit(node);
-            }
-        });
-
-        if (deletedMethods.size() > 0) {
-            final AST deleteAst = deleteUnit.getAST();
-            final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
-            // reload unit
-            final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(deletedSource);
-            final AST ast = unit.getAST();
-            for (Map.Entry<String, EssentialsGeneratedMethod> entry : deletedMethods.entrySet()) {
-                final EssentialsGeneratedMethod value = entry.getValue();
-                if (value.isMultiType()) {
-                    JavaSourceUtils.addImport(path, List.class.getName());
-                    JavaSourceUtils.addParameterizedMethod(value.getMethodName(), "List", newReturnType, path, "getLinkedBean", value.getInternalName());
-                } else {
-                    JavaSourceUtils.addTwoArgumentsMethod("getLinkedBean", "HippoBean", path, value.getMethodName(), value.getInternalName());
-                }
-
-                final String rewrite = JavaSourceUtils.rewrite(unit, ast);
-                log.info("rewrite {}", rewrite);
-            }
-        }
-
-    }
 
     private EssentialsGeneratedMethod extractMethod(final String methodName, final Iterable<EssentialsGeneratedMethod> generatedMethods) {
         for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
@@ -548,11 +462,10 @@ public class ContentBeansService {
     public Map<String, Path> getExistingImageTypes() {
         final Map<String, Path> existing = findExitingBeans();
         final Map<String, Path> imageTypes = new HashMap<>();
-        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_BEAN, null);
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, null);
         for (Path path : existing.values()) {
             final String myClass = JavaSourceUtils.getClassName(path);
             final String extendsClass = JavaSourceUtils.getExtendsClass(path);
-            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
             if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
                 imageTypes.put(myClass, path);
             }
@@ -561,10 +474,11 @@ public class ContentBeansService {
         return imageTypes;
     }
 
+    @SuppressWarnings("rawtypes")
     public void convertImageMethods(final String newImageNamespace) {
         final Map<String, Path> existing = findExitingBeans();
         final Map<String, String> imageTypes = new HashMap<>();
-        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_BEAN, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
         String newReturnType = null;
         for (Path path : existing.values()) {
             final String myClass = JavaSourceUtils.getClassName(path);
@@ -577,8 +491,8 @@ public class ContentBeansService {
                 newReturnType = myClass;
             }
         }
-        if(newImageNamespace.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)){
-            newReturnType = HIPPO_GALLERY_IMAGE_SET_BEAN;
+        if (newImageNamespace.equals(HIPPO_GALLERY_IMAGE_SET_BEAN) || newImageNamespace.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
+            newReturnType = HIPPO_GALLERY_IMAGE_SET_CLASS;
         }
         if (Strings.isNullOrEmpty(newReturnType)) {
             log.warn("Could not find return type for image set namespace: {}", newImageNamespace);
@@ -591,11 +505,16 @@ public class ContentBeansService {
             for (EssentialsGeneratedMethod m : generatedMethods) {
                 final Type type = m.getMethodDeclaration().getReturnType2();
                 if (type.isSimpleType()) {
-                    SimpleType simpleType = (SimpleType) type;
+                    final SimpleType simpleType = (SimpleType) type;
                     final String returnType = simpleType.getName().getFullyQualifiedName();
                     // check if image type and different than new return type
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
-                        //
+                        log.info("Found image type: {}", returnType);
+                        updateImageMethod(entry.getValue(), returnType, newReturnType, imageTypes.get(newReturnType));
+                    }
+                } else if (getParameterizedType(type) != null) {
+                    final String returnType = getParameterizedType(type);
+                    if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
                         updateImageMethod(entry.getValue(), returnType, newReturnType, imageTypes.get(newReturnType));
                     }
@@ -603,6 +522,27 @@ public class ContentBeansService {
             }
         }
     }
+
+    private String getParameterizedType(final Type type) {
+        if (!(type instanceof ParameterizedType)) {
+            return null;
+        }
+        final ParameterizedType parameterizedType = (ParameterizedType) type;
+        final Type myType = parameterizedType.getType();
+        @SuppressWarnings("rawtypes")
+        final List myArguments = parameterizedType.typeArguments();
+        if (myArguments != null && myArguments.size() == 1
+                && myType != null && myType.isSimpleType() && ((SimpleType) myType).getName().getFullyQualifiedName().equals("List")) {
+            final Object o = myArguments.get(0);
+            if (o instanceof SimpleType) {
+                final SimpleType paramClazz = (SimpleType) o;
+                return paramClazz.getName().getFullyQualifiedName();
+
+            }
+        }
+        return null;
+    }
+
 
     private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement) {
         final CompilationUnit deleteUnit = JavaSourceUtils.getCompilationUnit(path);
@@ -616,11 +556,9 @@ public class ContentBeansService {
                 final String methodName = node.getName().getFullyQualifiedName();
                 final Type type = node.getReturnType2();
                 if (type.isSimpleType()) {
-
-                    ///
                     final SimpleType simpleType = (SimpleType) type;
                     final String returnTypeName = simpleType.getName().getFullyQualifiedName();
-                    EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
+                    final EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
                     if (method == null) {
                         return super.visit(node);
                     }
@@ -629,6 +567,19 @@ public class ContentBeansService {
                         deletedMethods.put(method.getMethodName(), method);
                         return super.visit(node);
                     }
+                } else if (getParameterizedType(type) != null) {
+                    final String returnTypeName = getParameterizedType(type);
+                    final EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
+                    if (method == null) {
+                        return super.visit(node);
+                    }
+                    if (returnTypeName.equals(oldReturnType)) {
+                        node.delete();
+                        deletedMethods.put(method.getMethodName(), method);
+                        return super.visit(node);
+                    }
+
+                    log.info("oldReturnType {}", oldReturnType);
                 }
                 return super.visit(node);
             }
@@ -645,14 +596,11 @@ public class ContentBeansService {
                 } else {
                     JavaSourceUtils.addBeanMethodInternalType(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
                 }
-
-
                 log.debug("Replaced old method: {} with new return type: {}", oldMethod.getMethodName(), newReturnType);
                 context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));
             }
         }
     }
-
 
     /**
      * Create a bean for giving parent bean path

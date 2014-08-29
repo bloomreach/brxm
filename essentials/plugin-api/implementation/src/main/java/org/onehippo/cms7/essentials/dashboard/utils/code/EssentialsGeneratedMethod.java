@@ -17,8 +17,12 @@
 package org.onehippo.cms7.essentials.dashboard.utils.code;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.Type;
 
 /**
  * @version "$Id: EssentialsGeneratedMethod.java 173277 2013-08-09 10:06:29Z mmilicevic $"
@@ -36,6 +40,15 @@ public class EssentialsGeneratedMethod implements Serializable {
         this.methodDeclaration = methodDeclaration;
         this.methodName = methodName;
         this.internalName = internalName;
+        final Type type = methodDeclaration.getReturnType2();
+        if(type !=null && type.isParameterizedType()){
+            final ParameterizedType parameterizedType = (ParameterizedType) type;
+            final Type myType = parameterizedType.getType();
+            if (myType != null && myType.isSimpleType() && ((SimpleType) myType).getName().getFullyQualifiedName().equals("List")) {
+                this.multiType = true;
+            }
+        }
+
     }
 
     public EssentialsGeneratedMethod() {
