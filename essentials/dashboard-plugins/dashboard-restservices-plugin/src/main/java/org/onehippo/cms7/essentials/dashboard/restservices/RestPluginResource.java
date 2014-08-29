@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
@@ -38,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -61,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -72,6 +75,9 @@ public class RestPluginResource extends BaseResource {
 
 
     private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
+
+    @Inject
+    private EventBus eventBus;
 
     @GET
     @Path("/beans")
@@ -103,16 +109,16 @@ public class RestPluginResource extends BaseResource {
 
     @POST
     @Path("/")
-    public MessageRestful executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public RestfulList<MessageRestful> executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
 
-        final MessageRestful message = new MessageRestful();
-
+        final RestfulList<MessageRestful> messages = new RestfulList<>();
         final Map<String, String> values = payloadRestful.getValues();
         final String restName = values.get(RestPluginConst.REST_NAME);
         final String restType = values.get(RestPluginConst.REST_TYPE);
         final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
         if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
-            return new ErrorMessageRestful("REST service name / type or both were empty");
+            messages.add(new ErrorMessageRestful("REST service name / type or both were empty"));
+            return messages;
         }
         final PluginContext context = PluginContextFactory.getContext();
 
@@ -144,9 +150,10 @@ public class RestPluginResource extends BaseResource {
                 executor.execute(mySet, context);
             }
         }
-
-        message.setValue("Please rebuild and restart your application");
-        return message;
+        final String message = "HST Configuration changed, project rebuild needed";
+        eventBus.post(new RebuildEvent("Rest services", "tool", message));
+        messages.add(new MessageRestful(message));
+        return messages;
     }
 
     public FileInstruction createFileInstruction() {
