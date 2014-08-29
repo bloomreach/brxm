@@ -17,11 +17,14 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessControlException;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -37,9 +40,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class LoggingServlet extends HttpServlet {
 
@@ -56,6 +66,8 @@ public class LoggingServlet extends HttpServlet {
     private static final String DEFAULT_NODE = "////content/documents";
     private static final String DEFAULT_PRIV = "hippo:admin";
 
+    private static final String LOG_LEVEL_PARAM_NAME = "ll";
+
     private static final boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
     private static final boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
 
@@ -66,14 +78,13 @@ public class LoggingServlet extends HttpServlet {
     private String privilege;
     private String absPath;
 
-    private static final Level[] levels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO,
-            Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST, Level.ALL };
-
     private static final String[] log4jLevels = new String[] { "OFF", "SEVERE", "ERROR", "WARN", "INFO", "DEBUG",
             "TRACE", "ALL" };
 
     private static final String[] jdk14Levels = new String[] { "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
             "FINER", "FINEST", "ALL" };
+
+    private Configuration freeMarkerConfiguration;
 
     public void init(ServletConfig config) throws ServletException {
         repositoryLocation = getInitParameter(config, REPOS_PARAM, DEFAULT_REPOS);
@@ -81,7 +92,52 @@ public class LoggingServlet extends HttpServlet {
         absPath = ensureStartSlash(getInitParameter(config, NODE_PARAM, DEFAULT_NODE));
         log.info("LoggingServlet configured with repository '" + repositoryLocation + "' check node '" + absPath
                 + "' and check privilege '" + privilege + "'");
+
+        freeMarkerConfiguration = createFreemarkerConfiguration();
+
         super.init(config);
+    }
+
+    /**
+     * Create Freemarker template engine configuration on initiaization
+     * <P>
+     * By default, this method created a configuration by using {@link DefaultObjectWrapper}
+     * and {@link ClassTemplateLoader}. And sets additional properties by loading
+     * <code>./LoggingServlet-ftl.properties</code> from the classpath.
+     * </P>
+     * @return
+     */
+    protected Configuration createFreemarkerConfiguration() {
+        Configuration cfg = new Configuration();
+
+        cfg.setObjectWrapper(new DefaultObjectWrapper());
+        cfg.setTemplateLoader(new ClassTemplateLoader(getClass(), ""));
+
+        InputStream propsInput = null;
+        final String propsResName = getClass().getSimpleName() + "-ftl.properties";
+
+        try {
+            propsInput = getClass().getResourceAsStream(propsResName);
+            cfg.setSettings(propsInput);
+        } catch (Exception e) {
+            log.warn("Failed to load Freemarker configuration properties.", e);
+        } finally {
+            IOUtils.closeQuietly(propsInput);
+        }
+
+        return cfg;
+    }
+
+    /**
+     * Create Freemarker template to render result.
+     * By default, this loads <code>LoggingServlet-html.ftl</code> from the classpath.
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    protected Template getRenderTemplate(final HttpServletRequest request) throws IOException {
+        final String templateName = getClass().getSimpleName() + "-html.ftl";
+        return freeMarkerConfiguration.getTemplate(templateName);
     }
 
     private String getInitParameter(ServletConfig config, String paramName, String defaultValue) {
@@ -104,48 +160,41 @@ public class LoggingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // explicitly set character encoding
         req.setCharacterEncoding("UTF-8");
-        res.setContentType("text/html;charset=UTF-8");
+        res.setCharacterEncoding("UTF-8");
 
         if (!isAuthorized(req)) {
             BasicAuth.setRequestAuthorizationHeaders(res, "LoggingServlet");
             return;
         }
-        
-        String path = req.getRequestURI();
-        if (!path.endsWith("/")) res.sendRedirect(path + "/");
 
-        res.setStatus(HttpServletResponse.SC_OK);
-        res.setContentType("text/html");
-        PrintWriter writer = res.getWriter();
+        String requestURI = req.getRequestURI();
 
-        writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
-        writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
-        writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        writer.println("<head><title>Hippo Repository Console</title>");
-        writer.println("<style type=\"text/css\">");
-        writer.println(" table.params {font-size:small}");
-        writer.println("</style>");
-        writer.println("</head>");
-        writer.println("<body>");
-        writer.println("  <h2>Hippo Repository Console</h2>");
-        writer.println("  <h3>Request parameters</h3>");
-        writer
-                .println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
-        writer.println("    <tr><td>context path</td><td>: <code>" + req.getContextPath() + "</code></td></tr>");
-        writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
-        writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
-        writer.println("    </table>");
-        writer.println("  <h3>Logging</h3>");
+        if (!requestURI.endsWith("/")) {
+            res.sendRedirect(requestURI + "/");
+            return;
+        }
 
-        writer.println("<p>Logger in use: " + log.getClass().getName() + "</p><p>\n");
+        Map<String, Object> templateParams = new HashMap<String, Object>();
 
-        String lastLogger = req.getParameter("logger");
-        String lastLevel = req.getParameter("level");
-        SortedMap<String, String> loggerLevelMap = getLoggerLevelMap();
-        printLoggerLevels(writer, loggerLevelMap);
+        try {
+            if (isJDK14Log) {
+                templateParams.put("logLevels", Arrays.asList(jdk14Levels));
+            } else if (isLog4jLog) {
+                templateParams.put("logLevels", Arrays.asList(log4jLevels));
+            }
 
-        writer.println("</p>");
-        writer.println("</body></html>");
+            templateParams.put("loggerInUse", log);
+            Map<String, LoggerLevelInfo> loggerLevelInfosMap = getLoggerLevelInfosMap();
+            templateParams.put("loggerLevelInfosMap", loggerLevelInfosMap);
+        } catch (Exception ex) {
+            templateParams.put("exception", ex);
+        } finally {
+            try {
+                renderTemplatePage(req, res, getRenderTemplate(req), templateParams);
+            } catch (Exception te) {
+                log.warn("Failed to render freemarker template.", te);
+            }
+        }
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -153,9 +202,29 @@ public class LoggingServlet extends HttpServlet {
             BasicAuth.setRequestAuthorizationHeaders(res, "LoggingServlet");
             return;
         }
-        String loggerName = req.getParameter("logger");
-        String loggerLevel = req.getParameter("level");
-        setLoggerLevel(loggerName, loggerLevel);
+
+        String [] logLevelParams = req.getParameterValues(LOG_LEVEL_PARAM_NAME);
+
+        if (logLevelParams != null) {
+            Map<String, LoggerLevelInfo> loggerLevelInfosMap = getLoggerLevelInfosMap();
+
+            String loggerName = null;
+            String loggerLevel = null;
+
+            for (String logLevelParam : logLevelParams) {
+                loggerName = StringUtils.substringBefore(logLevelParam, ":");
+                loggerLevel = StringUtils.substringAfter(logLevelParam, ":");
+
+                if (StringUtils.isNotEmpty(loggerName) && StringUtils.isNotEmpty(loggerLevel)) {
+                    LoggerLevelInfo loggerLevelInfo = loggerLevelInfosMap.get(loggerName);
+
+                    if (loggerLevelInfo != null && !StringUtils.equals(loggerLevel, loggerLevelInfo.getEffectiveLogLevel())) {
+                        setLoggerLevel(loggerName, loggerLevel);
+                    }
+                }
+            }
+        }
+
         doGet(req, res);
     }
 
@@ -163,7 +232,9 @@ public class LoggingServlet extends HttpServlet {
         if (!BasicAuth.hasAuthorizationHeader(req)) {
             return false;
         }
+
         SimpleCredentials creds = BasicAuth.parseAuthorizationHeader(req);
+
         try {
             return hasRepositoryPrivs(creds);
         } catch (LoginException e) {
@@ -174,6 +245,7 @@ public class LoggingServlet extends HttpServlet {
             log.warn("Error while checking privileges: " + e.getMessage());
             log.debug("Error:", e);
         }
+
         return false;
     }
 
@@ -210,145 +282,19 @@ public class LoggingServlet extends HttpServlet {
         }
     }
 
-    private void printLoggerLevels(PrintWriter writer, Map<String, String> loggerLevelMap) {
-        writer.println("    <table>");
-        writer.println("      <tr><th>logger</th><th>level</th><th>change</th></tr>");
-        for (Map.Entry<String, String> logMap : loggerLevelMap.entrySet()) {
-            writer.print("      <tr><td><tt>");
-            String escapedName = StringEscapeUtils.escapeHtml(logMap.getKey());
-            writer.print("<a id=\""+escapedName+"\">");
-            writer.print(escapedName);
-            writer.print("</a>");
-            writer.print("</tt></td><td>");
-            writer.print(logMap.getValue());
-            writer.print("</td><td>");
-            printChangeLevelForm(writer, logMap.getKey());
-            writer.println("</td></tr>");
-        }
-        writer.println("    </table>");
-    }
-
-    private void printChangeLevelForm(final PrintWriter writer, final String loggerName) {
-        String escapedName = StringEscapeUtils.escapeHtml(loggerName);
-        writer.println("<form action=\"#"+escapedName+"\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
-        writer.println("<input type=\"hidden\" name=\"logger\" value=\""+escapedName+"\">");
-        writer.println("level: <select name=\"level\">");
-        if (isJDK14Log) {
-            for (int i = 0; i < jdk14Levels.length; i++) {
-                writer.println("<option label=\"" + jdk14Levels[i] + "\" value=\"" + jdk14Levels[i] + "\">"
-                        + jdk14Levels[i] + "</option>");
-            }
-        } else if (isLog4jLog) {
-            for (int i = 0; i < log4jLevels.length; i++) {
-                writer.println("<option label=\"" + log4jLevels[i] + "\" value=\"" + log4jLevels[i] + "\">"
-                        + log4jLevels[i] + "</option>");
-            }
-        }
-        writer.println("</select>");
-        writer.println("<input type=\"submit\" name=\"submit\" value=\"Apply\">");
-        writer.println("  </form>");
-    }
-
     public void destroy() {
     }
 
-    private class LoggerHierarchy {
-        String name;
-        java.util.logging.Logger logger;
-        Map<String, LoggerHierarchy> hierarchy;
-
-        LoggerHierarchy() {
-            name = "";
-            logger = null;
-            hierarchy = new TreeMap<String, LoggerHierarchy>();
-        }
-
-        LoggerHierarchy(java.util.logging.Logger logger) {
-            this.name = logger.getName();
-            this.logger = logger;
-            hierarchy = new TreeMap<String, LoggerHierarchy>();
-        }
-
-        LoggerHierarchy add(java.util.logging.Logger logger) {
-            if (logger == this.logger) {
-                return this;
-            }
-            LoggerHierarchy loggerHierarchy;
-            java.util.logging.Logger parent = logger.getParent();
-            if (parent != null) {
-                LoggerHierarchy parentHierarchy = add(parent);
-                if (!parentHierarchy.hierarchy.containsKey(logger.getName())) {
-                    loggerHierarchy = new LoggerHierarchy(logger);
-                    parentHierarchy.hierarchy.put(logger.getName(), loggerHierarchy);
-                } else
-                    loggerHierarchy = parentHierarchy.hierarchy.get(logger.getName());
-            } else {
-                if (!hierarchy.containsKey(logger.getName())) {
-                    loggerHierarchy = new LoggerHierarchy(logger);
-                    hierarchy.put(logger.getName(), loggerHierarchy);
-                } else
-                    loggerHierarchy = hierarchy.get(logger.getName());
-            }
-            return loggerHierarchy;
-        }
-
-        String print(PrintWriter writer, String contextLogger, String first) {
-            String last = first;
-            if (logger != null) {
-                last = name;
-                writer.print("  <tr><td>");
-                writer.print("<tt>");
-                if (contextLogger == null || contextLogger.equals("")) {
-                    int skipCount = 0;
-                    for (int i = 0; first.length() > i && name.length() > i; i++)
-                        if (first.charAt(i) != name.charAt(i))
-                            break;
-                        else if (first.charAt(i) == '.')
-                            skipCount = i;
-                    for (int i = 0; i < skipCount; i++)
-                        writer.print("&nbsp;");
-                    writer.print(name.substring(skipCount));
-                } else {
-                    for (int i = 0; i < contextLogger.length(); i++)
-                        writer.print("&nbsp;");
-                    writer.print(name.substring(contextLogger.length()));
-                }
-                writer.print("</tt>");
-
-                writer.print("</td><td>");
-                Level level = logger.getLevel();
-                if (level != null) {
-                    writer.print(level.getName());
-                } else {
-                    writer.print("<em>unset</em>");
-                }
-                writer.print("</td>");
-                writer.print("<td><select name=\"" + logger.getName() + "\"><option label=\"\" value=\"\"></option>");
-                for (int i = 0; i < levels.length; i++) {
-                    writer.print("<option label=\"" + levels[i].getName() + "\" value=\"" + levels[i].getName() + "\"");
-                    if (levels[i].equals(logger.getLevel()))
-                        writer.print(" selected");
-                    writer.print(">" + levels[i].getName() + "</option>");
-                }
-                writer.print("</select></td>");
-                writer.println("</td></tr>");
-            }
-            for (LoggerHierarchy child : hierarchy.values()) {
-                last = child.print(writer, name, last);
-            }
-            return last;
-        }
-    }
-
     /**
-     * Get a sorted map with sets "logger name" => "logger level"
-     * @return SortedMap<String, String>
+     * Get a sorted map with sets "logger name" => <code>LoggerLevelInfo</code>
+     * @return SortedMap<String, LoggerLevelInfo>
      */
-    private SortedMap<String, String> getLoggerLevelMap() {
-        SortedMap<String, String> logLevelMap = new TreeMap<String, String>();
+    private SortedMap<String, LoggerLevelInfo> getLoggerLevelInfosMap() {
+        SortedMap<String, LoggerLevelInfo> loggerLevelInfosMap = new TreeMap<String, LoggerLevelInfo>();
 
         if (isJDK14Log) {
             java.util.logging.LogManager manager = java.util.logging.LogManager.getLogManager();
+
             for (Enumeration<String> namesIter = manager.getLoggerNames(); namesIter.hasMoreElements();) {
                 String loggerName = namesIter.nextElement();
                 java.util.logging.Logger logger = manager.getLogger(loggerName);
@@ -364,8 +310,12 @@ public class LoggingServlet extends HttpServlet {
                         }
                     }
                 }
-                String loggerLevel = (level == null) ? effectiveLevel.toString() + " (unset)" : level.toString();
-                logLevelMap.put(loggerName, loggerLevel);
+
+                if (level != null) {
+                    loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, level.toString()));
+                } else {
+                    loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, null, effectiveLevel.toString()));
+                }
             }
         } else if (isLog4jLog) {
             try {
@@ -381,15 +331,19 @@ public class LoggingServlet extends HttpServlet {
 
                 // get and sort loggers and log levels
                 Enumeration loggers = (Enumeration) getLoggers.invoke(null, null);
+
                 while (loggers.hasMoreElements()) {
                     try {
                         Object logger = loggers.nextElement();
                         String loggerName = (String) getName.invoke(logger, null);
                         Object level = getLevel.invoke(logger, null);
                         Object effectiveLevel = getEffectiveLevel.invoke(logger, null);
-                        String loggerLevel = (level == null) ? effectiveLevel.toString() + " (unset)" : level
-                                .toString();
-                        logLevelMap.put(loggerName, loggerLevel);
+
+                        if (level != null) {
+                            loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, level.toString()));
+                        } else {
+                            loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, null, effectiveLevel.toString()));
+                        }
                     } catch (Exception e) {
                         log.error("Error getting logger name and level : " + e.getMessage());
                     }
@@ -398,7 +352,8 @@ public class LoggingServlet extends HttpServlet {
                 log.error("Error getting log4j through reflection: " + e.getMessage(), e);
             }
         }
-        return logLevelMap;
+
+        return loggerLevelInfosMap;
     }
 
     /**
@@ -411,9 +366,11 @@ public class LoggingServlet extends HttpServlet {
             log.warn("Invalid empty name. Not settting log level");
             return;
         }
+
         if (isJDK14Log) {
             java.util.logging.LogManager logManager = java.util.logging.LogManager.getLogManager();
             java.util.logging.Logger logger = logManager.getLogger(name);
+
             if (logger != null) {
                 logger.setLevel(Level.parse(level));
             } else {
@@ -446,6 +403,73 @@ public class LoggingServlet extends HttpServlet {
             }
         } else {
             log.warn("Unable to determine logger");
+        }
+    }
+
+    private void renderTemplatePage(final HttpServletRequest request, final HttpServletResponse response,
+            Template template, final Map<String, Object> templateParams) throws IOException, ServletException, TemplateException {
+        PrintWriter out = null;
+
+        try {
+            out = response.getWriter();
+            Map<String, Object> context = new HashMap<String, Object>();
+
+            if (templateParams != null && !templateParams.isEmpty()) {
+                for (Map.Entry<String, Object> entry : templateParams.entrySet()) {
+                    context.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+            context.put("request", request);
+            context.put("response", response);
+
+            template.process(context, out);
+            out.flush();
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
+    public static class LoggerLevelInfo {
+
+        private String loggerName;
+        private String logLevel;
+        private String effectiveLogLevel;
+
+        public LoggerLevelInfo(String loggerName, String logLevel) {
+            this(loggerName, logLevel, logLevel);
+        }
+
+        public LoggerLevelInfo(String loggerName, String logLevel, String effectiveLogLevel) {
+            this.loggerName = loggerName;
+            this.logLevel = logLevel;
+            this.effectiveLogLevel = effectiveLogLevel;
+        }
+
+        public String getLoggerName() {
+            return loggerName;
+        }
+
+        public void setLoggerName(String loggerName) {
+            this.loggerName = loggerName;
+        }
+
+        public String getLogLevel() {
+            return logLevel;
+        }
+
+        public void setLogLevel(String logLevel) {
+            this.logLevel = logLevel;
+        }
+
+        public String getEffectiveLogLevel() {
+            return effectiveLogLevel;
+        }
+
+        public void setEffectiveLogLevel(String effectiveLogLevel) {
+            this.effectiveLogLevel = effectiveLogLevel;
         }
     }
 }
