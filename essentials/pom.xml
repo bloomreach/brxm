@@ -278,12 +278,11 @@
                 <!-- exclude IntelliJ Atlassian plugin file -->
                 <exclude>**/atlassian-ide-plugin.xml</exclude>
                 <!-- essentials specific -->
-                <exclude>plugin-dashboard/*.txt</exclude>
-                <exclude>plugin-dashboard/src/main/webapp/components/**</exclude>
-                <exclude>plugin-dashboard/src/main/webapp/js/lib/**</exclude>
-                <exclude>plugin-dashboard/src/main/webapp/docs/rest-api/**</exclude>
+                <exclude>dashboard/*.txt</exclude>
+                <exclude>dashboard/src/main/webapp/components/**</exclude>
+                <exclude>dashboard/src/main/webapp/js/lib/**</exclude>
+                <exclude>dashboard/src/main/webapp/docs/rest-api/**</exclude>
                 <exclude>archetype/**</exclude>
-                <exclude>ide/**</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>*/.idea/**</exclude>
                 <exclude>*/.bowerrc/**</exclude>
