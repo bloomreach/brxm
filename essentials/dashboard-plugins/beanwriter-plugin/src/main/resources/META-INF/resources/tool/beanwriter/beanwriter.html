@@ -21,7 +21,10 @@
         <p class="list-group-item">
             The bean re-generation tool generates HST content beans for newly created content types or updates existing HST content beans after changing content types
         </p>
-        <p class="list-group-item"><strong>Use following image set for created methods of image return type:</strong>
+        <p class="list-group-item"><strong>Use following image set for
+            <span class="alert-info">new created methods</span> of image type:</strong>
+        <p class="list-group-item"><input type="checkbox" ng-model="updateImageMethods"/>
+            <strong>Overwrite existing methods with selected image set</strong>
         </p>
         <p class="list-group-item" ng-repeat="image in imageSets">
             <input type="radio" name="selectedImage" ng-model="$parent.selectedImageSet" ng-value="image"/>&nbsp;&nbsp;&nbsp;&nbsp;{{image}}

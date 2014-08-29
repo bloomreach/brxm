@@ -76,7 +76,8 @@ import com.google.common.eventbus.EventBus;
  */
 public class ContentBeansService {
 
-    public static final String HIPPO_GALLERY_IMAGE_SET = "HippoGalleryImageSet";
+    public static final String HIPPO_GALLERY_IMAGE_SET_BEAN = "HippoGalleryImageSetBean";
+    public static final String HIPPO_GALLERY_IMAGE_SET_CLASS = "HippoGalleryImageSet";
     private static Logger log = LoggerFactory.getLogger(ContentBeansService.class);
 
     private final PluginContext context;
@@ -274,7 +275,7 @@ public class ContentBeansService {
             if (mySupertypes.contains("hippogallery:relaxed")) {
                 final Path javaClass = createJavaClass(missingBean);
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
-                JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET);
+                JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET_BEAN);
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
                 addMethods(missingBean, javaClass, new ArrayList<String>());
             }
@@ -547,12 +548,12 @@ public class ContentBeansService {
     public Map<String, Path> getExistingImageTypes() {
         final Map<String, Path> existing = findExitingBeans();
         final Map<String, Path> imageTypes = new HashMap<>();
-        imageTypes.put(HIPPO_GALLERY_IMAGE_SET, null);
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_BEAN, null);
         for (Path path : existing.values()) {
             final String myClass = JavaSourceUtils.getClassName(path);
             final String extendsClass = JavaSourceUtils.getExtendsClass(path);
             final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET)) {
+            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
                 imageTypes.put(myClass, path);
             }
 
@@ -563,18 +564,21 @@ public class ContentBeansService {
     public void convertImageMethods(final String newImageNamespace) {
         final Map<String, Path> existing = findExitingBeans();
         final Map<String, String> imageTypes = new HashMap<>();
-        imageTypes.put(HIPPO_GALLERY_IMAGE_SET, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_BEAN, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
         String newReturnType = null;
         for (Path path : existing.values()) {
             final String myClass = JavaSourceUtils.getClassName(path);
             final String extendsClass = JavaSourceUtils.getExtendsClass(path);
             final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET)) {
+            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
                 imageTypes.put(myClass, JavaSourceUtils.getImportName(path));
             }
             if (annotation != null && newImageNamespace.equals(annotation.getInternalName())) {
                 newReturnType = myClass;
             }
+        }
+        if(newImageNamespace.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)){
+            newReturnType = HIPPO_GALLERY_IMAGE_SET_BEAN;
         }
         if (Strings.isNullOrEmpty(newReturnType)) {
             log.warn("Could not find return type for image set namespace: {}", newImageNamespace);

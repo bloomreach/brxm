@@ -34,12 +34,15 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -64,22 +67,37 @@ public class BeanWriterResource extends BaseResource {
         //############################################
         // USE SERVICES
         //############################################
+        final RestfulList<MessageRestful> messages = new MyRestList();
         final Map<String, String> values = payload.getValues();
         final String imageSet = values.get("imageSet");
+        final String updateImageMethods = values.get("updateImageMethods");
         final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
         // check if we are using custom image set:
-        if (!Strings.isNullOrEmpty(imageSet) || !imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET)) {
+        java.nio.file.Path path = null;
+        if (!Strings.isNullOrEmpty(imageSet) || !imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN)) {
             final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
-            final java.nio.file.Path path = existingImageTypes.get(imageSet);
+            path = existingImageTypes.get(imageSet);
             if (path != null) {
                 context.addPluginContextData(ContentBeansService.CONTEXT_BEAN_IMAGE_SET, path);
+
             }
         }
         // create beans
         contentBeansService.createBeans();
-
-
-        final RestfulList<MessageRestful> messages = new MyRestList();
+        // check if we need to upgrade beans
+        if (!Strings.isNullOrEmpty(imageSet) && !Strings.isNullOrEmpty(updateImageMethods) && updateImageMethods.equals("true")) {
+            if(path !=null){
+                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+                if (annotation == null || Strings.isNullOrEmpty(annotation.getInternalName())) {
+                    messages.add(new ErrorMessageRestful("Could not find selected image set: " + imageSet));
+                } else {
+                    contentBeansService.convertImageMethods(annotation.getInternalName());
+                }
+            }
+            else if(imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN)){
+                contentBeansService.convertImageMethods(imageSet);
+            }
+        }
         BeanWriterUtils.populateBeanwriterMessages(context, messages);
         if (messages.getItems().size() == 0) {
             messages.add(new MessageRestful("All beans were up to date"));
@@ -88,7 +106,6 @@ public class BeanWriterResource extends BaseResource {
             eventBus.post(new RebuildEvent("Beanwriter", "tool", message));
             messages.add(new MessageRestful(message));
         }
-
         return messages;
     }
 
