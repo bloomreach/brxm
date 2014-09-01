@@ -50,7 +50,7 @@
     <module>faq-component-plugin</module>
     <module>gallery-plugin</module>
     <module>image-component-plugin</module>
-    <module>list-content-plugin</module>
+    <module>list-plugin</module>
     <module>menu-plugin</module>
     <module>news-plugin</module>
     <module>poll-plugin</module>

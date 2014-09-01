@@ -97,7 +97,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-list-content-plugin</artifactId>
+      <artifactId>hippo-essentials-list-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

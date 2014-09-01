@@ -25,9 +25,9 @@
     <version>1.02.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Essentials List and Content Plugin</name>
-  <description>Hippo Essentials List and Content Plugin</description>
-  <artifactId>hippo-essentials-list-content-plugin</artifactId>
+  <name>Hippo Essentials List Plugin</name>
+  <description>Hippo Essentials List Plugin</description>
+  <artifactId>hippo-essentials-list-plugin</artifactId>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>

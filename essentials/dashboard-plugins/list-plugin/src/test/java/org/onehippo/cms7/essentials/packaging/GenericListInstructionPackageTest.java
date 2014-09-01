@@ -35,10 +35,10 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class GenericListContentInstructionPackageTest extends BaseRepositoryTest {
+public class GenericListInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 4;
+    public static final int TOTAL_INSTRUCTION_SETS = 4;
 
 
 
@@ -55,11 +55,11 @@ public class GenericListContentInstructionPackageTest extends BaseRepositoryTest
 
     @Test
     public void testParseInstructions() throws Exception {
-        final InstructionPackage instructionPackage = new TemplateSupportInstructionPackage("/META-INF/list_content_instructions.xml");
+        final InstructionPackage instructionPackage = new TemplateSupportInstructionPackage("/META-INF/list_instructions.xml");
         injector.autowireBean(instructionPackage);
         final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        assertEquals(TOTAL_INSTRUCTIONS, instructionSets.size());
+        assertEquals(TOTAL_INSTRUCTION_SETS, instructionSets.size());
     }
 
 
