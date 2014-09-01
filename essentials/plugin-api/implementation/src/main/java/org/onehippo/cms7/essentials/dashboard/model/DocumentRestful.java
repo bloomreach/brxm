@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.services.contenttype.ContentType;
 
@@ -44,8 +45,8 @@ public class DocumentRestful implements Restful {
     private Set<String> superTypes;
     private Set<String> fieldLocations;
 
-    public DocumentRestful(final ContentType contentType) {
-        this.fullName = extractFullName(contentType.getName());
+    public DocumentRestful(final ContentType contentType, final PluginContext context) {
+        this.fullName = extractFullName(contentType.getName(), context);
         this.prefix = extractPrefix(contentType.getPrefix(), fullName);
         this.mixin = contentType.isMixin();
         this.compoundType = contentType.isCompoundType();
@@ -83,8 +84,22 @@ public class DocumentRestful implements Restful {
         this.fullPath = fullPath;
     }
 
-    private String extractFullName(final CharSequence name) {
+    /**
+     * Extract project name first. For a project with {@code testproject} namespace,
+     * ContentService can return something  like {@code [hippostd:taggable, testproject:mydocument]} so we want second name to be chosen.
+     * @param name name returned by content type service
+     * @param context plugin context
+     * @return
+     */
+    private String extractFullName(final CharSequence name, final PluginContext context) {
         final Iterable<String> split = Splitter.on(",").split(name);
+        final String projectNamespacePrefix = context.getProjectNamespacePrefix();
+        for (String aName : split) {
+            if(aName.startsWith(projectNamespacePrefix)){
+                return aName;
+            }
+        }
+
         return split.iterator().next();
     }
 

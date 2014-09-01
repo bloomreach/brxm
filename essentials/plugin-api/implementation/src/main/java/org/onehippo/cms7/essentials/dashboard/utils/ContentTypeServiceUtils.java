@@ -93,9 +93,9 @@ public class ContentTypeServiceUtils {
                 Type myType = doc.isCompoundType() ? Type.COMPOUND : Type.DOCUMENT;
 
                 if (type == Type.ALL) {
-                    documents.add(new DocumentRestful(doc));
+                    documents.add(new DocumentRestful(doc, context));
                 } else if (myType == type) {
-                    documents.add(new DocumentRestful(doc));
+                    documents.add(new DocumentRestful(doc, context));
                 }
             }
 
@@ -111,7 +111,7 @@ public class ContentTypeServiceUtils {
                             final String propVal = value.getString();
                             if (node.hasProperty(propVal)) {
                                 // ".item" suffix produces value usable in document field editor template's wicket.id prop.
-                                locations.add(node.getProperty(propVal).getString() + ".item");
+                                locations.add(String.format("%s.item", node.getProperty(propVal).getString()));
                             }
                         }
                     }
