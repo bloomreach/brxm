@@ -31,13 +31,12 @@
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-plugin-api</artifactId>
+      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
+      <artifactId>api</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
+      <artifactId>implementation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -50,8 +49,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
+      <artifactId>implementation</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

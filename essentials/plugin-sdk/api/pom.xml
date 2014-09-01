@@ -21,17 +21,17 @@
 
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
-    <artifactId>hippo-essentials-plugin-sdk</artifactId>
+    <artifactId>plugin-sdk</artifactId>
     <version>1.02.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Essentials plugins api</name>
-  <description>Hippo Essentials plugins api</description>
-  <artifactId>hippo-essentials-plugin-api</artifactId>
+  <name>Hippo Essentials Plugin SDK API</name>
+  <description>Hippo Essentials Plugin SDK API</description>
+  <artifactId>api</artifactId>
+  <groupId>org.onehippo.cms7.essentials.sdk</groupId>
   <packaging>jar</packaging>
   <!--
    NOTE: *all* dependencies in the API should be provided
-
   -->
   <dependencies>
     <dependency>

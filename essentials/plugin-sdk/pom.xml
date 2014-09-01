@@ -25,14 +25,12 @@
     <version>1.02.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Essentials plugins sdk</name>
-  <description>Hippo Essentials plugins sdk</description>
-  <artifactId>hippo-essentials-plugin-sdk</artifactId>
+  <name>Hippo Essentials Plugin SDK</name>
+  <description>Hippo Essentials Plugin SDK</description>
+  <artifactId>plugin-sdk</artifactId>
   <packaging>pom</packaging>
 
   <properties>
-    <!--***START temporary override of versions*** -->
-    <!-- ***END temporary override of versions*** -->
     <javax.inject.version>1</javax.inject.version>
     <junit.version>4.11</junit.version>
     <maven-model.version>3.2.1</maven-model.version>
