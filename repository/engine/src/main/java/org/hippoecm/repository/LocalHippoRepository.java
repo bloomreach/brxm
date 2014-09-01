@@ -26,6 +26,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.jcr.AccessDeniedException;
@@ -47,6 +49,7 @@ import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.fs.FileSystemException;
 import org.hippoecm.repository.api.InitializationProcessor;
+import org.hippoecm.repository.api.PostStartupTask;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.impl.InitializationProcessorImpl;
@@ -329,12 +332,14 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 }
             }
 
+            SessionDecorator bootstrapSession = null;
+            List<PostStartupTask> postStartupTasks = Collections.emptyList();
+
             if (!initializedBefore || isContentBootstrapEnabled()) {
                 final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-                final SessionDecorator bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(credentials), credentials);
+                bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(credentials), credentials);
                 initializeSystemNodeTypes(bootstrapSession, jackrabbitRepository.getFileSystem());
-                contentBootstrap(bootstrapSession);
-                bootstrapSession.logout();
+                postStartupTasks = contentBootstrap(bootstrapSession);
             }
 
             jackrabbitRepository.enableVirtualLayer(true);
@@ -342,6 +347,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             moduleManager = new ModuleManager(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
             moduleManager.start();
 
+            log.debug("Executing post-startup tasks");
+            for (PostStartupTask task : postStartupTasks) {
+                task.execute();
+            }
+            if (bootstrapSession != null) {
+                bootstrapSession.logout();
+            }
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
         }
@@ -402,7 +414,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         return Boolean.getBoolean(SYSTEM_BOOTSTRAP_PROPERTY);
     }
 
-    private void contentBootstrap(final Session systemSession) throws RepositoryException {
+    private List<PostStartupTask> contentBootstrap(final Session systemSession) throws RepositoryException {
         final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
         if (!systemSession.getRootNode().hasNode("hippo:configuration")) {
@@ -424,10 +436,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (IOException ex) {
             throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
         }
-        initializationProcessor.processInitializeItems(systemSession);
+        final List<PostStartupTask> postStartupTasks = initializationProcessor.processInitializeItems(systemSession);
         if (log.isDebugEnabled()) {
             initializationProcessor.dryRun(systemSession);
         }
+        return postStartupTasks;
     }
 
     /**

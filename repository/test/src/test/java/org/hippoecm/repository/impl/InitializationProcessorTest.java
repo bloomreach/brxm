@@ -19,31 +19,41 @@ import java.io.File;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipFile;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.easymock.Capture;
+import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.InitializationProcessor;
+import org.hippoecm.repository.api.PostStartupTask;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.testutils.ZipTestUtil;
 import org.slf4j.Logger;
 import org.slf4j.helpers.NOPLogger;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 import static org.apache.jackrabbit.JcrConstants.JCR_CREATED;
-import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
-import static org.apache.jackrabbit.JcrConstants.JCR_MIMETYPE;
-import static org.apache.jackrabbit.JcrConstants.NT_FILE;
-import static org.apache.jackrabbit.JcrConstants.NT_FOLDER;
-import static org.apache.jackrabbit.JcrConstants.NT_RESOURCE;
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTFOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
@@ -52,6 +62,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTNODENAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.hippoecm.repository.impl.InitializationProcessorImpl.ContentFileInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -69,12 +80,14 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         test = session.getRootNode().addNode("test");
         item = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
         item.setProperty(HIPPO_STATUS, "pending");
+        session.getRootNode().addNode("webresources");
         session.save();
     }
 
     @After
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:initialize/testnode");
+        removeNode("/webresources");
         super.tearDown();
     }
 
@@ -97,9 +110,9 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         }
     }
 
-    private void process(Logger logger) {
+    private List<PostStartupTask> process(Logger logger) {
         InitializationProcessor processor = new InitializationProcessorImpl(logger);
-        processor.processInitializeItems(session);
+        return processor.processInitializeItems(session);
     }
 
     @Test
@@ -107,7 +120,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test");
         item.setProperty(HIPPO_CONTENT, "<sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\" xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" sv:name=\"testnode\"><sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\"><sv:value>nt:unstructured</sv:value></sv:property></sv:node>");
         session.save();
-        process(null);
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertTrue(session.nodeExists("/test/testnode"));
         assertEquals("done", item.getProperty(HIPPO_STATUS).getString());
     }
@@ -117,7 +131,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final Node delete = test.addNode("delete");
         item.setProperty(HIPPO_CONTENTDELETE, delete.getPath());
         session.save();
-        process(null);
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.nodeExists("/test/delete"));
     }
 
@@ -127,7 +142,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         test.addNode("sns");
         item.setProperty(HIPPO_CONTENTDELETE, sns.getPath());
         session.save();
-        process(new NOPLogger() {});
+        final List<PostStartupTask> tasks = process(new NOPLogger() {});
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertEquals(2, test.getNodes("sns").getSize());
     }
 
@@ -136,7 +152,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final Property delete = test.setProperty("delete", "");
         item.setProperty(HippoNodeType.HIPPO_CONTENTPROPDELETE, delete.getPath());
         session.save();
-        process(null);
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.propertyExists("/test/delete"));
     }
 
@@ -145,7 +162,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:single");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"a"});
         session.save();
-        process(new NOPLogger() {});
+        final List<PostStartupTask> tasks = process(new NOPLogger() {});
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.propertyExists("/test/propnode/hippo:single"));
     }
 
@@ -155,7 +173,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:single");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"b"});
         session.save();
-        process(null);
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         checkPropNode("b");
     }
 
@@ -165,7 +184,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:multi");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"m", "n"});
         session.save();
-        process(null);
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         checkPropNode(new String[]{"m", "n"});
     }
 
@@ -175,7 +195,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:multi");
         item.setProperty(HIPPO_CONTENTPROPADD, new String[] { "o", "p" });
         session.save();
-        process(null);
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
         checkPropNode(new String[]{"m", "n", "o", "p"});
     }
 
@@ -184,7 +205,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/foo.xml").toString());
         item.setProperty(HIPPO_CONTENTROOT, "/test");
         session.save();
-        process(null);
+        List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
 
         assertTrue(test.hasNode("foo"));
         Node foo = test.getNode("foo");
@@ -196,7 +218,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTEXTNODENAME, "foo");
         item.setProperty(HIPPO_STATUS, "pending");
         session.save();
-        process(null);
+        tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
 
         assertTrue(test.hasNode("foo"));
         foo = test.getNode("foo");
@@ -205,40 +228,54 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testContentFolderInitialization() throws Exception {
-        item.setProperty(HIPPO_CONTENTFOLDER, "resources");
-        item.setProperty(HIPPO_CONTENTROOT, "/test");
+    public void testWebResourceBundleInitialization() throws Exception {
+        item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "resources");
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");
         session.save();
-        process(null);
 
-        assertTrue(test.hasNode("resources"));
-        Node resources = test.getNode("resources");
-        Calendar created = resources.getProperty(JCR_CREATED).getDate();
-        assertTrue(resources.isNodeType(NT_FOLDER));
-        assertTrue(resources.hasNode("images"));
-        Node images = resources.getNode("images");
-        assertTrue(images.isNodeType(NT_FOLDER));
-        Node javascript = resources.getNode("javascript");
-        assertTrue(javascript.isNodeType(NT_FOLDER));
-        assertTrue(images.hasNode("hippo.png"));
-        Node png = images.getNode("hippo.png");
-        assertTrue(png.isNodeType(NT_FILE));
-        Node content = png.getNode(JCR_CONTENT);
-        assertTrue(content.isNodeType(NT_RESOURCE));
-        assertTrue(content.hasProperty(JCR_MIMETYPE));
-        assertTrue(content.hasProperty(JCR_DATA));
-        assertEquals("image/png", content.getProperty(JCR_MIMETYPE).getString());
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be one post-startup task", 1, tasks.size());
+
+        // test the post-startup task
+        final PostStartupTask importWebResources = tasks.get(0);
+
+        WebResourcesService webResourcesService = EasyMock.createMock(WebResourcesService.class);
+        HippoServiceRegistry.registerService(webResourcesService, WebResourcesService.class);
+
+        Capture<ZipFile> capturedZip = new Capture();
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)), eq(WebResourcesService.ImportMode.REPLACE));
+        expectLastCall();
+
+        replay(webResourcesService);
+        importWebResources.execute();
+        verify(webResourcesService);
+
+        ZipFile zip = capturedZip.getValue();
+        assertEquals(5, zip.size());
+        ZipTestUtil.assertEntries(zip,
+                "resources/",
+                "resources/images/",
+                "resources/images/hippo.png",
+                "resources/javascript/",
+                "resources/javascript/hippo.js"
+        );
 
         // test reload
         item.setProperty(HIPPO_RELOADONSTARTUP, true);
         item.setProperty(HIPPO_STATUS, "pending");
         session.save();
-        process(null);
 
-        assertTrue(test.hasNode("resources"));
-        resources = test.getNode("resources");
-        assertFalse(created.equals(resources.getProperty(JCR_CREATED).getDate()));
+        final List<PostStartupTask> reloadTasks = process(null);
+        assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
+        final PostStartupTask reimportWebresources = reloadTasks.get(0);
+
+        EasyMock.reset(webResourcesService);
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), anyObject(ZipFile.class), eq(WebResourcesService.ImportMode.REPLACE));
+        expectLastCall();
+
+        replay(webResourcesService);
+        reimportWebresources.execute();
+        verify(webResourcesService);
     }
 
     @Test

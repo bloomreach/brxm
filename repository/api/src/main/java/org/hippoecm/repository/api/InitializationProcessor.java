@@ -59,7 +59,7 @@ public interface InitializationProcessor {
      *
      * @param session the {@link Session} to use.
      */
-    void processInitializeItems(Session session);
+    List<PostStartupTask> processInitializeItems(Session session);
 
     /**
      * Process (execute) a specific list of initialize items.
@@ -67,7 +67,7 @@ public interface InitializationProcessor {
      * @param session the {@link Session} to use.
      * @param initializeItems the items to process
      */
-    void processInitializeItems(Session session, List<Node> initializeItems);
+    List<PostStartupTask> processInitializeItems(Session session, List<Node> initializeItems);
 
     /**
      * Set alternative logger to write messages to.

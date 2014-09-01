@@ -211,8 +211,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTENTRESOURCE = "hippo:contentresource";
 
-    public static final String HIPPO_CONTENTFOLDER = "hippo:contentfolder";
-
     public static final String HIPPO_CONTENTROOT = "hippo:contentroot";
 
     public static final String HIPPO_CONTENTDELETE = "hippo:contentdelete";
@@ -388,6 +386,8 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_VALUE = "hipposys:value";
 
     public static final String HIPPO_VALUES = "hippo:values";
+
+    public static final String HIPPO_WEBRESOURCEBUNDLE = "hippo:webresourcebundle";
 
     public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
 

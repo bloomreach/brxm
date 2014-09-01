@@ -123,7 +123,6 @@
 - hippo:nodetypesresource (string)
 - hippo:nodetypes (binary)
 - hippo:contentresource (string)
-- hippo:contentfolder (string)
 - hippo:content (string)
 - hippo:contentroot (string)
 - hippo:contentdelete (string)
@@ -135,6 +134,7 @@
 - hippo:contextnodename (string)
 - hippo:version (string)
 - hippo:timestamp (long)
+- hippo:webresourcebundle (string)
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time

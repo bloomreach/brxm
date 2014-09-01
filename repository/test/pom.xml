@@ -59,6 +59,13 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <!-- exclude the web resources service implementation so it can be mocked in unit tests -->
+        <exclusion>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-services-webresources</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>

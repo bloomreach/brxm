@@ -56,6 +56,8 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import com.google.common.base.Optional;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -75,10 +77,13 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.InitializationProcessor;
+import org.hippoecm.repository.api.PostStartupTask;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.util.FileContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;
@@ -92,7 +97,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 
 public class InitializationProcessorImpl implements InitializationProcessor {
 
-
     private static final Logger log = LoggerFactory.getLogger(InitializationProcessorImpl.class);
 
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
@@ -103,7 +107,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_NODETYPESRESOURCE,
             HippoNodeType.HIPPO_NODETYPES,
             HippoNodeType.HIPPO_CONTENTRESOURCE,
-            HippoNodeType.HIPPO_CONTENTFOLDER,
             HippoNodeType.HIPPO_CONTENT,
             HippoNodeType.HIPPO_CONTENTROOT,
             HippoNodeType.HIPPO_CONTENTDELETE,
@@ -111,7 +114,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_CONTENTPROPSET,
             HippoNodeType.HIPPO_CONTENTPROPADD,
             HippoNodeType.HIPPO_RELOADONSTARTUP,
-            HippoNodeType.HIPPO_VERSION };
+            HippoNodeType.HIPPO_VERSION,
+            HippoNodeType.HIPPO_WEBRESOURCEBUNDLE
+    };
 
     private final static String GET_INITIALIZE_ITEMS =
             "SELECT * FROM hipposys:initializeitem " +
@@ -191,7 +196,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     @Override
-    public void processInitializeItems(Session session) {
+    public List<PostStartupTask> processInitializeItems(Session session) {
         try {
             final List<Node> initializeItems = new ArrayList<>();
             final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
@@ -199,15 +204,16 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             while(nodes.hasNext()) {
                 initializeItems.add(nodes.nextNode());
             }
-            processInitializeItems(session, initializeItems, false);
+            return processInitializeItems(session, initializeItems, false);
         } catch (RepositoryException ex) {
             getLogger().error(ex.getMessage(), ex);
+            return Collections.emptyList();
         }
     }
 
     @Override
-    public void processInitializeItems(Session session, List<Node> initializeItems) {
-        processInitializeItems(session, initializeItems, false);
+    public List<PostStartupTask> processInitializeItems(Session session, List<Node> initializeItems) {
+        return processInitializeItems(session, initializeItems, false);
     }
 
     @Override
@@ -215,12 +221,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         this.logger = logger;
     }
 
-    private void processInitializeItems(Session session, List<Node> initializeItems, boolean dryRun) {
+    private List<PostStartupTask> processInitializeItems(Session session, List<Node> initializeItems, boolean dryRun) {
         Collections.sort(initializeItems, initializeItemComparator);
+        final List<PostStartupTask> postStartupTasks = new ArrayList<PostStartupTask>();
         try {
             if (session == null || !session.isLive()) {
                 getLogger().warn("Unable to refresh initialize nodes, no session available");
-                return;
+                return Collections.emptyList();
             }
 
             session.refresh(false);
@@ -253,8 +260,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         processContentFromFile(initializeItem, session, dryRun);
                     }
 
-                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTFOLDER)) {
-                        processContentFolder(initializeItem, session);
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_WEBRESOURCEBUNDLE)) {
+                        addTaskIfPresent(postStartupTasks, processWebResourceBundle(initializeItem, session));
                     }
 
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
@@ -291,75 +298,56 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         } catch (RepositoryException ex) {
             getLogger().error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
+        return postStartupTasks;
     }
 
-    private void processContentFolder(final Node item, final Session session) throws RepositoryException {
-        final String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_CONTENTROOT, "/"));
-        if (contentRoot.startsWith(INIT_PATH)) {
-            getLogger().error("Cannot initialize item {}: bootstrapping content to {} is not supported", item.getName(), INIT_PATH);
-            return;
+    private void addTaskIfPresent(final List<PostStartupTask> tasks, final Optional<? extends PostStartupTask> optionalTask) {
+        if (optionalTask.isPresent()) {
+            tasks.add(optionalTask.get());
         }
-        if (!session.nodeExists(contentRoot)) {
-            getLogger().error("Failed to initialize item {}: content root {} is missing", item.getName(), contentRoot);
-            return;
+    }
+
+    private Optional<? extends PostStartupTask> processWebResourceBundle(final Node item, final Session session) throws RepositoryException {
+        final String webResourcesRoot = WebResourcesService.JCR_ROOT_PATH;
+        if (!session.nodeExists(webResourcesRoot)) {
+            getLogger().error("Failed to initialize item {}: web resources root {} is missing", item.getName(), webResourcesRoot);
+            return Optional.absent();
         }
 
-        final Node contentRootNode = session.getNode(contentRoot);
-        String contentFolder = item.getProperty(HippoNodeType.HIPPO_CONTENTFOLDER).getString().trim();
+        String bundlePath = item.getProperty(HippoNodeType.HIPPO_WEBRESOURCEBUNDLE).getString().trim();
         // remove leading and trailing /
-        contentFolder = contentFolder.indexOf('/') == 0 && contentFolder.length() > 1 ? contentFolder.substring(1) : contentFolder;
-        contentFolder = contentFolder.lastIndexOf('/') == contentFolder.length()-1 ? contentFolder.substring(0, contentFolder.length()-1) : contentFolder;
-        if (contentFolder.isEmpty()) {
-            getLogger().error("Failed to initialize item {}: invalid content folder");
+        bundlePath = bundlePath.indexOf('/') == 0 && bundlePath.length() > 1 ? bundlePath.substring(1) : bundlePath;
+        bundlePath = bundlePath.lastIndexOf('/') == bundlePath.length()-1 ? bundlePath.substring(0, bundlePath.length()-1) : bundlePath;
+        if (bundlePath.isEmpty()) {
+            getLogger().error("Failed to initialize item {}: invalid {} property", item.getName(), HippoNodeType.HIPPO_WEBRESOURCEBUNDLE);
+            return Optional.absent();
         }
-        final String contentParentFolder = contentFolder.indexOf('/') == -1 ? "" : contentFolder.substring(0, contentFolder.lastIndexOf('/'));
+        final String parentPath = bundlePath.indexOf('/') == -1 ? "" : bundlePath.substring(0, bundlePath.lastIndexOf('/'));
         final String extensionSource = JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_EXTENSIONSOURCE, null);
         if (extensionSource != null && extensionSource.contains(".jar!")) {
             int index = -1;
             String contextNodePath = null;
             if (isReloadable(item)) {
-                final String contentFolderName = contentFolder.indexOf('/') == -1 ? contentFolder : contentFolder.substring(contentFolder.lastIndexOf('/')+1);
-                contextNodePath = contentRoot.equals("/") ? contentRoot + contentFolderName : contentRoot + "/" + contentFolderName;
+                final String bundleName = bundlePath.indexOf('/') == -1 ? bundlePath : bundlePath.substring(bundlePath.lastIndexOf('/') + 1);
+                contextNodePath = webResourcesRoot + "/" + bundleName;
                 index = getNodeIndex(session, contextNodePath);
                 if (!removeNode(session, contextNodePath, false)) {
-                    return;
+                    return Optional.absent();
                 }
             }
             try {
                 final ZipFile zipFile = new ZipFile(getBaseZipFileFromURL(new URL(extensionSource)));
-                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                while (entries.hasMoreElements()) {
-                    final ZipEntry entry = entries.nextElement();
-                    final String entryName = entry.getName();
-                    if (entryName.equals(contentFolder) || entryName.startsWith(contentFolder + "/")) {
-                        String entryPath = contentFolder.equals("/") || contentParentFolder.isEmpty() ? entryName : entryName.substring(contentParentFolder.length()+1);
-                        final String[] pathElements = entryPath.split("/");
-                        Node parentNode = contentRootNode;
-                        for (int i = 0; i < pathElements.length-1; i++) {
-                            final String pathElement = pathElements[i];
-                            if (parentNode.hasNode(pathElement)) {
-                                parentNode = parentNode.getNode(pathElement);
-                            }
-                            else {
-                                parentNode = createNtFolder(parentNode, pathElement);
-                            }
-                        }
-                        final String name = pathElements.length == 0 ? entryPath : pathElements[pathElements.length - 1];
-                        if (entry.isDirectory()) {
-                            createNtFolder(parentNode, name);
-                        }
-                        else {
-                            createNtFile(parentNode, zipFile, entry, name);
-                        }
-                    }
-                }
+                final SubZipFile bundleZipFile = new SubZipFile(zipFile, bundlePath);
+                final ImportWebResourceBundleTask importTask = new ImportWebResourceBundleTask(session, bundleZipFile);
+                return Optional.of(importTask);
             } catch (IOException | URISyntaxException e) {
-                getLogger().error("Error initializing content folder {} at {}", contentFolder, contentRoot, e);
+                getLogger().error("Error initializing web resource bundle {} at {}", bundlePath, webResourcesRoot, e);
             }
             if (index != -1) {
                 reorderNode(session, contextNodePath, index);
             }
         }
+        return Optional.absent();
     }
 
     private void createNtFile(final Node folderNode, final ZipFile zipFile, final ZipEntry resourceEntry, final String name) throws RepositoryException, IOException {
@@ -1176,6 +1164,32 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         private ContentFileInfo(final String contextNodeName, final String deltaDirective) {
             this.contextNodeName = contextNodeName;
             this.deltaDirective = deltaDirective;
+        }
+    }
+
+    private class ImportWebResourceBundleTask implements PostStartupTask {
+
+        private final Session session;
+        private final SubZipFile bundleZipFile;
+
+        public ImportWebResourceBundleTask(final Session session, final SubZipFile bundleZipFile) {
+            this.session = session;
+            this.bundleZipFile = bundleZipFile;
+        }
+
+        @Override
+        public void execute() {
+            final WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
+            if (service == null) {
+                getLogger().error("Cannot import web resource bundle '{}': missing service for '{}'",
+                        bundleZipFile.getName(), WebResourcesService.class.getName());
+                return;
+            }
+            try {
+                service.importJcrWebResourceBundle(session, bundleZipFile, WebResourcesService.ImportMode.REPLACE);
+            } catch (IOException e) {
+                getLogger().error("Cannot import web resource bundle '{}'", bundleZipFile.getName(), e);
+            }
         }
     }
 }
