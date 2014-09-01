@@ -50,130 +50,130 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-skeleton-package</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>skeleton-package</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-banner-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>banner-and-carousel</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-blog-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>blog</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-contentblocks-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>content-blocks</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-document-wizard-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>document-wizard</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-tagging-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>tagging</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-events-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>events</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-faq-component-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>faq</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-image-component-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>image-component</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-list-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>list</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-menu-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>menu</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-news-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>news</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-poll-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>poll</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-related-documents-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>related-documents</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-robots-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>robots</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-search-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>search</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-selection-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>selection</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-seo-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>seo</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-sitemap-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>sitemap</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-simple-content-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>simple-content</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-taxonomy-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>taxonomy</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-video-component-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>video</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-gallery-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>gallery-manager</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-beanwriter-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>bean-writer</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-restservices-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>rest-services</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -189,7 +189,6 @@
       <groupId>javax.ws.rs</groupId>
       <artifactId>jsr311-api</artifactId>
     </dependency>
-
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
