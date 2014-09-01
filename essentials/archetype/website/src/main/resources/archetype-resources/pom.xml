@@ -95,11 +95,6 @@
         <version>${dollar}{essentials.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-        <artifactId>implementation</artifactId>
-        <version>${dollar}{essentials.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.onehippo.cms7.essentials.components</groupId>
         <artifactId>cms</artifactId>
         <version>${dollar}{essentials.version}</version>
