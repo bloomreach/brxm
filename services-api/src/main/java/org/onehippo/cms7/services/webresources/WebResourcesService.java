@@ -16,6 +16,11 @@
 
 package org.onehippo.cms7.services.webresources;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.zip.ZipFile;
+
 import javax.jcr.Session;
 
 import org.onehippo.cms7.services.SingletonService;
@@ -26,6 +31,10 @@ import org.onehippo.cms7.services.WhiteboardService;
 @SuppressWarnings("UnusedDeclaration")
 public interface WebResourcesService {
 
+    public static final String JCR_ROOT_PATH = "/webresources";
+
+    public enum ImportMode { REPLACE, MERGE, UPDATE }
+
     /**
      * Creates a web resources implementation based on JCR.
      * @param session the JCR session used to access web resources.
@@ -34,5 +43,15 @@ public interface WebResourcesService {
      * @throw WebResourceException if the {@link WebResourceBundle} for <code>bundleName</code> cannot be found
      */
     WebResourceBundle getJcrWebResourceBundle(Session session, String bundleName) throws WebResourceException;
+
+    /**
+     * Imports web resources from the given directory.
+     */
+    void importJcrWebResourceBundle(Session session, File directory, ImportMode mode) throws IOException, WebResourceException;
+
+    /**
+     * Imports a web resources from the given zip file.
+     */
+    void importJcrWebResourceBundle(Session session, ZipFile zip, ImportMode mode) throws IOException, WebResourceException;
 
 }
