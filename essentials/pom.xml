@@ -91,7 +91,7 @@
 
   <modules>
     <module>plugin-sdk</module>
-    <module>dashboard-plugins</module>
+    <module>plugins</module>
     <module>dashboard-dependencies</module>
     <module>dashboard</module>
   </modules>
