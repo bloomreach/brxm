@@ -26,6 +26,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
@@ -45,8 +46,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -259,6 +260,9 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
             JcrNodeModel newNodeModel = new JcrNodeModel(node);
             modelReference.setModel(newNodeModel);
+        } catch (ConstraintViolationException e) {
+            error("It is not allowed to add the property '" + name + "' on this node primary node type (javax.jcr.nodetype.ConstraintViolationException)");
+            log.error(e.getClass().getName() + " : " + e.getMessage(), e);
         } catch (RepositoryException e) {
             error(e.toString());
             log.error(e.getClass().getName() + " : " + e.getMessage(), e);
@@ -319,8 +323,9 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
+       public IValueMap getProperties() {
+        IValueMap CUSTOM = new ValueMap("width=420,height=300").makeImmutable();
+        return CUSTOM;
     }
 
     @Override
