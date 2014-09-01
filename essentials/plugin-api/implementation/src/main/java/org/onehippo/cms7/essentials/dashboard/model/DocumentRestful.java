@@ -85,6 +85,7 @@ public class DocumentRestful implements Restful {
     }
 
     /**
+     * TODO: change once https://issues.onehippo.com/browse/CMS7-8249 is fixed
      * Extract project name first. For a project with {@code testproject} namespace,
      * ContentService can return something  like {@code [hippostd:taggable, testproject:mydocument]} so we want second name to be chosen.
      * @param name name returned by content type service
