@@ -22,7 +22,7 @@
   -->
   <instructionSet>
     <!-- cnd-->
-    <cnd documentType="bannerdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
+    <cnd documentType="bannerdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
 
     <!-- templates-->
     <xml action="copy" source="xml/namespaces/bannerdocument.xml" target="/hippo:namespaces/{{namespace}}"/>

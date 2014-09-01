@@ -89,10 +89,4 @@ public class Blogpost extends HippoDocument implements Authors {
     public List<Author> getAuthors() {
         return getLinkedBeans(AUTHORS, Author.class);
     }
-
-    @HippoEssentialsGenerated(internalName = "hippostd:tags")
-    public String[] getTags() {
-        return getProperty(TAGS);
-    }
-
 }

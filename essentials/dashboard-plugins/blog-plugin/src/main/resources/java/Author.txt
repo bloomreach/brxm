@@ -16,6 +16,8 @@ package {{beansPackage}};
  * limitations under the License.
  */
 
+import java.util.List;
+
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.onehippo.cms7.essentials.components.model.AuthorEntry;
@@ -54,13 +56,8 @@ public class Author extends HippoDocument implements AuthorEntry {
         return getLinkedBean(IMAGE, HippoGalleryImage.class);
     }
 
-
-    /**
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:account")
-    // TODO mm account...
-    public List<Account> getAccounts() {
-        return getChildBeansByName(ACCOUNTS, Account.class);
-    }
-    */
-
+  	@HippoEssentialsGenerated(internalName = "{{namespace}}:accounts")
+	  public List<Account> getAccounts() {
+		    return getChildBeansByName(ACCOUNTS, Account.class);
+	  }
 }
