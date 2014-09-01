@@ -46,6 +46,7 @@
         <sv:value>target</sv:value>
         <sv:value>title</sv:value>
         <sv:value>name</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="b">
@@ -171,6 +172,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="object">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -199,6 +203,7 @@
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>align</sv:value>
         <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="param">
