@@ -42,13 +42,14 @@
         </div>
         <div class="feature-description">
             <div class="row">
-                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short" ng-hide="showDescription">
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short">
                     <p ng-bind-html="plugin.introduction"></p>
-                    <a href="#" ng-show="plugin.description || plugin.imageUrls.length"
-                       data-ng-click="toggleDescription($event)">Read more</a>
+                    <p ng-show="plugin.description || plugin.imageUrls.length">
+                      <span class="fa" ng-class="{'fa-chevron-right': !showDescription, 'fa-chevron-down': showDescription}"></span>
+                      <a href="#" data-ng-click="toggleDescription($event)">Read more</a>
+                    </p>
                 </div>
-                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription">
-                    <p ng-bind-html="plugin.introduction"></p>
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription && plugin.description">
                     <p ng-bind-html="plugin.description"></p>
                 </div>
             </div>
@@ -77,7 +78,6 @@
                     </div>
                 </div>
             </div>
-            <a href="#" ng-show="showDescription" data-ng-click="toggleDescription($event)">Read less</a>
         </div>
         <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
     </div>
