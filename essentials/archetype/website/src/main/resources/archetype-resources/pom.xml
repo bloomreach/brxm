@@ -100,13 +100,13 @@
         <version>${dollar}{essentials.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials</groupId>
-        <artifactId>hippo-components-cms-plugin-library</artifactId>
+        <groupId>org.onehippo.cms7.essentials.components</groupId>
+        <artifactId>cms</artifactId>
         <version>${dollar}{essentials.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials</groupId>
-        <artifactId>hippo-components-plugin-library</artifactId>
+        <groupId>org.onehippo.cms7.essentials.components</groupId>
+        <artifactId>hst</artifactId>
         <version>${dollar}{essentials.version}</version>
       </dependency>
 

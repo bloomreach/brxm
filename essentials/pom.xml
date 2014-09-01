@@ -90,12 +90,12 @@
   </distributionManagement>
 
   <modules>
+    <module>components</module>
     <module>plugin-sdk</module>
     <module>plugins</module>
     <module>dashboard-dependencies</module>
     <module>dashboard</module>
   </modules>
-
 
   <repositories>
     <!--

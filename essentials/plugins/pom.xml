@@ -42,7 +42,6 @@
     <module>banner-and-carousel</module>
     <module>bean-writer</module>
     <module>blog</module>
-    <module>components-plugin</module>
     <module>content-blocks</module>
     <module>document-wizard</module>
     <module>events</module>

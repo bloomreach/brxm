@@ -14,8 +14,8 @@
   <description>${projectName} CMS</description>
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-components-cms-plugin-library</artifactId>
+      <groupId>org.onehippo.cms7.essentials.components</groupId>
+      <artifactId>cms</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
