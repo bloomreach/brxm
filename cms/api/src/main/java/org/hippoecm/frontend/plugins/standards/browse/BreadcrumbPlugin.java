@@ -240,7 +240,8 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
                 };
                 item.add(new AttributeAppender("class", css, " "));
 
-                item.setVisible(item.getIndex() < maxNumberOfCrumbs);
+                //CMS7-8008: Just show the last part of the breadcrumb
+                item.setVisible(item.getIndex() >= (nodeitems.size() - maxNumberOfCrumbs));
             }
         };
         return listview;
