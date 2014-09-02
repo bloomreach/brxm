@@ -16,6 +16,7 @@
 package org.hippoecm.repository.impl;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -35,7 +36,9 @@ public class SubZipFileTest {
 
     @Before
     public void setUp() throws IOException {
-        zip = new ZipFile(getClass().getResource("/org/hippoecm/repository/impl/SubZipFileTest.zip").getFile());
+        final String fileNameWithEscapedEntities = getClass().getResource("/org/hippoecm/repository/impl/SubZipFileTest.zip").getFile();
+        final String fileName = URLDecoder.decode(fileNameWithEscapedEntities, "UTF-8");
+        zip = new ZipFile(fileName);
     }
 
     @Test
