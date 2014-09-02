@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
-    private static final List<String> ALL_TYPES = new ArrayList<String>(8);
+    private static final List<String> ALL_TYPES = new ArrayList<>(8);
     static {
         ALL_TYPES.add(PropertyType.TYPENAME_BOOLEAN);
         ALL_TYPES.add(PropertyType.TYPENAME_DATE);
@@ -91,14 +91,14 @@ public class PropertyDialog extends AbstractDialog<Node> {
             private static final long serialVersionUID = 1L;
 
             protected Map<String, List<PropertyDefinition>> load() {
-                Map<String, List<PropertyDefinition>> choices = new HashMap<String, List<PropertyDefinition>>();
+                Map<String, List<PropertyDefinition>> choices = new HashMap<>();
                 Node node = model.getObject();
                 try {
                     NodeType pnt = node.getPrimaryNodeType();
                     for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
                         List<PropertyDefinition> list = choices.get(pd.getName());
                         if (list == null) {
-                            list = new ArrayList<PropertyDefinition>(5);
+                            list = new ArrayList<>(5);
                         }
                         list.add(pd);
                         choices.put(pd.getName(), list);
@@ -107,7 +107,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                         for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
                             List<PropertyDefinition> list = choices.get(pd.getName());
                             if (list == null) {
-                                list = new ArrayList<PropertyDefinition>(5);
+                                list = new ArrayList<>(5);
                             }
                             list.add(pd);
                             choices.put(pd.getName(), list);
@@ -162,7 +162,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 if (PropertyDialog.this.name != null) {
                     List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
                     if (propdefs != null) {
-                        List<String> result = new ArrayList<String>(propdefs.size());
+                        List<String> result = new ArrayList<>(propdefs.size());
                         for (PropertyDefinition pd : propdefs) {
                             result.add(PropertyType.nameFromValue(pd.getRequiredType()));
                         }
@@ -212,7 +212,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                List<String> result = new ArrayList<String>();
+                List<String> result = new ArrayList<>();
                 for (String propName : choiceModel.getObject().keySet()) {
                     if (propName.startsWith(input)) {
                         result.add(propName);
@@ -241,7 +241,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         });
 
         add(setFocus(nameField));
-        add(new TextArea<String>("value", new PropertyModel<String>(this, "value")));
+        add(new TextArea<>("value", new PropertyModel<String>(this, "value")));
     }
 
     @Override
@@ -262,7 +262,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             modelReference.setModel(newNodeModel);
         } catch (ConstraintViolationException e) {
             error("It is not allowed to add the property '" + name + "' on this node primary node type (javax.jcr.nodetype.ConstraintViolationException)");
-            log.error(e.getClass().getName() + " : " + e.getMessage(), e);
+            log.error(e.getClass().getName() + " : " + e.getMessage());
         } catch (RepositoryException e) {
             error(e.toString());
             log.error(e.getClass().getName() + " : " + e.getMessage(), e);
@@ -270,7 +270,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     public IModel<String> getTitle() {
-        return new Model<String>("Add a new Property");
+        return new Model<>("Add a new Property");
     }
 
     public String getName() {
