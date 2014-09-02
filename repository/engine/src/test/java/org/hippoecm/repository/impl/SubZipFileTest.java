@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -32,54 +33,54 @@ import static org.junit.Assert.*;
  */
 public class SubZipFileTest {
 
-    private ZipFile zip;
+    private File testZipFile;
 
     @Before
     public void setUp() throws IOException {
-        final String fileNameWithEscapedEntities = getClass().getResource("/org/hippoecm/repository/impl/SubZipFileTest.zip").getFile();
+        final String fileNameWithEscapedEntities = getClass().getResource("/org/hippoecm/repository/impl/path with spaces/SubZipFileTest.zip").getFile();
         final String fileName = URLDecoder.decode(fileNameWithEscapedEntities, "UTF-8");
-        zip = new ZipFile(fileName);
+        testZipFile = new File(fileName);
     }
 
     @Test
     public void unknownSubPath() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "noSuchSubPathInZip");
+        SubZipFile subZip = new SubZipFile(testZipFile, "noSuchSubPathInZip");
         ZipTestUtil.assertEntries(subZip);
     }
 
     @Test
     public void emptySubPath() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "empty");
+        SubZipFile subZip = new SubZipFile(testZipFile, "empty");
         ZipTestUtil.assertEntries(subZip, "empty/");
     }
 
     @Test
     public void subPathWithOneEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "one");
+        SubZipFile subZip = new SubZipFile(testZipFile, "one");
         ZipTestUtil.assertEntries(subZip, "one/", "one/baz");
     }
 
     @Test
     public void subPathWithTwoEntries() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "two");
+        SubZipFile subZip = new SubZipFile(testZipFile, "two");
         ZipTestUtil.assertEntries(subZip, "two/", "two/bar", "two/foo");
     }
 
     @Test
     public void getIncludedEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "two");
+        SubZipFile subZip = new SubZipFile(testZipFile, "two");
         assertEquals("two/foo", subZip.getEntry("two/foo").getName());
     }
 
     @Test
     public void getNonIncludedEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "two");
+        SubZipFile subZip = new SubZipFile(testZipFile, "two");
         assertNull(subZip.getEntry("one/baz"));
     }
 
     @Test
     public void getNonExistingEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(zip, "one");
+        SubZipFile subZip = new SubZipFile(testZipFile, "one");
         assertNull(subZip.getEntry("no/such/entry"));
     }
 

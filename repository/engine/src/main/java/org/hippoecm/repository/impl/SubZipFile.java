@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -28,63 +29,35 @@ import org.apache.commons.lang.StringUtils;
  */
 class SubZipFile extends ZipFile {
 
-    private final ZipFile delegate;
     private final String subPath;
 
-    SubZipFile(final ZipFile delegate, final String subPath) throws IOException {
-        super(delegate.getName());
-        this.delegate = delegate;
+    SubZipFile(final File file, final String subPath) throws IOException {
+        super(file);
         this.subPath = StringUtils.removeEnd(subPath, "/");
-    }
-
-    @Override
-    public String getComment() {
-        return delegate.getComment();
     }
 
     @Override
     public ZipEntry getEntry(final String name) {
         if (isIncluded(name, subPath)) {
-            return delegate.getEntry(name);
+            return super.getEntry(name);
         }
         return null;
     }
 
     @Override
-    public InputStream getInputStream(final ZipEntry entry) throws IOException {
-        return delegate.getInputStream(entry);
-    }
-
-    @Override
-    public String getName() {
-        return delegate.getName();
-    }
-
-    @Override
     public Enumeration<? extends ZipEntry> entries() {
-        return new SubEnumeration<>(delegate.entries(), subPath);
+        return new SubEnumeration<>(super.entries(), subPath);
     }
 
     @Override
     public int size() {
         int result = 0;
-        SubEnumeration enumeration = new SubEnumeration(delegate.entries(), subPath);
+        SubEnumeration enumeration = new SubEnumeration(super.entries(), subPath);
         while (enumeration.hasMoreElements()) {
             enumeration.nextElement();
             result++;
         }
         return result;
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate.close();
-    }
-
-    @Override
-    protected void finalize() throws IOException {
-        super.finalize();
-        delegate.close();
     }
 
     private static boolean isIncluded(final String entryName, final String subPath) {

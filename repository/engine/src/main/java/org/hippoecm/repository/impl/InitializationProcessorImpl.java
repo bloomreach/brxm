@@ -336,8 +336,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
             }
             try {
-                final ZipFile zipFile = new ZipFile(getBaseZipFileFromURL(new URL(extensionSource)));
-                final SubZipFile bundleZipFile = new SubZipFile(zipFile, bundlePath);
+                final SubZipFile bundleZipFile = new SubZipFile(getBaseZipFileFromURL(new URL(extensionSource)), bundlePath);
                 final ImportWebResourceBundleTask importTask = new ImportWebResourceBundleTask(session, bundleZipFile);
                 return Optional.of(importTask);
             } catch (IOException | URISyntaxException e) {
