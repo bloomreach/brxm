@@ -34,8 +34,6 @@
 
 [hippo:hardhandle] > mix:versionable mixin
 
-[hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
-
 // DATA TYPES: VIRTUAL LAYER
 
 [hippo:facetresult] orderable

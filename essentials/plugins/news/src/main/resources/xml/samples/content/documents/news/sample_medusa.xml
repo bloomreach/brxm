@@ -42,7 +42,8 @@
       <sv:value>{{namespace}}:newsdocument</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+      <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>fb670399-5482-4b83-8e7d-358ff83a8485</sv:value>
@@ -50,9 +51,6 @@
     <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
       <sv:value>live</sv:value>
       <sv:value>preview</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      <sv:value>news/the-medusa-news</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:holder" sv:type="String">
       <sv:value>admin</sv:value>

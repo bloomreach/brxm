@@ -25,8 +25,8 @@
   -->
 
   <instructionSet>
-    <folder template="instructions/content/administration-folder.xml" path="/content/documents/administration"/>
-    <folder template="instructions/content/labels-folder.xml" path="/content/documents/administration/labels"/>
+    <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration"/>
+    <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/global-labels.xml" target="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/homepage-labels.xml" target="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/pagination-labels.xml" target="/content/documents/administration/labels"/>

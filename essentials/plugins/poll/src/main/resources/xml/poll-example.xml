@@ -39,9 +39,6 @@
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>preview</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      <sv:value>example-poll/example-poll[3]</sv:value>
-    </sv:property>
     <sv:property sv:name="hippostd:state" sv:type="String">
       <sv:value>unpublished</sv:value>
     </sv:property>
@@ -108,10 +105,6 @@
       <sv:value>3c1ce377-d775-4391-8408-932ab9c1ba84</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String"/>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      <sv:value>example-poll/example-poll</sv:value>
-      <sv:value>example-poll/example-poll[3]</sv:value>
-    </sv:property>
     <sv:property sv:name="hippostd:state" sv:type="String">
       <sv:value>draft</sv:value>
     </sv:property>
@@ -179,9 +172,6 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>live</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      <sv:value>example-poll/example-poll</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:state" sv:type="String">
       <sv:value>published</sv:value>

@@ -67,10 +67,6 @@
         <sv:value>Video example</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String"/>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>videos/video-example/video-example[3]</sv:value>
-        <sv:value>videos/video-example/video-example[2]</sv:value>
-      </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>draft</sv:value>
       </sv:property>
@@ -130,9 +126,6 @@
       <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>videos/video-example/video-example[3]</sv:value>
-      </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>
       </sv:property>
@@ -179,9 +172,6 @@
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>videos/video-example/video-example[2]</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>published</sv:value>

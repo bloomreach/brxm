@@ -25,7 +25,6 @@
     <xml action="copy" source="xml/robots_sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
   <instructionSet group="sampleData">
-     <folder template="xml/administration_folder.xml" path="/content/documents/administration"/>
      <xml action="copy" source="xml/robots_content.xml" target="/content/documents/administration"/>
   </instructionSet>
 </instructions>

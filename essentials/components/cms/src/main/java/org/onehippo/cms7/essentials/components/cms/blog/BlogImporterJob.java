@@ -318,7 +318,7 @@ public class BlogImporterJob implements RepositoryJob {
         Node handleNode = rootNode.addNode(documentName, "hippo:handle");
         handleNode.addMixin("hippo:hardhandle");
         Node documentNode = handleNode.addNode(documentName, prefixedNamespace + docType);
-        documentNode.addMixin("hippo:harddocument");
+        documentNode.addMixin("mix:referenceable");
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
         return documentNode;
     }
@@ -420,7 +420,7 @@ public class BlogImporterJob implements RepositoryJob {
 
     private Node createBlogFolder(Node node, String name) throws RepositoryException {
         Node blogFolder = node.addNode(name, "hippostd:folder");
-        blogFolder.addMixin("hippo:harddocument");
+        blogFolder.addMixin("mix:referenceable");
         blogFolder.setProperty("hippostd:foldertype", new String[]{"new-blog-folder", "new-blog-document"});
         return blogFolder;
     }

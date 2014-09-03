@@ -1465,7 +1465,6 @@ plugins/robots/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsI
 plugins/robots/src/main/resources/META-INF/resources/feature/robotsPlugin/robotsPlugin.html -text
 plugins/robots/src/main/resources/META-INF/robots_plugin_instructions.xml -text
 plugins/robots/src/main/resources/META-INF/web-fragment.xml -text
-plugins/robots/src/main/resources/xml/administration_folder.xml -text
 plugins/robots/src/main/resources/xml/robots_content.xml -text
 plugins/robots/src/main/resources/xml/robots_sitemap.xml -text
 plugins/robots/src/test/resources/log4j.xml -text
@@ -1551,11 +1550,10 @@ plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphic
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.svg -text
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.woff -text
-plugins/skeleton-package/src/main/resources/instructions/content/administration-folder.xml -text
 plugins/skeleton-package/src/main/resources/instructions/content/global-labels.xml -text
 plugins/skeleton-package/src/main/resources/instructions/content/homepage-labels.xml -text
-plugins/skeleton-package/src/main/resources/instructions/content/labels-folder.xml -text
 plugins/skeleton-package/src/main/resources/instructions/content/pagination-labels.xml -text
+plugins/skeleton-package/src/main/resources/instructions/content/untranslated-folder.xml -text
 plugins/skeleton-package/src/main/resources/instructions/css/cms-request.css -text
 plugins/skeleton-package/src/main/resources/instructions/freemarker/base-footer.ftl -text
 plugins/skeleton-package/src/main/resources/instructions/freemarker/base-layout.ftl -text

@@ -62,10 +62,6 @@
         <sv:value>FAQ</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String"/>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>faq/about-faq/about-faq[3]</sv:value>
-        <sv:value>faq/about-faq/about-faq[2]</sv:value>
-      </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>draft</sv:value>
       </sv:property>
@@ -143,9 +139,6 @@
       <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>faq/about-faq/about-faq[3]</sv:value>
-      </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>
       </sv:property>
@@ -210,9 +203,6 @@
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>faq/about-faq/about-faq[2]</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>published</sv:value>
@@ -325,10 +315,6 @@
           <sv:value>What is this?</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String"/>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>faq/about-faq-items/faq-1/faq-1[3]</sv:value>
-          <sv:value>faq/about-faq-items/faq-1/faq-1[2]</sv:value>
-        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>draft</sv:value>
         </sv:property>
@@ -390,9 +376,6 @@
         <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
           <sv:value>preview</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>faq/about-faq-items/faq-1/faq-1[3]</sv:value>
-        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -441,9 +424,6 @@
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
           <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>faq/about-faq-items/faq-1/faq-1[2]</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
@@ -510,9 +490,6 @@
         <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
           <sv:value>preview</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>faq/about-faq-items/faq-2/faq-2[3]</sv:value>
-        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -571,10 +548,6 @@
           <sv:value>What is this?</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String"/>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>faq/about-faq-items/faq-2/faq-2</sv:value>
-          <sv:value>faq/about-faq-items/faq-2/faq-2[3]</sv:value>
-        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>draft</sv:value>
         </sv:property>
@@ -623,9 +596,6 @@
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
           <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>faq/about-faq-items/faq-2/faq-2</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>

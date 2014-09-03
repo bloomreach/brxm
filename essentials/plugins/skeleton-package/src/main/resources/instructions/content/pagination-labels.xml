@@ -45,9 +45,6 @@
       <sv:value>live</sv:value>
       <sv:value>preview</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      <sv:value>pagination</sv:value>
-    </sv:property>
     <sv:property sv:name="hippostd:state" sv:type="String">
       <sv:value>published</sv:value>
     </sv:property>

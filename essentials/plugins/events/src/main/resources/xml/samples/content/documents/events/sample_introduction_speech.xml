@@ -53,7 +53,8 @@
       <sv:value>{{namespace}}:eventsdocument</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+      <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>90b6f533-9cfb-46a1-a456-e9a5f359a534</sv:value>
@@ -61,9 +62,6 @@
     <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
       <sv:value>live</sv:value>
       <sv:value>preview</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      <sv:value>events/introduction-speech</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:holder" sv:type="String">
       <sv:value>admin</sv:value>

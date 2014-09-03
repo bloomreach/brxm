@@ -20,12 +20,11 @@
     <sv:value>hippogallery:stdImageGallery</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>2c8b0227-bf23-46b3-b31a-fc9317160be2</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
     <sv:value>new-image-folder</sv:value>
   </sv:property>
@@ -48,7 +47,7 @@
         <sv:value>hippogallery:imageset</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>40592e1d-4c8b-44e4-9672-02daa3ad1f5a</sv:value>
@@ -57,7 +56,6 @@
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
         <sv:value>coffee-206142_150.jpg</sv:value>
       </sv:property>
@@ -119,7 +117,7 @@
         <sv:value>hippogallery:imageset</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>989cc27f-6792-427d-a8eb-c4cc8bc88fbd</sv:value>
@@ -128,7 +126,6 @@
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
         <sv:value>blue-199261_150.jpg</sv:value>
       </sv:property>
@@ -190,7 +187,7 @@
         <sv:value>hippogallery:imageset</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>28bff5dc-c38d-4bc8-918f-a896d9296a34</sv:value>
@@ -199,7 +196,6 @@
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
         <sv:value>pencils-199883_150.jpg</sv:value>
       </sv:property>
@@ -261,7 +257,7 @@
         <sv:value>hippogallery:imageset</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>e4a26c1e-2a0b-4315-b8f8-04f25b7c38f1</sv:value>
@@ -270,7 +266,6 @@
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
         <sv:value>snail-193611_640.jpg</sv:value>
       </sv:property>
@@ -332,7 +327,7 @@
         <sv:value>hippogallery:imageset</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>a52b3020-2f53-4168-9099-fba3bf1ad7e7</sv:value>
@@ -341,7 +336,6 @@
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
         <sv:value>viognier-grapes-188185_640.jpg</sv:value>
       </sv:property>
@@ -403,7 +397,7 @@
         <sv:value>hippogallery:imageset</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>6a44c7c3-dc77-4494-8817-0150f37cf1ee</sv:value>
@@ -412,7 +406,6 @@
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
         <sv:value>animal-2883_640.jpg</sv:value>
       </sv:property>

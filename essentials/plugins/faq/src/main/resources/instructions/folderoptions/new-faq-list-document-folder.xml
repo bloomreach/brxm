@@ -52,7 +52,7 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <!-- NOTE: TEST ONLY-->
@@ -103,7 +103,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nieuwe faq post list map</sv:value>
+      <sv:value>nieuwe faq list map</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -117,7 +117,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nuova cartella faq list post</sv:value>
+      <sv:value>nuova cartella faq list</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -131,7 +131,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>un nouveau dossier faq list post</sv:value>
+      <sv:value>un nouveau dossier faq list</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -145,7 +145,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Nuova cartella faq list post</sv:value>
+      <sv:value>Nuova cartella faq list</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

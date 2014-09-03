@@ -102,7 +102,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouvo faq postt</sv:value>
+      <sv:value>nouvo faq post</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -116,7 +116,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neues Faq Post</sv:value>
+      <sv:value>Neuer FAQ Post</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
