@@ -549,7 +549,7 @@ public final class JavaSourceUtils {
 
 
     /**
-     * Adds {@code getLinkedBean(namespace, HippoGalleryImageSetBean.class)} method
+     * Adds {@code getLinkedBean(namespace, HippoGalleryImageSet.class)} method
      *
      * @param path         source file path
      * @param methodName   generated method name
