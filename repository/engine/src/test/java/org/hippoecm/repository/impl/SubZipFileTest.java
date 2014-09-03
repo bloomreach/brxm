@@ -17,16 +17,14 @@ package org.hippoecm.repository.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.ZipTestUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests {@link SubZipFile}.
@@ -36,10 +34,8 @@ public class SubZipFileTest {
     private File testZipFile;
 
     @Before
-    public void setUp() throws IOException {
-        final String fileNameWithEscapedEntities = getClass().getResource("/org/hippoecm/repository/impl/path with spaces/SubZipFileTest.zip").getFile();
-        final String fileName = URLDecoder.decode(fileNameWithEscapedEntities, "UTF-8");
-        testZipFile = new File(fileName);
+    public void setUp() throws Exception {
+        testZipFile = FileUtils.toFile(getClass().getResource("/org/hippoecm/repository/impl/path with spaces/SubZipFileTest.zip"));
     }
 
     @Test
