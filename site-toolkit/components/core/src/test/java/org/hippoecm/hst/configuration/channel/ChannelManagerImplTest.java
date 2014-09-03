@@ -43,12 +43,18 @@ import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_XTYPE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
@@ -169,7 +175,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
 
     @Test
-    public void channelIsCreatedFromBlueprint() throws Exception {
+    public void channel_is_created_from_blueprint_without_content_prototype() throws Exception {
         List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
@@ -200,6 +206,107 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
         Node siteNode = session.getNode(sitePath);
         assertEquals("/unittestcontent/documents", siteNode.getProperty(HstNodeTypes.SITE_CONTENT).getString());
+
+    }
+
+
+    @Test
+    public void channel_is_created_from_blueprint_with_content_prototype() throws Exception {
+       // first create prototype content
+       final String[] prototypeBootstrap = new String[] {
+                "/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint", "hippostd:folder",
+                "jcr:mixinTypes", "mix:referenceable",
+                "hippostd:foldertype", "new-document",
+                "hippostd:foldertype", "new-folder"
+       };
+
+        try {
+            RepositoryTestCase.build(prototypeBootstrap, session);
+            session.save();
+            Thread.sleep(100);
+
+            List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
+            assertEquals(1, bluePrints.size());
+            final Blueprint blueprint = bluePrints.get(0);
+            assertTrue(blueprint.getHasContentPrototype());
+
+
+            final Channel channel = blueprint.getPrototypeChannel();
+            channel.setName("newchannel");
+            channel.setUrl("http://cmit-myhost");
+            channel.setLocale("nl_NL");
+
+            String channelId = channelMngr.persist(blueprint.getId(), channel);
+            assertEquals("newchannel", channelId);
+
+            // assert content created from prototype
+            assertTrue(session.nodeExists("/unittestcontent/documents/newchannel"));
+
+        } finally {
+            if (session.nodeExists("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint")) {
+                session.getNode("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint").remove();
+            }
+            if (session.nodeExists("/unittestcontent/documents/newchannel")) {
+                session.getNode("/unittestcontent/documents/newchannel").remove();
+            }
+            session.save();
+        }
+
+    }
+
+
+    @Test
+    public void no_created_root_content_after_ChannelManagerEventListenerException_STOP_CHANNEL_PROCESSING() throws Exception {
+        // make sure a ChannelException is forced *after* the workflow creates the root content. We can force this by
+        // decorating the channel and force a ChannelException on channel#setContentRoot which is invoked after the content
+        // creation
+        // first create prototype content
+        final String[] prototypeBootstrap = new String[] {
+                "/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint", "hippostd:folder",
+                "jcr:mixinTypes", "mix:referenceable",
+                "hippostd:foldertype", "new-document",
+                "hippostd:foldertype", "new-folder"
+        };
+
+        try {
+            RepositoryTestCase.build(prototypeBootstrap, session);
+            session.save();
+            Thread.sleep(100);
+
+            ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
+            channelMngr.addChannelManagerEventListeners(shortCircuitingListener);
+
+            List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
+            assertEquals(1, bluePrints.size());
+            final Blueprint blueprint = bluePrints.get(0);
+            assertTrue(blueprint.getHasContentPrototype());
+
+
+            final Channel channel = blueprint.getPrototypeChannel();
+
+            channel.setName("newchannel");
+            channel.setUrl("http://cmit-myhost");
+            channel.setLocale("nl_NL");
+
+            try {
+                channelMngr.persist(blueprint.getId(), channel);
+                fail("ChannelException was expected");
+            } catch (ChannelException e) {
+                //expected
+            }
+            // assert content *not* created because of STOP_CHANNEL_PROCESSING exception
+            assertFalse(session.nodeExists("/unittestcontent/documents/newchannel"));
+
+        } finally {
+            if (session.nodeExists("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint")) {
+                session.getNode("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint").remove();
+            }
+            if (session.nodeExists("/unittestcontent/documents/newchannel")) {
+                session.getNode("/unittestcontent/documents/newchannel").remove();
+            }
+            session.save();
+        }
+
 
     }
 
@@ -330,6 +437,8 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertEquals("noot", channelInfo.getGetme());
 
     }
+
+
 
     @Test
     public void testChannelManagerEventListeners() throws Exception {
