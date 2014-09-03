@@ -21,7 +21,7 @@
   <parent>
     <artifactId>hippo-essentials</artifactId>
     <groupId>org.onehippo.cms7.essentials</groupId>
-    <version>1.02.00</version>
+    <version>1.02.01-SNAPSHOT</version>
   </parent>
 
   <name>dependencies</name>
