@@ -507,12 +507,12 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoImage(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getBeans", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoGalleryImageBean", path, methodName, propertyName);
+            addTwoArgumentsMethod("getBean", "HippoGalleryImageSet", path, methodName, propertyName);
         }
-        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
 
 
     }
@@ -524,7 +524,7 @@ public final class JavaSourceUtils {
         } else {
             addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
         }
-        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
 
     public static void addBeanMethodInternalType(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
