@@ -563,8 +563,6 @@ public final class JavaSourceUtils {
         } else {
             addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
         }
-
-        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
 
