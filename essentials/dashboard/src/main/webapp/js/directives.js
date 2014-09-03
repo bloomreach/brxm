@@ -206,7 +206,7 @@
                 templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
                     $scope.label = 'CMS Document Type Editor';
-                    $scope.defaultNameSpace = $rootScope.projectSettings.namespace;
+                    $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
                 }
             }
         }).directive("essentialsNotifier", function () {
