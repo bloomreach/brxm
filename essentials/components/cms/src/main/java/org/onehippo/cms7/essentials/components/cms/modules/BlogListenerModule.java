@@ -87,7 +87,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
         projectNamespace = JcrUtils.getStringProperty(moduleConfig, "projectNamespace", null);
         if (!Strings.isNullOrEmpty(projectNamespace)) {
             listener = new AuthorFieldHandler(projectNamespace);
-            HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+            //HippoServiceRegistry.registerService(listener, HippoEventBus.class);
         } else {
             log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
         }
