@@ -479,6 +479,7 @@ public class ContentBeansService {
         final Map<String, Path> existing = findExitingBeans();
         final Map<String, String> imageTypes = new HashMap<>();
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
+        imageTypes.put(HIPPO_GALLERY_IMAGE_SET_BEAN, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
         String newReturnType = null;
         for (Path path : existing.values()) {
             final String myClass = JavaSourceUtils.getClassName(path);
