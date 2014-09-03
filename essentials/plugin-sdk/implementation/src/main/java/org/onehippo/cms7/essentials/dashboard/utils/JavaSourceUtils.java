@@ -522,7 +522,7 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLikedBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
     }
