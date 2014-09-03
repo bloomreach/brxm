@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.components;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -42,10 +43,16 @@ public class EssentialsFacetsComponent extends CommonComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         super.doBeforeRender(request, response);
-        log.info("**** FACET COMPONENT **** ");
         final EssentialsFacetsComponentInfo paramInfo = getComponentParametersInfo(request);
         final HstRequestContext context = request.getRequestContext();
-        final String facetPath = paramInfo.getFacetPath();
+        String facetPath = paramInfo.getFacetPath();
+        // check if component is used through sitemap mapping:
+        if (Strings.isNullOrEmpty(facetPath)) {
+            final HippoBean bean = context.getContentBean();
+            if (bean != null) {
+                facetPath = bean.getPath();
+            }
+        }
         final String queryParam = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
         final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(context, facetPath, queryParam);
         if (hippoFacetNavigationBean == null) {
@@ -69,8 +76,7 @@ public class EssentialsFacetsComponent extends CommonComponent {
         HippoFacetNavigationBean facNavBean;
         if (!StringUtils.isBlank(resolvedContentPath)
                 && !resolvedContentPath.startsWith("/")
-                && context.getSiteContentBaseBean().getBean(resolvedContentPath, HippoFacetNavigationBean.class) != null)
-        {
+                && context.getSiteContentBaseBean().getBean(resolvedContentPath, HippoFacetNavigationBean.class) != null) {
             facNavBean = ContentBeanUtils.getFacetNavigationBean(resolvedContentPath, parsedQuery);
         } else {
             facNavBean = ContentBeanUtils.getFacetNavigationBean(path, parsedQuery);
