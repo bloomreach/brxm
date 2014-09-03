@@ -478,6 +478,7 @@ public class ContentBeansService {
     public void convertImageMethods(final String newImageNamespace) {
         final Map<String, Path> existing = findExitingBeans();
         final Map<String, String> imageTypes = new HashMap<>();
+        final Set<Path> imageTypePaths = new HashSet<>();
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_BEAN, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean");
         String newReturnType = null;
@@ -487,6 +488,7 @@ public class ContentBeansService {
             final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
             if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
                 imageTypes.put(myClass, JavaSourceUtils.getImportName(path));
+                imageTypePaths.add(path);
             }
             if (annotation != null && newImageNamespace.equals(annotation.getInternalName())) {
                 newReturnType = myClass;
@@ -501,7 +503,12 @@ public class ContentBeansService {
         }
         log.info("Converting existing image beans to new type: {}", newReturnType);
         for (Map.Entry<String, Path> entry : existing.entrySet()) {
-            final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(entry.getValue());
+            // check if image type and skip if so:
+            final Path path = entry.getValue();
+            if(imageTypePaths.contains(path)){
+                continue;
+            }
+            final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
             final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
             for (EssentialsGeneratedMethod m : generatedMethods) {
                 final Type type = m.getMethodDeclaration().getReturnType2();
@@ -511,13 +518,13 @@ public class ContentBeansService {
                     // check if image type and different than new return type
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
-                        updateImageMethod(entry.getValue(), returnType, newReturnType, imageTypes.get(newReturnType));
+                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
                     }
                 } else if (getParameterizedType(type) != null) {
                     final String returnType = getParameterizedType(type);
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
-                        updateImageMethod(entry.getValue(), returnType, newReturnType, imageTypes.get(newReturnType));
+                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
                     }
                 }
             }

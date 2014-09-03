@@ -32,6 +32,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterJob;
 import org.onehippo.cms7.essentials.components.cms.handlers.AuthorFieldHandler;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.RequiresService;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
@@ -86,6 +87,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
         projectNamespace = JcrUtils.getStringProperty(moduleConfig, "projectNamespace", null);
         if (!Strings.isNullOrEmpty(projectNamespace)) {
             listener = new AuthorFieldHandler(projectNamespace);
+            HippoServiceRegistry.registerService(listener, HippoEventBus.class);
         } else {
             log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
         }
