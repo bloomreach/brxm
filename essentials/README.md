@@ -48,7 +48,7 @@ $ mvn clean install
 ### run archetype
 
 ```shell
-mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.02.00"
+mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.02.01-SNAPSHOT"
 ```
 
 ## Working with Git
