@@ -42,10 +42,28 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>accesskey</sv:value>
+        <sv:value>charset</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
         <sv:value>href</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>lang</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>rel</sv:value>
+        <sv:value>style</sv:value>
+        <sv:value>tabindex</sv:value>
         <sv:value>target</sv:value>
         <sv:value>title</sv:value>
-        <sv:value>name</sv:value>
+        <sv:value>type</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="address">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
@@ -60,7 +78,17 @@
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>class</sv:value>
-        <sv:value>id</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="br">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="body">
@@ -68,9 +96,13 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="br">
+    <sv:node sv:name="caption">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="code">
@@ -79,6 +111,7 @@
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="div">
@@ -87,42 +120,107 @@
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
         <sv:value>id</sv:value>
+        <sv:value>lang</sv:value>
+        <sv:value>style</sv:value>
+        <sv:value>title</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="em">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="embed">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>allowscriptaccess</sv:value>
+        <sv:value>height</sv:value>
+        <sv:value>src</sv:value>
+        <sv:value>type</sv:value>
+        <sv:value>width</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="h1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="h2">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="h3">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="h4">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="h5">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="h6">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="hr">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="html">
@@ -140,14 +238,18 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>src</sv:value>
         <sv:value>align</sv:value>
         <sv:value>allowfullscreen</sv:value>
         <sv:value>class</sv:value>
         <sv:value>frameborder</sv:value>
         <sv:value>height</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>longdesc</sv:value>
         <sv:value>name</sv:value>
         <sv:value>scrolling</sv:value>
+        <sv:value>src</sv:value>
+        <sv:value>style</sv:value>
+        <sv:value>title</sv:value>
         <sv:value>width</sv:value>
       </sv:property>
     </sv:node>
@@ -156,16 +258,17 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>src</sv:value>
+        <sv:value>align</sv:value>
         <sv:value>alt</sv:value>
         <sv:value>border</sv:value>
-        <sv:value>align</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>height</sv:value>
         <sv:value>hspace</sv:value>
+        <sv:value>src</sv:value>
+        <sv:value>style</sv:value>
+        <sv:value>title</sv:value>
         <sv:value>vspace</sv:value>
         <sv:value>width</sv:value>
-        <sv:value>height</sv:value>
-        <sv:value>title</sv:value>
-        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="li">
@@ -173,6 +276,8 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
@@ -186,14 +291,32 @@
         <sv:value>data</sv:value>
         <sv:value>height</sv:value>
         <sv:value>id</sv:value>
-        <sv:value>width</sv:value>
+        <sv:value>style</sv:value>
         <sv:value>title</sv:value>
         <sv:value>type</sv:value>
+        <sv:value>width</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="ol">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>start</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="option">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>selected</sv:value>
+        <sv:value>style</sv:value>
+        <sv:value>value</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="p">
@@ -203,6 +326,7 @@
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>align</sv:value>
         <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
@@ -211,9 +335,10 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>id</sv:value>
+        <sv:value>class</sv:value>
         <sv:value>name</sv:value>
         <sv:value>value</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="pre">
@@ -222,6 +347,28 @@
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="s">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="select">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>multiple</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>size</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="span">
@@ -230,22 +377,36 @@
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
         <sv:value>class</sv:value>
-        <sv:value>id</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>lang</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="strong">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="sub">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="sup">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="table">
@@ -253,18 +414,25 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>class</sv:value>
-        <sv:value>border</sv:value>
-        <sv:value>cellspacing</sv:value>
-        <sv:value>cellpadding</sv:value>
-        <sv:value>width</sv:value>
         <sv:value>align</sv:value>
+        <sv:value>border</sv:value>
+        <sv:value>cellpadding</sv:value>
+        <sv:value>cellspacing</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>id</sv:value>
         <sv:value>style</sv:value>
+        <sv:value>summary</sv:value>
+        <sv:value>width</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="tbody">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="td">
@@ -272,10 +440,34 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>width</sv:value>
+        <sv:value>class</sv:value>
         <sv:value>colspan</sv:value>
+        <sv:value>dir</sv:value>
         <sv:value>rowspan</sv:value>
+        <sv:value>scope</sv:value>
+        <sv:value>style</sv:value>
         <sv:value>valign</sv:value>
+        <sv:value>width</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="textarea">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>cols</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>rows</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="tfoot">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
@@ -284,10 +476,21 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>width</sv:value>
+        <sv:value>class</sv:value>
         <sv:value>colspan</sv:value>
         <sv:value>rowspan</sv:value>
+        <sv:value>scope</sv:value>
+        <sv:value>style</sv:value>
         <sv:value>valign</sv:value>
+        <sv:value>width</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="thead">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
@@ -296,6 +499,7 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
@@ -303,10 +507,19 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="ul">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>dir</sv:value>
+        <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
