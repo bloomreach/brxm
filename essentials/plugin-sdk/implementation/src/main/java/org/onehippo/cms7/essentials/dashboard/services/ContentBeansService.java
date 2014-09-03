@@ -398,7 +398,7 @@ public class ContentBeansService {
                     } else {
                         final String className = JavaSourceUtils.getClassName(path);
                         final String importName = JavaSourceUtils.getImportName(path);
-                        JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importName, methodName, name, multiple);
+                        JavaSourceUtils.addBeanMethodInternalImageSet(beanPath, className, importName, methodName, name, multiple);
                     }
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
@@ -594,7 +594,7 @@ public class ContentBeansService {
                 if (newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_CLASS) || newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)) {
                     JavaSourceUtils.addBeanMethodHippoImageSet(path, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
                 } else {
-                    JavaSourceUtils.addBeanMethodInternalType(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+                    JavaSourceUtils.addBeanMethodInternalImageSet(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
                 }
                 log.debug("Replaced old method: {} with new return type: {}", oldMethod.getMethodName(), newReturnType);
                 context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));

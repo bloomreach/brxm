@@ -507,10 +507,10 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoImage(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageBean", path, methodName, propertyName);
+            addTwoArgumentsMethod("getBean", "HippoGalleryImageBean", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
 
@@ -522,7 +522,7 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod("getLikedBean", "HippoGalleryImageSet", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
     }
@@ -533,6 +533,16 @@ public final class JavaSourceUtils {
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod("getBean", className, path, methodName, propertyName);
+        }
+        addImport(path, importPath);
+    }
+
+    public static void addBeanMethodInternalImageSet(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, "List", className, path, "getLinkedBeans", propertyName);
+            addImport(path, List.class.getName());
+        } else {
+            addTwoArgumentsMethod("getLinkedBean", className, path, methodName, propertyName);
         }
         addImport(path, importPath);
     }
