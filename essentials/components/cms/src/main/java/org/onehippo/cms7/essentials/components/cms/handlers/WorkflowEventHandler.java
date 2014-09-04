@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.components.cms.handlers;
 
-import javax.jcr.Session;
-
 import org.onehippo.cms7.event.HippoEvent;
 
 /**
@@ -25,6 +23,6 @@ import org.onehippo.cms7.event.HippoEvent;
  */
 public interface WorkflowEventHandler {
 
-    void handle(HippoEvent<?> event, Session session);
+    void handle(HippoEvent<?> event);
 
 }

@@ -85,12 +85,6 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
         projectNamespace = JcrUtils.getStringProperty(moduleConfig, "projectNamespace", null);
-        if (!Strings.isNullOrEmpty(projectNamespace)) {
-            listener = new AuthorFieldHandler(projectNamespace);
-            //HippoServiceRegistry.registerService(listener, HippoEventBus.class);
-        } else {
-            log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
-        }
         active = JcrUtils.getBooleanProperty(moduleConfig, "active", Boolean.FALSE);
         runNow = JcrUtils.getBooleanProperty(moduleConfig, "runInstantly", Boolean.FALSE);
         blogBasePath = JcrUtils.getStringProperty(moduleConfig, BlogImporterJob.BLOGS_BASE_PATH, null);
@@ -129,6 +123,12 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         this.session = session;
+        if (!Strings.isNullOrEmpty(projectNamespace)) {
+            listener = new AuthorFieldHandler(projectNamespace, session);
+            HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+        } else {
+            log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
+        }
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
         if (repositoryScheduler.checkExists(SCHEDULER_NAME + "Job", SCHEDULER_GROUP_NAME)) {
             return;
@@ -209,6 +209,9 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected void doShutdown() {
+        if (listener != null) {
+            HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
+        }
         session.logout();
     }
 
