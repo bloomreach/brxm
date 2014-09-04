@@ -33,6 +33,7 @@
                 <div class="col-xs-6 text-right">
                     <button class="btn btn-primary"
                             ng-show="isDiscovered()"
+                            ng-disabled="installButtonDisabled"
                             ng-click="installPlugin()">Install {{plugin.type}}
                     </button>
                     <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>

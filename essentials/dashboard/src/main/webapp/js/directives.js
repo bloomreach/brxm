@@ -334,6 +334,7 @@
                                || $scope.plugin.installState === 'installed';
                     };
                     $scope.installPlugin = function () {
+                        $scope.installButtonDisabled = true; // avoid double-clicking
                         $rootScope.pluginsCache = null;
                         var pluginId = $scope.plugin.id;
                         $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {

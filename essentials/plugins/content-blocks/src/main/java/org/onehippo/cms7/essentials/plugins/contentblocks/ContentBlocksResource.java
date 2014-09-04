@@ -101,10 +101,10 @@ public class ContentBlocksResource extends BaseResource {
                                              HippoNodeUtils.resolvePath(primaryType).substring(1)), session);
                 while (it.hasNext()) {
                     final Node fieldNode = it.nextNode();
-                    final String name = MessageFormat.format("{0}:{1}", projectNamespacePrefix, fieldNode.getName());
-                    if (providerMap.containsKey(name)) {
+                    final String providerName = fieldNode.getProperty("cpItemsPath").getString();
+                    if (providerMap.containsKey(providerName)) {
                         final ProviderActionRestful providerAction = new ProviderActionRestful();
-                        providerAction.setName(name);
+                        providerAction.setName(providerName);
                         providerActions.add(providerAction);
                     }
                 }
