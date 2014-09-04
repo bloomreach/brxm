@@ -94,9 +94,10 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         final UpdaterExecutor updaterExecutor = new UpdaterExecutor(updaterNode, session);
         updaterExecutor.execute();
         updaterExecutor.destroy();
-        assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:updatedcount", -1l));
-        assertEquals(1, JcrUtils.getLongProperty(updaterNode, "hipposys:failedcount", -1l));
-        assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:skippedcount", -1l));
+
+        assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:updatedcount", -1L).longValue());
+        assertEquals(1, JcrUtils.getLongProperty(updaterNode, "hipposys:failedcount", -1L).longValue());
+        assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:skippedcount", -1L).longValue());
         final String qux = JcrUtils.getStringProperty(session.getNode("/test/bar"), "qux", null);
         if (dryRun) {
             assertNull(qux);
@@ -120,9 +121,9 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         final UpdaterExecutor updaterExecutor = new UpdaterExecutor(updaterNode, session);
         updaterExecutor.execute();
         updaterExecutor.destroy();
-        assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:updatedcount", -1l));
-        assertEquals(1, JcrUtils.getLongProperty(updaterNode, "hipposys:failedcount", -1l));
-        assertEquals(1, JcrUtils.getLongProperty(updaterNode, "hipposys:skippedcount", -1l));
+        assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:updatedcount", -1L).longValue());
+        assertEquals(1, JcrUtils.getLongProperty(updaterNode, "hipposys:failedcount", -1L).longValue());
+        assertEquals(1, JcrUtils.getLongProperty(updaterNode, "hipposys:skippedcount", -1L).longValue());
         final String qux = JcrUtils.getStringProperty(session.getNode("/test/bar"), "qux", null);
         if (dryRun) {
             assertNull(qux);

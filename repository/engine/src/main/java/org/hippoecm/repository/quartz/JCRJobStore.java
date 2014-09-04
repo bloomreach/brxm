@@ -743,8 +743,8 @@ public class JCRJobStore implements JobStore {
         if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
             final java.util.Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
             final java.util.Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
-            final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0);
-            final long repeatInterval = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATINTERVAL, 0);
+            final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0L);
+            final long repeatInterval = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATINTERVAL, 0L);
             if (startTime == null) {
                 log.warn("Cannot create simple trigger from node {}: mandatory property {} is missing",
                         triggerNode.getPath(), HIPPOSCHED_STARTTIME);

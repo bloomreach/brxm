@@ -42,8 +42,8 @@ class UpdaterInfo {
 
     private static final Logger log = LoggerFactory.getLogger(UpdaterInfo.class);
 
-    private static final int DEFAULT_THROTTLE = 1000;
-    private static final int DEFAULT_BATCH_SIZE = 10;
+    private static final long DEFAULT_THROTTLE = 1000;
+    private static final long DEFAULT_BATCH_SIZE = 10;
     private static final String DEFAULT_QUERY_LANGUAGE = "xpath";
 
     private final String identifier;
