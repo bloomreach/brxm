@@ -507,12 +507,12 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoImage(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getBeans", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod("getBean", "HippoGalleryImageBean", path, methodName, propertyName);
         }
-        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
 
 
     }
