@@ -40,12 +40,13 @@ public class AuthorFieldHandler implements WorkflowEventHandler {
     // Regrettably, the CMS doesn't expose below string in an API...
     private static final String METHOD_NAME_SAVE = "commitEditableInstance";
 
+    private final Session session;
+    private final String projectNamespacePrefix;
 
-    private final String projectNamespacePath;
 
-
-    public AuthorFieldHandler(final String projectNamespacePath) {
-        this.projectNamespacePath = projectNamespacePath;
+    public AuthorFieldHandler(final String projectNamespacePrefix, final Session session) {
+        this.projectNamespacePrefix = projectNamespacePrefix;
+        this.session = session;
     }
 
     /**
@@ -55,7 +56,10 @@ public class AuthorFieldHandler implements WorkflowEventHandler {
      */
     @Override
     @Subscribe
-    public void handle(final HippoEvent<?> event, final Session session) {
+    public void handle(final HippoEvent<?> event) {
+        if (Strings.isNullOrEmpty(projectNamespacePrefix)) {
+            return;
+        }
         if (HippoEventConstants.CATEGORY_WORKFLOW.equals(event.category())) {
             HippoWorkflowEvent<?> wfEvent = new HippoWorkflowEvent(event);
 
@@ -78,25 +82,12 @@ public class AuthorFieldHandler implements WorkflowEventHandler {
         try {
             final Node handle = session.getNodeByIdentifier(handleUuid);
             final Node variant = HandlerUtils.getVariant(handle, "unpublished");
-            boolean doSave = false;
-            if (variant != null) {
-                if (session.propertyExists(projectNamespacePath)) {
-                    final String projectNamespace = session.getProperty(projectNamespacePath).getString();
-                    if (Strings.isNullOrEmpty(projectNamespace)) {
-                        log.warn("projectNamespace property not set @{}", projectNamespacePath);
-                        return;
-                    }
-
-                    if (BlogUpdater.wants(variant, projectNamespace + ":blogpost")) {
-                        doSave = BlogUpdater.handleSaved(variant, projectNamespace);
-                    }
-                } else {
-                    log.warn("projectNamespace property not set");
+            if (variant != null && BlogUpdater.wants(variant, projectNamespacePrefix + ":blogpost")) {
+                if (BlogUpdater.handleSaved(variant, projectNamespacePrefix)) {
+                    session.save();
                 }
             }
-            if (doSave) {
-                session.save();
-            }
+
         } catch (RepositoryException ex) {
             log.debug("Failed to process node for handle UUID '" + handleUuid + "'.", ex);
             try {
