@@ -412,6 +412,7 @@ public class ContentBeansService {
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 case "hippogallery:image":
+
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
                     existing.add(name);
