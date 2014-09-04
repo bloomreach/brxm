@@ -18,7 +18,6 @@ package org.onehippo.cms7.services.webresources;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.zip.ZipFile;
 
 import javax.jcr.Session;
