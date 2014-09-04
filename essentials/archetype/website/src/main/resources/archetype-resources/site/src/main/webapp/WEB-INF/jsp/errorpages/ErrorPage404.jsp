@@ -10,11 +10,10 @@
 <body>
 <h2>Welcome to Hippo</h2>
 <p>
-  It appears that you just created an empty Hippo project from the archetype. There is nothing to
-  show on the site yet. We recommend you use Hippo Essentials to start developing your project.
+  It appears that you just created an empty Hippo project from the archetype. There is nothing to show on the site yet.
+  We recommend you use
+  <a href="http://<%=request.getServerName() + ':' + request.getServerPort() + "/essentials"%>">Hippo's setup application</a>
+  to start developing your project.
 </p>
-<h3>
-  <a href="http://<%=request.getServerName() + ':' + request.getServerPort() + "/essentials"%>">Go to Hippo Essentials</a>
-</h3>
 </body>
 </html>

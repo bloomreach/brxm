@@ -17,7 +17,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Hippo Essentials</title>
+  <title>Hippo Setup</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css?v=${project.version}"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css?v=${project.version}"/>
   <script type="application/javascript">
@@ -72,7 +72,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
-      <a class="navbar-brand" href="#">Hippo Essentials</a>
+      <a class="navbar-brand" href="#">Hippo Setup</a>
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>
