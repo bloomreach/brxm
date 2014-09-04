@@ -26,7 +26,7 @@
     <sv:value>true</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:path" sv:type="String">
-    <sv:value>{{namespace}}:{{path}}</sv:value>
+    <sv:value>{{provider}}</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:type" sv:type="String">
     <sv:value>nt:base</sv:value>
