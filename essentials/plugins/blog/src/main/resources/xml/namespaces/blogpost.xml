@@ -147,7 +147,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-          <sv:value>false</sv:value>
+          <sv:value>true</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
           <sv:value>false</sv:value>

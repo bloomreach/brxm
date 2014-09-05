@@ -64,12 +64,7 @@ public class HippoContentBean {
         this.contentType = contentType;
 
         final String originalName = contentType.getName();
-        if( originalName.indexOf(',') !=-1){
-            name = COMMA_SPLITTER.split(originalName)[0];
-        }else{
-            name = originalName;
-        }
-
+        name = extractName(originalName);
         if (name.indexOf(':') != -1) {
             final String[] fullName = PREFIX_SPLITTER.split(name);
             this.shortName = fullName[1];
@@ -81,6 +76,20 @@ public class HippoContentBean {
         processProperties();
         processSubNodes();
         processSupertypes();
+    }
+
+    private String extractName(final String originalName) {
+        String myName = originalName;
+        if (originalName.indexOf(',') != -1) {
+            final String[] names = COMMA_SPLITTER.split(originalName);
+            myName = names[0];
+            for (String n : names) {
+                if (n.startsWith(context.getProjectNamespacePrefix())) {
+                    myName = n;
+                }
+            }
+        }
+        return myName;
     }
 
     private void processSupertypes() {
