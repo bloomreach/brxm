@@ -85,7 +85,7 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="resourcebundle:messages" sv:type="String">
       <sv:value>Home Page</sv:value>
-      <sv:value>Every website comes with its own styling requirements. Hippo's Setup application can therefore not address site styling. Instead, the generated pages use minimal styling to render the content. It is the task of the Hippo developer to adjust the front-end to the site's needs. - [This text can be edited &lt;a href="http://localhost:8080/cms/?1&amp;path=/content/documents/administration/labels/homepage" target="_blank"&gt;here&lt;/a&gt;.]</sv:value>
+      <sv:value>Every website comes with its own styling requirements. Hippo's setup application can therefore not address site styling. Instead, the generated pages use minimal styling to render the content. It is the task of the Hippo developer to adjust the front-end to the site's needs. - [This text can be edited &lt;a href="http://localhost:8080/cms/?1&amp;path=/content/documents/administration/labels/homepage" target="_blank"&gt;here&lt;/a&gt;.]</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

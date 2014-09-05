@@ -231,7 +231,7 @@
 
                     var modalOptions = {
                         headerText: 'Service Down',
-                        bodyText: 'The Essentials dashboard server appears to be down. If you are' +
+                        bodyText: 'The setup application server appears to be down. If you are' +
                             ' rebuilding the project, please wait until it is up and running again.'
 
                     };
