@@ -623,7 +623,7 @@
         "id": "bannerPlugin",
         "name": "Banners",
         "icon" : "/essentials/images/icons/bundle.png",
-        "introduction": "With Banner, you add banners to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
+        "introduction": "With Banner, you add banners and carousels to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
         "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/document-component.html",
         "imageUrls": [
             "/essentials/images/screenshots/banner01.png",
