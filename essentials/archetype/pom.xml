@@ -29,7 +29,7 @@
   </description>
 
   <artifactId>essentials-archetype</artifactId>
-  <version>1.02.02-SNAPSHOT</version>
+  <version>2.00.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
