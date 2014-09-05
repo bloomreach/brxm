@@ -16,24 +16,18 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
-import java.util.List;
-
-public class DocumentTypeRestful implements Restful {
-    private String id;
+public class ContentBlocksFieldRestful implements Restful {
     private String name;
-    private List<ContentBlocksFieldRestful> contentBlocksFields;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
-    }
+    private String picketType;
+    private Integer maxItems;
+    List<String> compoundRefs;
 
     public String getName() {
         return name;
@@ -43,19 +37,44 @@ public class DocumentTypeRestful implements Restful {
         this.name = name;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
-    })
-    public List<ContentBlocksFieldRestful> getContentBlocksFields() {
-        return contentBlocksFields;
+    public String getPicketType() {
+        return picketType;
+    }
+
+    public void setPicketType(final String picketType) {
+        this.picketType = picketType;
+    }
+
+    public Integer getMaxItems() {
+        return maxItems;
+    }
+
+    public void setMaxItems(final Integer maxItems) {
+        this.maxItems = maxItems;
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({
-            @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
+            @JsonSubTypes.Type(String.class)
     })
-    public void setProviderActions(final List<ContentBlocksFieldRestful> contentBlocksFields) {
-        this.contentBlocksFields = contentBlocksFields;
+    public List<String> getCompoundRefs() {
+        return compoundRefs;
     }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+    @JsonSubTypes({
+            @JsonSubTypes.Type(String.class)
+    })
+    public void setCompoundRefs(final List<String> compoundRefs) {
+        this.compoundRefs = compoundRefs;
+    }
+
+    public void addCompoundRef(String compoundRef) {
+        if (compoundRefs == null) {
+            compoundRefs = new ArrayList<>();
+        }
+
+        compoundRefs.add(compoundRef);
+    }
+
 }

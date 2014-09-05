@@ -46,11 +46,14 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.model.*;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.*;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.*;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compound;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.DocumentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,21 +69,81 @@ public class ContentBlocksResource extends BaseResource {
     private static final String ERROR_MSG = "The Content Blocks plugin encountered an error, check the log messages for more info.";
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
 
+    @GET
+    @Path("/")
+    public ContentBlocksRestful getContentBlocks() {
+        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.DOCUMENT);
+        List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
+
+        final Session session = GlobalUtils.createSession();
+        try {
+            for (DocumentRestful documentType : documents) {
+                if ("basedocument".equals(documentType.getName())) {
+                    continue; // don't expose the base document as you can't instantiate it.
+                }
+                final String primaryType = documentType.getFullName();
+                final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
+                cbDocument.setId(primaryType);
+                cbDocument.setName(getName(session, primaryType));
+
+                // augment the documents with content block information
+            }
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        final ContentBlocksRestful contentBlocks = new ContentBlocksRestful();
+        contentBlocks.setDocumentTypes(cbDocuments);
+        return contentBlocks;
+    }
+
+    @GET
+    @Path("/compounds")
+    public List<CompoundRestful> getCompounds() {
+        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.COMPOUND);
+        List<CompoundRestful> cbCompounds = new ArrayList<>();
+
+        final Session session = GlobalUtils.createSession();
+        try {
+            for (DocumentRestful compoundType : compoundTypes) {
+                final String primaryType = compoundType.getFullName();
+                final CompoundRestful cbCompound = new CompoundRestful();
+                cbCompound.setId(primaryType);
+                cbCompound.setName(getName(session, primaryType));
+                cbCompounds.add(cbCompound);
+            }
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        return cbCompounds;
+    }
+
+    private String getName(final Session session, final String primaryType) {
+        String name = primaryType;
+        try {
+            name = HippoNodeUtils.getDisplayValue(session, primaryType);
+        } catch (RepositoryException e) {
+            log.warn("Problem retrieving translated name for primary type '" + primaryType + "'.", e);
+        }
+        return name;
+    }
+
     /**
      * Retrieve all document types and their content block providers
      *
      * @return data structure representing the current state.
      */
     @GET
-    @Path("/")
-    public ContentBlocksRestful getContentBlocks() {
+    @Path("/old")
+    public ContentBlocksRestful getContentBlocksOld() {
         final List<DocumentTypeRestful> docTypes = new ArrayList<>();
         final PluginContext context = PluginContextFactory.getContext();
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
 
         final Session session = GlobalUtils.createSession();
         try {
-            final Map<String, ProviderRestful> providerMap = getProviderMap();
+            final Map<String, ProviderRestful> providerMap = null; //getProviderMap();
             final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new JcrMatcher() {
                 @Override
                 public boolean matches(Node node) throws RepositoryException {
@@ -92,8 +155,8 @@ public class ContentBlocksResource extends BaseResource {
                 final DocumentTypeRestful docType = new DocumentTypeRestful();
                 final List<ProviderActionRestful> providerActions = new ArrayList<>();
                 docType.setName(primaryType);
-                docType.setTranslatedName(HippoNodeUtils.getDisplayValue(session, primaryType));
-                docType.setProviderActions(providerActions);
+//                docType.setTranslatedName(HippoNodeUtils.getDisplayValue(session, primaryType));
+//                docType.setProviderActions(providerActions);
 
                 // detect the doc type's provider fields
                 final NodeIterator it = findContentBlockFields(
@@ -136,16 +199,16 @@ public class ContentBlocksResource extends BaseResource {
 
         try {
             for (DocumentTypeRestful docType : contentBlocks.getDocumentTypes()) {
-                for (ProviderActionRestful providerAction : docType.getProviderActions()) {
-                    if (providerAction.isAdd()) {
-                        addProvider(session, docType.getName(), providerAction.getName());
-                    } else {
-                        removeProvider(session, docType.getName(), providerAction.getName());
-                    }
-                }
+//                for (ProviderActionRestful providerAction : docType.getProviderActions()) {
+//                    if (providerAction.isAdd()) {
+//                        addProvider(session, docType.getName(), providerAction.getName());
+//                    } else {
+//                        removeProvider(session, docType.getName(), providerAction.getName());
+//                    }
+//                }
             }
-        } catch (ContentBlocksException e) {
-            return createErrorMessage(e.getMessage(), response);
+//        } catch (ContentBlocksException e) {
+//            return createErrorMessage(e.getMessage(), response);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
@@ -153,75 +216,11 @@ public class ContentBlocksResource extends BaseResource {
         return new MessageRestful("Successfully updated content blocks settings");
     }
 
-    /**
-     * Retrieve a list of all content blocks providers.
-     *
-     * @return data structure representing the current state.
-     */
-    @GET
-    @Path("/providers")
-    public RestfulList<ProviderRestful> getProviders() {
-        final RestfulList<ProviderRestful> providers = new RestList<>();
-        final Session session = GlobalUtils.createSession();
-        try {
-            final Set<String> primaryTypes = HippoNodeUtils.getCompounds(session, new JcrMatcher() {
-                @Override
-                public boolean matches(final Node prototypeNode) throws RepositoryException {
-                    return (prototypeNode.hasProperty("cbitem") && prototypeNode.getProperty("cbitem").getBoolean());
-                }
-            });
-            for (String primaryType : primaryTypes) {
-                final ProviderRestful provider = new ProviderRestful();
-                provider.setName(primaryType);
-                provider.setTranslatedName(HippoNodeUtils.getDisplayValue(session, primaryType));
-                provider.setRepositoryPath(HippoNodeUtils.resolvePath(primaryType));
-                providers.add(provider);
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to retrieve providers", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-        return providers;
-    }
-
-    /**
-     * Create a new empty provider compound.
-     *
-     * This is currently irreversible; we can't unregister a "document" type from the CND.
-     *
-     * @param name     name of the new provider
-     * @param response for signalling an error.
-     * @return         feedback message.
-     */
-    @PUT
-    @Path("/providers/{name}")
-    public MessageRestful createProvider(@PathParam("name") String name, @Context HttpServletResponse response) {
-        final Session session = GlobalUtils.createSession();
-        try {
-            createProvider(session, name);
-        } catch (ContentBlocksException e) {
-            return createErrorMessage(e.getMessage(), response);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-        return new MessageRestful("Successfully created provider with name: " + name);
-    }
-
     private NodeIterator findContentBlockFields(String queryString, final Session session) throws RepositoryException {
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query query = queryManager.createQuery(queryString, EssentialConst.XPATH);
         final QueryResult execute = query.execute();
         return execute.getNodes();
-    }
-
-    private Map<String, ProviderRestful> getProviderMap() {
-        final RestfulList<ProviderRestful> providers = getProviders();
-        Map<String, ProviderRestful> providerMap = new HashMap<>();
-        for (ProviderRestful provider : providers.getItems()) {
-            providerMap.put(provider.getName(), provider);
-        }
-        return providerMap;
     }
 
     private void addProvider(final Session session, final String docTypeName, final String providerName)
@@ -352,44 +351,6 @@ public class ContentBlocksResource extends BaseResource {
         } catch (RepositoryException e) {
             log.error("Document type " + docTypeName + " is missing editor template node.");
             throw new ContentBlocksException(ERROR_MSG);
-        }
-    }
-
-    private void createProvider(final Session session, final String name) throws ContentBlocksException {
-        if (Strings.isNullOrEmpty(name)) {
-            throw new ContentBlocksException("Invalid (empty) provider name.");
-        }
-        final PluginContext context = PluginContextFactory.getContext();
-        final String namespace = context.getProjectNamespacePrefix();
-        final String errorMsg = "Error creating provider '" + name + "'. Check log messages for more information.";
-        try {
-            CndUtils.registerDocumentType(context, namespace, name, true, false, "hippo:compound", "hippostd:relaxed");
-
-            final NamespaceRegistry registry = session.getWorkspace().getNamespaceRegistry();
-            final Map<String, Object> data = new HashMap<>();
-            data.put("name", name);
-            data.put("namespace", namespace);
-            data.put("uri", registry.getURI(namespace));
-
-            final String parsed = TemplateUtils.injectTemplate("provider_template.xml", data, getClass());
-            if (parsed == null) {
-                log.error("Template 'provider_template.xml' not found.");
-                throw new ContentBlocksException(errorMsg);
-            }
-            session.importXML("/hippo:namespaces/" + namespace, IOUtils.toInputStream(parsed),
-                    ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-            session.save();
-        } catch (NodeTypeExistsException e) {
-            final String msg = "Node type " + namespace + ':' + name + " already exists.";
-            log.debug(msg, e);
-            throw new ContentBlocksException(msg);
-        } catch (ItemExistsException e) {
-            final String msg = "Item with name " + namespace + ':' + name + " already exists.";
-            log.debug(msg, e);
-            throw new ContentBlocksException(msg);
-        } catch (RepositoryException | IOException e) {
-            log.error("Error adding compound type: {}", e);
-            throw new ContentBlocksException(errorMsg);
         }
     }
 }

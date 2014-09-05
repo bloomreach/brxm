@@ -29,7 +29,7 @@
             $scope.newProviderName = "";
             $scope.createProvider = function () {
                 $http.put(restEndpoint + 'providers/' + $scope.newProviderName).success(function (data) {
-                    loadProviders(); // reload providers after adding one
+                    loadCompounds(); // reload providers after adding one
                 });
                 $scope.newProviderName = "";
             };
@@ -85,45 +85,40 @@
             };
 
             $scope.init = function () {
-                loadProviders();
-                loadDocumentTypes();
+                $http.get(restEndpoint + 'compounds').success(function (data) {
+                    $scope.compounds = data;
+
+                    // create the compound map
+                    $scope.compoundMap = {};
+                    angular.forEach($scope.compounds, function (compound) {
+                        $scope.compoundMap[compound.id] = compound;
+                    });
+
+                    loadDocumentTypes();
+                });
             };
             $scope.init();
                 
             // Helper functions
-            function loadProviders() {
-                $http.get(restEndpoint + 'providers').success(function (data) {
-                    $scope.providers = data.items;
-
-                    // (re-)initialize the provider map
-                    $scope.providerMap = {};
-                    angular.forEach($scope.providers, function (provider) {
-                        $scope.providerMap[provider.name] = provider;
-                    });
-
-                    // replace the provider links
-                    angular.forEach($scope.documentTypes, function(docType) {
-                        var newProviders = [];
-                        angular.forEach(docType.providers, function(provider) {
-                            newProviders.push($scope.providerMap[provider.name]);
-                        });
-                        docType.providers = newProviders;
-                    });
-                });
+            function loadCompounds() {
+                // delete!
             }
             function loadDocumentTypes() {
-                $http.get(restEndpoint).success(function (data) {
-                    $scope.documentTypes = data.documentTypes;
-                    angular.forEach($scope.documentTypes, function (docType) {
-                        // prepare document types for displaying in the UI.
-                        var parts = docType.name.split(':');
-                        docType.prefix = parts[0];
-                        docType.nodeName = parts[1];
-                        docType.providers = [];
-                        angular.forEach(docType.providerActions, function(provider) {
-                            docType.providers.push($scope.providerMap[provider.name]);
-                        });
+                $http.get($rootScope.REST.documents_documents).success(function (data) {
+                    $scope.documentTypes = data;
+
+                    // filter document types to show
+                    $scope.editable = [];
+                    angular.forEach(data, function(type) {
+                        if (type.name !== 'basedocument') {
+                            $scope.editable.push(type);
+                        }
                     });
+
+                    // if there's only one editable type, preselect it.
+                    if ($scope.editable.length == 1) {
+                        $scope.selectedDocumentType = $scope.editable[0];
+                    }
                 });
             }
         })

@@ -15,90 +15,64 @@
   -->
 
 <div class="panel panel-default" ng-controller="contentBlocksCtrl">
-    <div class="panel-heading"><h3>Content Blocks</h3></div>
-    <div class="panel-body">
-        <p>The Content Blocks feature provides support for adding <em>content blocks fields</em> to your document types.
-            A content block field is a collection of different (potentially complex) field types from which the content
-            authors may choose, and it is represented by a <em>provider</em>. A provider is a specialized compound field
-            which holds together all choices of the content blocks field.
-        </p>
-        <p>This configuration screen allows you to create new (empty) providers, and associate them with your document
-            types. After creating a new provider, you want to add field choices to it in the CMS Document Type
-            Editor in order to make it a meaningful provider. You can click on the provider's link to get there.
-            Beware that field choices of type <em>compound</em> are currently supported.
-        </p>
-        <p>When you associate a provider with one of your document types, the corresponding content blocks field will
-            be created at the default location for new fields. You can move the content blocks field to the desired
-            position in (again) the CMS Document Type Editor. You can click on the document type's link to get there.
-            Make sure you commit all changes before coming back to the setup application.
-        </p>
-        <p class="alert alert-info">Note that both the creation of a new provider and associating providers with
-            document types will require an update of your content beans. The BeanWriter tool is currently not capable of
-            dealing with Content Blocks fields correctly, so you'll need to do this manually, in your project sources.
-        </p>
-        <p>You can find more detailed documentation for the
-            <a target="_blank" href="http://content-blocks.forge.onehippo.org">Content Blocks plugin in the Hippo Forge</a>.
-        </p>
-        <h4>Available Providers</h4>
-        <div class="alert-warning" ng-hide="providers.length > 0">
-            <p><strong>No providers found</strong></p>
-        </div>
-        <ul ng-show="providers.length > 0" class="list-group">
-            <li class="list-group-item essentials-group-item" ng-repeat="provider in providers">
-                <a href="{{baseCmsNamespaceUrl}}{{provider.repositoryPath}}" target="_blank">{{provider.translatedName}}</a>
-            </li>
-        </ul>
-        <h4>Create new Provider</h4>
-        <form novalidate name="providerForm">
-            <div class="input-group">
-                <input type="text"
-                       class="form-control"
-                       ng-model="newProviderName"
-                       ng-required="true"
-                       ng-pattern="/^[a-zA-Z]{2,}$/"
-                       placeholder="Enter provider name"/>
-                <span class="input-group-btn">
-                    <button ng-disabled="!providerForm.$valid"
-                            class="btn btn-primary"
-                            type="submit"
-                            ng-click="createProvider()">Create</button>
-                </span>
-            </div>
-        </form>
-        <div ng-show="providers.length > 0">
-            <h4>Document Type Setup</h4>
-            <table class="table table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th class="col-sm-7">Document Type</th>
-                    <th class="col-sm-7">Associated Providers</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="docType in documentTypes">
-                    <td>
-                      <essentials-cms-document-type-deep-link
-                          name-space="{{docType.prefix}}"
-                          document-name="{{docType.nodeName}}"
-                          label="{{docType.translatedName}}">
-                      </essentials-cms-document-type-deep-link>
-                    </td>
-                    <td>
-                        <select hippo.theme.select-box ng-model="docType.providers"
-                              no-results-text="No Providers available"
-                              ng-options="p.translatedName for p in providers" multiple="multiple"
-                              data-options="providers"
-                              data-placeholder="Select Providers"></select>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="pull-right">
-                <button class="btn btn-primary" ng-click="update()">Save</button>
-            </div>
-            <p class="clearfix">&nbsp;</p>
-        </div>
+  <div class="panel-heading"><h3>Content Blocks</h3></div>
+  <div class="panel-body">
+    <p>The Content Blocks feature provides support for adding <em>content blocks fields</em> to your document types.
+      A content block field is a collection of different (potentially complex) field types from which the content
+      authors may choose.
+    </p>
+    <p>This configuration screen allows you to add new content blocks field to your document types. You can also
+      modify (or delete) existing content blocks fields.
+    </p>
+    <p>When you create a new content blocks field, it will be created at the default location for new fields.
+      You can move the content blocks field to the desired position in the CMS Document Type Editor. You can
+      click on the document type's link to get there. Make sure you commit all changes before coming back to
+      the setup application.
+    </p>
+    <p class="alert alert-info">Note that adding a new content blocks field to a document type will require an
+      update of the corresponding content bean. The BeanWriter tool is currently not capable of dealing with
+      content blocks fields correctly, so you'll need to do this manually, in your project sources.
+    </p>
+    <p>You can find more detailed documentation for the
+      <a target="_blank" href="http://content-blocks.forge.onehippo.org">Content Blocks plugin in the Hippo Forge</a>.
+    </p>
+
+    <h4>Edit your Content Blocks Fields</h4>
+    <div ng-hide="documentTypes.length > 0" class="alert alert-warning">
+      <p>You appear not to have any editable document types in your project yet. In order to create content blocks fields,
+        you first need to have document types. Either install features that provide a document type, or create some
+        in the CMS Document Type Editor.
+      </p>
     </div>
+    <form ng-show="documentTypes.length > 0" class="form-horizontal" novalidate name="contentBlocksForm">
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Document Type:</label>
+        <div class="col-sm-8">
+          <select name="documentType" required hippo.theme.select-box
+                  class="form-control"
+                  ng-model="selectedDocumentType"
+                  ng-selected="selectedDocumentType"
+                  ng-options="type.name for type in editable"
+                  data-options="editable"
+                  data-placeholder="Choose a document type...">
+          </select>
+        </div>
+      </div>
+
+      <!--Document type-specific part-->
+      <div ng-show="selectedDocumentType">
+        Here comes the document type specific part: A list of existing content blocks fields, where you can
+        edit the content blocks (also the name?), or which you can delete. Then, there's a form group to create
+        a new field (name) with associated content blocks. Do we want to support copying an existing field from
+        the same or another document type? Would be nice!
+      </div>
+
+      <div class="pull-right">
+        <button class="btn btn-primary" ng-click="update()">Save Changes</button>
+      </div>
+      <p class="clearfix">&nbsp;</p>
+    </form>
+  </div>
 </div>
 
 

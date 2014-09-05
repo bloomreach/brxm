@@ -1259,6 +1259,8 @@ plugins/content-blocks/pom.xml -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksException.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksParameterService.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksResource.java -text
+plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/CompoundRestful.java -text
+plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ContentBlocksFieldRestful.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ContentBlocksRestful.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/DocumentTypeRestful.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ProviderActionRestful.java -text

@@ -16,16 +16,11 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
-import java.util.List;
-
-public class DocumentTypeRestful implements Restful {
+public class CompoundRestful implements Restful {
     private String id;
     private String name;
-    private List<ContentBlocksFieldRestful> contentBlocksFields;
 
     public String getId() {
         return id;
@@ -41,21 +36,5 @@ public class DocumentTypeRestful implements Restful {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
-    })
-    public List<ContentBlocksFieldRestful> getContentBlocksFields() {
-        return contentBlocksFields;
-    }
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
-    })
-    public void setProviderActions(final List<ContentBlocksFieldRestful> contentBlocksFields) {
-        this.contentBlocksFields = contentBlocksFields;
     }
 }
