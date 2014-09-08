@@ -322,7 +322,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             getLogger().error("Failed to initialize item {}: invalid {} property", item.getName(), HippoNodeType.HIPPO_WEBRESOURCEBUNDLE);
             return Optional.absent();
         }
-        final String parentPath = bundlePath.indexOf('/') == -1 ? "" : bundlePath.substring(0, bundlePath.lastIndexOf('/'));
         final String extensionSource = JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_EXTENSIONSOURCE, null);
         if (extensionSource != null && extensionSource.contains(".jar!")) {
             int index = -1;
@@ -347,23 +346,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
         }
         return Optional.absent();
-    }
-
-    private void createNtFile(final Node folderNode, final ZipFile zipFile, final ZipEntry resourceEntry, final String name) throws RepositoryException, IOException {
-        final Node file = folderNode.addNode(name, JcrConstants.NT_FILE);
-        final Node resource = file.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE);
-        final String mimeType = tika.detect(resourceEntry.getName());
-        if (mimeType != null) {
-            resource.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-        }
-        final Binary data = folderNode.getSession().getValueFactory().createBinary(zipFile.getInputStream(resourceEntry));
-        resource.setProperty(JcrConstants.JCR_DATA, data);
-    }
-
-    private Node createNtFolder(Node parentNode, final String pathElement) throws RepositoryException {
-        parentNode = parentNode.addNode(pathElement, JcrConstants.NT_FOLDER);
-        getLogger().info("Added nt:folder {}", parentNode.getPath());
-        return parentNode;
     }
 
     private void processContentPropSet(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
