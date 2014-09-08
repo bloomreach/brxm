@@ -1240,6 +1240,7 @@ table.hippo-window-form {
   margin-left: 2px;
   background-image: url("images/hippo-picker-navigation-breadcrumb.png");
   background-position: left 20px;
+  background-repeat: repeat-y;
   padding-left: 7px;
 }
 
