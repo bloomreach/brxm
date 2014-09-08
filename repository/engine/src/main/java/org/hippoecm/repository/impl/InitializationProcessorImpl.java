@@ -129,7 +129,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             HippoNodeType.HIPPO_TIMESTAMP + " IS NULL OR " +
             HippoNodeType.HIPPO_TIMESTAMP + " < {})";
 
-    private static final Double NO_HIPPO_SEQUENCE = new Double(-1.0);
+    private static final double NO_HIPPO_SEQUENCE = -1.0;
 
     private static final Comparator<Node> initializeItemComparator = new Comparator<Node>() {
 
@@ -151,8 +151,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     };
 
     private Logger logger;
-
-    private final Tika tika = new Tika();
 
     public InitializationProcessorImpl() {}
 
