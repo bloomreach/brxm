@@ -29,7 +29,7 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>components</artifactId>
-    <version>1.02.03-SNAPSHOT</version>
+    <version>1.02.03</version>
   </parent>
 
   <name>Hippo Essentials CMS Component Library</name>
