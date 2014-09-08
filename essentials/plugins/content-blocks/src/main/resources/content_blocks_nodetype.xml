@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="{{path}}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="{{name}}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:field</sv:value>
   </sv:property>
@@ -26,9 +26,12 @@
     <sv:value>true</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:path" sv:type="String">
-    <sv:value>{{provider}}</sv:value>
+    <sv:value>{{namespace}}:{{name}}</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:type" sv:type="String">
     <sv:value>nt:base</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
+    <sv:value>contentblocks-validator</sv:value>
   </sv:property>
 </sv:node>

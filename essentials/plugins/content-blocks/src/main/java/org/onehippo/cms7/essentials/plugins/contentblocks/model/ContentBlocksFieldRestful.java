@@ -25,8 +25,9 @@ import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 public class ContentBlocksFieldRestful implements Restful {
     private String name;
-    private String picketType;
-    private Integer maxItems;
+    private String originalName;
+    private String pickerType;
+    private long maxItems;
     List<String> compoundRefs;
 
     public String getName() {
@@ -37,19 +38,27 @@ public class ContentBlocksFieldRestful implements Restful {
         this.name = name;
     }
 
-    public String getPicketType() {
-        return picketType;
+    public String getOriginalName() {
+        return originalName;
     }
 
-    public void setPicketType(final String picketType) {
-        this.picketType = picketType;
+    public void setOriginalName(final String originalName) {
+        this.originalName = originalName;
     }
 
-    public Integer getMaxItems() {
+    public String getPickerType() {
+        return pickerType;
+    }
+
+    public void setPickerType(final String pickerType) {
+        this.pickerType = pickerType;
+    }
+
+    public long getMaxItems() {
         return maxItems;
     }
 
-    public void setMaxItems(final Integer maxItems) {
+    public void setMaxItems(final long maxItems) {
         this.maxItems = maxItems;
     }
 

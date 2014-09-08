@@ -73,7 +73,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/")
     public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.ALL);
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.ALL);
     }
 
     @ApiOperation(
@@ -82,7 +82,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.DOCUMENT);
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.DOCUMENT);
     }
 
     @ApiOperation(
@@ -91,7 +91,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.COMPOUND);
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.COMPOUND);
     }
 
 

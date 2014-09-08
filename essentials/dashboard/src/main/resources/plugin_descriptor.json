@@ -24,6 +24,7 @@
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge",
                 "artifactId": "content-blocks",
+                "version": "1.11.01",
                 "scope": "compile",
                 "targetPom": "cms"
             }

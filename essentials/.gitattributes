@@ -1261,10 +1261,7 @@ plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/conten
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksResource.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/CompoundRestful.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ContentBlocksFieldRestful.java -text
-plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ContentBlocksRestful.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/DocumentTypeRestful.java -text
-plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ProviderActionRestful.java -text
-plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/ProviderRestful.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/RestList.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/CBPayload.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/Compound.java -text

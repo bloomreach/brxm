@@ -20,6 +20,7 @@ import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentTypeRestful implements Restful {
@@ -55,7 +56,15 @@ public class DocumentTypeRestful implements Restful {
     @JsonSubTypes({
             @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
     })
-    public void setProviderActions(final List<ContentBlocksFieldRestful> contentBlocksFields) {
+    public void setContentBlocksFields(final List<ContentBlocksFieldRestful> contentBlocksFields) {
         this.contentBlocksFields = contentBlocksFields;
+    }
+
+    public void addContentBlocksField(final ContentBlocksFieldRestful contentBlocksField) {
+        if (contentBlocksFields == null) {
+            contentBlocksFields = new ArrayList<>();
+        }
+
+        contentBlocksFields.add(contentBlocksField);
     }
 }

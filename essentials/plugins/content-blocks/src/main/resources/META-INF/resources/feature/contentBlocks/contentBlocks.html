@@ -45,15 +45,15 @@
       </p>
     </div>
     <form ng-show="documentTypes.length > 0" class="form-horizontal" novalidate name="contentBlocksForm">
-      <div class="form-group">
+      <div ng-show="contentBlocksForm.$valid" class="form-group">
         <label class="col-sm-4 control-label">Document Type:</label>
         <div class="col-sm-8">
-          <select name="documentType" required hippo.theme.select-box
+          <select name="documentType" hippo.theme.select-box
                   class="form-control"
                   ng-model="selectedDocumentType"
                   ng-selected="selectedDocumentType"
-                  ng-options="type.name for type in editable"
-                  data-options="editable"
+                  ng-options="type.name for type in documentTypes"
+                  data-options="documentTypes"
                   data-placeholder="Choose a document type...">
           </select>
         </div>
@@ -61,14 +61,54 @@
 
       <!--Document type-specific part-->
       <div ng-show="selectedDocumentType">
-        Here comes the document type specific part: A list of existing content blocks fields, where you can
-        edit the content blocks (also the name?), or which you can delete. Then, there's a form group to create
-        a new field (name) with associated content blocks. Do we want to support copying an existing field from
-        the same or another document type? Would be nice!
+        <div ng-hide="selectedDocumentType.contentBlocksFields.length > 0" class="alert alert-warning">
+          <p>This document type does not yet have any content blocks fields. You can add some and then set them up.
+          </p>
+        </div>
+        <table ng-show="selectedDocumentType.contentBlocksFields.length > 0" class="table table-hover">
+          <tr>
+            <th>Field Name</th>
+            <th>Picker Type</th>
+            <th>Max Items</th>
+            <th>Available Compounds</th>
+            <th></th>
+          </tr>
+          <tr ng-repeat="field in selectedDocumentType.contentBlocksFields">
+            <td>
+              <input class="form-control" required type="text" ng-model="field.name"/>
+            </td>
+            <td>
+              <select hippo.theme.select-box
+                      class="form-control"
+                      ng-model="field.pickerType"
+                      ng-selected="field.pickerType"
+                      ng-options="pickerType for pickerType in pickerTypes"
+                      data-options="pickerTypes"></select>
+            </td>
+            <td>
+              <input class="form-control" type="text" ng-model="field.maxItems" ng-pattern="/^\d+$/" placeholder="No limit"/>
+            </td>
+            <td>
+              <select hippo.theme.select-box
+                      class="form-control"
+                      multiple="multiple"
+                      required
+                      ng-model="field.compounds"
+                      ng-selected="field.compounds"
+                      ng-options="compound.name for compound in compounds"
+                      data-options="compounds"
+                      data-placeholder="Select compound types"></select>
+            </td>
+            <td>
+              <button class="btn btn-danger" ng-click="deleteField(field)">Delete</button>
+            </td>
+          </tr>
+        </table>
+        <button class="btn btn-success" ng-click="addField()">Add empty content blocks field</button>
       </div>
 
       <div class="pull-right">
-        <button class="btn btn-primary" ng-click="update()">Save Changes</button>
+        <button class="btn btn-primary" ng-disabled="!contentBlocksForm.$valid" ng-click="update()">Save Changes</button>
       </div>
       <p class="clearfix">&nbsp;</p>
     </form>

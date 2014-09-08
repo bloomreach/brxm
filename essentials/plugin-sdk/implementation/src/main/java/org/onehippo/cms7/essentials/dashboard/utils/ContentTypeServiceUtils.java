@@ -68,11 +68,21 @@ public class ContentTypeServiceUtils {
      * @param type for filtering document types
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocuments(final Type type) {
+    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final Type type) {
+        return fetchDocuments(type, true);
+    }
+
+    /**
+     * Fetch a list of documents of the specified type.
+     *
+     * @param type for filtering document types
+     * @return filtered list of document types
+     */
+    public static List<DocumentRestful> fetchDocuments(final Type type, boolean ownNamespaceOnly) {
         final PluginContext context = PluginContextFactory.getContext();
         final String namespacePrefix = context.getProjectNamespacePrefix();
         final Session session = context.createSession();
-        final Collection<ContentType> projectContentTypes = new HashSet<>();
+        final Collection<ContentType> filteredContentTypes = new HashSet<>();
         final List<DocumentRestful> documents = new ArrayList<>();
         try {
             final ContentTypeService service = new HippoContentTypeService(session);
@@ -81,15 +91,14 @@ public class ContentTypeServiceUtils {
 
             // filter on own namespace
             for (Map.Entry<String, Set<ContentType>> entry : typesByPrefix.entrySet()) {
-                final String key = entry.getKey();
                 final Set<ContentType> value = entry.getValue();
-                if (key.equals(namespacePrefix)) {
-                    projectContentTypes.addAll(value);
+                if (!ownNamespaceOnly || entry.getKey().equals(namespacePrefix)) {
+                    filteredContentTypes.addAll(value);
                 }
             }
 
             // filter on document type
-            for (ContentType doc : projectContentTypes) {
+            for (ContentType doc : filteredContentTypes) {
                 Type myType = doc.isCompoundType() ? Type.COMPOUND : Type.DOCUMENT;
 
                 if (type == Type.ALL) {
