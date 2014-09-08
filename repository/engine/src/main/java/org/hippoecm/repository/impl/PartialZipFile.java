@@ -17,8 +17,8 @@ package org.hippoecm.repository.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -27,11 +27,11 @@ import org.apache.commons.lang.StringUtils;
 /**
  * View on a subset of the entries in a zipfile below a certain path.
  */
-class SubZipFile extends ZipFile {
+class PartialZipFile extends ZipFile {
 
     private final String subPath;
 
-    SubZipFile(final File file, final String subPath) throws IOException {
+    PartialZipFile(final File file, final String subPath) throws IOException {
         super(file);
         this.subPath = StringUtils.removeEnd(subPath, "/");
     }
@@ -46,13 +46,13 @@ class SubZipFile extends ZipFile {
 
     @Override
     public Enumeration<? extends ZipEntry> entries() {
-        return new SubEnumeration<>(super.entries(), subPath);
+        return new PartialEnumeration<>(super.entries(), subPath);
     }
 
     @Override
     public int size() {
         int result = 0;
-        SubEnumeration enumeration = new SubEnumeration(super.entries(), subPath);
+        PartialEnumeration enumeration = new PartialEnumeration(super.entries(), subPath);
         while (enumeration.hasMoreElements()) {
             enumeration.nextElement();
             result++;
@@ -64,13 +64,13 @@ class SubZipFile extends ZipFile {
         return entryName.equals(subPath) || entryName.startsWith(subPath + "/");
     }
 
-    private static class SubEnumeration<T extends ZipEntry> implements Enumeration<T> {
+    private static class PartialEnumeration<T extends ZipEntry> implements Enumeration<T> {
 
         private final Enumeration<T> delegate;
         private final String subPath;
         private T next;
 
-        private SubEnumeration(final Enumeration<T> delegate, final String subPath) {
+        private PartialEnumeration(final Enumeration<T> delegate, final String subPath) {
             this.delegate = delegate;
             this.subPath = subPath;
             this.next = null;
@@ -94,12 +94,12 @@ class SubZipFile extends ZipFile {
 
         @Override
         public T nextElement() {
-            if (next != null) {
+            if (next != null || hasMoreElements()) {
                 T result = next;
                 next = null;
                 return result;
             } else {
-                return delegate.nextElement();
+                throw new NoSuchElementException("No more entries below " + subPath);
             }
         }
     }

@@ -336,7 +336,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
             }
             try {
-                final SubZipFile bundleZipFile = new SubZipFile(getBaseZipFileFromURL(new URL(extensionSource)), bundlePath);
+                final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(new URL(extensionSource)), bundlePath);
                 final ImportWebResourceBundleTask importTask = new ImportWebResourceBundleTask(session, bundleZipFile);
                 return Optional.of(importTask);
             } catch (IOException | URISyntaxException e) {
@@ -1169,9 +1169,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private class ImportWebResourceBundleTask implements PostStartupTask {
 
         private final Session session;
-        private final SubZipFile bundleZipFile;
+        private final PartialZipFile bundleZipFile;
 
-        public ImportWebResourceBundleTask(final Session session, final SubZipFile bundleZipFile) {
+        public ImportWebResourceBundleTask(final Session session, final PartialZipFile bundleZipFile) {
             this.session = session;
             this.bundleZipFile = bundleZipFile;
         }

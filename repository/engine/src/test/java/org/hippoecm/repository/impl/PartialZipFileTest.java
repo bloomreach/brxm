@@ -17,19 +17,23 @@ package org.hippoecm.repository.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.ZipTestUtil;
 
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Tests {@link SubZipFile}.
+ * Tests {@link PartialZipFile}.
  */
-public class SubZipFileTest {
+public class PartialZipFileTest {
 
     private File testZipFile;
 
@@ -40,43 +44,59 @@ public class SubZipFileTest {
 
     @Test
     public void unknownSubPath() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "noSuchSubPathInZip");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "noSuchSubPathInZip");
         ZipTestUtil.assertEntries(subZip);
     }
 
     @Test
     public void emptySubPath() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "empty");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "empty");
         ZipTestUtil.assertEntries(subZip, "empty/");
     }
 
     @Test
     public void subPathWithOneEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "one");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "one");
         ZipTestUtil.assertEntries(subZip, "one/", "one/baz");
     }
 
     @Test
     public void subPathWithTwoEntries() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "two");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "two");
         ZipTestUtil.assertEntries(subZip, "two/", "two/bar", "two/foo");
     }
 
     @Test
+    public void enumeratePartialWithNextElementOnly() throws IOException {
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "two");
+        final Enumeration<? extends ZipEntry> entries = subZip.entries();
+
+        assertEquals("two/", entries.nextElement().getName());
+        assertEquals("two/bar", entries.nextElement().getName());
+        assertEquals("two/foo", entries.nextElement().getName());
+        try {
+            entries.nextElement();
+            fail("An exception should be thrown because there should be no more entries");
+        } catch (NoSuchElementException expected) {
+            // all OK
+        }
+    }
+
+    @Test
     public void getIncludedEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "two");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "two");
         assertEquals("two/foo", subZip.getEntry("two/foo").getName());
     }
 
     @Test
     public void getNonIncludedEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "two");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "two");
         assertNull(subZip.getEntry("one/baz"));
     }
 
     @Test
     public void getNonExistingEntry() throws IOException {
-        SubZipFile subZip = new SubZipFile(testZipFile, "one");
+        PartialZipFile subZip = new PartialZipFile(testZipFile, "one");
         assertNull(subZip.getEntry("no/such/entry"));
     }
 
