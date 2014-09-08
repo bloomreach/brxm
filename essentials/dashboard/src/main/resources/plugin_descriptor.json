@@ -75,6 +75,13 @@
                 "artifactId": "selectionplugins-addon-cms",
                 "scope": "compile",
                 "targetPom": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.cms7.essentials.components",
+                "artifactId": "cms",
+                "scope": "compile",
+                "targetPom": "cms"
             }
         ],
         "libraries": [
