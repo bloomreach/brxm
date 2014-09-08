@@ -52,7 +52,7 @@ class PartialZipFile extends ZipFile {
     @Override
     public int size() {
         int result = 0;
-        PartialEnumeration enumeration = new PartialEnumeration(super.entries(), subPath);
+        PartialEnumeration enumeration = new PartialEnumeration<>(super.entries(), subPath);
         while (enumeration.hasMoreElements()) {
             enumeration.nextElement();
             result++;
