@@ -381,6 +381,7 @@ test/src/test/resources/sample-demodata.xml -text svneol=unset#text/plain
 test/src/test/resources/sample.cnd -text
 test/src/test/resources/user-author.xml -text svneol=unset#text/plain
 test/src/test/resources/user-editor.xml -text svneol=unset#text/plain
+test/src/test/resources/webresourcebundle/images/hippo.png -text svneol=unset#image/png
 testcontent/pom.xml -text
 testcontent/src/main/resources/hippoecm-extension.xml -text
 testcontent/src/main/resources/testcontent-asset-example.xml -text

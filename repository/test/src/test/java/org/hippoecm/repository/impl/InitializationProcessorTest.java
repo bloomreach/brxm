@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.io.FileUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -73,6 +74,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
     private Node test;
     private Node item;
+    private WebResourcesService webResourcesService;
 
     @Before
     public void setUp() throws Exception {
@@ -82,12 +84,18 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_STATUS, "pending");
         session.getRootNode().addNode("webresources");
         session.save();
+
+        webResourcesService = EasyMock.createMock(WebResourcesService.class);
+        HippoServiceRegistry.registerService(webResourcesService, WebResourcesService.class);
     }
 
     @After
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:initialize/testnode");
         removeNode("/webresources");
+
+        HippoServiceRegistry.unregisterService(webResourcesService, WebResourcesService.class);
+
         super.tearDown();
     }
 
@@ -228,7 +236,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testWebResourceBundleInitialization() throws Exception {
+    public void testWebResourceBundleInitializationFromJar() throws Exception {
         item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "resources");
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");
         session.save();
@@ -238,9 +246,6 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         // test the post-startup task
         final PostStartupTask importWebResources = tasks.get(0);
-
-        WebResourcesService webResourcesService = EasyMock.createMock(WebResourcesService.class);
-        HippoServiceRegistry.registerService(webResourcesService, WebResourcesService.class);
 
         Capture<ZipFile> capturedZip = new Capture();
         webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)), eq(WebResourcesService.ImportMode.REPLACE));
@@ -271,6 +276,46 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         EasyMock.reset(webResourcesService);
         webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), anyObject(ZipFile.class), eq(WebResourcesService.ImportMode.REPLACE));
+        expectLastCall();
+
+        replay(webResourcesService);
+        reimportWebresources.execute();
+        verify(webResourcesService);
+    }
+
+    @Test
+    public void testWebResourceBundleInitializationFromDirectory() throws Exception {
+        final URL testBundleUrl = getClass().getResource("/hippoecm-extension.xml");
+
+        item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "webresourcebundle");
+        item.setProperty(HIPPO_EXTENSIONSOURCE, testBundleUrl.toString());
+        session.save();
+
+        final List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be one post-startup task", 1, tasks.size());
+
+        // test the post-startup task
+        final PostStartupTask importWebResources = tasks.get(0);
+
+        final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "webresourcebundle");
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir), eq(WebResourcesService.ImportMode.REPLACE));
+        expectLastCall();
+
+        replay(webResourcesService);
+        importWebResources.execute();
+        verify(webResourcesService);
+
+        // test reload
+        item.setProperty(HIPPO_RELOADONSTARTUP, true);
+        item.setProperty(HIPPO_STATUS, "pending");
+        session.save();
+
+        final List<PostStartupTask> reloadTasks = process(null);
+        assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
+        final PostStartupTask reimportWebresources = reloadTasks.get(0);
+
+        EasyMock.reset(webResourcesService);
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir), eq(WebResourcesService.ImportMode.REPLACE));
         expectLastCall();
 
         replay(webResourcesService);

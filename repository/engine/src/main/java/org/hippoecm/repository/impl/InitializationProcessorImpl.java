@@ -302,9 +302,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private Optional<? extends PostStartupTask> processWebResourceBundle(final Node item, final Session session) throws RepositoryException {
-        final String webResourcesRoot = WebResourcesService.JCR_ROOT_PATH;
-        if (!session.nodeExists(webResourcesRoot)) {
-            getLogger().error("Failed to initialize item {}: web resources root {} is missing", item.getName(), webResourcesRoot);
+        if (!session.nodeExists(WebResourcesService.JCR_ROOT_PATH)) {
+            getLogger().error("Failed to initialize item {}: web resources root {} is missing", item.getName(), WebResourcesService.JCR_ROOT_PATH);
             return Optional.absent();
         }
 
@@ -317,27 +316,37 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return Optional.absent();
         }
         final String extensionSource = JcrUtils.getStringProperty(item, HippoNodeType.HIPPO_EXTENSIONSOURCE, null);
-        if (extensionSource != null && extensionSource.contains(".jar!")) {
-            int index = -1;
-            String contextNodePath = null;
-            if (isReloadable(item)) {
+
+        try {
+            final Optional<? extends PostStartupTask> importTask = createImportWebResourceTask(extensionSource, bundlePath, session);
+            if (importTask.isPresent() && isReloadable(item)) {
                 final String bundleName = bundlePath.indexOf('/') == -1 ? bundlePath : bundlePath.substring(bundlePath.lastIndexOf('/') + 1);
-                contextNodePath = webResourcesRoot + "/" + bundleName;
-                index = getNodeIndex(session, contextNodePath);
+                final String contextNodePath = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName;
+                int index = getNodeIndex(session, contextNodePath);
                 if (!removeNode(session, contextNodePath, false)) {
                     return Optional.absent();
                 }
+                if (index != -1) {
+                    reorderNode(session, contextNodePath, index);
+                }
             }
-            try {
-                final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(new URL(extensionSource)), bundlePath);
-                final ImportWebResourceBundleTask importTask = new ImportWebResourceBundleTask(session, bundleZipFile);
-                return Optional.of(importTask);
-            } catch (IOException | URISyntaxException e) {
-                getLogger().error("Error initializing web resource bundle {} at {}", bundlePath, webResourcesRoot, e);
-            }
-            if (index != -1) {
-                reorderNode(session, contextNodePath, index);
-            }
+            return importTask;
+        } catch (URISyntaxException|IOException e) {
+            getLogger().error("Error initializing web resource bundle {} at {}", bundlePath, WebResourcesService.JCR_ROOT_PATH, e);
+            return Optional.absent();
+        }
+    }
+
+    private Optional<? extends PostStartupTask> createImportWebResourceTask(final String extensionSource, final String bundlePath, final Session session) throws IOException, URISyntaxException {
+        if (extensionSource == null) {
+            return Optional.absent();
+        } else if (extensionSource.contains("jar!")) {
+            final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(new URL(extensionSource)), bundlePath);
+            return Optional.of(new ImportWebResourceBundleFromZipTask(session, bundleZipFile));
+        } else if (extensionSource.startsWith("file:")) {
+            final File extensionFile = FileUtils.toFile(new URL(extensionSource));
+            final File bundleDir = new File(extensionFile.getParent(), bundlePath);
+            return Optional.of(new ImportWebResourceBundleFromDirectoryTask(session, bundleDir));
         }
         return Optional.absent();
     }
@@ -1142,12 +1151,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    private class ImportWebResourceBundleTask implements PostStartupTask {
+    private class ImportWebResourceBundleFromZipTask implements PostStartupTask {
 
         private final Session session;
         private final PartialZipFile bundleZipFile;
 
-        public ImportWebResourceBundleTask(final Session session, final PartialZipFile bundleZipFile) {
+        public ImportWebResourceBundleFromZipTask(final Session session, final PartialZipFile bundleZipFile) {
             this.session = session;
             this.bundleZipFile = bundleZipFile;
         }
@@ -1167,4 +1176,31 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
         }
     }
+
+    private class ImportWebResourceBundleFromDirectoryTask implements PostStartupTask {
+
+        private final Session session;
+        private final File bundleDir;
+
+        public ImportWebResourceBundleFromDirectoryTask(final Session session, final File bundleDir) {
+            this.session = session;
+            this.bundleDir = bundleDir;
+        }
+
+        @Override
+        public void execute() {
+            final WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
+            if (service == null) {
+                getLogger().error("Cannot import web resource bundle '{}': missing service for '{}'",
+                        bundleDir, WebResourcesService.class.getName());
+                return;
+            }
+            try {
+                service.importJcrWebResourceBundle(session, bundleDir, WebResourcesService.ImportMode.REPLACE);
+            } catch (IOException e) {
+                getLogger().error("Cannot import web resource bundle '{}'", bundleDir, e);
+            }
+        }
+    }
+
 }
