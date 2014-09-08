@@ -113,6 +113,8 @@ conf/hst.properties -text
 conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
 content/pom.xml -text
+content/src/main/resources/configuration/frontend/cms.xml -text
+content/src/main/resources/configuration/queries/templates/new-image-folder.xml -text
 content/src/main/resources/default-ecm-content.xml -text
 content/src/main/resources/democontent/demosite-assets.xml -text
 content/src/main/resources/democontent/demosite-common.xml svneol=native#text/plain
@@ -167,6 +169,7 @@ content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text s
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
+content/src/main/resources/namespaces/demosite/qaimageset.xml -text
 content/src/main/resources/resourcebundles.xml -text
 content/src/main/resources/security/configuser-read-everywhere.xml -text
 content/src/main/resources/security/group-liveusers.xml -text

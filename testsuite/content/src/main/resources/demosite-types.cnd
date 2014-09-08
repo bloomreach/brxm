@@ -4,6 +4,7 @@
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 <'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
 <'relateddocs'='http://forge.onehippo.org/relateddocs/nt/1.1'>
+<'hippogallery'='http://www.onehippo.org/jcr/hippogallery/nt/2.0'>
 
 [demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
   orderable
@@ -38,3 +39,5 @@
   orderable
 
 [demosite:secure] mixin
+
+[demosite:qaimageset] > hippogallery:imageset, hippogallery:relaxed
