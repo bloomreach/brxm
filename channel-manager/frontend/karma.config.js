@@ -29,7 +29,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             // dependencies
-            'components/jquery/jquery.js',
+            'components/jquery/dist/jquery.js',
             'components/underscore/underscore.js',
             'components/angular/angular.js',
             'components/angular-route/angular-route.js',
