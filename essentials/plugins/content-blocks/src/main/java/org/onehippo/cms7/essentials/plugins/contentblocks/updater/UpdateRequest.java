@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.contentblocks;
+package org.onehippo.cms7.essentials.plugins.contentblocks.updater;
 
-import java.util.HashMap;
+import java.util.Map;
 
-import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+public class UpdateRequest {
+    private String resource;
+    private Map<String, Object> vars;
 
-import static org.junit.Assert.assertTrue;
+    public UpdateRequest(final String resource, final Map<String, Object>vars) {
+        this.resource = resource;
+        this.vars = vars;
+    }
 
-/**
- * @version "$Id$"
- */
-public class ContentBlocksPluginTest {
+    public String getResource() {
+        return resource;
+    }
 
-
-    @Test
-    public void testTemplateLoading() throws Exception {
-        final String template = TemplateUtils.injectTemplate("content_blocks_template.xml", new HashMap<String, Object>(), ContentBlocksPluginTest.class);
-        assertTrue(template != null);
-
+    public Map<String, Object> getVars() {
+        return vars;
     }
 }

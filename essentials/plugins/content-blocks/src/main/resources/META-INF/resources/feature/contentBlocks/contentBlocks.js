@@ -23,6 +23,7 @@
 
             $scope.compounds = [];
             $scope.documentTypes = [];
+            $scope.copyChoices = [];
             $scope.pickerTypes = [ 'links', 'dropdown' ];
 
             $scope.addField = function() {
@@ -38,6 +39,15 @@
                 var index = $scope.selectedDocumentType.contentBlocksFields.indexOf(field);
                 if (index > -1) {
                     $scope.selectedDocumentType.contentBlocksFields.splice(index, 1);
+                }
+            };
+
+            $scope.copyField = function() {
+                var newField = angular.copy($scope.copyChoice.field);
+                delete newField.originalName;
+                $scope.selectedDocumentType.contentBlocksFields.push(newField);
+                if ($scope.copyChoices.length > 1) {
+                    $scope.copyChoice = null;
                 }
             };
 
@@ -66,6 +76,7 @@
                         $scope.selectedDocumentType = null;
                     }
                     $scope.documentTypes = data;
+                    $scope.copyChoices = [];
 
                     // replace content blocks compound refs with actual compounds
                     angular.forEach($scope.documentTypes, function(docType) {
@@ -78,6 +89,11 @@
                             angular.forEach(field.compoundRefs, function(compoundRef) {
                                 field.compounds.push($scope.compoundMap[compoundRef]);
                             });
+
+                            $scope.copyChoices.push({
+                                "name": docType.name + ' - ' + field.name,
+                                "field": field
+                            });
                         });
                         if (docType.name === selectedName) {
                             $scope.selectedDocumentType = docType; // restore previous selection
@@ -88,6 +104,10 @@
                     if ($scope.documentTypes.length == 1) {
                         $scope.selectedDocumentType = $scope.documentTypes[0];
                     }
+                    if ($scope.copyChoices.length == 1) {
+                        $scope.copyChoice = $scope.copyChoices[0];
+                    }
+                    $scope.up = true;
                 });
             };
 

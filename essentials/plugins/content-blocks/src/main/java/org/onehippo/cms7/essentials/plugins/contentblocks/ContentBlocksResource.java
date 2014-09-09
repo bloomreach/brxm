@@ -50,8 +50,10 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.*;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.*;
+import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.util.parsing.combinator.testing.Str;
 
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
@@ -65,6 +67,7 @@ public class ContentBlocksResource extends BaseResource {
     private static final String PROP_CAPTION = "caption";
     private static final String PROP_COMPOUNDLIST = "compoundList";
     private static final String PROP_MAXITEMS = "maxitems";
+    private static final String PROP_PATH = "hipposysedit:path";
     private static final String PROP_PICKERTYPE = "contentPickerType";
 
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
@@ -105,13 +108,16 @@ public class ContentBlocksResource extends BaseResource {
     @POST
     @Path("/")
     public MessageRestful update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
+        final List<UpdateRequest> updaters = new ArrayList<>();
+        int updatersRun = 0;
         final Session session = GlobalUtils.createSession();
 
         try {
             for (DocumentTypeRestful docType : docTypes) {
-                updateDocumentType(docType, session);
+                updateDocumentType(docType, session, updaters);
             }
             session.save();
+            updatersRun = executeUpdaters(session, updaters);
         } catch (RepositoryException e) {
             log.warn("Problem saving the JCR changes after updating the content blocks fields.", e);
             return createErrorMessage(ERROR_MSG, response);
@@ -121,7 +127,14 @@ public class ContentBlocksResource extends BaseResource {
             GlobalUtils.cleanupSession(session);
         }
 
-        return new MessageRestful("Successfully updated content blocks settings");
+        String message = "Successfully updated content blocks settings.";
+        if (updatersRun > 0) {
+            message += " " + updatersRun + " content updater" + (updatersRun > 1 ? "s were" : " was") + " executed"
+                    + " to adjust your content. You may want to delete them from the history and use them on other"
+                    + " environments, too.";
+        }
+
+        return new MessageRestful(message);
     }
 
     @GET
@@ -197,7 +210,7 @@ public class ContentBlocksResource extends BaseResource {
      * @param session    JCR session
      * @throws ContentBlocksException for error message propagation
      */
-    private void updateDocumentType(final DocumentTypeRestful docType, final Session session)
+    private void updateDocumentType(final DocumentTypeRestful docType, final Session session, final List<UpdateRequest> updaters)
             throws ContentBlocksException {
         final String primaryType = docType.getId();
 
@@ -212,13 +225,13 @@ public class ContentBlocksResource extends BaseResource {
                     if (fieldName.equals(field.getOriginalName())) {
                         updated = true;
                         docType.getContentBlocksFields().remove(field);
-                        updateField(fieldNode, docType.getName(), field);
+                        updateField(fieldNode, docType, field, updaters);
                         // the fieldNode may have been renamed (copied), don't use it anymore!
                         break;
                     }
                 }
                 if (!updated) {
-                    deleteField(fieldNode, docType.getName(), fieldName);
+                    deleteField(fieldNode, docType, fieldName, updaters);
                 }
             }
         } catch (RepositoryException e) {
@@ -322,24 +335,42 @@ public class ContentBlocksResource extends BaseResource {
      * We update a field rather than deleting and re-creating it, such that its (adjusted) location, hints and
      * other parameters get preserved.
      *
-     * @param fieldNode   JCR node representing the content blocks field in the document (type) editor
-     * @param docTypeName Name of the current document type
-     * @param field       desired field parameters
+     * @param oldFieldNode JCR node representing the content blocks field in the document (type) editor
+     * @param docType      Document type to update
+     * @param field        desired field parameters
      * @throws ContentBlocksException for error message propagation
      */
-    private void updateField(Node fieldNode, final String docTypeName, final ContentBlocksFieldRestful field)
+    private void updateField(Node oldFieldNode, final DocumentTypeRestful docType,
+                             final ContentBlocksFieldRestful field, final List<UpdateRequest> updaters)
             throws ContentBlocksException {
-        final String namespace = PluginContextFactory.getContext().getProjectNamespacePrefix();
+        Node fieldNode = oldFieldNode;
         try {
             final String newNodeName = makeNodeName(field.getName());
-            Node nodeTypeNode = getNodeTypeNode(fieldNode);
+            final Node oldNodeTypeNode = getNodeTypeNode(fieldNode);
+            Node nodeTypeNode = oldNodeTypeNode;
 
             if (!newNodeName.equals(fieldNode.getName())) {
+                final String namespace = PluginContextFactory.getContext().getProjectNamespacePrefix();
+                final String oldNodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
+                final String newNodePath = namespace + ":" + newNodeName;
                 nodeTypeNode = JcrUtils.copy(nodeTypeNode, newNodeName, nodeTypeNode.getParent());
-                nodeTypeNode.setProperty("hipposysedit:path", namespace + ":" + newNodeName);
+                nodeTypeNode.setProperty(PROP_PATH, newNodePath);
+                oldNodeTypeNode.remove();
 
+                final String oldNodeCaption = fieldNode.getProperty(PROP_CAPTION).getString();
                 fieldNode = JcrUtils.copy(fieldNode, newNodeName, fieldNode.getParent());
                 fieldNode.setProperty("field", newNodeName);
+                oldFieldNode.remove();
+
+                // schedule updater to fix existing content
+                final Map<String, Object> vars = new HashMap<>();
+                vars.put("docType", docType.getId());
+                vars.put("docName", docType.getName());
+                vars.put("oldNodePath", oldNodePath);
+                vars.put("oldNodeName", oldNodeCaption);
+                vars.put("newNodePath", newNodePath);
+                vars.put("newNodeName", field.getName());
+                updaters.add(new UpdateRequest("content-updater.xml", vars));
             }
 
             fieldNode.setProperty(PROP_CAPTION, field.getName());
@@ -354,7 +385,8 @@ public class ContentBlocksResource extends BaseResource {
                 clusterOptions.getProperty(PROP_MAXITEMS).remove();
             }
         } catch (RepositoryException e) {
-            final String msg = "Failed to update content blocks field '" + field.getName() + "' from document type '" + docTypeName + "'.";
+            final String msg = "Failed to update content blocks field '" + field.getName() + "' from document type '"
+                    + docType.getName() + "'.";
             log.warn(msg, e);
             throw new ContentBlocksException(msg);
         }
@@ -364,21 +396,56 @@ public class ContentBlocksResource extends BaseResource {
      * Delete an existing content blocks field
      *
      * @param fieldNode   JCR node representing the content blocks field in the document (type) editor
-     * @param docTypeName Name of the current document type
+     * @param docType     Document type to update
      * @param fieldName   Name of the to-be deleted field.
      * @throws ContentBlocksException for error message propagation
      */
-    private void deleteField(final Node fieldNode, final String docTypeName, final String fieldName)
-            throws ContentBlocksException {
+    private void deleteField(final Node fieldNode, final DocumentTypeRestful docType, final String fieldName,
+                             final List<UpdateRequest> updaters) throws ContentBlocksException {
         try {
             final Node nodeTypeNode = getNodeTypeNode(fieldNode);
+            final String nodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
+            final String nodeName = fieldNode.getProperty(PROP_CAPTION).getString();
             fieldNode.remove();
             nodeTypeNode.remove();
+
+            final Map<String, Object> vars = new HashMap<>();
+            vars.put("docType", docType.getId());
+            vars.put("docName", docType.getName());
+            vars.put("nodePath", nodePath);
+            vars.put("nodeName", nodeName);
+            updaters.add(new UpdateRequest("content-deleter.xml", vars));
         } catch (RepositoryException e) {
-            final String msg = "Failed to remove content blocks field '" + fieldName + "' from document type '" + docTypeName + "'.";
+            final String msg = "Failed to remove content blocks field '" + fieldName + "' from document type '"
+                    + docType.getName() + "'.";
             log.warn(msg, e);
             throw new ContentBlocksException(msg);
         }
+    }
+
+    private int executeUpdaters(final Session session, final List<UpdateRequest> updaters) {
+        int updatersRun = 0;
+        for (UpdateRequest updater : updaters) {
+            final String parsed = TemplateUtils.injectTemplate(updater.getResource(), updater.getVars(), getClass());
+            if (parsed != null) {
+                InputStream in = null;
+                try {
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
+                    ((HippoSession)session).importDereferencedXML("/hippo:configuration/hippo:update/hippo:queue", in,
+                            ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
+                            ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+                    session.save();
+                    updatersRun++;
+                } catch (RepositoryException | IOException e) {
+                    GlobalUtils.refreshSession(session, false);
+                    log.error("Error scheduling updater", e);
+                } finally {
+                    IOUtils.closeQuietly(in);
+                }
+            }
+        }
+        return updatersRun;
     }
 
     private String makeDisplayName(final Session session, final String primaryType) {
@@ -392,6 +459,7 @@ public class ContentBlocksResource extends BaseResource {
     }
 
     private String makeNodeName(final String caption) {
+        // TODO: I believe this is not good enough, as it supports for example commas...
         return NodeNameCodec.encode(caption);
     }
 
