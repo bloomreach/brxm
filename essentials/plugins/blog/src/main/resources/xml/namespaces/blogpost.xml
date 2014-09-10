@@ -551,7 +551,7 @@
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="caption" sv:type="String">
-          <sv:value>Authors</sv:value>
+          <sv:value>Author(s)</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
           <sv:value>authors</sv:value>
