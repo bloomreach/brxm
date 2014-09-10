@@ -5,6 +5,7 @@
 archetype/LICENSE -text
 archetype/NOTICE -text
 archetype/pom.xml -text
+archetype/sync-marker.txt -text
 archetype/website/pom.xml -text
 archetype/website/src/main/resources/META-INF/maven/archetype-metadata.xml -text
 archetype/website/src/main/resources/archetype-resources/README.txt -text

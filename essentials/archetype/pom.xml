@@ -104,6 +104,7 @@
               <excludes combine.children="append">
                 <!-- skip archetype resources itself (but should not contain 3rd party copyrighted/licensed content) -->
                 <exclude>website/src/**</exclude>
+                <exclude>sync-marker.txt</exclude>
               </excludes>
             </configuration>
           </plugin>
