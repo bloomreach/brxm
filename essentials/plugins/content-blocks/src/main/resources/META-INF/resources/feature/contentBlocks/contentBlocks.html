@@ -63,13 +63,13 @@
 
           <!--Document type-specific part-->
           <div ng-show="selectedDocumentType">
-            <div class="row">
+            <div class="row" ng-show="contentBlocksForm.$valid">
               <div class="col-sm-8 col-sm-offset-4">
                 <p>
                   <essentials-cms-document-type-deep-link
                       name-space="{{selectedDocTypeNamespace()}}"
                       document-name="{{selectedDocTypeName()}}"
-                      label="Edit in CMS">
+                      label="Edit {{selectedDocumentType.name}} in CMS">
                   </essentials-cms-document-type-deep-link>
                 </p>
               </div>
@@ -84,7 +84,7 @@
                 <th></th>
                 <th>Picker Type</th>
                 <th>Max Blocks</th>
-                <th>Available Compounds</th>
+                <th>Used Compounds</th>
               </tr>
               <tr ng-repeat="field in selectedDocumentType.contentBlocksFields">
                 <td>
@@ -117,28 +117,36 @@
                 </td>
               </tr>
             </table>
-            <button class="btn btn-success" ng-click="addField()">Add</button> an empty content blocks field
-            <span ng-show="copyChoices.length > 0">
-              or <button class="btn btn-success" ng-disabled="!copyChoice" ng-click="copyField()">Copy</button> an
-                <span title="You may need to save your changes in order to update the list of choices">existing field</span>:
-            </span>
             <div class="row">
-            <div class="col-sm-4" ng-show="copyChoices.length > 0">
-              <select hippo.theme.select-box
-                      class="form-control"
-                      ng-model="copyChoice"
-                      ng-selected="copyChoice"
-                      ng-options="choice.name for choice in copyChoices"
-                      data-options="copyChoices"
-                      data-placeholder="Select field to copy"></select>
+              <div class="col-xs-12">
+                <p>
+                  <button class="btn btn-success" ng-click="addField()">Add</button> an empty content blocks field
+                  <span ng-show="copyChoices.length > 0">
+                    or <button class="btn btn-success" ng-disabled="!copyChoice" ng-click="copyField()">Copy</button> an
+                    <span title="You may need to save your changes in order to update the list of choices">existing field</span>:
+                  </span>
+                </p>
+              </div>
             </div>
+            <div class="row">
+              <div class="col-sm-4" ng-show="copyChoices.length > 0">
+                <p>
+                  <select hippo.theme.select-box
+                          class="form-control"
+                          ng-model="copyChoice"
+                          ng-selected="copyChoice"
+                          ng-options="choice.name for choice in copyChoices"
+                          data-options="copyChoices"
+                          data-placeholder="Select field to copy"></select>
+                </p>
+              </div>
             </div>
+            <div class="pull-right">
+              <button class="btn btn-primary" ng-click="reset()">Reset Changes</button>
+              <button class="btn btn-success" ng-disabled="!contentBlocksForm.$valid" ng-click="update()">Save Changes</button>
+            </div>
+            <p class="clearfix">&nbsp;</p>
           </div>
-          <div class="pull-right">
-            <button class="btn btn-primary" ng-click="reset()">Reset Changes</button>
-            <button class="btn btn-success" ng-disabled="!contentBlocksForm.$valid" ng-click="update()">Save Changes</button>
-          </div>
-          <p class="clearfix">&nbsp;</p>
         </form>
     </div>
   </div>
