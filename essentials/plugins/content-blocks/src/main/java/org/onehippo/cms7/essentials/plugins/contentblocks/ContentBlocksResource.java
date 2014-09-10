@@ -43,7 +43,6 @@ import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.*;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
@@ -53,7 +52,6 @@ import org.onehippo.cms7.essentials.plugins.contentblocks.model.*;
 import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.util.parsing.combinator.testing.Str;
 
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
@@ -469,7 +467,6 @@ public class ContentBlocksResource extends BaseResource {
     }
 
     private String makeNodeName(final String caption) {
-        // TODO: I believe this is not good enough, as it supports for example commas...
         return NodeNameCodec.encode(caption);
     }
 
