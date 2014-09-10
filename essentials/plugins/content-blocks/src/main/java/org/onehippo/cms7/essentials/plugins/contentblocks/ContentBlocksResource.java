@@ -351,15 +351,15 @@ public class ContentBlocksResource extends BaseResource {
         Node fieldNode = oldFieldNode;
         try {
             final String newNodeName = makeNodeName(field.getName());
-            if (fieldNode.getParent().hasNode(newNodeName)) {
-                throw new ContentBlocksException(
-                        "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
-            }
-
             final Node oldNodeTypeNode = getNodeTypeNode(fieldNode);
             Node nodeTypeNode = oldNodeTypeNode;
 
             if (!newNodeName.equals(fieldNode.getName())) {
+                if (fieldNode.getParent().hasNode(newNodeName)) {
+                    throw new ContentBlocksException(
+                            "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
+                }
+
                 final String namespace = PluginContextFactory.getContext().getProjectNamespacePrefix();
                 final String oldNodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
                 final String newNodePath = namespace + ":" + newNodeName;
