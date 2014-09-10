@@ -18,15 +18,16 @@
   <div class="panel-heading"><h3>Content Blocks</h3></div>
   <div class="panel-body">
     <p>The Content Blocks feature provides support for adding <em>content blocks fields</em> to your document types.
-      A content block field is a collection of different (potentially complex) field types from which the content
-      authors may choose.
+      A content blocks field is a collection of different (potentially complex) compound field types from which the
+      content authors may choose.
     </p>
     <p>This configuration screen allows you to add new content blocks field to your document types. You can also
-      modify (or delete) existing content blocks fields.
+      modify (or delete) existing content blocks fields. Content updtaers will be run automatically to adjust your
+      existing content.
     </p>
     <p>When you create a new content blocks field, it will be created at the default location for new fields.
       You can move the content blocks field to the desired position in the CMS Document Type Editor. You can
-      click on the document type's link to get there. Make sure you commit all changes before coming back to
+      click on the 'Edit in CMS' link to get there. Make sure you commit all changes before coming back to
       the setup application.
     </p>
     <p class="alert alert-info">Note that adding a new content blocks field to a document type will require an
@@ -46,7 +47,7 @@
           </p>
         </div>
         <form ng-show="documentTypes.length > 0" class="form-horizontal" novalidate name="contentBlocksForm">
-          <div ng-show="contentBlocksForm.$valid" class="form-group">
+          <div ng-show="contentBlocksForm.$valid" class="form-group row">
             <label class="col-sm-4 control-label">Document Type:</label>
             <div class="col-sm-8">
               <select name="documentType" hippo.theme.select-box
@@ -62,6 +63,17 @@
 
           <!--Document type-specific part-->
           <div ng-show="selectedDocumentType">
+            <div class="row">
+              <div class="col-sm-8 col-sm-offset-4">
+                <p>
+                  <essentials-cms-document-type-deep-link
+                      name-space="{{selectedDocTypeNamespace()}}"
+                      document-name="{{selectedDocTypeName()}}"
+                      label="Edit in CMS">
+                  </essentials-cms-document-type-deep-link>
+                </p>
+              </div>
+            </div>
             <div ng-hide="selectedDocumentType.contentBlocksFields.length > 0" class="alert alert-warning">
               <p>This document type does not yet have any content blocks fields. You can add some and then set them up.
               </p>
@@ -105,11 +117,6 @@
                 </td>
               </tr>
             </table>
-            <div ng-show="selectedDocumentType.contentBlocksFields.length > 0" class="alert alert-warning">
-              <p>Be careful when changing the name of an existing content blocks field. If you already have documents
-                using this field, you will need to update these documents.
-              </p>
-            </div>
             <button class="btn btn-success" ng-click="addField()">Add</button> an empty content blocks field
             <span ng-show="copyChoices.length > 0">
               or <button class="btn btn-success" ng-disabled="!copyChoice" ng-click="copyField()">Copy</button> an
@@ -128,7 +135,8 @@
             </div>
           </div>
           <div class="pull-right">
-            <button class="btn btn-primary" ng-disabled="!contentBlocksForm.$valid" ng-click="update()">Save Changes</button>
+            <button class="btn btn-primary" ng-click="reset()">Reset Changes</button>
+            <button class="btn btn-success" ng-disabled="!contentBlocksForm.$valid" ng-click="update()">Save Changes</button>
           </div>
           <p class="clearfix">&nbsp;</p>
         </form>

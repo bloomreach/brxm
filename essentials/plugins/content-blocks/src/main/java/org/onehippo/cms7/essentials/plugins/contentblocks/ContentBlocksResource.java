@@ -130,8 +130,8 @@ public class ContentBlocksResource extends BaseResource {
         String message = "Successfully updated content blocks settings.";
         if (updatersRun > 0) {
             message += " " + updatersRun + " content updater" + (updatersRun > 1 ? "s were" : " was") + " executed"
-                    + " to adjust your content. You may want to delete them from the history and use them on other"
-                    + " environments, too.";
+                    + " to adjust your content. You may want to delete content updaters from the history and use them"
+                    + " on other environments, too.";
         }
 
         return new MessageRestful(message);
@@ -266,6 +266,11 @@ public class ContentBlocksResource extends BaseResource {
             final Node nodeTypeNode = getNodeTypeNode(docTypeNode, primaryType);
             final Node editorTemplateNode = getEditorTemplateNode(docTypeNode, primaryType);
 
+            if (editorTemplateNode.hasNode(newNodeName)) {
+                throw new ContentBlocksException(
+                        "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
+            }
+
             // Determine document type layout
             String fieldType;
             final String pluginClass = editorTemplateNode.getNode("root").getProperty("plugin.class").getString();
@@ -346,6 +351,11 @@ public class ContentBlocksResource extends BaseResource {
         Node fieldNode = oldFieldNode;
         try {
             final String newNodeName = makeNodeName(field.getName());
+            if (fieldNode.getParent().hasNode(newNodeName)) {
+                throw new ContentBlocksException(
+                        "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
+            }
+
             final Node oldNodeTypeNode = getNodeTypeNode(fieldNode);
             Node nodeTypeNode = oldNodeTypeNode;
 

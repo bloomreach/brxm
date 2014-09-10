@@ -45,6 +45,15 @@
             $scope.copyField = function() {
                 var newField = angular.copy($scope.copyChoice.field);
                 delete newField.originalName;
+                delete newField.name;
+
+                // revert deep-copying of compounds, we must refer to the exact same instance
+                // for the pre-selection to work.
+                newField.compounds = [];
+                angular.forEach($scope.copyChoice.field.compounds, function(compound) {
+                    newField.compounds.push(compound);
+                });
+
                 $scope.selectedDocumentType.contentBlocksFields.push(newField);
                 if ($scope.copyChoices.length > 1) {
                     $scope.copyChoice = null;
@@ -63,52 +72,27 @@
                     });
                 });
 
-                $http.post(restEndpoint, $scope.documentTypes).success(function (data) {
-                    $scope.reset();
+                $http.post(restEndpoint, $scope.documentTypes)
+                  .success(function () {
+                    initDocTypes($scope.documentTypes, true);
+                }).error(function () {
+                    initDocTypes($scope.documentTypes, false);
                 });
             };
 
             $scope.reset = function() {
                 $http.get(restEndpoint).success(function (data) {
-                    var selectedName;
-                    if ($scope.selectedDocumentType) {
-                        selectedName = $scope.selectedDocumentType.name;
-                        $scope.selectedDocumentType = null;
-                    }
-                    $scope.documentTypes = data;
-                    $scope.copyChoices = [];
-
-                    // replace content blocks compound refs with actual compounds
-                    angular.forEach($scope.documentTypes, function(docType) {
-                        angular.forEach(docType.contentBlocksFields, function(field) {
-                            field.originalName = field.name;
-                            if (field.maxItems == 0) {
-                                delete field.maxItems;
-                            }
-                            field.compounds = [];
-                            angular.forEach(field.compoundRefs, function(compoundRef) {
-                                field.compounds.push($scope.compoundMap[compoundRef]);
-                            });
-
-                            $scope.copyChoices.push({
-                                "name": docType.name + ' - ' + field.name,
-                                "field": field
-                            });
-                        });
-                        if (docType.name === selectedName) {
-                            $scope.selectedDocumentType = docType; // restore previous selection
-                        }
-                    });
-
-                    // if there's only one document type, preselect it.
-                    if ($scope.documentTypes.length == 1) {
-                        $scope.selectedDocumentType = $scope.documentTypes[0];
-                    }
-                    if ($scope.copyChoices.length == 1) {
-                        $scope.copyChoice = $scope.copyChoices[0];
-                    }
+                    initDocTypes(data, true);
                     $scope.up = true;
                 });
+            };
+
+            $scope.selectedDocTypeNamespace = function() {
+                return $scope.selectedDocumentType.id.split(':')[0];
+            };
+
+            $scope.selectedDocTypeName = function() {
+                return $scope.selectedDocumentType.id.split(':')[1];
             };
 
             $scope.init = function () {
@@ -121,9 +105,53 @@
                         $scope.compoundMap[compound.id] = compound;
                     });
 
+
                     $scope.reset();
                 });
             };
             $scope.init();
+
+            function initDocTypes(docTypes, setOriginalName) {
+                // preserve docType selection if possible
+                var selectedName;
+                if ($scope.selectedDocumentType) {
+                    selectedName = $scope.selectedDocumentType.name;
+                    $scope.selectedDocumentType = null;
+                }
+                $scope.documentTypes = docTypes;
+                $scope.copyChoices = [];
+
+                // replace content blocks compound refs with actual compounds
+                angular.forEach($scope.documentTypes, function(docType) {
+                    angular.forEach(docType.contentBlocksFields, function(field) {
+                        if (setOriginalName) {
+                            field.originalName = field.name;
+                        }
+                        if (field.maxItems == 0) {
+                            delete field.maxItems;
+                        }
+                        field.compounds = [];
+                        angular.forEach(field.compoundRefs, function(compoundRef) {
+                            field.compounds.push($scope.compoundMap[compoundRef]);
+                        });
+
+                        $scope.copyChoices.push({
+                            "name": docType.name + ' - ' + field.name,
+                            "field": field
+                        });
+                    });
+                    if (docType.name === selectedName) {
+                        $scope.selectedDocumentType = docType; // restore previous selection
+                    }
+                });
+
+                // if there's only one document type, preselect it.
+                if ($scope.documentTypes.length == 1) {
+                    $scope.selectedDocumentType = $scope.documentTypes[0];
+                }
+                if ($scope.copyChoices.length == 1) {
+                    $scope.copyChoice = $scope.copyChoices[0];
+                }
+            }
         })
 })();
