@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import javax.jcr.version.VersionException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
@@ -105,6 +107,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private boolean upgradeValidateFlag = true;
 
     private String repoPath;
+    private String repoConfig;
 
     /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
     boolean needsRestart = false;
@@ -115,23 +118,33 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private ModuleManager moduleManager;
 
-    protected LocalHippoRepository() throws RepositoryException {
+    protected LocalHippoRepository() {
         super();
     }
 
-    protected LocalHippoRepository(String location) throws RepositoryException {
-        super(location);
+    protected LocalHippoRepository(String repositoryConfig) throws RepositoryException {
+        super();
+        this.repoConfig = repositoryConfig;
     }
 
-    public static HippoRepository create(String location) throws RepositoryException {
+    protected LocalHippoRepository(String repositoryDirectory, String repositoryConfig) throws RepositoryException {
+        super(repositoryDirectory);
+        this.repoConfig = repositoryConfig;
+    }
+
+    public static HippoRepository create(String repositoryDirectory) throws RepositoryException {
+        return create(repositoryDirectory, null);
+    }
+
+    public static HippoRepository create(String repositoryDirectory, String repositoryConfig) throws RepositoryException {
         LocalHippoRepository localHippoRepository;
-        if (location == null) {
-            localHippoRepository = new LocalHippoRepository();
+        if (repositoryDirectory == null) {
+            localHippoRepository = new LocalHippoRepository(repositoryConfig);
         } else {
-            localHippoRepository = new LocalHippoRepository(location);
+            localHippoRepository = new LocalHippoRepository(repositoryDirectory, repositoryConfig);
         }
         localHippoRepository.initialize();
-        VMHippoRepository.register(location, localHippoRepository);
+        VMHippoRepository.register(repositoryDirectory, localHippoRepository);
         return localHippoRepository;
     }
 
@@ -212,21 +225,30 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * @return InputStream to the repository config
      * @throws RepositoryException
      */
-    private static InputStream getRepositoryConfigAsStream() throws RepositoryException {
-        String configPath = System.getProperty(SYSTEM_CONFIG_PROPERTY);
+    private InputStream getRepositoryConfigAsStream() throws RepositoryException {
 
-        if (configPath == null || "".equals(configPath)) {
+        String configPath = repoConfig;
+
+        if (StringUtils.isEmpty(configPath)) {
+            configPath = System.getProperty(SYSTEM_CONFIG_PROPERTY);
+        }
+
+        if (StringUtils.isEmpty(configPath)) {
             configPath = System.getProperty(SYSTEM_SERVLETCONFIG_PROPERTY);
         }
 
-        if (configPath == null || "".equals(configPath)) {
-            log.info("Using default repository config: " + DEFAULT_REPOSITORY_CONFIG);
-            return LocalHippoRepository.class.getResourceAsStream(DEFAULT_REPOSITORY_CONFIG);
+        if (StringUtils.isEmpty(configPath)) {
+            configPath = DEFAULT_REPOSITORY_CONFIG;
         }
 
         if (!configPath.startsWith("file:")) {
-            log.info("Using resource repository config: " + configPath);
-            return LocalHippoRepository.class.getResourceAsStream(configPath);
+            final URL configResource = LocalHippoRepository.class.getResource(configPath);
+            log.info("Using resource repository config: " + configResource);
+            try {
+                return configResource.openStream();
+            } catch (IOException e) {
+                throw new RepositoryException("Failed to open repository configuration", e);
+            }
         }
 
         configPath = RepoUtils.stripFileProtocol(configPath);

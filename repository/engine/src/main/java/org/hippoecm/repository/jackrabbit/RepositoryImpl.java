@@ -212,7 +212,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
-        return ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager();
+        return getWorkspaceInfo(workspaceName).getSearchManager();
+    }
+
+    public PersistenceManager getPersistenceManager(String workspaceName) throws RepositoryException {
+        return getWorkspaceInfo(workspaceName).getPersistenceManager();
     }
 
     /**
@@ -225,12 +229,12 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         if (workspaceName == null) {
             workspaceName = super.repConfig.getDefaultWorkspaceName();
         }
-        return ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getRootSession();
+        return (getWorkspaceInfo(workspaceName)).getRootSession();
     }
 
     @Override
-    protected WorkspaceInfo getWorkspaceInfo(final String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
-        return super.getWorkspaceInfo(workspaceName);
+    protected HippoWorkspaceInfo getWorkspaceInfo(final String workspaceName) throws RepositoryException {
+        return (HippoWorkspaceInfo) super.getWorkspaceInfo(workspaceName);
     }
 
     @Override

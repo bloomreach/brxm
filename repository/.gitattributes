@@ -360,6 +360,7 @@ test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/java/org/onehippo/repository/LocalRefreshTest.java -text
+test/src/test/java/org/onehippo/repository/clustering/ClusterTest.java -text
 test/src/test/java/org/onehippo/repository/search/SearchTransactionalityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerSimilarityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerTest.java -text
@@ -376,6 +377,10 @@ test/src/test/resources/org/hippoecm/repository/updater/cnd2.cnd -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd3.cnd -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd4.cnd -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd5.cnd -text
+test/src/test/resources/org/onehippo/repository/clustering/node1-repository-h2.xml -text
+test/src/test/resources/org/onehippo/repository/clustering/node1-repository-mysql.xml -text
+test/src/test/resources/org/onehippo/repository/clustering/node2-repository-h2.xml -text
+test/src/test/resources/org/onehippo/repository/clustering/node2-repository-mysql.xml -text
 test/src/test/resources/repository-test.cnd -text
 test/src/test/resources/sample-demodata.xml -text svneol=unset#text/plain
 test/src/test/resources/sample.cnd -text
