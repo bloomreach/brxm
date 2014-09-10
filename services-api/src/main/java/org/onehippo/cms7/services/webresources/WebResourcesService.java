@@ -32,8 +32,6 @@ public interface WebResourcesService {
 
     public static final String JCR_ROOT_PATH = "/webresources";
 
-    public enum ImportMode { REPLACE, MERGE, UPDATE }
-
     /**
      * Creates a web resources implementation based on JCR.
      * @param session the JCR session used to access web resources.
@@ -44,13 +42,17 @@ public interface WebResourcesService {
     WebResourceBundle getJcrWebResourceBundle(Session session, String bundleName) throws WebResourceException;
 
     /**
-     * Imports web resources from the given directory.
+     * Imports a web resource bundle from the given directory. The name of the directory is used as the name of
+     * the bundle. Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted
+     * from JCR.
      */
-    void importJcrWebResourceBundle(Session session, File directory, ImportMode mode) throws IOException, WebResourceException;
+    void importJcrWebResourceBundle(Session session, File directory) throws IOException, WebResourceException;
 
     /**
-     * Imports a web resources from the given zip file.
+     * Imports a web resource bundle from the given zip file. The zip file should contain a single root directory entry
+     * that contains all web resources. The name of the root directory entry is used as the name of the bundle.
+     * Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted from JCR.
      */
-    void importJcrWebResourceBundle(Session session, ZipFile zip, ImportMode mode) throws IOException, WebResourceException;
+    void importJcrWebResourceBundle(Session session, ZipFile zip) throws IOException, WebResourceException;
 
 }
