@@ -34,6 +34,7 @@ public interface WebResourcesService {
 
     /**
      * Creates a web resources implementation based on JCR.
+     *
      * @param session the JCR session used to access web resources.
      * @param bundleName the name of the web resources bundle.
      * @return a JCR-based web resources implementation for <code>bundleName</code>.
@@ -42,9 +43,13 @@ public interface WebResourcesService {
     WebResourceBundle getJcrWebResourceBundle(Session session, String bundleName) throws WebResourceException;
 
     /**
-     * Imports a web resource bundle from the given directory. The name of the directory is used as the name of
-     * the bundle. Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted
-     * from JCR.
+     * Imports a web resource bundle from a directory. The name of the directory is used as the name of the bundle.
+     * Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted from JCR.
+     *
+     * @param session the JCR session used to access web resources.
+     * @param directory the directory containing the web resources to import.
+     * @throws IOException if an I/O error occurs while reading web resources from file system
+     * @throws WebResourceException if another error occurs while importing web resources
      */
     void importJcrWebResourceBundle(Session session, File directory) throws IOException, WebResourceException;
 
@@ -52,7 +57,24 @@ public interface WebResourcesService {
      * Imports a web resource bundle from the given zip file. The zip file should contain a single root directory entry
      * that contains all web resources. The name of the root directory entry is used as the name of the bundle.
      * Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted from JCR.
+     *
+     * @param session the JCR session used to access web resources.
+     * @param zip the ZIP file containing the web resources to import.
+     * @throws IOException if an I/O error occurs while reading web resources from the ZIP file
+     * @throws WebResourceException if another error occurs while importing web resources
      */
     void importJcrWebResourceBundle(Session session, ZipFile zip) throws IOException, WebResourceException;
+
+    /**
+     * Imports a sub-tree of a web resource bundle from a directory. The sub-tree can consist of a directory or
+     * a single file.
+     *
+     * @param session the JCR session used to access web resources.
+     * @param bundleName the name of the web resource bundle
+     * @param bundleSubPath the relative sub-path in the web resource bundle to import the resources into.
+     * @param fileOrDirectory the file or directory to import web resources from.
+     * @throws WebResourceException if an error occurs while importing web resources
+     */
+    void importJcrWebResources(Session session, String bundleName, String bundleSubPath, File fileOrDirectory) throws WebResourceException;
 
 }
