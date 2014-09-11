@@ -174,6 +174,7 @@ test/log4j.log
 test/nbproject
 test/repository
 test/src/test/java/org/hippoecm/repository/decorating/.MirrorTest.java.swp
+test/src/test/java/org/onehippo/repository/scratchpad
 test/target
 test/tm.epoch
 test/tm.out
