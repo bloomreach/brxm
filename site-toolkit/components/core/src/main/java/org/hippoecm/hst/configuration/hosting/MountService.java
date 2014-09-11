@@ -47,6 +47,7 @@ import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -551,11 +552,15 @@ public class MountService implements ContextualizableMount, MutableMount {
                     if (hstSiteNodeForMount != null && hstSiteNodeForMount.getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITE)) {
                         contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
                     } else {
-                        this.contentPath = mountPoint;
+                        contentPath = mountPoint;
                     }
                 } else {
                     // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
-                    this.contentPath = mountPoint;
+                    contentPath = mountPoint;
+                }
+
+                if (StringUtils.isNotEmpty(contentPath)) {
+                    contentPath = "/"+ PathUtils.normalizePath(contentPath);
                 }
                 assertContentPathNotEmpty(mount, contentPath);
                 // add this Mount to the maps in the VirtualHostsService
@@ -583,6 +588,10 @@ public class MountService implements ContextualizableMount, MutableMount {
                 }
 
                 contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+
+                if (StringUtils.isNotEmpty(contentPath)) {
+                    contentPath = "/"+ PathUtils.normalizePath(contentPath);
+                }
 
                 assertContentPathNotEmpty(mount, contentPath);
                 log.info("Successfull initialized hstSite '{}' for Mount '{}' in '{}' ms.",
