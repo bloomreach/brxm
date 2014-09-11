@@ -44,7 +44,6 @@ import org.onehippo.repository.testutils.ZipTestUtil;
 import org.slf4j.Logger;
 import org.slf4j.helpers.NOPLogger;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_CREATED;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
@@ -248,7 +247,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask importWebResources = tasks.get(0);
 
         Capture<ZipFile> capturedZip = new Capture();
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)), eq(WebResourcesService.ImportMode.REPLACE));
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)));
         expectLastCall();
 
         replay(webResourcesService);
@@ -275,7 +274,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask reimportWebresources = reloadTasks.get(0);
 
         EasyMock.reset(webResourcesService);
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), anyObject(ZipFile.class), eq(WebResourcesService.ImportMode.REPLACE));
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), anyObject(ZipFile.class));
         expectLastCall();
 
         replay(webResourcesService);
@@ -298,7 +297,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask importWebResources = tasks.get(0);
 
         final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "webresourcebundle");
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir), eq(WebResourcesService.ImportMode.REPLACE));
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir));
         expectLastCall();
 
         replay(webResourcesService);
@@ -315,7 +314,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask reimportWebresources = reloadTasks.get(0);
 
         EasyMock.reset(webResourcesService);
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir), eq(WebResourcesService.ImportMode.REPLACE));
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir));
         expectLastCall();
 
         replay(webResourcesService);
