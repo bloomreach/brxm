@@ -301,7 +301,7 @@ public abstract class ClusterTest {
         return null;
     }
 
-    private Session loginSession(Object repo) {
+    protected Session loginSession(Object repo) {
         try {
             return (Session) repo.getClass().getMethod("login", Credentials.class).invoke(repo, CREDENTIALS);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

@@ -186,6 +186,7 @@
             <exclude>**/integration/*.java</exclude>
             <exclude>**/UpdaterExecutorTest.java</exclude>
             <exclude>**/SchedulerTest.java</exclude>
+            <exclude>**/MonkeyTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -230,6 +231,7 @@
                     <include>**/StampedeTest.java</include>
                     <include>**/UpdaterExecutorTest.java</include>
                     <include>**/SchedulerTest.java</include>
+                    <include>**/MonkeyTest.java</include>
                   </includes>
                 </configuration>
               </execution>

@@ -361,6 +361,16 @@ test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/java/org/onehippo/repository/LocalRefreshTest.java -text
 test/src/test/java/org/onehippo/repository/clustering/ClusterTest.java -text
+test/src/test/java/org/onehippo/repository/monkey/Action.java -text
+test/src/test/java/org/onehippo/repository/monkey/AddNodeAction.java -text
+test/src/test/java/org/onehippo/repository/monkey/Monkey.java -text
+test/src/test/java/org/onehippo/repository/monkey/MonkeyTest.java -text
+test/src/test/java/org/onehippo/repository/monkey/MoveNodeAction.java -text
+test/src/test/java/org/onehippo/repository/monkey/RefreshAction.java -text
+test/src/test/java/org/onehippo/repository/monkey/RemoveNodeAction.java -text
+test/src/test/java/org/onehippo/repository/monkey/RemovePropertyAction.java -text
+test/src/test/java/org/onehippo/repository/monkey/SaveAction.java -text
+test/src/test/java/org/onehippo/repository/monkey/SetPropertyAction.java -text
 test/src/test/java/org/onehippo/repository/search/SearchTransactionalityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerSimilarityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerTest.java -text
