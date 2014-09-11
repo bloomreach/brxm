@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.io.File;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -29,12 +28,9 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -99,32 +95,6 @@ public class BaseResource {
         getInjector().autowireBean(instructionPackage);
         return instructionPackage;
     }
-
-    /**
-     * This function determines by the fact that all dependencies and repositories specified in a plugin's descriptor
-     * are present in the relevant POM files if the plugin was packaged with Essentials, or pulled-in from a marketplace.
-     * <p/>
-     * The return value of this function is only valid while the plugin is in its "discovered" installation state.
-     *
-     * @param plugin the plugin under consideration
-     * @return true if the plugin was packages with Essentials, false otherwise.
-     */
-    protected boolean isPackaged(final Plugin plugin) {
-        final List<EssentialsDependency> dependencies = plugin.getDependencies();
-        for (EssentialsDependency dependency : dependencies) {
-            if (!DependencyUtils.hasDependency(dependency)) {
-                return false;
-            }
-        }
-        final List<Repository> repositories = plugin.getRepositories();
-        for (Repository repository : repositories) {
-            if (!DependencyUtils.hasRepository(repository)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 
     protected ProjectRestful getProjectRestful() {
         final PluginContext context = new DefaultPluginContext(null);

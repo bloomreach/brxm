@@ -335,7 +335,6 @@ public class PluginResource extends BaseResource {
                 continue;
             }
             if (pluginId.equals(id)) {
-                final boolean isPackaged = isPackaged(plugin);
                 // add dependencies and repositories, if necessary
                 final List<EssentialsDependency> dependencies = plugin.getDependencies();
                 final Collection<EssentialsDependency> dependenciesNotInstalled = new ArrayList<>();
@@ -358,10 +357,11 @@ public class PluginResource extends BaseResource {
 
                 if (dependenciesNotInstalled.size() == 0 && repositoriesNotInstalled.size() == 0) {
                     final PluginContext context = PluginContextFactory.getContext();
-                    String installState = null;
+                    final boolean isPackaged = plugin.getDependencies().size() == 0 && plugin.getRepositories().size() == 0;
+                    final String installState = determineInstallStateAfterInstallation(plugin, isPackaged);
+
                     try (PluginConfigService service = new FilePluginService(context)) {
                         InstallerDocument document = createPluginInstallerDocument(id);
-                        installState = determineInstallStateAfterInstallation(plugin, isPackaged);
                         document.setInstallationState(installState);
                         service.write(document);
                     }
@@ -792,7 +792,7 @@ public class PluginResource extends BaseResource {
 
     private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext) {
         final RestfulList<PluginRestful> plugins = new RestList<>();
-        final List<PluginRestful> items = getLocalPlugins(servletContext);
+        final List<PluginRestful> items = getLocalPlugins();
         final Collection<String> restClasses = new ArrayList<>();
         final PluginContext context = PluginContextFactory.getContext();
         // remote plugins
@@ -827,7 +827,7 @@ public class PluginResource extends BaseResource {
     }
 
 
-    private List<PluginRestful> getLocalPlugins(final ServletContext servletContext) {
+    private List<PluginRestful> getLocalPlugins() {
         final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
         final String json = GlobalUtils.readStreamAsText(stream);
         final ObjectMapper mapper = new ObjectMapper();
