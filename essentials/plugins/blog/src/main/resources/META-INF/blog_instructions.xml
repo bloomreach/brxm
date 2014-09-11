@@ -86,10 +86,10 @@
   <instructionSet group="jsp">
     <file action="copy" source="jsp/blog-main.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-main.jsp"/>
     <file action="copy" source="jsp/blog-author-posts.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-author-posts.jsp"/>
-    <file action="copy" source="jsp/facet.jsp" target="{{jspRoot}}/{{namespace}}/facet/blog-facet.jsp"/>
+    <file action="copy" source="jsp/blog-facet.jsp" target="{{jspRoot}}/{{namespace}}/facet/blog-facet.jsp"/>
     <file action="copy" source="jsp/blog-detail.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-detail.jsp"/>
     <file action="copy" source="jsp/blog-list.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-list.jsp"/>
-    <file action="copy" source="jsp/author.jsp" target="{{jspRoot}}/{{namespace}}/author/blog-author.jsp"/>
+    <file action="copy" source="jsp/blog-author.jsp" target="{{jspRoot}}/{{namespace}}/author/blog-author.jsp"/>
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES

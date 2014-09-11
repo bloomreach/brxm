@@ -1232,12 +1232,12 @@ plugins/blog/src/main/resources/images/facets.png -text
 plugins/blog/src/main/resources/java/Account.txt -text
 plugins/blog/src/main/resources/java/Author.txt -text
 plugins/blog/src/main/resources/java/Blogpost.txt -text
-plugins/blog/src/main/resources/jsp/author.jsp -text
 plugins/blog/src/main/resources/jsp/blog-author-posts.jsp -text
+plugins/blog/src/main/resources/jsp/blog-author.jsp -text
 plugins/blog/src/main/resources/jsp/blog-detail.jsp -text
+plugins/blog/src/main/resources/jsp/blog-facet.jsp -text
 plugins/blog/src/main/resources/jsp/blog-list.jsp -text
 plugins/blog/src/main/resources/jsp/blog-main.jsp -text
-plugins/blog/src/main/resources/jsp/facet.jsp -text
 plugins/blog/src/main/resources/xml/data/account-types.xml -text
 plugins/blog/src/main/resources/xml/data/blog-categories.xml -text
 plugins/blog/src/main/resources/xml/folder/blog-author-folder.xml -text
