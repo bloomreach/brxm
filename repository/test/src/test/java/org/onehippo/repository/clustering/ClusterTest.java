@@ -86,7 +86,11 @@ public abstract class ClusterTest {
     protected Session session2;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void startRepositories() throws Exception {
+        startRepositories(cleanup);
+    }
+
+    protected static void startRepositories(boolean cleanup) throws Exception {
         final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         final File repo1Dir = new File(tmpdir, "repository-node1");
         if (!repo1Dir.exists()) {
@@ -103,7 +107,9 @@ public abstract class ClusterTest {
             h2Dir.mkdir();
         }
         h2Path = h2Dir.getAbsolutePath();
-        cleanup();
+        if (cleanup) {
+            cleanup();
+        }
         if (dbtype.equals("h2")) {
             server = Server.createTcpServer("-tcpPort", "9001", "-baseDir", h2Path).start();
         }
@@ -119,7 +125,11 @@ public abstract class ClusterTest {
     }
 
     @AfterClass
-    public static void shutDownClass() throws Exception {
+    public static void stopRepositories() throws Exception {
+        stopRepositories(cleanup);
+    }
+
+    protected static void stopRepositories(boolean cleanup) throws Exception {
         if (repo1 != null) {
             closeRepository(repo1);
         }
@@ -129,7 +139,9 @@ public abstract class ClusterTest {
         if (server != null) {
             server.stop();
         }
-        cleanup();
+        if (cleanup) {
+            cleanup();
+        }
     }
 
     private static void closeRepository(final Object repo) {
@@ -141,19 +153,17 @@ public abstract class ClusterTest {
     }
 
     private static void cleanup() throws IOException {
-        if (cleanup) {
-            final File repo1Dir = new File(repo1Path);
-            if (repo1Dir.exists()) {
-                FileUtils.cleanDirectory(repo1Dir);
-            }
-            final File repo2Dir = new File(repo2Path);
-            if (repo2Dir.exists()) {
-                FileUtils.cleanDirectory(repo2Dir);
-            }
-            final File h2Dir = new File(h2Path);
-            if (h2Dir.exists()) {
-                FileUtils.cleanDirectory(h2Dir);
-            }
+        final File repo1Dir = new File(repo1Path);
+        if (repo1Dir.exists()) {
+            FileUtils.cleanDirectory(repo1Dir);
+        }
+        final File repo2Dir = new File(repo2Path);
+        if (repo2Dir.exists()) {
+            FileUtils.cleanDirectory(repo2Dir);
+        }
+        final File h2Dir = new File(h2Path);
+        if (h2Dir.exists()) {
+            FileUtils.cleanDirectory(h2Dir);
         }
     }
 
