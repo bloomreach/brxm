@@ -34,6 +34,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
 import org.h2.tools.Server;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -178,6 +179,7 @@ public abstract class ClusterTest {
         assumeTrue(session2.nodeExists("/test"));
     }
 
+    @After
     public void tearDown() throws Exception {
         if (session1 != null && session1.isLive()) {
             removeNodes("/test");
