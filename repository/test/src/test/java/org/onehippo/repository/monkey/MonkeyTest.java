@@ -32,6 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.fail;
 
+/**
+ * Asserts consistency across multiple random concurrency scenarios
+ * both within a single cluster node and across cluster nodes.
+ */
 public class MonkeyTest extends ClusterTest {
 
     static final Logger log = LoggerFactory.getLogger(MonkeyTest.class);
