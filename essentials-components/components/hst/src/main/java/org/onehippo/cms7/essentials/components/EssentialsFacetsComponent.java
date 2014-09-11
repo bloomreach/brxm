@@ -55,10 +55,6 @@ public class EssentialsFacetsComponent extends CommonComponent {
         }
         final String queryParam = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
         final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(context, facetPath, queryParam);
-        if (hippoFacetNavigationBean == null) {
-            log.warn("Can't find facet navigation bean for facet path '{}'.", facetPath);
-            return;
-        }
 
         request.setAttribute(REQUEST_ATTR_QUERY, queryParam);
         request.setAttribute(REQUEST_ATTR_FACETS, hippoFacetNavigationBean);
@@ -83,5 +79,4 @@ public class EssentialsFacetsComponent extends CommonComponent {
         }
         return facNavBean;
     }
-
 }

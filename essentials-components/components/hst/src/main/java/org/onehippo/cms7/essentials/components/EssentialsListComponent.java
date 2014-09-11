@@ -133,7 +133,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param request       instance of  HstRequest
      * @param query         instance of  HstQuery
      * @param componentInfo instance of EssentialsDocumentListComponentInfo
-     * @param <T>
+     * @param <T>           component info class.
      */
     protected <T extends EssentialsDocumentListComponentInfo> void applyOrdering(final HstRequest request, final HstQuery query, final T componentInfo) {
         final String sortField = componentInfo.getSortField();
@@ -174,16 +174,16 @@ public class EssentialsListComponent extends CommonComponent {
     protected <T extends EssentialsDocumentListComponentInfo>
     Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
 
-        Pageable<HippoBean> pageable = null;
+        Pageable<HippoBean> pageable = DefaultPagination.emptyCollection();
         final String relPath = SiteUtils.relativePathFrom(scope, request.getRequestContext());
         final HippoFacetNavigationBean facetBean = ContentBeanUtils.getFacetNavigationBean(relPath, getSearchQuery(request));
         if (facetBean != null) {
             final HippoResultSetBean resultSet = facetBean.getResultSet();
-            if (resultSet == null) {
-                return DefaultPagination.emptyCollection();
+            if (resultSet != null) {
+                final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
+                pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(),
+                                                    getCurrentPage(request));
             }
-            final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
-            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
         }
         return pageable;
     }
@@ -233,12 +233,11 @@ public class EssentialsListComponent extends CommonComponent {
         buildAndApplyFilters(request, query);
 
         final HstQueryResult execute = query.execute();
-        final Pageable<HippoBean> pageable = new IterablePagination<>(
+        return new IterablePagination<>(
                 execute.getHippoBeans(),
                 execute.getTotalSize(),
                 pageSize,
                 page);
-        return pageable;
     }
 
     protected <T extends EssentialsDocumentListComponentInfo> void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
@@ -253,7 +252,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @throws FilterException
      */
     protected void buildAndApplyFilters(final HstRequest request, final HstQuery query) throws FilterException {
-        final List<BaseFilter> filters = new ArrayList<BaseFilter>();
+        final List<BaseFilter> filters = new ArrayList<>();
 
         contributeAndFilters(filters, request, query);
 
@@ -377,7 +376,7 @@ public class EssentialsListComponent extends CommonComponent {
      *
      * @param request   the current request
      * @param paramInfo the settings of the component
-     * @return
+     * @return          flag indicating whether or not to show pagination
      */
     protected boolean isShowPagination(final HstRequest request, final EssentialsPageable paramInfo) {
         final Boolean showPagination = paramInfo.getShowPagination();
