@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -149,6 +151,7 @@ public class PluginResource extends BaseResource {
 
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
+    private static final Lock pingLock = new ReentrantLock();
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
@@ -169,55 +172,62 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/ping")
     public SystemInfo ping(@Context ServletContext servletContext) {
-
         final SystemInfo systemInfo = new SystemInfo();
-        systemInfo.setInitialized(initialized);
-        final List<PluginRestful> plugins = getPlugins(servletContext);
-        for (PluginRestful plugin : plugins) {
-            systemInfo.incrementPlugins();
-            final String installState = plugin.getInstallState();
-            final boolean isTool = "tool".equals(plugin.getType());
-            if (isTool) {
-                systemInfo.incrementTools();
-            }
-            final boolean isFeature = "feature".equals(plugin.getType());
-            if (isFeature && !PluginInstallationState.DISCOVERED.equals(installState)) {
-                systemInfo.incrementInstalledFeatures();
-            }
-            if (!isTool && !Strings.isNullOrEmpty(installState)) {
-                if (installState.equals(PluginInstallationState.BOARDING)
-                        || installState.equals(PluginInstallationState.INSTALLING)) {
-                    systemInfo.addRebuildPlugin(plugin);
-                    systemInfo.setNeedsRebuild(true);
-                } else if (installState.equals(PluginInstallationState.ONBOARD)) {
-                    systemInfo.incrementConfigurablePlugins();
-                }
-            }
-        }
-        // check if we have external rebuild events:
-        final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
-        for (RebuildEvent rebuildEvent : rebuildEvents) {
-            systemInfo.setNeedsRebuild(true);
-            final List<Plugin> rebuildPlugins = systemInfo.getRebuildPlugins();
-            // skip duplicate names:
-            boolean containsPlugin = false;
-            final String pluginName = rebuildEvent.getPluginName();
-            for (Plugin rebuildPlugin : rebuildPlugins) {
-                if(rebuildPlugin.getName().equals(pluginName)){
-                    containsPlugin = true;
-                }
-            }
-            if(!containsPlugin){
-                final Plugin plugin = new PluginRestful(pluginName);
-                plugin.setType(rebuildEvent.getPluginType());
-                systemInfo.addRebuildPlugin(plugin);
-            }
-        }
 
+        // We lock the ping to avoid concurrent setup short-circuiting.
+        if (!pingLock.tryLock()) {
+            log.warn("WARNING: You appear to be using two dashboards at the same time. Essentials doesn't support that." +
+                    " Check if you have multiple tabs open, pointing at Essentials, and if so, close all except for one.");
+            pingLock.lock();
+        }
+        try {
+            systemInfo.setInitialized(initialized);
+            final List<PluginRestful> plugins = getPlugins(servletContext);
+            for (PluginRestful plugin : plugins) {
+                systemInfo.incrementPlugins();
+                final String installState = plugin.getInstallState();
+                final boolean isTool = "tool".equals(plugin.getType());
+                if (isTool) {
+                    systemInfo.incrementTools();
+                }
+                final boolean isFeature = "feature".equals(plugin.getType());
+                if (isFeature && !PluginInstallationState.DISCOVERED.equals(installState)) {
+                    systemInfo.incrementInstalledFeatures();
+                }
+                if (!isTool && !Strings.isNullOrEmpty(installState)) {
+                    if (installState.equals(PluginInstallationState.BOARDING)
+                            || installState.equals(PluginInstallationState.INSTALLING)) {
+                        systemInfo.addRebuildPlugin(plugin);
+                        systemInfo.setNeedsRebuild(true);
+                    } else if (installState.equals(PluginInstallationState.ONBOARD)) {
+                        systemInfo.incrementConfigurablePlugins();
+                    }
+                }
+            }
+            // check if we have external rebuild events:
+            final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
+            for (RebuildEvent rebuildEvent : rebuildEvents) {
+                systemInfo.setNeedsRebuild(true);
+                final List<Plugin> rebuildPlugins = systemInfo.getRebuildPlugins();
+                // skip duplicate names:
+                boolean containsPlugin = false;
+                final String pluginName = rebuildEvent.getPluginName();
+                for (Plugin rebuildPlugin : rebuildPlugins) {
+                    if (rebuildPlugin.getName().equals(pluginName)) {
+                        containsPlugin = true;
+                    }
+                }
+                if (!containsPlugin) {
+                    final Plugin plugin = new PluginRestful(pluginName);
+                    plugin.setType(rebuildEvent.getPluginType());
+                    systemInfo.addRebuildPlugin(plugin);
+                }
+            }
+        } finally {
+            pingLock.unlock();
+        }
 
         return systemInfo;
-
-
     }
 
 
