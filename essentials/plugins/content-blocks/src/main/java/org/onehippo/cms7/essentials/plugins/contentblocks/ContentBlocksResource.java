@@ -48,8 +48,11 @@ import org.onehippo.cms7.essentials.dashboard.model.*;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.*;
+import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
+import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsCompound;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.*;
 import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +76,21 @@ public class ContentBlocksResource extends BaseResource {
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
-        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.DOCUMENT);
+        final ContentTypeFilter filter = new ContentTypeFilter() {
+            public boolean pass(ContentType type) {
+                // Accept both doc types and compounds, but rule out imagesets.
+                if (type.isContentType("hippogallery:imageset")) {
+                    return false;
+                }
+                for (String supertype : type.getSuperTypes()) {
+                    if (supertype.equals("hippogallery:imageset")) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
+        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocuments(filter, true);
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
         final Session session = GlobalUtils.createSession();
@@ -138,7 +155,7 @@ public class ContentBlocksResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
-        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(ContentTypeServiceUtils.Type.COMPOUND, false);
+        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(new ContentTypeIsCompound(), false);
         List<String> compoundTypeNames = new ArrayList<>(Arrays.asList(
                 "hippo:mirror", // TODO: avoid hard-coding these. How can I use the content type service to achieve this?
                 "hippo:resource",

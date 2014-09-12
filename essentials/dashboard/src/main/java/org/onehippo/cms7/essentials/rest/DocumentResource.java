@@ -47,6 +47,9 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
+import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsCompound;
+import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +76,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/")
     public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.ALL);
+        return ContentTypeServiceUtils.fetchDocuments(null, true);
     }
 
     @ApiOperation(
@@ -82,7 +85,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.DOCUMENT);
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(new ContentTypeIsDocument());
     }
 
     @ApiOperation(
@@ -91,7 +94,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(ContentTypeServiceUtils.Type.COMPOUND);
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(new ContentTypeIsCompound());
     }
 
 

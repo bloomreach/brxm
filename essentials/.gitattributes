@@ -1031,6 +1031,9 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/NoAnnotationMethodVisitor.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/exc/EssentialsCodeCreationException.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitor.java -text
+plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/contenttypeservice/ContentTypeFilter.java -text
+plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/contenttypeservice/ContentTypeIsCompound.java -text
+plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/contenttypeservice/ContentTypeIsDocument.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/inject/ApplicationModule.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/inject/PropertiesModule.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/update/UpdateUtils.java -text

@@ -39,6 +39,7 @@ import javax.jcr.Value;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
@@ -46,50 +47,39 @@ import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by tjeger on 7/9/14.
- */
 public class ContentTypeServiceUtils {
     private static final Logger log = LoggerFactory.getLogger(ContentTypeServiceUtils.class);
-
-    public enum Type {
-        ALL,
-        COMPOUND,
-        DOCUMENT,
-        ASSET,
-        GALLERY
-    }
 
     /**
      * Fetch a list of documents of the specified type.
      *
      * Only document types of the project's own namespace are retrieved.
      *
-     * @param type for filtering document types
+     * @param filter for filtering document types. May be null.
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final Type type) {
-        return fetchDocuments(type, true);
+    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final ContentTypeFilter filter) {
+        return fetchDocuments(filter, true);
     }
 
     /**
      * Fetch a list of documents of the specified type.
      *
-     * @param type for filtering document types
+     * @param filter for filtering document types. May be null.
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocuments(final Type type, boolean ownNamespaceOnly) {
+    public static List<DocumentRestful> fetchDocuments(final ContentTypeFilter filter, final boolean ownNamespaceOnly) {
         final PluginContext context = PluginContextFactory.getContext();
-        final String namespacePrefix = context.getProjectNamespacePrefix();
-        final Session session = context.createSession();
-        final Collection<ContentType> filteredContentTypes = new HashSet<>();
         final List<DocumentRestful> documents = new ArrayList<>();
+        final Session session = context.createSession();
         try {
             final ContentTypeService service = new HippoContentTypeService(session);
             final ContentTypes contentTypes = service.getContentTypes();
             final SortedMap<String, Set<ContentType>> typesByPrefix = contentTypes.getTypesByPrefix();
 
             // filter on own namespace
+            final String namespacePrefix = context.getProjectNamespacePrefix();
+            final Collection<ContentType> filteredContentTypes = new HashSet<>();
             for (Map.Entry<String, Set<ContentType>> entry : typesByPrefix.entrySet()) {
                 final Set<ContentType> value = entry.getValue();
                 if (!ownNamespaceOnly || entry.getKey().equals(namespacePrefix)) {
@@ -99,11 +89,7 @@ public class ContentTypeServiceUtils {
 
             // filter on document type
             for (ContentType doc : filteredContentTypes) {
-                Type myType = doc.isCompoundType() ? Type.COMPOUND : Type.DOCUMENT;
-
-                if (type == Type.ALL) {
-                    documents.add(new DocumentRestful(doc, context));
-                } else if (myType == type) {
+                if (filter == null || filter.pass(doc)) {
                     documents.add(new DocumentRestful(doc, context));
                 }
             }
