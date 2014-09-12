@@ -4,7 +4,6 @@ them to kickstart their project in a matter of minutes, to benefit from our best
 or community plugins from the Hippo Marketplace.
 
 ```
-Hippo Essentials is in BETA stage and is still undergoing testing and changes before its official release.
 Please use the Hippo Essentials feedback form to inform us if you encounter any bugs/glitches or if you have any
 suggestions for improvements.
 ```
@@ -25,28 +24,27 @@ and password. You just have to create a SSH key and configure the key in your GI
 [instructions on how to create your SSH key](https://help.github.com/articles/generating-ssh-keys) on Git
 Hub. In order to make use of your SSH key, you have to make sure you use the following clone command:
 
-```
-$ git clone git@github.com:onehippo/essentials.git
+```shell
+git clone git@github.com:onehippo/essentials.git
 ```
 ### Build the essentials components:
-```
-$ cd essentials
-$ mvn clean install
+```shell
+cd essentials
+mvn clean install
 ```
 
 ### Validate license headers:
-```
-$ mvn clean && mvn validate -Ppedantic
+```shell
+mvn clean && mvn validate -Ppedantic
 ```
 
 ### Create and install archetype locally :
-```
-$ cd essentials/archetype
-$ mvn clean install
+```shell
+cd essentials/archetype
+mvn clean install
 ```
 
 ### run archetype
-
 ```shell
 mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=2.00.02-SNAPSHOT"
 ```
@@ -54,8 +52,8 @@ mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArti
 ## Working with Git
 
 Create local working branch to work on:
-```
-$ git checkout -b YOUR_LOCAL_BRANCH_NAME
+```shell
+git checkout -b YOUR_LOCAL_BRANCH_NAME
 ```
 
 Now work on files, use git status to & git add and git commit files.
@@ -63,8 +61,8 @@ NOTE: This can be done within Intellij as well, just commit files
 
 Push your changes to remote repository, -u option is to create remote tracking branch:
 
-```
-$ git push -u origin YOUR_LOCAL_BRANCH_NAME
+```shell
+git push -u origin YOUR_LOCAL_BRANCH_NAME
 ```
 This will make a remote branch, visible to other team members.
 
@@ -73,17 +71,16 @@ Once you are ready to integrate your work into master, request a pull request th
 
 NOTE: If you wanna merge your changes yourself do following:
 
-
-```
-$ git checkout master
-$ git pull
-$ git pull origin YOUR_LOCAL_BRANCH_NAME
-$ git push
+```shell
+git checkout master
+git pull
+git pull origin YOUR_LOCAL_BRANCH_NAME
+git push
 ```
 
 To delete remote branch:
-```
-$ git push origin --delete  YOUR_LOCAL_BRANCH_NAME
+```shell
+git push origin --delete  YOUR_LOCAL_BRANCH_NAME
 ```
 
 ##Running locally
@@ -92,9 +89,9 @@ $ git push origin --delete  YOUR_LOCAL_BRANCH_NAME
 This project uses the Maven Cargo plugin to run the CMS, Website and Essentials dashboard locally in Tomcat.
 From the project root folder, execute:
 
-```
-$ mvn clean install
-$ mvn -P cargo.run
+```shell
+mvn clean install
+mvn -P cargo.run
 ```
 
 The following URLs are available from this project:
@@ -107,48 +104,45 @@ Logs are located in `target/tomcat6x/logs`
 
 ##Using JRebel
 
-
 Set the environment variable `REBEL_HOME` to the directory containing jrebel.jar.
 
 Build with:
 
-```
-$ mvn clean install -Djrebel
+```shell
+mvn clean install -Djrebel
 ```
 
 Start with:
 
-```
-$ mvn -P cargo.run -Djrebel
+```shell
+mvn -P cargo.run -Djrebel
 ```
 
 ##Best Practice for development
-
 
 Use the option `-Drepo.path=/some/path/to/repository` during start up. This will avoid
 your repository to be cleared when you do a mvn clean.
 
 For example start your project with:
 
-```
-$ mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo
+```shell
+mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo
 ```
 or with jrebel:
 
-```
-$ mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo -Djrebel
+```shell
+mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo -Djrebel
 ```
 ##Hot deploy
 
 To hot deploy, redeploy or undeploy the CMS or site:
 
-```
-$ cd cms (or site)
-$ mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
+```shell
+cd cms (or site)
+mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
 ```
 
 ##Automatic Export
-
 
 To have your repository changes automatically exported to filesystem during local development, log into
 http://localhost:8080/cms/console and press the *"Enable Auto Export"* button at the top right. To set this
@@ -161,7 +155,6 @@ Copyright 2013-2014 Hippo B.V.
 Distributed under the [Apache 2.0 license](https://github.com/onehippo/essentials/blob/master/LICENSE).
 
 
-
 ## NOTES:
 
 ### Cloning project using HTTPS clone
@@ -169,6 +162,6 @@ Distributed under the [Apache 2.0 license](https://github.com/onehippo/essential
 The first option is to use a HTTPS clone. You have to provide your GIT username and password to be able
 to perform GIT operations. The clone can be created by the following command:
 
-```
-$ git clone https://github.com/onehippo/essentials.git
+```shell
+git clone https://github.com/onehippo/essentials.git
 ```
