@@ -13,16 +13,22 @@
     "ExplorerCanvas": [],
     "fastclick": [],
     "flot": [],
-    "font-awesome": ["fonts/*"],
     "hippo-plugins": ["dist/js/main.min.js"],
-    "hippo-theme": ["dist/css/main.min.css", "dist/js/main.min.js"],
+    "hippo-theme": [
+      "dist/css/main.min.css",
+      "dist/js/main.min.js",
+      "images/**/*",
+      "fonts/**/*"
+    ],
     "html5shiv": [],
     "jasmine-jquery": [],
-    "jquery": ["jquery.min.js", "jquery.min.map"],
+    "jquery": ["dist/jquery.min.js", "dist/jquery.min.map"],
     "js-detect-ie": [],
     "jstree": ["dist/jstree.js", "dist/themes/default/*"],
     "underscore": ["underscore-min.js", "underscore-min.map"],
     "angular-ui-router": ["release/angular-ui-router.min.js"],
     "respond": ["dest/respond.min.js"],
-    "sizzle": []
+    "sizzle": [],
+    "google-code-prettify": [],
+    "font-awesome": []
 }
