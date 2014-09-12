@@ -17,8 +17,8 @@
     "hippo-theme": [
       "dist/css/main.min.css",
       "dist/js/main.min.js",
-      "images/**/*",
-      "fonts/**/*"
+      "dist/images/*",
+      "dist/fonts/*"
     ],
     "html5shiv": [],
     "jasmine-jquery": [],
