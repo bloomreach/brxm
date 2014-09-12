@@ -1171,7 +1171,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
             try {
                 service.importJcrWebResourceBundle(session, bundleZipFile);
-            } catch (IOException e) {
+                session.save();
+            } catch (IOException|RepositoryException e) {
                 getLogger().error("Cannot import web resource bundle '{}'", bundleZipFile.getName(), e);
             }
         }
@@ -1197,7 +1198,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
             try {
                 service.importJcrWebResourceBundle(session, bundleDir);
-            } catch (IOException e) {
+                session.save();
+            } catch (IOException|RepositoryException e) {
                 getLogger().error("Cannot import web resource bundle '{}'", bundleDir, e);
             }
         }
