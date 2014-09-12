@@ -18,10 +18,17 @@ package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
-public class ProviderRestful implements Restful {
+public class CompoundRestful implements Restful {
+    private String id;
     private String name;
-    private String translatedName;
-    private String repositoryPath;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -29,21 +36,5 @@ public class ProviderRestful implements Restful {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getTranslatedName() {
-        return translatedName;
-    }
-
-    public void setTranslatedName(final String translatedName) {
-        this.translatedName = translatedName;
-    }
-
-    public String getRepositoryPath() {
-        return repositoryPath;
-    }
-
-    public void setRepositoryPath(final String repositoryPath) {
-        this.repositoryPath = repositoryPath;
     }
 }

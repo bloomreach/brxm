@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.contentblocks.model;
+package org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice;
 
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.services.contenttype.ContentType;
 
-public class ProviderActionRestful implements Restful {
-    private String name; // full (name-spaced) name of provider compound
-    private boolean add; // flag indicating that the provider shall be added or removed from document type
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isAdd() {
-        return add;
-    }
-
-    public void setAdd(final boolean add) {
-        this.add = add;
+public class ContentTypeIsDocument implements ContentTypeFilter {
+    public boolean pass(final ContentType type) {
+        return !type.isCompoundType();
     }
 }

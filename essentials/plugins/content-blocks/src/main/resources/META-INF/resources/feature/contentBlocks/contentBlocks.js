@@ -21,110 +21,137 @@
         .controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             var restEndpoint = $rootScope.REST.dynamic + 'contentblocks/';
 
-            $scope.baseCmsNamespaceUrl = "http://localhost:8080/cms?path=";
-            $scope.providers = [];
-            $scope.providerMap = {};
+            $scope.compounds = [];
             $scope.documentTypes = [];
+            $scope.copyChoices = [];
+            $scope.pickerTypes = [ 'links', 'dropdown' ];
 
-            $scope.newProviderName = "";
-            $scope.createProvider = function () {
-                $http.put(restEndpoint + 'providers/' + $scope.newProviderName).success(function (data) {
-                    loadProviders(); // reload providers after adding one
-                });
-                $scope.newProviderName = "";
+            $scope.addField = function() {
+                var field = {
+                    name: '',
+                    pickerType: $scope.pickerTypes[0],
+                    compounds: []
+                };
+                $scope.selectedDocumentType.contentBlocksFields.push(field);
             };
 
-            $scope.update = function () {
-                // per document type, compare the current providers (which may have been adjusted)
-                // with the originally loaded providers. If there are differences, some providers
-                // will have to be added or removed.
-                var actionableDocuments = [];
-                angular.forEach($scope.documentTypes, function(docType) {
-                    var actionableProviders = [];
-                    angular.forEach(docType.providers, function(savedProvider) {
-                        var isAdded = true;
-                        angular.forEach(docType.providerActions, function(loadedProvider) {
-                            if (savedProvider.name === loadedProvider.name) {
-                                isAdded = false; // docType already had this provider.
-                            }
-                        });
-                        if (isAdded) {
-                            actionableProviders.push({
-                                "name": savedProvider.name,
-                                "add": true
-                            });
-                        }
-                    });
-                    angular.forEach(docType.providerActions, function(loadedProvider) {
-                        var isDeleted = true;
-                        angular.forEach(docType.providers, function(savedProvider) {
-                            if (loadedProvider.name === savedProvider.name) {
-                                isDeleted = false; // docType still has this provider
-                            }
-                        })
-                        if (isDeleted) {
-                            actionableProviders.push({
-                                "name": loadedProvider.name,
-                                "add": false
-                            })
-                        }
-                    });
-                    if (actionableProviders.length) {
-                        actionableDocuments.push({
-                            "name": docType.name,
-                            "providerActions": actionableProviders
-                        });
-                    }
-                });
-
-                if (actionableDocuments.length) {
-                    $http.post(restEndpoint + 'update', { "documentTypes": actionableDocuments }).success(function() {
-                        loadDocumentTypes();
-                    });
+            $scope.deleteField = function(field) {
+                var index = $scope.selectedDocumentType.contentBlocksFields.indexOf(field);
+                if (index > -1) {
+                    $scope.selectedDocumentType.contentBlocksFields.splice(index, 1);
                 }
             };
 
+            $scope.copyField = function() {
+                var newField = angular.copy($scope.copyChoice.field);
+                delete newField.originalName;
+                delete newField.name;
+
+                // revert deep-copying of compounds, we must refer to the exact same instance
+                // for the pre-selection to work.
+                newField.compounds = [];
+                angular.forEach($scope.copyChoice.field.compounds, function(compound) {
+                    newField.compounds.push(compound);
+                });
+
+                $scope.selectedDocumentType.contentBlocksFields.push(newField);
+                if ($scope.copyChoices.length > 1) {
+                    $scope.copyChoice = null;
+                }
+            };
+
+            $scope.update = function () {
+                // translate the content blocks field compounds back to compoundrefs
+                angular.forEach($scope.documentTypes, function(docType) {
+                    angular.forEach(docType.contentBlocksFields, function(field) {
+                        field.compoundRefs = [];
+                        angular.forEach(field.compounds, function(compound) {
+                            field.compoundRefs.push(compound.id);
+                        });
+                        delete field.compounds;
+                    });
+                });
+
+                $http.post(restEndpoint, $scope.documentTypes)
+                  .success(function () {
+                    initDocTypes($scope.documentTypes, true);
+                }).error(function () {
+                    initDocTypes($scope.documentTypes, false);
+                });
+            };
+
+            $scope.reset = function() {
+                $http.get(restEndpoint).success(function (data) {
+                    initDocTypes(data, true);
+                    $scope.up = true;
+                });
+            };
+
+            $scope.selectedDocTypeNamespace = function() {
+                return $scope.selectedDocumentType.id.split(':')[0];
+            };
+
+            $scope.selectedDocTypeName = function() {
+                return $scope.selectedDocumentType.id.split(':')[1];
+            };
+
             $scope.init = function () {
-                loadProviders();
-                loadDocumentTypes();
+                $http.get(restEndpoint + 'compounds').success(function (data) {
+                    $scope.compounds = data;
+
+                    // create the compound map
+                    $scope.compoundMap = {};
+                    angular.forEach($scope.compounds, function (compound) {
+                        $scope.compoundMap[compound.id] = compound;
+                    });
+
+
+                    $scope.reset();
+                });
             };
             $scope.init();
-                
-            // Helper functions
-            function loadProviders() {
-                $http.get(restEndpoint + 'providers').success(function (data) {
-                    $scope.providers = data.items;
 
-                    // (re-)initialize the provider map
-                    $scope.providerMap = {};
-                    angular.forEach($scope.providers, function (provider) {
-                        $scope.providerMap[provider.name] = provider;
-                    });
+            function initDocTypes(docTypes, setOriginalName) {
+                // preserve docType selection if possible
+                var selectedName;
+                if ($scope.selectedDocumentType) {
+                    selectedName = $scope.selectedDocumentType.name;
+                    $scope.selectedDocumentType = null;
+                }
+                $scope.documentTypes = docTypes;
+                $scope.copyChoices = [];
 
-                    // replace the provider links
-                    angular.forEach($scope.documentTypes, function(docType) {
-                        var newProviders = [];
-                        angular.forEach(docType.providers, function(provider) {
-                            newProviders.push($scope.providerMap[provider.name]);
+                // replace content blocks compound refs with actual compounds
+                angular.forEach($scope.documentTypes, function(docType) {
+                    angular.forEach(docType.contentBlocksFields, function(field) {
+                        if (setOriginalName) {
+                            field.originalName = field.name;
+                        }
+                        if (field.maxItems == 0) {
+                            delete field.maxItems;
+                        }
+                        field.compounds = [];
+                        angular.forEach(field.compoundRefs, function(compoundRef) {
+                            field.compounds.push($scope.compoundMap[compoundRef]);
                         });
-                        docType.providers = newProviders;
-                    });
-                });
-            }
-            function loadDocumentTypes() {
-                $http.get(restEndpoint).success(function (data) {
-                    $scope.documentTypes = data.documentTypes;
-                    angular.forEach($scope.documentTypes, function (docType) {
-                        // prepare document types for displaying in the UI.
-                        var parts = docType.name.split(':');
-                        docType.prefix = parts[0];
-                        docType.nodeName = parts[1];
-                        docType.providers = [];
-                        angular.forEach(docType.providerActions, function(provider) {
-                            docType.providers.push($scope.providerMap[provider.name]);
+
+                        $scope.copyChoices.push({
+                            "name": docType.name + ' - ' + field.name,
+                            "field": field
                         });
                     });
+                    if (docType.name === selectedName) {
+                        $scope.selectedDocumentType = docType; // restore previous selection
+                    }
                 });
+
+                // if there's only one document type, preselect it.
+                if ($scope.documentTypes.length == 1) {
+                    $scope.selectedDocumentType = $scope.documentTypes[0];
+                }
+                if ($scope.copyChoices.length == 1) {
+                    $scope.copyChoice = $scope.copyChoices[0];
+                }
             }
         })
 })();
