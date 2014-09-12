@@ -45,6 +45,7 @@ public interface WebResourcesService {
     /**
      * Imports a web resource bundle from a directory. The name of the directory is used as the name of the bundle.
      * Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted from JCR.
+     * The caller of this method is responsible for saving the changes made in the session.
      *
      * @param session the JCR session used to access web resources.
      * @param directory the directory containing the web resources to import.
@@ -57,6 +58,7 @@ public interface WebResourcesService {
      * Imports a web resource bundle from the given zip file. The zip file should contain a single root directory entry
      * that contains all web resources. The name of the root directory entry is used as the name of the bundle.
      * Existing web resources in JCR are replaced by the new ones. Missing web resources are deleted from JCR.
+     * The caller of this method is responsible for saving the changes made in the session.
      *
      * @param session the JCR session used to access web resources.
      * @param zip the ZIP file containing the web resources to import.
@@ -67,7 +69,7 @@ public interface WebResourcesService {
 
     /**
      * Imports a sub-tree of a web resource bundle from a directory. The sub-tree can consist of a directory or
-     * a single file.
+     * a single file. The caller of this method is responsible for saving the changes made in the session.
      *
      * @param session the JCR session used to access web resources.
      * @param bundleName the name of the web resource bundle
