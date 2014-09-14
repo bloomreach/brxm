@@ -92,7 +92,7 @@ public abstract class ClusterTest {
     }
 
     protected static void startRepositories(boolean cleanup) throws Exception {
-        final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        final File tmpdir = new File(System.getProperty("java.io.tmpdir"), ClusterTest.class.getSimpleName());
         final File repo1Dir = new File(tmpdir, "repository-node1");
         if (!repo1Dir.exists()) {
             repo1Dir.mkdir();
