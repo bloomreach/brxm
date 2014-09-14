@@ -35,6 +35,10 @@ import static junit.framework.Assert.fail;
 /**
  * Asserts consistency across multiple random concurrency scenarios
  * both within a single cluster node and across cluster nodes.
+ * <p>
+ *     The system property -Dorg.onehippo.repository.monkey.MonkeyTest.actionCount
+ *     controls the amount of action to perform during each test. Defaults to 1000.
+ * </p>
  */
 public class MonkeyTest extends ClusterTest {
 
@@ -111,13 +115,13 @@ public class MonkeyTest extends ClusterTest {
         return clusterContentEqual()
                 && checkIndexConsistency(repo1)
                 && checkIndexConsistency(repo2)
-                && checkDatabaseConsistency(repo1, session1)
-                && checkDatabaseConsistency(repo2, session2);
+                && checkDatabaseConsistency(repo1)
+                && checkDatabaseConsistency(repo2);
     }
 
     private boolean checkSingleNodeConsistency(Object repo) throws IOException, RepositoryException {
         log.info("checking node consistency...");
-        return checkIndexConsistency(repo) && checkDatabaseConsistency(repo, session1);
+        return checkIndexConsistency(repo) && checkDatabaseConsistency(repo);
     }
 
 }

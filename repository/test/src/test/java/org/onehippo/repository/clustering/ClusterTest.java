@@ -241,9 +241,9 @@ public abstract class ClusterTest {
      * Check the database consistency of a repository. All access to the repository must be invoked using
      * reflection because it runs in an isolated classloader.
      */
-    protected boolean checkDatabaseConsistency(Object repo, Session session) throws RepositoryException {
+    protected boolean checkDatabaseConsistency(Object repo) throws RepositoryException {
         Object persistenceManager = getPersistenceManager(repo);
-        ClassLoader classLoader = persistenceManager.getClass().getClassLoader();
+        ClassLoader classLoader = repo.getClass().getClassLoader();
         try {
             final Class<?> checkerClass = Class.forName("org.apache.jackrabbit.core.persistence.bundle.ConsistencyCheckerImpl", true, classLoader);
             final Class<?> pmClass = Class.forName("org.apache.jackrabbit.core.persistence.bundle.AbstractBundlePersistenceManager", true, classLoader);
@@ -251,7 +251,7 @@ public abstract class ClusterTest {
             final Class<?> channelClass = Class.forName("org.apache.jackrabbit.core.cluster.UpdateEventChannel", true, classLoader);
             final Constructor<?> checkerConstructor = checkerClass.getConstructor(pmClass, listenerClass, String.class, channelClass);
             final Object checker = checkerConstructor.newInstance(persistenceManager, null, null, null);
-            checkerClass.getMethod("check", String[].class, boolean.class).invoke(checker, new String[] { session.getNode("/test").getIdentifier() }, true);
+            checkerClass.getMethod("check", String[].class, boolean.class).invoke(checker, new String[] { session1.getNode("/test").getIdentifier() }, true);
             // todo: check() with a determinate list of ids seems to be broken, we need to run a double check because of that
             checkerClass.getMethod("doubleCheckErrors").invoke(checker);
             final Object report = checkerClass.getMethod("getReport").invoke(checker);
@@ -296,7 +296,7 @@ public abstract class ClusterTest {
             repository.setAccessible(true);
             return (Repository) repository.get(decorator);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
-            log.error("Failed to get internal RepositorImpl from LocalHippoRepository: " + e);
+            log.error("Failed to get internal RepositoryImpl from LocalHippoRepository: " + e);
         }
         return null;
     }
