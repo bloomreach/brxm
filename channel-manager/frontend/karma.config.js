@@ -33,7 +33,6 @@ module.exports = function(config) {
             'components/underscore/underscore.js',
             'components/angular/angular.js',
             'components/angular-route/angular-route.js',
-            'components/hippo-plugins/dist/js/main.js',
             'components/hippo-theme/dist/js/main.js',
             'components/angular-translate/angular-translate.js',
             'components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',

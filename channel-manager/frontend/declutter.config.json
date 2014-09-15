@@ -13,7 +13,6 @@
     "ExplorerCanvas": [],
     "fastclick": [],
     "flot": [],
-    "hippo-plugins": ["dist/js/main.min.js"],
     "hippo-theme": [
       "dist/css/main.min.css",
       "dist/js/main.min.js",

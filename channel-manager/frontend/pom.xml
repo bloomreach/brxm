@@ -133,15 +133,6 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.frontend</groupId>
-      <artifactId>hippo-plugins</artifactId>
-      <version>${hippo.frontend.plugins.version}</version>
-      <classifier>distribution</classifier>
-      <type>zip</type>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.frontend</groupId>
       <artifactId>hippo-theme</artifactId>
       <version>${hippo.frontend.theme.version}</version>
       <classifier>distribution</classifier>
@@ -303,7 +294,6 @@
             <configuration>
               <includeGroupIds>org.onehippo.cms7.frontend</includeGroupIds>
               <includeArtifactIds>
-                hippo-plugins,
                 hippo-theme
               </includeArtifactIds>
               <stripClassifier>true</stripClassifier>

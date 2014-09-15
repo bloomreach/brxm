@@ -320,7 +320,6 @@ angular/components/font-awesome/fonts/*
     For general information about the SIL OFL License: http://scripts.sil.org/OFL
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/hippo-plugins/dist/js/main.min.*.js
 angular/components/hippo-theme/dist/css/main.min.*.css
 angular/components/hippo-theme/dist/js/main.min.*.js
 
