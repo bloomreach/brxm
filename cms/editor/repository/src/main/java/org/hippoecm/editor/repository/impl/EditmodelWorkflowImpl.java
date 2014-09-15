@@ -46,9 +46,12 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.editor.EditorNodeType.EDITOR_TEMPLATES;
 
 public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflow {
 
@@ -456,6 +459,21 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 prototype.remove();
             }
         }
+        if (target.hasNode(EDITOR_TEMPLATES)) {
+            for (Node pluginCluster : new NodeIterable(target.getNode(EDITOR_TEMPLATES).getNodes())) {
+                if (pluginCluster.hasProperty("type")) {
+                    String type = pluginCluster.getProperty("type").getString();
+                    final int offset = type.indexOf(':');
+                    if (offset != -1) {
+                        type = type.substring(0, offset+1) + name;
+                    } else {
+                        type = name;
+                    }
+                    pluginCluster.setProperty("type", type);
+                }
+            }
+        }
+
         if (target.isNodeType(HippoNodeType.NT_TRANSLATED)) {
             target.removeMixin(HippoNodeType.NT_TRANSLATED);
         }
