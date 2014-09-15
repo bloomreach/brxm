@@ -26,16 +26,10 @@ You can automate the installation of NPM using Chocolatey package manager:
 https://chocolatey.org/
 
 The package for Node.js can be installed using:
-cinst nodejs.install
 
-Then install Bower and Grunt with NPM as explained before. Due to an open issue with Maven
-exec plugin [1], you will have to either copy or rename the Bower and Grunt .cmd files to
-.bat extension:
-C:\Program Files\nodejs\npm.cmd -> npm.bat
-C:\Users\USERNAME\AppData\Roaming\npm\bower.cmd -> bower.bat
-C:\Users\USERNAME\AppData\Roaming\npm\grunt.cmd -> grunt.bat
+  $ cinst nodejs.install
 
-[1] http://jira.codehaus.org/browse/MEXEC-118
+Then install Bower and Grunt with NPM as explained before.
 
 -----
 Build
