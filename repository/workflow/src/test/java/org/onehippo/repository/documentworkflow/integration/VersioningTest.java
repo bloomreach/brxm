@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.integration;
+package org.onehippo.repository.documentworkflow.integration;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -48,31 +48,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
-public class DocumentWorkflowVersioningIntegrationTest extends RepositoryTestCase {
+public class VersioningTest extends AbstractDocumentWorkflowIntegrationTest {
 
     private static final int NO_VERSIONS = 3;
 
-    private Node handle;
-    private Node document;
-
-    @Override
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        final Node test = session.getRootNode().addNode("test");
-        handle = test.addNode("document", NT_HANDLE);
-        document = handle.addNode("document", NT_DOCUMENT);
-        document.addMixin(HIPPOSTDPUBWF_DOCUMENT);
-        document.addMixin(MIX_VERSIONABLE);
-        document.addMixin(NT_RELAXED);
-        document.setProperty(HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
-        document.setProperty(HIPPOSTDPUBWF_CREATED_BY, "testuser");
-        document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
-        document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
-        document.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
         document.setProperty("counter", 0l);
-
         session.save();
     }
 
