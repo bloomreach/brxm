@@ -23,6 +23,9 @@ import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.REJECTED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_REQUEST;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -123,5 +126,36 @@ public class RequestTest extends AbstractDocumentWorkflowIntegrationTest {
         }, 10);
 
         assertFalse("Document is still live", isLive());
+    }
+
+    @Test
+    public void testRequestAndRejectPublication() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        workflow.requestPublication();
+        assertTrue("Publication request not found", handle.hasNode(HIPPO_REQUEST));
+
+        Node request = handle.getNode(HIPPO_REQUEST);
+        workflow.rejectRequest(request.getIdentifier(), "Testing");
+
+        assertTrue("Request missing on handle", handle.hasNode(HIPPO_REQUEST));
+        assertTrue("Type property missing", request.hasProperty(HIPPOSTDPUBWF_TYPE));
+        assertEquals("Expected type to be rejected", REJECTED, request.getProperty(HIPPOSTDPUBWF_TYPE).getString());
+        assertTrue("Reason property missing", request.hasProperty(HIPPOSTDPUBWF_REASON));
+        assertEquals("Expected reason to be 'Testing'", "Testing", request.getProperty(HIPPOSTDPUBWF_REASON).getString());
+        assertFalse("Document should not be live after being rejected", isLive());
+    }
+
+    @Test
+    public void testCancelRequest() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        workflow.requestPublication();
+        assertTrue("Publication request not found", handle.hasNode(HIPPO_REQUEST));
+
+        Node request = handle.getNode(HIPPO_REQUEST);
+        workflow.cancelRequest(request.getIdentifier());
+
+        assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
     }
 }

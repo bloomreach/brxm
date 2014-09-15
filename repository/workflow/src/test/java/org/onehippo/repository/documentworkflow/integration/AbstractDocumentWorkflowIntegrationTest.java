@@ -92,6 +92,9 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
 
     protected boolean isLive() throws RepositoryException {
         Node published = getVariant(PUBLISHED);
+        if (published == null) {
+            return false;
+        }
         final Value[] availability = published.getProperty(HIPPO_AVAILABILITY).getValues();
         return toStringSet(availability).contains("live");
     }
