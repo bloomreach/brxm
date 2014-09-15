@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -34,9 +33,20 @@ import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_RELAXED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowVersioningIntegrationTest extends RepositoryTestCase {
 
@@ -51,16 +61,16 @@ public class DocumentWorkflowVersioningIntegrationTest extends RepositoryTestCas
         super.setUp();
 
         final Node test = session.getRootNode().addNode("test");
-        handle = test.addNode("document", "hippo:handle");
-        document = handle.addNode("document", "hippo:document");
-        document.addMixin("hippostdpubwf:document");
-        document.addMixin("mix:versionable");
-        document.addMixin("hippostd:relaxed");
-        document.setProperty("hippostdpubwf:creationDate", Calendar.getInstance());
-        document.setProperty("hippostdpubwf:createdBy", "testuser");
-        document.setProperty("hippostdpubwf:lastModificationDate", Calendar.getInstance());
-        document.setProperty("hippostdpubwf:lastModifiedBy", "testuser");
-        document.setProperty("hippostd:state", "unpublished");
+        handle = test.addNode("document", NT_HANDLE);
+        document = handle.addNode("document", NT_DOCUMENT);
+        document.addMixin(HIPPOSTDPUBWF_DOCUMENT);
+        document.addMixin(MIX_VERSIONABLE);
+        document.addMixin(NT_RELAXED);
+        document.setProperty(HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        document.setProperty(HIPPOSTDPUBWF_CREATED_BY, "testuser");
+        document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
+        document.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
         document.setProperty("counter", 0l);
 
         session.save();
@@ -88,7 +98,7 @@ public class DocumentWorkflowVersioningIntegrationTest extends RepositoryTestCas
     }
 
     @Test
-    public void testVersionDocument() throws Exception {
+    public void testVersionDocumentAndRetrieve() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow();
         for (int i = 0; i < NO_VERSIONS; i++) {
             edit();
@@ -104,7 +114,7 @@ public class DocumentWorkflowVersioningIntegrationTest extends RepositoryTestCas
     }
 
     @Test
-    public void testRestoreVersion() throws Exception {
+    public void testVersionDocumentAndRestore() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow();
         for (int i = 0; i < NO_VERSIONS; i++) {
             edit();
@@ -131,8 +141,7 @@ public class DocumentWorkflowVersioningIntegrationTest extends RepositoryTestCas
 
     private Workflow getWorkflow(Node node, String category) throws RepositoryException {
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        Node canonicalNode = ((HippoNode) node).getCanonicalNode();
-        return workflowManager.getWorkflow(category, canonicalNode);
+        return workflowManager.getWorkflow(category, node);
     }
 
 }
