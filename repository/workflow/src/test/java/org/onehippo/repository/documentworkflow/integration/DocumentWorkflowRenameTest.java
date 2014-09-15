@@ -23,7 +23,7 @@ import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class RenameTest extends AbstractDocumentWorkflowIntegrationTest {
+public class DocumentWorkflowRenameTest extends AbstractDocumentWorkflowIntegrationTest {
 
     @Test
     public void testRenameLiveDocumentFails() throws Exception {

@@ -31,24 +31,12 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
-import static org.hippoecm.repository.HippoStdNodeType.NT_RELAXED;
-import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
-import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
-public class VersioningTest extends AbstractDocumentWorkflowIntegrationTest {
+public class DocumentWorkflowVersioningTest extends AbstractDocumentWorkflowIntegrationTest {
 
     private static final int NO_VERSIONS = 3;
 

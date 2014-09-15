@@ -24,10 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
@@ -73,6 +75,7 @@ public abstract class RepositoryTestCase {
 
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
+    protected static final Credentials CREDENTIALS = new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
     protected static HippoRepository external = null;
     protected static HippoRepository background = null;
@@ -152,7 +155,7 @@ public abstract class RepositoryTestCase {
         } else {
             server = background;
         }
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session = server.login(CREDENTIALS);
         removeNode("/test");
 
         saveState();
