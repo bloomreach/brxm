@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.repository.documentworkflow.integration;
 
 import org.hippoecm.repository.api.WorkflowException;
@@ -51,4 +50,5 @@ public class RenameTest extends AbstractDocumentWorkflowIntegrationTest {
         workflow.rename("success");
         assertEquals("success", handle.getName());
     }
+
 }

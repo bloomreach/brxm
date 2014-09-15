@@ -540,6 +540,7 @@ workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
 workflow/src/test/java/org/hippoecm/repository/gallery/GalleryWorkflowTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/AbstractDocumentWorkflowIntegrationTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/RenameTest.java -text
+workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/RequestTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/VersioningTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractWorkflowTaskActionTest.java -text
