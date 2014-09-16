@@ -482,10 +482,22 @@
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriteParam.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js</exclude>
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js</exclude>
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js</exclude>
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/cobalt.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/eclipse.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/elegant.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/monokai.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/neat.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
                 <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
