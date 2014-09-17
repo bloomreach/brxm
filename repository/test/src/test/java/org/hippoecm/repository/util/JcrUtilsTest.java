@@ -20,13 +20,13 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class JcrUtilsTest extends RepositoryTestCase {
 
@@ -112,8 +112,26 @@ public class JcrUtilsTest extends RepositoryTestCase {
         JcrUtils.copy(session, "/test/node", "/test/copy");
 
         final Node copy = session.getNode("/test/copy");
-        Assert.assertEquals(PropertyType.STRING, copy.getProperty("string").getType());
-        Assert.assertEquals(PropertyType.DOUBLE, copy.getProperty("double").getType());
+        assertEquals(PropertyType.STRING, copy.getProperty("string").getType());
+        assertEquals(PropertyType.DOUBLE, copy.getProperty("double").getType());
     }
 
+    @Test
+    public void testCopyNodeToDescendantDestinationIsIllegal() throws Exception {
+        try {
+            JcrUtils.copy(session, "/test/node", "/test/node/child");
+            fail("Should not be able to copy node to own subpath");
+        } catch (IllegalArgumentException expected) {
+        }
+        try {
+            JcrUtils.copy(node, "child", node);
+            fail("Should not be able to copy node to same node as destination");
+        } catch (IllegalArgumentException expected) {
+        }
+        try {
+            JcrUtils.copy(session.getNode("/test"), "child", node);
+            fail("Should not be able to copy node to node that is descendant of source");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
 }

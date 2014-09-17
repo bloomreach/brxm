@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 import javax.jcr.Binary;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -480,6 +481,8 @@ public class JcrUtils {
      * @param destAbsPath the absolute path of the resulting copy
      * @return the created node
      * @throws RepositoryException
+     * @throws IllegalArgumentException if srcNode is same as destParentNode or destParentNode is a descendant of srcNode
+     * or destAbsPath is the root node path.
      */
     public static Node copy(Session session, String srcAbsPath, String destAbsPath) throws RepositoryException {
         if (destAbsPath.equals("/")) {
@@ -487,7 +490,7 @@ public class JcrUtils {
         }
 
         if (destAbsPath.startsWith(srcAbsPath) && destAbsPath.substring(srcAbsPath.length()).startsWith("/")) {
-            throw new IllegalArgumentException("Destination cannot be child of source node");
+            throw new IllegalArgumentException("Destination cannot be descendant of source node");
         }
 
         final Node srcNode = session.getNode(srcAbsPath);
@@ -507,12 +510,18 @@ public class JcrUtils {
      * @param destParentNode the parent of the to be newly created node
      * @return the created node
      * @throws RepositoryException
+     * @throws IllegalArgumentException if srcNode is same as destParentNode or destParentNode is a descendant of srcNode
      */
     public static Node copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
         if (isVirtual(srcNode)) {
             return null;
         }
-
+        if (srcNode.isSame(destParentNode)) {
+            throw new IllegalArgumentException("Destination parent node cannot be the same as source node");
+        }
+        if (isAncestor(srcNode, destParentNode)) {
+            throw new IllegalArgumentException("Destination parent node cannot be descendant of source node");
+        }
         final DefaultCopyHandler chain = new DefaultCopyHandler(destParentNode);
         final NodeInfo nodeInfo = new NodeInfo(srcNode);
         final NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
@@ -529,8 +538,15 @@ public class JcrUtils {
      * @param srcNode  the node to copy
      * @param destNode the node that the contents of srcNode will be copied to
      * @throws RepositoryException
+     * @throws IllegalArgumentException  if scrNode is same as destNode or destNode is a descendant of srcNode
      */
     public static void copyTo(final Node srcNode, Node destNode) throws RepositoryException {
+        if (srcNode.isSame(destNode)) {
+            throw new IllegalArgumentException("Destination node cannot be the same as source node");
+        }
+        if (isAncestor(srcNode, destNode)) {
+            throw new IllegalArgumentException("Destination node cannot be descendant of source node");
+        }
         copyTo(srcNode, new OverwritingCopyHandler(destNode));
     }
 
@@ -761,4 +777,15 @@ public class JcrUtils {
         }
     }
 
+    private static boolean isAncestor(final Node ancestor, final Node descendant) throws RepositoryException {
+        try {
+            Node node = descendant;
+            do {
+                node = node.getParent();
+            } while (!ancestor.isSame(node));
+            return true;
+        } catch (ItemNotFoundException e) {
+            return false;
+        }
+    }
 }
