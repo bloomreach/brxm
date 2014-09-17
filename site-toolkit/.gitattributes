@@ -391,7 +391,6 @@ client/src/main/java/org/hippoecm/hst/linking/HstLinkProcessorTemplate.java svne
 client/src/main/java/org/hippoecm/hst/servlet/BinariesServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/HstFreemarkerServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/HstPingServlet.java -text
-client/src/main/java/org/hippoecm/hst/servlet/ResourceServlet.java -text
 client/src/main/java/org/hippoecm/hst/tag/BaseHstURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/DefineObjectsTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HeadContributionTag.java svneol=native#text/plain
