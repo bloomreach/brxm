@@ -145,7 +145,7 @@ public class CopyDialog extends LookupDialog {
 
                 modelReference.setModel(new JcrNodeModel(targetNode));
             }
-        } catch (RepositoryException ex) {
+        } catch (RepositoryException | IllegalArgumentException ex) {
             log.error(ex.getMessage());
             error(ex.getMessage());
         }
