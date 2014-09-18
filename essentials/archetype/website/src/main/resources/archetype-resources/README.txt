@@ -4,8 +4,8 @@ Running locally
 This project uses the Maven Cargo plugin to run Essentials, the CMS and site locally in Tomcat.
 From the project root folder, execute:
 
-  $ mvn clean verify
-  $ mvn -P cargo.run
+  mvn clean verify
+  mvn -P cargo.run
 
 Access the Hippo Essentials at http://localhost:8080/essentials.
 After your project is set up, access the CMS at http://localhost:8080/cms and the site at http://localhost:8080/site.
@@ -16,8 +16,8 @@ Building distribution
 
 To build a Tomcat distribution tarball containing only deployable artifacts:
 
-  $ mvn clean verify
-  $ mvn -P dist
+  mvn clean verify
+  mvn -P dist
 
 See also src/main/assembly/distribution.xml if you need to customize the distribution.
 
@@ -28,11 +28,11 @@ Set the environment variable REBEL_HOME to the directory containing jrebel.jar.
 
 Build with:
 
-  $ mvn clean verify -Djrebel
+  mvn clean verify -Djrebel
 
 Start with:
 
-  $ mvn -P cargo.run -Djrebel
+  mvn -P cargo.run -Djrebel
 
 Best Practice for development
 =============================
@@ -42,19 +42,19 @@ your repository to be cleared when you do a mvn clean.
 
 For example start your project with:
 
-$ mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo
+  mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo
 
 or with jrebel:
 
-$ mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo -Djrebel
+  mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo -Djrebel
 
 Hot deploy
 ==========
 
 To hot deploy, redeploy or undeploy the CMS or site:
 
-  $ cd cms (or site)
-  $ mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
+  cd cms (or site)
+  mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
 
 Automatic Export
 ================
@@ -68,6 +68,6 @@ Monitoring with JMX Console
 ===========================
 You may run the following command:
 
-  $ jconsole
+  jconsole
 
 Now open the local process org.apache.catalina.startup.Bootstrap start
