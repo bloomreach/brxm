@@ -17,16 +17,14 @@ package org.onehippo.repository.documentworkflow.integration;
 
 import java.util.Date;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
-import javax.jcr.version.VersionManager;
 
-import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_REQUEST;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -52,6 +50,7 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
             public void execute() throws Exception {
                 assertTrue("Document not live after publication", isLive());
                 assertFalse("Publication did not create a new version", oldVersion.isSame(getBaseVersion()));
+                assertFalse("Still a request pending", containsRequest());
             }
         }, 10);
     }
@@ -77,6 +76,7 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
             public void execute() throws Exception {
                 assertFalse("Document still live after depublication", isLive());
                 assertFalse("Depublication did not create a new version", oldVersion.isSame(getBaseVersion()));
+                assertFalse("Still a request pending", containsRequest());
             }
         }, 10);
     }
@@ -102,5 +102,9 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
 
     private Version getBaseVersion() throws RepositoryException {
         return getVariant(UNPUBLISHED).getBaseVersion();
+    }
+
+    private boolean containsRequest() throws RepositoryException {
+        return handle.hasNode(HIPPO_REQUEST);
     }
 }
