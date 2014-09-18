@@ -96,9 +96,10 @@ public interface WebResourceBundle {
     String createTag() throws WebResourceException;
 
     /**
-     * @return the anti-cache value of this {@link WebResourceBundle}. Useful to be able to cache resources in the
+     * @return the anti-cache value of this {@link WebResourceBundle}, useful to be able to cache resources in the
      * client (browser) : Whenever the client needs new resources, the anti cache value changes resulting in different
-     * URLs for the resources
+     * URLs for the resources. Only chars allowed are [a-z] and [0-9] to avoid encoding/decoding problems when used in
+     * URLs
      */
     String getAntiCacheValue();
 }
