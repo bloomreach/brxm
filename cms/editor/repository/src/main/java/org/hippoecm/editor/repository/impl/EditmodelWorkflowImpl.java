@@ -46,7 +46,9 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.OverwritingCopyHandler;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -317,7 +319,11 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                         continue;
                     }
                     if (clone.getPrimaryNodeType().canAddChildNode(child.getName(), child.getPrimaryNodeType().getName())) {
-                        subject.getSession().move(child.getPath(), clone.getPath() + "/" + child.getName());
+                        JcrUtils.copy(subject.getSession(), child.getPath(), clone.getPath() + "/" + child.getName());
+                    } else if (clone.hasNode(child.getName())) {
+                        // child node was auto-created, copy-over additional properties and child nodes
+                        JcrUtils.copyTo(subject.getSession().getNode(child.getPath()),
+                                new OverwritingCopyHandler(clone.getNode(child.getName())));
                     }
                 }
 
