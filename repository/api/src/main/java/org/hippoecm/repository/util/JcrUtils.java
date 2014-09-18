@@ -516,6 +516,9 @@ public class JcrUtils {
         if (isVirtual(srcNode)) {
             return null;
         }
+        if (destNodeName.indexOf('/') != -1) {
+            throw new IllegalArgumentException(destNodeName + " is a path, not a name");
+        }
         if (srcNode.isSame(destParentNode)) {
             throw new IllegalArgumentException("Destination parent node cannot be the same as source node");
         }
