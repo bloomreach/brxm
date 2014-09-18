@@ -165,7 +165,7 @@ public class HstWebResourceTag extends ParamContainerTag {
                     } else if (reqContext.isCmsRequest()
                             || resolvedMount.getMount().isPreview()
                             || latestTagName == null) {
-                        webResourcesPrefix.append(webResourceBundle.getChecksum());
+                        webResourcesPrefix.append(webResourceBundle.getAntiCacheValue());
                     } else {
                         webResourcesPrefix.append(latestTagName);
                     }

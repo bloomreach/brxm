@@ -90,7 +90,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
             }
 
             final WebResource webResource;
-            if (version.equals(webResourceBundle.getChecksum())) {
+            if (version.equals(webResourceBundle.getAntiCacheValue())) {
                 webResource = webResourceBundle.get(contentPath);
             } else  {
                 webResource = webResourceBundle.get(contentPath, version);
