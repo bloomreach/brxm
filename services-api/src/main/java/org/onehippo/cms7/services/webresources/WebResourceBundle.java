@@ -96,7 +96,9 @@ public interface WebResourceBundle {
     String createTag() throws WebResourceException;
 
     /**
-     * @return the checksum of this {@link WebResourceBundle}
+     * @return the anti-cache value of this {@link WebResourceBundle}. Useful to be able to cache resources in the
+     * client (browser) : Whenever the client needs new resources, the anti cache value changes resulting in different
+     * URLs for the resources
      */
-    String getChecksum();
+    String getAntiCacheValue();
 }

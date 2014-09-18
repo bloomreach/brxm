@@ -56,6 +56,4 @@ public interface WebResource {
      */
     Binary getBinary();
 
-    String getChecksum();
-
 }
