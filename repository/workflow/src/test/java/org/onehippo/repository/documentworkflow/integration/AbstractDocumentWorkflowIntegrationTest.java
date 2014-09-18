@@ -55,10 +55,8 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
         final Node test = session.getRootNode().addNode("test", NT_FOLDER);
         createDocument(test);
-
         session.save();
     }
 
@@ -74,7 +72,6 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
         document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
         document.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
     }
-
 
     protected DocumentWorkflow getDocumentWorkflow(final Node handle) throws RepositoryException {
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();

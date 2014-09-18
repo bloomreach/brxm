@@ -17,9 +17,16 @@ package org.onehippo.repository.documentworkflow.integration;
 
 import java.util.Date;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionManager;
+
+import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -37,12 +44,14 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
     @Test
     public void schedulingPublicationPublishesDocument() throws Exception {
         assumeTrue(!isLive());
+        final Version oldVersion = getBaseVersion();
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-        workflow.publish(new Date(System.currentTimeMillis()+1000));
+        workflow.publish(new Date(System.currentTimeMillis() + 1000));
         poll(new Executable() {
             @Override
             public void execute() throws Exception {
                 assertTrue("Document not live after publication", isLive());
+                assertFalse("Publication did not create a new version", oldVersion.isSame(getBaseVersion()));
             }
         }, 10);
     }
@@ -61,11 +70,13 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.publish();
         assumeTrue(isLive());
-        workflow.depublish(new Date(System.currentTimeMillis()+1000));
+        final Version oldVersion = getBaseVersion();
+        workflow.depublish(new Date(System.currentTimeMillis() + 1000));
         poll(new Executable() {
             @Override
             public void execute() throws Exception {
                 assertFalse("Document still live after depublication", isLive());
+                assertFalse("Depublication did not create a new version", oldVersion.isSame(getBaseVersion()));
             }
         }, 10);
     }
@@ -89,4 +100,7 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
                 (Boolean) workflow.hints().get("depublish"));
     }
 
+    private Version getBaseVersion() throws RepositoryException {
+        return getVariant(UNPUBLISHED).getBaseVersion();
+    }
 }
