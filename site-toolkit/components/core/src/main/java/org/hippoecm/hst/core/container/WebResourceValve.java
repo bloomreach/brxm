@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.util.WebResourceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.Binary;
 import org.onehippo.cms7.services.webresources.WebResource;
@@ -44,7 +45,6 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
     private static final Logger log = LoggerFactory.getLogger(WebResourceValve.class);
     private static final long ONE_YEAR_SECONDS = TimeUnit.SECONDS.convert(365L, TimeUnit.DAYS);
     private static final long ONE_YEAR_MILLISECONDS = TimeUnit.MILLISECONDS.convert(ONE_YEAR_SECONDS, TimeUnit.SECONDS);
-
 
     @Override
     public void invoke(final ValveContext context) throws ContainerException {
@@ -61,22 +61,10 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         try {
             final Session session = requestContext.getSession();
             final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-            final ChannelInfo channelInfo = resolvedMount.getMount().getChannelInfo();
 
-            final Channel channel = resolvedMount.getMount().getChannel();
-            if (channel == null) {
-                String msg = String.format("Cannot serve web resource for mount '%s' because it does not have a " +
-                        "channel configuration.", resolvedMount.getMount());
-                throw new WebResourceException(msg);
-            }
-
-            final String bundleName;
-            if (StringUtils.isNotBlank(channelInfo.getWebResourceBundleName())) {
-                bundleName = channelInfo.getWebResourceBundleName();
-            } else {
-                bundleName = channel.getId();
-            }
-
+            final String bundleName = WebResourceUtils.getBundleName(requestContext);
+            log.info("Trying to get WebResourceBundle for bundle name '{}' and session user '{}'", bundleName,
+                    session.getUserID());
 
             final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
 
@@ -84,7 +72,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
             String version = requestContext.getResolvedSiteMapItem().getParameter("version");
             if (version == null) {
                 String msg = String.format("Cannot serve web resource '%s' for mount '%s' because sitemap item" +
-                        "'%s' does not contain version param.",  contentPath,
+                        "'%s' does not contain version param.", contentPath,
                         resolvedMount.getMount(), requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getQualifiedId());
                 throw new WebResourceException(msg);
             }
@@ -101,7 +89,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copy(binary.getStream(), outputStream);
             outputStream.flush();
-
+            outputStream.close();
         } catch (RepositoryException e) {
             throw new ContainerException(e);
         } catch (IOException e) {

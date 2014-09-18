@@ -25,25 +25,8 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * Base type for channel info interfaces.
  */
-@FieldGroupList({
-        @FieldGroup(
-                titleKey = "fields.channel",
-                value = { "bundle", "bundleVersion"}
-        )
-})
 public interface ChannelInfo {
 
     Map<String, Object> getProperties();
-
-    @Parameter(name = "bundle", displayName = "Web Resources Bundle")
-   // TODO use jcr path to select a bundle
-//    @JcrPath(
-//            pickerSelectableNodeTypes = { "webresources:bundle" },
-//            pickerInitialPath = "/webresources"
-//    )
-    String getWebResourceBundleName();
-
-    @Parameter(name = "bundleVersion", displayName = "Web Resources Bundle Version")
-    String getWebResourceBundleVersion();
 
 }

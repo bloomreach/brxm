@@ -26,10 +26,7 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -37,6 +34,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.util.WebResourceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.WebResourceBundle;
 import org.onehippo.cms7.services.webresources.WebResourceException;
@@ -138,37 +136,11 @@ public class HstWebResourceTag extends ParamContainerTag {
             final ResolvedMount resolvedMount = reqContext.getResolvedMount();
             try {
                 final Session session = reqContext.getSession();
-                final Channel channel = resolvedMount.getMount().getChannel();
-                if (channel == null) {
-                    log.warn("Cannot create web resource URLs for mount '{}' because it does not have a " +
-                            "channel configuration.", resolvedMount.getMount());
-                    return EVAL_PAGE;
-                }
 
-                String bundleName = channel.getId();
-                String bundleVersion = null;
-                final ChannelInfo channelInfo = resolvedMount.getMount().getChannelInfo();
-                if (channelInfo != null) {
-                    if (StringUtils.isNotBlank(channelInfo.getWebResourceBundleName())) {
-                        bundleName = channelInfo.getWebResourceBundleName();
-                    }
-                    if (StringUtils.isNotBlank(channelInfo.getWebResourceBundleVersion())) {
-                        bundleVersion = channelInfo.getWebResourceBundleVersion();
-                    }
-                }
-
+                final String bundleName = WebResourceUtils.getBundleName(reqContext);
                 try {
                     final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
-                    final String latestTagName =  webResourceBundle.getLatestTagName();
-                    if (bundleVersion != null) {
-                        webResourcesPrefix.append(bundleVersion);
-                    } else if (reqContext.isCmsRequest()
-                            || resolvedMount.getMount().isPreview()
-                            || latestTagName == null) {
-                        webResourcesPrefix.append(webResourceBundle.getAntiCacheValue());
-                    } else {
-                        webResourcesPrefix.append(latestTagName);
-                    }
+                    webResourcesPrefix.append(webResourceBundle.getAntiCacheValue());
                 } catch (WebResourceException e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Cannot find webresource bundle '{}'", bundleName, e);
