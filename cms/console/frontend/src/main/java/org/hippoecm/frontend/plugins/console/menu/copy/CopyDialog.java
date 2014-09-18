@@ -127,14 +127,19 @@ public class CopyDialog extends LookupDialog {
 
     @Override
     public void onOk() {
-        Node sourceNode = getOriginalModel().getObject();
-        Node parentNode = getParentDestNode();
-        
-        if (Strings.isEmpty(name) || parentNode == null || sourceNode == null) {
+        if (Strings.isEmpty(name)) {
+            return;
+        }
+        final Node sourceNode = getOriginalModel().getObject();
+        if (sourceNode == null) {
             return;
         }
 
         try {
+            final Node parentNode = getParentDestNode();
+            if (parentNode == null) {
+                return;
+            }
             JcrUtils.copy(sourceNode, name, parentNode);
 
             Node targetNode = JcrUtils.getNodeIfExists(parentNode, name);
@@ -151,12 +156,20 @@ public class CopyDialog extends LookupDialog {
         }
     }
 
-    private Node getParentDestNode() {
+    private Node getParentDestNode() throws RepositoryException {
         IJcrTreeNode selectedTreeNode = getSelectedNode();
         if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null ) {
             return null;
         }
-        return selectedTreeNode.getNodeModel().getObject();
+        Node parentNode = selectedTreeNode.getNodeModel().getObject();
+        final String[] elements = name.split("/");
+        for (int i = 0; i < elements.length-1; i++) {
+            if (!parentNode.hasNode(elements[i])) {
+                throw new RepositoryException("No such destination: " + parentNode.getPath() + "/" + elements[i]);
+            }
+            parentNode = parentNode.getNode(elements[i]);
+        }
+        return parentNode;
     }
 
   /*  @Override
