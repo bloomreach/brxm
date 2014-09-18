@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ import org.apache.commons.proxy.Invocation;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.freemarker.DelegatingTemplateLoader;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
-import org.hippoecm.hst.freemarker.RepositoryTemplateLoader;
+import org.hippoecm.hst.freemarker.jcr.JcrTemplateLoader;
+import org.hippoecm.hst.freemarker.jcr.WebResourceTemplateLoader;
 import org.hippoecm.hst.proxy.ProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,11 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
     private boolean lookupVirtualWebappLibResourcePathsEnabled;
 
     private boolean taglibModelInitialized;
-    
-    private RepositoryTemplateLoader repositoryTemplateLoader;
+
+    private JcrTemplateLoader repositoryTemplateLoader;
+    private WebResourceTemplateLoader webResourceTemplateLoader;
+
+    private static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
 
     @Override
     public void init() throws ServletException {
@@ -77,18 +81,14 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             conf.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
         }
 
+        final String projectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
+        if (projectBaseDir != null) {
+            log.info("Setting freemarker template update delay to '0ms' since running locally");
+            conf.setTemplateUpdateDelay(0);
+        }
         conf.setLocalizedLookup(false);
         
     }
-    
-    
-    
-    @Override
-    public void destroy() {
-        super.destroy();
-        repositoryTemplateLoader.destroy();
-    }
-
 
     @Override
     public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -104,15 +104,15 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
     }
 
     /**
-     * Special dispatch info is included when the request contains the attribute {@link ContainerConstants#DISPATCH_URI_SCHEME}. For example
-     * this value is 'classpath' or 'jcr' to load a template from a classpath or repository
+     * Special dispatch info is included when the request contains the attribute {@link ContainerConstants#DISPATCH_URI_PROTOCOL}. For example
+     * this value is 'classpath:' or 'jcr:' or 'webresource:' to load a template from a classpath or repository
      */
     @Override 
     protected String requestUrlToTemplatePath(HttpServletRequest request)
     {
         String path = super.requestUrlToTemplatePath(request);
-        if(request.getAttribute(ContainerConstants.DISPATCH_URI_SCHEME) != null){            
-            path = request.getAttribute(ContainerConstants.DISPATCH_URI_SCHEME) + ":" + path;   
+        if(request.getAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL) != null){
+            path = request.getAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL) + path;
         }
         return path;
     }
@@ -197,17 +197,24 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     /**
      * Overrides {@link FreemarkerServlet#createTemplateLoader(String)} in order to use
-     * {@link MultiTemplateLoader} instead which cascades {@link HstClassTemplateLoader} and {@link RepositoryTemplateLoader}
+     * {@link MultiTemplateLoader} instead which cascades {@link HstClassTemplateLoader} and {@link org.hippoecm.hst.freemarker.jcr.JcrTemplateLoader}
      * until it finds a template by the <code>templatePath</code>.
      */
     @Override
     protected TemplateLoader createTemplateLoader(String templatePath) throws IOException {
         TemplateLoader defaultTemplateLoader = 
-                new DelegatingTemplateLoader(super.createTemplateLoader(templatePath), null, new String [] { "classpath:", "jcr:" });
+                new DelegatingTemplateLoader(super.createTemplateLoader(templatePath), null,
+                        new String [] { ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL,
+                                ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL,
+                                ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL });
         TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
         // repository template loader
-        repositoryTemplateLoader = new RepositoryTemplateLoader();
-        TemplateLoader[] loaders = new TemplateLoader[] { defaultTemplateLoader, classTemplateLoader, repositoryTemplateLoader };
+        repositoryTemplateLoader = new JcrTemplateLoader();
+        webResourceTemplateLoader = new WebResourceTemplateLoader();
+        TemplateLoader[] loaders = new TemplateLoader[] { defaultTemplateLoader,
+                classTemplateLoader,
+                repositoryTemplateLoader,
+                webResourceTemplateLoader };
         TemplateLoader multiLoader = new MultiTemplateLoader(loaders);
         return multiLoader;
     }

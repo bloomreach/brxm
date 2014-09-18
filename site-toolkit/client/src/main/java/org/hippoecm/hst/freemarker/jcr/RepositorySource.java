@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.freemarker;
+package org.hippoecm.hst.freemarker.jcr;
 
 public class RepositorySource {
     
@@ -43,10 +43,6 @@ public class RepositorySource {
         return placeHolderLastModified;
     }
 
-    public boolean isNotFound() {
-        return notFound;
-    }
-    
     @Override
     public boolean equals(Object anObject) {
         if(this == anObject) {
@@ -54,7 +50,7 @@ public class RepositorySource {
         }
         if(anObject instanceof RepositorySource) {
             RepositorySource otherSource = (RepositorySource)anObject;
-            if(this.notFound && otherSource.notFound) {
+            if(notFound && otherSource.notFound) {
                 return true;
             }
             if(this.template == null || otherSource.template == null) {
@@ -68,7 +64,7 @@ public class RepositorySource {
     
     @Override 
     public int hashCode(){
-        if(this.notFound) {
+        if(notFound) {
             return NOTFOUND_HASHCODE;
         }
         return this.template.hashCode() ^  (int)this.placeHolderLastModified ;

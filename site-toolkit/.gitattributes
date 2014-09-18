@@ -385,8 +385,14 @@ client/src/main/java/org/hippoecm/hst/component/support/spring/mvc/HstDispatcher
 client/src/main/java/org/hippoecm/hst/component/support/spring/util/MetadataReaderClasspathResourceScanner.java -text
 client/src/main/java/org/hippoecm/hst/freemarker/DelegatingTemplateLoader.java -text
 client/src/main/java/org/hippoecm/hst/freemarker/HstClassTemplateLoader.java -text svneol=unset#text/plain
-client/src/main/java/org/hippoecm/hst/freemarker/RepositorySource.java svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/freemarker/RepositoryTemplateLoader.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/AbstractTemplateLoader.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/JcrTemplateLoader.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/RepositorySource.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/TemplateLoadingCache.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/WebResourceTemplateLoader.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/HstConfigurationTemplateEventListener.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/RepositoryTemplateEventListener.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/WebResourcesTemplateEventListener.java -text
 client/src/main/java/org/hippoecm/hst/linking/HstLinkProcessorTemplate.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/BinariesServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/HstFreemarkerServlet.java svneol=native#text/plain
@@ -419,6 +425,8 @@ client/src/main/java/org/hippoecm/hst/tag/SiteMapItemTag.java svneol=native#text
 client/src/main/java/org/hippoecm/hst/utils/MessageUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/PropertyUtils.java -text svneol=unset#text/plain
+client/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
+client/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/freemarker/SpringComponentManager-freemarker.xml -text
 client/src/main/resources/META-INF/hst-core.tld svneol=native#text/plain
 client/src/site/site.xml -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/AColorPropertyEditor.java -text

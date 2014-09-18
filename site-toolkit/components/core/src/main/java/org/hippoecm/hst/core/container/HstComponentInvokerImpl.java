@@ -342,12 +342,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (namedDispatching) {
                 disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);
             } else {
-                if (dispatchUrl.startsWith("jcr:")) {
-                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_SCHEME, "jcr");
-                    dispatchUrl = dispatchUrl.substring(4);
-                } else if (dispatchUrl.startsWith("classpath:")) {
-                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_SCHEME, "classpath");
-                    dispatchUrl = dispatchUrl.substring(10);
+                if (dispatchUrl.startsWith(ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL, ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL.length());
+                } else if (dispatchUrl.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL, ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length());
+                } else if (dispatchUrl.startsWith(ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL, ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL.length());
                     
                     if (!dispatchUrl.startsWith("/")) {
                         String resolvedDispatchUrl = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/") + "/" + dispatchUrl;

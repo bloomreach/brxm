@@ -103,7 +103,7 @@ public interface ContainerConstants {
     /**
      * The dispatch URI scheme attribute name
      */
-    String DISPATCH_URI_SCHEME = "org.hippoecm.hst.core.container.HstComponentWindow.dispatch.uri.scheme";
+    String DISPATCH_URI_PROTOCOL = "org.hippoecm.hst.core.container.HstComponentWindow.dispatch.uri.protocol";
 
     String MOUNT_ALIAS_REST = "rest";
 
@@ -174,4 +174,7 @@ public interface ContainerConstants {
 
     String HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN = "org.hippoecm.hst.security.servlet.LoginServlet.jaas_login_attempt_token";
 
+    String FREEMARKER_JCR_TEMPLATE_PROTOCOL = "jcr:";
+    String FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL = "webresource:";
+    String FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL = "classpath:";
 }

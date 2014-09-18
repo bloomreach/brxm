@@ -27,11 +27,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
@@ -999,7 +1000,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 
                 if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                    templateRenderPath = "jcr:" + valueProvider.getPath();
+                    templateRenderPath = ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
                 }
                 this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
             } else {
@@ -1028,7 +1029,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
             
             if (StringUtils.isBlank(templateServeResourcePath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                templateServeResourcePath = "jcr:" + valueProvider.getPath();
+                templateServeResourcePath = ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
             }
             
             this.isNamedResourceServer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
