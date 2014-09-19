@@ -30,6 +30,7 @@ public class HstConfigurationTemplateEventListener extends RepositoryTemplateEve
 
     private static final Logger log = LoggerFactory.getLogger(HstConfigurationTemplateEventListener.class);
 
+    @Override
     public void onEvent(EventIterator events) {
         Set<String> pathsToRemoveFromCache = new HashSet<>();
         while (events.hasNext()) {

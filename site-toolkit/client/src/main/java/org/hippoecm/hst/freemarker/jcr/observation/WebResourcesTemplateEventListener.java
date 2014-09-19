@@ -37,7 +37,8 @@ public class WebResourcesTemplateEventListener extends RepositoryTemplateEventLi
             try {
                 final String eventPath = event.getPath();
                 if (!eventPath.contains(".ftl")) {
-                    log.info("Event path '{}' is not for a freemarker template file, continue", eventPath);
+                    log.debug("Event path '{}' is not for a freemarker template file, continue", eventPath);
+                    continue;
                 }
                 final String nodePath;
                 switch (event.getType()) {
@@ -53,11 +54,6 @@ public class WebResourcesTemplateEventListener extends RepositoryTemplateEventLi
                     default:
                         nodePath = eventPath;
                 }
-
-                if (nodePath == null || !nodePath.contains(".ftl")) {
-                    log.info("Event path '{}' is not for a freemarker template file, continue", eventPath);
-                }
-
                 String freeMarkerFilePath = nodePath;
                 while (!freeMarkerFilePath.endsWith(".ftl")) {
                     freeMarkerFilePath = getParentPath(freeMarkerFilePath);

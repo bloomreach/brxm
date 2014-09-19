@@ -32,10 +32,11 @@ import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -56,17 +57,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String componentClassName;
 
     private String hstTemplate;
-    
+
     private String hstResourceTemplate;
 
     private boolean isNamedRenderer;
-    
+
     private boolean isNamedResourceServer;
-    
+
     private String renderPath;
-    
+
     private String serveResourcePath;
-    
+
     private String xtype;
 
     /**
@@ -75,7 +76,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String componentFilterTag;
 
     /**
-     * the type of this {@link HstComponentConfiguration}. 
+     * the type of this {@link HstComponentConfiguration}.
      */
     private Type type;
 
@@ -89,16 +90,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private int autocreatedCounter = 0;
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
-    
+
     // the set of parameter prefixes
-    private Set<String> parameterNamePrefixSet = new HashSet<String>(); 
-    
+    private Set<String> parameterNamePrefixSet = new HashSet<String>();
+
     private Map<String, String> localParameters = new LinkedHashMap<String, String>();
-    
+
     private String canonicalStoredLocation;
-    
+
     private String canonicalIdentifier;
-    
+
     /**
      * <code>true</code> when the backing {@link HstNode} of this {@link HstComponentConfiguration} is inherited
      */
@@ -134,7 +135,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String asyncMode = null;
 
     /**
-     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that 
+     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that
      * A {@link HstComponentConfiguration} is only cacheable if and only if <b>none</b> of its descendant {@link HstComponentConfiguration}s for the request
      * are marked as uncacheable : <b>Note</b>  explicitly for 'the request', thus {@link HstComponentConfiguration} that are {@link HstComponentConfiguration#isAsync()}
      * and its descendants can be uncacheable while an ancestor of the async {@link HstComponentConfiguration} can still be cacheable
@@ -146,16 +147,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     private Boolean cacheable = null;
 
-    
-    
+
+
     /**
-     * Optional iconPath relative to webapp for sites. If not configured, it is <code>null</code>. It does not inherit 
+     * Optional iconPath relative to webapp for sites. If not configured, it is <code>null</code>. It does not inherit
      * from ancestor components
      */
     private String iconPath;
-    
+
     /**
-     * Optional label of this component. if not configured, it is just <code>null</code>. It does not inherit 
+     * Optional label of this component. if not configured, it is just <code>null</code>. It does not inherit
      * from ancestor components
      */
     private String label;
@@ -175,7 +176,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String lockedBy;
     private Calendar lockedOn;
     private Calendar lastModified;
-    
+
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
@@ -183,6 +184,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     /**
      * rootNodeName is either hst:components or hst:pages.
+     *
      * @param referableContainers : can be null
      */
     public HstComponentConfigurationService(final HstNode node,
@@ -195,6 +197,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     /**
      * rootNodeName is either hst:components or hst:pages.
+     *
      * @param referableContainers : can be null
      */
     public HstComponentConfigurationService(final HstNode node,
@@ -221,29 +224,29 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.name = explicitName;
         }
 
-        if(parent == null) {
+        if (parent == null) {
             this.id = StringPool.get(rootNodeName + "/" + name);
         } else {
             this.id = StringPool.get(parent.getId() + "/" + name);
         }
-        
+
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
-        
-        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
-          type = Type.COMPONENT;
-        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
-          type = Type.CONTAINER_COMPONENT;
-          if(componentClassName == null) {
-              // TODO do not depend on hardcoded location 'org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent'
-              log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'", new String[]{"org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent",HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
-              componentClassName = "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent";
-          }
-        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
+
+        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
+            type = Type.COMPONENT;
+        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
+            type = Type.CONTAINER_COMPONENT;
+            if (componentClassName == null) {
+                // TODO do not depend on hardcoded location 'org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent'
+                log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'", new String[]{"org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
+                componentClassName = "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent";
+            }
+        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
             if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
                 log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
-                        "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
+                                "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
                         new String[]{HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
                                 HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
                                 HstNodeTypes.NODETYPE_HST_COMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT});
@@ -252,13 +255,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
-        
+
         this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
-        
-        if(referenceComponent != null) {
+
+        if (referenceComponent != null) {
             if (type == Type.CONTAINER_COMPONENT) {
                 throw new ModelLoadingException("ContainerComponents are not allowed to have a reference. Pls fix the" +
-                        "configuration for '"+canonicalStoredLocation+"'");
+                        "configuration for '" + canonicalStoredLocation + "'");
             } else if (type == Type.CONTAINER_ITEM_COMPONENT) {
                 log.warn("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
                         "components of type '{}'. Setting reference to null.", new String[]{canonicalStoredLocation, HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT,
@@ -266,17 +269,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 this.referenceComponent = null;
             }
         }
-        
+
         this.hstTemplate = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE));
         this.hstResourceTemplate = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_RESOURCE_TEMPLATE));
         this.pageErrorHandlerClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
-        
+
         this.label = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_LABEL));
         this.iconPath = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ICON_PATH));
-        
-        if(type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
+
+        if (type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
             this.xtype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
-        } 
+        }
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
         String[] parameterNamePrefixes = node.getValueProvider().getStrings(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
@@ -284,16 +287,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (parameterNames.length != parameterValues.length) {
             log.warn("Skipping parameters for component '{}' because they only make sense if there are equal number of names and values", id);
         } else {
-            if(parameterNamePrefixes.length > 0 ) {
-                if(parameterNamePrefixes.length != parameterNames.length) {
+            if (parameterNamePrefixes.length > 0) {
+                if (parameterNamePrefixes.length != parameterNames.length) {
                     log.warn("Skipping parameters for component '{}' because there are hst:parameternameprefixes configured, but if " +
-                    		"it is configured it MUST be of equal length as the hst:parameternames", id);
+                            "it is configured it MUST be of equal length as the hst:parameternames", id);
                 } else {
                     // if there is a non empty parameterNamePrefix, we prefix the parameter name with this value + the 
                     // HstComponentConfiguration#PARAMETER_PREFIX_NAME_DELIMITER
                     for (int i = 0; i < parameterNames.length; i++) {
                         StringBuilder parameterNameBuilder = new StringBuilder(parameterNames[i]);
-                        if(!StringUtils.isEmpty(parameterNamePrefixes[i])) {
+                        if (!StringUtils.isEmpty(parameterNamePrefixes[i])) {
                             parameterNameBuilder.insert(0, HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
                             parameterNameBuilder.insert(0, parameterNamePrefixes[i]);
                             if (!parameterNamePrefixSet.contains(parameterNamePrefixes[i])) {
@@ -302,31 +305,30 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         }
                         this.parameters.put(StringPool.get(parameterNameBuilder.toString()), StringPool.get(parameterValues[i]));
                         this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
-                    } 
+                    }
                 }
             } else {
                 for (int i = 0; i < parameterNames.length; i++) {
                     this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                     this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
-                } 
-            } 
+                }
+            }
         }
 
 
-
-        if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
+        if (node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
             this.standalone = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE);
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC)) {
+        if (node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC)) {
             this.async = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_ASYNC);
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC_MODE)) {
+        if (node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC_MODE)) {
             this.asyncMode = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ASYNC_MODE);
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
+        if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
             this.cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
         }
 
@@ -338,12 +340,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // regardless merging/referencing of components, we directly inherit lock props: They are normally
         // only stored on hst container items and those don't support merging any way
         if (parent != null) {
-            lockedBy = (lockedBy == null) ?  ((ConfigurationLockInfo)parent).getLockedBy() : lockedBy;
-            lockedOn = (lockedOn == null) ?  ((ConfigurationLockInfo)parent).getLockedOn() : lockedOn;
-            lastModified = (lastModified == null) ?  parent.getLastModified() : lastModified;
+            lockedBy = (lockedBy == null) ? ((ConfigurationLockInfo) parent).getLockedBy() : lockedBy;
+            lockedOn = (lockedOn == null) ? ((ConfigurationLockInfo) parent).getLockedOn() : lockedOn;
+            lastModified = (lastModified == null) ? parent.getLastModified() : lastModified;
         }
 
-        if(isCatalogItem) {
+        if (isCatalogItem) {
             // do not load children 
             return;
         }
@@ -393,7 +395,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
             } catch (ModelLoadingException e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Skipping component '"+child.getValueProvider().getPath()+"'", e);
+                    log.warn("Skipping component '" + child.getValueProvider().getPath() + "'", e);
                 } else if (log.isWarnEnabled()) {
                     log.warn("Skipping component '{}' : '{}'", child.getValueProvider().getPath(), e.toString());
                 }
@@ -446,14 +448,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
             if (refNode == null) {
                 log.warn("Component '{}' contains an unresolvable reference '{}'. It should be a location relative to '{}'. " +
-                        "Component '{}' will be ignored.",
+                                "Component '{}' will be ignored.",
                         new String[]{child.getValueProvider().getPath(), reference,
                                 HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
             }
             if (!HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
                 log.warn("Component '{}' contains an reference '{}' that does not point to a node of type '{}'. That is not allowed. " +
-                        "Component '{}' will be ignored.",
+                                "Component '{}' will be ignored.",
                         new String[]{child.getValueProvider().getPath(), reference,
                                 HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
@@ -488,30 +490,30 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public String getRenderPath() {
-        if(isNamedRenderer) {
+        if (isNamedRenderer) {
             return null;
         }
         return this.renderPath;
     }
 
     public String getNamedRenderer() {
-        if(!isNamedRenderer) {
+        if (!isNamedRenderer) {
             return null;
         }
         return this.renderPath;
     }
-    
+
     public String getHstResourceTemplate() {
         return this.hstResourceTemplate;
     }
-    
+
     public String getServeResourcePath() {
         if (isNamedResourceServer) {
             return null;
         }
         return this.serveResourcePath;
     }
-    
+
     public String getNamedResourceServer() {
         if (!isNamedResourceServer) {
             return null;
@@ -526,7 +528,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public Map<String, String> getParameters() {
         return parameters;
     }
-    
+
     @Override
     public Set<String> getParameterPrefixes() {
         return parameterNamePrefixSet;
@@ -551,12 +553,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public String getLocalParameter(String name) {
-		return localParameters.get(name);
-	}
+        return localParameters.get(name);
+    }
 
-	public Map<String, String> getLocalParameters() {
-		return localParameters;
-	}
+    public Map<String, String> getLocalParameters() {
+        return localParameters;
+    }
 
     public String getId() {
         return this.id;
@@ -595,7 +597,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public HstComponentConfiguration getChildByName(String name) {
         return childConfByName.get(name);
     }
-    
+
     public String getCanonicalStoredLocation() {
         return canonicalStoredLocation;
     }
@@ -635,7 +637,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public boolean isCompositeCacheable() {
         return compositeCacheable;
     }
-    
+
     @Override
     public String getLabel() {
         return label;
@@ -663,8 +665,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
 
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
-            HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+                                                      HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
+                                                      Map<String, HstComponentConfiguration> rootComponentConfigurations) {
         if (child.getReferenceComponent() != null) {
             // populate child component if not yet happened
             child.populateComponentReferences(rootComponentConfigurations, populated);
@@ -717,7 +719,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations,
-            List<HstComponentConfiguration> populated) {
+                                               List<HstComponentConfiguration> populated) {
         if (populated.contains(this)) {
             return;
         }
@@ -728,8 +730,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             HstComponentConfigurationService referencedComp = (HstComponentConfigurationService) rootComponentConfigurations
                     .get(this.getReferenceComponent());
             if (referencedComp != null) {
-                if(referencedComp == this) {
-                    throw new ModelLoadingException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. Incorrect ComponentId = "+this.getId());
+                if (referencedComp == this) {
+                    throw new ModelLoadingException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. Incorrect ComponentId = " + this.getId());
                 }
                 if (referencedComp.getReferenceComponent() != null) {
                     // populate referenced comp first:
@@ -808,7 +810,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 // prototype variable flag not needed to take from the referencedComp so no check here for that variable!
-                
+
                 if (!referencedComp.parameters.isEmpty()) {
                     // as we already have parameters, add only the once we do not yet have
                     for (Entry<String, String> entry : referencedComp.parameters.entrySet()) {
@@ -817,12 +819,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         }
                     }
                 }
-                
+
                 if (!referencedComp.parameterNamePrefixSet.isEmpty()) {
                     // as we already have parameters, add only the once we do not yet have
                     for (String prefix : referencedComp.parameterNamePrefixSet) {
                         if (!parameterNamePrefixSet.contains(prefix)) {
-                            parameterNamePrefixSet.add(prefix); 
+                            parameterNamePrefixSet.add(prefix);
                         }
                     }
                 }
@@ -832,12 +834,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 // now we need to merge all the descendant components from the referenced component with this component.
 
                 for (HstComponentConfigurationService childToMerge : referencedComp.orderedListConfigs) {
-                  
+
                     if (childToMerge.getReferenceComponent() != null) {
                         // populate child component if not yet happened
                         childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                     }
-                     
+
                     if (this.childConfByName.get(childToMerge.name) != null) {
                         // we have an overlay again because we have a component with the same name
                         // first populate it
@@ -846,7 +848,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                         // merge the childToMerge with existingChild
                         existingChild.combine(childToMerge, rootComponentConfigurations, populated);
-                    } else  {
+                    } else {
                         // make a copy of the child
                         addDeepCopy(childToMerge, populated, rootComponentConfigurations);
                     }
@@ -860,20 +862,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private void combine(HstComponentConfigurationService childToMerge,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations,
-            List<HstComponentConfiguration> populated) {
-        
-        if(this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
+                         Map<String, HstComponentConfiguration> rootComponentConfigurations,
+                         List<HstComponentConfiguration> populated) {
+
+        if (this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
             log.warn("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
                     "components. Cannot merge '{}' and '{}' because at least one of them is a Container component. Fix configuration.", childToMerge.getId(), this.getId());
             return;
         }
-        if(this.type == Type.CONTAINER_ITEM_COMPONENT || childToMerge.type == Type.CONTAINER_ITEM_COMPONENT) {
+        if (this.type == Type.CONTAINER_ITEM_COMPONENT || childToMerge.type == Type.CONTAINER_ITEM_COMPONENT) {
             log.warn("Incorrect component configuration: *ContainerItem* Components are not allowed to be merged with other " +
                     "components. Cannot merge '{}' and '{}' because at least one of them is a ContainerItemComponent. Fix configuration.", childToMerge.getId(), this.getId());
             return;
         }
-        
+
         if (this.componentClassName == null) {
             this.componentClassName = childToMerge.componentClassName;
         }
@@ -938,7 +940,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
 
         // inherited flag not needed to merge
-        
+
         if (!childToMerge.parameters.isEmpty()) {
             // as we already have parameters, add only the once we do not yet have
             for (Entry<String, String> entry : childToMerge.parameters.entrySet()) {
@@ -947,7 +949,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
             }
         }
-        
+
         if (!childToMerge.parameterNamePrefixSet.isEmpty()) {
             // as we already have parameters, add only the once we do not yet have
             for (String prefix : childToMerge.parameterNamePrefixSet) {
@@ -956,7 +958,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
             }
         }
-        
+
         for (HstComponentConfigurationService toMerge : childToMerge.orderedListConfigs) {
             HstComponentConfigurationService existingChild = this.childConfByName.get(toMerge.name);
             if (existingChild != null) {
@@ -976,10 +978,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+                             Map<String, HstComponentConfiguration> rootComponentConfigurations) {
 
         String newId = StringPool.get(this.id + "-" + childToMerge.id);
-        
+
         HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge, populated,
                 rootComponentConfigurations);
         this.componentConfigurations.put(copy.getId(), copy);
@@ -989,25 +991,25 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
-        if(StringUtils.isNotEmpty(hstTemplate)) {
+        if (StringUtils.isNotEmpty(hstTemplate)) {
             String templateRenderPath = null;
             HstNode template = templateResourceMap.get(hstTemplate);
             if (template != null) {
                 ValueProvider valueProvider = template.getValueProvider();
-                
+
                 if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
                     templateRenderPath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
                 }
-                
+
                 if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                    templateRenderPath = ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
+                    templateRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
                 }
                 this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
             } else {
                 log.warn("Cannot find hst:template '{}' for hst component '{}'.", hstTemplate, this.toString());
             }
             renderPath = StringPool.get(templateRenderPath);
-            if(renderPath == null) {
+            if (renderPath == null) {
                 log.info("renderer '{}' for component '{}' can not be found. This component will not have a renderer " +
                         "by default. It can be set runtime or this component is used without renderer.", getHstTemplate(), id);
             }
@@ -1016,47 +1018,47 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             child.setRenderPath(templateResourceMap);
         }
     }
-    
+
     protected void setServeResourcePath(Map<String, HstNode> templateResourceMap) {
         String templateServeResourcePath = null;
         HstNode template = templateResourceMap.get(getHstResourceTemplate());
-        
+
         if (template != null) {
             ValueProvider valueProvider = template.getValueProvider();
-            
+
             if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
                 templateServeResourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
             }
-            
+
             if (StringUtils.isBlank(templateServeResourcePath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                templateServeResourcePath = ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
+                templateServeResourcePath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
             }
-            
+
             this.isNamedResourceServer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
         }
-        
+
         this.serveResourcePath = StringPool.get(templateServeResourcePath);
-        
+
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setServeResourcePath(templateResourceMap);
         }
     }
-    
+
     protected void inheritParameters() {
         // before traversing child components add the parameters from the parent, and if already present, override them
         // this overriding however is *not* done for containeritemcomponents: They are self contained and do never get their
         // parametervalues overridden by ancestors: They only get what they don't already have themselves
         if (type == Type.CONTAINER_ITEM_COMPONENT) {
             if (parent != null && parent.getParameters() != null) {
-                for(Entry<String, String> entry : parent.getParameters().entrySet()) {
-                    if(parameters.containsKey(entry.getKey())) {
+                for (Entry<String, String> entry : parent.getParameters().entrySet()) {
+                    if (parameters.containsKey(entry.getKey())) {
                         // we already have the parameter, skip
                         continue;
                     }
                     String parameterName = entry.getKey();
                     parameters.put(parameterName, entry.getValue());
                     // if the parameter has a prefix that is not yet in parameterNamePrefixSet, add it as well
-                    if(parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER) > -1) {
+                    if (parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER) > -1) {
                         String prefix = parameterName.substring(0, parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER));
                         if (!parameterNamePrefixSet.contains(prefix)) {
                             parameterNamePrefixSet.add(prefix);
@@ -1077,8 +1079,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     /**
-     * get all the unique variants for this component + its descendants and set this to
-     * variants instance variable if not empty
+     * get all the unique variants for this component + its descendants and set this to variants instance variable if
+     * not empty
      */
     protected void populateVariants() {
         // first traverse the children
@@ -1100,9 +1102,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     /**
-     * Since the HST supports async only on one level (thus async descendants of an async component are rendered with the
-     * async ancestor), we only include the variants of an async component if the current or an ancestor component is already
-     * async
+     * Since the HST supports async only on one level (thus async descendants of an async component are rendered with
+     * the async ancestor), we only include the variants of an async component if the current or an ancestor component
+     * is already async
      */
     private void onlyAddChildVariantsIfCurrentOrAncestorIsAlreadyAsync(final Set<String> variantsSet, final HstComponentConfigurationService asyncChild) {
         if (isAsync() || hasAsyncAncestor()) {
@@ -1133,7 +1135,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 // do not traverse parents because we are an async item and
                 // we do not have async ancestors and we already marked ourselves as compositeCacheable = false;
             } else {
-                HstComponentConfigurationService parent = (HstComponentConfigurationService)getParent();
+                HstComponentConfigurationService parent = (HstComponentConfigurationService) getParent();
                 while (parent != null) {
                     parent.compositeCacheable = false;
                     if (parent.isAsync()) {
@@ -1214,6 +1216,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         builder.append(id).append(", stored jcr location=").append(canonicalStoredLocation)
                 .append(", className=").append(this.componentClassName)
                 .append(", template=").append(this.hstTemplate).append("]");
-        return  builder.toString();
+        return builder.toString();
     }
 }

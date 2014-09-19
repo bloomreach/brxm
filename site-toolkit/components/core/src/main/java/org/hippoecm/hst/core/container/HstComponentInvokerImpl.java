@@ -32,29 +32,34 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.DISPATCH_URI_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL;
+
 /**
  * HstComponentInvokerImpl
- * 
+ *
  * @version $Id$
  */
 public class HstComponentInvokerImpl implements HstComponentInvoker {
-    
+
     private final static Logger log = LoggerFactory.getLogger(HstComponentInvokerImpl.class);
 
     protected boolean exceptionThrowable;
-    
+
     protected String errorRenderPath;
-    
+
     protected String dispatchUrlPrefix;
-    
+
     public void setExceptionThrowable(boolean exceptionThrowable) {
         this.exceptionThrowable = exceptionThrowable;
     }
-    
+
     public void setErrorRenderPath(String errorRenderPath) {
         this.errorRenderPath = errorRenderPath;
     }
-    
+
     public void setDispatchUrlPrefix(String dispatchUrlPrefix) {
         if (dispatchUrlPrefix != null && !dispatchUrlPrefix.startsWith("/")) {
             log.info("The configured dispatchUrlPrefix '{}' does not start with a '/'. We prepend a '/' as the location should be a context relative path.");
@@ -63,13 +68,13 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             this.dispatchUrlPrefix = dispatchUrlPrefix;
         }
     }
-    
+
     public void invokeAction(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
-        
+
         if (component != null) {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
@@ -81,9 +86,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if (this.exceptionThrowable) {
                     throw e;
                 }
-                
+
                 window.addComponentExcpetion(e);
-                
+
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
                 } else if (log.isWarnEnabled()) {
@@ -93,9 +98,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
-                
+
                 window.addComponentExcpetion(new HstComponentException(e));
-                
+
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught: " + e, e);
                 } else if (log.isWarnEnabled()) {
@@ -104,7 +109,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
-                }                
+                }
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -116,23 +121,23 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
-        
+
         if (component != null) {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
             try {
-                if(log.isDebugEnabled()) {
+                if (log.isDebugEnabled()) {
                     log.debug("invoking doBeforeRender of component: {}", component.getClass().getName());
                 }
-                
+
                 component.doBeforeRender(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 if (this.exceptionThrowable) {
                     throw e;
                 }
-                
+
                 window.addComponentExcpetion(e);
-                
+
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught: " + e, e);
                 } else if (log.isWarnEnabled()) {
@@ -142,9 +147,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
-                
+
                 window.addComponentExcpetion(new HstComponentException(e));
-                
+
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
                 } else if (log.isWarnEnabled()) {
@@ -153,7 +158,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
-                }                
+                }
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -166,22 +171,22 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         boolean namedDispatching = false;
-        String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath(); 
-        
+        String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath();
+
         if (StringUtils.isBlank(dispatchUrl)) {
             dispatchUrl = window.getRenderPath();
         }
-        
+
         if (dispatchUrl == null) {
             dispatchUrl = window.getNamedRenderer();
             namedDispatching = (dispatchUrl != null);
         }
-        
+
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
-        
+
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
-            
+
             if (!StringUtils.isBlank(dispatchUrl)) {
                 invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
             } else {
@@ -191,9 +196,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (this.exceptionThrowable) {
                 throw e;
             }
-            
+
             window.addComponentExcpetion(e);
-            
+
             if (log.isDebugEnabled()) {
                 log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
             } else if (log.isWarnEnabled()) {
@@ -203,14 +208,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (this.exceptionThrowable) {
                 throw new HstComponentException(e);
             }
-            
+
             window.addComponentExcpetion(new HstComponentException(e));
 
             logComponentException(window, e);
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
         }
-        
+
         if (window.hasComponentExceptions()) {
             renderErrorInformation(requestContainerConfig, servletRequest, servletResponse, window);
         }
@@ -231,7 +236,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
-        
+
         if (component != null) {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
@@ -241,9 +246,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if (this.exceptionThrowable) {
                     throw e;
                 }
-                
+
                 window.addComponentExcpetion(e);
-                
+
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
                 } else if (log.isWarnEnabled()) {
@@ -253,9 +258,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
-                
+
                 window.addComponentExcpetion(new HstComponentException(e));
-                
+
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught: " + e, e);
                 } else if (log.isWarnEnabled()) {
@@ -264,7 +269,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
-                }                
+                }
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -278,37 +283,37 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstComponent component = window.getComponent();
         boolean namedDispatching = false;
         String dispatchUrl = ((HstResourceResponseImpl) hstResponse).getServeResourcePath();
-        
+
         if (StringUtils.isBlank(dispatchUrl)) {
             dispatchUrl = window.getServeResourcePath();
         }
-        
+
         if (dispatchUrl == null) {
             dispatchUrl = window.getNamedResourceServer();
             namedDispatching = (dispatchUrl != null);
         }
-        
+
         if (dispatchUrl == null) {
             dispatchUrl = window.getRenderPath();
         }
-        
+
         if (dispatchUrl == null) {
             dispatchUrl = window.getNamedRenderer();
             namedDispatching = (dispatchUrl != null);
         }
-        
+
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
-        
+
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
-            
+
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
-            
+
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
                 throw e;
             }
-            
+
             window.addComponentExcpetion(e);
 
             logComponentException(window, e);
@@ -316,9 +321,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (this.exceptionThrowable) {
                 throw new HstComponentException(e);
             }
-            
+
             window.addComponentExcpetion(new HstComponentException(e));
-            
+
             if (log.isDebugEnabled()) {
                 log.warn("Component exception caught: " + e, e);
             } else if (log.isWarnEnabled()) {
@@ -335,23 +340,23 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
     protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, boolean namedDispatching, String dispatchUrl, HstComponentWindow window) throws Exception {
         RequestDispatcher disp = null;
-        
+
         if (!StringUtils.isBlank(dispatchUrl)) {
             log.debug("Invoking dispatcher of url: {}", dispatchUrl);
 
             if (namedDispatching) {
                 disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);
             } else {
-                if (dispatchUrl.startsWith(ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL)) {
-                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL, ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL);
-                    dispatchUrl = dispatchUrl.substring(ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL.length());
-                } else if (dispatchUrl.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
-                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL, ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL);
-                    dispatchUrl = dispatchUrl.substring(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length());
-                } else if (dispatchUrl.startsWith(ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL)) {
-                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL, ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL);
-                    dispatchUrl = dispatchUrl.substring(ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL.length());
-                    
+                if (dispatchUrl.startsWith(FREEMARKER_JCR_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_JCR_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(FREEMARKER_JCR_TEMPLATE_PROTOCOL.length());
+                } else if (dispatchUrl.startsWith(FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length());
+                } else if (dispatchUrl.startsWith(FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL.length());
+
                     if (!dispatchUrl.startsWith("/")) {
                         String resolvedDispatchUrl = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/") + "/" + dispatchUrl;
 
@@ -364,13 +369,13 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                         dispatchUrl = dispatchUrlPrefix + dispatchUrl;
                     }
                 }
-                
+
                 disp = requestContainerConfig.getServletContext().getRequestDispatcher(dispatchUrl);
             }
         }
-        
+
         if (disp == null) {
-            log.warn("The request dispatcher for dispatch url '{}' is null. Component name: '{}' . Component class: '"+window.getComponentName()+"'. Component id: '"+window.getComponentInfo().getId()+"'. If the component is inherited, the id might be a concatenation of some id's.", dispatchUrl, window.getName());
+            log.warn("The request dispatcher for dispatch url '{}' is null. Component name: '{}' . Component class: '" + window.getComponentName() + "'. Component id: '" + window.getComponentInfo().getId() + "'. If the component is inherited, the id might be a concatenation of some id's.", dispatchUrl, window.getName());
 
             window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
         } else {
@@ -395,11 +400,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
         }
     }
-    
+
     protected void renderErrorInformation(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) {
         try {
             servletResponse.reset();
-            
+
             if (errorRenderPath != null && errorRenderPath.length() != 0) {
                 try {
                     servletRequest.setAttribute("errorComponentWindow", window);
@@ -418,11 +423,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
         }
     }
-    
+
     private ClassLoader switchToContainerClassloader(HstContainerConfig requestContainerConfig) {
         ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
-        
+
         if (containerClassloader != currentClassloader) {
             Thread.currentThread().setContextClassLoader(containerClassloader);
             return currentClassloader;
@@ -430,7 +435,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             return null;
         }
     }
-    
+
     private void setHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest, HstResponse hstResponse) {
         // Needs to set hst request/response into attribute map
         // because hst request/response can be wrapped so it's not possible to use casting
@@ -438,20 +443,20 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         servletRequest.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
         servletRequest.setAttribute(ContainerConstants.HST_RESPONSE, hstResponse);
     }
-    
+
     private void removeHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest, HstResponse hstResponse) {
         // Removes hst request/response into attribute map after dispatching
         servletRequest.removeAttribute(ContainerConstants.HST_REQUEST);
         servletRequest.removeAttribute(ContainerConstants.HST_RESPONSE);
     }
-    
+
     private StackTraceElement getFirstStackTraceElement(final Throwable th) {
-        StackTraceElement [] stackTraceElements = th.getStackTrace();
-        
+        StackTraceElement[] stackTraceElements = th.getStackTrace();
+
         if (stackTraceElements != null && stackTraceElements.length != 0) {
             return stackTraceElements[0];
         }
-        
+
         return null;
     }
 }
