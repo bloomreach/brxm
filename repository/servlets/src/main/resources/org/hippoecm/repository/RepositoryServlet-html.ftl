@@ -19,289 +19,319 @@ ${response.setContentType("text/html;charset=UTF-8")}
 
 <html>
 
-<head>
-  <title>Hippo Repository Browser</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <style type="text/css">
-    body { background-color: #efefef }
-    h3 {margin:2px}
-    table.params {font-size:small}
-    td.header {text-align: left; vertical-align: top; padding: 10px;}
-    td {text-align: left}
-    th {text-align: left}
-    #infotable { background-color: #cfcfcf }
-    #error { background-color: #efef00; font-size: large; padding: 10px }
-  </style>
-</head>
+  <head>
+    <title>Hippo Repository Browser</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="${request.contextPath}/repository-servlet.css" />
+    <script type="text/javascript" src="${request.contextPath}/repository-servlet.js"></script>
+  </head>
 
-<body>
+  <body onload="addKeydownListeners()">
+    <div class="hippo-header"></div>
+    <table id="infotable" width="100%">
+      <tr>
+        <td class="header">
+          <h3>Search by ...</h3>
+          <form name="queryForm" method="get" action="" accept-charset="UTF-8">
+            <table style="params" summary="searching">
 
-<table id="infotable" width="100%">
-  <tr>
-    <td class="header">
-      <h3>Search by ...</h3>
-      <table style="params" summary="searching">
-        <form method="get" action="" accept-charset="UTF-8">
-        <tr>
-          <th>UUID: </th>
-          <td>
-              <input name="uuid" type="text" size="80" value="${request.getParameter('uuid')!}"/>
-              <input type="submit" value="Fetch"/>
-          </td>
-        </tr>
-        </form>
-        <form method="get" action="" accept-charset="UTF-8">
-        <tr>
-          <th>XPath: </th>
-          <td>
-              <input name="xpath" type="text" size="120" value="${request.getParameter('xpath')!}"/>
-          </td>
-        </tr>
-        <tr>
-          <td>Limit: </td>
-          <td>
-              <input name="limit" type="text" size="5" value="${request.getParameter('limit')!1000?c}"/>
-              <input type="submit" value="Search"/>
-          </td>
-        </tr>
-        </form>
-        <form method="get" action="" accept-charset="UTF-8">
-        <tr>
-          <th>SQL: </th>
-          <td>
-              <input name="sql" type="text" size="120" value="${request.getParameter('sql')!}"/>
-          </td>
-        </tr>
-        <tr>
-          <td>Limit: </td>
-          <td>
-              <input name="limit" type="text" size="5" value="${request.getParameter('limit')!1000?c}"/>
-              <input type="submit" value="Search"/>
-          </td>
-        </tr>
-        </form>
-      </table>
-    </td>
-    <td class="header">
-      <h3>Request Information</h3>
-      <table style="params" summary="request parameters">
-        <tr>
-          <th>Name</th>
-          <th>Value</th>
-        </tr>
-        <tr>
-          <td>Servlet Path : </td>
-          <td><code>${request.servletPath!}</code></td>
-        </tr>
-        <tr>
-          <td>Request URI : </td>
-          <td><code>${request.requestURI!}</code></td>
-        </tr>
-        <tr>
-          <td>Relative Path : </td>
-          <td><code>${currentNodePath!}</code></td>
-        </tr>
-      </table>
-    </td>
-    <td class="header">
-      <h3>Login Information</h3>
-      <table style="params" summary="login parameters">
-        <tr>
-          <th>Logged in as : </th>
-          <td>
-              <#if jcrSession??>
-                <code>${jcrSession.userID}</code>
-              </#if>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+              <#--UUID-->
+              <tr>
+                <th>UUID: </th>
+                <td>
+                  <input name="uuid" type="text" size="40" value="${request.getParameter('uuid')!}"/>
+                  <input type="button" value="Fetch" onclick="setActiveQueryAndSubmit('uuid')"/>
+                  <span class="vertical-spacer"/>
+                </td>
+              </tr>
 
-<#if exception??>
-  <div id="error">
-    ERROR: <blockquote>${exception}</blockquote>
-  </div>
-</#if>
+              <#--FREE TEXT-->
+              <tr>
+                <th>Text: </th>
+                <td>
+                  <input name="textquery" type="text" size="40" value="${request.getParameter('textquery')!}"/>
+                </td>
+              </tr>
+              <tr>
+                <td>Limit: </td>
+                <td>
+                  <input name="textquery-limit" type="text" size="5" value="${request.getParameter('textquery-limit')!1000?c}"/>
+                  <input type="button" value="Search" onclick="setActiveQueryAndSubmit('textquery')"/>
+                  <span class="vertical-spacer"/>
+                </td>
+              </tr>
 
-<hr>
+              <#--XPATH-->
+              <tr>
+                <th>XPath: </th>
+                <td>
+                  <input name="xpath" type="text" size="75" value="${request.getParameter('xpath')!}"/>
+                </td>
+              </tr>
+              <tr>
+                <td>Limit: </td>
+                <td>
+                  <input name="xpath-limit" type="text" size="5" value="${request.getParameter('xpath-limit')!1000?c}"/>
+                  <input type="button" value="Search" onclick="setActiveQueryAndSubmit('xpath')"/>
+                  <span class="vertical-spacer"/>
+                </td>
+              </tr>
 
-<#if currentNode??>
-    <h3>Referenced node</h3>
-    Accessing node : &nbsp;&nbsp;
+              <#--SQL2-->
+              <tr>
+                <th>SQL: </th>
+                <td>
+                  <input name="sql" type="text" size="75" value="${request.getParameter('sql')!}"/>
+                </td>
+              </tr>
+              <tr>
+                <td>Limit: </td>
+                <td>
+                  <input name="sql-limit" type="text" size="5" value="${request.getParameter('sql-limit')!1000?c}"/>
+                  <input type="button" value="Search" onclick="setActiveQueryAndSubmit('sql')"/>
+                  <span class="vertical-spacer"/>
+                </td>
+              </tr>
 
-    <code>
-      <#assign baseRelPath = "./">
-      <#if currentNode.isSame(rootNode)>
-        / <a href="${baseRelPath}">root</a> /
-      <#else>
-        <#assign distance = ancestorNodes?size>
-        <#assign baseRelPath = "">
-        <#list 0..distance as d>
-          <#assign baseRelPath = "../${baseRelPath}">
-        </#list>
-        / <a href="${baseRelPath}">root</a> /
+              <input name="search-type" type="hidden" value=""/>
 
-        <#assign distance = ancestorNodes?size>
-        <#list ancestorNodes as ancestor>
-          <#assign ancestorLink = "">
-          <#list 1..distance as d>
-            <#assign ancestorLink = "../${ancestorLink}">
-          </#list>
-          <a href="${ancestorLink}">${ancestor.name!html}</a>
-          /
-          <#assign distance = distance - 1>
-        </#list>
-        <a href="./">${currentNode.name!html}</a>
-        /
-      </#if>
-    </code>
+            </table>
+          </form>
+        </td>
 
-    <ul>
-      <#list currentNode.nodes as child>
-        <li type="circle">
-          <#assign childLink = "${child.name}">
-          <#if child.index gt 1>
-            <#assign childLink = "${childLink}[${child.index}]">
+        <td class="header">
+          <h3>Request Information</h3>
+          <table class="params" summary="request parameters">
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+            <tr>
+              <td>Servlet Path : </td>
+              <td><code>${request.servletPath!}</code></td>
+            </tr>
+            <tr>
+              <td>Request URI : </td>
+              <td><code>${request.requestURI!}</code></td>
+            </tr>
+            <tr>
+              <td>Relative Path : </td>
+              <td><code>${currentNodePath!}</code></td>
+            </tr>
+          </table>
+        </td>
+        <td class="header">
+          <h3>Login Information</h3>
+          <table class="params" summary="login parameters">
+            <tr>
+              <th>Logged in as : </th>
+              <td>
+                  <#if jcrSession??>
+                    <code>${jcrSession.userID}</code>
+                  </#if>
+              </td>
+            </tr>
+            <tr>
+              <th><br/><a class="logout" href="${request.contextPath}/repository/?logout">Logout</a></th>
+              <td></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <#if exception??>
+      <div id="error">
+        ERROR: <blockquote>${exception}</blockquote>
+      </div>
+    </#if>
+
+    <hr>
+
+    <#if currentNode??>
+        <h3>Referenced node</h3>
+        Accessing node : &nbsp;&nbsp;
+
+        <code>
+          <#assign baseRelPath = "./">
+          <#if currentNode.isSame(rootNode)>
+            /<a href="${baseRelPath}">root</a>/
+          <#else>
+            <#assign distance = ancestorNodes?size>
+            <#assign baseRelPath = "">
+            <#list 0..distance as d>
+              <#assign baseRelPath = "../${baseRelPath}">
+            </#list>
+            /<a href="${baseRelPath}">root</a>/
+
+            <#assign distance = ancestorNodes?size>
+            <#list ancestorNodes as ancestor>
+              <#assign ancestorLink = "">
+              <#list 1..distance as d>
+                <#assign ancestorLink = "../${ancestorLink}">
+              </#list>
+              <a href="${ancestorLink}">${ancestor.name!html}</a>/
+              <#assign distance = distance - 1>
+            </#list>
+            <a href="./">${currentNode.name!html}</a>/
           </#if>
-          <a href="./${childLink?url}/">
-            ${child.name?html}
-            <#if child.hasProperty("hippo:count")>
-            [${child.getProperty("hippo:count").long}]
-            </#if>
-          </a>
-        </li>
-      </#list>
-      <#list currentNode.properties as prop>
-        <li type="disc">
-          [name="${prop.name}"] =
-          <#if prop.definition.multiple>
-            [
-              <#list prop.values as value>
-                <#if value.type != 2>
-                  ${value.string!?html},
+        </code>
+
+        <ul>
+          <#list currentNode.nodes as child>
+            <li type="circle">
+              <#assign childLink = "${child.name}">
+              <#if child.index gt 1>
+                <#assign childLink = "${childLink}[${child.index}]">
+              </#if>
+              <a href="./${childLink}/">
+                ${child.name?html}
+                <#if child.hasProperty("hippo:count")>
+                [${child.getProperty("hippo:count").long}]
+                </#if>
+              </a>
+            </li>
+          </#list>
+          <#list currentNode.properties as prop>
+            <li type="disc">
+              [name="${prop.name}"] =
+              <#if prop.definition.multiple>
+                [
+                  <#list prop.values as value>
+                    <#if value.type != 2>
+                      ${value.string!?html},
+                    <#else>
+                      ${prop.length} bytes.
+                    </#if>
+                  </#list>
+                ]
+              <#else>
+                <#if prop.type != 2>
+                  ${prop.string!?html}
                 <#else>
                   ${prop.length} bytes.
                 </#if>
-              </#list>
-            ]
-          <#else>
-            <#if prop.type != 2>
-              ${prop.string!?html}
-            <#else>
-              ${prop.length} bytes.
-            </#if>
-          </#if>
-        </li>
-      </#list>
-    </ul>
-</#if>
-<hr>
-
-<#if queryResult??>
-  <h3>Query executed</h3>
-
-  <blockquote>
-    <#if request.getParameter("xpath")??>
-      ${request.getParameter("xpath")!?html}
-    <#else>
-      ${request.getParameter("sql")!?html}
-    </#if>
-  </blockquote>
-
-  <#assign queryResultNodes = queryResult.nodes>
-  Number of results found: ${queryResultTotalSize!-1}
-
-  <ol>
-    <#list queryResultNodes as node>
-      <#if node??>
-        <li><a href="${baseRelPath}${node.path?substring(1)!url}">${node.path}</a></li>
-      </#if>
-    </#list>
-  </ol>
-
-  <hr/>
-
-  <table summary="searchresult" border="1">
-    <tr>
-      <th>#</th>
-      <#list queryResult.columnNames as columnName>
-        <th>${columnName}</th>
-      </#list>
-    </tr>
-    <#list queryResult.rows as row>
-      <#if row??>
-        <tr>
-          <td>${row_index + 1}</td>
-          <#assign values = row.values>
-          <#if values??>
-            <#list row.values as value>
-              <#if value?? && value.type != 2>
-                <td>${value.string!}</td>
-              <#else>
-                <td></td>
               </#if>
-            </#list>
-          </#if>
-        </tr>
-      </#if>
-    </#list>
-  </table>
-</#if>
+            </li>
+          </#list>
+        </ul>
+    </#if>
 
-<#if repositoryMap??>
-  <h3>Repository as map</h3>
-  <blockquote>
-    _name = ${repositoryMap.get("_name")!}<br/>
-    _location = ${repositoryMap.get("_location")!}<br/>
-    _path = ${repositoryMap.get("_path")!}<br/>
-    _index = ${repositoryMap.get("_index")!}<br/>
-    _size = ${repositoryMap.get("_size")!}<br/>
-    <#list repositoryMap?keys as key>
-      ${key} = ${repositoryMap.get(key)!}
-    </#list>
-  </blockquote>
-</#if>
-
-<#if nodeById??>
-
-  <#if request.getParameter("uuid")??>
-
-    <h3>Get node by UUID</h3>
-    <blockquote>
-      UUID = ${request.getParameter("uuid")!}
-    </blockquote>
-    <ol>
-      <li>Found node: <a href="${baseRelPath}${nodeById.path?substring(1)!url}">${nodeById.path}</a></li>
-    </ol>
-
-  <#elseif request.getParameter("deref")??>
-
-    <h3>Getting nodes having a reference to </h3>
-    <blockquote>
-      UUID = ${request.getParameter("uuid")!}
-      ( <a href="${baseRelPath}${nodeById.path?substring(1)!url}">${nodeById.path}</a> )
-    </blockquote>
     <hr>
-    <table>
-      <tr>
-        <th align="left">Node path</th>
-        <th align="left">Property reference name</th>
-      </tr>
-      <#list nodeById.references as prop>
+
+    <#if queryResult??>
+      <h3>Query executed</h3>
+
+      <blockquote>
+        ${originalQuery?html}
+      </blockquote>
+
+      <#assign queryResultNodes = queryResult.nodes>
+      Number of results found: ${queryResultTotalSize!-1}
+
+      <ol>
+        <#list queryResultNodes as node>
+          <#if node??>
+            <li>
+              <a href="${baseRelPath}${node.path?substring(1)!url}">${node.path}</a>
+    <#-- TODO
+              writer.println("<a class=\"node-link\" title=\"Open node in new cms console window\" target=\"_blank\" href=\"" + req.getContextPath() + "/console/?path=" + resultNode.getPath() + "\">c</a>");
+              writer.println("<a class=\"node-link\" title=\"Open node in new cms window\" target=\"_blank\" href=\"" + req.getContextPath() + "/?path=" + resultNode.getPath() + "\">cms</a>");
+              writer.println("<a class=\"node-link\" title=\"Open node in repository\" href=\"" + req.getContextPath() + "/repository" + resultNode.getPath() + "\">r</a>");
+    -->
+
+            </li>
+          </#if>
+        </#list>
+      </ol>
+
+      <hr/>
+
+      <table summary="searchresult" border="1">
         <tr>
-          <td>${prop.parent.path!}</td>
-          <td>${prop.name!}</td>
+          <th>#</th>
+          <#list queryResult.columnNames as columnName>
+            <th>${columnName}</th>
+          </#list>
         </tr>
-      </#list>
-    </table>
+        <#list queryResult.rows as row>
+          <#if row??>
+            <tr>
+              <td>${row_index + 1}</td>
+              <#assign values = row.values>
+              <#if values??>
+                <#list row.values as value>
+                  <#if value?? && value.type != 2>
+                    <td>${value.string!}</td>
+                  <#else>
+                    <td></td>
+                  </#if>
+                </#list>
+              </#if>
+            </tr>
+          </#if>
+        </#list>
+      </table>
+    </#if>
 
-  </#if>
+    <#if repositoryMap??>
+      <h3>Repository as map</h3>
+      <blockquote>
+        _name = ${repositoryMap.get("_name")!}<br/>
+        _location = ${repositoryMap.get("_location")!}<br/>
+        _path = ${repositoryMap.get("_path")!}<br/>
+        _index = ${repositoryMap.get("_index")!}<br/>
+        _size = ${repositoryMap.get("_size")!}<br/>
+        <#list repositoryMap?keys as key>
+          ${key} = ${repositoryMap.get(key)!}
+        </#list>
+      </blockquote>
+    </#if>
 
-</#if>
+    <#if nodeById??>
 
-<br/>
+      <#if request.getParameter("uuid")??>
 
-</body>
+        <h3>Get node by UUID</h3>
+        <blockquote>
+          UUID = ${request.getParameter("uuid")!}
+        </blockquote>
+        <ol>
+          <li>
+            Found node: <a href="${baseRelPath}${nodeById.path?substring(1)!url}">${nodeById.path}</a>
+            <#-- TODO
+            writer.println("<a class=\"node-link\" title=\"Open node in new cms console window\" target=\"_blank\" href=\"" + req.getContextPath() + "/console/?path=" + n.getPath() + "\">c</a>");
+            writer.println("<a class=\"node-link\" title=\"Open node in new cms window\" target=\"_blank\" href=\"" + req.getContextPath() + "/?path=" + n.getPath() + "\">cms</a>");
+            writer.println("<a class=\"node-link\" title=\"Open node in repository\" href=\"" + req.getContextPath() + "/repository" + n.getPath() + "\">r</a>");-->
+          </li>
+        </ol>
+
+      <#elseif request.getParameter("deref")??>
+
+        <h3>Getting nodes having a reference to </h3>
+        <blockquote>
+          UUID = ${request.getParameter("uuid")!}
+          ( <a href="${baseRelPath}${nodeById.path?substring(1)!url}">${nodeById.path}</a> )
+        </blockquote>
+        <hr>
+        <table>
+          <tr>
+            <th align="left">Node path</th>
+            <th align="left">Property reference name</th>
+          </tr>
+          <#list nodeById.references as prop>
+            <tr>
+              <td>${prop.parent.path!}</td>
+              <td>${prop.name!}</td>
+            </tr>
+          </#list>
+        </table>
+
+      </#if>
+
+    </#if>
+
+    <br/>
+
+    </body>
 </html>

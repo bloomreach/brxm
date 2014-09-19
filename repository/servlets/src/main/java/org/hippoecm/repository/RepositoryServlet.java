@@ -18,7 +18,6 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.rmi.ConnectException;
@@ -40,7 +39,6 @@ import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -52,9 +50,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.api.HippoNodeIterator;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.hippoecm.repository.util.RepoUtils;
@@ -256,9 +254,7 @@ public class RepositoryServlet extends HttpServlet {
                 name = new RepositoryUrl(bindingAddress).getName();
                 log.info("Unbinding '"+name+"' from registry.");
                 registry.unbind(name);
-            } catch (RemoteException e) {
-                log.error("Error during unbinding '" + name + "': " + e.getMessage());
-            } catch (NotBoundException e) {
+            } catch (RemoteException | NotBoundException e) {
                 log.error("Error during unbinding '" + name + "': " + e.getMessage());
             } catch (MalformedURLException e) {
                 log.error("MalformedURLException while parsing '" + bindingAddress + "': " + e.getMessage());
@@ -314,17 +310,20 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // explicitly set character encoding
         req.setCharacterEncoding("UTF-8");
         res.setCharacterEncoding("UTF-8");
 
-        if (!BasicAuth.hasAuthorizationHeader(req)) {
-            BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
-            return;
+        if(req.getParameter("logout") != null){
+            FormAuth.logout(req);
         }
 
-        SimpleCredentials creds = BasicAuth.parseAuthorizationHeader(req);
+        Session jcrSession = FormAuth.authorize(req, repository);
+        if(jcrSession == null) {
+            FormAuth.showLoginPage(req, res, "");
+            return;
+        }
 
         String currentNodePath = req.getRequestURI();
 
@@ -341,22 +340,9 @@ public class RepositoryServlet extends HttpServlet {
             currentNodePath = currentNodePath.substring(req.getServletPath().length());
         }
 
-        Session jcrSession = null;
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         try {
-            if (creds.getUserID() == null || creds.getUserID().length() == 0) {
-                jcrSession = repository.login();
-            } else {
-                jcrSession = repository.login(creds);
-            }
-
-            if (((HippoSession)jcrSession).getUser().isSystemUser()) {
-                final InetAddress address = InetAddress.getByName(req.getRemoteHost());
-                if (!address.isAnyLocalAddress() && !address.isLoopbackAddress()) {
-                    throw new LoginException();
-                }
-            }
 
             templateParams.put("jcrSession", jcrSession);
 
@@ -386,30 +372,50 @@ public class RepositoryServlet extends HttpServlet {
                 templateParams.put("ancestorNodes", ancestorNodes);
             }
 
-            String param;
 
-            if ((param = req.getParameter("xpath")) != null || (param = req.getParameter("sql")) != null) {
-                QueryManager qmgr = jcrSession.getWorkspace().getQueryManager();
+            String searchType = req.getParameter("search-type");
 
-                String language = req.getParameter("xpath") != null ? Query.XPATH: Query.SQL;
-                Query query;
-                if (!param.toLowerCase().contains("order by")) {
-                    if (language.equals(Query.XPATH)) {
-                        param = param + " order by @jcr:score asc";
-                    } else {
-                        param = param + " order by jcr:score asc";
-                    }
+
+            if (searchType != null && !"uuid".equals(searchType)) {
+
+                String limit = "1000";
+                boolean isXPathQuery = false;
+                String queryString = "";
+
+                if ("textquery".equals(searchType)) {
+                    limit = req.getParameter("textquery-limit");
+                    isXPathQuery = true;
+                    queryString = req.getParameter("textquery");
+                    templateParams.put("originalQuery", queryString);
+                    queryString = "//*[jcr:contains(* , '" + queryString + "') ]";
+                    queryString = addOrderbyClause(queryString, true);
+
+                } else if ("xpath".equals(searchType)) {
+                    limit = req.getParameter("xpath-limit");
+                    isXPathQuery = true;
+                    queryString = req.getParameter("xpath");
+                    templateParams.put("originalQuery", queryString);
+                    queryString = addOrderbyClause(queryString, true);
+
+                } else if ("sql".equals(searchType)) {
+                    limit = req.getParameter("sql-limit");
+                    isXPathQuery = false;
+                    queryString = req.getParameter("sql");
+                    templateParams.put("originalQuery", queryString);
+                    queryString = addOrderbyClause(queryString, false);
                 }
 
-                if (Query.XPATH.equals(language)) {
+                QueryManager qmgr = jcrSession.getWorkspace().getQueryManager();
+                String language = (isXPathQuery ? Query.XPATH: Query.SQL);
+                Query query;
+
+                if (isXPathQuery) {
                     // we encode xpath queries to support queries like /jcr:root/7_8//*
                     // the 7 needs to be encode
-                    query = qmgr.createQuery(RepoUtils.encodeXpath(param), language);
+                    query = qmgr.createQuery(RepoUtils.encodeXpath(queryString), language);
                 } else {
-                    query = qmgr.createQuery(param, language);
+                    query = qmgr.createQuery(queryString, language);
                 }
-
-                String limit = req.getParameter("limit");
 
                 if (limit != null && !limit.isEmpty()) {
                     query.setLimit(Long.parseLong(limit));
@@ -420,8 +426,12 @@ public class RepositoryServlet extends HttpServlet {
                 templateParams.put("queryResultTotalSize", ((HippoNodeIterator) queryResult.getNodes()).getTotalSize());
             }
 
-            if ((param = req.getParameter("map")) != null) {
+
+
+
+            if (req.getParameter("map") != null) {
                 Map repositoryMap = repository.getRepositoryMap(currentNode);
+                String param = req.getParameter("map");
                 if (!"".equals(param)) {
                     StringTokenizer st = new StringTokenizer(param, ".");
                     while (st.hasMoreTokens()) {
@@ -431,10 +441,14 @@ public class RepositoryServlet extends HttpServlet {
                 templateParams.put("repositoryMap", repositoryMap);
             }
 
-            if (((param = req.getParameter("uuid")) != null) || ((param = req.getParameter("deref")) != null)) {
-                Node nodeById = jcrSession.getNodeByIdentifier(param);
+            if ("uuid".equals(searchType)) {
+                Node nodeById = jcrSession.getNodeByIdentifier(req.getParameter("uuid"));
+                templateParams.put("nodeById", nodeById);
+            } else if (req.getParameter("deref") != null) {
+                Node nodeById = jcrSession.getNodeByIdentifier(req.getParameter("deref"));
                 templateParams.put("nodeById", nodeById);
             }
+
         } catch (LoginException ex) {
             BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
         } catch (Exception ex) {
@@ -520,6 +534,13 @@ public class RepositoryServlet extends HttpServlet {
                 out.close();
             }
         }
+    }
+
+    private String addOrderbyClause(String queryString, boolean isXPath) {
+        if(!queryString.toLowerCase().contains("order by")) {
+            return queryString + " order by " + (isXPath ? "@" : "") + "jcr:score";
+        }
+        return queryString;
     }
 
 }
