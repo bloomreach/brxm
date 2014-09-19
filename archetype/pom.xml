@@ -23,17 +23,17 @@
     <version>26</version>
   </parent>
 
-  <name>Hippo CMS7 Site Toolkit Maven Archetypes</name>
-  <description>Hippo CMS7 Site Toolkit Maven Archetypes. This project enables you to start with a skeleton project
+  <name>Hippo CMS7 Project Archetype</name>
+  <description>This project enables you to start with a skeleton project
     gluing together all the necessary components and compatible versions.
   </description>
 
-  <artifactId>essentials-archetype</artifactId>
+  <artifactId>archetype</artifactId>
   <version>2.00.03-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
-    <notice.project.name>Hippo CMS7 Essentials Maven Archetypes</notice.project.name>
+    <notice.project.name>Hippo CMS7 Project Archetype</notice.project.name>
   </properties>
 
   <distributionManagement>
@@ -65,11 +65,9 @@
     </repository>
   </repositories>
 
-
   <modules>
     <module>website</module>
   </modules>
-
 
   <build>
     <defaultGoal>package</defaultGoal>

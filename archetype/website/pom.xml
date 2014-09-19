@@ -17,15 +17,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>essentials-archetype</artifactId>
+    <artifactId>archetype</artifactId>
     <groupId>org.onehippo.cms7</groupId>
     <version>2.00.03-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo CMS7 Site Toolkit Website Archetype</name>
-  <description>Hippo Site Toolkit Website Archetype: this creates a website skeleton, gluing together the correct
-  versions of cms7, hst config editor and hst, and showing a home page and about.</description>
-  <artifactId>essentials-archetype-website</artifactId>
+  <name>Hippo CMS7 Project Archetype</name>
+  <description>The Hippo CMS7 Project Archetype is the recommended way to create a new Hippo project.
+    After generating a new project from this archetype, you will have an empty Hippo project, to which
+    you can add the features o fyour choice.</description>
+  <artifactId>hippo-project-archetype</artifactId>
   <packaging>maven-archetype</packaging>
 
   <properties>
