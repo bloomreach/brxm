@@ -80,7 +80,7 @@
                   <arg value="org.apache.maven.plugins:maven-archetype-plugin:2.0:generate" />
                   <arg value="-Dhippo.snapshots=${hippo.snapshots}" />
                   <arg value="-DarchetypeGroupId=org.onehippo.cms7" />
-                  <arg value="-DarchetypeArtifactId=essentials-archetype-website" />
+                  <arg value="-DarchetypeArtifactId=hippo-project-archetype" />
                   <arg value="-DarchetypeVersion=${project.version}" />
                   <arg value="-DgroupId=${gettingstarted.app.groupId}" />
                   <arg value="-DartifactId=${gettingstarted.app.artifactId}" />
