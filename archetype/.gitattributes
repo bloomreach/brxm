@@ -2,7 +2,6 @@
 /LICENSE -text
 /NOTICE -text
 /pom.xml -text
-/svn-commit.tmp -text
 /sync-marker.txt -text
 website/pom.xml -text
 website/src/main/resources/META-INF/maven/archetype-metadata.xml -text
