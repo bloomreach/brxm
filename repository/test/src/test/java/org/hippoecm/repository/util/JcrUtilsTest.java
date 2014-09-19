@@ -35,7 +35,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        final String[] content = new String[] {
+        final String[] content = new String[]{
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
@@ -132,6 +132,16 @@ public class JcrUtilsTest extends RepositoryTestCase {
             JcrUtils.copy(session.getNode("/test"), "child", node);
             fail("Should not be able to copy node to node that is descendant of source");
         } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testCopyNodeByPathIsIllegal() throws Exception {
+        try {
+            JcrUtils.copy(node, "this/is/a/relative/path/not/a/nodeName", node);
+            fail("Should not be able to copy node when destinationName is a path");
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("path"));
         }
     }
 }
