@@ -18,8 +18,6 @@ package org.hippoecm.repository;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -45,16 +43,6 @@ public class HREPTWO690Test extends RepositoryTestCase {
         "hippo:values", "en",
         "hippo:modes", "select"
     };
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     @Test
     public void testIssue() throws RepositoryException {

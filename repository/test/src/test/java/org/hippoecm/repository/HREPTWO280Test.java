@@ -24,18 +24,6 @@ import org.junit.Test;
 
 public class HREPTWO280Test extends FacetedNavigationAbstractTest {
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-      super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-      super.tearDown();
-    }
-
     @Test
     public void testIssue() throws RepositoryException {
         commonStart();

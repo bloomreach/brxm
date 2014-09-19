@@ -32,24 +32,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CopyNodeTest extends RepositoryTestCase {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-        super.tearDown();
-    }
-
     @Test
     public void testVirtualTreeCopy() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test","nt:unstructured");

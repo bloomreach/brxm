@@ -47,16 +47,6 @@ import org.junit.Test;
 
 public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void testFacetSearchExport() throws RepositoryException, Exception {
         commonStart(10);

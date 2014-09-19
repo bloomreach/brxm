@@ -50,24 +50,6 @@ public class HREPTWO548Test extends RepositoryTestCase {
         "jcr:mixinTypes", "mix:versionable"
     };
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        while (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        session.save(); //session.refresh(false);
-        if (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-    }
-
     @Test
     public void testIssue() throws RepositoryException {
         Node result;

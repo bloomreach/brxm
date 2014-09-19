@@ -28,26 +28,6 @@ import static org.junit.Assert.assertTrue;
 
 public class HREPTWO456Test extends RepositoryTestCase {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-            session.refresh(false);
-        }
-        super.tearDown();
-    }
-
     @Test
     public void testIssue() throws RepositoryException {
         Node node = session.getRootNode().addNode("test","nt:unstructured");

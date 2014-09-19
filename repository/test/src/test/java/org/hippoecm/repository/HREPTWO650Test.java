@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import org.hippoecm.repository.util.Utilities;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -25,23 +22,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 public class HREPTWO650Test extends FacetedNavigationAbstractTest {
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-      super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-      super.tearDown();
-    }
 
     @Test
     public void testDates() throws RepositoryException {

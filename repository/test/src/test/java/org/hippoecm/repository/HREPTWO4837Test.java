@@ -33,10 +33,7 @@ public class HREPTWO4837Test extends RepositoryTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        while (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.getRootNode().addNode("test", "nt:unstructured");
+        session.getRootNode().addNode("test");
     }
 
     @Test
