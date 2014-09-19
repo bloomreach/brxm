@@ -1,0 +1,5 @@
+Please note that the "Essentials Archetype" has been moved to SVN at
+
+https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype
+
+After a phase-out period of the "old" archetype, this will be THE Hippo Project Archetype.
