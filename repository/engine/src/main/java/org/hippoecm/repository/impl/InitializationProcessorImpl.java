@@ -79,6 +79,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.util.FileContentResourceLoader;
@@ -1165,15 +1166,16 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         public void execute() {
             final WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
             if (service == null) {
-                getLogger().error("Cannot import web resource bundle '{}': missing service for '{}'",
-                        bundleZipFile.getName(), WebResourcesService.class.getName());
+                getLogger().error("Failed to import web resource bundle '{}' from '{}': missing service for '{}'",
+                        bundleZipFile.getSubPath(), bundleZipFile.getName(), WebResourcesService.class.getName());
                 return;
             }
             try {
                 service.importJcrWebResourceBundle(session, bundleZipFile);
                 session.save();
-            } catch (IOException|RepositoryException e) {
-                getLogger().error("Cannot import web resource bundle '{}'", bundleZipFile.getName(), e);
+            } catch (IOException|RepositoryException|WebResourceException e) {
+                getLogger().error("Failed to import web resource bundle '{}' from '{}'", bundleZipFile.getSubPath(),
+                        bundleZipFile.getName(), e);
             }
         }
     }
@@ -1192,15 +1194,15 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         public void execute() {
             final WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
             if (service == null) {
-                getLogger().error("Cannot import web resource bundle '{}': missing service for '{}'",
+                getLogger().error("Failed to import web resource bundle from '{}': missing service for '{}'",
                         bundleDir, WebResourcesService.class.getName());
                 return;
             }
             try {
                 service.importJcrWebResourceBundle(session, bundleDir);
                 session.save();
-            } catch (IOException|RepositoryException e) {
-                getLogger().error("Cannot import web resource bundle '{}'", bundleDir, e);
+            } catch (IOException|RepositoryException|WebResourceException e) {
+                getLogger().error("Failed to import web resource bundle from '{}'", bundleDir, e);
             }
         }
     }

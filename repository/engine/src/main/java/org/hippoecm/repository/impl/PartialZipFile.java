@@ -36,6 +36,10 @@ class PartialZipFile extends ZipFile {
         this.subPath = StringUtils.removeEnd(subPath, "/");
     }
 
+    String getSubPath() {
+        return subPath;
+    }
+
     @Override
     public ZipEntry getEntry(final String name) {
         if (isIncluded(name, subPath)) {

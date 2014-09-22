@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.testutils.slf4j;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,36 @@ public class LoggerRecordingWrapper extends LoggerWrapper {
 
     public void clearLogRecords() {
         logRecords.clear();
+    }
+
+    public List<String> getTraceMessages() {
+        return getFormattedMessages(Level.TRACE_INT);
+    }
+
+    public List<String> getDebugMessages() {
+        return getFormattedMessages(Level.DEBUG_INT);
+    }
+
+    public List<String> getInfoMessages() {
+        return getFormattedMessages(Level.INFO_INT);
+    }
+
+    public List<String> getWarnMessages() {
+        return getFormattedMessages(Level.WARN_INT);
+    }
+
+    public List<String> getErrorMessages() {
+        return getFormattedMessages(Level.ERROR_INT);
+    }
+
+    public List<String> getFormattedMessages(final int level) {
+        List<String> messages = new ArrayList();
+        for (LogRecord record : logRecords) {
+            if (record.getLevel() == level) {
+                messages.add(record.getFormattedMessage());
+            }
+        }
+        return Collections.unmodifiableList(messages);
     }
 
     @Override

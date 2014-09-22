@@ -38,9 +38,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.testutils.ZipTestUtil;
+import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
 import org.slf4j.Logger;
 import org.slf4j.helpers.NOPLogger;
 
@@ -149,7 +151,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         test.addNode("sns");
         item.setProperty(HIPPO_CONTENTDELETE, sns.getPath());
         session.save();
-        final List<PostStartupTask> tasks = process(new NOPLogger() {});
+        final List<PostStartupTask> tasks = process(NOPLogger.NOP_LOGGER);
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertEquals(2, test.getNodes("sns").getSize());
     }
@@ -169,7 +171,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:single");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"a"});
         session.save();
-        final List<PostStartupTask> tasks = process(new NOPLogger() {});
+        final List<PostStartupTask> tasks = process(NOPLogger.NOP_LOGGER);
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.propertyExists("/test/propnode/hippo:single"));
     }
@@ -320,6 +322,32 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         replay(webResourcesService);
         reimportWebresources.execute();
         verify(webResourcesService);
+    }
+
+    @Test
+    public void testMissingWebResourceBundleInitializationLogsError() throws Exception {
+        final URL testBundleUrl = getClass().getResource("/hippoecm-extension.xml");
+
+        item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "noSuchDirectory");
+        item.setProperty(HIPPO_EXTENSIONSOURCE, testBundleUrl.toString());
+        session.save();
+
+        final LoggerRecordingWrapper recordingLogger = new LoggerRecordingWrapper(NOPLogger.NOP_LOGGER);
+        final List<PostStartupTask> tasks = process(recordingLogger);
+        assertEquals("There should be one post-startup task", 1, tasks.size());
+
+        // test the post-startup task
+        final PostStartupTask importWebResources = tasks.get(0);
+
+        final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "noSuchDirectory");
+        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir));
+        expectLastCall().andThrow(new WebResourceException("simulate a web resource exception during import"));
+
+        replay(webResourcesService);
+        importWebResources.execute();
+        verify(webResourcesService);
+
+        assertEquals("expected an error message to be logged", 1, recordingLogger.getErrorMessages().size());
     }
 
     @Test
