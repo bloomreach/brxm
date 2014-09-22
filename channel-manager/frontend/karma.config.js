@@ -73,7 +73,7 @@ module.exports = function(config) {
 
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-        reporters: ['dots'],
+        reporters: ['dots','junit'],
 
         // web server port
         port: 9876,
@@ -110,6 +110,10 @@ module.exports = function(config) {
             'page/**/!(*spec).js': ['coverage'],
             'pages/**/!(*spec).js': ['coverage'],
             'shared/**/!(*spec).js': ['coverage']
+        },
+
+        junitReporter: {
+            outputFile: '../target/surefire-reports/TEST-karma-results.xml'
         }
 
     });
