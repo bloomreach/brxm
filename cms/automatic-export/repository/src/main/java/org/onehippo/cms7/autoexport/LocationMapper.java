@@ -124,6 +124,12 @@ final class LocationMapper {
         contextNode = "/hippo:configuration/$1/$2";
         file = "configuration/$1/$2.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /content/taxonomies
+        nodePatterns = new String[] {"/content/taxonomies" + ANY};
+        propertyPatterns = nodePatterns;
+        contextNode = "/content/taxonomies";
+        file = "taxonomies.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /content
         nodePatterns = new String[] {"/content", "/content/" + NAME};
         propertyPatterns = new String[] {"/content/" + NAME, "/content/" + NAME + "/" + NAME};
