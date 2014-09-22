@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,15 @@ Hippo.Tree = Hippo.Tree || {};
 Hippo.Tree.addShortcuts = function(callbackUrl) {
 
     var register = function(key) {
+        // always unregister first to avoid multiple callbacks registered to one input event
+        shortcut.remove(key);
         shortcut.add(key, function() {
             Wicket.Ajax.get({
-                u : callbackUrl+'&key='+key
+                u : callbackUrl + '&key=' + key
             });
         }, {
-            'disable_in_input': true
+            'disable_in_input': true,
+            'type': 'keypress'
         });
     };
     register('Up');
