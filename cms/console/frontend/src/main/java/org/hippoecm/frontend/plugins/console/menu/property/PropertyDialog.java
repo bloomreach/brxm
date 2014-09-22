@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.menu.property;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,35 +31,50 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.console.editor.PropertiesEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wicket.contrib.input.events.EventType;
+import wicket.contrib.input.events.InputBehavior;
+import wicket.contrib.input.events.key.KeyType;
+
 public class PropertyDialog extends AbstractDialog<Node> {
-
-
     private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
+
     private static final List<String> ALL_TYPES = new ArrayList<>(8);
     static {
         ALL_TYPES.add(PropertyType.TYPENAME_BOOLEAN);
@@ -75,16 +91,21 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
     }
 
-    private String name = "";
-    private String value = "";
-    private Boolean isMultiple = Boolean.FALSE;
+    @SuppressWarnings("unused")
+    private String name;
     private String type = PropertyType.TYPENAME_STRING;
+    private Boolean isMultiple = Boolean.FALSE;
+    private List<String> values;
     private IModel<Map<String, List<PropertyDefinition>>> choiceModel;
-    private final IModelReference modelReference;
+    private final IModelReference<Node> modelReference;
+    
+    private boolean focusOnLatestValue;
 
     public PropertyDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
         final IModel<Node> model = modelReference.getModel();
+        
+        getParent().add(new AttributeAppender("class", Model.of("property-dialog"), " "));
 
         // list defined properties for automatic completion
         choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {
@@ -147,11 +168,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         });
         checkBox.setOutputMarkupId(true);
-        checkBox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {}
-        });
         add(checkBox);
 
         // dropdown for property type
@@ -239,9 +255,100 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 target.add(checkBox);
             }
         });
+        nameField.setRequired(true);
+        add(nameField);
 
-        add(setFocus(nameField));
-        add(new TextArea<>("value", new PropertyModel<String>(this, "value")));
+        values = new LinkedList<>();
+        values.add("");
+
+        final WebMarkupContainer valuesContainer = new WebMarkupContainer("valuesContainer");
+        valuesContainer.setOutputMarkupId(true);
+        add(valuesContainer);
+        
+        valuesContainer.add(new ListView<String>("values", values) {
+
+            @Override
+            protected void populateItem(final ListItem<String> item) {
+                final TextField textField = new TextField<>("val", item.getModel());
+                textField.add(new OnChangeAjaxBehavior() {
+
+                    @Override
+                    protected void onUpdate(final AjaxRequestTarget target) {
+                    }
+
+                });
+                item.add(textField);
+
+                if (focusOnLatestValue && item.getIndex() == (values.size() - 1)) {
+                    AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+                    if (ajax != null) {
+                        ajax.focusComponent(textField);
+                    }
+                    focusOnLatestValue = false;
+                }
+
+                final AjaxLink deleteLink = new AjaxLink("removeLink") {
+                    @Override
+                    public void onClick(final AjaxRequestTarget target) {
+                        values.remove(item.getIndex());
+                        target.add(valuesContainer);
+                    }
+
+                    @Override
+                    public boolean isVisible() {
+                        return super.isVisible() && item.getIndex() > 0;
+                    }
+                };
+                
+                deleteLink.add(new Image("removeIcon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
+                deleteLink.add(new AttributeModifier("title", getString("property.value.remove")));
+                deleteLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
+                    @Override
+                    protected String getTarget() {
+                        return "'" + deleteLink.getMarkupId() + "'";
+                    }
+                });
+                item.add(deleteLink);
+            }
+        });
+
+        final AjaxLink addLink = new AjaxLink("addLink") {
+            @Override
+            public void onClick(final AjaxRequestTarget target) {
+                values.add("");
+                target.add(valuesContainer);
+                focusOnLatestValue = true;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isMultiple;
+            }
+        };
+        addLink.add(new AttributeModifier("title", getString("property.value.add")));
+        addLink.add(new Image("addIcon", new PackageResourceReference(PropertiesEditor.class, "list-add-16.png")));
+        addLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
+            @Override
+            protected String getTarget() {
+                return "'" + addLink.getMarkupId() + "'";
+            }
+        });
+        valuesContainer.add(addLink);
+
+        checkBox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.add(valuesContainer);
+                if (!isMultiple && values.size() > 1) {
+                    String first = values.get(0);
+                    values.clear();
+                    values.add(first);
+                }
+            }
+        });
+
+        setFocus(nameField);
     }
 
     @Override
@@ -249,19 +356,18 @@ public class PropertyDialog extends AbstractDialog<Node> {
         try {
             final IModel<Node> nodeModel = modelReference.getModel();
             final Node node = nodeModel.getObject();
-
             final int propertyType = PropertyType.valueFromName(type);
-            final Value value = getJcrValue(propertyType);
+            
             if (isMultiple) {
-                Value[] values = value != null ? new Value[] { value } : new Value[] {};
-                node.setProperty(name, values, propertyType);
+                node.setProperty(name, getJcrValues(propertyType), propertyType);
             } else {
-                node.setProperty(name, value, propertyType);
+                node.setProperty(name, getJcrValue(propertyType), propertyType);
             }
-            JcrNodeModel newNodeModel = new JcrNodeModel(node);
-            modelReference.setModel(newNodeModel);
+            
+            modelReference.setModel(new JcrNodeModel(node));
+
         } catch (ConstraintViolationException e) {
-            error("It is not allowed to add the property '" + name + "' on this node primary node type (javax.jcr.nodetype.ConstraintViolationException)");
+            error("It is not allowed to add the property '" + name + "' on this node.");
             log.error(e.getClass().getName() + " : " + e.getMessage());
         } catch (RepositoryException e) {
             error(e.toString());
@@ -270,50 +376,30 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     public IModel<String> getTitle() {
-        return new Model<>("Add a new Property");
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        if (name == null)
-            name = "";
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        if (value == null)
-            value = "";
-        this.value = value;
-    }
-
-    public void setMultiple(Boolean isMultiple) {
-        this.isMultiple = isMultiple;
-    }
-
-    public Boolean isMultiple() {
-        return isMultiple;
-    }
-
-    public void setPropertyType(String type) {
-        this.type = type;
-    }
-
-    public String getPropertyType() {
-        return type;
+        return Model.of("Add a new Property");
     }
 
     private Value getJcrValue(final int propertyType) {
         try {
-            return getValueFactory().createValue(value, propertyType);
+            String value = values.get(0);
+            return getValueFactory().createValue(value == null ? "" : value, propertyType);
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
+        }
+        return null;
+    }
+
+    private Value[] getJcrValues(final int propertyType) {
+        try {
+            ValueFactory factory = getValueFactory();
+            Value[] jcrValues = new Value[values.size()];
+            for (int i = 0; i < jcrValues.length; i++) {
+                String value = values.get(i);
+                jcrValues[i] = factory.createValue(value == null ? "" : value, propertyType);
+            }
+            return jcrValues;
+        } catch (RepositoryException e) {
+            log.info(e.getMessage());
         }
         return null;
     }
@@ -324,8 +410,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
     @Override
        public IValueMap getProperties() {
-        IValueMap CUSTOM = new ValueMap("width=420,height=300").makeImmutable();
-        return CUSTOM;
+        return new ValueMap("width=420,height=300").makeImmutable();
     }
 
     @Override
@@ -333,5 +418,5 @@ public class PropertyDialog extends AbstractDialog<Node> {
         choiceModel.detach();
         super.onDetach();
     }
-
+    
 }

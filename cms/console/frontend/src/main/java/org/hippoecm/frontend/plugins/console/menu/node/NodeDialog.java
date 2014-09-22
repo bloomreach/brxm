@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
@@ -38,6 +39,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -55,8 +57,8 @@ public class NodeDialog extends AbstractDialog<Node> {
     private String name;
     private String type;
 
-    private final Map<String, Collection<String>> namesToTypes = new HashMap<String, Collection<String>>();
-    private final Map<String, Collection<String>> typesToNames = new HashMap<String, Collection<String>>();
+    private final Map<String, Collection<String>> namesToTypes = new HashMap<>();
+    private final Map<String, Collection<String>> typesToNames = new HashMap<>();
 
     private final IModelReference<Node> modelReference;
 
@@ -64,6 +66,8 @@ public class NodeDialog extends AbstractDialog<Node> {
         this.modelReference = modelReference;
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
+
+        getParent().add(new AttributeAppender("class", Model.of("node-dialog"), " "));
 
         // list defined child node names and types for automatic completion
         final Node node = nodeModel.getObject();
@@ -135,8 +139,8 @@ public class NodeDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                Collection<String> result = new TreeSet<String>();
-                if (name != null && !name.isEmpty()) {
+                Collection<String> result = new TreeSet<>();
+                if (!Strings.isEmpty(name)) {
                     if (namesToTypes.get(name) != null) {
                         result.addAll(namesToTypes.get(name));
                     }
@@ -165,6 +169,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                         DefaultCssAutoCompleteTextField.class, "DefaultCssAutoCompleteTextField.css")));
             }
         };
+        typeField.setRequired(true);
         add(typeField);
 
         final Model<String> nameModel = new Model<String>() {
@@ -205,7 +210,7 @@ public class NodeDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                Collection<String> result = new TreeSet<String>();
+                Collection<String> result = new TreeSet<>();
                 if (type != null && !type.isEmpty()) {
                     if (typesToNames.get(type) != null) {
                         result.addAll(typesToNames.get(type));
@@ -221,6 +226,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                 return result.iterator();
             }
         };
+        nameField.setRequired(true);
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             private static final long serialVersionUID = 1L;
 
@@ -229,6 +235,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                 target.add(typeField);
             }
         });
+
         typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             private static final long serialVersionUID = 1L;
 
@@ -237,8 +244,8 @@ public class NodeDialog extends AbstractDialog<Node> {
                 target.add(nameField);
             }
         });
-        add(setFocus(nameField));
 
+        add(setFocus(nameField));
     }
 
     @Override
@@ -254,7 +261,7 @@ public class NodeDialog extends AbstractDialog<Node> {
     }
 
     public IModel<String> getTitle() {
-        return new Model<String>("Add a new Node");
+        return new Model<>("Add a new Node");
     }
 
     @Override
@@ -263,7 +270,7 @@ public class NodeDialog extends AbstractDialog<Node> {
     }
 
     private Collection<NodeType> getDescendentNodeTypes(NodeType nt) {
-        Collection<NodeType> result = new HashSet<NodeType>();
+        Collection<NodeType> result = new HashSet<>();
         NodeTypeIterator subNodeTypes = nt.getDeclaredSubtypes();
         while (subNodeTypes.hasNext()) {
             NodeType subNodeType = subNodeTypes.nextNodeType();
@@ -278,13 +285,13 @@ public class NodeDialog extends AbstractDialog<Node> {
     private void addNodeType(NodeDefinition nd, NodeType nt) {
         Collection<String> types = namesToTypes.get(nd.getName());
         if (types == null) {
-            types = new HashSet<String>(5);
+            types = new HashSet<>(5);
             namesToTypes.put(nd.getName(), types);
         }
         types.add(nt.getName());
         Collection<String> names = typesToNames.get(nt.getName());
         if (names == null) {
-            names = new HashSet<String>(5);
+            names = new HashSet<>(5);
             typesToNames.put(nt.getName(), names);
         }
         names.add(nd.getName());

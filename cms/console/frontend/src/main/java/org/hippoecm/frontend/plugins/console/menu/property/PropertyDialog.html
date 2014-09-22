@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,23 +15,34 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <p>
-      <strong>Multi value:</strong><input type="checkbox" wicket:id="isMultiple"/>
-      <strong style="padding-left: 10px;">Type:</strong>
-      <select wicket:id="types"/>
-    </p>
     <ul>
       <li>
-        <strong>Name: </strong>
-        <fieldset>
-          <input wicket:id="name"/>
-        </fieldset>
+        <label wicket:for="types">Type:</label><select wicket:id="types"/>
+        <label wicket:for="isMultiple">Multi value:</label><input type="checkbox" wicket:id="isMultiple"/>
       </li>
       <li>
-        <strong>Value: </strong>
+        <label wicket:for="name">Name: </label>
         <fieldset>
-          <input wicket:id="value"/>
+          <input wicket:id="name" type="text"/>
         </fieldset>
+      </li>
+      <li wicket:id="valuesContainer">
+          <label>Value: </label>
+          <div class="property-values">
+              <div wicket:id="values">
+                  <div class="property-value">
+                      <input type="text" wicket:id="val"/>
+                      <a wicket:id="removeLink" class="property-value-remove">
+                          <img wicket:id="removeIcon" class="remove-icon" width="16" height="16"/>
+                      </a>
+                  </div>
+              </div>
+              <div>
+                  <a wicket:id="addLink" class="property-value-add">
+                      <img wicket:id="addIcon" class="add-icon" width="16" height="16"/>
+                  </a>
+              </div>
+          </div>
       </li>
     </ul>
   </wicket:extend>

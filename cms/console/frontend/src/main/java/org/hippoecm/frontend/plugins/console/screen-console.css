@@ -201,10 +201,11 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-tree div.wicket-tree div.row-selected {background-image: none;}
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
-
 .wicket-modal .hippo-root { padding: 10px; }
 
-.wicket-modal .hippo-modal-feedback ul { margin-left: 10px; margin-right: 10px; }
+.wicket-modal .hippo-modal-feedback ul {
+    margin: 0 10px 10px;
+}
 
 .hippo-modal-feedback ul li.feedbackPanelERROR {display: block; margin:0;}
 
@@ -273,3 +274,86 @@ body.hippo-root div.yui-log-container {
     color: green;
 }
 
+/* Node & Property dialog */
+.wicket-modal .node-dialog .hippo-root { 
+    height: 168px;
+    overflow: auto;
+    padding: 15px 20px 0;
+}
+
+.wicket-modal .property-dialog .hippo-root { 
+    height: 218px;
+    padding: 15px 20px 0;
+    overflow: auto;
+}
+
+.node-dialog form > ul,
+.property-dialog form > ul {
+    padding: 10px 15px 0;
+}
+
+.node-dialog fieldset,
+.property-dialog fieldset {
+    margin-top: 3px;
+}
+
+.node-dialog input[type=text],
+.property-dialog input[type=text] {
+    width: 272px;
+}
+
+.node-dialog li,
+.property-dialog li {
+    margin-bottom: 10px;
+}
+
+.node-dialog li label,
+.property-dialog li label {
+    font-weight: bold;
+    display: inline;
+}
+
+.property-dialog li label {
+    margin-right: 10px;
+    margin-left: 20px;
+}
+
+.property-dialog li label:first-of-type {
+    margin-left: 0;
+}
+
+.property-dialog li select {
+    min-width: 117px;
+}
+
+.property-dialog .add-value {
+    position:absolute;
+    left: 280px;
+}
+
+.property-dialog .property-values {
+    display: table;
+    margin-top: 3px;
+}
+
+.property-dialog .property-values > div {
+    display: table-row;
+}
+
+.property-dialog .property-values > div > div {
+    display: table-cell;
+}
+
+.property-dialog li .property-value {
+    padding-bottom: 2px;    
+}
+
+.property-dialog .property-value-add {
+    margin: 5px 0;
+    display: inline-block;
+}
+
+.property-dialog .property-value-add img,
+.property-dialog .property-value-remove img {
+    vertical-align: middle;
+}
