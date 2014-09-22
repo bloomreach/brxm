@@ -30,6 +30,8 @@ public final class Shortcuts {
     public static final KeyType[] CTRL_S = new KeyType[]{KeyType.Ctrl, KeyType.s};
     // open node (based on path input)
     public static final KeyType[] CTRL_O = new KeyType[]{KeyType.Ctrl, KeyType.o};
+    // add node
+    public static final KeyType[] CTRL_N = new KeyType[]{KeyType.Ctrl, KeyType.n};
     // add property
     public static final KeyType[] CTRL_P = new KeyType[]{KeyType.Ctrl, KeyType.p};
     // delete multiple nodes
@@ -47,6 +49,7 @@ public final class Shortcuts {
 
     static {
         HELP_ITEMS.add(new HelpDescription("SAVE", "Save pending changes", "Ctrl + s"));
+        HELP_ITEMS.add(new HelpDescription("ADD NODE", "Add node to selected node", "Ctrl + n"));
         HELP_ITEMS.add(new HelpDescription("ADD PROPERTY", "Add property to selected node", "Ctrl + p"));
         HELP_ITEMS.add(new HelpDescription("DELETE MULTIPLE NODES", "Select multiple nodes and delete those", "Ctrl + m"));
         HELP_ITEMS.add(new HelpDescription("OPEN", "Open node by path (rel & abs) or UUID", "Ctrl + o"));

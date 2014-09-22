@@ -46,14 +46,10 @@ import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
 import org.hippoecm.frontend.plugins.standards.sort.NodeSortPanel;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MenuPlugin extends ListViewPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(MenuPlugin.class);
 
     private SaveDialogLink saveDialogLink;
     private NodeSortPanel sorter;
@@ -70,7 +66,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new NodeDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("node-dialog", new Model<String>("Add"), dialogFactory, dialogService));
+        add(new DialogLink("node-dialog", new Model<>("Add"), dialogFactory, dialogService, Shortcuts.CTRL_N));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -79,7 +75,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new DeleteDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("delete-dialog", new Model<String>("Delete"), dialogFactory, dialogService));
+        add(new DialogLink("delete-dialog", new Model<>("Delete"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -94,7 +90,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 };
             }
         };
-        saveDialogLink = new SaveDialogLink("save-dialog", new Model<String>("Write changes to repository"), dialogFactory, dialogService);
+        saveDialogLink = new SaveDialogLink("save-dialog", new Model<>("Write changes to repository"), dialogFactory, dialogService);
         add(saveDialogLink);
 
         dialogFactory = new IDialogFactory() {
@@ -110,7 +106,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 };
             }
         };
-        add(new DialogLink("reset-dialog", new Model<String>("Reset"), dialogFactory, dialogService));
+        add(new DialogLink("reset-dialog", new Model<>("Reset"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -125,7 +121,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 };
             }
         };
-        add(new DialogLink("property-dialog", new Model<String>("Add Property"), dialogFactory, dialogService, Shortcuts.CTRL_P));
+        add(new DialogLink("property-dialog", new Model<>("Add Property"), dialogFactory, dialogService, Shortcuts.CTRL_P));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -134,7 +130,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new RenameDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("rename-dialog", new Model<String>("Rename"), dialogFactory, dialogService));
+        add(new DialogLink("rename-dialog", new Model<>("Rename"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -143,7 +139,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new MoveDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("move-dialog", new Model<String>("Move"), dialogFactory, dialogService));
+        add(new DialogLink("move-dialog", new Model<>("Move"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -152,7 +148,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new CopyDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("copy-dialog", new Model<String>("Copy"), dialogFactory, dialogService));
+        add(new DialogLink("copy-dialog", new Model<>("Copy"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -161,7 +157,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new OpenDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("open-dialog", new Model<String>("Open"), dialogFactory, dialogService, Shortcuts.CTRL_O));
+        add(new DialogLink("open-dialog", new Model<>("Open"), dialogFactory, dialogService, Shortcuts.CTRL_O));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -170,7 +166,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new DeleteMultipleDialog(new NodeModelReference(MenuPlugin.this, (JcrNodeModel) getDefaultModel()));
             }
         };
-        add(new DialogLink("delete-multiple-dialog", new Model<String>("Delete *"), dialogFactory, dialogService, Shortcuts.CTRL_M));
+        add(new DialogLink("delete-multiple-dialog", new Model<>("Delete *"), dialogFactory, dialogService, Shortcuts.CTRL_M));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -178,7 +174,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new HelpDialog();
             }
         };
-        add(new DialogLink("help-dialog", new Model<String>("?"), dialogFactory, dialogService, Shortcuts.CTRL_H));
+        add(new DialogLink("help-dialog", new Model<>("?"), dialogFactory, dialogService, Shortcuts.CTRL_H));
 
         add(sorter = new NodeSortPanel("sorter-panel"));
         sorter.setDefaultModel(getDefaultModel());
