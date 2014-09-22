@@ -29,8 +29,7 @@ Hippo.Tree.addShortcuts = function(callbackUrl) {
                 u : callbackUrl + '&key=' + key
             });
         }, {
-            'disable_in_input': true,
-            'type': 'keypress'
+            'disable_in_input': true
         });
     };
     register('Up');
