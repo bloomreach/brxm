@@ -85,11 +85,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
             }
 
             setHeaders(response, webResource);
-            final Binary binary = webResource.getBinary();
-            final ServletOutputStream outputStream = response.getOutputStream();
-            IOUtils.copy(binary.getStream(), outputStream);
-            outputStream.flush();
-            outputStream.close();
+            writeWebResource(response, webResource);
         } catch (RepositoryException e) {
             throw new ContainerException(e);
         } catch (IOException e) {
@@ -107,7 +103,6 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         context.invokeNext();
     }
 
-
     public static void setHeaders(final HttpServletResponse response, final WebResource webResource) throws RepositoryException {
         // no need for ETag since expires 1 year
         response.setHeader("Content-Length", Long.toString(webResource.getBinary().getSize()));
@@ -115,5 +110,13 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
         response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
         response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);
+    }
+
+    private static void writeWebResource(final HttpServletResponse response, final WebResource webResource) throws IOException {
+        final Binary binary = webResource.getBinary();
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
+            IOUtils.copy(binary.getStream(), outputStream);
+            outputStream.flush();
+        }
     }
 }

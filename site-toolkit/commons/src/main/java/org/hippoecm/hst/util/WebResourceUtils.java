@@ -25,10 +25,9 @@ public class WebResourceUtils {
         String bundleName = requestContext.getResolvedMount().getMount().getContextPath();
         if (bundleName == null || bundleName.length() == 0) {
             bundleName = DEFAULT_BUNDLE_NAME;
-        } if (bundleName.startsWith("/")) {
+        } else if (bundleName.startsWith("/")) {
             bundleName = bundleName.substring(1);
         }
-
         return bundleName;
     }
 }
