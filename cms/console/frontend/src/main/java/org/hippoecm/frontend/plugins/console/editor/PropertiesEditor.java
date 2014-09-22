@@ -43,7 +43,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertiesEditor extends DataView {
+public class PropertiesEditor extends DataView<Property> {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,7 +51,7 @@ public class PropertiesEditor extends DataView {
 
     private String namespacePrefix;
 
-    public PropertiesEditor(String id, IDataProvider model) {
+    public PropertiesEditor(String id, IDataProvider<Property> model) {
         super(id, model);
 
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
@@ -84,9 +84,10 @@ public class PropertiesEditor extends DataView {
             valuesContainer.setOutputMarkupId(true);
             item.add(valuesContainer);
 
-            valuesContainer.add(createPropertyValueEditor("values", model));
+            PropertyValueEditor editor = createPropertyValueEditor("values", model);
+            valuesContainer.add(editor);
 
-            final AjaxLink addLink = addLink("add", model, valuesContainer);
+            final AjaxLink addLink = addLink("add", model, valuesContainer, editor);
             addLink.add(new AttributeModifier("title", getString("property.value.add")));
             item.add(addLink);
 
@@ -100,10 +101,9 @@ public class PropertiesEditor extends DataView {
     }
 
     /**
-     * Creates {@link PropertyValueEditor} for a property.
-     * @param id
-     * @param model
-     * @return
+     * Creates {@link PropertyValueEditor} for a property. If name equals 'hst:script' and parent node is of type
+     * 'hst:template' a FreemarkerCodeMirrorPropertyValueEditor is returned instead.
+     *
      * @throws RepositoryException 
      */
     protected PropertyValueEditor createPropertyValueEditor(final String id, final JcrPropertyModel model) throws RepositoryException {
@@ -153,7 +153,9 @@ public class PropertiesEditor extends DataView {
         return deleteLink;
     }
 
-    private AjaxLink addLink(String id, final JcrPropertyModel model, final WebMarkupContainer focusComponent) {
+    private AjaxLink addLink(String id, final JcrPropertyModel model, final WebMarkupContainer component, 
+                             final PropertyValueEditor editor) {
+        
         return new AjaxLink<Property>(id, model) {
             private static final long serialVersionUID = 1L;
 
@@ -167,12 +169,13 @@ public class PropertiesEditor extends DataView {
                     System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
                     newValues[newValues.length - 1] = createDefaultValue(prop.getType());
                     prop.setValue(newValues);
+                    
+                    editor.setFocusOnLastItem(true);
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                     return;
                 }
-
-                target.add(focusComponent);
+                target.add(component);
             }
         };
     }

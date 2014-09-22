@@ -38,12 +38,14 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converter.DateConverter;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
+import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
@@ -59,6 +61,8 @@ class PropertyValueEditor extends DataView {
 
     private JcrPropertyModel propertyModel;
     private final DateConverter dateConverter = new ISO8601DateConverter();
+    
+    private boolean focusOnLastItem;
 
     PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
         super(id, dataProvider);
@@ -89,7 +93,6 @@ class PropertyValueEditor extends DataView {
                     }
 
                     NodeEditor editor = findParent(NodeEditor.class);
-
                     if (editor != null) {
                         target.add(editor);
                     }
@@ -103,6 +106,15 @@ class PropertyValueEditor extends DataView {
             removeLink.setVisible(definition.isMultiple() && !definition.isProtected());
 
             item.add(removeLink);
+
+            if (focusOnLastItem && item.getIndex() == getItemCount() - 1) {
+                focusOnLastItem = false;
+
+                AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (ajax != null && valueEditor instanceof AjaxUpdatingWidget) {
+                    ajax.focusComponent(((AjaxUpdatingWidget) valueEditor).getFocusComponent());
+                }
+            }
         }
         catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -111,19 +123,20 @@ class PropertyValueEditor extends DataView {
         }
     }
 
+    public void setFocusOnLastItem(final boolean focusOnLastItem) {
+        this.focusOnLastItem = focusOnLastItem;
+    }
+
     /**
      * Finds {@link EditorPlugin} containing this from ancestor components.
-     * @return
      */
     protected EditorPlugin getEditorPlugin() {
-        EditorPlugin plugin = findParent(EditorPlugin.class);
-        return plugin;
+        return findParent(EditorPlugin.class);
     }
 
     /**
      * Creates property value editing component.
-     * @param valueModel
-     * @return
+     * 
      * @throws RepositoryException
      */
     protected Component createValueEditor(final JcrPropertyValueModel valueModel) throws RepositoryException {
@@ -176,19 +189,16 @@ class PropertyValueEditor extends DataView {
                     }
                 }
 
-                editor.setCols(String.valueOf(columnCount + 1));
                 editor.setRows(String.valueOf(rowCount + 1));
                 return editor;
             }
             else if (asString.length() > TEXT_AREA_MAX_COLUMNS) {
                 TextAreaWidget editor = new TextAreaWidget("value", stringModel);
-                editor.setCols(String.valueOf(TEXT_AREA_MAX_COLUMNS));
                 editor.setRows(String.valueOf((asString.length() / 80)));
                 return editor;
             }
             else {
                 TextAreaWidget editor = new TextAreaWidget("value", stringModel);
-                editor.setCols(String.valueOf(TEXT_AREA_MAX_COLUMNS));
                 editor.setRows("1");
                 return editor;
             }
