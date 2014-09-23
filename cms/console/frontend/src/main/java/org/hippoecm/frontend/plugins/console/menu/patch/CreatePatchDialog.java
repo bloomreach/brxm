@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -38,6 +39,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Time;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.download.DownloadLink;
@@ -59,22 +61,12 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(CreatePatchDialog.class);
 
-    private static final String[] ILLEGAL_PATHS = new String[] {
-            "/content",
-            "/hippo:log",
-            "/formdata",
-            "/jcr:system",
-            "/hippo:configuration/hippo:initialize",
-            "/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:request",
-            "/hippo:configuration/hippo:update/hippo:queue",
-            "/hippo:configuration/hippo:udpate/hippo:history"
-    };
-
     private final Label diff;
     private String path;
     private List<Step> steps;
+    private final List<String> excludedPaths;
 
-    public CreatePatchDialog(IModel<Node> model) {
+    public CreatePatchDialog(final IPluginConfig config, IModel<Node> model) {
         super(model);
         diff = new Label("diff");
         diff.setOutputMarkupId(true);
@@ -82,6 +74,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
         DownloadLink link = new PatchDownloadLink("download-link");
         link.add(new Label("download-link-text", "Download (or right click and choose \"Save as...\")"));
         add(link);
+        excludedPaths = Arrays.asList(config.getStringArray("excludedPaths"));
         try {
             path = getModelObject().getPath();
             if (!isPathValid(path)) {
@@ -95,14 +88,14 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
     }
 
     @Override
-    public IModel getTitle() {
-        return new Model<String>("Create Diff for " + path);
+    public IModel<String> getTitle() {
+        return new Model<>("Create Diff for " + path);
     }
 
     @Override
     protected List<Step> getSteps() {
         if (steps == null) {
-            steps = new ArrayList<Step>(2);
+            steps = new ArrayList<>(2);
             steps.add(new CreatePatchStep());
             steps.add(new DoneStep());
         }
@@ -113,7 +106,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
         if (path.equals("/")) {
             return false;
         }
-        for (String illegalPath : ILLEGAL_PATHS) {
+        for (String illegalPath : excludedPaths) {
             if (path.startsWith(illegalPath)) {
                 return false;
             }
@@ -148,22 +141,10 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
 
             writer.write("\n\n");
 
-        } catch (RepositoryException e) {
+        } catch (RepositoryException | IOException | JcrDiffException | JAXBException e) {
             final String message = "An unexpected error occurred while creating diff: " + e.getMessage();
             error(message);
             log.error(message, e);
-        } catch (IOException e) {
-            final String message = "An unexpected error occurred while creating diff: " + e.getMessage();
-            error(message);
-            log.error(message, e);
-        } catch (JcrDiffException e) {
-            final String message = "An unexpected error occurred while creating diff: " + e.getMessage();
-            error(message);
-            log.error(message, e);
-        } catch (JAXBException e) {
-            final String message = "An unexpected error occurred while creating diff: " + e.getMessage();
-            error(message);
-            log.error(message);
         } finally {
             if (session != null) {
                 session.logout();
@@ -198,14 +179,14 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
         protected int execute() {
             final StringWriter writer = new StringWriter();
             createDiff(writer);
-            diff.setDefaultModel(new Model<String>(writer.getBuffer().toString()));
+            diff.setDefaultModel(new Model<>(writer.getBuffer().toString()));
             RequestCycle.get().find(AjaxRequestTarget.class).add(diff);
             return 1;
         }
 
         @Override
         protected IModel<String> getOkLabel() {
-            return new Model<String>("Show Diff");
+            return new Model<>("Show Diff");
         }
     }
 

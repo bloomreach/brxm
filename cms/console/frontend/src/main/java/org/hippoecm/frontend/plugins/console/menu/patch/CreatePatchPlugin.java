@@ -29,15 +29,15 @@ public class CreatePatchPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    public CreatePatchPlugin(IPluginContext context, IPluginConfig config) {
+    public CreatePatchPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         IDialogFactory factory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
             public IDialogService.Dialog createDialog() {
-                return new CreatePatchDialog(getModel());
+                return new CreatePatchDialog(config, getModel());
             }
         };
-        add(new DialogLink("link", new Model<String>("Create patch"), factory, getDialogService()));
+        add(new DialogLink("link", new Model<>("Create patch"), factory, getDialogService()));
     }
 
 }
