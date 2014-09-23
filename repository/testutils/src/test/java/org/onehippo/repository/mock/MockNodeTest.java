@@ -751,78 +751,31 @@ public class MockNodeTest {
     }
 
     @Test
-    public void checkin_versionable_node_string_property_type() throws RepositoryException {
+    public void checkin_versionable_node_property_types() throws RepositoryException, IOException {
         MockNode node = MockNode.root().addNode("test", "nt:unstructured");
         node.addMixin("mix:versionable");
         node.setProperty("string", "string");
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final Version version = versionManager.checkin(node.getPath());
-        assertEquals("string", version.getFrozenNode().getProperty("string").getString());
-    }
-
-    @Test
-    public void checkin_versionable_node_boolean_property_types() throws RepositoryException {
-        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
-        node.addMixin("mix:versionable");
         node.setProperty("true", true);
         node.setProperty("false", false);
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final Version version = versionManager.checkin(node.getPath());
-        assertEquals(true, version.getFrozenNode().getProperty("true").getBoolean());
-        assertEquals(false, version.getFrozenNode().getProperty("false").getBoolean());
-    }
-
-    @Ignore
-    @Test
-    public void checkin_versionable_node_calendar_property_types() throws RepositoryException {
-        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
-        node.addMixin("mix:versionable");
-        final Calendar cal = Calendar.getInstance();
-        node.setProperty("cal", cal);
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final Version version = versionManager.checkin(node.getPath());
-        assertEquals(cal, version.getFrozenNode().getProperty("cal").getDate());
-    }
-
-    @Test
-    public void checkin_versionable_node_long_property_types() throws RepositoryException {
-        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
-        node.addMixin("mix:versionable");
         node.setProperty("long", 10L);
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final Version version = versionManager.checkin(node.getPath());
-        assertEquals(10L, version.getFrozenNode().getProperty("long").getLong());
-    }
-
-    @Test
-    public void checkin_versionable_node_binary_property_types() throws RepositoryException, IOException {
-        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
-        node.addMixin("mix:versionable");
         node.setProperty("binary", new MockBinary(IOUtils.toInputStream("hello world!")));
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final Version version = versionManager.checkin(node.getPath());
-        assertEquals("hello world!", IOUtils.toString(version.getFrozenNode().getProperty("binary").getBinary().getStream()));
-    }
-
-    @Test
-    public void checkin_versionable_node_double_property_types() throws RepositoryException {
-        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
-        node.addMixin("mix:versionable");
         node.setProperty("double", 10D);
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final Version version = versionManager.checkin(node.getPath());
-        assertEquals(10D, version.getFrozenNode().getProperty("double").getDouble(), 001D);
-    }
-
-    @Test
-    public void checkin_versionable_node_big_decimal_property_types() throws RepositoryException {
-        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
-        node.addMixin("mix:versionable");
         final BigDecimal bigDecimal = new BigDecimal(1.0000000012123d);
         node.setProperty("bigDecimal", bigDecimal);
+        final Calendar cal = Calendar.getInstance();
+        node.setProperty("cal", cal);
+
         final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
         final Version version = versionManager.checkin(node.getPath());
+
+        assertEquals("string", version.getFrozenNode().getProperty("string").getString());
+        assertEquals(true, version.getFrozenNode().getProperty("true").getBoolean());
+        assertEquals(false, version.getFrozenNode().getProperty("false").getBoolean());
+        assertEquals(10L, version.getFrozenNode().getProperty("long").getLong());
+        assertEquals("hello world!", IOUtils.toString(version.getFrozenNode().getProperty("binary").getBinary().getStream()));
+        assertEquals(10D, version.getFrozenNode().getProperty("double").getDouble(), 001D);
         assertEquals(bigDecimal, version.getFrozenNode().getProperty("bigDecimal").getDecimal());
+        assertEquals(ISO8601.format(cal), ISO8601.format(node.getProperty("cal").getDate()));
     }
 
     @Test

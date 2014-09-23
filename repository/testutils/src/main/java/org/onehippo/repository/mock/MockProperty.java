@@ -172,7 +172,7 @@ public class MockProperty extends MockItem implements Property {
     @Override
     public void setValue(final Calendar value) {
         this.values.clear();
-        this.values.add(new MockValue(PropertyType.DECIMAL, ISO8601.format(value)));
+        this.values.add(new MockValue(PropertyType.DATE, ISO8601.format(value)));
         multiple = false;
     }
 
