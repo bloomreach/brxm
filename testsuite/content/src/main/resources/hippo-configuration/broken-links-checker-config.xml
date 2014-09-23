@@ -1,24 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
-         sv:name="brokenlinks">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:module</sv:value>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="nightly"
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
+  <sv:property sv:name="hipposched:enabled" sv:type="Boolean"  h:merge="override">
+    <sv:value>false</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:moduleconfig" h:merge="combine">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:moduleconfig" h:merge="combine">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>brokenlinks:config</sv:value>
-      </sv:property>
-      <sv:property sv:name="enabled" sv:type="Boolean"  h:merge="override">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="cronExpression" sv:type="String"  h:merge="override">
-        <sv:value>0 0/5 * * * ? *</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
+  <sv:property sv:name="hipposched:cronExpression" sv:type="String"  h:merge="override">
+    <sv:value>0 0/5 * * * ? *</sv:value>
+  </sv:property>
 </sv:node>

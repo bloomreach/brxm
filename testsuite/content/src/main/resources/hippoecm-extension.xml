@@ -735,36 +735,6 @@
     </sv:property>
   </sv:node>
 
-  <!-- Formdata node and a security domain for it -->
-  <sv:node sv:name="testsuite-formdata-container">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hippo-configuration/formdata.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.0</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="testsuite-formdata-domain">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hippo-configuration/formdata-domain.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:domains</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.1</sv:value>
-    </sv:property>
-  </sv:node>
-
   <!-- Security and default available users -->
   <sv:node sv:name="testsuite-user-editor">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1003,7 +973,7 @@
       <sv:value>hippo-configuration/broken-links-checker-config.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:modules</sv:value>
+      <sv:value>/hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/system/CheckBrokenLinks/hipposched:triggers</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>80000</sv:value>

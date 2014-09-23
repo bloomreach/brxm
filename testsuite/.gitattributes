@@ -131,8 +131,6 @@ content/src/main/resources/democontent_nl/demo-wikipedia-nl.xml -text
 content/src/main/resources/demosite-namespace.xml svneol=native#text/plain
 content/src/main/resources/demosite-types.cnd -text
 content/src/main/resources/hippo-configuration/broken-links-checker-config.xml -text
-content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
-content/src/main/resources/hippo-configuration/formdata.xml -text svneol=unset#text/plain
 content/src/main/resources/hippo-configuration/modules/autoexport-module.xml -text
 content/src/main/resources/hippo-configuration/queries/templates/new-document-demosite.xml -text
 content/src/main/resources/hippo-configuration/queries/templates/new-folder-demosite.xml -text

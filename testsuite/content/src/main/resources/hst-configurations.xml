@@ -15,10 +15,8 @@
     limitations under the License.
 
 -->
-<sv:node sv:name="hst:configurations" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:configurations</sv:value>
-  </sv:property>
+<sv:node sv:name="hst:configurations" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
   <sv:node sv:name="demosite">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>

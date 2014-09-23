@@ -15,22 +15,8 @@
     limitations under the License.
 
 -->
-<sv:node sv:name="gallery" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippogallery:stdImageGallery</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-image-folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
-    <sv:value>hippogallery:exampleImageSet</sv:value>
-  </sv:property>
+<sv:node sv:name="gallery" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
   <sv:node sv:name="images">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippogallery:stdImageGallery</sv:value>
