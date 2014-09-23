@@ -15,16 +15,6 @@
  */
 package org.onehippo.repository.mock;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -50,12 +40,25 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
+import javax.jcr.version.VersionManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.util.JcrConstants;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class MockNodeTest {
 
@@ -728,7 +731,10 @@ public class MockNodeTest {
 
     @Test(expected = UnsupportedRepositoryOperationException.class)
     public void checkinNonVersionableNode() throws RepositoryException {
-        MockNode.root().checkin();
+
+        final MockNode root = MockNode.root();
+        final VersionManager versionManager = root.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(root.getPath());
     }
 
     @Test
@@ -738,10 +744,85 @@ public class MockNodeTest {
 
         assertTrue(node.isCheckedOut());
         assertTrue(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
-
-        node.checkin();
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(node.getPath());
         assertFalse(node.isCheckedOut());
         assertFalse(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
+    }
+
+    @Test
+    public void checkin_versionable_node_string_property_type() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        node.setProperty("string", "string");
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals("string", version.getFrozenNode().getProperty("string").getString());
+    }
+
+    @Test
+    public void checkin_versionable_node_boolean_property_types() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        node.setProperty("true", true);
+        node.setProperty("false", false);
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals(true, version.getFrozenNode().getProperty("true").getBoolean());
+        assertEquals(false, version.getFrozenNode().getProperty("false").getBoolean());
+    }
+
+    @Ignore
+    @Test
+    public void checkin_versionable_node_calendar_property_types() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        final Calendar cal = Calendar.getInstance();
+        node.setProperty("cal", cal);
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals(cal, version.getFrozenNode().getProperty("cal").getDate());
+    }
+
+    @Test
+    public void checkin_versionable_node_long_property_types() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        node.setProperty("long", 10L);
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals(10L, version.getFrozenNode().getProperty("long").getLong());
+    }
+
+    @Test
+    public void checkin_versionable_node_binary_property_types() throws RepositoryException, IOException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        node.setProperty("binary", new MockBinary(IOUtils.toInputStream("hello world!")));
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals("hello world!", IOUtils.toString(version.getFrozenNode().getProperty("binary").getBinary().getStream()));
+    }
+
+    @Test
+    public void checkin_versionable_node_double_property_types() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        node.setProperty("double", 10D);
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals(10D, version.getFrozenNode().getProperty("double").getDouble(), 001D);
+    }
+
+    @Test
+    public void checkin_versionable_node_big_decimal_property_types() throws RepositoryException {
+        MockNode node = MockNode.root().addNode("test", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        final BigDecimal bigDecimal = new BigDecimal(1.0000000012123d);
+        node.setProperty("bigDecimal", bigDecimal);
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version version = versionManager.checkin(node.getPath());
+        assertEquals(bigDecimal, version.getFrozenNode().getProperty("bigDecimal").getDecimal());
     }
 
     @Test
@@ -750,8 +831,9 @@ public class MockNodeTest {
         node.addMixin("mix:versionable");
         node.setProperty("test", "foo");
         node.addNode("child", "nt:unstructured");
+        //final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        //versionManager.checkin(node.getPath());
         node.checkin();
-
         assertVersionException(new Code() {
             public void execute() throws RepositoryException {
                 node.setProperty("test", "bar");
@@ -786,15 +868,20 @@ public class MockNodeTest {
 
     @Test(expected = UnsupportedRepositoryOperationException.class)
     public void checkoutNonVersionableNode() throws RepositoryException {
-        MockNode.root().checkout();
+
+        final MockNode root = MockNode.root();
+        final VersionManager versionManager = root.getSession().getWorkspace().getVersionManager();
+        versionManager.checkout(root.getPath());
     }
 
     @Test
     public void checkoutCheckedInNode() throws RepositoryException {
         MockNode node = MockNode.root().addNode("test", "nt:base");
         node.addMixin("mix:versionable");
-        node.checkin();
-        node.checkout();
+
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(node.getPath());
+        versionManager.checkout(node.getPath());
 
         assertTrue(node.isCheckedOut());
         assertTrue(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
@@ -805,8 +892,9 @@ public class MockNodeTest {
         final MockNode root = MockNode.root();
         final MockNode node = root.addNode("test", "nt:base");
         node.addMixin("mix:versionable");
-        node.checkin();
-        node.checkout();
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(node.getPath());
+        versionManager.checkout(node.getPath());
 
         node.setProperty("testProp", "bar");
         assertTrue(node.hasProperty("testProp"));
@@ -842,13 +930,14 @@ public class MockNodeTest {
         final MockNode node = MockNode.root().addNode("test", "nt:base");
         node.addMixin("mix:versionable");
         node.setProperty("testProp", "a");
-        node.checkin();
-        node.checkout();
-        node.setProperty("testProp", "b");
-        node.checkin();
 
-        final MockVersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final MockVersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(node.getPath());
+        versionManager.checkout(node.getPath());
+        node.setProperty("testProp", "b");
+        versionManager.checkin(node.getPath());
+
+        final VersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
         final VersionIterator allVersions = versionHistory.getAllVersions();
 
         assertEquals(2, allVersions.getSize());
@@ -865,10 +954,10 @@ public class MockNodeTest {
         final MockNode node = MockNode.root().addNode("test", "nt:base");
         node.addMixin("mix:versionable");
         node.setProperty("testProp", "a");
-        node.checkin();
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(node.getPath());
 
-        final MockVersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        final MockVersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
+        final VersionHistory versionHistory = versionManager.getVersionHistory(node.getPath());
 
         final Version version = versionHistory.getVersion("1.0");
 

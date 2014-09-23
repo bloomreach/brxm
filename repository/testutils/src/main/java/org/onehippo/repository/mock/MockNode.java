@@ -99,7 +99,7 @@ public class MockNode extends MockItem implements HippoNode {
     private final Map<String, List<MockNode>> children;
     private final Set<String> mixins;
     private String primaryItemName;
-    private boolean isCheckedOut = true;
+    private boolean checkedOut = true;
 
     public MockNode(String name) {
         this(name, null);
@@ -741,22 +741,19 @@ public class MockNode extends MockItem implements HippoNode {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public MockVersion checkin() throws RepositoryException {
         final MockVersionManager versionManager = getSession().getWorkspace().getVersionManager();
         final MockVersion version = versionManager.checkin(getPath());
-        setProperty(JcrConstants.JCR_IS_CHECKED_OUT, false);
-        this.isCheckedOut = false;
         return version;
     }
 
+    @Deprecated
     @Override
     public void checkout() throws RepositoryException {
-        if (!mixins.contains(JcrConstants.MIX_VERSIONABLE)) {
-            throw new UnsupportedRepositoryOperationException("Node " + getPath() + " is not versionable");
-        }
-        this.isCheckedOut = true;
-        setProperty(JcrConstants.JCR_IS_CHECKED_OUT, true);
+        final MockVersionManager versionManager = getSession().getWorkspace().getVersionManager();
+        versionManager.checkout(getPath());
     }
 
     @Override
@@ -801,7 +798,11 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public boolean isCheckedOut() throws RepositoryException {
-        return isCheckedOut;
+        return checkedOut;
+    }
+
+    public void setCheckedOut(final boolean checkedOut) {
+        this.checkedOut = checkedOut;
     }
 
     private void validateCheckedOut() throws RepositoryException {
@@ -897,4 +898,5 @@ public class MockNode extends MockItem implements HippoNode {
     public NodeIterator pendingChanges() throws RepositoryException {
         throw new UnsupportedOperationException();
     }
+
 }

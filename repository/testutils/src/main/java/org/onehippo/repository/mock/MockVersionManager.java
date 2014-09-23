@@ -65,13 +65,24 @@ public class MockVersionManager implements VersionManager {
 
     @Override
     public MockVersion checkin(final String absPath) throws VersionException, UnsupportedRepositoryOperationException, InvalidItemStateException, LockException, RepositoryException {
+        MockNode node = session.getNode(absPath);
+        if (!node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            throw new UnsupportedRepositoryOperationException("Node '" + absPath + "' is not versionable");
+        }
+        node.setProperty(JcrConstants.JCR_IS_CHECKED_OUT, false);
+        node.setCheckedOut(false);
         MockVersionHistory history = getVersionHistory(absPath);
         return history.addVersion();
     }
 
     @Override
     public void checkout(final String absPath) throws UnsupportedRepositoryOperationException, LockException, RepositoryException {
-        session.getNode(absPath).checkout();
+        MockNode node = session.getNode(absPath);
+        if (!node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            throw new UnsupportedRepositoryOperationException("Node '" + absPath + "' is not versionable");
+        }
+        node.setCheckedOut(true);
+        node.setProperty(JcrConstants.JCR_IS_CHECKED_OUT, true);
     }
 
     @Override
