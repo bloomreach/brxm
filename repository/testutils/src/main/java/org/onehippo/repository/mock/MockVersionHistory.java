@@ -60,11 +60,20 @@ public class MockVersionHistory extends MockNode implements VersionHistory {
         frozenNode.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).remove();
         frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, versionable.getIdentifier());
         frozenNode.setProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE, NameValue.valueOf(versionable.getPrimaryNodeType().getName()));
+        freezeMixins(frozenNode);
+
+        final String versionName = "1." + versionCount;
+        MockVersion version = addVersion(versionName, frozenNode);
+        versionCount += 1;
+        return version;
+    }
+
+    private void freezeMixins(final MockNode frozenNode) throws RepositoryException {
         if (versionable.getMixinNodeTypes().length > 1) {
             Value[] mixinTypes = new Value[versionable.getMixinNodeTypes().length - 1];
             int pos = 0;
             for (NodeType nodeType : versionable.getMixinNodeTypes()) {
-                if (nodeType.getName().equals("mix:versionable")) {
+                if (nodeType.getName().equals(JcrConstants.MIX_VERSIONABLE)) {
                     continue;
                 }
                 mixinTypes[pos] = NameValue.valueOf(nodeType.getName());
@@ -72,11 +81,6 @@ public class MockVersionHistory extends MockNode implements VersionHistory {
             }
             frozenNode.setProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES, mixinTypes);
         }
-
-        final String versionName = "1." + versionCount;
-        MockVersion version = addVersion(versionName, frozenNode);
-        versionCount += 1;
-        return version;
     }
 
     private MockVersion addVersion(final String name, final MockNode frozenNode) throws RepositoryException {
