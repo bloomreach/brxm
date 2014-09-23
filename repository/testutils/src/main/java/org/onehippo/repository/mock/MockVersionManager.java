@@ -49,7 +49,7 @@ public class MockVersionManager implements VersionManager {
     private final MockSession session;
     private final MockNode versionStorage;
 
-    public MockVersionManager(final MockSession session) throws RepositoryException {
+    MockVersionManager(final MockSession session) throws RepositoryException {
         this.session = session;
 
         MockNode root = session.getRootNode();

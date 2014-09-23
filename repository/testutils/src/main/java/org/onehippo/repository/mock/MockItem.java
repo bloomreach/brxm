@@ -39,6 +39,7 @@ public abstract class MockItem implements Item {
 
     private String name;
     private MockNode parent;
+    private MockSession session;
 
     public MockItem(String name) {
         this.name = name;
@@ -102,8 +103,12 @@ public abstract class MockItem implements Item {
 
     @Override
     public MockSession getSession() throws RepositoryException {
+        if (session != null) {
+            return session;
+        }
         MockNode root = getRootNode();
-        return new MockSession(root);
+        session = new MockSession(root);
+        return session;
     }
 
     MockNode getRootNode() {

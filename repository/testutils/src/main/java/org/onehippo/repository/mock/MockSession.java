@@ -59,7 +59,7 @@ public class MockSession implements HippoSession {
 
     private final MockNode root;
 
-    public MockSession(MockNode root) {
+    MockSession(MockNode root) {
         this.root = root;
     }
 
