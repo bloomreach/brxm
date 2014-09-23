@@ -33,7 +33,7 @@ public class MockWorkflowContext implements WorkflowContext {
     private MockRepositoryMap configuration;
 
     public MockWorkflowContext(String userIdentity) throws RepositoryException {
-        this(userIdentity, new MockSession(MockNode.root()));
+        this(userIdentity, MockNode.root().getSession());
     }
 
     public MockWorkflowContext(String userIdentity, Session session) throws RepositoryException {
