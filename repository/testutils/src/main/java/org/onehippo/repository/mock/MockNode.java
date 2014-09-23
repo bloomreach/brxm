@@ -712,7 +712,14 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public NodeType[] getMixinNodeTypes() {
-        throw new UnsupportedOperationException();
+        NodeType[] nodeTypes = new NodeType[mixins.size()];
+        int pos = 0;
+        for (String mixin : mixins) {
+            final MockNodeType mockNodeType = new MockNodeType(mixin);
+            nodeTypes[pos] = mockNodeType;
+            pos++;
+        }
+        return nodeTypes;
     }
 
     @Override

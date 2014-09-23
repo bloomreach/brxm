@@ -26,12 +26,15 @@ import javax.jcr.NodeIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.LabelExistsVersionException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
+import org.apache.jackrabbit.value.NameValue;
 import org.onehippo.repository.util.JcrConstants;
 
 /**
@@ -55,12 +58,24 @@ public class MockVersionHistory extends MockNode implements VersionHistory {
     MockVersion addVersion() throws RepositoryException {
         final MockNode frozenNode = new MockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE, versionable);
         frozenNode.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).remove();
+        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, versionable.getIdentifier());
+        frozenNode.setProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE, NameValue.valueOf(versionable.getPrimaryNodeType().getName()));
+        if (versionable.getMixinNodeTypes().length > 1) {
+            Value[] mixinTypes = new Value[versionable.getMixinNodeTypes().length - 1];
+            int pos = 0;
+            for (NodeType nodeType : versionable.getMixinNodeTypes()) {
+                if (nodeType.getName().equals("mix:versionable")) {
+                    continue;
+                }
+                mixinTypes[pos] = NameValue.valueOf(nodeType.getName());
+                pos++;
+            }
+            frozenNode.setProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES, mixinTypes);
+        }
 
         final String versionName = "1." + versionCount;
         MockVersion version = addVersion(versionName, frozenNode);
-
         versionCount += 1;
-
         return version;
     }
 

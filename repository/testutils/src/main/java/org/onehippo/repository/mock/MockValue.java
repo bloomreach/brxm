@@ -59,44 +59,41 @@ public class MockValue implements Value {
         this.type = value.getType();
 
         switch (type) {
-        case PropertyType.STRING:
-        {
-            this.stringifiedValue = value.getString();
-            break;
-        }
-        case PropertyType.DATE:
-        {
-            this.stringifiedValue = ISO8601.format(value.getDate());
-            break;
-        }
-        case PropertyType.BOOLEAN:
-        {
-            this.stringifiedValue = Boolean.toString(value.getBoolean());
-            break;
-        }
-        case PropertyType.LONG:
-        {
-            this.stringifiedValue = Long.toString(value.getLong());
-            break;
-        }
-        case PropertyType.DOUBLE:
-        {
-            this.stringifiedValue = Double.toString(value.getDouble());
-            break;
-        }
-        case PropertyType.DECIMAL:
-        {
-            this.stringifiedValue = value.getDecimal().toString();
-            break;
-        }
-        case PropertyType.BINARY: {
-            this.binary = value.getBinary();
-            break;
-        }
-        default:
-        {
-            throw new UnsupportedOperationException("Unsupported type, " + type + ". Only primitive number/string values are currently supported.");
-        }
+            case PropertyType.STRING: {
+                this.stringifiedValue = value.getString();
+                break;
+            }
+            case PropertyType.DATE: {
+                this.stringifiedValue = ISO8601.format(value.getDate());
+                break;
+            }
+            case PropertyType.BOOLEAN: {
+                this.stringifiedValue = Boolean.toString(value.getBoolean());
+                break;
+            }
+            case PropertyType.LONG: {
+                this.stringifiedValue = Long.toString(value.getLong());
+                break;
+            }
+            case PropertyType.DOUBLE: {
+                this.stringifiedValue = Double.toString(value.getDouble());
+                break;
+            }
+            case PropertyType.DECIMAL: {
+                this.stringifiedValue = value.getDecimal().toString();
+                break;
+            }
+            case PropertyType.BINARY: {
+                this.binary = value.getBinary();
+                break;
+            }
+            case PropertyType.NAME: {
+                this.stringifiedValue = value.getString();
+                break;
+            }
+            default: {
+                throw new UnsupportedOperationException("Unsupported type, " + type + ". Only primitive number/string values are currently supported.");
+            }
         }
     }
 

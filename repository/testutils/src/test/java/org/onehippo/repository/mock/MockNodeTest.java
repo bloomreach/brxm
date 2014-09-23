@@ -741,7 +741,6 @@ public class MockNodeTest {
     public void checkinVersionableNode() throws RepositoryException {
         MockNode node = MockNode.root().addNode("test", "nt:base");
         node.addMixin("mix:versionable");
-
         assertTrue(node.isCheckedOut());
         assertTrue(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
         final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
@@ -750,8 +749,38 @@ public class MockNodeTest {
         assertFalse(node.getProperty(JcrConstants.JCR_IS_CHECKED_OUT).getBoolean());
     }
 
+
     @Test
-    public void checkin_versionable_node_property_types() throws RepositoryException, IOException {
+    public void frozenNode_test_frozen_uuid_and_node_types() throws RepositoryException, IOException {
+        MockNode node = MockNode.root().addNode("node", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version versioned = versionManager.checkin(node.getPath());
+        final Node frozenNode = versioned.getFrozenNode();
+        assertEquals(node.getIdentifier(), frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+        assertEquals("nt:unstructured", frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString());
+        assertFalse("mix:versionable should be skipped from frozen node",frozenNode.hasProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES));
+
+    }
+
+    @Test
+    public void frozenNode_test_frozen_uuid_primary_with_mixin_types_besides_versionable() throws RepositoryException, IOException {
+        MockNode node = MockNode.root().addNode("node", "nt:unstructured");
+        node.addMixin("mix:versionable");
+        node.addMixin("mix:etag");
+
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        final Version versioned = versionManager.checkin(node.getPath());
+        final Node frozenNode = versioned.getFrozenNode();
+
+        assertEquals(node.getIdentifier(), frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+        assertEquals("nt:unstructured", frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString());
+        assertTrue(frozenNode.hasProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES));
+        assertEquals("mix:etag", frozenNode.getProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES).getValues()[0].getString());
+    }
+
+    @Test
+    public void frozenNode_test_various_property_types() throws RepositoryException, IOException {
         MockNode node = MockNode.root().addNode("test", "nt:unstructured");
         node.addMixin("mix:versionable");
         node.setProperty("string", "string");
