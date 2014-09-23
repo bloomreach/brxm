@@ -784,9 +784,8 @@ public class MockNodeTest {
         node.addMixin("mix:versionable");
         node.setProperty("test", "foo");
         node.addNode("child", "nt:unstructured");
-        //final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        //versionManager.checkin(node.getPath());
-        node.checkin();
+        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+        versionManager.checkin(node.getPath());
         assertVersionException(new Code() {
             public void execute() throws RepositoryException {
                 node.setProperty("test", "bar");
