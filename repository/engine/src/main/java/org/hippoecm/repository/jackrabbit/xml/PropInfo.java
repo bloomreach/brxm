@@ -32,10 +32,7 @@ import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
@@ -50,9 +47,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
-
 /**
  * Information about a property being imported. This class is used
  * by the XML import handlers to pass the parsed property information
@@ -65,11 +59,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
  */
 public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
 
-
-    private static final String OVERRIDE = "override";
-    private static final String INSERT = "insert";
-    private static final String APPEND = "append";
-    private static final String SKIP = "skip";
 
     private static Logger log = LoggerFactory.getLogger(PropInfo.class);
 
@@ -93,9 +82,12 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         this.mergeBehavior = mergeBehavior;
         this.mergeLocation = mergeLocation;
         if (name.getLocalName().endsWith(Reference.REFERENCE_SUFFIX)) {
-            String localName = StringUtils.substringBefore(name.getLocalName(), Reference.REFERENCE_SUFFIX);
-            this.name =  NameFactoryImpl.getInstance().create(name.getNamespaceURI(), localName);
+            String local = name.getLocalName();
+            local = local.substring(0, (local.length() - Reference.REFERENCE_SUFFIX.length()));
+            this.name =  NameFactoryImpl.getInstance().create(name.getNamespaceURI(), local);
             this.isPathReference = true;
+            // paths are strings
+            //this.type = PropertyType.REFERENCE;
             this.type = PropertyType.STRING;
         } else {
             this.name = name;
@@ -107,23 +99,23 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         this.valueFactory = valueFactory;
     }
 
-    private boolean mergeOverride() {
-        return OVERRIDE.equalsIgnoreCase(mergeBehavior);
+    public boolean mergeOverride() {
+        return "override".equalsIgnoreCase(mergeBehavior);
     }
 
-    private boolean mergeCombine() {
-        return APPEND.equalsIgnoreCase(mergeBehavior) || INSERT.equalsIgnoreCase(mergeBehavior);
+    public boolean mergeCombine() {
+        return "append".equalsIgnoreCase(mergeBehavior) || "insert".equalsIgnoreCase(mergeBehavior);
     }
 
-    private boolean mergeSkip() {
-        return SKIP.equalsIgnoreCase(mergeBehavior);
+    public boolean mergeConflict() {
+        return "conflict".equalsIgnoreCase(mergeBehavior);
     }
 
     public int mergeLocation(Value[] values) {
-        if(APPEND.equalsIgnoreCase(mergeBehavior)) {
+        if("append".equalsIgnoreCase(mergeBehavior)) {
             return values.length;
-        } else if(INSERT.equalsIgnoreCase(mergeBehavior)) {
-            if(StringUtils.isEmpty(mergeLocation)) {
+        } else if("insert".equalsIgnoreCase(mergeBehavior)) {
+            if(mergeLocation == null || mergeLocation.trim().equals("")) {
                 return 0;
             } else {
                 return Integer.parseInt(mergeLocation);
@@ -133,9 +125,12 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
     }
 
+    /**
+     * Disposes all values contained in this property.
+     */
     public void dispose() {
-        for (final TextValue value : values) {
-            value.dispose();
+        for (int i = 0; i < values.length; i++) {
+            values[i].dispose();
         }
     }
 
@@ -220,19 +215,19 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
     }
 
-    public void apply(NodeImpl node, NamePathResolver resolver, Map<NodeId, List<Reference>> derefNodes)
-            throws RepositoryException {
+    public void apply(NodeImpl node, NamePathResolver resolver,
+            Map<NodeId, List<Reference>> derefNodes, String basePath, int referenceBehavior) throws RepositoryException {
 
         // find applicable definition
         QPropertyDefinition def = getApplicablePropertyDef(node.getEffectiveNodeType());
         if (def.isProtected()) {
             // skip protected property
-            log.debug("skipping protected property {}", name);
+            log.debug("skipping protected property " + name);
             return;
         }
         if (isGeneratedProperty(name)) {
-            // skip auto-generated property, let the repository handle recreation
-            log.debug("skipping auto-generated property {}", name);
+            // skip autogenerated property, let the repository handle recreation
+            log.debug("skipping autogenerated property " + name);
             return;
         }
 
@@ -257,12 +252,11 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
                 System.arraycopy(va, 0, newValues, pos, va.length);
                 System.arraycopy(oldValues, pos, newValues, pos+va.length, oldValues.length-pos);
                 va = newValues;
-            } else if (mergeSkip()) {
-                log.debug("skipping existing property {}", name);
-                return;
+            } else if (mergeConflict()) {
+                throw new ItemExistsException("Property " + node.getPath() + "/" + name + " already exist");
             } else {
                 if (!def.isAutoCreated()) {
-                    log.warn("Property "+node.safeGetJCRPath()+"/"+name+" already exist");
+                    log.warn("Property "+node.getPath()+"/"+name+" already exist");
                 }
             }
         }
@@ -303,11 +297,18 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
             return;
         }
 
+        // multi- or single-valued property?
         if (!multiple && va.length == 1 && !def.isMultiple()) {
+            Exception e = null;
             try {
                 // set single-value
                 node.setProperty(name, va[0]);
-            } catch (ValueFormatException | ConstraintViolationException e) {
+            } catch (ValueFormatException vfe) {
+                e = vfe;
+            } catch (ConstraintViolationException cve) {
+                e = cve;
+            }
+            if (e != null) {
                 // setting single-value failed, try setting value array
                 // as a last resort (in case there are ambiguous property
                 // definitions)
@@ -320,7 +321,13 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
     }
 
     private boolean isGeneratedProperty(Name name) throws RepositoryException {
-        final String jcrName = resolver.getJCRName(name);
-        return HIPPO_PATHS.equals(jcrName) || HIPPO_RELATED.equals(jcrName);
+        
+        if (HippoNodeType.HIPPO_PATHS.equals(resolver.getJCRName(name))) {
+            return true;
+        }
+        if (HippoNodeType.HIPPO_RELATED.equals(resolver.getJCRName(name))) {
+            return true;
+        }
+        return false;
     }
 }
