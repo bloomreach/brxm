@@ -33,6 +33,7 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -46,6 +47,12 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE;
+import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
+import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
+import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_SKIP;
+import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_THROW;
+
 public class DereferencedSessionImporter implements Importer {
 
 
@@ -55,7 +62,6 @@ public class DereferencedSessionImporter implements Importer {
     private final NodeImpl importTargetNode;
     private final int uuidBehavior;
     private final int referenceBehavior;
-    private final int mergeBehavior;
     private final String importPath;
     private NamePathResolver resolver;
 
@@ -68,21 +74,12 @@ public class DereferencedSessionImporter implements Importer {
 
     private final Stack<NodeImpl> parents;
 
-    /**
-     * Creates a new <code>SessionImporter</code> instance.
-     *
-     * @param importTargetNode
-     * @param session
-     * @param uuidBehavior     any of the constants declared by
-     *                         {@link ImportUUIDBehavior}
-     */
     public DereferencedSessionImporter(NodeImpl importTargetNode, SessionImpl session, int uuidBehavior,
-            int referenceBehavior, int mergeBehavior) {
+            int referenceBehavior) {
 
         this.importTargetNode = importTargetNode;
         this.session = session;
         this.uuidBehavior = uuidBehavior;
-        this.mergeBehavior = mergeBehavior;
         this.referenceBehavior = referenceBehavior;
         this.resolver = new DefaultNamePathResolver(session, true);
 
@@ -93,13 +90,10 @@ public class DereferencedSessionImporter implements Importer {
             // guess not..
         }
 
-        parents = new Stack<NodeImpl>();
+        parents = new Stack<>();
         parents.push(importTargetNode);
         importPath = importTargetNode.safeGetJCRPath();
 
-        if (log.isDebugEnabled())
-            log.debug("Importing to: " + importPath + " u:" + uuidBehavior + " r:" + referenceBehavior + " m:"
-                    + mergeBehavior);
     }
 
     protected NodeImpl createNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, NodeInfo nodeInfo)
@@ -116,36 +110,21 @@ public class DereferencedSessionImporter implements Importer {
         } else if (nodeInfo.mergeOverlay() && nodeInfo.getOrigin() != null) {
             node = nodeInfo.getOrigin();
             if (mixinNames != null) {
-                for (int i = 0; i < mixinNames.length; i++) {
-                    node.addMixin(mixinNames[i]);
+                for (final Name mixinName : mixinNames) {
+                    node.addMixin(mixinName);
                 }
             }
             if (nodeTypeName != null) {
                 node.setPrimaryType(nodeTypeName.toString());
             }
-           /*NodeImpl origin = nodeInfo.getOrigin();
-            node = parent.replaceChildNode(origin.getNodeId(), nodeName, nodeTypeName, mixinNames);
-            for(PropertyIterator iter = origin.getProperties(); iter.hasNext(); ) {
-                Property p = iter.nextProperty();
-                if(p.isMultiple()) {
-                    node.setProperty(p.getName(), p.getValues());
-                } else {
-                    node.setProperty(p.getName(), p.getValue());
-                }
-            }
-            for(NodeIterator iter = origin.getNodes(); iter.hasNext(); ) {
-                NodeImpl child = (NodeImpl) iter.nextNode();
-                child.getSession().move(child.getPath(), node.getPath()+"/"+child.getName());
-            }*/
             return node;
         } else {
             node = parent.addNode(nodeName, nodeTypeName, id);
         }
 
-        // add mixins
         if (mixinNames != null) {
-            for (int i = 0; i < mixinNames.length; i++) {
-                node.addMixin(mixinNames[i]);
+            for (final Name mixinName : mixinNames) {
+                node.addMixin(mixinName);
             }
         }
         return node;
@@ -203,21 +182,15 @@ public class DereferencedSessionImporter implements Importer {
 
     /**
      * Resolve merge conflict
-     * @param parent the parent of the conflicting node
-     * @param conflicting the conflicting node
-     * @param nodeInfo the info of the node to be added
      * @return nodeInfo of the node to create or null if the node is to be skipped
-     * @throws RepositoryException
      */
-    protected NodeInfo resolveMergeConflict(NodeImpl parent, NodeImpl conflicting, NodeInfo nodeInfo)
-            throws RepositoryException {
+    protected NodeInfo resolveMergeConflict(NodeImpl conflicting, NodeInfo nodeInfo) throws RepositoryException {
 
         NodeDefinition def = conflicting.getDefinition();
         Name ntName = nodeInfo.getNodeTypeName();
 
         if (def.isAutoCreated() && conflicting.isNodeType(ntName)) {
-            // this node has already been auto-created, no need to create it
-            log.debug("Overwriting autocreated node " + conflicting.safeGetJCRPath());
+            log.debug("Overwriting autocreated node {}", conflicting.safeGetJCRPath());
             conflicting.remove();
             return nodeInfo;
         }
@@ -225,67 +198,18 @@ public class DereferencedSessionImporter implements Importer {
             nodeInfo.originItem = conflicting;
             return nodeInfo;
         }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP || nodeInfo.mergeSkip()) {
-            String msg = "Import merge skip node " + conflicting.safeGetJCRPath();
-            log.debug(msg);
+        if (nodeInfo.mergeSkip()) {
+            log.debug("Skipping {} ", conflicting.safeGetJCRPath());
             return null;
         }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_THROW) {
-            String msg = "A node already exists add " + conflicting.safeGetJCRPath() + "!";
-            log.debug(msg);
-            importTargetNode.refresh(false);
-            throw new ItemExistsException(msg);
-        }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_OVERWRITE) {
-            // check for potential conflicts
-            if (def.isProtected() && conflicting.isNodeType(ntName)) {
-                // skip protected node
-                parents.push(null); // push null onto stack for skipped node
-                log.warn("Import merge overwrite, skipping protected node " + conflicting.safeGetJCRPath());
-                return null;
-            } else {
-                conflicting.remove();
-                return nodeInfo;
-            }
-        }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP) {
-            if (def.allowsSameNameSiblings()) {
-                return nodeInfo;
-            } else {
-                String msg = "Import merge add or skip, skipped node " + conflicting.safeGetJCRPath() + " a node alread !";
-                log.debug(msg);
-                return null;
-            }
-        }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE) {
-            if (def.allowsSameNameSiblings()) {
-                return nodeInfo;
-            } else {
-                // check for potential conflicts
-                if (def.isProtected() && conflicting.isNodeType(ntName)) {
-                    // skip protected node
-                    log.warn("Imoprt merge add or overwrite, skipping protected node " + conflicting.safeGetJCRPath());
-                    return null;
-                } else {
-                    conflicting.remove();
-                    return nodeInfo;
-                }
-            }
-        }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_DISABLE) {
-            if (def.allowsSameNameSiblings()) {
-                return nodeInfo;
-            } else {
-                String msg = "A node already exists add " + conflicting.safeGetJCRPath() + "!";
-                log.debug(msg);
-                importTargetNode.refresh(false);
-                throw new ItemExistsException(msg);
-            }
-        }
 
-        String msg = "unknown mergeBehavior: " + mergeBehavior;
-        log.warn(msg);
-        throw new RepositoryException(msg);
+        if (def.allowsSameNameSiblings()) {
+            return nodeInfo;
+        } else {
+            importTargetNode.refresh(false);
+            throw new ItemExistsException("A node already exists at "
+                    + conflicting.safeGetJCRPath() + " and same-name siblings are not allowed.");
+        }
     }
 
     /**
@@ -320,30 +244,21 @@ public class DereferencedSessionImporter implements Importer {
             }
         }
 
-        String msg = "unknown mergeBehavior: " + mergeBehavior;
+        String msg = "unknown reference behaviour: " + referenceBehavior;
         log.debug(msg);
         throw new RepositoryException(msg);
     }
 
-    //-------------------------------------------------------------< Importer >
-    /**
-     * {@inheritDoc}
-     */
     public void start() throws RepositoryException {
-        // nop
         startTime = System.currentTimeMillis();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
     public void startNode(org.apache.jackrabbit.core.xml.NodeInfo info, List propInfos) throws RepositoryException {
         NodeInfo nodeInfo = (NodeInfo) info;
         NodeImpl parent = parents.peek();
 
         // process node
-        NodeImpl node = null;
+        NodeImpl node;
         NodeId id = nodeInfo.getId();
         Name nodeName = nodeInfo.getName();
         int index = nodeInfo.getIndex();
@@ -352,60 +267,35 @@ public class DereferencedSessionImporter implements Importer {
 
         if (parent == null) {
             // parent node was skipped, skip this child node too
-            parents.push(null); // push null onto stack for skipped node
-            if (log.isDebugEnabled())
-                log.debug("skipping node " + nodeName);
+            parents.push(null);
             return;
         }
         if (parent.hasNode(nodeName, index)) {
+            final NodeImpl existing = parent.getNode(nodeName, index);
             if (importPath.equals(parent.safeGetJCRPath())) {
-                // this is the root target node, decided by the user self
-                // only throw an error on the most strict import
-                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_DISABLE
-                        || nodeInfo.mergeOverlay()
-                        || nodeInfo.mergeCombine()
-                        || nodeInfo.mergeSkip()
-                        || nodeInfo.mergeInsertBefore() != null) {
-                    String msg = "The node already exists add " + parent.safeGetJCRPath() + ", creating new one.";
-                    log.info(msg);
-                } else {
-                    String msg = "The base node already exists add " + parent.safeGetJCRPath() + ", merging.";
-                    log.info(msg);
-                    parents.push(parent.getNode(nodeName)); // push null onto stack for skipped node
+                if (!nodeInfo.mergeSkip() && !nodeInfo.mergeOverlay() && !nodeInfo.mergeCombine()
+                        && StringUtils.isEmpty(nodeInfo.mergeInsertBefore())) {
+                    log.info("Implicit merge on context root {}", existing.safeGetJCRPath());
+                    parents.push(existing);
                     return;
                 }
             }
-            nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName, index), nodeInfo);
+            nodeInfo = resolveMergeConflict(existing, nodeInfo);
             if (nodeInfo == null) {
-                parents.push(null); // push null onto stack for skipped node
+                parents.push(null);
                 return;
             }
         } else {
             if (nodeInfo.mergeCombine() || nodeInfo.mergeOverlay()) {
-                final String msg = "No such node to merge with: " + parent.safeGetJCRPath() + "/" + nodeInfo.getName();
+                final String msg = "No such node to merge with: " + parent.safeGetJCRPath() + "/" + nodeName;
                 throw new RepositoryException(msg);
             }
         }
 
-        // create node
-        if (id == null) {
-            // no potential uuid conflict, always add new node
-            node = createNode(parent, nodeName, ntName, mixins, null, nodeInfo);
+        if (id == null || !hasConflictingIdentifier(id)) {
+            node = createNode(parent, nodeName, ntName, mixins, id, nodeInfo);
         } else {
-            // potential uuid conflict
-            NodeImpl conflicting;
-            try {
-                conflicting = session.getNodeById(id);
-            } catch (ItemNotFoundException infe) {
-                conflicting = null;
-            }
-            if (conflicting != null) {
-                // resolve uuid conflict
-                node = resolveUUIDConflict(parent, conflicting, nodeInfo);
-            } else {
-                // create new with given uuid
-                node = createNode(parent, nodeName, ntName, mixins, id, nodeInfo);
-            }
+            node = resolveUUIDConflict(parent, session.getNodeById(id), nodeInfo);
         }
 
         String insertBeforeLocation = nodeInfo.mergeInsertBefore();
@@ -434,24 +324,17 @@ public class DereferencedSessionImporter implements Importer {
         }
 
         // process properties
-        Iterator iter = propInfos.iterator();
-        while (iter.hasNext()) {
-            PropInfo propInfo = (PropInfo) iter.next();
-            propInfo.apply(node, resolver, derefNodes, importPath, referenceBehavior);
+        for (final Object propInfo : propInfos) {
+            ((PropInfo) propInfo).apply(node, resolver, derefNodes);
         }
 
         parents.push(node);
-        if (log.isDebugEnabled()) {
-            log.debug("startNode: " + parents.peek().safeGetJCRPath());
-        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void endNode(org.apache.jackrabbit.core.xml.NodeInfo nodeInfo) throws RepositoryException {
-        if (parents.peek() != null)
-            log.debug("endNode: " + parents.peek().safeGetJCRPath());
         parents.pop();
     }
 
@@ -460,13 +343,12 @@ public class DereferencedSessionImporter implements Importer {
      */
     public void end() throws RepositoryException {
         // loop over all nodeIds with references
-        for (Iterator<Map.Entry<NodeId, List<Reference>>> it = derefNodes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<NodeId, List<Reference>> nodeRef = it.next();
+        for (Map.Entry<NodeId, List<Reference>> nodeRef : derefNodes.entrySet()) {
             NodeImpl node = session.getNodeById(nodeRef.getKey());
 
             // loop over all the references for this node
             List<Reference> references = nodeRef.getValue();
-            for(Reference ref : references) {
+            for (Reference ref : references) {
                 ref.setBasePath(importPath);
                 ref.resolveUUIDs(session);
 
@@ -501,5 +383,14 @@ public class DereferencedSessionImporter implements Importer {
         if (log.isDebugEnabled()) {
             log.debug("end(), import ran for " + (System.currentTimeMillis() - startTime) + " ms.");
         }
+    }
+
+    private boolean hasConflictingIdentifier(NodeId nodeId) throws RepositoryException {
+        try {
+            return session.getNodeById(nodeId) != null;
+        } catch (ItemNotFoundException infe) {
+            return false;
+        }
+
     }
 }

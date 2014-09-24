@@ -237,6 +237,16 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testContentInitializationMergesImplicitlyOnExistingNode() throws Exception {
+        test.addNode("foo");
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/foo.xml").toString());
+        item.setProperty(HIPPO_CONTENTROOT, "/test");
+        session.save();
+        process(null);
+        assertTrue(test.hasNode("foo/bar"));
+    }
+
+    @Test
     public void testWebResourceBundleInitializationFromJar() throws Exception {
         item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "resources");
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");

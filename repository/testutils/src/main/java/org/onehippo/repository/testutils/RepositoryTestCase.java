@@ -16,6 +16,7 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Credentials;
+import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -36,14 +38,23 @@ import javax.jcr.nodetype.PropertyDefinition;
 import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW;
+import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
+import static org.hippoecm.repository.api.ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
 
 /**
  * Abstract base class for writing tests against repository.
@@ -95,6 +106,9 @@ public abstract class RepositoryTestCase {
             repoPath = location;
         }
     }
+
+    @Rule
+    public TestName testName = new TestName();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected HippoRepository server = null;
@@ -159,6 +173,8 @@ public abstract class RepositoryTestCase {
         removeNode("/test");
 
         saveState();
+
+        importTestContent();
     }
 
     @After
@@ -357,4 +373,17 @@ public abstract class RepositoryTestCase {
         return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
 
+    private void importTestContent() throws Exception {
+        final InputStream testClassContent = getClass().getResourceAsStream(getClass().getName() + ".xml");
+        importContent(testClassContent);
+        final InputStream testMethodContent = getClass().getResourceAsStream(getClass().getName() + "$" + testName.getMethodName() + ".xml");
+        importContent(testMethodContent);
+    }
+
+    private void importContent(final InputStream testContent) throws Exception {
+        if (testContent != null) {
+            ((HippoSession) session).importDereferencedXML("/test", testContent, IMPORT_UUID_COLLISION_THROW, IMPORT_REFERENCE_NOT_FOUND_THROW, IMPORT_MERGE_ADD_OR_SKIP);
+            session.save();
+        }
+    }
 }
