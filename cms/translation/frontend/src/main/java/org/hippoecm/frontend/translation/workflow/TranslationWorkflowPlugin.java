@@ -393,10 +393,12 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 autoTranslateContent = false;
                 WorkflowManager manager = ((HippoWorkspace) docNode.getSession().getWorkspace()).getWorkflowManager();
                 WorkflowDescriptor workflow = manager.getWorkflowDescriptor("translate", docNode);
-                final Serializable available = workflow.hints().get("translate");
-                if (available != null && (Boolean) available) {
-                    autoTranslateModel = new PropertyModel<>(TranslationAction.this, "autoTranslateContent");
-                    autoTranslateContent = false; // default when translation is available
+                if (workflow != null) {
+                    final Serializable available = workflow.hints().get("translate");
+                    if (available != null && (Boolean) available) {
+                        autoTranslateModel = new PropertyModel<>(TranslationAction.this, "autoTranslateContent");
+                        autoTranslateContent = false; // default when translation is available
+                    }
                 }
 
                 ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
