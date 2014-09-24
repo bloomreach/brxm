@@ -37,8 +37,7 @@ public interface RemoteServicingXASession extends RemoteXASession, Remote, Seria
     public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse) throws IOException,
             RepositoryException, RemoteException;
 
-    public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, RepositoryException, RemoteException;
+    public void importEnhancedSystemViewXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException, RemoteException;
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 

@@ -44,13 +44,13 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;
 
-    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws RepositoryException;
+    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior, int referenceBehavior) throws RepositoryException;
 
-    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws RepositoryException;
+    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior) throws RepositoryException;
 
-    void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException;
+    void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException;
 
-    void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException;
+    void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException;
 
     Node getCanonicalNode(Node node) throws RepositoryException;
 

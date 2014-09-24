@@ -182,29 +182,29 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
-    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
-            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
-            VersionException, LockException, RepositoryException {
-        return getInternalHippoSession().getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
-    }
-
     @Override
-    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException {
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException {
         importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
     @Override
-    public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader,  int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException {
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+        importEnhancedSystemViewXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior);
+    }
 
+    @Override
+    public void importDereferencedXML(String parentAbsPath, InputStream in,
+                                      ContentResourceLoader referredResourceLoader,
+                                      int uuidBehavior, int referenceBehavior,
+                                      int mergeBehavior) throws IOException, RepositoryException {
+        importEnhancedSystemViewXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior);
+    }
+
+    @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
         try {
             postMountEnabled(false);
-            getInternalHippoSession().importDereferencedXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior, mergeBehavior);
+            getInternalHippoSession().importDereferencedXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior);
             // run derived data engine
             derivedEngine.save();
             //session.save();
@@ -217,7 +217,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         try {
             postMountEnabled(false);
-            importDereferencedXML(parentAbsPath, in, uuidBehavior, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_DISABLE);
+            importEnhancedSystemViewXML(parentAbsPath, in, uuidBehavior, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
         } finally {
             postMountEnabled(true);
         }

@@ -77,8 +77,8 @@ public class EnhancedImportTest extends RepositoryTestCase {
     }
 
     private void importXML(final String path, final String resource) throws Exception {
-        ((HippoSession) session).importDereferencedXML(path, getClass().getResourceAsStream(resource),
-                IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_REMOVE, IMPORT_MERGE_ADD_OR_SKIP);
+        ((HippoSession) session).importEnhancedSystemViewXML(path, getClass().getResourceAsStream(resource),
+                IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_REMOVE);
         session.save();
     }
 

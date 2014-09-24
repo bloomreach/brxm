@@ -552,8 +552,18 @@ final public class UpdaterSession implements HippoSession {
     }
 
     @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         throw new UpdaterException("illegal method");
+    }
+
+    @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
     }
 
     @Override

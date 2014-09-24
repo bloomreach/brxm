@@ -138,13 +138,17 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
+    }
+
+    @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
         try {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             byte[] bytes = new byte[4096];
-            for (int n = xml.read(bytes); n != -1; n = xml.read(bytes)) {
+            for (int n = in.read(bytes); n != -1; n = in.read(bytes)) {
                 buffer.write(bytes, 0, n);
             }
-            remote.importDereferencedXML(path, buffer.toByteArray(), uuidBehavior, referenceBehavior, mergeBehavior);
+            remote.importEnhancedSystemViewXML(parentAbsPath, buffer.toByteArray(), uuidBehavior, referenceBehavior);
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
@@ -155,6 +159,11 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

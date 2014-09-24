@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class DereferencedExportImportTest extends RepositoryTestCase {
+public class EnhancedExportImportTest extends RepositoryTestCase {
 
     Node testData;
     Node testExport;
@@ -132,8 +132,7 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
     }
@@ -149,8 +148,7 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
 
@@ -176,9 +174,7 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior,
-                mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
 
@@ -211,9 +207,8 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         testData.getNode("ref1").remove();
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         try {
-            ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+            ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
             fail("Import should fail.");
         } catch (RepositoryException e) {
             // expected
@@ -231,8 +226,7 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         testData.getNode("ref1").remove();
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
@@ -250,37 +244,11 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         session.getRootNode().addMixin("mix:referenceable");
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
         assertEquals(session.getRootNode().getIdentifier(), node.getNode("doc4").getProperty("ref-to-extern").getString());
-    }
-
-
-    @Test
-    public void testMergeFailImport() throws RepositoryException, IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
-        InputStream in = new ByteArrayInputStream(out.toByteArray());
-
-        int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
-        session.save();
-
-        out = new ByteArrayOutputStream();
-        ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
-        in = new ByteArrayInputStream(out.toByteArray());
-        try {
-            referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-            mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_THROW;
-            ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
-            fail("Import should fail.");
-        } catch (RepositoryException e) {
-            // expected
-        }
     }
 
     @Test
@@ -290,16 +258,14 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
         session.save();
 
         out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         in = new ByteArrayInputStream(out.toByteArray());
         referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
-        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
 
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
         assertEquals(10L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());

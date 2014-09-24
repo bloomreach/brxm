@@ -600,7 +600,7 @@ abstract class SessionImplHelper {
             context.getWorkspace().getInternalLockManager().checkLock(parent);
         }
 
-        DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
+        DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior);
         return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry(), contentResourceLoader);
     }
 

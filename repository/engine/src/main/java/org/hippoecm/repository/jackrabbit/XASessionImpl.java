@@ -217,31 +217,27 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     }
 
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
-            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+            int referenceBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        return getDereferencedImportContentHandler(parentAbsPath, null, uuidBehavior, referenceBehavior, mergeBehavior);
+        return getDereferencedImportContentHandler(parentAbsPath, null, uuidBehavior, referenceBehavior);
     }
 
     @Override
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath,
-            ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior)
+            ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior)
             throws RepositoryException {
-        return helper.getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior, mergeBehavior);
+        return helper.getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior);
     }
 
-    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException {
-        importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior, mergeBehavior);
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior)
+            throws IOException, RepositoryException {
+        importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior);
     }
 
-    public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException {
+    public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior)
+            throws IOException, RepositoryException {
         ContentHandler handler =
-            getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior, mergeBehavior);
+            getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior);
         new DefaultContentHandler(handler).parse(in);
     }
 

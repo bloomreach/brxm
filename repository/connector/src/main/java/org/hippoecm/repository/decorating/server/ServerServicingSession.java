@@ -77,10 +77,9 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
         }
     }
 
-    public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, RepositoryException, RemoteException {
+    public void importEnhancedSystemViewXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException, RemoteException {
         try {
-            session.importDereferencedXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior, mergeBehavior);
+            session.importEnhancedSystemViewXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

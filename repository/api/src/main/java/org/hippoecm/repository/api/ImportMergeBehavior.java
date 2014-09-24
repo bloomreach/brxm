@@ -21,7 +21,9 @@ package org.hippoecm.repository.api;
  * parameter in {@link HippoSession#importDereferencedXML}.
  * When a node already exists in the repository on the same path during import, the value specified by the mergeBehavior governs what to do in such a case.
  * The mergeBehavior parameter must be just one of these values.
+ * @deprecated there is no substitution for this class, content merging is done using enhanced system view xml semantics
  */
+@Deprecated
 public interface ImportMergeBehavior {
 
     /**

@@ -67,9 +67,9 @@ public class HREPTWO3870IssueTest extends RepositoryTestCase {
 
         // create facetsearch
         InputStream in = new ByteArrayInputStream(tags.getBytes());
-        ((HippoSession) session).importDereferencedXML(test.getPath(), in,
+        ((HippoSession) session).importEnhancedSystemViewXML(test.getPath(), in,
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_THROW);
+                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
         session.save();
 
         // test integrity
@@ -86,9 +86,9 @@ public class HREPTWO3870IssueTest extends RepositoryTestCase {
 
         // re-create facetsearch
         in = new ByteArrayInputStream(tags.getBytes());
-        ((HippoSession) session).importDereferencedXML(test.getPath(), in,
+        ((HippoSession) session).importEnhancedSystemViewXML(test.getPath(), in,
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_THROW);
+                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
 
         try {
             session.save();

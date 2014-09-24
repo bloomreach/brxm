@@ -67,22 +67,25 @@ public class ImportTest extends RepositoryTestCase {
         }
 
         Node test = session.getRootNode().getNode("test");
-        Node resource = test.addNode("data", "nt:resource");
+        Node resource = test.addNode("resource", "nt:resource");
         resource.setProperty("jcr:data", session.getValueFactory().createValue(new ByteArrayBinary(data)));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
         session.save();
         File file = new File("import.xml");
         //FileOutputStream out = new FileOutputStream(file);
         //session.exportSystemView("/test/data", out, false, false);
-        session.exportSystemView("/test/data", new OutputXML(file), false, false);
+        session.exportSystemView("/test/resource", new OutputXML(file), false, false);
 
-        FileInputStream in = new FileInputStream(new File("import.xml"));
+        resource.remove();
+        session.save();
+
+        FileInputStream in = new FileInputStream(file);
         session.importXML(test.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
         in.close();
         session.save();
 
-        assertTrue(test.hasNode("data[2]"));
-        Binary binary = test.getNode("data[2]").getProperty("jcr:data").getBinary();
+        assertTrue(test.hasNode("resource"));
+        Binary binary = test.getNode("resource").getProperty("jcr:data").getBinary();
         assertEquals(data.length, binary.getSize());
         byte[] compareData = new byte[data.length];
         assertEquals(data.length, binary.read(compareData, 0));

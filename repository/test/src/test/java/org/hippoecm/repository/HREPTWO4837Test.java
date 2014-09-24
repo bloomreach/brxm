@@ -42,8 +42,8 @@ public class HREPTWO4837Test extends RepositoryTestCase {
         session.save();
         session.refresh(false);
         assertTrue(session.getRootNode().hasNode("test/aap/noot/noot/noot"));
-        ((HippoSession)session).importDereferencedXML("/test", getClass().getResourceAsStream("HREPTWO4837Test.xml"),
-                ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_OVERWRITE);
+        ((HippoSession)session).importEnhancedSystemViewXML("/test", getClass().getResourceAsStream("HREPTWO4837Test.xml"),
+                ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
         session.save();
         session.refresh(false);
         assertTrue(session.getRootNode().hasNode("test/aap/noot/noot/noot"));

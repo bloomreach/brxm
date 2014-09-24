@@ -357,7 +357,17 @@ public class MockSession implements HippoSession {
     }
 
     @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void importDereferencedXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

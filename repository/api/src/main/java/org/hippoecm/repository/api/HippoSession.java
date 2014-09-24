@@ -165,11 +165,29 @@ public interface HippoSession extends Session {
      * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
      * @see org.hippoecm.repository.api.ImportReferenceBehavior
      * @see org.hippoecm.repository.api.ImportMergeBehavior
+     * @deprecated use {@link #importEnhancedSystemViewXML(String, java.io.InputStream, int, int)}
      */
+    @Deprecated
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException;
+
+    /**
+     * Import an enhanced system view xml file.
+     *
+     * @param parentAbsPath the parent node below which to in
+     * @param in the input stream from which to read the XML
+     * @param uuidBehavior how to handle deserialized UUIDs in the input stream {@link javax.jcr.ImportUUIDBehavior}
+     * @param referenceBehavior an options flag containing one of the values of {@link ImportReferenceBehavior} indicating how to handle references
+     * @throws IOException if incoming stream is not a valid XML document.
+     * @throws RepositoryException a generic error while accessing the repository
+     * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
+     * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
+     * @see org.hippoecm.repository.api.ImportReferenceBehavior
+     */
+    public void importEnhancedSystemViewXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior)
+            throws IOException, RepositoryException;
 
     /**
      * <b>This call is not (yet) part of the API, but under evaluation.</b>
@@ -192,11 +210,33 @@ public interface HippoSession extends Session {
      * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
      * @see org.hippoecm.repository.api.ImportReferenceBehavior
      * @see org.hippoecm.repository.api.ImportMergeBehavior
+     * @deprecated use {@link #importEnhancedSystemViewXML(String, java.io.InputStream, org.onehippo.repository.api.ContentResourceLoader, int, int)}
      */
+    @Deprecated
     public void importDereferencedXML(String parentAbsPath, InputStream in,
             ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior)
             throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException,
             VersionException, InvalidSerializedDataException, LockException, RepositoryException;
+
+    /**
+     * Import an enhanced system view xml file.
+     *
+     * @param parentAbsPath the parent node below which to in
+     * @param in the input stream from which to read the XML
+     * @param referredResourceLoader the content resouce loader to load the referred imported content resources
+     * @param uuidBehavior how to handle deserialized UUIDs in the input stream {@link javax.jcr.ImportUUIDBehavior}
+     * @param referenceBehavior an options flag containing one of the values of {@link ImportReferenceBehavior} indicating how to handle references
+     * @throws IOException if incoming stream is not a valid XML document.
+     * @throws RepositoryException a generic error while accessing the repository
+     * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
+     * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
+     * @see org.hippoecm.repository.api.ImportReferenceBehavior
+     */
+    public void importEnhancedSystemViewXML(String parentAbsPath, InputStream in,
+                                      ContentResourceLoader referredResourceLoader,
+                                      int uuidBehavior, int referenceBehavior)
+            throws IOException, RepositoryException;
+
 
     public File exportEnhancedSystemViewPackage(String parentAbsPath, boolean recurse)
             throws IOException, RepositoryException;
