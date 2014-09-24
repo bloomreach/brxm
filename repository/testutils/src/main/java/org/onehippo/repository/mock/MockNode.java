@@ -808,7 +808,7 @@ public class MockNode extends MockItem implements HippoNode {
         return checkedOut;
     }
 
-    public void setCheckedOut(final boolean checkedOut) {
+    void setCheckedOut(final boolean checkedOut) {
         this.checkedOut = checkedOut;
     }
 
