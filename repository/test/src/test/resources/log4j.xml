@@ -105,7 +105,7 @@
   </category>
 
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.translation.impl.TranslationVirtualProvider">
@@ -118,10 +118,6 @@
   </category>
   <category additivity="false" name="org.hippoecm.repository.quartz.SchedulerTest">
     <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.onehippo.repository.monkey.MonkeyTest">
-    <level value="info"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.quartz.JCRJobStore">
