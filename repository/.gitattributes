@@ -259,6 +259,9 @@ engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combine-result.
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combinetopproperty-fixture.xml -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combinetopproperty-merge.xml -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combinetopproperty-result.xml -text
+engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/implicitmerge-fixture.xml -text
+engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/implicitmerge-merge.xml -text
+engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/implicitmerge-result.xml -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/insert-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/insert-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/insert-result.xml svneol=native#text/plain

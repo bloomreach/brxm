@@ -127,6 +127,11 @@ public class EnhancedImportTest extends RepositoryTestCase {
         test();
     }
 
+    @Test
+    public void testImplicitMerge() throws Exception {
+        test();
+    }
+
     private boolean compare(Node node1, Node node2) throws RepositoryException, JcrDiffException, IOException {
 
         final Matcher matcher = new Matcher();
