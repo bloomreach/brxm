@@ -51,7 +51,6 @@ public class TestBaseHstURLTag {
     @Before
     public void before() throws Exception {
         MockServletContext servletContext = new MockServletContext();
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         HstRequest hstRequest = new MockHstRequest();
         HstResponse hstResponse = new MockHstResponse();
         HttpServletRequest request = new MockHttpServletRequest();
