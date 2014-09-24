@@ -33,6 +33,10 @@ public class Reference {
      */
     static final String REFERENCE_SUFFIX = "___pathreference";
 
+    /**
+     * sv:value
+     */
+
     /** '*' is not valid in property name, but can of course be used in value */
     static final String SEPARATOR = "*";
 

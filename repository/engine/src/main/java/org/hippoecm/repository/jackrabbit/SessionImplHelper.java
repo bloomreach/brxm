@@ -549,7 +549,7 @@ abstract class SessionImplHelper {
      * {@inheritDoc}
      */
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, final ContentResourceLoader contentResourceLoader, int uuidBehavior,
-            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+            int referenceBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
 
         // check sanity of this session
@@ -600,7 +600,7 @@ abstract class SessionImplHelper {
             context.getWorkspace().getInternalLockManager().checkLock(parent);
         }
 
-        DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior);
+        DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
         return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry(), contentResourceLoader);
     }
 
