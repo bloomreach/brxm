@@ -235,7 +235,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="formdata-domain">
+  <sv:node sv:name="hst-formdata-domain">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -250,7 +250,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="formdata-container">
+  <sv:node sv:name="hst-formdata-container">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
