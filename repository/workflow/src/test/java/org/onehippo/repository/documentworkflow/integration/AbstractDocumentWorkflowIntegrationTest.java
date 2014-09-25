@@ -92,6 +92,9 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
         if (published == null) {
             return false;
         }
+        if (!published.hasProperty(HIPPO_AVAILABILITY)) {
+            return false;
+        }
         final Value[] availability = published.getProperty(HIPPO_AVAILABILITY).getValues();
         return toStringSet(availability).contains("live");
     }
