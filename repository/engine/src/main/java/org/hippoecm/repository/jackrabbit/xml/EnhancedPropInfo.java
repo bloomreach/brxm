@@ -50,6 +50,11 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.SKIP;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.OVERRIDE;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.APPEND;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.INSERT;
+
 /**
  * Information about a property being imported. This class is used
  * by the XML import handlers to pass the parsed property information
@@ -61,12 +66,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
  * {@link NodeState} instance in a workspace.
  */
 public class EnhancedPropInfo extends PropInfo {
-
-
-    private static final String OVERRIDE = "override";
-    private static final String INSERT = "insert";
-    private static final String APPEND = "append";
-    private static final String SKIP = "skip";
 
     private static Logger log = LoggerFactory.getLogger(EnhancedPropInfo.class);
 

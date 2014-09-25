@@ -62,7 +62,6 @@ import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.NodeIteratorDecorator;
@@ -204,7 +203,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
         try {
             postMountEnabled(false);
-            getInternalHippoSession().importDereferencedXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior);
+            getInternalHippoSession().importEnhancedSystemViewXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior);
             // run derived data engine
             derivedEngine.save();
             //session.save();

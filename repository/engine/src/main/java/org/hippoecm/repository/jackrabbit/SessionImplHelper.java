@@ -73,12 +73,11 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.util.XMLChar;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
-import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
-import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
+import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewImportHandler;
+import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewImporter;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.domain.QFacetRule;
@@ -101,7 +100,7 @@ abstract class SessionImplHelper {
     NodeTypeRegistry ntReg;
     RepositoryImpl rep;
     Subject subject;
-    org.apache.jackrabbit.core.SessionImpl sessionImpl;
+    private InternalHippoSession session;
     SessionContext context;
 
     /**
@@ -143,18 +142,15 @@ abstract class SessionImplHelper {
      * @throws NamespaceException if the namespace is not found
      * @throws RepositoryException if a repository error occurs
      */
-    public String getNamespacePrefix(String uri)
-            throws NamespaceException, RepositoryException {
-        Iterator<Map.Entry<String, String>> iterator = namespaces.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> entry = iterator.next();
+    public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
+        for (final Map.Entry<String, String> entry : namespaces.entrySet()) {
             if (entry.getValue().equals(uri)) {
                 return entry.getKey();
             }
         }
 
         // The following throws an exception if the URI is not found, that's OK
-        String prefix = sessionImpl.getWorkspace().getNamespaceRegistry().getPrefix(uri);
+        String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(uri);
 
         // Generate a new prefix if the global mapping is already taken
         String base = prefix;
@@ -179,13 +175,12 @@ abstract class SessionImplHelper {
      * @throws NamespaceException if the namespace is not found
      * @throws RepositoryException if a repository error occurs
      */
-    public String getNamespaceURI(String prefix)
-            throws NamespaceException, RepositoryException {
-        String uri = (String) namespaces.get(prefix);
+    public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
+        String uri = namespaces.get(prefix);
 
         if (uri == null) {
             // Not in local mappings, try the global ones
-            uri = sessionImpl.getWorkspace().getNamespaceRegistry().getURI(prefix);
+            uri = session.getWorkspace().getNamespaceRegistry().getURI(prefix);
             if (namespaces.containsValue(uri)) {
                 // The global URI is locally mapped to some other prefix,
                 // so there are no mappings for this prefix
@@ -212,7 +207,7 @@ abstract class SessionImplHelper {
      */
     public String[] getNamespacePrefixes()
             throws RepositoryException {
-        NamespaceRegistry registry = sessionImpl.getWorkspace().getNamespaceRegistry();
+        NamespaceRegistry registry = session.getWorkspace().getNamespaceRegistry();
         String[] uris = registry.getURIs();
         for (int i = 0; i < uris.length; i++) {
             getNamespacePrefix(uris[i]);
@@ -277,15 +272,15 @@ abstract class SessionImplHelper {
 
     private HashSet<Privilege> jcrPrivileges = new HashSet<Privilege>();
     
-    SessionImplHelper(org.apache.jackrabbit.core.SessionImpl sessionImpl, RepositoryContext repositoryContext,
+    SessionImplHelper(InternalHippoSession session, RepositoryContext repositoryContext,
                       SessionContext sessionContext, Subject subject) throws RepositoryException {
-        this.sessionImpl = sessionImpl;
+        this.session = session;
         this.context = sessionContext;
         this.ntReg = repositoryContext.getNodeTypeRegistry();
         this.rep = (RepositoryImpl) repositoryContext.getRepository();
         this.subject = subject;
         setUserId();
-        AccessControlManager acMgr = sessionImpl.getAccessControlManager();
+        AccessControlManager acMgr = this.session.getAccessControlManager();
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_ADD_CHILD_NODES));
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_LIFECYCLE_MANAGEMENT));
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_LOCK_MANAGEMENT));
@@ -308,7 +303,7 @@ abstract class SessionImplHelper {
      */
     void init() throws RepositoryException {
         final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
-        HippoQueryHandler queryHandler = repository.getHippoQueryHandler(sessionImpl.getWorkspace().getName());
+        HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());
         if (queryHandler != null) {
             this.authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
                                                          queryHandler.getNamespaceMappings(),
@@ -380,7 +375,7 @@ abstract class SessionImplHelper {
      * @throws RepositoryException
      */
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-        AccessControlManager acMgr = sessionImpl.getAccessControlManager();
+        AccessControlManager acMgr = session.getAccessControlManager();
 
         // build the set of actions to be checked
         HashSet<Privilege> privileges = new HashSet<Privilege>();
@@ -418,13 +413,13 @@ abstract class SessionImplHelper {
         throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         Name ntName;
         try {
-            ntName = (nodeType!=null ? sessionImpl.getQName(nodeType) : null);
+            ntName = (nodeType!=null ? session.getQName(nodeType) : null);
         } catch (IllegalNameException ex) {
             throw new NoSuchNodeTypeException(nodeType);
         }
         final Set<NodeId> filteredResults = new HashSet<NodeId>();
         if (node==null) {
-            node = sessionImpl.getRootNode();
+            node = session.getRootNode();
             if (node.isModified()&&(nodeType==null||node.isNodeType(nodeType))) {
                 filteredResults.add(((org.apache.jackrabbit.core.NodeImpl)node).getNodeId());
             }
@@ -474,7 +469,7 @@ abstract class SessionImplHelper {
              * current list.  If so, remove them.
              */
             if (prune) {
-                HierarchyManager hierMgr = sessionImpl.getHierarchyManager();
+                HierarchyManager hierMgr = session.getHierarchyManager();
                 for (Iterator<NodeId> i = filteredResults.iterator(); i.hasNext();) {
                     if (hierMgr.isAncestor(state.getNodeId(), i.next()))
                         i.remove();
@@ -485,7 +480,7 @@ abstract class SessionImplHelper {
         }
 
         return new NodeIterator() {
-            private final org.apache.jackrabbit.core.ItemManager itemMgr = sessionImpl.getItemManager();
+            private final org.apache.jackrabbit.core.ItemManager itemMgr = session.getItemManager();
             private final Iterator<NodeId> iterator = filteredResults.iterator();
             private int pos = 0;
             private Item next;
@@ -553,17 +548,17 @@ abstract class SessionImplHelper {
             VersionException, LockException, RepositoryException {
 
         // check sanity of this session
-        if (!sessionImpl.isLive()) {
+        if (!session.isLive()) {
             throw new RepositoryException("this session has been closed");
         }
 
         NodeImpl parent;
         try {
-            Path p = sessionImpl.getQPath(parentAbsPath).getNormalizedPath();
+            Path p = session.getQPath(parentAbsPath).getNormalizedPath();
             if (!p.isAbsolute()) {
                 throw new RepositoryException("not an absolute path: " + parentAbsPath);
             }
-            parent = sessionImpl.getItemManager().getNode(p);
+            parent = session.getItemManager().getNode(p);
         } catch (NameException e) {
             String msg = parentAbsPath + ": invalid path";
             log.debug(msg);
@@ -600,8 +595,8 @@ abstract class SessionImplHelper {
             context.getWorkspace().getInternalLockManager().checkLock(parent);
         }
 
-        DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior);
-        return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry(), contentResourceLoader);
+        EnhancedSystemViewImporter importer = new EnhancedSystemViewImporter(parent, session, uuidBehavior, referenceBehavior);
+        return new EnhancedSystemViewImportHandler(importer, contentResourceLoader, session);
     }
 
     public Node getCanonicalNode(NodeImpl node) throws RepositoryException {
@@ -610,7 +605,7 @@ abstract class SessionImplHelper {
             if(nodeId instanceof MirrorNodeId) {
                 NodeId upstream = ((MirrorNodeId)nodeId).getCanonicalId();
                 try {
-                    return sessionImpl.getNodeById(upstream);
+                    return session.getNodeById(upstream);
                 } catch(ItemNotFoundException ex) {
                     return null;
                 }

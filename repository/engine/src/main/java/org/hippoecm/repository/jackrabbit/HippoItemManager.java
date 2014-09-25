@@ -15,11 +15,12 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import org.apache.jackrabbit.core.ItemManager;
 import org.apache.jackrabbit.core.session.SessionContext;
 
-public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
+public class HippoItemManager extends ItemManager {
 
-    protected ItemManager(SessionContext context) {
+    protected HippoItemManager(SessionContext context) {
         super(context);
         context.getItemStateManager().addListener(this);
     }

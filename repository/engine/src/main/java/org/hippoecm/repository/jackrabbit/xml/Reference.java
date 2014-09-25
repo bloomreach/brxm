@@ -20,9 +20,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 
 public class Reference {
 
@@ -33,25 +33,11 @@ public class Reference {
      */
     static final String REFERENCE_SUFFIX = "___pathreference";
 
-    /** '*' is not valid in property name, but can of course be used in value */
-    static final String SEPARATOR = "*";
-
-    /** indicate whether original reference property was a multi valued property */
-    static final String MULTI_VALUE = "m";
-
-    /** indicate whether original reference property was a single valued property */
-    static final String SINGLE_VALUE = "s";
-
     private final boolean isMulti;
-
     private String propName;
-
     private Name name;
-
     private String basePath;
-
     private final String[] paths;
-
     private final String[] uuids;
 
     //-------------------------------------------------------------< Instantiators >
@@ -115,7 +101,7 @@ public class Reference {
 
 
     //-------------------------------------------------------------< Resolvers >
-    void resolveUUIDs(SessionImpl sessionImpl) {
+    void resolveUUIDs(InternalHippoSession sessionImpl) {
         for (int i = 0; i < paths.length; i++) {
             try {
                 String path = paths[i];
@@ -161,7 +147,7 @@ public class Reference {
         }
         String path;
         for (int i = 0; i < uuids.length; i++) {
-            path = session.getNodeByUUID(uuids[i]).getPath();
+            path = session.getNodeByIdentifier(uuids[i]).getPath();
             if (path.startsWith(getBasePath())) {
                 paths[i] = path.substring(len);
             } else {

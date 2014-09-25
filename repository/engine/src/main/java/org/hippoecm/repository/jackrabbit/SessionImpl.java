@@ -24,18 +24,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeImpl;
@@ -52,7 +46,6 @@ import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
@@ -142,7 +135,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
 
     @Override
     protected org.apache.jackrabbit.core.ItemManager createItemManager() {
-        return new ItemManager(context);
+        return new HippoItemManager(context);
     }
 
     @Override
@@ -205,29 +198,10 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     }
 
     @Override
-    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
-            int referenceBehavior) throws PathNotFoundException, ConstraintViolationException,
-            VersionException, LockException, RepositoryException {
-        return getDereferencedImportContentHandler(parentAbsPath, null, uuidBehavior, referenceBehavior);
-    }
-
-    @Override
-    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, ContentResourceLoader referredResourceLoader, int uuidBehavior,
-            int referenceBehavior) throws RepositoryException {
-        return helper.getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior);
-    }
-
-    @Override
-    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior)
-            throws IOException, RepositoryException {
-        importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior);
-    }
-
-    @Override
-    public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior)
+    public void importEnhancedSystemViewXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior)
             throws IOException, RepositoryException {
         ContentHandler handler =
-            getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior);
+                helper.getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior);
         new DefaultContentHandler(handler).parse(in);
     }
 

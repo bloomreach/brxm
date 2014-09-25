@@ -43,15 +43,16 @@ import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DereferencedSessionImporter implements Importer {
+public class EnhancedSystemViewImporter implements Importer {
 
 
-    private static Logger log = LoggerFactory.getLogger(DereferencedSessionImporter.class);
+    private static Logger log = LoggerFactory.getLogger(EnhancedSystemViewImporter.class);
 
-    private final SessionImpl session;
+    private final InternalHippoSession session;
     private final NodeImpl importTargetNode;
     private final int uuidBehavior;
     private final int referenceBehavior;
@@ -67,14 +68,14 @@ public class DereferencedSessionImporter implements Importer {
 
     private final Stack<NodeImpl> parents;
 
-    public DereferencedSessionImporter(NodeImpl importTargetNode, SessionImpl session, int uuidBehavior,
-            int referenceBehavior) {
+    public EnhancedSystemViewImporter(NodeImpl importTargetNode, InternalHippoSession session, int uuidBehavior,
+                                      int referenceBehavior) {
 
         this.importTargetNode = importTargetNode;
         this.session = session;
         this.uuidBehavior = uuidBehavior;
         this.referenceBehavior = referenceBehavior;
-        this.resolver = new DefaultNamePathResolver(session, true);
+        this.resolver = session;
 
         isRootReferenceable = false;
         try {
@@ -209,31 +210,31 @@ public class DereferencedSessionImporter implements Importer {
      * resolveReferenceConflict
      */
     public String resolveReferenceConflict(NodeImpl node, String name, String path) throws RepositoryException {
-        StringBuffer buf = new StringBuffer();
-        buf.append("Reference not found for property ");
-        buf.append('\'').append(node.safeGetJCRPath()).append('/').append(name).append('\'');
-        buf.append(" : ");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Reference not found for property ");
+        sb.append('\'').append(node.safeGetJCRPath()).append('/').append(name).append('\'');
+        sb.append(" : ");
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE) {
-            buf.append("skipping.");
-            log.warn(buf.toString());
+            sb.append("skipping.");
+            log.warn(sb.toString());
             return null;
         }
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW) {
-            buf.append("throw error.");
-            log.warn(buf.toString());
+            sb.append("throw error.");
+            log.warn(sb.toString());
             importTargetNode.refresh(false);
-            throw new RepositoryException(buf.toString());
+            throw new RepositoryException(sb.toString());
         }
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT) {
             if (isRootReferenceable) {
-                buf.append("trying to set reference to root node.");
-                log.warn(buf.toString());
-                return session.getRootNode().getUUID();
+                sb.append("trying to set reference to root node.");
+                log.warn(sb.toString());
+                return session.getRootNode().getIdentifier();
             } else {
-                buf.append("root not referenceable.");
-                log.warn(buf.toString());
+                sb.append("root not referenceable.");
+                log.warn(sb.toString());
                 importTargetNode.refresh(false);
-                throw new RepositoryException(buf.toString());
+                throw new RepositoryException(sb.toString());
             }
         }
 
@@ -254,7 +255,7 @@ public class DereferencedSessionImporter implements Importer {
         NodeImpl node;
         NodeId id = nodeInfo.getId();
         Name nodeName = nodeInfo.getName();
-        int index = nodeInfo.getIndex();
+         int index = nodeInfo.getIndex();
         Name ntName = nodeInfo.getNodeTypeName();
         Name[] mixins = nodeInfo.getMixinNames();
 

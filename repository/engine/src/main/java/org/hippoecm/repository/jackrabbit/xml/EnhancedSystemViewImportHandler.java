@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.jcr.InvalidSerializedDataException;
@@ -30,27 +29,33 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
 import org.apache.jackrabbit.core.id.NodeId;
-import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.PropInfo;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
-import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.onehippo.repository.api.ContentResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class DereferencedSysViewImportHandler extends DefaultHandler {
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.FILE;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.LOCATION;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.MERGE;
 
+public class EnhancedSystemViewImportHandler extends DefaultHandler {
     
     private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
-    private static final String NS_XMLIMPORT = "http://www.onehippo.org/jcr/xmlimport";
+
+    private static Logger log = LoggerFactory.getLogger(EnhancedSystemViewImportHandler.class);
 
     /**
      * stack of ImportState instances; an instance is pushed onto the stack
@@ -76,68 +81,34 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     private final ContentResourceLoader contentResourceLoader;
     private final ValueFactory valueFactory;
     private final Importer importer;
-    private NamespaceContext nsContext;
-    private NamePathResolver resolver;
+    private InternalHippoSession resolver;
 
-    protected DereferencedSysViewImportHandler(Importer importer, final ContentResourceLoader contentResourceLoader, ValueFactory valueFactory) {
+    public EnhancedSystemViewImportHandler(Importer importer, final ContentResourceLoader contentResourceLoader, InternalHippoSession session) throws RepositoryException {
         this.importer = importer;
         this.contentResourceLoader = contentResourceLoader;
-        this.valueFactory = valueFactory;
+        this.valueFactory = session.getValueFactory();
+        this.resolver = session;
     }
 
-    /**
-     * Initializes the underlying {@link Importer} instance. This method
-     * is called by the XML parser when the XML document starts.
-     *
-     * @throws SAXException if the importer can not be initialized
-     * @see DefaultHandler#startDocument()
-     */
-    @Override
-    public void startDocument() throws SAXException {
-        try {
-            importer.start();
-            nsContext = null;
-        } catch (RepositoryException re) {
-            throw new SAXException(re);
-        }
+    //---------------------------------------------------------< ErrorHandler >
+
+    public void warning(SAXParseException e) throws SAXException {
+        log.warn("warning encountered at line: " + e.getLineNumber()
+                + ", column: " + e.getColumnNumber()
+                + " while parsing XML stream", e);
     }
 
-    /**
-     * Closes the underlying {@link Importer} instance. This method
-     * is called by the XML parser when the XML document ends.
-     *
-     * @throws SAXException if the importer can not be closed
-     * @see DefaultHandler#endDocument()
-     */
-    @Override
-    public void endDocument() throws SAXException {
-        try {
-            importer.end();
-        } catch (RepositoryException re) {
-            throw new SAXException(re);
-        }
+    public void error(SAXParseException e) throws SAXException {
+        log.error("error encountered at line: " + e.getLineNumber()
+                + ", column: " + e.getColumnNumber()
+                + " while parsing XML stream: " + e.toString());
     }
 
-    /**
-     * Starts a local namespace context for the current XML element.
-     * This method is called by {@link ImportHandler} when the processing of
-     * an XML element starts. The given local namespace mappings have been
-     * recorded by {@link ImportHandler#startPrefixMapping(String, String)}
-     * for the current XML element.
-     *
-     * @param mappings local namespace mappings
-     */
-    public final void startNamespaceContext(Map mappings) {
-        nsContext = new NamespaceContext(nsContext, mappings);
-        resolver = new DefaultNamePathResolver(nsContext);
-    }
-
-    /**
-     * Restores the parent namespace context. This method is called by
-     * {@link ImportHandler} when the processing of an XML element ends.
-     */
-    public final void endNamespaceContext() {
-        nsContext = nsContext.getParent();
+    public void fatalError(SAXParseException e) throws SAXException {
+        log.error("fatal error encountered at line: " + e.getLineNumber()
+                + ", column: " + e.getColumnNumber()
+                + " while parsing XML stream: " + e.toString());
+        throw e;
     }
 
     private void processNode(ImportState state, boolean start, boolean end) throws SAXException {
@@ -173,9 +144,24 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
 
     //-------------------------------------------------------< ContentHandler >
 
-    /**
-    * {@inheritDoc}
-    */
+    @Override
+    public void startDocument() throws SAXException {
+        try {
+            importer.start();
+        } catch (RepositoryException re) {
+            throw new SAXException(re);
+        }
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        try {
+            importer.end();
+        } catch (RepositoryException re) {
+            throw new SAXException(re);
+        }
+    }
+
     @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
         Name name = NameFactoryImpl.getInstance().create(namespaceURI, localName);
@@ -209,8 +195,8 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
 
             // push new ImportState instance onto the stack
             ImportState state = new ImportState();
-            state.mergeBehavior = atts.getValue(NS_XMLIMPORT, "merge");
-            state.location = atts.getValue(NS_XMLIMPORT, "location");
+            state.mergeBehavior = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
+            state.location = atts.getValue(ENHANCED_IMPORT_URI, LOCATION);
             try {
                 state.nodeName = resolver.getQName(svName);
                 state.index = index;
@@ -251,8 +237,8 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                 currentPropMultiple = Boolean.valueOf(multiple);
             }
             
-            currentMergeBehavior = atts.getValue(NS_XMLIMPORT, "merge");
-            currentMergeLocation = atts.getValue(NS_XMLIMPORT, "location");
+            currentMergeBehavior = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
+            currentMergeLocation = atts.getValue(ENHANCED_IMPORT_URI, LOCATION);
             try {
                 currentPropType = PropertyType.valueFromName(type);
             } catch (IllegalArgumentException e) {
@@ -260,7 +246,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             }
         } else if (name.equals(NameConstants.SV_VALUE)) {
             // sv:value element
-            final String fileName = atts.getValue(NS_XMLIMPORT, "file");
+            final String fileName = atts.getValue(ENHANCED_IMPORT_URI, FILE);
             if (fileName != null) {
                 try {
                     currentBinaryPropValueURL = contentResourceLoader != null ? contentResourceLoader.getResource(fileName) : null;
@@ -279,9 +265,6 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         }
     }
 
-    /**
-    * {@inheritDoc}
-    */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (currentPropValue != null) {
@@ -294,9 +277,6 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         }
     }
 
-    /**
-    * {@inheritDoc}
-    */
     @Override
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
         if (currentPropValue != null) {
@@ -312,9 +292,6 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         }
     }
 
-    /**
-    * {@inheritDoc}
-    */
     @Override
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
         Name name = NameFactoryImpl.getInstance().create(namespaceURI, localName);
@@ -400,46 +377,17 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     }
 
     //--------------------------------------------------------< inner classes >
+
     class ImportState {
-        /**
-         * name of current node
-         */
+
         Name nodeName;
-        /**
-         * primary type of current node
-         */
         Name nodeTypeName;
-        /**
-         * list of mixin types of current node
-         */
         ArrayList<Name> mixinNames;
-        /**
-         * uuid of current node
-         */
         String uuid;
-        /**
-         * index of the current node
-         */
         int index;
-
-        /**
-         * list of PropInfo instances representing properties of current node
-         */
         List<PropInfo> props = new ArrayList<>();
-
-        /**
-         * flag indicating whether startNode() has been called for current node
-         */
         boolean started = false;
-
-        /**
-         * Merge behavior for current Node
-         */
         String mergeBehavior;
-
-        /**
-         * Optional location to be used for mergeBehavior
-         */
         String location;
     }
 

@@ -19,12 +19,12 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
-class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.SKIP;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.OVERLAY;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.COMBINE;
+import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.INSERT;
 
-    private static final String SKIP = "skip";
-    private static final String OVERLAY = "overlay";
-    private static final String COMBINE = "combine";
-    private static final String INSERT = "insert";
+class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
 
     private String mergeBehavior;
     private NodeImpl originItem;

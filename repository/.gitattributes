@@ -148,14 +148,13 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/HippoLockManager.java -t
 engine/src/main/java/org/hippoecm/repository/jackrabbit/HippoPropertyId.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/InternalHippoSession.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/BufferedStringValue.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedImportHandler.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSessionImporter.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSysViewImportHandler.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedPropInfo.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedSystemViewConstants.java -text
+engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedSystemViewImportHandler.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedSystemViewImporter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedSystemViewPackage.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/HippoDocumentViewExporter.java -text
-engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/NamespaceContext.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/Reference.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/quartz/HippoSchedJcrConstants.java -text

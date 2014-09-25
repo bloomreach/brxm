@@ -18,6 +18,7 @@ package org.hippoecm.repository.jackrabbit;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -25,14 +26,16 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.ItemManager;
+import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.commons.conversion.IdentifierResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
-import org.xml.sax.ContentHandler;
 
 /**
  * Internal hippo session implementation methods.
@@ -44,13 +47,7 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;
 
-    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior, int referenceBehavior) throws RepositoryException;
-
-    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior) throws RepositoryException;
-
-    void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException;
-
-    void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException;
+    void importEnhancedSystemViewXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException;
 
     Node getCanonicalNode(Node node) throws RepositoryException;
 
@@ -61,5 +58,11 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
     Session createDelegatedSession(InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 
     void localRefresh();
+
+    NodeImpl getNodeById(NodeId id) throws ItemNotFoundException, RepositoryException;
+
+    HierarchyManager getHierarchyManager();
+
+    ItemManager getItemManager();
 
 }
