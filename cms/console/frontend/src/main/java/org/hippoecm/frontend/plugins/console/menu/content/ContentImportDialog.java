@@ -66,7 +66,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
 
-    public class LookupHashMap<K,V> extends HashMap<K,V> {
+    public class  LookupHashMap<K,V> extends HashMap<K,V> {
         private static final long serialVersionUID = 9065806784464553409L;
 
         public K getFirstKey(Object value) {
@@ -83,7 +83,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     }
 
     private final LookupHashMap<Integer, String> uuidOpts = new LookupHashMap<Integer, String>();
-    private final LookupHashMap<Integer, String> mergeOpts = new LookupHashMap<Integer, String>();
     private final LookupHashMap<Integer, String> derefOpts = new LookupHashMap<Integer, String>();
 
     private final JcrNodeModel nodeModel;
@@ -94,7 +93,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     // hard coded defaults
     private String uuidBehavior = "Create new uuids on import";
-    private String mergeBehavior = "Disable merging";
     private String derefBehavior = "Throw error when not found";
 
     private void InitMaps() {
@@ -102,13 +100,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, "Replace existing node with same uuid");
         uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW, "Throw error on uuid collision");
         uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, "Create new uuids on import");
-
-        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_DISABLE, "Disable merging");
-        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE, "Try to add, else overwrite same name nodes");
-        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP, "Try to add, else skip same name nodes");
-        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE, "Overwrite same name nodes");
-        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_SKIP, "Skip same name nodes");
-        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_THROW, "Throw error on naming conflict");
 
         derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, "Remove reference when not found");
         derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, "Throw error when not found");
@@ -121,14 +112,12 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         this.nodeModel = (JcrNodeModel) modelReference.getModel();
 
         DropDownChoice<String> uuid = new DropDownChoice<>("uuidBehaviors", new PropertyModel<String>(this, "uuidBehavior"), new ArrayList<>(uuidOpts.values()));
-        DropDownChoice<String> merge = new DropDownChoice<>("mergeBehaviors", new PropertyModel<String>(this, "mergeBehavior"), new ArrayList<>(mergeOpts.values()));
         DropDownChoice<String> reference = new DropDownChoice<>("derefBehaviors", new PropertyModel<String>(this, "derefBehavior"), new ArrayList<>(derefOpts.values()));
         LabelledBooleanFieldWidget save = new LabelledBooleanFieldWidget("saveBehavior",
                 new PropertyModel<Boolean>(this, "saveBehavior"),
                 Model.of("Immediate save after import"));
 
         add(uuid.setNullValid(false).setRequired(true));
-        add(merge.setNullValid(false).setRequired(true));
         add(reference.setNullValid(false).setRequired(true));
         add(save);
 
@@ -168,7 +157,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         final FileUpload upload = fileUploadField.getFileUpload();
 
         int uuidOpt = uuidOpts.getFirstKey(uuidBehavior);
-        int mergeOpt = mergeOpts.getFirstKey(mergeBehavior);
         int derefOpt = derefOpts.getFirstKey(derefBehavior);
 
         try {
@@ -216,11 +204,11 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                         zipFile = new ZipFile(tempFile);
                         ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
                         esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
-                        session.importDereferencedXML(absPath, esvIn, contentResourceLoader, uuidOpt, derefOpt, mergeOpt);
+                        session.importEnhancedSystemViewXML(absPath, esvIn, contentResourceLoader, uuidOpt, derefOpt);
                     }
                     else if (fileName.endsWith(".xml")) {
                         in = new BufferedInputStream(upload.getInputStream());
-                        session.importDereferencedXML(absPath, in, uuidOpt, derefOpt, mergeOpt);
+                        session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt);
                     }
                     else {
                         warn("Unrecognized file: only .xml and .zip can be processed");
@@ -229,7 +217,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 }
                 else {
                     in = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
-                    session.importDereferencedXML(absPath, in, uuidOpt, derefOpt, mergeOpt);
+                    session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt);
                 }
 
                 if (generate) {
@@ -285,13 +273,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
             }
         }
         return null;
-    }
-
-    public void setMergeBehavior(String mergeBehavior) {
-        this.mergeBehavior = mergeBehavior;
-    }
-    public String getMergeBehavior() {
-        return mergeBehavior;
     }
 
     public void setDerefBehavior(String derefBehavior) {
