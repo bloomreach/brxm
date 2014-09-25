@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
@@ -37,6 +40,7 @@ public final class ChannelStoreFactory {
     public static final String CONFIG_COLUMNS = "columns";
     public static final String CONFIG_SORT_COLUMN = "sort.column";
     public static final String CONFIG_SORT_ORDER = "sort.order";
+    public static final String CONFIG_CHANNEL_STORE = "channelStore";
 
     private ChannelStoreFactory() {
         // prevent instantiation
@@ -62,7 +66,7 @@ public final class ChannelStoreFactory {
                     String.format("Cannot find locale provider service with ID '%s'", localeProviderServiceId));
         }
 
-        final ChannelStore channelStore = new ChannelStore("channel-store", fieldList,
+        final ChannelStore channelStore = build(config, "channel-store", fieldList,
                 parseSortColumn(config, storeFieldNames), parseSortOrder(config),
                 new LocaleResolver(localeProvider), restProxyServices,
                 blueprintStore);
@@ -75,6 +79,20 @@ public final class ChannelStoreFactory {
         }
 
         return channelStore;
+    }
+
+    static ChannelStore build(IPluginConfig config, String storeId, List<ExtDataField> fieldList, String sortColumn, ChannelStore.SortOrder sortOrder, LocaleResolver localeResolver, Map<String, IRestProxyService> restProxyServices, BlueprintStore blueprintStore){
+        String channelStoreClassName = config.getString(CONFIG_CHANNEL_STORE);
+        if(StringUtils.isNotBlank(channelStoreClassName)){
+            try {
+                Class<?> customChannelStore = Class.forName(channelStoreClassName);
+                Constructor<?> channelStoreConstructor = customChannelStore.getConstructor(String.class, List.class, String.class, ChannelStore.SortOrder.class, LocaleResolver.class, Map.class, BlueprintStore.class);
+                return (ChannelStore) channelStoreConstructor.newInstance(storeId, fieldList, sortColumn, sortOrder, localeResolver, restProxyServices, blueprintStore);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | ClassCastException e) {
+                log.error("Could not instantiate custom channel store: {}", channelStoreClassName, e);
+            }
+        }
+        return new ChannelStore("channel-store", fieldList, sortColumn, sortOrder, localeResolver, restProxyServices, blueprintStore);
     }
 
     static Set<String> parseChannelFields(IPluginConfig config) {

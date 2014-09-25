@@ -41,10 +41,13 @@
         <sv:value>ascending</sv:value>
       </sv:property>
       <sv:property sv:name="channelRegionIconPath" sv:type="String">
-        <sv:value>/content/gallery/channels/${locale}.png/${locale}.png/hippogallery:original</sv:value>
+        <sv:value>/content/gallery/channels/${region}.png/${region}.png/hippogallery:original</sv:value>
       </sv:property>
       <sv:property sv:name="channelTypeIconPath" sv:type="String">
         <sv:value>/content/gallery/channels/${type}.png/${type}.png/hippogallery:original</sv:value>
+      </sv:property>
+      <sv:property sv:name="channelStore" sv:type="String">
+        <sv:value>org.onehippo.cms7.channelmanager.channels.CountryGroupingChannelStore</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="templatecomposer">

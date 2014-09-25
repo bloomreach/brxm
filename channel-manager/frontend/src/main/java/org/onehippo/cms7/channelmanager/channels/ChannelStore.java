@@ -15,7 +15,7 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,8 +43,8 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.encoding.UrlEncoder;
+import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IRestProxyService;
@@ -234,7 +234,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
             }
 
-            populateChannelTypeAndRegion(channel, object);
+            populateChannelType(channel, object);
+            populateChannelRegion(channel, object);
 
             data.put(object);
         }
@@ -242,21 +243,28 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return data;
     }
 
-    private void populateChannelTypeAndRegion(final Channel channel, final JSONObject object) throws JSONException {
+    protected void populateChannelType(final Channel channel, final JSONObject object) throws JSONException {
         String type = channel.getType();
         object.put("channelType", type);
 
-        final Map<String, String> channelFieldValues = getChannelFieldValues(channel);
+        final Map<String, String> channelFieldValuesWithType = new HashMap<String, String>();
+        channelFieldValuesWithType.put("type", channel.getType());
 
-        String channelIconUrl = getChannelTypeIconUrl(channelFieldValues);
+        String channelIconUrl = getChannelIconUrl(channelFieldValuesWithType, getChannelTypeIconPath());
         if (StringUtils.isEmpty(channelIconUrl)) {
             channelIconUrl = getIconResourceReferenceUrl(type + ".png");
         }
         object.put("channelTypeImg", channelIconUrl);
+    }
 
+    protected void populateChannelRegion(final Channel channel, final JSONObject object) throws JSONException {
         if (StringUtils.isNotEmpty(channel.getLocale())) {
             object.put("channelRegion", channel.getLocale());
-            String regionIconUrl = getChannelRegionIconUrl(channelFieldValues);
+
+            final Map<String, String> channelFieldValuesWithRegion = new HashMap<String, String>();
+            channelFieldValuesWithRegion.put("region", channel.getLocale());
+
+            String regionIconUrl = getChannelIconUrl(channelFieldValuesWithRegion, getChannelRegionIconPath());
             if (StringUtils.isEmpty(regionIconUrl)) {
                 regionIconUrl = getIconResourceReferenceUrl(channel.getLocale() + ".png");
             }
@@ -266,36 +274,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
     }
 
-    private Map<String, String> getChannelFieldValues(final Channel channel) {
-        final Map<String, String> channelFieldValues = new HashMap<String, String>();
-        for (Field field : channel.getClass().getDeclaredFields()) {
-            if (field.getType() != String.class) {
-                continue;
-            }
-            String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
-            channelFieldValues.put(field.getName(), fieldValue);
-        }
-
-        final String locale = channel.getLocale();
-        if (locale != null) {
-            channelFieldValues.put("locale", locale.toLowerCase());
-        }
-        return channelFieldValues;
-    }
-
-    private String getChannelRegionIconUrl(final Map<String, String> channelFieldValues) {
-        MapVariableInterpolator mapVariableInterpolator = new MapVariableInterpolator(this.channelRegionIconPath,
-                channelFieldValues);
-        return getChannelIconUrl(mapVariableInterpolator.toString());
-    }
-
-    private String getChannelTypeIconUrl(final Map<String, String> channelFieldValues) {
-        MapVariableInterpolator mapVariableInterpolator = new MapVariableInterpolator(this.channelTypeIconPath,
-                channelFieldValues);
-        return getChannelIconUrl(mapVariableInterpolator.toString());
-    }
-
-    private String getChannelIconUrl(final String channelIconPath) {
+    protected String getChannelIconUrl(final Map<String, String> channelFieldValues, final String channelIconPathTemplate) {
+        String channelIconPath = new MapVariableInterpolator(channelIconPathTemplate, channelFieldValues).toString();
         if (StringUtils.isEmpty(channelIconPath)) {
             return null;
         }
@@ -340,12 +320,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.channelTypeIconPath = channelTypeIconPath;
     }
 
-    private String getIconResourceReferenceUrl(final String resource) {
+    protected String getIconResourceReferenceUrl(final String resource) {
         RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
-            ResourceReference iconResource = new PackageResourceReference(getClass(), resource);
-            CharSequence typeImgUrl = requestCycle.urlFor(new ResourceReferenceRequestHandler(iconResource));
-            return typeImgUrl.toString();
+            PackageResourceReference iconResource = new PackageResourceReference(getClass(), resource);
+            return ChannelStore.resourceExists(iconResource) ?
+                    requestCycle.urlFor(new ResourceReferenceRequestHandler(iconResource)).toString() :
+                    null;
         }
         return null;
     }
@@ -394,6 +375,25 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private static String getResourceValue(String key, Object... parameters) {
         return new ClassResourceModel(key, ChannelStore.class, parameters).getObject();
+    }
+
+    protected static boolean resourceExists(final PackageResourceReference iconResource) {
+        IResourceStream resourceStream = null;
+        try{
+            resourceStream = iconResource.getResource().getResourceStream();
+            return resourceStream != null;
+        } catch (Exception e) {
+            log.warn("Resource could not be found and exception was thrown:", e);
+            return false;
+        } finally {
+            if(resourceStream != null){
+                try {
+                    resourceStream.close();
+                } catch (IOException e) {
+                    log.warn("Could not close resource stream. This may create a memory leak");
+                }
+            }
+        }
     }
 
     public void reload() {

@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -106,7 +105,7 @@ public class ChannelStoreTest {
         replay(mockedChannelService);
 
         final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
-        ChannelStore store = new ChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
+        ChannelStore store = new CountryGroupingChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
                 createNiceMock(LocaleResolver.class), mockedProxyServices, new BlueprintStore(mockedProxyServices));
 
         JSONArray json = store.getData();
@@ -114,7 +113,7 @@ public class ChannelStoreTest {
 
         JSONObject channelData = json.getJSONObject(0);
         assertEquals("The channel should have a type", "testtype", channelData.getString("channelType"));
-        assertEquals("The channel should have a region", "nl_NL", channelData.getString("channelRegion"));
+        assertEquals("The channel should have a region", "NL", channelData.getString("channelRegion"));
         assertEquals("The channel should have a locale since we provide a field for it", "nl_NL", channelData.getString("locale"));
         assertEquals("The channel should have an ID since we provide a field for it", "testchannelid", channelData.getString("id"));
         assertEquals("The channel should have a host name since we provide a field for it", "host.example.com", channelData.getString("hostname"));
