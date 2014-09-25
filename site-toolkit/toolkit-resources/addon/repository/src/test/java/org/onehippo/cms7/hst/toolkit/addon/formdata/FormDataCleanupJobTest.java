@@ -25,8 +25,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -38,22 +38,14 @@ import static org.easymock.EasyMock.replay;
 
 public class FormDataCleanupJobTest extends RepositoryTestCase {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        NodeIterator nodes = getFormdataNodes();
-        while(nodes.hasNext()) {
-            nodes.nextNode().remove();
-        }
-        Node rootNode = session.getRootNode();
-        rootNode.addNode("formdata", "hst:formdatacontainer");
-        session.save();
-
-    }
-
     @After
     public void tearDown() throws Exception {
-        removeNode("/formdata");
+        if (session.getNode("/formdata").hasNodes()) {
+            for (Node child : new NodeIterable(session.getNode("/formdata").getNodes())) {
+                child.remove();
+            }
+            session.save();
+        }
         super.tearDown();
     }
 
