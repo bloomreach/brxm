@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Binary;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -32,8 +31,6 @@ import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
@@ -41,12 +38,12 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.xml.Importer;
+import org.apache.jackrabbit.core.xml.PropInfo;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +60,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
  * {@link NodeImpl} instance through a session or directly to a
  * {@link NodeState} instance in a workspace.
  */
-public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
+public class EnhancedPropInfo extends PropInfo {
 
 
     private static final String OVERRIDE = "override";
@@ -71,7 +68,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
     private static final String APPEND = "append";
     private static final String SKIP = "skip";
 
-    private static Logger log = LoggerFactory.getLogger(PropInfo.class);
+    private static Logger log = LoggerFactory.getLogger(EnhancedPropInfo.class);
 
 
     private final NamePathResolver resolver;
@@ -86,8 +83,8 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
     private final ValueFactory valueFactory;
 
 
-    public PropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior,
-                    String mergeLocation, final URL[] binaryURLs, final ValueFactory valueFactory) {
+    public EnhancedPropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior,
+                            String mergeLocation, final URL[] binaryURLs, final ValueFactory valueFactory) {
         super(name, type, values);
         this.multiple = multiple != null ? multiple : Boolean.FALSE;
         this.mergeBehavior = mergeBehavior;
@@ -119,7 +116,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         return SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
-    public int mergeLocation(Value[] values) {
+    private int mergeLocation(Value[] values) {
         if(APPEND.equalsIgnoreCase(mergeBehavior)) {
             return values.length;
         } else if(INSERT.equalsIgnoreCase(mergeBehavior)) {
@@ -133,12 +130,14 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
     }
 
+    @Override
     public void dispose() {
         for (final TextValue value : values) {
             value.dispose();
         }
     }
 
+    @Override
     public int getTargetType(QPropertyDefinition def) {
         int target = def.getRequiredType();
         if (target != PropertyType.UNDEFINED) {

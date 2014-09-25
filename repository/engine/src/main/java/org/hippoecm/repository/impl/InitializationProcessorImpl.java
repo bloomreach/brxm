@@ -1030,7 +1030,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 HippoSession hippoSession = (HippoSession) session;
                 int uuidBehaviour = ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
                 int referenceBehaviour = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-                int mergeBehaviour = ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
                 if (pckg) {
                     tempFile = File.createTempFile("package", ".zip");
                     out = new FileOutputStream(tempFile);
@@ -1040,8 +1039,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     zipFile = new ZipFile(tempFile);
                     ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
                     esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
-                    hippoSession.importDereferencedXML(parentAbsPath, esvIn, contentResourceLoader,
-                            uuidBehaviour, referenceBehaviour, mergeBehaviour);
+                    hippoSession.importEnhancedSystemViewXML(parentAbsPath, esvIn, contentResourceLoader, uuidBehaviour, referenceBehaviour);
                 }
                 else {
                     ContentResourceLoader contentResourceLoader = null;
@@ -1055,8 +1053,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                             contentResourceLoader = new FileContentResourceLoader(sourceFile.getParentFile());
                         }
                     }
-                    hippoSession.importDereferencedXML(parentAbsPath, istream, contentResourceLoader,
-                            uuidBehaviour, referenceBehaviour, mergeBehaviour);
+                    hippoSession.importEnhancedSystemViewXML(parentAbsPath, istream, contentResourceLoader, uuidBehaviour, referenceBehaviour);
                 }
             } else {
                 session.importXML(parentAbsPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);

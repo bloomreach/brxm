@@ -32,6 +32,7 @@ import javax.jcr.ValueFactory;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
+import org.apache.jackrabbit.core.xml.PropInfo;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
@@ -151,7 +152,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         if (state.uuid != null) {
             id = NodeId.valueOf(state.uuid);
         }
-        NodeInfo node = new NodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id, state.mergeBehavior, state.location, state.index);
+        EnhancedNodeInfo node = new EnhancedNodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id, state.mergeBehavior, state.location, state.index);
         // call Importer
         try {
             if (start) {
@@ -213,9 +214,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             try {
                 state.nodeName = resolver.getQName(svName);
                 state.index = index;
-            } catch (NameException e) {
-                throw new SAXException(new InvalidSerializedDataException("illegal node name: " + svName, e));
-            } catch (NamespaceException e) {
+            } catch (NameException | NamespaceException e) {
                 throw new SAXException(new InvalidSerializedDataException("illegal node name: " + svName, e));
             }
             stack.push(state);
@@ -233,12 +232,10 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             }
             try {
                 currentPropName = resolver.getQName(svName);
-            } catch (NameException e) {
-                throw new SAXException(new InvalidSerializedDataException("illegal property name: " + svName, e));
-            } catch (NamespaceException e) {
+            } catch (NameException | NamespaceException e) {
                 throw new SAXException(new InvalidSerializedDataException("illegal property name: " + svName, e));
             }
-            
+
             // property type (sv:type attribute)
             String type = getAttribute(atts, NameConstants.SV_TYPE);
             if (type == null) {
@@ -348,17 +345,14 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                     state.nodeTypeName = resolver.getQName(s);
                 } catch (IOException ioe) {
                     throw new SAXException("error while retrieving value", ioe);
-                } catch (NameException e) {
-                    throw new SAXException(new InvalidSerializedDataException("illegal node type name: " + s, e));
-                } catch (NamespaceException e) {
+                } catch (NameException | NamespaceException e) {
                     throw new SAXException(new InvalidSerializedDataException("illegal node type name: " + s, e));
                 }
             } else if (currentPropName.equals(NameConstants.JCR_MIXINTYPES)) {
                 if (state.mixinNames == null) {
                     state.mixinNames = new ArrayList<Name>(currentPropValues.size());
                 }
-                for (int i = 0; i < currentPropValues.size(); i++) {
-                    BufferedStringValue val = currentPropValues.get(i);
+                for (BufferedStringValue val : currentPropValues) {
                     String s = null;
                     try {
                         s = val.retrieve();
@@ -366,9 +360,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                         state.mixinNames.add(mixin);
                     } catch (IOException ioe) {
                         throw new SAXException("error while retrieving value", ioe);
-                    } catch (NameException e) {
-                        throw new SAXException(new InvalidSerializedDataException("illegal mixin type name: " + s, e));
-                    } catch (NamespaceException e) {
+                    } catch (NameException | NamespaceException e) {
                         throw new SAXException(new InvalidSerializedDataException("illegal mixin type name: " + s, e));
                     }
                 }
@@ -382,7 +374,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                     }
                 }
             } else {
-                PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
+                EnhancedPropInfo prop = new EnhancedPropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
                         .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation,
                         currentBinaryPropValueURLs.toArray(new URL[currentBinaryPropValueURLs.size()]), valueFactory);
                 state.props.add(prop);
@@ -433,7 +425,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         /**
          * list of PropInfo instances representing properties of current node
          */
-        List<org.apache.jackrabbit.core.xml.PropInfo> props = new ArrayList<org.apache.jackrabbit.core.xml.PropInfo>();
+        List<PropInfo> props = new ArrayList<>();
 
         /**
          * flag indicating whether startNode() has been called for current node

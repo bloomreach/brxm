@@ -19,46 +19,55 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
-public class NodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
+class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
 
-    String mergeBehavior;
-    NodeImpl originItem = null;
-    String location;
-    int index;
+    private static final String SKIP = "skip";
+    private static final String OVERLAY = "overlay";
+    private static final String COMBINE = "combine";
+    private static final String INSERT = "insert";
 
-    public NodeInfo(Name name, Name nodeTypeName, Name[] mixinNames,
-                    NodeId id, String mergeBehavior, String location, int index) {
+    private String mergeBehavior;
+    private NodeImpl originItem;
+    private String location;
+    private int index;
+
+    EnhancedNodeInfo(Name name, Name nodeTypeName, Name[] mixinNames,
+                            NodeId id, String mergeBehavior, String location, int index) {
         super(name, nodeTypeName, mixinNames, id);
         this.mergeBehavior = mergeBehavior;
         this.location = location;
         this.index = index;
     }
 
-    public boolean mergeSkip() {
-        return "skip".equalsIgnoreCase(mergeBehavior);
+    boolean mergeSkip() {
+        return SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
-    public boolean mergeOverlay() {
-        return "overlay".equalsIgnoreCase(mergeBehavior);
+    boolean mergeOverlay() {
+        return OVERLAY.equalsIgnoreCase(mergeBehavior);
     }
 
-    public boolean mergeCombine() {
-        return "combine".equalsIgnoreCase(mergeBehavior);
+    boolean mergeCombine() {
+        return COMBINE.equalsIgnoreCase(mergeBehavior);
     }
 
-    public String mergeInsertBefore() {
-        if ("insert".equalsIgnoreCase(mergeBehavior)) {
+    String mergeInsertBefore() {
+        if (INSERT.equalsIgnoreCase(mergeBehavior)) {
             return (location != null ? location : "");
         } else {
             return null;
         }
     }
 
-    public NodeImpl getOrigin() {
+    NodeImpl getOrigin() {
         return originItem;
     }
 
-    public int getIndex() {
+    void setOrigin(NodeImpl originItem) {
+        this.originItem = originItem;
+    }
+
+    int getIndex() {
         return index;
     }
 }

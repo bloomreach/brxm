@@ -152,11 +152,11 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedImportHa
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSessionImporter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSysViewImportHandler.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSysViewSAXEventGenerator.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedPropInfo.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedSystemViewPackage.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/HippoDocumentViewExporter.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/NamespaceContext.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEventGenerator.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PropInfo.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/Reference.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/quartz/HippoSchedJcrConstants.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/JobExecutionContextImpl.java -text

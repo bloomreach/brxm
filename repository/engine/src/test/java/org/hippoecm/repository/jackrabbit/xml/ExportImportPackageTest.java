@@ -95,10 +95,9 @@ public class ExportImportPackageTest extends RepositoryTestCase {
             }
             ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
             esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
-            session.importDereferencedXML("/test", esvIn, contentResourceLoader,
+            session.importEnhancedSystemViewXML("/test", esvIn, contentResourceLoader,
                     ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW,
-                    ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
             assertTrue(session.nodeExists("/test/test"));
             final Node test = session.getNode("/test/test");
             assertTrue(test.hasProperty("test"));
@@ -129,10 +128,9 @@ public class ExportImportPackageTest extends RepositoryTestCase {
             Map<String, File> entryFilesMap = unzipFileTo(session.exportEnhancedSystemViewPackage("/test", true), tempDir);
             xmlInput = new FileInputStream(entryFilesMap.get("esv.xml"));
             ContentResourceLoader contentResourceLoader = new FileContentResourceLoader(tempDir);
-            session.importDereferencedXML("/test", xmlInput, contentResourceLoader,
+            session.importEnhancedSystemViewXML("/test", xmlInput, contentResourceLoader,
                     ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW,
-                    ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
             assertTrue(session.nodeExists("/test/test"));
             final Node test = session.getNode("/test/test");
             assertTrue(test.hasProperty("test"));

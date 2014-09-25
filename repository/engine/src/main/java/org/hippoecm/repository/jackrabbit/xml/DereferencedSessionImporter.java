@@ -17,7 +17,6 @@ package org.hippoecm.repository.jackrabbit.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -38,20 +37,14 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.Importer;
+import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE;
-import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
-import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
-import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_SKIP;
-import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_THROW;
 
 public class DereferencedSessionImporter implements Importer {
 
@@ -96,7 +89,7 @@ public class DereferencedSessionImporter implements Importer {
 
     }
 
-    protected NodeImpl createNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, NodeInfo nodeInfo)
+    protected NodeImpl createNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, EnhancedNodeInfo nodeInfo)
             throws RepositoryException {
         NodeImpl node;
 
@@ -138,7 +131,7 @@ public class DereferencedSessionImporter implements Importer {
      * @return NodeImpl of the created node
      * @throws RepositoryException
      */
-    protected NodeImpl resolveUUIDConflict(NodeImpl parent, NodeImpl conflicting, NodeInfo nodeInfo)
+    protected NodeImpl resolveUUIDConflict(NodeImpl parent, NodeImpl conflicting, EnhancedNodeInfo nodeInfo)
             throws RepositoryException {
         NodeImpl node;
         if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW) {
@@ -184,7 +177,7 @@ public class DereferencedSessionImporter implements Importer {
      * Resolve merge conflict
      * @return nodeInfo of the node to create or null if the node is to be skipped
      */
-    protected NodeInfo resolveMergeConflict(NodeImpl conflicting, NodeInfo nodeInfo) throws RepositoryException {
+    protected EnhancedNodeInfo resolveMergeConflict(NodeImpl conflicting, EnhancedNodeInfo nodeInfo) throws RepositoryException {
 
         NodeDefinition def = conflicting.getDefinition();
         Name ntName = nodeInfo.getNodeTypeName();
@@ -195,7 +188,7 @@ public class DereferencedSessionImporter implements Importer {
             return nodeInfo;
         }
         if (nodeInfo.mergeCombine() || nodeInfo.mergeOverlay()) {
-            nodeInfo.originItem = conflicting;
+            nodeInfo.setOrigin(conflicting);
             return nodeInfo;
         }
         if (nodeInfo.mergeSkip()) {
@@ -253,8 +246,8 @@ public class DereferencedSessionImporter implements Importer {
         startTime = System.currentTimeMillis();
     }
 
-    public void startNode(org.apache.jackrabbit.core.xml.NodeInfo info, List propInfos) throws RepositoryException {
-        NodeInfo nodeInfo = (NodeInfo) info;
+    public void startNode(NodeInfo info, List propInfos) throws RepositoryException {
+        EnhancedNodeInfo nodeInfo = (EnhancedNodeInfo) info;
         NodeImpl parent = parents.peek();
 
         // process node
@@ -325,7 +318,7 @@ public class DereferencedSessionImporter implements Importer {
 
         // process properties
         for (final Object propInfo : propInfos) {
-            ((PropInfo) propInfo).apply(node, resolver, derefNodes);
+            ((EnhancedPropInfo) propInfo).apply(node, resolver, derefNodes);
         }
 
         parents.push(node);
