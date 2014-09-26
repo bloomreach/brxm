@@ -286,8 +286,8 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
     @Test
     public void testExcludedForLinkRewritingSitemapItem() throws Exception {
         // current context points to a location that has a sitemap item that only contains items that are excluded for linkrewriting. Thus, not a link
-        // below /newswith_linkrwriting_excluded should be returned
-        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/newswith_linkrwriting_excluded");
+        // below /newswith_linkrewriting_excluded should be returned
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/newswith_linkrewriting_excluded");
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
         HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
