@@ -239,9 +239,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
         if (localContainerURL.getComponentRenderingWindowReferenceNamespace() != null || localContainerURL.getResourceWindowReferenceNamespace() != null) {
             includeLocalESIPipelineURL(writer, uri, localContainerURL);
         } else {
-            log.warn(
-                    "Ignoring ESI Include Tag. ESI Include Tag for a local navigational URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
-                    uri);
+            includeLocalDispatchURL(writer, uri, localContainerURL);
         }
     }
 
@@ -307,6 +305,12 @@ public class ESIPageRenderer implements ComponentManagerAware {
             ((HstMutableRequestContext) requestContext).setServletResponse(response);
             ((HstMutableRequestContext) requestContext).setBaseURL(baseURL);
         }
+    }
+
+    protected void includeLocalDispatchURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
+        log.warn(
+                "Ignoring ESI Include Tag. ESI Include Tag for a local navigational URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
+                uri);
     }
 
     protected void includeRemoteURL(Writer writer, URI uri) throws IOException {
