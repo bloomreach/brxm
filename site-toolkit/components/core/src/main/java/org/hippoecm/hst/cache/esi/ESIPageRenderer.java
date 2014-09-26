@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.util.MimeUtil;
 import org.hippoecm.hst.configuration.hosting.MatchException;
@@ -44,8 +46,6 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
 /**
  * ESIPageRenderer
@@ -236,6 +236,16 @@ public class ESIPageRenderer implements ComponentManagerAware {
     }
 
     protected void includeLocalURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
+        if (localContainerURL.getComponentRenderingWindowReferenceNamespace() != null || localContainerURL.getResourceWindowReferenceNamespace() != null) {
+            includeLocalESIPipelineURL(writer, uri, localContainerURL);
+        } else {
+            log.warn(
+                    "Ignoring ESI Include Tag. ESI Include Tag for a local navigational URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
+                    uri);
+        }
+    }
+
+    protected void includeLocalESIPipelineURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
         Pipeline pipeline = getESIIncludePipeline();
 
         if (pipeline == null) {
