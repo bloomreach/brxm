@@ -51,7 +51,7 @@ class ModuleDescriptorUtils {
     }
     
     static List<ModuleDefinition> collectAllModuleDefinitions(ClassLoader classLoader, String ... moduleDescriptorResourcePaths) throws IOException {
-        List<ModuleDefinition> moduleDefinitions = new ArrayList<ModuleDefinition>();
+        List<ModuleDefinition> moduleDefinitions = new ArrayList<>();
         
         for (String moduleDescriptorResourcePath : moduleDescriptorResourcePaths) {
             Enumeration<URL> moduleDescriptorURLs = classLoader.getResources(moduleDescriptorResourcePath);
@@ -77,6 +77,7 @@ class ModuleDescriptorUtils {
         
         JAXBContext jc = JAXBContext.newInstance(ModuleDefinition.class);
         Unmarshaller um = jc.createUnmarshaller();
+
         
         InputStream is = null;
         BufferedInputStream bis = null;

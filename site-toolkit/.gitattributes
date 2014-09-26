@@ -662,6 +662,7 @@ components/core/src/main/java/org/hippoecm/hst/core/util/PropertyParser.java svn
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanMethodInvoker.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/ModuleDefinition.java -text
+components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/StringTrimAdapter.java -text
 components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/package-info.java -text
 components/core/src/main/java/org/hippoecm/hst/site/addon/module/runtime/ModuleInstanceImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationContextUtils.java -text

@@ -1,19 +1,36 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-@XmlJavaTypeAdapter(value=StringTrimAdapter.class,type=String.class)
 package org.hippoecm.hst.site.addon.module.model;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+public class StringTrimAdapter extends XmlAdapter<String, String> {
+    @Override
+    public String unmarshal(String v) throws Exception {
+        if (v == null) {
+            return null;
+        }
+        return v.trim();
+    }
+
+    @Override
+    public String marshal(String v) throws Exception {
+        if (v == null) {
+            return null;
+        }
+        return v.trim();
+    }
+}
