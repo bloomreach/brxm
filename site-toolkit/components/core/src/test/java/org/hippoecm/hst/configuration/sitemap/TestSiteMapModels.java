@@ -79,6 +79,10 @@ public class TestSiteMapModels extends AbstractTestConfigurations {
         assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
 
         for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
+            if (hstSiteMapItem.getQualifiedId().contains("hst:default")) {
+                log.debug("Skip hst:default sitemap");
+                continue;
+            }
             CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
             assertFalse(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
             final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
@@ -103,6 +107,10 @@ public class TestSiteMapModels extends AbstractTestConfigurations {
         assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
 
         for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
+            if (hstSiteMapItem.getQualifiedId().contains("hst:default")) {
+                log.debug("Skip hst:default sitemap");
+                continue;
+            }
             CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
             assertTrue(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
             final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());

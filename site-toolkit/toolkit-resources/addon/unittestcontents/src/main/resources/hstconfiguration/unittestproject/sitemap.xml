@@ -264,7 +264,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="newswith_linkrwriting_excluded">
+  <sv:node sv:name="newswith_linkrewriting_excluded">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
