@@ -642,4 +642,12 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="copyright">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>copyright</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

@@ -460,6 +460,32 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  
+
+  <sv:node sv:name="single">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>single</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="copyright">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/single</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/copyright</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
 </sv:node>
 

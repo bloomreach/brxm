@@ -41,7 +41,7 @@
     </esi:remove>
   </p>
   <p>
-    <esi:include src="<hst:link path='/examples/copyright.jsp'/>"/>
+    <esi:include src="<hst:link siteMapItemRefId='copyright'/>"/>
     <esi:remove>
       (C) Hippo B.V., All Rights Reserved
     </esi:remove>
