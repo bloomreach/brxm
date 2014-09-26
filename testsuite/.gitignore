@@ -3,6 +3,7 @@
 /.idea
 /.project
 /.settings
+/Users
 api/*.iml
 api/.classpath
 api/.project

@@ -40,6 +40,18 @@
       <a href="http://www.onehippo.com/en/about/work-at-hippo">Open positions within Hippo</a>
     </esi:remove>
   </p>
+  <p>
+    <esi:include src="<hst:link path='/examples/copyright.jsp'/>"/>
+    <esi:remove>
+      (C) Hippo B.V., All Rights Reserved
+    </esi:remove>
+  </p>
+  <p>
+    <esi:include src="<hst:link path='/examples/poweredby.jsp'/>"/>
+    <esi:remove>
+      Powered By Hippo
+    </esi:remove>
+  </p>
 </div>
 
 <script language="javascript">
