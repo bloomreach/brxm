@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -26,34 +26,29 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:configuration</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:sitemap">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemap</sv:value>
-        </sv:property>
-      </sv:node>
       <sv:node sv:name="hst:pages">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:pages</sv:value>
+          <sv:value>hst:pages</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hst:components">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:components</sv:value>
+          <sv:value>hst:components</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hst:templates">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:templates</sv:value>
+          <sv:value>hst:templates</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hst:sitemenus">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenus</sv:value>
+          <sv:value>hst:sitemenus</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hst:sitemapitemhandlers">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitemhandlers</sv:value>
+          <sv:value>hst:sitemapitemhandlers</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hst:catalog">
