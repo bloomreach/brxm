@@ -100,7 +100,7 @@ public class CountryGroupingChannelStore extends ChannelStore {
             return StringUtils.isEmpty(countryCode) ? UNKNOWN_COUNTRYCODE : countryCode;
 
         } catch (IllegalArgumentException e){
-            log.info("Channel locale is not a legal locale. Channel name: {}, id: {}, locale: {}", new String[]{channel.getName(), channel.getId(), channel.getLocale()});
+            log.warn("Channel locale is not a legal locale. Channel name: {}, id: {}, locale: {}", new String[]{channel.getName(), channel.getId(), channel.getLocale()});
 
             //Hippo can use any string as a locale, for example 7_9, even if it isn't a valid java locale
             //So we have to do some more, manual processing
