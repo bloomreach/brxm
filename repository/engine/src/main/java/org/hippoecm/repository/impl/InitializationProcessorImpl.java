@@ -103,7 +103,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private static final Logger log = LoggerFactory.getLogger(InitializationProcessorImpl.class);
 
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
-    private static final long LOCK_TIMEOUT = Long.getLong("repo.bootstrap.lock.timeout", 1000 * 60 * 5);
+    private static final long LOCK_TIMEOUT = Long.getLong("repo.bootstrap.lock.timeout", 60 * 5);
     private static final long LOCK_ATTEMPT_INTERVAL = 1000 * 2;
 
     private static final String[] INIT_ITEM_PROPERTIES = {
@@ -236,7 +236,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 log.debug("Lock successfully obtained");
                 return true;
             } catch (LockException e) {
-                if (System.currentTimeMillis() - t1 < LOCK_TIMEOUT) {
+                if (System.currentTimeMillis() - t1 < LOCK_TIMEOUT * 1000) {
                     log.debug("Obtaining lock failed, reattempting in {} ms", LOCK_ATTEMPT_INTERVAL);
                     try {
                         Thread.sleep(LOCK_ATTEMPT_INTERVAL);
