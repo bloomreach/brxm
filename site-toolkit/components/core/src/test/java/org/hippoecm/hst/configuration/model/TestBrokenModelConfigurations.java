@@ -18,7 +18,7 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.Map;
 
-import javax.jcr.NodeIterator;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -42,8 +42,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -516,6 +516,11 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testProjectNoSiteMap() throws Exception {
 
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+
+        final Node defaultSiteMap = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap");
+        for (Node siteMapItem : new NodeIterable(defaultSiteMap.getNodes())) {
+            siteMapItem.remove();
+        }
         session.save();
         final VirtualHosts firstModel = hstManager.getVirtualHosts();
         final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
