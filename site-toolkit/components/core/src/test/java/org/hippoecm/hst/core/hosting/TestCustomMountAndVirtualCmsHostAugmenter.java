@@ -30,8 +30,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;
 
-import junit.framework.Assert;
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
