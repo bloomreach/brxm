@@ -27,15 +27,13 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.hippoecm.repository.reviewedactions.PublicationRequest;
-import org.hippoecm.repository.reviewedactions.PublishableDocument;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl implements BasicReviewedActionsWorkflow {
+@Deprecated
+public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl implements DeprecatedBasicReviewedActionsWorkflow {
 
     private static final Logger log = LoggerFactory.getLogger(DeprecatedBasicReviewedActionsWorkflowImpl.class);
 

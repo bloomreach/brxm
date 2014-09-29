@@ -30,12 +30,10 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.hippoecm.repository.reviewedactions.PublishableDocument;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.hippoecm.repository.standardworkflow.DeprecatedVersionWorkflow;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
@@ -43,8 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
-
-public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
+@Deprecated
+public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicReviewedActionsWorkflowImpl implements DeprecatedFullReviewedActionsWorkflow {
 
     private static final Logger log = LoggerFactory.getLogger(DeprecatedFullReviewedActionsWorkflowImpl.class);
 
@@ -164,7 +162,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow)workflow).copyTo(folder, publishedDocument, newName, null);
-                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext().getWorkflow("default", copy);
+                DeprecatedFullReviewedActionsWorkflow copiedDocumentWorkflow = (DeprecatedFullReviewedActionsWorkflow) getWorkflowContext().getWorkflow("default", copy);
                 copiedDocumentWorkflow.depublish();
             } else
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
@@ -243,7 +241,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             publishedDocument.setPublicationDate(new Date());
             publishedDocument.setAvailability(new String[] { "live", "preview" });
             getWorkflowContext().getInternalWorkflowSession().save();
-            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", publishedDocument);
+            DeprecatedVersionWorkflow versionWorkflow = (DeprecatedVersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", publishedDocument);
             versionWorkflow.version();
         } catch(MappingException ex) {
             log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -265,7 +263,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
 
     void doDepublish() throws WorkflowException {
         try {
-            VersionWorkflow versionWorkflow;
+            DeprecatedVersionWorkflow versionWorkflow;
             if(unpublishedDocument == null) {
                 unpublishedDocument = publishedDocument;
                 unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
@@ -276,7 +274,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             }
             getWorkflowContext().getInternalWorkflowSession().save();
             publishedDocument = null;
-            versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", unpublishedDocument);
+            versionWorkflow = (DeprecatedVersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", unpublishedDocument);
             try {
                 versionWorkflow.version();
             } catch(MappingException ex) {

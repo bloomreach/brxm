@@ -51,8 +51,6 @@ api/src/main/java/org/onehippo/repository/util/ZipFileContentResourceLoader.java
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 api/src/test/java/org/hippoecm/repository/util/DateToolsTest.java -text
 builtin/pom.xml svneol=native#text/plain
-builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflow.java -text
-builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/CopyWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflow.java svneol=native#text/plain
@@ -335,7 +333,6 @@ test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#te
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/SecurityDelegationTest.java -text
-test/src/test/java/org/hippoecm/repository/VersioningWorkflowTest.java -text
 test/src/test/java/org/hippoecm/repository/concurrent/StampedeTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/FacetedReferenceTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/MirrorCombiFacetSelectTest.java svneol=native#text/plain
@@ -463,8 +460,11 @@ upgrade/handlemigration/src/main/resources/harddocument-updater.xml -text
 upgrade/handlemigration/src/main/resources/hardhandle-updater.xml -text
 upgrade/handlemigration/src/main/resources/hippoecm-extension.xml -text
 upgrade/handlemigration/src/main/resources/org/onehippo/cms7/repository/upgrade/handlemigration-workspace.xml -text
+upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedBasicReviewedActionsWorkflow.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedBasicReviewedActionsWorkflowImpl.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedFullReviewedActionsWorkflowImpl.java -text
+upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/PublicationRequest.java -text
+upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/PublishableDocument.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HardDocumentUpdateVisitorTest.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HardHandleUpdateVisitorTest.java -text
 upgrade/handlemigration/src/test/resources/deprecated-versioning-workflows.xml svneol=native#text/plain
@@ -479,9 +479,6 @@ utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
 workflow/src/main/java/org/hippoecm/faceteddate/DerivedDataFunction.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationRequest.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationState.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocument.java -text
 workflow/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text

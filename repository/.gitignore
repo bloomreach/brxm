@@ -250,6 +250,5 @@ workflow/*.log
 workflow/.classpath
 workflow/.project
 workflow/.settings
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/.FullReviewedActionsWorkflowImpl.java.swp
 workflow/target
 /workspaces

@@ -39,7 +39,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
  */
 @Deprecated
-public interface VersionWorkflow extends Workflow {
+public interface DeprecatedVersionWorkflow extends Workflow {
 
     /**
      * Creates a version of the current document state, such that the current state of the document may be re-retrieved or restored

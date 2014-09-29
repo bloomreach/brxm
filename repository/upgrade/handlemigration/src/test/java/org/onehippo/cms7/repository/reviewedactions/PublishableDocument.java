@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.reviewedactions;
+package org.onehippo.cms7.repository.reviewedactions;
 
 import java.util.Date;
 

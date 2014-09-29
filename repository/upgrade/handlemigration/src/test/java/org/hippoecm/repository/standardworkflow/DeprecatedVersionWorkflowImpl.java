@@ -48,7 +48,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
-public class DeprecatedVersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
+@Deprecated
+public class DeprecatedVersionWorkflowImpl extends Document implements DeprecatedVersionWorkflow, InternalWorkflow {
 
 
     private static Node findSubject(Node version) throws RepositoryException {

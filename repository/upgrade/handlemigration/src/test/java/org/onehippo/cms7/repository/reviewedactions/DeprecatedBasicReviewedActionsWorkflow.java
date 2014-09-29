@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.reviewedactions;
+package org.onehippo.cms7.repository.reviewedactions;
 
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -29,7 +29,7 @@ import org.hippoecm.repository.standardworkflow.EditableWorkflow;
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
  */
 @Deprecated
-public interface BasicReviewedActionsWorkflow extends Workflow, EditableWorkflow {
+public interface DeprecatedBasicReviewedActionsWorkflow extends Workflow, EditableWorkflow {
 
     /**
      * Request unpublication and deletion of document.

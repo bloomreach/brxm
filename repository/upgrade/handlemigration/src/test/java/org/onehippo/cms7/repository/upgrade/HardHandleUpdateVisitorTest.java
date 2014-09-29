@@ -37,7 +37,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.cms7.repository.reviewedactions.DeprecatedFullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -123,7 +123,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
     }
 
     private void deleteTestDocument(final Node document) throws Exception {
-        final FullReviewedActionsWorkflow workflow = getFullReviewedActionsWorkflow(document);
+        final DeprecatedFullReviewedActionsWorkflow workflow = getFullReviewedActionsWorkflow(document);
         workflow.depublish();
         workflow.delete();
     }
@@ -318,8 +318,8 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         return null;
     }
 
-    private FullReviewedActionsWorkflow getFullReviewedActionsWorkflow(final Node document) throws RepositoryException {
-        return (FullReviewedActionsWorkflow) getWorkflow("deprecated", document);
+    private DeprecatedFullReviewedActionsWorkflow getFullReviewedActionsWorkflow(final Node document) throws RepositoryException {
+        return (DeprecatedFullReviewedActionsWorkflow) getWorkflow("deprecated", document);
     }
 
     private FolderWorkflow getFolderWorkflow(final Node folder) throws RepositoryException {

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.reviewedactions;
+package org.onehippo.cms7.repository.reviewedactions;
 
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -29,7 +29,7 @@ import org.hippoecm.repository.standardworkflow.CopyWorkflow;
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
  */
 @Deprecated
-public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflow, CopyWorkflow {
+public interface DeprecatedFullReviewedActionsWorkflow extends DeprecatedBasicReviewedActionsWorkflow, CopyWorkflow {
 
     /**
      * Immediate unpublication and deletion of document.
