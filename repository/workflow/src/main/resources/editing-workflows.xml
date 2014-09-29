@@ -47,23 +47,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="reviewedactions">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Editing publishable documents</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostdpubwf:document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="default">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:workflow</sv:value>
