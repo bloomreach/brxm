@@ -57,7 +57,7 @@ public class CountryGroupingChannelStore extends ChannelStore {
         Map<String, String> channelFieldValues = new HashMap<>();
         channelFieldValues.put("region", countryCode.toLowerCase());
 
-        if (StringUtils.isNotBlank(countryCode) && ! UNKNOWN_COUNTRYCODE.equals(countryCode)) {
+        if (StringUtils.isNotBlank(countryCode)) {
             object.put("channelRegion", countryCode);
         }
 
@@ -65,7 +65,7 @@ public class CountryGroupingChannelStore extends ChannelStore {
         String countryIconUrl = getChannelIconUrl(channelFieldValues, getChannelRegionIconPath());
 
         //else, try finding it in the repository but now using the channel's locale property (for backwards compatibility)
-        if (StringUtils.isEmpty(countryIconUrl) && !UNKNOWN_COUNTRYCODE.equals(countryCode)) {
+        if (StringUtils.isEmpty(countryIconUrl)) {
             //Fallback: we now consider the region field to have the same value as the locale
             String locale = channel.getLocale();
             if (StringUtils.isNotBlank(locale)) {
@@ -75,17 +75,17 @@ public class CountryGroupingChannelStore extends ChannelStore {
         }
 
         //else, try finding it as a resource in the filesystem, using again that country property
-        if (StringUtils.isEmpty(countryIconUrl) && !UNKNOWN_COUNTRYCODE.equals(countryCode)) {
+        if (StringUtils.isEmpty(countryIconUrl)) {
             countryIconUrl = getIconResourceReferenceUrl(countryCode + ".png");
         }
 
         //else, try finding it as a resource in the filesystem, using again channel's locale property (for backwards compatibility)
-        if (StringUtils.isEmpty(countryIconUrl) && !UNKNOWN_COUNTRYCODE.equals(countryCode)) {
+        if (StringUtils.isEmpty(countryIconUrl)) {
             countryIconUrl = getIconResourceReferenceUrl(channel.getLocale() + ".png");
         }
 
         //else, show the default "unknown" country icon, this is loaded from filesystem and it always exists
-        if (StringUtils.isEmpty(countryIconUrl) && !UNKNOWN_COUNTRYCODE.equals(countryCode)) {
+        if (StringUtils.isEmpty(countryIconUrl)) {
             countryIconUrl = getIconResourceReferenceUrl(UNKNOWN_COUNTRYCODE + ".png");
         }
 
