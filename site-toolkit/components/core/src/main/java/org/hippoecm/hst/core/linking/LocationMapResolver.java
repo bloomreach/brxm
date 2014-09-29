@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.linking;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -461,7 +463,8 @@ public class LocationMapResolver {
      * 3) Take the matched sitemap items (List) with the first common ancestor with the current ctx sitemap item : if List contains 1 item: return item: else continue;
      * 4) If (3) returns multiple matched items, return the ones that are the closest (wrt depth) to the common ancestor: if there is one, return item : else continue;
      * 5) If (4) returns 1 or more items, pick the first (we cannot distinguish better) 
-     * 6) If still no best context hit found, we return the first matchingSiteMapItem in the matchingSiteMapItems list, as there they are all equally out of context
+     * 6) If still no best context hit found, they are all equally out of context: We order them by the depth, where lowest
+     * depth sitemap items have precedence. If equally deep, they are sorted lexically to guarantee some fixed order
      * 
      * if the list is empty, return null
      */
@@ -582,14 +585,31 @@ public class LocationMapResolver {
         }
         if(matchingSiteMapItems.size() > 0) {
             // we are at step (6) : add the ones we did not yet add:
+            List<HstSiteMapItemService> remaining = new ArrayList<>();
             for(HstSiteMapItem item : matchingSiteMapItems) {
                 if(!contextOrderedMatches.contains(item)) {
-                    contextOrderedMatches.add(item);
+                    remaining.add((HstSiteMapItemService)item);
                 }
             }
+            Collections.sort(remaining, new LowestDepthFirstAndThenLexicalComparator());
+            contextOrderedMatches.addAll(remaining);
         }
-        
+
         return contextOrderedMatches;
+    }
+
+
+    class LowestDepthFirstAndThenLexicalComparator implements Comparator<HstSiteMapItemService> {
+        @Override
+        public int compare(final HstSiteMapItemService item1, final HstSiteMapItemService item2) {
+            if (item1.getDepth() == item2.getDepth()) {
+                // order lexically to force consistent result
+                return item1.getId().compareTo(item2.getId());
+            } else {
+                // item with lowest depth is best
+                return item1.getDepth() - item2.getDepth();
+            }
+        }
     }
 
 }

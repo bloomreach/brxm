@@ -21,7 +21,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -29,11 +35,14 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 
 public class TestHstLinkRewriting extends AbstractBeanTestCase {
 
@@ -50,6 +59,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
     @Test
     public void testSimpleHstLinkForBean() throws Exception {
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
@@ -117,6 +127,69 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         assertEquals("wrong absolute link for News/News1", "/site/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for News/News1", "http://localhost:8080/site/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
 
+    }
+
+    @Test
+    public void test_multiple_sitemap_items_qualify_results_in_lowest_depth_item() throws Exception {
+
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            // add set of sitemap items, only one level deeper every time
+            final Node sitemapNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap");
+
+            for (int i = 1; i <= 10; i++) {
+                final Node newsSiteMapItemCopy = sitemapNode.addNode("newsmultiple" + i, NODETYPE_HST_SITEMAPITEM);
+                newsSiteMapItemCopy.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "News");
+                newsSiteMapItemCopy.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "hst:pages/newsoverview");
+                JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
+                        "/hst:hst/hst:configurations/unittestproject/hst:sitemap/newsmultiple"+i + "/news");
+                newsSiteMapItemCopy.getNode("news").getProperty("hst:refId").remove();
+                newsSiteMapItemCopy.getNode("news/_default_.html").getProperty("hst:refId").remove();
+            }
+
+            session.save();
+            Thread.sleep(1000);
+
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
+            HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+            assertEquals("wrong link.getPath for News/News1", "news/News1.html", newsLink.getPath());
+        } finally {
+            restoreHstConfigBackup(session);
+        }
+    }
+
+    @Test
+    public void test_multiple_equal_lowest_depth_sitemap_items_qualify_results_in_lexically_smallest_item() throws Exception {
+
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            // add set of sitemap items, only one level deeper every time
+            final Node sitemapNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap");
+
+            for (int i = 1; i <= 10; i++) {
+                JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
+                        "/hst:hst/hst:configurations/unittestproject/hst:sitemap/aaa" + i);
+                final Node newsSiteMapItemCopy = sitemapNode.getNode("aaa" + i);
+                newsSiteMapItemCopy.getProperty("hst:refId").remove();
+                newsSiteMapItemCopy.getNode("_default_.html").getProperty("hst:refId").remove();
+            }
+
+            session.save();
+            Thread.sleep(1000);
+
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
+            HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+            assertEquals("wrong link.getPath for News/News1: Should be the lexically ordered first one"
+                    , "aaa1/News1.html", newsLink.getPath());
+        } finally {
+            restoreHstConfigBackup(session);
+        }
     }
 
     /**
@@ -620,6 +693,11 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
         result = link.toUrlForm(requestContext, false);
         assertEquals("/site/ho+me?hint=one#chapter1" + URLEncoder.encode("&delay=two", "UTF-8"), result);
+    }
+
+    protected Session createSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
 }
