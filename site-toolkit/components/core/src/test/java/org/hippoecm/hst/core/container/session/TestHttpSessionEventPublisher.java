@@ -15,15 +15,11 @@
  */
 package org.hippoecm.hst.core.container.session;
 
-import static org.junit.Assert.assertSame;
-
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -33,6 +29,8 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.junit.Assert.assertSame;
 
 /**
  * TestHttpSessionEventPublisher
