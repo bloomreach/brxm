@@ -158,6 +158,9 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             assertEquals("wrong link.getPath for News/News1", "news/News1.html", newsLink.getPath());
         } finally {
             restoreHstConfigBackup(session);
+            if (session != null) {
+                session.logout();
+            }
         }
     }
 
@@ -189,6 +192,9 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
                     , "aaa1/News1.html", newsLink.getPath());
         } finally {
             restoreHstConfigBackup(session);
+            if (session != null) {
+                session.logout();
+            }
         }
     }
 
