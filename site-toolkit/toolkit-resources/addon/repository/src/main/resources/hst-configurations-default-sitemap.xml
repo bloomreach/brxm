@@ -29,18 +29,7 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="_any_.eot">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.ftl">
+  <sv:node sv:name="_any_.CSS">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -62,7 +51,7 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="_any_.html">
+  <sv:node sv:name="_any_.GIF">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -84,7 +73,29 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="_any_.ICO">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="_any_.jpeg">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="_any_.JPEG">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -106,6 +117,17 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="_any_.JPG">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="_any_.js">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -117,7 +139,7 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="_any_.json">
+  <sv:node sv:name="_any_.JS">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -128,7 +150,7 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="_any_.map">
+  <sv:node sv:name="_any_.pdf">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -139,40 +161,7 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="_any_.mp3">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.mp4">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.ogg">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.otf">
+  <sv:node sv:name="_any_.PDF">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -194,6 +183,17 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="_any_.PNG">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="_any_.svg">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -205,40 +205,7 @@
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="_any_.ttf">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.wav">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.webm">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_.woff">
+  <sv:node sv:name="_any_.SVG">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
