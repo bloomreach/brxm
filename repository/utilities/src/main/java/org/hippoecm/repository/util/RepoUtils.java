@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Manifest;
 
+import javax.jcr.Session;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO9075;
 
@@ -136,6 +138,14 @@ public class RepoUtils {
             builder.append("/");
         }
         return builder.substring(0, builder.length() - 1);
+    }
+
+    public static String getClusterNodeId(Session session) {
+        String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
+        if (clusteNodeId == null) {
+            clusteNodeId = "default";
+        }
+        return clusteNodeId;
     }
 
 }

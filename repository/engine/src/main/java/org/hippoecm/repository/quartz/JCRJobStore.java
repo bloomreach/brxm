@@ -47,6 +47,7 @@ import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.api.SynchronousEventListener;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.quartz.Calendar;
 import org.quartz.CronTrigger;
@@ -86,6 +87,7 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_S
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
 import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
+import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
 import static org.quartz.SimpleTrigger.REPEAT_INDEFINITELY;
 
 
@@ -890,14 +892,6 @@ public class JCRJobStore implements JobStore {
             node.addMixin(JcrConstants.MIX_LOCKABLE);
         }
         session.save();
-    }
-
-    private static String getClusterNodeId(Session session) {
-        String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
-        if (clusteNodeId == null) {
-            clusteNodeId = "default";
-        }
-        return clusteNodeId;
     }
 
 

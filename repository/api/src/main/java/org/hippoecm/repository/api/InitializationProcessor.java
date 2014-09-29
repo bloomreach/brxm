@@ -75,4 +75,20 @@ public interface InitializationProcessor {
      * @param logger  the logger to use
      */
     void setLogger(Logger logger);
+
+    /**
+     * Obtain a cluster-wide lock on the initialization process to prevent concurrent initialization attempts.
+     * Waits until the lock becomes available if the lock is already held by another session.
+     *
+     * @return whether the lock was successfully obtained.
+     * @throws RepositoryException
+     */
+    boolean lock(Session session) throws RepositoryException;
+
+    /**
+     * Free the lock previously obtained by the {@link #lock(javax.jcr.Session)} method.
+     * @throws RepositoryException
+     */
+    void unlock(Session session) throws RepositoryException;
+
 }

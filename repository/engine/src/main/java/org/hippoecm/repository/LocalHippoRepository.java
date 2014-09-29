@@ -34,7 +34,6 @@ import java.util.Properties;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
-import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -327,22 +326,19 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         jackrabbitRepository = new LocalRepositoryImpl(repConfig);
 
         repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
+        boolean locked = false;
+        Session bootstrapSession = null;
+        final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
         try {
-            // get the current root/system session for the default workspace for namespace and nodetypes init
-            Session jcrRootSession =  jackrabbitRepository.getRootSession(null);
+            final Session rootSession =  jackrabbitRepository.getRootSession(null);
 
-            if(!jcrRootSession.getRootNode().isNodeType("mix:referenceable")) {
-                jcrRootSession.getRootNode().addMixin("mix:referenceable");
-                jcrRootSession.save();
-            }
-
-            final boolean initializedBefore = initializedBefore(jcrRootSession);
+            final boolean initializedBefore = initializedBefore(rootSession);
             if (initializedBefore) {
                 switch(readUpgradeFlag()) {
                 case TRUE:
                     jackrabbitRepository.enableVirtualLayer(false);
-                    migrate(jcrRootSession);
+                    migrate(rootSession);
                     if (needsRestart) {
                         return;
                     }
@@ -354,30 +350,47 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 }
             }
 
-            SessionDecorator bootstrapSession = null;
             List<PostStartupTask> postStartupTasks = Collections.emptyList();
 
             if (!initializedBefore || isContentBootstrapEnabled()) {
                 final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-                bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(credentials), credentials);
-                initializeSystemNodeTypes(bootstrapSession, jackrabbitRepository.getFileSystem());
-                postStartupTasks = contentBootstrap(bootstrapSession);
+                bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
+                initializeSystemNodeTypes(initializationProcessor, bootstrapSession, jackrabbitRepository.getFileSystem());
+                if (!bootstrapSession.getRootNode().hasNode("hippo:configuration")) {
+                    log.info("Initializing configuration content");
+                    InputStream configuration = getClass().getResourceAsStream("configuration.xml");
+                    if (configuration != null) {
+                        initializationProcessor.initializeNodecontent(bootstrapSession, "/", configuration, null);
+                    } else {
+                        log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
+                    }
+                    bootstrapSession.save();
+                } else {
+                    log.info("Initial configuration content already present");
+                }
+                if (locked = initializationProcessor.lock(bootstrapSession)) {
+                    postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
+                } else {
+                    throw new RepositoryException("Cannot proceed with initialization: failed to obtain lock on initialization processor");
+                }
             }
 
             jackrabbitRepository.enableVirtualLayer(true);
 
-            moduleManager = new ModuleManager(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            moduleManager = new ModuleManager(rootSession.impersonate(new SimpleCredentials("system", new char[]{})));
             moduleManager.start();
 
             log.debug("Executing post-startup tasks");
             for (PostStartupTask task : postStartupTasks) {
                 task.execute();
             }
+        } finally {
+            if (locked) {
+                initializationProcessor.unlock(bootstrapSession);
+            }
             if (bootstrapSession != null) {
                 bootstrapSession.logout();
             }
-        } catch (LoginException ex) {
-            log.error("no access to repository by repository itself", ex);
         }
     }
 
@@ -436,23 +449,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         return Boolean.getBoolean(SYSTEM_BOOTSTRAP_PROPERTY);
     }
 
-    private List<PostStartupTask> contentBootstrap(final Session systemSession) throws RepositoryException {
-        final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
-
-        if (!systemSession.getRootNode().hasNode("hippo:configuration")) {
-            log.info("Initializing configuration content");
-            InputStream configuration = getClass().getResourceAsStream("configuration.xml");
-            if (configuration != null) {
-                initializationProcessor.initializeNodecontent(systemSession, "/", configuration, null);
-            } else {
-                log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
-            }
-            systemSession.save();
-        } else {
-            log.info("Initial configuration content already present");
-        }
-
-        // load all extension resources
+    private List<PostStartupTask> contentBootstrap(final InitializationProcessorImpl initializationProcessor, final Session systemSession) throws RepositoryException {
         try {
             initializationProcessor.loadExtensions(systemSession);
         } catch (IOException ex) {
@@ -486,9 +483,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    private void initializeSystemNodeTypes(final Session systemSession, final FileSystem fileSystem) throws RepositoryException {
+    private void initializeSystemNodeTypes(final InitializationProcessorImpl initializationProcessor, final Session systemSession, final FileSystem fileSystem) throws RepositoryException {
         final Session syncSession = systemSession.impersonate(new SimpleCredentials("system", new char[] {}));
-        final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
         final Properties checksumProperties = new Properties();
         try {
