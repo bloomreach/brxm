@@ -97,18 +97,12 @@ public class CountryGroupingChannelStore extends ChannelStore {
         try{
             Locale locale = LocaleUtils.toLocale(channelLocaleAsString);
             String countryCode = locale.getCountry();
-            return StringUtils.isEmpty(countryCode) ? UNKNOWN_COUNTRYCODE : countryCode;
-
+            if (StringUtils.isNotBlank(countryCode)) {
+                return countryCode;
+            }
         } catch (IllegalArgumentException e){
             log.warn("Channel locale is not a legal locale. Channel name: {}, id: {}, locale: {}", new String[]{channel.getName(), channel.getId(), channel.getLocale()});
-
-            //Hippo can use any string as a locale, for example 7_9, even if it isn't a valid java locale
-            //So we have to do some more, manual processing
-            if(StringUtils.isBlank(channelLocaleAsString) || channelLocaleAsString.indexOf('_') == -1){
-                return UNKNOWN_COUNTRYCODE;
-            }
-            String countryCode = channelLocaleAsString.substring(channelLocaleAsString.indexOf('_') + 1);
-            return StringUtils.isBlank(countryCode) ? UNKNOWN_COUNTRYCODE : countryCode;
         }
+        return UNKNOWN_COUNTRYCODE;
     }
 }
