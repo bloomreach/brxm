@@ -132,7 +132,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
                     return !target.getNode(target.getName()).isNodeType(NT_DELETED);
                 }
             }
-        } catch (ItemNotFoundException|NamespaceException ignored) {
+        } catch (ItemNotFoundException|NamespaceException|IllegalArgumentException ignored) {
             log.debug("Ignoring exception while checking that link '{}' exists and assume it does not exist", linkRelPath, ignored);
         } catch (RepositoryException e) {
             log.error("Error while checking internal link existence", e);
