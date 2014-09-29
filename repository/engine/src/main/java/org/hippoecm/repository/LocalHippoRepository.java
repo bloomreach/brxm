@@ -60,10 +60,12 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.modules.ModuleManager;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEFOLDER;
+import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
 
 public class LocalHippoRepository extends HippoRepositoryImpl {
 
@@ -332,6 +334,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         try {
             final Session rootSession =  jackrabbitRepository.getRootSession(null);
+            ensureRootIsReferenceable(rootSession);
 
             final boolean initializedBefore = initializedBefore(rootSession);
             if (initializedBefore) {
@@ -391,6 +394,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             if (bootstrapSession != null) {
                 bootstrapSession.logout();
             }
+        }
+    }
+
+    private void ensureRootIsReferenceable(final Session rootSession) throws RepositoryException {
+        if(!rootSession.getRootNode().isNodeType(MIX_REFERENCEABLE)) {
+            rootSession.getRootNode().addMixin(MIX_REFERENCEABLE);
+            rootSession.save();
         }
     }
 
