@@ -174,9 +174,15 @@
     <appender-ref ref="console"/>
   </logger>
 
-
   <logger additivity="false" name="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <level value="info"/>
+    <appender-ref ref="site"/>
+    <appender-ref ref="intranet"/>
+    <appender-ref ref="console"/>
+  </logger>
+
+  <logger additivity="false" name="org.hippoecm.hst.cache.esi.ESIPageRenderer">
+    <level value="error"/>
     <appender-ref ref="site"/>
     <appender-ref ref="intranet"/>
     <appender-ref ref="console"/>
