@@ -60,8 +60,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
     static final Logger log = LoggerFactory.getLogger(WorkflowManagerImpl.class);
 
-    private static final ThreadLocal<String> INTERACTION_ID = new ThreadLocal<>();
-    private static final ThreadLocal<String> INTERACTION = new ThreadLocal<>();
+    private static final ThreadLocal<String> tlInteractionId = new ThreadLocal<>();
+    private static final ThreadLocal<String> tlInteraction = new ThreadLocal<>();
 
     /**
      * userSession is the session from which this WorkflowManager instance was created.
@@ -354,13 +354,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
             WorkflowPostActions postActions = null;
             boolean resetInteraction = false;
-            String interaction = INTERACTION.get();
-            String interactionId = INTERACTION_ID.get();
+            String interaction = tlInteraction.get();
+            String interactionId = tlInteractionId.get();
             if (interactionId == null) {
                 interactionId = UUID.randomUUID().toString();
-                INTERACTION_ID.set(interactionId);
+                tlInteractionId.set(interactionId);
                 interaction = category + ":" + workflowName + ":" + method.getName();
-                INTERACTION.set(interaction);
+                tlInteraction.set(interaction);
                 resetInteraction = true;
             }
             Method targetMethod = null;
@@ -392,8 +392,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 throw e;
             } finally {
                 if (resetInteraction) {
-                    INTERACTION.remove();
-                    INTERACTION_ID.remove();
+                    tlInteraction.remove();
+                    tlInteractionId.remove();
                 }
                 if (postActions != null) {
                     postActions.dispose();
