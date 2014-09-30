@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,162 @@
 
 package org.hippoecm.frontend.plugins.console.menu.open;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.RequiredTextFieldWidget;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.StringCodecFactory;
 
 public class OpenDialog extends AbstractDialog<Node> {
 
+    private final String WICKET_ELEMENT_ID = "pathOrId";
+
     private static final long serialVersionUID = 1L;
     private String pathOrId;
-    private TextFieldWidget tf;
     private NodeModelReference modelReference;
 
     public OpenDialog(final NodeModelReference modelReference) {
         this.modelReference = modelReference;
-
-        IModel<String> labelModel = new Model<String>("Path/UUID");
+        IModel<String> labelModel = new Model<>("Path/UUID");
         add(new Label("label", labelModel));
-        add(tf = new RequiredTextFieldWidget("pathOrId", new PropertyModel<String>(this, "pathOrId"), labelModel));
-        tf.setSize("85");
-        setFocus(tf);
+        add(setFocus(makeValueField(getValueCurrentlySelectedJcrNode())));
+    }
+
+    private AutoCompleteTextField<String> makeValueField(final PropertyModel<String> value) {
+        return new AutoCompleteTextField<String>(
+                WICKET_ELEMENT_ID, value, getAutoCompleteSettings()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+                Collection<String> result = new TreeSet<>();
+                addMatchingNodes(input, result);
+                return result.iterator();
+            }
+
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                super.renderHead(response);
+                String script = "document.getElementById('" + getMarkupId() + "').focus(); "
+                        + "document.getElementById('" + getMarkupId() + "').select();";
+                response.render(OnDomReadyHeaderItem.forScript(script));
+                response.render(CssHeaderItem.forReference(new CssResourceReference(
+                        DefaultCssAutoCompleteTextField.class, "DefaultCssAutoCompleteTextField.css")));
+            }
+        };
+    }
+
+    private PropertyModel<String> getValueCurrentlySelectedJcrNode() {
+        PropertyModel<String> value = new PropertyModel<>(this, WICKET_ELEMENT_ID);
+        final Node node = modelReference.getModel().getObject();
+        try {
+            value.setObject(node.getPath());
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private AutoCompleteSettings getAutoCompleteSettings() {
+        AutoCompleteSettings settings = new AutoCompleteSettings();
+        settings.setAdjustInputWidth(false)
+                .setUseSmartPositioning(true)
+                .setShowCompleteListOnFocusGain(true)
+                .setShowListOnEmptyInput(true);
+        return settings;
+    }
+
+    private void addMatchingNodes(String path, Collection<String> result) {
+        String relPath = path.substring(1);
+        try {
+            NodeIterator nodes = getNodesFromRelativePath(relPath);
+            while(nodes.hasNext()) {
+                result.add(nodes.nextNode().getPath());
+            }
+        } catch (PathNotFoundException e) {
+            addNodesMatchingOnSubstring(relPath, result);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private NodeIterator getNodesFromRelativePath(String relPath) throws RepositoryException {
+        Node node = UserSession.get().getRootNode();
+        if (!relPath.isEmpty()) {
+            relPath = removeDoubleSlashes(relPath);
+            Node nodeAtPath = getNodeIgnoreException(node, relPath);
+            if (nodeAtPath != null) {
+                node = nodeAtPath;
+            }
+            else {
+                // Special characters (such as colon, eg in "/hst:hst") result in false negatives.
+                String encRelPath = StringCodecFactory.ISO9075Helper.encodeLocalName(relPath);
+                nodeAtPath = getNodeIgnoreException(node, encRelPath);
+                if (nodeAtPath != null) {
+                    node = nodeAtPath;
+                }
+                else {
+                    throw new PathNotFoundException("Couldn't find node with relative path: " + relPath);
+                }
+            }
+        }
+        return node.getNodes();
+    }
+
+    private String removeDoubleSlashes(String path) {
+        while (path.contains("//")) {
+            path = path.replace("//", "/");
+        }
+        return path;
+    }
+
+    private Node getNodeIgnoreException(Node node, String path) {
+        try {
+            return node.getNode(path);
+        }
+        catch (RepositoryException e) {
+            //ignore
+        }
+        return null;
+    }
+
+    private void addNodesMatchingOnSubstring(String relPath, Collection<String> result) {
+        String subPath = relPath.substring(0, relPath.lastIndexOf('/') + 1);
+        String remainingQuery = relPath.substring(subPath.length());
+        try {
+            NodeIterator nodes = getNodesFromRelativePath(subPath);
+            while (nodes.hasNext()) {
+                final Node node = nodes.nextNode();
+                if (node.getName().startsWith(remainingQuery)) {
+                    result.add(node.getPath());
+                }
+            }
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -74,7 +198,6 @@ public class OpenDialog extends AbstractDialog<Node> {
 
         if(selected ==  null) {
             error("Node was not found, please try again.");
-            setFocus(tf);
         } else {
             modelReference.setModel(new JcrNodeModel(selected));
         }
