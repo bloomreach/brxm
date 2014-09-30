@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="channel-list" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-  <sv:property sv:name="channelRegionIconPath" sv:type="String" h:merge="override">
-    <sv:value>/content/gallery/channels/${region}.png/${region}.png/hippogallery:original</sv:value>
-  </sv:property>
-  <sv:property sv:name="channelStore" sv:type="String">
-    <sv:value>org.onehippo.cms7.channelmanager.channels.CountryGroupingChannelStore</sv:value>
-  </sv:property>
-</sv:node>
