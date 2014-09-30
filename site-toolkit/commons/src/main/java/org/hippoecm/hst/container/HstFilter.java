@@ -229,37 +229,37 @@ public class HstFilter implements Filter {
             request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
         }
 
-		if (request.getAttribute(FILTER_DONE_KEY) != null) {
-			chain.doFilter(request, response);
-			return;
-		}
+        if (request.getAttribute(FILTER_DONE_KEY) != null) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-    	HttpServletRequest req = (HttpServletRequest)request;
+        HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
 
-		request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
+        request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
 
-    	boolean requestContextSetToProvider = false;
+        boolean requestContextSetToProvider = false;
 
         Task rootTask = null;
 
         try {
-    		if (!HstServices.isAvailable()) {
-    			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-    			log.error("The HST Container Services are not initialized yet.");
-    			return;
-    		}
+            if (!HstServices.isAvailable()) {
+                res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                log.error("The HST Container Services are not initialized yet.");
+                return;
+            }
 
-    		// ensure ClientComponentManager (if defined) is initialized properly
-    		if (!initialized) {
-    		    synchronized (this) {
-    		        if (!initialized) {
-    	                doInit(filterConfig);
-    	                initialized = true;
-    		        }
-    		    }
-    		}
-    	    HstManager hstManager = getHstManager();
+            // ensure ClientComponentManager (if defined) is initialized properly
+            if (!initialized) {
+                synchronized (this) {
+                    if (!initialized) {
+                        doInit(filterConfig);
+                        initialized = true;
+                    }
+                }
+            }
+            HstManager hstManager = getHstManager();
             if (hstManager != currentManagerInstance) {
                 synchronized (this) {
                     currentManagerInstance = hstManager;
@@ -271,23 +271,23 @@ public class HstFilter implements Filter {
                     }
                 }
             }
-    	    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstManager.getSiteMapItemHandlerFactory();
+            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstManager.getSiteMapItemHandlerFactory();
 
-    	    if(siteMapItemHandlerFactory == null || hstManager == null) {
+            if(siteMapItemHandlerFactory == null || hstManager == null) {
                 res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 log.error("The HstManager or siteMapItemHandlerFactory is not available");
                 return;
             }
 
-    		if (requestContainerConfig == null) {
-        		synchronized (this) {
-        			if (requestContainerConfig == null) {
-        				requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
-        			}
-        		}
-    		}
+            if (requestContainerConfig == null) {
+                synchronized (this) {
+                    if (requestContainerConfig == null) {
+                        requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
+                    }
+                }
+            }
 
-    		// Sets up the container request wrapper
+            // Sets up the container request wrapper
             HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
@@ -343,27 +343,27 @@ public class HstFilter implements Filter {
                         return;
                     }
                 }
-    	    }
+            }
 
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
 
-    		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-    		if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(containerRequest.getPathInfo()))) {
-    		    chain.doFilter(request, response);
-    			return;
-    		}
+            // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
+            if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(containerRequest.getPathInfo()))) {
+                chain.doFilter(request, response);
+                return;
+            }
 
             HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
-    		if (requestContext == null) {
-        		HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
-        		requestContext = rcc.create();
-        		if (this.contextNamespace != null) {
-        			requestContext.setContextNamespace(contextNamespace);
-        		}
-        		containerRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
-    		}
-    		requestContext.setServletContext(filterConfig.getServletContext());
+            if (requestContext == null) {
+                HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
+                requestContext = rcc.create();
+                if (this.contextNamespace != null) {
+                    requestContext.setContextNamespace(contextNamespace);
+                }
+                containerRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
+            }
+            requestContext.setServletContext(filterConfig.getServletContext());
             requestContext.setPathSuffix(containerRequest.getPathSuffix());
 
             if("true".equals(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
@@ -504,9 +504,9 @@ public class HstFilter implements Filter {
                     HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                 }
             }
-    	}
-    	catch (MatchException e) {
-    	    if(log.isDebugEnabled()) {
+        }
+        catch (MatchException e) {
+            if(log.isDebugEnabled()) {
                 log.info(e.getClass().getName() + " for '{}':", req.getRequestURI() , e);
             } else {
                 log.info(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
@@ -527,24 +527,24 @@ public class HstFilter implements Filter {
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    	catch (Exception e) {
+        catch (Exception e) {
             if(log.isDebugEnabled()) {
                 log.warn("Unknown error encountered while processing request '{}':", req.getRequestURI(), e);
             } else {
                 log.warn("Unknown error encountered while processing request '{}': {}", req.getRequestURI(), e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    	}
-    	finally {
-    	    // clears up the current thread's active request context object.
-    	    if (requestContextSetToProvider) {
-    	        RequestContextProvider.clear();
-    	    }
+        }
+        finally {
+            // clears up the current thread's active request context object.
+            if (requestContextSetToProvider) {
+                RequestContextProvider.clear();
+            }
 
             if (rootTask != null) {
                 HDC.cleanUp();
             }
-    	}
+        }
     }
 
     private void setHstServletPath(final GenericHttpServletRequestWrapper request, final ResolvedMount resolvedMount) {
@@ -791,11 +791,11 @@ public class HstFilter implements Filter {
 
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager,
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers) throws ContainerException {
-    	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
-    	if (processHandlers) {
+        if (processHandlers) {
             initializeResourceLifecycleManagements();
-        	// run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
+            // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
             try {
                 resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res, filterChain);
                 if(resolvedSiteMapItem == null) {
@@ -809,27 +809,27 @@ public class HstFilter implements Filter {
                 cleanupResourceLifecycleManagements();
                 throw e;
             }
-    		// sync possibly changed ResolvedSiteMapItem
-    		requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-    	}
+            // sync possibly changed ResolvedSiteMapItem
+            requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        }
 
-		if (resolvedSiteMapItem.getErrorCode() > 0) {
-			try {
-				if (log.isDebugEnabled()) {
+        if (resolvedSiteMapItem.getErrorCode() > 0) {
+            try {
+                if (log.isDebugEnabled()) {
                     log.debug("The resolved sitemap item for {} has error status: {}", requestContext.getBaseURL().getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-				}
-				res.sendError(resolvedSiteMapItem.getErrorCode());
-
-			} catch (IOException e) {
-				if (log.isDebugEnabled()) {
+                }
+                res.sendError(resolvedSiteMapItem.getErrorCode());
+                
+            } catch (IOException e) {
+                if (log.isDebugEnabled()) {
                     log.warn("Exception invocation on sendError().", e);
-				} else if (log.isWarnEnabled()) {
+                } else if (log.isWarnEnabled()) {
                     log.warn("Exception invocation on sendError().");
-				}
-			}
-			// we're done:
-			return;
-		}
+                }
+            }
+            // we're done:
+            return;
+        }
 
         if (resolvedSiteMapItem.getStatusCode() > 0) {
             log.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code"
@@ -837,9 +837,9 @@ public class HstFilter implements Filter {
             res.setStatus(resolvedSiteMapItem.getStatusCode());
         }
 
-		HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
+        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
 
-		// now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
+        // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
         if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
             String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
             req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
@@ -856,7 +856,7 @@ public class HstFilter implements Filter {
             processResolvedSiteMapItem(req, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true);
         }
 
-		return;
+        return;
     }
 
     /**
