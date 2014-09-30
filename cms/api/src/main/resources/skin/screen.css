@@ -785,6 +785,37 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   width: 156px;
 }
 
+/* Split the dropdown in columns if there are many languages */
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    overflow:hidden;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
+    width:320px;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    width:480px;
+
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li,
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
+    float:left;
+    clear: none;
+    display:inline;
+    margin-right: 0;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li {
+    width:50%;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
+    width:33.333%;
+}
+
 /* override from wicket styles */
 .hippo-toolbar-section-button {
   padding-right: 20px;

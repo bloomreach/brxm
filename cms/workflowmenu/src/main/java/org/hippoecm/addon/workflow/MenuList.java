@@ -18,14 +18,20 @@ package org.hippoecm.addon.workflow;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.Model;
 
 class MenuList extends Panel implements MenuComponent {
 
     private static final long serialVersionUID = 1L;
+
+    private static final int TWO_COL_THRESHOLD = 20;
+    private static final int THREE_COL_THRESHOLD = 40;
+
     private final List<Component> list;
     private final MenuHierarchy menu;
 
@@ -46,5 +52,15 @@ class MenuList extends Panel implements MenuComponent {
     public void update() {
         this.list.clear();
         this.list.addAll(menu.list(this));
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+        if (list.size() > THREE_COL_THRESHOLD) {
+            add(new AttributeAppender("class", true, Model.of("hippo-toolbar-three-col"), " "));
+        } else if (list.size() > TWO_COL_THRESHOLD) {
+            add(new AttributeAppender("class", true, Model.of("hippo-toolbar-two-col"), " "));
+        }
     }
 }
