@@ -30,7 +30,7 @@
 
   <artifactId>hippo-project-archetype</artifactId>
   <version>2.00.03-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <packaging>maven-archetype</packaging>
 
   <properties>
     <notice.project.name>Hippo CMS7 Project Archetype</notice.project.name>
