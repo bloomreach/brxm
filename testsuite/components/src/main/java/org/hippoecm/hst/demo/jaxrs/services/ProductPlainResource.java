@@ -40,7 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.BaseWorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
@@ -55,7 +55,7 @@ import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
 import org.hippoecm.hst.demo.jaxrs.services.util.ResponseUtils;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -300,26 +300,26 @@ public class ProductPlainResource extends AbstractResource {
             productBean.setTags(productRepresentation.getTags());
 
             if (StringUtils.equals("requestPublication", workflowAction)) {
-                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                    public void processWorkflow(DocumentWorkflow wf) throws Exception {
                         wf.requestPublication();
                     }
                 });
             } else if (StringUtils.equals("publish", workflowAction)) {
-                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                    public void processWorkflow(DocumentWorkflow wf) throws Exception {
                         wf.publish();
                     }
                 });
             } else if (StringUtils.equals("requestDepublication", workflowAction)) {
-                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                    public void processWorkflow(DocumentWorkflow wf) throws Exception {
                         wf.requestDepublication();
                     }
                 });
             } else if (StringUtils.equals("depublish", workflowAction)) {
-                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                    public void processWorkflow(DocumentWorkflow wf) throws Exception {
                         wf.depublish();
                     }
                 });

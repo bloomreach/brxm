@@ -28,14 +28,14 @@ import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.BaseWorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoRequestBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,6 @@ public class TodoList extends BaseHstComponent {
             final String requestPath = request.getParameter("requestPath");
             final String requestType = request.getParameter("requestType");
             final String documentAction = request.getParameter("documentAction");
-
             if (requestPath == null || "".equals(requestPath)) {
                 return;
             }
@@ -70,19 +69,18 @@ public class TodoList extends BaseHstComponent {
             persistableSession = getPersistableSession(request);
 
             wpm = getWorkflowPersistenceManager(persistableSession);
-            wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullRequestWorkflow>() {
-                public void processWorkflow(FullRequestWorkflow wf) throws Exception {
-                    FullRequestWorkflow fraw = (FullRequestWorkflow) wf;
-
+            HippoRequestBean requestBean = (HippoRequestBean) wpm.getObject(requestPath);
+            final String hippoRequestIdentifier = requestBean.getNode().getIdentifier();
+            wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                public void processWorkflow(DocumentWorkflow wf) throws Exception {
                     if ("Accept".equals(documentAction)) {
-                        fraw.acceptRequest();
+                        wf.acceptRequest(hippoRequestIdentifier);
                     } else if ("Reject".equals(documentAction)) {
-                        fraw.cancelRequest();
+                        wf.cancelRequest(hippoRequestIdentifier);
                     }
                 }
             });
 
-            HippoRequestBean requestBean = (HippoRequestBean) wpm.getObject(requestPath);
             wpm.update(requestBean);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -126,12 +124,12 @@ public class TodoList extends BaseHstComponent {
                 queryLimit = Long.parseLong(param);
             }
 
-            List<HippoRequestBean> todoList = new ArrayList<HippoRequestBean>();
+            List<HippoRequestBean> todoList = new ArrayList<>();
 
             Query query = request.getRequestContext().getSession().getWorkspace().getQueryManager().createQuery(todoItemsQuery, Query.XPATH);
 
             if (query instanceof HippoQuery) {
-                ((HippoQuery) query).setLimit(queryLimit);
+                query.setLimit(queryLimit);
             }
 
             QueryResult result = query.execute();
