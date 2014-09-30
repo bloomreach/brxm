@@ -17,8 +17,6 @@
 package org.hippoecm.hst.content.beans.manager.workflow;
 
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -37,12 +35,6 @@ public class TestBaseWorkflowCallbackHandler {
         }.getWorkflowType());
         assertEquals(EditableWorkflow.class, new BaseWorkflowCallbackHandler<EditableWorkflow>() {
             public void processWorkflow(final EditableWorkflow workflow) throws Exception {}
-        }.getWorkflowType());
-        assertEquals(FullRequestWorkflow.class, new BaseWorkflowCallbackHandler<FullRequestWorkflow>() {
-            public void processWorkflow(final FullRequestWorkflow workflow) throws Exception {}
-        }.getWorkflowType());
-        assertEquals(FullReviewedActionsWorkflow.class, new BaseWorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-            public void processWorkflow(final FullReviewedActionsWorkflow workflow) throws Exception {}
         }.getWorkflowType());
         assertEquals(DocumentWorkflow.class, new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
             public void processWorkflow(final DocumentWorkflow workflow) throws Exception {}

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.manager.workflow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,10 +28,12 @@ import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
@@ -104,8 +103,8 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
         ObjectConverter objectConverter = getObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-        wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-            public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+        wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+            public void processWorkflow(DocumentWorkflow wf) throws Exception {
                 wf.requestPublication();
             }
         });
@@ -155,8 +154,8 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
         ObjectConverter objectConverter = getObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-        wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-            public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+        wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+            public void processWorkflow(DocumentWorkflow wf) throws Exception {
                 wf.requestPublication();
             }
         });

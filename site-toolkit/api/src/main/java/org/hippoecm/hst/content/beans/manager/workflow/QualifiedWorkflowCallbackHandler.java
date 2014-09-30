@@ -23,7 +23,7 @@ import org.hippoecm.repository.api.Workflow;
  * post-processing (like publishing) during a WorkflowPersistenceManager update call.
  * @param <T> The Workflow specific type which should be provided during the callback
  */
-public interface QualifiedWorkflowCallbackHandler<T extends Workflow> extends WorkflowCallbackHandler<T> {
+public interface QualifiedWorkflowCallbackHandler<T extends Workflow> {
 
     /**
      * @return The expected type of Workflow in the callback call
@@ -36,6 +36,5 @@ public interface QualifiedWorkflowCallbackHandler<T extends Workflow> extends Wo
      * @param workflow The Workflow instance retrieved for the update
      * @throws Exception To report back any exception to the WorkflowPersistenceManager invoking process.
      */
-    @Override
     void processWorkflow(T workflow) throws Exception;
 }

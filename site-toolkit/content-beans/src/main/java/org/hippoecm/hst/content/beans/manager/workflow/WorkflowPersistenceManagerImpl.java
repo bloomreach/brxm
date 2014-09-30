@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -101,14 +101,6 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * The workflow category name to add a new folder.
      */
     protected String folderAdditionWorkflowCategory = "new-folder"; 
-
-    /**
-     * Workflow callback handler
-     * @deprecated since 2.28.00 (CMS 7.9), use {@link #workflowCallbackHandler} instead
-     */
-    @SuppressWarnings("rawtypes")
-    @Deprecated
-    protected WorkflowCallbackHandler deprecatedWorkflowCallbackHandler;
 
     /**
      * Qualified Workflow callback handler
@@ -367,8 +359,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 Node contentNode = contentBean.getNode();
                 contentNode = getCanonicalNode(contentNode);
                 Class<? extends Workflow> workflowType = workflowCallbackHandler != null ? workflowCallbackHandler.getWorkflowType() : null;
-                WorkflowCallbackHandler currentCallbackHandler = workflowCallbackHandler != null ? workflowCallbackHandler : deprecatedWorkflowCallbackHandler;
-                boolean documentWorkflowType = currentCallbackHandler == null || ((workflowType != null && DocumentWorkflow.class.isAssignableFrom(workflowType)));
+                boolean documentWorkflowType = workflowCallbackHandler == null || ((workflowType != null && DocumentWorkflow.class.isAssignableFrom(workflowType)));
                 Node workflowNode = documentWorkflowType ? getHandleForDocumentWorkflow(contentNode) : contentNode;
                 if (workflowNode == null) {
                     // needed fallback if provided contentNode doesn't 'live'
@@ -412,7 +403,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                                         wf = getWorkflow(documentNodeWorkflowCategory, document);
                                     }
                                     if (wf != null) {
-                                        currentCallbackHandler.processWorkflow(wf);
+                                        workflowCallbackHandler.processWorkflow(wf);
                                     } else {
                                         throw new ObjectBeanPersistenceException("Workflow callback cannot be called because the workflow is null. ");
                                     }
@@ -423,9 +414,9 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         } else {
                             throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + path + ": " + wf);
                         } 
-                    } else if (currentCallbackHandler != null) {
+                    } else if (workflowCallbackHandler != null) {
                         if (wf != null) {
-                            currentCallbackHandler.processWorkflow(wf);
+                            workflowCallbackHandler.processWorkflow(wf);
                         } 
                     }
                 } else {
@@ -595,20 +586,6 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      */
     public void setDocumentAdditionWorkflowCategory(String documentAdditionWorkflowCategory) {
         this.documentAdditionWorkflowCategory = documentAdditionWorkflowCategory;
-    }
-
-    /**
-     * @deprecated since 2.28.00 (CMS 7.9), use {@link #setWorkflowCallbackHandler(QualifiedWorkflowCallbackHandler)} instead
-     * @param workflowCallbackHandler
-     */
-    @Deprecated
-    public void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler) {
-        if (workflowCallbackHandler instanceof QualifiedWorkflowCallbackHandler) {
-            this.workflowCallbackHandler = (QualifiedWorkflowCallbackHandler)workflowCallbackHandler;
-        }
-        else {
-            this.deprecatedWorkflowCallbackHandler = workflowCallbackHandler;
-        }
     }
 
     public void setWorkflowCallbackHandler(QualifiedWorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler) {
