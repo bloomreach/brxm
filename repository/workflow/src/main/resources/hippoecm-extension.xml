@@ -103,7 +103,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.02</sv:value>
+      <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
 
@@ -125,7 +125,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.03</sv:value>
+      <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="shortcuts-workflows">
@@ -188,7 +188,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.02</sv:value>
+      <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
 
@@ -210,7 +210,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.02</sv:value>
+      <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
   <!--Workflows configuration-->
@@ -231,7 +231,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.02</sv:value>
+      <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
   <!--Workflows configuration-->
