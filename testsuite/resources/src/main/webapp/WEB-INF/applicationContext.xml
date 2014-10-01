@@ -57,12 +57,6 @@
   <bean id="contactViewController"
     class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
 
-  <!-- HST Component Beans -->
-  <bean id="contactBean" class="org.hippoecm.hst.demo.spring.ContactSpring">
-    <property name="mailSender" ref="mailSender" />
-    <property name="templateMessage" ref="templateMessage" />
-  </bean>
-  
   <bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
     <property name="to" value="contact@mycompany.com" />
     <property name="subject" value="My opinion" />
