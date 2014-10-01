@@ -57,19 +57,19 @@
 <script language="javascript">
 <!--
 function <hst:namespace/>mycb(req) {
-    var text = req.responseText;
-    if (text) {
-    	simpleio_objectbyid("<hst:namespace/>datetime").innerHTML = text;
-    }
-    window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
+  var text = req.responseText;
+  if (text) {
+    simpleio_objectbyid("<hst:namespace/>datetime").innerHTML = text;
+  }
+  window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
 }
 function <hst:namespace/>refreshDateTime() {
-	simpleio_sendrequest("<hst:resourceURL/>", <hst:namespace/>mycb, null);
+  simpleio_sendrequest("<hst:resourceURL/>", <hst:namespace/>mycb, null);
 }
 window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
 
 function <hst:namespace/>refreshTime() {
-    simpleio_sendrequest("<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
+  simpleio_sendrequest("<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
 }
 //-->
 </script>
