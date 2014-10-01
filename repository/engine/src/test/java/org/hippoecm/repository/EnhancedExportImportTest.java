@@ -268,6 +268,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
 
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
-        assertEquals(10L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());
+        assertEquals(2, testImport.getNodes(TEST_EXPORT_NODE).getSize());
+        assertEquals(5L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());
     }
 }

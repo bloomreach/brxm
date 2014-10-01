@@ -32,14 +32,11 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 
-import org.apache.cxf.common.util.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
@@ -266,14 +263,6 @@ public class EnhancedSystemViewImporter implements Importer {
         }
         if (parent.hasNode(nodeName, index)) {
             final NodeImpl existing = parent.getNode(nodeName, index);
-            if (importPath.equals(parent.safeGetJCRPath())) {
-                if (!nodeInfo.mergeSkip() && !nodeInfo.mergeOverlay() && !nodeInfo.mergeCombine()
-                        && StringUtils.isEmpty(nodeInfo.mergeInsertBefore())) {
-                    log.info("Implicit merge on context root {}", existing.safeGetJCRPath());
-                    parents.push(existing);
-                    return;
-                }
-            }
             nodeInfo = resolveMergeConflict(existing, nodeInfo);
             if (nodeInfo == null) {
                 parents.push(null);

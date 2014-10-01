@@ -73,7 +73,7 @@ public class EnhancedImportTest extends RepositoryTestCase {
         importXML("/test", name + "-fixture.xml");
         importXML("/test", name + "-merge.xml");
         importXML("/compare", name + "-result.xml");
-        assertTrue(compare(session.getRootNode().getNode("test"), session.getRootNode().getNode("compare/test")));
+        assertTrue(compare(session.getNode("/test"), session.getNode("/compare/test")));
     }
 
     private void importXML(final String path, final String resource) throws Exception {
@@ -148,6 +148,12 @@ public class EnhancedImportTest extends RepositoryTestCase {
         if (!operations.isEmpty()) {
             final PatchWriter patchWriter = new PatchWriter(patch, new OutputStreamWriter(System.out));
             patchWriter.writePatch();
+            for (Operation operation : operations) {
+                System.out.println(operation);
+            }
+
+            session.exportSystemView(node1.getPath(), System.out, true, false);
+            session.exportSystemView(node2.getPath(), System.out, true, false);
             return false;
         }
         return true;
