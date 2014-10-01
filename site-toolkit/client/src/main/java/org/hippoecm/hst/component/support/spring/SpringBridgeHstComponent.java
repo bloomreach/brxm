@@ -18,7 +18,6 @@ package org.hippoecm.hst.component.support.spring;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -26,6 +25,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -201,16 +201,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
             ComponentManager componentManager = null;
             
             if (delegatedBean == null) {
-                componentManager = HstFilter.getClientComponentManager(servletContext);
-                
-                if (componentManager != null) {
-                    delegatedBean = componentManager.getComponent(beanName);
-                    if (delegatedBean != null) {
-                        log.warn("ClientComponentManager is deprecated. Use HstService#getComponentManager() instead and replace " +
-                                "client-assembly spring configuration with hst-assemply/overrides configuration. Remove " +
-                                "clientComponentManagerClass init-param from web.xml for HstFilter as well.");
-                    }
-                }
+                delegatedBean = HstServices.getComponentManager().getComponent(beanName);
             }
             
             if (delegatedBean == null) {
