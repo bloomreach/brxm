@@ -34,7 +34,7 @@ import org.junit.Test;
 public class DeprecatedHtmlCleanerConfigTest extends PluginTest {
 
     protected IPluginConfig getPluginConfig() throws Exception {
-        Node cleanerConfigNode = root.getNode("cleaner.config");
+        Node cleanerConfigNode = root.getNode("deprecated.cleaner.config");
         JcrNodeModel nodeModel = new JcrNodeModel(cleanerConfigNode);
         return new JcrPluginConfig(nodeModel);
     }

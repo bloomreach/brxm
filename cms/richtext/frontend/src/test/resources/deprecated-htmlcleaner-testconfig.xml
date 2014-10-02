@@ -16,7 +16,7 @@
 -->
 <sv:node xmlns:hippohtmlcleaner="http://www.onehippo.org/jcr/htmlcleaner/nt/2.1"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="cleaner.config">
+         sv:name="deprecated.cleaner.config">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippohtmlcleaner:config</sv:value>
     </sv:property>
