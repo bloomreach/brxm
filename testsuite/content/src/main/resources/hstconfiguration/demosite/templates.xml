@@ -1,90 +1,114 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:templates">
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:templates</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>246bd2bc-f68c-4ea1-baed-506d832c4606</sv:value>
   </sv:property>
   <sv:node sv:name="homepage.ftl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>687a34af-bed0-4938-aeab-21d7435f0f83</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value>&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#13;
-&#13;
-  &lt;div class="yui-u"&gt;&#13;
-&#13;
-    &lt;h1&gt;${document.title}&lt;/h1&gt;&#13;
-    &lt;p&gt;${document.summary}&lt;/p&gt;&#13;
-    &lt;@hst.html hippohtml=document.html/&gt;&#13;
-&#13;
-    &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;&#13;
-    &lt;p&gt;Example mount property fetched through hst component: '${testParamFromMount!}'&lt;/p&gt;&#13;
-&#13;
-    &lt;#if "${document.resource!}" != ""&gt;&#13;
-      &lt;@hst.link var="resource" hippobean=document.resource /&gt; &#13;
-      &lt;#if "${resource!}" != ""&gt; &#13;
-        &lt;a href="${resource}"&gt;${document.resource.name}&lt;/a&gt;&#13;
-      &lt;/#if&gt; &#13;
-    &lt;/#if&gt; &#13;
-&#13;
-    &lt;div&gt; &#13;
-      &lt;@hst.include ref="todolist"/&gt;&#13;
-    &lt;/div&gt; &#13;
-&#13;
-    &lt;div class="bannersHome"&gt; &#13;
-      &lt;@hst.include ref="banners-div"/&gt; &#13;
-    &lt;/div&gt; &#13;
-    &#13;
-    &lt;div class="bannersHome"&gt;&#13;
-      &lt;@hst.include ref="banners-table"/&gt; &#13;
-    &lt;/div&gt; &#13;
-&#13;
-    &lt;div class="bannersHome"&gt;&#13;
-      &lt;@hst.include ref="banners-ol"/&gt; &#13;
-    &lt;/div&gt; &#13;
-&#13;
-    &lt;div class="bannersHome"&gt;&#13;
-      &lt;@hst.include ref="banners-ul"/&gt; &#13;
-    &lt;/div&gt; &#13;
-&#13;
-    &lt;div style="border-width: 4px; border-style: solid; border-color: red; "&gt;&#13;
-      &lt;p&gt;&#13;
-        Apart from this text, this container should be EMPTY as the banners should be skipped &#13;
-        by ExampleComponentWindowFilter due to parameter ExampleComponentWindowFilter.hide = true&#13;
-      &lt;/p&gt;&#13;
-      &lt;@hst.include ref="container-with-skipped-banners"/&gt; &#13;
-    &lt;/div&gt; &#13;
-&#13;
-    &lt;hr/&gt;&#13;
-    &#13;
-    &lt;p&gt;Dummy Example REST links &lt;/p&gt; &#13;
-    &lt;@hst.link var="imageset" hippobean=image mount="restapi-gallery" /&gt; &#13;
-    &lt;@hst.link var="original" hippobean=image subPath="original" mount="restapi-gallery"/&gt; &#13;
-    &lt;@hst.link var="thumbnail" hippobean=image subPath="thumbnail" mount="restapi-gallery"/&gt; &#13;
-    &#13;
-    &lt;p&gt; &#13;
-      ImageSet : &#13;
-      &lt;a target="_blank" href="${imageset}"&gt;${imageset}&lt;/a&gt;&#13;
-    &lt;/p&gt; &#13;
-    &#13;
-    &lt;p&gt;&#13;
-      Thumbnail : &#13;
-      &lt;a target="_blank" href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&#13;
-    &lt;/p&gt;&#13;
-    &#13;
-    &lt;p&gt; &#13;
-      Original : &#13;
-      &lt;a target="_blank" href="${original}"&gt;${original}&lt;/a&gt;&#13;
-    &lt;/p&gt;&#13;
-    &#13;
-    &lt;br/&gt;&#13;
-    &lt;br/&gt;&#13;
-    &#13;
-    &lt;div style="color:red"&gt;&#13;
-      Note: this page is loaded by a repository freemarker template, &#13;
-      see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &#13;
-    &lt;/div&gt;&#13;
-&#13;
-    &lt;p style="height: 30em;"&gt; &lt;/p&gt; &#13;
-  &#13;
+      <sv:value>&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
+&#xd;
+  &lt;div class="yui-u"&gt;&#xd;
+&#xd;
+    &lt;h1&gt;${document.title}&lt;/h1&gt;&#xd;
+    &lt;p&gt;${document.summary}&lt;/p&gt;&#xd;
+    &lt;@hst.html hippohtml=document.html/&gt;&#xd;
+&#xd;
+    &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;&#xd;
+    &lt;p&gt;Example mount property fetched through hst component: '${testParamFromMount!}'&lt;/p&gt;&#xd;
+&#xd;
+    &lt;#if "${document.resource!}" != ""&gt;&#xd;
+      &lt;@hst.link var="resource" hippobean=document.resource /&gt; &#xd;
+      &lt;#if "${resource!}" != ""&gt; &#xd;
+        &lt;a href="${resource}"&gt;${document.resource.name}&lt;/a&gt;&#xd;
+      &lt;/#if&gt; &#xd;
+    &lt;/#if&gt; &#xd;
+&#xd;
+    &lt;div&gt; &#xd;
+      &lt;@hst.include ref="todolist"/&gt;&#xd;
+    &lt;/div&gt; &#xd;
+&#xd;
+    &lt;div class="bannersHome"&gt; &#xd;
+      &lt;@hst.include ref="banners-div"/&gt; &#xd;
+    &lt;/div&gt; &#xd;
+    &#xd;
+    &lt;div class="bannersHome"&gt;&#xd;
+      &lt;@hst.include ref="banners-table"/&gt; &#xd;
+    &lt;/div&gt; &#xd;
+&#xd;
+    &lt;div class="bannersHome"&gt;&#xd;
+      &lt;@hst.include ref="banners-ol"/&gt; &#xd;
+    &lt;/div&gt; &#xd;
+&#xd;
+    &lt;div class="bannersHome"&gt;&#xd;
+      &lt;@hst.include ref="banners-ul"/&gt; &#xd;
+    &lt;/div&gt; &#xd;
+&#xd;
+    &lt;div style="border-width: 4px; border-style: solid; border-color: red; "&gt;&#xd;
+      &lt;p&gt;&#xd;
+        Apart from this text, this container should be EMPTY as the banners should be skipped &#xd;
+        by ExampleComponentWindowFilter due to parameter ExampleComponentWindowFilter.hide = true&#xd;
+      &lt;/p&gt;&#xd;
+      &lt;@hst.include ref="container-with-skipped-banners"/&gt; &#xd;
+    &lt;/div&gt; &#xd;
+&#xd;
+    &lt;hr/&gt;&#xd;
+    &#xd;
+    &lt;p&gt;Dummy Example REST links &lt;/p&gt; &#xd;
+    &lt;@hst.link var="imageset" hippobean=image mount="restapi-gallery" /&gt; &#xd;
+    &lt;@hst.link var="original" hippobean=image subPath="original" mount="restapi-gallery"/&gt; &#xd;
+    &lt;@hst.link var="thumbnail" hippobean=image subPath="thumbnail" mount="restapi-gallery"/&gt; &#xd;
+    &#xd;
+    &lt;p&gt; &#xd;
+      ImageSet : &#xd;
+      &lt;a target="_blank" href="${imageset}"&gt;${imageset}&lt;/a&gt;&#xd;
+    &lt;/p&gt; &#xd;
+    &#xd;
+    &lt;p&gt;&#xd;
+      Thumbnail : &#xd;
+      &lt;a target="_blank" href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&#xd;
+    &lt;/p&gt;&#xd;
+    &#xd;
+    &lt;p&gt; &#xd;
+      Original : &#xd;
+      &lt;a target="_blank" href="${original}"&gt;${original}&lt;/a&gt;&#xd;
+    &lt;/p&gt;&#xd;
+&#xd;
+    &lt;br/&gt;&lt;br/&gt;&#xd;
+&#xd;
+    &lt;hr/&gt;&#xd;
+    &lt;p&gt;Test Example HST URLs (escaped by default)&lt;/p&gt;&#xd;
+    &lt;pre&gt;&lt;xmp&gt;RENDER URL: &lt;@hst.renderURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.renderURL&gt;&#xd;
+RESOURCE URL: &lt;@hst.resourceURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.resourceURL&gt;&#xd;
+COMPONENT RENDERING URL: &lt;@hst.componentRenderingURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.componentRenderingURL&gt;&#xd;
+ACTION URL: &lt;@hst.actionURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.actionURL&gt;&#xd;
+LINK URL: &lt;@hst.link path="/news"&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.link&gt;&lt;/xmp&gt;&lt;/pre&gt;&#xd;
+&#xd;
+    &lt;hr/&gt;&#xd;
+    &lt;p&gt;Test Example HST URLs (not escaped by escapeXml="false")&lt;/p&gt;&#xd;
+    &lt;pre&gt;&lt;xmp&gt;RENDER URL: &lt;@hst.renderURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.renderURL&gt;&#xd;
+RESOURCE URL: &lt;@hst.resourceURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.resourceURL&gt;&#xd;
+COMPONENT RENDERING URL: &lt;@hst.componentRenderingURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.componentRenderingURL&gt;&#xd;
+ACTION URL: &lt;@hst.actionURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.actionURL&gt;&#xd;
+LINK URL: &lt;@hst.link path="/news" escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.link&gt;&lt;/xmp&gt;&lt;/pre&gt;&#xd;
+&#xd;
+    &lt;br/&gt;&lt;br/&gt;&#xd;
+&#xd;
+    &lt;div style="color:red"&gt;&#xd;
+      Note: this page is loaded by a repository freemarker template, &#xd;
+      see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &#xd;
+    &lt;/div&gt;&#xd;
+&#xd;
+    &lt;p style="height: 30em;"&gt; &lt;/p&gt; &#xd;
+  &#xd;
   &lt;/div&gt;</sv:value>
     </sv:property>
   </sv:node>

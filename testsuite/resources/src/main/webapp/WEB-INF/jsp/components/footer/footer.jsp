@@ -64,12 +64,12 @@ function <hst:namespace/>mycb(req) {
   window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
 }
 function <hst:namespace/>refreshDateTime() {
-  simpleio_sendrequest("<hst:resourceURL/>", <hst:namespace/>mycb, null);
+  simpleio_sendrequest("<hst:resourceURL escapeXml='false' />", <hst:namespace/>mycb, null);
 }
 window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
 
 function <hst:namespace/>refreshTime() {
-  simpleio_sendrequest("<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
+  simpleio_sendrequest("<hst:resourceURL escapeXml='false' resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
 }
 //-->
 </script>

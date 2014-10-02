@@ -34,20 +34,34 @@
     <hst:include ref="todolist"/>
   </div>
 
-   <hr/>
+  <hr/>
   <p>Dummy Example REST links </p>
-  
   <hst:link var="imageset" hippobean="${image}"  mount="restapi-gallery"/>
   <hst:link var="thumbnail" hippobean="${image}" mount="restapi-gallery" subPath="thumbnail" />
   <hst:link var="original" hippobean="${image}"  mount="restapi-gallery"  subPath="original"/>
-  
   <p> ImageSet : <a target="_blank" href="${imageset}">${imageset}</a></p>
   <p> Thumbnail : <a target="_blank" href="${thumbnail}">${thumbnail}</a></p>
   <p> Original : <a target="_blank" href="${original}">${original}</a></p>
+
+  <br/><br/>
+
+  <hr/>
+  <p>Test Example HST URLs (escaped by default)</p>
+  <pre><xmp>RENDER URL: <hst:renderURL><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:renderURL>
+RESOURCE URL: <hst:resourceURL><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:resourceURL>
+COMPONENT RENDERING URL: <hst:componentRenderingURL><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:componentRenderingURL>
+ACTION URL: <hst:actionURL><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:actionURL>
+LINK URL: <hst:link path="/news"><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:link></xmp></pre>
+
+  <hr/>
+  <p>Test Example HST URLs (not escaped by escapeXml="false")</p>
+  <pre><xmp>RENDER URL: <hst:renderURL escapeXml="false"><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:renderURL>
+RESOURCE URL: <hst:resourceURL escapeXml="false"><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:resourceURL>
+COMPONENT RENDERING URL: <hst:componentRenderingURL escapeXml="false"><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:componentRenderingURL>
+ACTION URL: <hst:actionURL escapeXml="false"><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:actionURL>
+LINK URL: <hst:link path="/news" escapeXml="false"><hst:param name="a" value="one"/><hst:param name="b" value="two"/></hst:link></xmp></pre>
+
   <p style="height: 30em;">  </p>
-  
-  <p style="height: 30em;">  </p>
-  
-  
+
 </div>
 
