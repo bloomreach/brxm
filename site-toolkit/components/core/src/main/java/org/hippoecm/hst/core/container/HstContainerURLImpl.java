@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -178,7 +177,7 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     public void setActionParameter(String name, String[] values) {
         if (this.actionParameterMap == null) {
-            this.actionParameterMap = new HashMap<String, String[]>();
+            this.actionParameterMap = new LinkedHashMap<String, String[]>();
         }
 
         if (values == null) {

@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.tag;
 
+import static org.hippoecm.hst.utils.TagUtils.createPathInfoWithoutRequestContext;
+import static org.hippoecm.hst.utils.TagUtils.getQueryString;
+import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
+
 import java.io.UnsupportedEncodingException;
 
 import javax.jcr.RepositoryException;
@@ -42,10 +46,6 @@ import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.utils.TagUtils.createPathInfoWithoutRequestContext;
-import static org.hippoecm.hst.utils.TagUtils.getQueryString;
-import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
-
 /**
  * Abstract supporting class for Hst Link tags
  */
@@ -64,6 +64,8 @@ public class HstWebResourceTag extends ParamContainerTag {
     protected String var;
 
     protected String scope;
+
+    protected Boolean escapeXml = true;
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -167,6 +169,10 @@ public class HstWebResourceTag extends ParamContainerTag {
                 throw new JspException("UnsupportedEncodingException on the base url", e);
             }
 
+            if (escapeXml) {
+                urlString = HstRequestUtils.escapeXml(urlString);
+            }
+
             writeOrSetVar(urlString, var, pageContext, scope);
 
             return EVAL_PAGE;
@@ -180,6 +186,7 @@ public class HstWebResourceTag extends ParamContainerTag {
     protected void cleanup() {
         super.cleanup();
         var = null;
+        escapeXml = true;
         scope = null;
         path = null;
     }
@@ -202,6 +209,14 @@ public class HstWebResourceTag extends ParamContainerTag {
         return var;
     }
 
+    /**
+     * Returns escapeXml property.
+     * @return Boolean
+     */
+    public Boolean getEscapeXml() {
+        return escapeXml;
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
@@ -219,8 +234,16 @@ public class HstWebResourceTag extends ParamContainerTag {
     public void setScope(String scope) {
         this.scope = scope;
     }
-    
-    
+
+    /**
+     * Sets the escapeXml property.
+     * @param escapeXml
+     * @return void
+     */
+    public void setEscapeXml(Boolean escapeXml) {
+        this.escapeXml = escapeXml;
+    }
+
     /* -------------------------------------------------------------------*/
 
     /**

@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.tag;
 
-import java.io.IOException;
+import static org.hippoecm.hst.utils.TagUtils.getQueryString;
+import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -26,7 +28,6 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
@@ -37,25 +38,19 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.utils.TagUtils.getQueryString;
-import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
-
 /**
  * Abstract supporting class for Hst Link tags
  */
 
 public class HstLinkTag extends ParamContainerTag {
-    
 
     private final static Logger log = LoggerFactory.getLogger(HstLinkTag.class);
     
@@ -118,7 +113,9 @@ public class HstLinkTag extends ParamContainerTag {
      * URL
      */
     protected boolean linkForAttributeSet = false;
-    
+
+    protected Boolean escapeXml = true;
+
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
@@ -283,6 +280,10 @@ public class HstLinkTag extends ParamContainerTag {
                 throw new JspException("UnsupportedEncodingException on the base url", e);
             }
 
+            if (escapeXml) {
+                urlString = HstRequestUtils.escapeXml(urlString);
+            }
+
             writeOrSetVar(urlString, var, pageContext, scope);
 
             return EVAL_PAGE;
@@ -311,6 +312,7 @@ public class HstLinkTag extends ParamContainerTag {
         mountAlias = null;
         mountType = null;
         linkForAttributeSet = false;
+        escapeXml = true;
     }
     
     /* (non-Javadoc)
@@ -348,6 +350,14 @@ public class HstLinkTag extends ParamContainerTag {
     
     public String getSubPath(){
         return this.subPath;
+    }
+
+    /**
+     * Returns escapeXml property.
+     * @return Boolean
+     */
+    public Boolean getEscapeXml() {
+        return escapeXml;
     }
 
     public void setLink(HstLink hstLink) {
@@ -434,8 +444,16 @@ public class HstLinkTag extends ParamContainerTag {
     public void setScope(String scope) {
         this.scope = scope;
     }
-    
-    
+
+    /**
+     * Sets the escapeXml property.
+     * @param escapeXml
+     * @return void
+     */
+    public void setEscapeXml(Boolean escapeXml) {
+        this.escapeXml = escapeXml;
+    }
+
     /* -------------------------------------------------------------------*/
         
     /**

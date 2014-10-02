@@ -114,6 +114,16 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
     <example><![CDATA[
       <ul id="paging-nav">
         <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
@@ -156,6 +166,16 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -189,6 +209,16 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -211,6 +241,16 @@
       <name>fullyQualified</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
     <example><![CDATA[
@@ -331,6 +371,16 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
     <example><![CDATA[
     <!-- In a body component: A list of document names with summaries and links to those documents: -->
 
@@ -408,6 +458,16 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
     </attribute>
     <example><![CDATA[
          <hst:webresource var="html4shiv" path="/js/html5shiv.js"/>

@@ -16,7 +16,7 @@
 package org.hippoecm.hst.tag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public abstract class ParamContainerTag extends TagSupport {
        
     private static final long serialVersionUID = 1L;
 
-    protected Map<String, List<String>> parametersMap = new HashMap<>();
+    protected Map<String, List<String>> parametersMap = new LinkedHashMap<>();
 
     protected List<String> removedParametersList =  new ArrayList<>();
 

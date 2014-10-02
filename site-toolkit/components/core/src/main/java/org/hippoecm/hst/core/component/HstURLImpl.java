@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.component;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.core.container.ContainerException;
@@ -36,7 +36,7 @@ public class HstURLImpl implements HstURL {
     protected String type = RENDER_TYPE;
     protected String referenceNamespace;
     protected HstContainerURL baseContainerURL;
-    protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    protected Map<String, String[]> parameterMap = new LinkedHashMap<String, String[]>();
     protected String resourceID;
     protected HstContainerURLProvider urlProvider;
     protected transient HstRequestContext requestContext;

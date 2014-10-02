@@ -32,12 +32,12 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
 import org.hippoecm.hst.mock.core.component.MockHstURL;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockPageContext;
-import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
 /**
@@ -178,6 +178,48 @@ public class TestBaseHstURLTag {
         for (int i = 0; i < 5; i++) {
             assertEquals("value" + i, getFirstArrayStringItem(params.get("param" + i)));
         }
+    }
+
+    @Test
+    public void testUrlEscapedByDefault() throws Exception {
+        final String testLink = "/site/news/a/b/c?p1=1&p2=2&p3=3";
+        final String escapedTestLink = HstRequestUtils.escapeXml(testLink);
+
+        urlTag.setVar("link");
+        urlTag.setUrl(new MockHstURL() {
+            @Override
+            public String toString() {
+                return testLink;
+            }
+        });
+
+        urlTag.doStartTag();
+        urlTag.doEndTag();
+
+        String link = (String) pageContext.getAttribute("link");
+
+        assertEquals(escapedTestLink, link);
+    }
+
+    @Test
+    public void testUrlNotEscaped() throws Exception {
+        final String testLink = "/site/news/a/b/c?p1=1&p2=2&p3=3";
+
+        urlTag.setEscapeXml(false);
+        urlTag.setVar("link");
+        urlTag.setUrl(new MockHstURL() {
+            @Override
+            public String toString() {
+                return testLink;
+            }
+        });
+
+        urlTag.doStartTag();
+        urlTag.doEndTag();
+
+        String link = (String) pageContext.getAttribute("link");
+
+        assertEquals(testLink, link);
     }
 
     private String getFirstArrayStringItem(String [] array) {

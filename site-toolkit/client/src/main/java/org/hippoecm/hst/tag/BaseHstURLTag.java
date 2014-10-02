@@ -90,7 +90,9 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
             if (escapeXml) {
                 urlString = doEscapeXml(urlString);
             }
+
             HstRequestContext requestContext =  HstRequestUtils.getHstRequestContext((HttpServletRequest) pageContext.getRequest());
+
             if (mustURLBeFullyQualified(requestContext)) {
                 urlString = HstRequestUtils.getFullyQualifiedHstURL(requestContext, url, true);
             }
