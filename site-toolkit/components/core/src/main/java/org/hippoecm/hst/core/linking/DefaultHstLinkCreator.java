@@ -301,8 +301,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         final String originalNodePath;
         Mount mount;
         ResolverProperties resolverProperties;
-        boolean isCmsRequest;
-      
+
         /**
          * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link Mount} is taken from this context. If
          * we have a {@link ResolvedSiteMapItem} on the <code>requestContext</code>, we also set this also for the {@link HstLinkResolver} for context aware link rewriting
@@ -316,7 +315,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             resolverProperties = new ResolverProperties();
             resolverProperties.resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             mount = requestContext.getResolvedMount().getMount();
-            isCmsRequest = requestContext.isCmsRequest();
         }
 
         /**
