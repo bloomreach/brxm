@@ -27,6 +27,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -50,6 +51,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     private HstLinkProcessor linkProcessor;
     
     private List<LocationResolver> locationResolvers;
+
+    private LinkRewritePathResolver linkRewritePathResolver;
+
+    public void setLinkRewritePathResolver(LinkRewritePathResolver linkRewritePathResolver) {
+        this.linkRewritePathResolver = linkRewritePathResolver;
+    }
 
     public void setBinariesPrefix(String binariesPrefix){
         this.binariesPrefix = binariesPrefix;
@@ -272,12 +279,26 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return new LocationMapResolver(subLocationMapTree);
     }
 
-    
+    private String getNodePath(Node node, boolean canonical,  boolean navigationStateful) throws RepositoryException {
+        if (linkRewritePathResolver == null) {
+            return node.getPath();
+        }
+        if (log.isDebugEnabled()) {
+            long start = System.nanoTime();
+            final String path = linkRewritePathResolver.getPath(node, RequestContextProvider.get(), canonical, navigationStateful);
+            log.debug("LinkRewritePathResolver '{}' took '{}' to get linkr rewrite path '{}' for node '{}'",
+                    linkRewritePathResolver.getClass().getName(), String.valueOf((System.nanoTime() - start)/ 1000000D),
+                    path, node.getPath());
+            return path;
+        } else {
+            return linkRewritePathResolver.getPath(node, RequestContextProvider.get(), canonical, navigationStateful);
+        }
+    }
+
     private class HstLinkResolver {
         
         Node node;
-        String nodePath;
-       
+        final String originalNodePath;
         Mount mount;
         ResolverProperties resolverProperties;
         boolean isCmsRequest;
@@ -290,14 +311,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          */
         HstLinkResolver(Node node, HstRequestContext requestContext){
             this.node = node;
+            originalNodePath = getOriginalNodePath(node);
             // note: the resolvedSiteMapItem can be null
             resolverProperties = new ResolverProperties();
             resolverProperties.resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             mount = requestContext.getResolvedMount().getMount();
             isCmsRequest = requestContext.isCmsRequest();
         }
-        
-        
+
         /**
          * Create a HstLinkResolver instance for creating a link in this {@link Mount}. We do not take into account the current context from {@link ResolvedSiteMapItem}
          * when creating a {@link HstLinkResolver} through this constructor
@@ -306,11 +327,22 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          */
         HstLinkResolver(Node node, Mount mount){
             this.node = node;
+            originalNodePath = getOriginalNodePath(node);
             this.mount = mount;
             resolverProperties = new ResolverProperties();
         }
-        
-        HstLink resolve(){
+
+        private String getOriginalNodePath(final Node node) {
+            try {
+                return node.getPath();
+            } catch (RepositoryException e) {
+                log.error("Repository exception while fetching node path");
+                return "??";
+            }
+        }
+
+
+        HstLink resolve() {
             if(mount == null) {
                 log.info("Cannot create link when the mount is null. Return null");
                 return null;
@@ -340,7 +372,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             if(link != null) {
                                return link; 
                             } else {
-                                log.debug("Location resolved for nodetype '{}' is not able to create link for node '{}'. Try next location resolver", resolver.getNodeType(), node.getPath());
+                                log.debug("Location resolved for nodetype '{}' is not able to create link for node '{}'. Try next location resolver",
+                                        resolver.getNodeType(), originalNodePath);
                             }
                         }
                     }
@@ -353,11 +386,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     } else {
                         resolverProperties.virtual = true;
                     }
-                    nodePath = node.getPath();
                     if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                         node = NodeUtils.getDeref(node);
                         if (node == null) {
-                            log.info("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
+                            log.info("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", originalNodePath);
                             return createPageNotFoundLink(mount);
                         }
                     }
@@ -372,12 +404,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             resolverProperties.representsDocument = true;
                         }
                     }
-                    
-                    nodePath = node.getPath();
+
+                    final String nodePath = getNodePath(node, resolverProperties.canonicalLink, resolverProperties.navigationStateful);
                     
                     linkInfo = resolveToLinkInfo(nodePath, mount, resolverProperties);
-                    
-                    
+
                     if (linkInfo == null && resolverProperties.tryOtherMounts) {    
                         
                         log.debug("We cannot create a link for '{}' for the mount '{}' belonging to the current request. Try to create a cross-domain/site/channel link.", nodePath, mount.getName());
@@ -478,10 +509,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
             } catch(RepositoryException e){
                 log.error("Repository Exception during creating link", e);
+            } catch (Exception e) {
+                log.error("Exception during creating link", e);
             }
-            
+
             if(linkInfo == null) {
-                log.info("Cannot create a link for node with path '{}'. Return a page not found link", nodePath);
+                log.info("Cannot create a link for node with path '{}'. Return a page not found link", originalNodePath);
                 return createPageNotFoundLink(mount);
             }
             
@@ -492,7 +525,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return link;
             
         }
-        
+
 
         /**
          * If <code>type</code> is null, the types of the current {@link Mount} are used. If <code>hostGroupName</code> is null, the 
@@ -539,12 +572,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     log.debug("The HST has no support to return all available canonical links for virtual only nodes");
                     return Collections.emptyList();
                 } 
-                
-                nodePath = node.getPath(); 
+
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                     node = NodeUtils.getDeref(node);
                     if( node == null ) {
-                        log.debug("Broken content internal link for '{}'. Cannot create a HstLink for it. Return an empty list for canonical links.", nodePath);
+                        log.debug("Broken content internal link for '{}'. Cannot create a HstLink for it. Return an empty list for canonical links.", originalNodePath);
                         return Collections.emptyList();
                     }
                 }
@@ -558,7 +590,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                 }
                 
-                nodePath = node.getPath();
+                final String nodePath = getNodePath(node, resolverProperties.canonicalLink, resolverProperties.navigationStateful);
                 
                 // try to get the list of candidateMounts to get a HstLink for
 
@@ -635,10 +667,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 
             } catch(RepositoryException e){
                 log.warn("Repository Exception during creating link", e);
+            } catch (Exception e) {
+                log.error("Exception during creating link", e);
             }
             
             if(linkInfoList.isEmpty()) {
-                log.debug("Cannot create any link for node with path '{}'. Return empty list for canonicalLinks.", nodePath);
+                log.debug("Cannot create any link for node with path '{}'. Return empty list for canonicalLinks.", originalNodePath);
                 return Collections.emptyList();
             }
             

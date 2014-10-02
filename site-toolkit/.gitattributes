@@ -191,6 +191,7 @@ api/src/main/java/org/hippoecm/hst/core/jcr/pool/package-info.java svneol=native
 api/src/main/java/org/hippoecm/hst/core/linking/HstLink.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/linking/HstLinkCreator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/linking/HstLinkProcessor.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/linking/LinkRewritePathResolver.java -text
 api/src/main/java/org/hippoecm/hst/core/linking/LocationMapTree.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/linking/LocationMapTreeItem.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/linking/LocationResolver.java svneol=native#text/plain
@@ -633,6 +634,7 @@ components/core/src/main/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegatio
 components/core/src/main/java/org/hippoecm/hst/core/jcr/SubjectBasedRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/CompositeList.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultHstLinkCreator.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultLinkRewritePathResolver.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkProcessorChain.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapResolver.java svneol=native#text/plain

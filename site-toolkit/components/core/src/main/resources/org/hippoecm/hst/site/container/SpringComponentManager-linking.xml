@@ -19,7 +19,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
-    class="org.hippoecm.hst.core.linking.DefaultHstLinkCreator">
+        class="org.hippoecm.hst.core.linking.DefaultHstLinkCreator">
     <property name="pageNotFoundPath" value="${linkrewriting.failed.path}"/>
     <property name="binariesPrefix" value="${binaries.prefix.path}"/>
     <property name="binaryLocations">
@@ -29,9 +29,16 @@
       </list>
     </property>
 
+    <property name="linkRewritePathResolver" ref="org.hippoecm.hst.core.linking.LinkRewritePathResolver"/>
     <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
     <property name="locationResolvers" ref="org.hippoecm.hst.core.linking.locationResolvers"/>
   </bean>
+
+  <bean id="org.hippoecm.hst.core.linking.LinkRewritePathResolver"
+        class="org.hippoecm.hst.core.linking.DefaultLinkRewritePathResolver">
+  </bean>
+
+
 
   <bean id="org.hippoecm.hst.core.linking.locationResolvers"
     class="org.springframework.beans.factory.config.ListFactoryBean">
