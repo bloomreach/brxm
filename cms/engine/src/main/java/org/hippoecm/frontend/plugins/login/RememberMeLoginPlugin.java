@@ -542,7 +542,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     }
 
     private String sanitize(final String userId) {
-        return userId.trim();
+        //CMS7-8343 - if the userId contains one or more spaces the query against the repository will not find the node
+        return userId.trim().replaceAll(" ", "_x0020_");
     }
 
     private void handleLoginFailure(PageParameters loginExceptionPageParameters, PluginUserSession userSession) {
