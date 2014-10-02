@@ -32,7 +32,7 @@
     &nbsp;
     <a href="javascript:<hst:namespace/>refreshTime();">Refresh Time</a>
     &nbsp;
-    <a href="<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/aresourcepage.jsp'/>/">A Resource URL</a>
+    <a href="<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/aresourcepage.jsp'/>">A Resource URL</a>
   </p>
   <p>
     <esi:include src="<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/open-position-within-hippo.jsp' />"/>
@@ -69,7 +69,7 @@ function <hst:namespace/>refreshDateTime() {
 window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
 
 function <hst:namespace/>refreshTime() {
-  simpleio_sendrequest("<hst:resourceURL escapeXml='false' resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
+  simpleio_sendrequest("<hst:resourceURL escapeXml='false' resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>", <hst:namespace/>mycb, null);
 }
 //-->
 </script>

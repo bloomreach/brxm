@@ -58,7 +58,7 @@
     function <hst:namespace/>loadSuggstions(value) {
       if( simpleio_objectbyid('<hst:namespace/>suggest').checked) {
         if (value.length > 0) {
-          simpleio_sendrequest("<hst:resourceURL/>", <hst:namespace/>returnedSuggestions, "suggestquery="+value);
+          simpleio_sendrequest("<hst:resourceURL escapeXml='false' />", <hst:namespace/>returnedSuggestions, "suggestquery="+value);
         }
       }
     }

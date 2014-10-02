@@ -50,7 +50,7 @@ function <hst:namespace/>refreshDateTime() {
 window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
 
 function <hst:namespace/>refreshTime() {
-  simpleio_sendrequest("<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
+  simpleio_sendrequest("<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>", <hst:namespace/>mycb, null);
 }
 //-->
 </script>

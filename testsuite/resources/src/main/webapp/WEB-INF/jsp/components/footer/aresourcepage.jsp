@@ -16,7 +16,7 @@
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 {
-  "renderURL": "<hst:renderURL><hst:param name="p1" value="v1"/><hst:param name="p2" value="v2"/></hst:renderURL>",
-  "actionURL": "<hst:actionURL/>",
-  "resourceURL": "<hst:resourceURL resourceId="/WEB-INF/jsp/components/footer/aresourcepage.jsp"/>/"
+  "renderURL": "<hst:renderURL escapeXml="false"><hst:param name="p1" value="v1"/><hst:param name="p2" value="v2"/></hst:renderURL>",
+  "actionURL": "<hst:actionURL escapeXml="false" />",
+  "resourceURL": "<hst:resourceURL escapeXml="false" resourceId="/WEB-INF/jsp/components/footer/aresourcepage.jsp"/>/"
 }
