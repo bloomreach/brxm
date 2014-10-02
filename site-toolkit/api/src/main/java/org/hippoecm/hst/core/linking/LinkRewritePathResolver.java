@@ -27,7 +27,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  *      link creation of a {@link javax.jcr.Node} or {@link org.hippoecm.hst.content.beans.standard.HippoBean}
  * </p>
  * <p>
- *     A usecase where this NodeToPathResolver can be used is for example when you have <i>comment</i> documents which have
+ *     A use case where this NodeToPathResolver can be used is for example when you have <i>comment</i> documents which have
  *     a link to the <i>news</i> article they are a comment about. The <i>comment</i> documents themselves do *not* have
  *     a URL. They are only visible in the context of the news article they are a comment about. In this case, when there
  *     is a link to a <i>comment</i> document or when a <i>comment</i> document is found via search, you want to actually
@@ -37,6 +37,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  *     (say 2 to 3) milliseconds, you'll run into performance issues when a lot of links have to be created. Custom implementation
  *     can best always logs at debug level how long parts of the method takes to execute (default hst logs the total
  *     time as well). Target time should be around 1/10 to 1 millisecond max.
+ * </p>
+ * <p>
+ *     Note that the <code>node</code> argument in {@link #getPath(Node, HstRequestContext, boolean, boolean)} is not necessarily
+ *     the {@link Node} of the backing {@link org.hippoecm.hst.content.beans.standard.HippoBean} for which a link is
+ *     required. The {@link Node} typically might be the parent ({@link org.hippoecm.repository.api.HippoNodeType#NT_HANDLE})
+ *     in case the {@link Node} is a {@link org.hippoecm.repository.api.HippoNodeType#NT_DOCUMENT}
  * </p>
  */
 public interface LinkRewritePathResolver {
