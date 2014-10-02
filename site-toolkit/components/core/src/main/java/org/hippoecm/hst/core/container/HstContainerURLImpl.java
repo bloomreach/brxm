@@ -126,6 +126,24 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         return this.parameterMap;
     }
 
+    public String getParameter(String name) {
+        String [] values = getParameterValues(name);
+
+        if (values == null || values.length == 0) {
+            return null;
+        }
+
+        return values[0];
+    }
+
+    public String[] getParameterValues(String name) {
+        if (parameterMap == null || !parameterMap.containsKey(name)) {
+            return null;
+        }
+
+        return parameterMap.get(name);
+    }
+
     public void setParameter(String name, String value) {
         setParameter(name, value != null ? new String [] { value } : (String []) null);
     }

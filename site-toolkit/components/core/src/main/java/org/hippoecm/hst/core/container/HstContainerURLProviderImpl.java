@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,12 +39,16 @@ import org.slf4j.LoggerFactory;
  * <P>
  * <code><xmp>
  * 1) render url will not be encoded : http://localhost/site/content/news/2008/08
- * 2) action url will be encoded     : http://localhost/site/content/_hn:<encoded_params>/news/2008/08
- *          the <encoded_params>     : <request_type>|<action reference namespace>
- * 3) resource url will be encoded   : http://localhsot/site/content/_hn:<encoded_params>/news/2008/08
- *          the <encoded_params>     : <request_type>|<resource reference namespace>|<resource ID>
- * 4)component rendering url will be encoded : http://localhsot/site/content/_hn:<encoded_params>/news/2008/08
- *          the <encoded_params>     : <request_type>|<resource reference namespace>
+ * 2) action url will be encoded     : http://localhost/site/content/news/2008/08?_hn:type=action&_hn:ref=r1
+ *          the _hn:type parameter, 'action', means the request is for ACTION phase,
+ *          and the _hn:ref parameter, 'r1', means the ACTION request is targeting to the component window referenced by 'r1'.
+ * 3) resource url will be encoded   : http://localhsot/site/content/news/2008/08?_hn:type=resource&_hn:ref=r1&_hn:rid=resourceId
+ *          the _hn:type parameter, 'resource', means the request is for RESOURCE phase,
+ *          the _hn:ref parameter, 'r1', means the RESOURCE request is targeting to the component window referenced by 'r1'.
+ *          and the _hn:rid parameter, 'resourceId', means the RESOURCE ID of the RESOURCE request.
+ * 4) component rendering url will be encoded : http://localhsot/site/content/news/2008/08?_hn:type=component-rendering&_hn:ref=r1
+ *          the _hn:type parameter, 'component-rendering', means the request is for COMPONENT RENDERING phase,
+ *          and the _hn:ref parameter, 'r1', means the COMPONENT RENDERING request is targeting to the component window referenced by 'r1'.
  * </xmp></code> 
  * </P>
  * 
@@ -60,14 +63,19 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     protected static final String DEFAULT_HST_URL_NAMESPACE_PREFIX = "_hn:";
 
     protected String urlNamespacePrefix = DEFAULT_HST_URL_NAMESPACE_PREFIX;
-    protected String urlNamespacePrefixedPath = '/' + urlNamespacePrefix;
+    protected String urlNamespacedTypeParamName = urlNamespacePrefix + "type";
+    protected String urlNamespacedReferenceParamName = urlNamespacePrefix + "ref";
+    protected String urlNamespacedResourceIdParamName = urlNamespacePrefix + "rid";
+
     protected String parameterNameComponentSeparator = ":";
 
     protected HstNavigationalStateCodec navigationalStateCodec;
 
     public void setUrlNamespacePrefix(String urlNamespacePrefix) {
         this.urlNamespacePrefix = urlNamespacePrefix;
-        this.urlNamespacePrefixedPath = '/' + urlNamespacePrefix;
+        urlNamespacedTypeParamName = urlNamespacePrefix + "type";
+        urlNamespacedReferenceParamName = urlNamespacePrefix + "ref";
+        urlNamespacedResourceIdParamName = urlNamespacePrefix + "rid";
     }
 
     public String getUrlNamespacePrefix() {
@@ -104,9 +112,10 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
         String characterEncoding = StringUtils.defaultIfEmpty(requestCharacterEncoding, "ISO-8859-1");
         url.setCharacterEncoding(characterEncoding);
-        String [] namespacedPartAndPathInfo = splitPathInfo(requestPath.substring(mount.getResolvedMountPath().length()), characterEncoding);
-        url.setPathInfo(namespacedPartAndPathInfo[1]);
-        parseRequestInfo(url,namespacedPartAndPathInfo[0]);
+        url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
+
+        parseRequestInfo(url);
+
         return url;
     }
 
@@ -118,10 +127,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setPortNumber(baseURL.getPortNumber());
         url.setResolvedMountPath(mount.getResolvedMountPath());
         url.setRequestPath(requestPath);
-        String [] namespacedPartAndPathInfo = splitPathInfo(requestPath.substring(mount.getResolvedMountPath().length()), baseURL.getCharacterEncoding());
-        url.setPathInfo(namespacedPartAndPathInfo[1]);
-        parseRequestInfo(url,namespacedPartAndPathInfo[0]);
+        url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
         url.setCharacterEncoding(baseURL.getCharacterEncoding());
+
+        parseRequestInfo(url);
+
         return url;
     }
 
@@ -138,12 +148,10 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         Map<String, String []> paramMap = HstRequestUtils.parseQueryString(request);
         url.setParameters(paramMap);
-
         url.setResolvedMountPath(resolvedMount.getResolvedMountPath());
+        url.setPathInfo(request.getPathInfo());
 
-        String [] namespacedPartAndPathInfo = splitPathInfo(resolvedMount, request, characterEncoding);
-        url.setPathInfo(namespacedPartAndPathInfo[1]);
-        parseRequestInfo(url,namespacedPartAndPathInfo[0]);
+        parseRequestInfo(url);
 
         return url;
     }
@@ -179,7 +187,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
 
         // if the Mount is port agnostic, in other words, has port = 0, we take the port from the baseContainerURL
-        if(mount.getPort() == 0) {
+        if (mount.getPort() == 0) {
             url.setPortNumber(baseContainerURL.getPortNumber());
         } else {
             url.setPortNumber(mount.getPort());
@@ -187,7 +195,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         boolean includeTrailingSlash = false;
 
-        if(pathInfo != null && pathInfo.endsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
+        if (pathInfo != null && pathInfo.endsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
             // we now must not strip the trailing slash because it is part of the rest call ./
             includeTrailingSlash = true; 
         }
@@ -197,7 +205,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         // get a wrong URL like /mountPath/./subPath : It must be /mountPath./subPath instead. Thus, hence this check
         boolean includeLeadingSlash = true;
 
-        if(pathInfo != null && pathInfo.startsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
+        if (pathInfo != null && pathInfo.startsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
             includeLeadingSlash = false;
         }
 
@@ -304,42 +312,9 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         StringBuilder url = new StringBuilder(100);
         String pathSuffixDelimiter = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
 
-        if (containerURL.getActionWindowReferenceNamespace() != null) {
-            url.append(this.urlNamespacePrefixedPath);
-
-            StringBuilder sbRequestInfo = new StringBuilder(80);
-            sbRequestInfo.append(HstURL.ACTION_TYPE).append(REQUEST_INFO_SEPARATOR);
-            sbRequestInfo.append(containerURL.getActionWindowReferenceNamespace()).append(REQUEST_INFO_SEPARATOR);
-
-            url.append(URLEncoder.encode(sbRequestInfo.toString(), characterEncoding));
-        } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
-            url.append(this.urlNamespacePrefixedPath);
-
-            String resourceId = containerURL.getResourceId();
-            // resource id should be double-encoded because it can have slashes,
-            // which can make a problem in Tomcat 6.
-            if (resourceId != null) {
-                resourceId = URLEncoder.encode(resourceId, characterEncoding);
-            }
-
-            String requestInfo = 
-                HstURL.RESOURCE_TYPE + REQUEST_INFO_SEPARATOR + 
-                containerURL.getResourceWindowReferenceNamespace() + REQUEST_INFO_SEPARATOR + 
-                (resourceId != null ? resourceId : "");
-
-            url.append(URLEncoder.encode(requestInfo, characterEncoding));
-        } else if (containerURL.getComponentRenderingWindowReferenceNamespace() != null) {
-            url.append(this.urlNamespacePrefixedPath);
-            String requestInfo =
-                HstURL.COMPONENT_RENDERING_TYPE + REQUEST_INFO_SEPARATOR +
-                containerURL.getComponentRenderingWindowReferenceNamespace();
-
-            url.append(URLEncoder.encode(requestInfo, characterEncoding));
-        }
-
         boolean includeSlash = true;
 
-        if(containerURL.getPathInfo().startsWith(pathSuffixDelimiter)) {
+        if (containerURL.getPathInfo().startsWith(pathSuffixDelimiter)) {
             includeSlash = false;
         }
 
@@ -379,12 +354,31 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             }
         }
 
-        if(pathSuffixDelimiter != null && containerURL.getPathInfo().endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
+        if (pathSuffixDelimiter != null && containerURL.getPathInfo().endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
             // the trailing slash is removed above, but for ./ we need to append the slash again
             url.append('/');
         }
 
         boolean firstParamDone = (url.indexOf("?") >= 0);
+
+        if (containerURL.getActionWindowReferenceNamespace() != null) {
+            url.append(firstParamDone ? "&" : "?").append(urlNamespacedTypeParamName).append('=').append(HstURL.ACTION_TYPE);
+            url.append('&').append(urlNamespacedReferenceParamName).append('=').append(URLEncoder.encode(containerURL.getActionWindowReferenceNamespace(), characterEncoding));
+            firstParamDone = true;
+        } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
+            url.append(firstParamDone ? "&" : "?").append(urlNamespacedTypeParamName).append('=').append(HstURL.RESOURCE_TYPE);
+            url.append('&').append(urlNamespacedReferenceParamName).append('=').append(URLEncoder.encode(containerURL.getResourceWindowReferenceNamespace(), characterEncoding));
+
+            if (containerURL.getResourceId() != null) {
+                url.append('&').append(urlNamespacedResourceIdParamName).append('=').append(URLEncoder.encode(containerURL.getResourceId(), characterEncoding));
+            }
+
+            firstParamDone = true;
+        } else if (containerURL.getComponentRenderingWindowReferenceNamespace() != null) {
+            url.append(firstParamDone ? "&" : "?").append(urlNamespacedTypeParamName).append('=').append(HstURL.COMPONENT_RENDERING_TYPE);
+            url.append('&').append(urlNamespacedReferenceParamName).append('=').append(URLEncoder.encode(containerURL.getComponentRenderingWindowReferenceNamespace(), characterEncoding));
+            firstParamDone = true;
+        }
 
         Map<String, String []> parameters = containerURL.getParameterMap();
 
@@ -406,39 +400,27 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url.toString();
     }
 
-    protected void parseRequestInfo(HstContainerURL url, String encodedRequestInfo) {
+    protected void parseRequestInfo(HstContainerURL url) {
         try {
-            if (encodedRequestInfo != null) {
-                String encodedInfo = encodedRequestInfo.substring(urlNamespacePrefixedPath.length());
-                String [] requestInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR, 3);
+            String requestType = url.getParameter(urlNamespacedTypeParamName);
 
-                String requestType = requestInfos[0];
+            if (HstURL.ACTION_TYPE.equals(requestType)) {
+                String actionWindowReferenceNamespace = url.getParameter(urlNamespacedReferenceParamName);
+                url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
 
-                if (HstURL.ACTION_TYPE.equals(requestType)) {
-                    String actionWindowReferenceNamespace = requestInfos[1];
-                    url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
+                log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
+            } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
+                String resourceWindowReferenceNamespace = url.getParameter(urlNamespacedReferenceParamName);
+                String resourceId = url.getParameter(urlNamespacedResourceIdParamName);
+                url.setResourceId(resourceId);
+                url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
 
-                    log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
-                } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
-                    String resourceWindowReferenceNamespace = requestInfos[1];
-                    String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
+                log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
+            } else if (HstURL.COMPONENT_RENDERING_TYPE.equals(requestType)) {
+                String componentRenderingReferenceNamespace = url.getParameter(urlNamespacedReferenceParamName);
+                url.setComponentRenderingWindowReferenceNamespace(componentRenderingReferenceNamespace);
 
-                    if (resourceId != null) {
-                        // resource id is double-encoded because it can have slashes,
-                        // which can make a problem in Tomcat 6.
-                        resourceId = URLDecoder.decode(resourceId, url.getCharacterEncoding());
-                    }
-
-                    url.setResourceId(resourceId);
-                    url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
-
-                    log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
-                } else if (HstURL.COMPONENT_RENDERING_TYPE.equals(requestType)) {
-                    String componentRenderingReferenceNamespace = requestInfos[1];
-                    url.setComponentRenderingWindowReferenceNamespace(componentRenderingReferenceNamespace);
-
-                    log.debug("partial render window chosen for {}: {}", url.getPathInfo(), componentRenderingReferenceNamespace);
-                }
+                log.debug("partial render window chosen for {}: {}", url.getPathInfo(), componentRenderingReferenceNamespace);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -446,94 +428,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             } else if (log.isWarnEnabled()) {
                 log.warn("Invalid container URL path: {}", url.getRequestPath());
             }
+        } finally {
+            // clean up all the HST-2 namespaced parameters
+            url.setParameter(urlNamespacedTypeParamName, (String) null);
+            url.setParameter(urlNamespacedReferenceParamName, (String) null);
+            url.setParameter(urlNamespacedResourceIdParamName, (String) null);
         }
-    }
-
-    /*
-     * Splits path info to an array of namespaced path part and remainder. 
-     */
-    protected String [] splitPathInfo(String requestPath, String characterEncoding) {
-        String pathInfo = requestPath;
-
-        try {
-            pathInfo = URLDecoder.decode(requestPath, characterEncoding);
-        } catch (UnsupportedEncodingException e) {
-            log.warn("Invalid request path: {}", requestPath, e);
-        }
-
-        if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
-            return new String [] { null, pathInfo };
-        }
-
-        String temp = requestPath.substring(requestPath.indexOf(urlNamespacePrefixedPath));
-        String namespacedPathPart = temp;
-        int offset = temp.indexOf('/', 1);
-
-        if (offset != -1) {
-            namespacedPathPart = temp.substring(0, offset);
-        }
-
-        pathInfo = "";
-
-        try {
-            namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
-
-            if (offset != -1) {
-                pathInfo = URLDecoder.decode(temp.substring(offset), characterEncoding);
-            }
-        } catch (UnsupportedEncodingException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Invalid request uri: {}", requestPath, e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Invalid request uri: {}", requestPath);
-            }
-        }
-
-        return new String [] { namespacedPathPart, pathInfo };
-    }
-
-    /*
-     * Splits path info to an array of namespaced path part and remainder. 
-     */
-    protected String [] splitPathInfo(ResolvedMount resolvedMount, HttpServletRequest request, String characterEncoding) {
-
-        String pathInfo = request.getPathInfo();
-
-        if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
-            return new String [] { null, pathInfo };
-        }
-
-        String requestURI = (String) request.getAttribute("javax.servlet.include.request_uri");
-
-        if (requestURI == null) {
-            requestURI = HstRequestUtils.getRequestURI(request, true);
-        }
-
-        String namespacedPathPart = "";
-        String pathInfoFromURI = "";
-
-        String temp = requestURI.substring(requestURI.indexOf(urlNamespacePrefixedPath));
-        int offset = temp.indexOf('/', 1);
-
-        if (offset != -1) {
-            namespacedPathPart = temp.substring(0, offset);
-            pathInfoFromURI = temp.substring(offset);
-        } else {
-            namespacedPathPart = temp;
-        }
-
-        try {
-            namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
-            pathInfoFromURI = URLDecoder.decode(pathInfoFromURI, characterEncoding);
-        } catch (UnsupportedEncodingException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Invalid request uri: {}", requestURI, e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Invalid request uri: {}", requestURI);
-            }
-        }
-
-        return new String [] { namespacedPathPart, pathInfoFromURI };
     }
 
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {

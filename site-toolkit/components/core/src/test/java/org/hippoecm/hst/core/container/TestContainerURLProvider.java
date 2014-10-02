@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -352,18 +351,14 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         HstContainerURL componentRenderingURL = urlProvider.createURL(containerURL, url);
 
-        final String componentRenderingWindowReferenceNamespace = "cr";
         componentRenderingURL.setComponentRenderingWindowReferenceNamespace("cr");
 
         String componentRenderingURLString = urlProvider.toURLString(componentRenderingURL, requestContext);
 
-        String decodedURLPart =  HstURL.COMPONENT_RENDERING_TYPE + 
-                              HstContainerURLProviderImpl.REQUEST_INFO_SEPARATOR + 
-                              componentRenderingWindowReferenceNamespace;
-        String encodedURLPart = URLEncoder.encode(decodedURLPart, componentRenderingURL.getCharacterEncoding());
-
-        assertTrue("componentRenderingURLString is wrong: " + componentRenderingURLString, componentRenderingURLString.contains(encodedURLPart));
-        assertTrue("componentRenderingURLString is wrong: " + componentRenderingURLString, componentRenderingURLString.contains(HstContainerURLProviderImpl.DEFAULT_HST_URL_NAMESPACE_PREFIX+encodedURLPart));
+        assertTrue("componentRenderingURLString is wrong: " + componentRenderingURLString, 
+                componentRenderingURLString.contains("?_hn:type=" + HstURL.COMPONENT_RENDERING_TYPE));
+        assertTrue("componentRenderingURLString is wrong: " + componentRenderingURLString, 
+                componentRenderingURLString.contains("&_hn:ref=" + componentRenderingURL.getComponentRenderingWindowReferenceNamespace()));
 
         ((MockHttpServletRequest) request).setParameter("r1:param1", "value1");
         ((MockHttpServletRequest) request).setParameter("r1:param2", "value2");

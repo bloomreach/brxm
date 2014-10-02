@@ -169,6 +169,32 @@ public interface HstContainerURL {
     Map<String, String[]> getParameterMap();
 
     /**
+     * Returns the value of a render parameter as a <code>String</code>,
+     * or <code>null</code> if the render parameter does not exist.
+     * 
+     * <p>You should only use this method when you are sure the
+     * parameter has only one value. If the parameter might have
+     * more than one value, use {@link #getParameterValues}.
+     *
+     * <p>If you use this method with a multivalued
+     * parameter, the value returned is equal to the first value
+     * in the array returned by <code>getParameterValues</code>.</p>
+     * 
+     * @param name
+     * @return
+     */
+    String getParameter(String name);
+
+    /**
+     * Returns an array of <code>String</code> objects containing 
+     * all of the values the given render parameter has, or 
+     * <code>null</code> if the render parameter does not exist.
+     * @param name
+     * @return
+     */
+    String[] getParameterValues(String name);
+
+    /**
      * Sets the action parameter for the target HstComponent.
      * If the value is null, it will remove the parameter.
      * 
