@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.linking.LinkPathNotFoundException;
 import org.hippoecm.hst.core.linking.LinkRewritePathResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -56,7 +57,7 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                 final String msg = String.format("Found a comment document '%s' without a commentlink node. " +
                                 "Cannot create a link for it.", document.getPath());
                 log.info(msg);
-                throw new RuntimeException(msg);
+                throw new LinkPathNotFoundException(msg);
             }
 
             final String docBase = JcrUtils.getStringProperty(commentLink, HippoNodeType.HIPPO_DOCBASE, null);
@@ -66,7 +67,7 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                 final String msg = String.format("Found a comment document '%s' without incorrect docbase in commentlink node. " +
                                 "Cannot create a link for it.", document.getPath());
                 log.info(msg);
-                throw new RuntimeException(msg);
+                throw new LinkPathNotFoundException(msg);
             }
 
             try {
@@ -80,13 +81,13 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                     final String msg = String.format("Found a comment document '%s' without docbase '%s' that does" +
                             "not point to a document (handle).", document.getPath(), docBase);
                     log.info(msg);
-                    throw new RuntimeException(msg);
+                    throw new LinkPathNotFoundException(msg);
                 }
             } catch (ItemNotFoundException e) {
                 final String msg = String.format("Found a comment document '%s' without docbase '%s' that does" +
                         "not point to an existing node.", document.getPath(), docBase);
                 log.info(msg);
-                throw new RuntimeException(msg);
+                throw new LinkPathNotFoundException(msg);
             }
 
         } catch (RepositoryException e) {
