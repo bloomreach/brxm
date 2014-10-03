@@ -31,7 +31,7 @@ abstract public class AbstractHippoFacetChildNavigation extends HippoFacetNaviga
     abstract List<? extends AbstractHippoFacetChildNavigation> getAncestorsAndSelf();
     
     /**
-     * he ancestors and self of this AbstractHippoFacetChildNavigation. Note that only the ancestors of the same bean type are returned. 
+     * The ancestors and self of this AbstractHippoFacetChildNavigation. Note that only the ancestors of the same bean type are returned.
      * @return the ancestor list of AbstractHippoFacetChildNavigation's or an empty list if no ancestors present
      */
     abstract List<? extends AbstractHippoFacetChildNavigation> getAncestors();
