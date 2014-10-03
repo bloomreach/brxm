@@ -279,7 +279,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return new LocationMapResolver(subLocationMapTree);
     }
 
-    private String getNodePath(Node node, boolean canonical,  boolean navigationStateful) throws RepositoryException {
+    private String getNodePath(Node node, boolean canonical,  boolean navigationStateful)
+            throws RepositoryException, LinkPathNotFoundException {
         if (linkRewritePathResolver == null) {
             return node.getPath();
         }
@@ -349,7 +350,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 log.info("Cannot create link when the jcr node null. Return a page not found link");
                 return createPageNotFoundLink(mount);
             }
-            
+
             boolean postProcess = true;
             Node canonicalNode = null;
             if(!resolverProperties.navigationStateful) {
@@ -357,7 +358,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 // we'll continue with the non canonical node
                 canonicalNode = NodeUtils.getCanonicalNode(node);
             }
-            
+
             LinkInfo linkInfo = null;
             try {
                 if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
@@ -368,14 +369,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         if(node.isNodeType(resolver.getNodeType())) {
                             HstLink link = resolver.resolve(node, mount, mount.getHstSite().getLocationMapTree());
                             if(link != null) {
-                               return link; 
+                               return link;
                             } else {
                                 log.debug("Location resolved for nodetype '{}' is not able to create link for node '{}'. Try next location resolver",
                                         resolver.getNodeType(), originalNodePath);
                             }
                         }
                     }
-                   
+
                     log.info("There is no resolver that can handle a resource of type '{}'. Return do not found link", node.getPrimaryNodeType().getName());
                     return createPageNotFoundLink(mount);
                 } else {
@@ -404,13 +405,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
 
                     final String nodePath = getNodePath(node, resolverProperties.canonicalLink, resolverProperties.navigationStateful);
-                    
+
                     linkInfo = resolveToLinkInfo(nodePath, mount, resolverProperties);
 
-                    if (linkInfo == null && resolverProperties.tryOtherMounts) {    
-                        
+                    if (linkInfo == null && resolverProperties.tryOtherMounts) {
+
                         log.debug("We cannot create a link for '{}' for the mount '{}' belonging to the current request. Try to create a cross-domain/site/channel link.", nodePath, mount.getName());
-                        
+
                         // when trying other mounts, we do not support 'preferredItem'. Set to null if it wasn't already set to null
 
                         if(resolverProperties.preferredItem != null) {
@@ -432,7 +433,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          *
                          * Note that if there is a preferredItem we ignore this one for cross domain linking as preferredItem only work within the same Mount
                          */
-                        
+
                         List<Mount> mountsForHostGroup = mount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(mount.getVirtualHost().getHostGroupName());
 
                         /*
@@ -451,7 +452,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          * 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper the more specific.
                          */
                         List<Mount> candidateMounts = new ArrayList<Mount>();
-                        
+
                         for(Mount candidateMount : mountsForHostGroup) {
                            if(candidateMount == mount) {
                                // do not try the already used mount above again
@@ -461,7 +462,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                // not a mount for a HstSite
                                continue;
                            }
-                         
+
                            // (a)
                            if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
                               // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
@@ -479,7 +480,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                }
                            }
                         }
-                        
+
                         if(candidateMounts.size() == 0) {
                             log.info("There is no Mount available that is suited to linkrewrite '{}'. Return page not found link.", nodePath);
                             return createPageNotFoundLink(mount);
@@ -489,9 +490,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             // sort the candidate mounts according the algorithm mount ordering (1), (2), (3) and (4) applied
                             // this is done by the CandidateMountComparator which gets the current 'mount' as reference for
                             // the ordering 
-                            
+
                             Collections.sort(candidateMounts, new CandidateMountComparator(mount));
-                            
+
                             for(Mount tryMount : candidateMounts) {
                                 linkInfo = resolveToLinkInfo(nodePath, tryMount, resolverProperties);
                                 if(linkInfo != null) {
@@ -500,11 +501,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                 }
                             }
                         }
-                        
-                      
+
+
                     }
                 }
-            
+
+            } catch (LinkPathNotFoundException e) {
+                log.debug("Returning not found link for '{}' :", originalNodePath, e);
+                return createPageNotFoundLink(mount);
             } catch(RepositoryException e){
                 log.error("Repository Exception during creating link", e);
             } catch (Exception e) {
@@ -663,6 +667,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
             
                 
+            } catch (LinkPathNotFoundException e) {
+                log.debug("LinkPathNotFoundException for '{}'. Return empty list", originalNodePath, e);
+                return Collections.emptyList();
             } catch(RepositoryException e){
                 log.warn("Repository Exception during creating link", e);
             } catch (Exception e) {
