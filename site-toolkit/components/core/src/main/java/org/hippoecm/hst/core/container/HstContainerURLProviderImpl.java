@@ -98,11 +98,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return this.navigationalStateCodec;
     }
 
-    public HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath) {
-        return parseURL(mount, request.getContextPath(), requestPath, request.getCharacterEncoding());
+    public HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath, Map<String, String []> queryParams) {
+        return parseURL(mount, request.getContextPath(), requestPath, queryParams, request.getCharacterEncoding());
     }
 
-    public HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, String requestCharacterEncoding) {
+    public HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, Map<String, String []> queryParams, String requestCharacterEncoding) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         url.setContextPath(contextPath);
         url.setHostName(mount.getMount().getVirtualHost().getHostName());
@@ -113,13 +113,14 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         String characterEncoding = StringUtils.defaultIfEmpty(requestCharacterEncoding, "ISO-8859-1");
         url.setCharacterEncoding(characterEncoding);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
+        url.setParameters(queryParams);
 
         parseRequestInfo(url);
 
         return url;
     }
 
-    public HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath) {
+    public HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath, Map<String, String []> queryParams) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         HstContainerURL baseURL = requestContext.getBaseURL();
         url.setContextPath(baseURL.getContextPath());
@@ -129,6 +130,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setRequestPath(requestPath);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
         url.setCharacterEncoding(baseURL.getCharacterEncoding());
+        url.setParameters(queryParams);
 
         parseRequestInfo(url);
 

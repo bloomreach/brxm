@@ -16,6 +16,7 @@
 package org.hippoecm.hst.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -439,7 +440,7 @@ public class HstRequestUtils {
             queryParamMap = new LinkedHashMap<String, String []>();
 
             String[] paramPairs = queryString.split("&");
-            String paramName = null;
+            String paramName;
 
             for (String paramPair : paramPairs) {
                 String[] paramNameAndValue = paramPair.split("=");
@@ -452,6 +453,47 @@ public class HstRequestUtils {
 
             for (Map.Entry<String, String []> entry : queryParamMap.entrySet()) {
                 entry.setValue(request.getParameterValues(entry.getKey()));
+            }
+        }
+
+        return queryParamMap;
+    }
+
+    public static Map<String, String []> parseQueryString(URI uri, String encoding) throws UnsupportedEncodingException {
+        Map<String, String []> queryParamMap = null;
+
+        String queryString = uri.getQuery();
+
+        if (queryString == null) {
+            queryParamMap = Collections.emptyMap();
+        } else {
+            // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
+            queryParamMap = new LinkedHashMap<String, String []>();
+
+            String[] paramPairs = queryString.split("&");
+            String paramName;
+            String paramValue;
+            String [] paramValues;
+            String [] tempValues;
+
+            for (String paramPair : paramPairs) {
+                String[] paramNameAndValue = paramPair.split("=");
+
+                if (paramNameAndValue.length > 1) {
+                    paramName = paramNameAndValue[0];
+                    paramValue = URLDecoder.decode(paramNameAndValue[1], encoding);
+
+                    paramValues = queryParamMap.get(paramName);
+
+                    if (paramValues == null) {
+                        queryParamMap.put(paramName, new String[] { paramValue });
+                    } else {
+                        tempValues = new String[paramValues.length + 1];
+                        System.arraycopy(paramValues, 0, tempValues, 0, paramValues.length);
+                        tempValues[paramValues.length] = paramValue;
+                        queryParamMap.put(paramName, tempValues);
+                    }
+                }
             }
         }
 

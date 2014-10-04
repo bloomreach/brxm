@@ -22,6 +22,7 @@ import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,25 +66,38 @@ public class TestHstRequestUtils {
     }
     
     @Test
-    public void testParseQueryString() throws Exception {
+    public void testParseQueryStringFromRequest() throws Exception {
         String queryString = "foo=bar&lux=bar&foo=foo";
         String[] fooValues = {"bar", "foo"};
         String[] luxValues = {"bar"};
-        
+
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getQueryString()).andReturn(queryString).anyTimes();
         expect(request.getParameterValues("foo")).andReturn(fooValues).anyTimes();
         expect(request.getParameterValues("lux")).andReturn(luxValues).anyTimes();
-        
+
         replay(request);
-       
-        
-        Map<String, String[] > parsedQueryStringMap =  HstRequestUtils.parseQueryString(request);
+
+        Map<String, String[]> parsedQueryStringMap =  HstRequestUtils.parseQueryString(request);
 
         assertTrue("parsedQueryStringMap must contain foo.", parsedQueryStringMap.containsKey("foo"));
         assertTrue("parsedQueryStringMap must have 2 values for foo.", parsedQueryStringMap.get("foo").length == 2);
         assertTrue("parsedQueryStringMap must contain lux.", parsedQueryStringMap.containsKey("lux"));
         assertTrue("parsedQueryStringMap must have 1 value for lux.", parsedQueryStringMap.get("lux").length == 1);
+    }
+
+    @Test
+    public void testParseQueryStringFromURI() throws Exception {
+        URI uri = URI.create("http://www.example.com/?foo=bar&lux=bar&foo=foo+bar");
+        Map<String, String[]> parsedQueryStringMap =  HstRequestUtils.parseQueryString(uri, "UTF-8");
+
+        assertTrue("parsedQueryStringMap must contain foo.", parsedQueryStringMap.containsKey("foo"));
+        assertTrue("parsedQueryStringMap must have 2 values for foo.", parsedQueryStringMap.get("foo").length == 2);
+        assertEquals("bar", parsedQueryStringMap.get("foo")[0]);
+        assertEquals("foo bar", parsedQueryStringMap.get("foo")[1]);
+        assertTrue("parsedQueryStringMap must contain lux.", parsedQueryStringMap.containsKey("lux"));
+        assertTrue("parsedQueryStringMap must have 1 value for lux.", parsedQueryStringMap.get("lux").length == 1);
+        assertEquals("bar", parsedQueryStringMap.get("lux")[0]);
     }
 
     @Test

@@ -67,20 +67,22 @@ public interface HstContainerURLProvider {
      * @param requestContext
      * @param mount
      * @param requestPath
+     * @param queryParams
      * @return
      */
-    HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath);
+    HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath, Map<String, String []> queryParams);
     
     /**
      * Parses a request for a specific {@link ResolvedMount} and requestPath
      * and creates an {@link HstContainerURL} instance.
      * 
      * @param request
-     * @param requestPath
      * @param mount
+     * @param requestPath
+     * @param queryParams
      * @return
      */
-    HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath);
+    HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath, Map<String, String []> queryParams);
 
     /**
      * Parses a request for a specific {@link ResolvedMount}, contextPath, requestPath and request character encoding
@@ -89,10 +91,11 @@ public interface HstContainerURLProvider {
      * @param mount
      * @param contextPath
      * @param requestPath
+     * @param queryParams
      * @param requestCharacterEncoding
      * @return
      */
-    HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, String requestCharacterEncoding);
+    HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, Map<String, String []> queryParams, String requestCharacterEncoding);
 
     /**
      * Creates an {@link HstContainerURL} instance for a new pathInfo (without query parameters)

@@ -22,17 +22,20 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.easymock.EasyMock;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.component.HstURLFactoryImpl;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
@@ -449,5 +452,64 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         url.setParameter("param2", "value2");
         assertTrue("The url is wrong.", url.toString().contains("r2:param1=value1"));
         assertFalse("The url is wrong.", url.toString().contains("r1:param2=value2"));
+    }
+
+    @Test
+    public void testParseURLsWithRequestPathAndQueryParams() throws Exception {
+        ResolvedMount resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
+        EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn("").anyTimes();
+        HstContainerURL baseURL = EasyMock.createNiceMock(HstContainerURL.class);
+
+        EasyMock.replay(resolvedMount);
+        EasyMock.replay(baseURL);
+
+        requestContext.setResolvedMount(resolvedMount);
+        requestContext.setBaseURL(baseURL);
+
+        String requestPath = "/news";
+
+        Map<String, String[]> queryParams = new HashMap<String, String[]>();
+        queryParams.put("_hn:type", new String [] { "action" });
+        queryParams.put("_hn:ref", new String [] { "r1" });
+        queryParams.put("p1", new String [] { "v1" });
+        queryParams.put("p2", new String [] { "v2" });
+
+        HstContainerURL containerURL = urlProvider.parseURL(requestContext, requestContext.getResolvedMount(), requestPath, queryParams);
+
+        assertEquals("r1", containerURL.getActionWindowReferenceNamespace());
+        assertNull(containerURL.getResourceWindowReferenceNamespace());
+        assertNull(containerURL.getResourceId());
+        assertNull(containerURL.getComponentRenderingWindowReferenceNamespace());
+        assertNull(containerURL.getParameter("_hn:type"));
+        assertNull(containerURL.getParameter("_hn:ref"));
+        assertNull(containerURL.getParameter("p-non-existing"));
+        assertEquals("v1", containerURL.getParameter("p1"));
+        assertEquals("v2", containerURL.getParameter("p2"));
+
+        queryParams = new HashMap<String, String[]>();
+        queryParams.put("_hn:type", new String [] { "resource" });
+        queryParams.put("_hn:ref", new String [] { "r1" });
+        queryParams.put("_hn:rid", new String [] { "resid" });
+        queryParams.put("p1", new String [] { "v1" });
+        queryParams.put("p2", new String [] { "v2" });
+
+        containerURL = urlProvider.parseURL(requestContext, requestContext.getResolvedMount(), requestPath, queryParams);
+
+        assertNull(containerURL.getActionWindowReferenceNamespace());
+        assertEquals("r1", containerURL.getResourceWindowReferenceNamespace());
+        assertEquals("resid", containerURL.getResourceId());
+        assertNull(containerURL.getComponentRenderingWindowReferenceNamespace());
+
+        queryParams = new HashMap<String, String[]>();
+        queryParams.put("_hn:type", new String [] { "component-rendering" });
+        queryParams.put("_hn:ref", new String [] { "r1" });
+        queryParams.put("p1", new String [] { "v1" });
+        queryParams.put("p2", new String [] { "v2" });
+
+        containerURL = urlProvider.parseURL(requestContext, requestContext.getResolvedMount(), requestPath, queryParams);
+
+        assertNull(containerURL.getActionWindowReferenceNamespace());
+        assertNull(containerURL.getResourceWindowReferenceNamespace());
+        assertEquals("r1", containerURL.getComponentRenderingWindowReferenceNamespace());
     }
 }

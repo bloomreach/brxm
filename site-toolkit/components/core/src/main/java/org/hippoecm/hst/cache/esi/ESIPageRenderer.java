@@ -44,6 +44,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,7 +204,8 @@ public class ESIPageRenderer implements ComponentManagerAware {
                     requestPathFromURL = StringUtils.substringAfter(uri.getPath(), curContextPath);
                 }
 
-                localContainerURL = requestContext.getContainerURLProvider().parseURL(curResolvedMount, curContextPath, requestPathFromURL, curBaseURL.getCharacterEncoding());
+                Map<String, String[]> queryParams = HstRequestUtils.parseQueryString(uri, StringUtils.defaultIfEmpty(curBaseURL.getCharacterEncoding(), "UTF-8"));
+                localContainerURL = requestContext.getContainerURLProvider().parseURL(curResolvedMount, curContextPath, requestPathFromURL, queryParams, curBaseURL.getCharacterEncoding());
             } catch (MatchException e) {
                 log.debug("The host is not matched by local HST virtual hosts configuration. It might be a remote URL: '{}'.", uri);
             } catch (Exception e) {
