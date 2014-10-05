@@ -223,61 +223,6 @@
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="new-smart-folder">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:templatequery</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-smart-folder/hippostd:templates/node()</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:language" sv:type="String">
-      <sv:value>xpath</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippostd:icon" sv:type="String">
-      <sv:value>addextended_ico</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippostd:renderer" sv:type="String">
-      <sv:value>facetselect</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippostd:modify" sv:type="String">
-      <sv:value>./_name</sv:value>
-      <sv:value>$name</sv:value>
-      <sv:value>./_name/content/hippo:docbase</sv:value>
-      <sv:value>$docbase</sv:value>
-      <sv:value>./_name/content/hippo:facets</sv:value>
-      <sv:value>$facet</sv:value>
-      <sv:value>./_name/content/hippo:values</sv:value>
-      <sv:value>$value</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippostd:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:templates</sv:value>
-      </sv:property>
-      <sv:node sv:name="new-smart-folder">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:unstructured</sv:value>
-        </sv:property>
-        <sv:node sv:name="content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:facetselect</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String">
-            <sv:value>facet</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:values" sv:type="String">
-            <sv:value>value</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:modes" sv:type="String">
-            <sv:value>single</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-
   <sv:node sv:name="new-translated-folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
