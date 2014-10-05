@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.impl;
+package org.onehippo.repository.bootstrap;
 
 import java.io.File;
 import java.io.IOException;

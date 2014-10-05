@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.impl;
+package org.onehippo.repository.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.bootstrap.PartialZipFile;
 import org.onehippo.repository.testutils.ZipTestUtil;
 
 import static junit.framework.Assert.fail;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Tests {@link PartialZipFile}.
+ * Tests {@link org.onehippo.repository.bootstrap.PartialZipFile}.
  */
 public class PartialZipFileTest {
 

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.impl;
+package org.onehippo.repository.bootstrap;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +37,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Attributes;
@@ -85,10 +83,7 @@ import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.LocalHippoRepository;
@@ -104,7 +99,6 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
-import org.onehippo.cms7.utilities.xml.ProxyContentHandler;
 import org.onehippo.repository.util.FileContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;
 import org.onehippo.repository.xml.ContentResourceLoader;
@@ -112,14 +106,12 @@ import org.onehippo.repository.xml.DefaultContentHandler;
 import org.onehippo.repository.xml.ImportResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
@@ -1435,56 +1427,4 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     }
 
-    /**
-     * ProxyContentHandler that forwards SAX events only below a certain node path.
-     */
-    private static class PartialSystemViewFilter extends ProxyContentHandler {
-
-        private final Queue<String> startPath = new ArrayDeque<>();
-        private int depth = -1;
-
-        public PartialSystemViewFilter(final ContentHandler handler, final String startPath) {
-            super(handler);
-            Collections.addAll(this.startPath, startPath.split("/"));
-        }
-
-        @Override
-        public void startElement(final String uri, final String localName, final String qName, final org.xml.sax.Attributes atts) throws SAXException {
-            if (!skip()) {
-                depth++;
-                super.startElement(uri, localName, qName, atts);
-                return;
-            }
-            Name name = NameFactoryImpl.getInstance().create(uri, localName);
-            if (name.equals(NameConstants.SV_NODE)) {
-                String svName = atts.getValue(SV_NAME.getNamespaceURI(), SV_NAME.getLocalName());
-                if (startPath.peek().equals(svName)) {
-                    startPath.remove();
-                    if (startPath.isEmpty()) {
-                        depth++;
-                        super.startElement(uri, localName, qName, atts);
-                    }
-                }
-            }
-        }
-
-        private boolean skip() {
-            return depth < 0;
-        }
-
-        @Override
-        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-            if (!skip()) {
-                super.endElement(uri, localName, qName);
-                depth--;
-            }
-        }
-
-        @Override
-        public void characters(final char[] ch, final int start, final int length) throws SAXException {
-            if (!skip()) {
-                super.characters(ch, start, length);
-            }
-        }
-    }
 }

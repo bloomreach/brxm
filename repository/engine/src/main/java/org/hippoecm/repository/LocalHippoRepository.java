@@ -53,14 +53,13 @@ import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.PostStartupTask;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
-import org.hippoecm.repository.impl.InitializationProcessorImpl;
+import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
 import org.hippoecm.repository.impl.ReferenceWorkspaceImpl;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.modules.ModuleManager;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -138,7 +138,6 @@ engine/src/main/java/org/hippoecm/repository/deriveddata/PropertyReference.java 
 engine/src/main/java/org/hippoecm/repository/deriveddata/PropertyUpdateLogger.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/RelativePropertyReference.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/ResolvePropertyReference.java -text
-engine/src/main/java/org/hippoecm/repository/impl/InitializationProcessorImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/ReferenceWorkspaceImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/VersionManagerDecorator.java -text
 engine/src/main/java/org/hippoecm/repository/impl/WorkflowLogger.java -text
@@ -189,6 +188,8 @@ engine/src/main/java/org/hippoecm/repository/security/user/DelegatingUserManager
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/cms7/jaxrs/JaxrsApplication.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/InitializationProcessorImpl.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/PartialSystemViewFilter.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistration.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistry.java -text
@@ -237,6 +238,7 @@ engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ExportImportPackageT
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
+engine/src/test/java/org/onehippo/repository/bootstrap/PartialSystemViewFilterTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
@@ -282,6 +284,8 @@ engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-merge.xml 
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-result.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/unittest.pdf -text
 engine/src/test/resources/org/hippoecm/repository/words_on_new_line_without_spaces.pdf -text
+engine/src/test/resources/org/onehippo/repository/bootstrap/PartialSystemViewFilterTest_expected.xml -text
+engine/src/test/resources/org/onehippo/repository/bootstrap/PartialSystemViewFilterTest_input.xml -text
 engine/src/test/resources/repository-test.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
 ldap/src/main/resources/hippoldap.cnd -text
@@ -350,7 +354,6 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationGuid
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationRangesTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSimpleTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSortingTest.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/repository/impl/InitializationProcessorTest.java -text
 test/src/test/java/org/hippoecm/repository/integration/UpgradeIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupJobTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/RepositoryLoggerTest.java -text
@@ -361,6 +364,7 @@ test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/java/org/onehippo/repository/LocalRefreshTest.java -text
+test/src/test/java/org/onehippo/repository/bootstrap/InitializationProcessorTest.java -text
 test/src/test/java/org/onehippo/repository/clustering/ClusterTest.java -text
 test/src/test/java/org/onehippo/repository/monkey/Action.java -text
 test/src/test/java/org/onehippo/repository/monkey/AddNodeAction.java -text

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.impl;
+package org.onehippo.repository.bootstrap;
 
 import java.io.File;
 import java.io.InputStream;
@@ -38,13 +38,13 @@ import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.PostStartupTask;
-import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.testutils.ZipTestUtil;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
@@ -74,7 +74,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
-import static org.hippoecm.repository.impl.InitializationProcessorImpl.ContentFileInfo;
+import static org.onehippo.repository.bootstrap.InitializationProcessorImpl.ContentFileInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -485,16 +485,6 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         assertEquals("foo", contentFileInfo.contextNodeName);
         assertEquals("combine", contentFileInfo.deltaDirective);
-    }
-
-    @Test
-    public void testGetPartialContentInputStream() throws Exception {
-        InitializationProcessorImpl processor = new InitializationProcessorImpl();
-        try (InputStream in = processor.getPartialContentInputStream(getClass().getResourceAsStream("/bootstrap/delta.xml"), "foo/bar")) {
-//            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" " +
-//                    "xmlns:esv=\"http://www.onehippo.org/jcr/xmlimport\" sv:name=\"bar\" esv:merge=\"combine\"/>", IOUtils.toString(in).trim());
-            System.out.println(IOUtils.toString(in));
-        }
     }
 
     /*

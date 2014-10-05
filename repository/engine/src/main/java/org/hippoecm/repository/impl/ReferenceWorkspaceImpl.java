@@ -39,6 +39,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
 import org.xml.sax.InputSource;
 
 public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
