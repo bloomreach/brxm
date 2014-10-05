@@ -37,7 +37,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -55,10 +54,9 @@ import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationId
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,11 +202,11 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                         zipFile = new ZipFile(tempFile);
                         ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
                         esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
-                        session.importEnhancedSystemViewXML(absPath, esvIn, contentResourceLoader, uuidOpt, derefOpt);
+                        session.importEnhancedSystemViewXML(absPath, esvIn, uuidOpt, derefOpt, contentResourceLoader);
                     }
                     else if (fileName.endsWith(".xml")) {
                         in = new BufferedInputStream(upload.getInputStream());
-                        session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt);
+                        session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt, null);
                     }
                     else {
                         warn("Unrecognized file: only .xml and .zip can be processed");
@@ -217,7 +215,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 }
                 else {
                     in = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
-                    session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt);
+                    session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt, null);
                 }
 
                 if (generate) {
