@@ -66,9 +66,10 @@ import javax.transaction.xa.XAResource;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.impl.NodeDecorator;
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ImportResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -552,17 +553,12 @@ final public class UpdaterSession implements HippoSession {
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+    public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

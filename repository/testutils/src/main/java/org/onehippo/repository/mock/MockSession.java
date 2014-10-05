@@ -34,8 +34,6 @@ import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFactory;
-import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -45,9 +43,10 @@ import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ImportResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -357,17 +356,12 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void importDereferencedXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+    public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

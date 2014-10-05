@@ -13,16 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
-
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.SKIP;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.OVERLAY;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.COMBINE;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.INSERT;
 
 class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
 
@@ -40,19 +35,19 @@ class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
     }
 
     boolean mergeSkip() {
-        return SKIP.equalsIgnoreCase(mergeBehavior);
+        return EnhancedSystemViewConstants.SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
     boolean mergeOverlay() {
-        return OVERLAY.equalsIgnoreCase(mergeBehavior);
+        return EnhancedSystemViewConstants.OVERLAY.equalsIgnoreCase(mergeBehavior);
     }
 
     boolean mergeCombine() {
-        return COMBINE.equalsIgnoreCase(mergeBehavior);
+        return EnhancedSystemViewConstants.COMBINE.equalsIgnoreCase(mergeBehavior);
     }
 
     String mergeInsertBefore() {
-        if (INSERT.equalsIgnoreCase(mergeBehavior)) {
+        if (EnhancedSystemViewConstants.INSERT.equalsIgnoreCase(mergeBehavior)) {
             return (location != null ? location : "");
         } else {
             return null;

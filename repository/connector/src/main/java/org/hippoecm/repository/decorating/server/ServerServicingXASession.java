@@ -33,6 +33,7 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerXASession;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
+import org.onehippo.repository.xml.ImportResult;
 
 public class ServerServicingXASession extends ServerXASession implements RemoteServicingXASession {
 
@@ -77,10 +78,10 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
         }
     }
 
-    public void importEnhancedSystemViewXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior)
+    public ImportResult importEnhancedSystemViewXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior)
             throws IOException, RepositoryException, RemoteException {
         try {
-            session.importEnhancedSystemViewXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior);
+            return session.importEnhancedSystemViewXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior, null);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

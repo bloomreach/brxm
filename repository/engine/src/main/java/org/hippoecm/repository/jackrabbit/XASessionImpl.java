@@ -17,7 +17,6 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.HashSet;
@@ -46,12 +45,12 @@ import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
-import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.DefaultContentHandler;
+import org.onehippo.repository.xml.ImportContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -209,11 +208,11 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
         return helper.pendingChanges(node, nodeType, prune);
     }
 
-    public void importEnhancedSystemViewXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior)
+    @Override
+    public void importEnhancedSystemViewXML(ImportContext importContext)
             throws IOException, RepositoryException {
-        ContentHandler handler =
-            helper.getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior);
-        new DefaultContentHandler(handler).parse(in);
+        ContentHandler handler = helper.getDereferencedImportContentHandler(importContext);
+        new DefaultContentHandler(handler).parse(importContext.getInputStream());
     }
 
     @Override

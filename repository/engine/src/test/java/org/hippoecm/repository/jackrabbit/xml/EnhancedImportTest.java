@@ -17,6 +17,7 @@ package org.hippoecm.repository.jackrabbit.xml;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -37,11 +38,11 @@ import org.onehippo.cms7.jcrdiff.match.MatcherItemInfo;
 import org.onehippo.cms7.jcrdiff.match.PatchFactory;
 import org.onehippo.cms7.jcrdiff.serialization.PatchWriter;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.xml.ImportResult;
 
-import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW;
 import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
-import static org.hippoecm.repository.api.ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
 import static org.hippoecm.repository.api.ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 public class EnhancedImportTest extends RepositoryTestCase {
@@ -69,17 +70,27 @@ public class EnhancedImportTest extends RepositoryTestCase {
     }
 
     private void test() throws Exception {
+        test(null);
+    }
+
+    private void test(String[] expectedContextPaths) throws Exception {
         String name = testName.getMethodName().substring(4).toLowerCase();
         importXML("/test", name + "-fixture.xml");
-        importXML("/test", name + "-merge.xml");
+        final ImportResult importResult = importXML("/test", name + "-merge.xml");
+        if (expectedContextPaths != null) {
+            final Collection<String> contextPaths = importResult.getContextPaths();
+            assertArrayEquals(expectedContextPaths, contextPaths.toArray(new String[contextPaths.size()]));
+        }
         importXML("/compare", name + "-result.xml");
         assertTrue(compare(session.getNode("/test"), session.getNode("/compare/test")));
     }
 
-    private void importXML(final String path, final String resource) throws Exception {
-        ((HippoSession) session).importEnhancedSystemViewXML(path, getClass().getResourceAsStream(resource),
-                IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_REMOVE);
+    private ImportResult importXML(final String path, final String resource) throws Exception {
+        final ImportResult importResult = ((HippoSession) session).
+                importEnhancedSystemViewXML(path, getClass().getResourceAsStream(resource),
+                        IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_REMOVE, null);
         session.save();
+        return importResult;
     }
 
     @Test
@@ -94,12 +105,12 @@ public class EnhancedImportTest extends RepositoryTestCase {
 
     @Test
     public void testCombine() throws Exception {
-        test();
+        test(new String[] { "/test/aap", "/test/aap/noot" });
     }
 
     @Test
     public void testOverlay() throws Exception {
-        test();
+        test(new String[] { "/test/aap", "/test/aap/noot" });
     }
 
     @Test

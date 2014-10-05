@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 
 import java.io.File;

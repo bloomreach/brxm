@@ -22,7 +22,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
+
 
 /**
  * {@link ContentResourceLoader} implementation for loading resources from a directory.

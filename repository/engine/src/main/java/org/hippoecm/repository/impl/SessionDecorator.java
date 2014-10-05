@@ -62,19 +62,20 @@ import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
-import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewPackage;
-import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
-import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
+import org.onehippo.repository.xml.DereferencedSysViewSAXEventGenerator;
+import org.onehippo.repository.xml.EnhancedSystemViewPackage;
+import org.onehippo.repository.xml.HippoDocumentViewExporter;
+import org.onehippo.repository.xml.ImportResult;
+import org.onehippo.repository.xml.PhysicalSysViewSAXEventGenerator;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ImportContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -187,26 +188,24 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
-        importEnhancedSystemViewXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior);
-    }
-
-    @Override
     public void importDereferencedXML(String parentAbsPath, InputStream in,
                                       ContentResourceLoader referredResourceLoader,
                                       int uuidBehavior, int referenceBehavior,
                                       int mergeBehavior) throws IOException, RepositoryException {
-        importEnhancedSystemViewXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior);
+        importEnhancedSystemViewXML(parentAbsPath, in, uuidBehavior, referenceBehavior, referredResourceLoader);
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+    public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in,
+                                                    final int uuidBehavior, final int referenceBehavior,
+                                                    final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
+        ImportContext importContext = new ImportContext(parentAbsPath, in, uuidBehavior, referenceBehavior,
+                referredResourceLoader, null);
         try {
             postMountEnabled(false);
-            getInternalHippoSession().importEnhancedSystemViewXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior);
-            // run derived data engine
+            getInternalHippoSession().importEnhancedSystemViewXML(importContext);
             derivedEngine.save();
-            //session.save();
+            return importContext.getImportResult();
         } finally {
             postMountEnabled(true);
         }
@@ -216,7 +215,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         try {
             postMountEnabled(false);
-            importEnhancedSystemViewXML(parentAbsPath, in, uuidBehavior, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
+            super.importXML(parentAbsPath, in, uuidBehavior);
         } finally {
             postMountEnabled(true);
         }

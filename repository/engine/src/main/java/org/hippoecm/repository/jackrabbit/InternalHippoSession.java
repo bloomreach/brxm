@@ -16,7 +16,6 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -34,8 +33,8 @@ import org.apache.jackrabbit.spi.commons.conversion.IdentifierResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
-import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ImportContext;
 
 /**
  * Internal hippo session implementation methods.
@@ -47,7 +46,7 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;
 
-    void importEnhancedSystemViewXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException;
+    void importEnhancedSystemViewXML(ImportContext importContext) throws IOException, RepositoryException;
 
     Node getCanonicalNode(Node node) throws RepositoryException;
 

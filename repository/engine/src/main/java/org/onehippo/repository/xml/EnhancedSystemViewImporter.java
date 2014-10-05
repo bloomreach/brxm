@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,11 +38,12 @@ import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
 
 public class EnhancedSystemViewImporter implements Importer {
 
@@ -54,10 +55,9 @@ public class EnhancedSystemViewImporter implements Importer {
     private final int uuidBehavior;
     private final int referenceBehavior;
     private final String importPath;
-    private NamePathResolver resolver;
-
+    private final NamePathResolver resolver;
+    private final ImportContext importContext;
     private boolean isRootReferenceable;
-
     private long startTime;
 
     /** Keep a list of nodeId's that need revisiting for dereferencing */
@@ -65,18 +65,18 @@ public class EnhancedSystemViewImporter implements Importer {
 
     private final Stack<NodeImpl> parents;
 
-    public EnhancedSystemViewImporter(NodeImpl importTargetNode, InternalHippoSession session, int uuidBehavior,
-                                      int referenceBehavior) {
-
+    public EnhancedSystemViewImporter(NodeImpl importTargetNode, ImportContext importContext, InternalHippoSession session) {
         this.importTargetNode = importTargetNode;
+        this.importContext = importContext;
         this.session = session;
-        this.uuidBehavior = uuidBehavior;
-        this.referenceBehavior = referenceBehavior;
+
+        this.uuidBehavior = importContext.getUuidBehaviour();
+        this.referenceBehavior = importContext.getReferenceBehaviour();
         this.resolver = session;
 
         isRootReferenceable = false;
         try {
-            isRootReferenceable = ((NodeImpl)session.getRootNode()).isNodeType(NameConstants.MIX_REFERENCEABLE);
+            isRootReferenceable = session.getRootNode().isNodeType(MIX_REFERENCEABLE);
         } catch (RepositoryException e) {
             // guess not..
         }
@@ -87,36 +87,36 @@ public class EnhancedSystemViewImporter implements Importer {
 
     }
 
-    protected NodeImpl createNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, EnhancedNodeInfo nodeInfo)
+    protected NodeImpl mergeOrCreateNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, EnhancedNodeInfo nodeInfo)
             throws RepositoryException {
         NodeImpl node;
 
-        // add node
-        if(nodeInfo.mergeCombine() && nodeInfo.getOrigin() != null) {
+        if (nodeInfo.mergeCombine()) {
             node = nodeInfo.getOrigin();
-            // 'replace' current parent with parent of conflicting
-            // parent = (NodeImpl) conflicting.getParent();
-            // replace child node
-            // node = parent.replaceChildNode(nodeInfo.getId(), nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
-        } else if (nodeInfo.mergeOverlay() && nodeInfo.getOrigin() != null) {
+            importContext.addContextPath(node.safeGetJCRPath());
+        } else if (nodeInfo.mergeOverlay()) {
             node = nodeInfo.getOrigin();
-            if (mixinNames != null) {
-                for (final Name mixinName : mixinNames) {
-                    node.addMixin(mixinName);
-                }
+            for (Name name : node.getMixinTypeNames()) {
+                node.removeMixin(name);
             }
             if (nodeTypeName != null) {
                 node.setPrimaryType(nodeTypeName.toString());
             }
-            return node;
+            importContext.addContextPath(node.safeGetJCRPath());
         } else {
             node = parent.addNode(nodeName, nodeTypeName, id);
+            if (importPath.equals(parent.safeGetJCRPath())) {
+                importContext.addContextPath(node.safeGetJCRPath());
+            }
         }
 
         if (mixinNames != null) {
             for (final Name mixinName : mixinNames) {
                 node.addMixin(mixinName);
             }
+        }
+        if (importPath.equals(parent.safeGetJCRPath())) {
+            importContext.setBaseNode(node);
         }
         return node;
     }
@@ -134,7 +134,7 @@ public class EnhancedSystemViewImporter implements Importer {
         NodeImpl node;
         if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW) {
             // create new with new uuid
-            node = createNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(), null, nodeInfo);
+            node = mergeOrCreateNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(), null, nodeInfo);
         } else if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW) {
             String msg = "a node with uuid " + nodeInfo.getId() + " already exists!";
             log.debug(msg);
@@ -149,7 +149,7 @@ public class EnhancedSystemViewImporter implements Importer {
             // remove conflicting
             conflicting.remove();
             // create new with given uuid
-            node = createNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(),
+            node = mergeOrCreateNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(),
                     nodeInfo.getId(), nodeInfo);
         } else if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING) {
             if (conflicting.getDepth() == 0) {
@@ -252,7 +252,7 @@ public class EnhancedSystemViewImporter implements Importer {
         NodeImpl node;
         NodeId id = nodeInfo.getId();
         Name nodeName = nodeInfo.getName();
-         int index = nodeInfo.getIndex();
+        int index = nodeInfo.getIndex();
         Name ntName = nodeInfo.getNodeTypeName();
         Name[] mixins = nodeInfo.getMixinNames();
 
@@ -276,7 +276,7 @@ public class EnhancedSystemViewImporter implements Importer {
         }
 
         if (id == null || !hasConflictingIdentifier(id)) {
-            node = createNode(parent, nodeName, ntName, mixins, id, nodeInfo);
+            node = mergeOrCreateNode(parent, nodeName, ntName, mixins, id, nodeInfo);
         } else {
             node = resolveUUIDConflict(parent, session.getNodeById(id), nodeInfo);
         }

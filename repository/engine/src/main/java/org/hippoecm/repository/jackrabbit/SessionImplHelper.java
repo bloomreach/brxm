@@ -76,14 +76,13 @@ import org.apache.jackrabbit.util.XMLChar;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
-import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewImportHandler;
-import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewImporter;
+import org.onehippo.repository.xml.EnhancedSystemViewImportHandler;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
+import org.onehippo.repository.xml.ImportContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -543,8 +542,7 @@ abstract class SessionImplHelper {
     /**
      * {@inheritDoc}
      */
-    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, final ContentResourceLoader contentResourceLoader, int uuidBehavior,
-            int referenceBehavior) throws PathNotFoundException, ConstraintViolationException,
+    public ContentHandler getDereferencedImportContentHandler(ImportContext importContext) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
 
         // check sanity of this session
@@ -553,6 +551,7 @@ abstract class SessionImplHelper {
         }
 
         NodeImpl parent;
+        String parentAbsPath = importContext.getParentAbsPath();
         try {
             Path p = session.getQPath(parentAbsPath).getNormalizedPath();
             if (!p.isAbsolute()) {
@@ -595,8 +594,7 @@ abstract class SessionImplHelper {
             context.getWorkspace().getInternalLockManager().checkLock(parent);
         }
 
-        EnhancedSystemViewImporter importer = new EnhancedSystemViewImporter(parent, session, uuidBehavior, referenceBehavior);
-        return new EnhancedSystemViewImportHandler(importer, contentResourceLoader, session);
+        return new EnhancedSystemViewImportHandler(parent, importContext, session);
     }
 
     public Node getCanonicalNode(NodeImpl node) throws RepositoryException {

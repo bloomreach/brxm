@@ -27,7 +27,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.junit.After;
 import org.junit.Before;
@@ -132,7 +131,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
     }
@@ -148,7 +147,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
 
@@ -174,7 +173,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
 
@@ -208,7 +207,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
         try {
-            ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+            ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
             fail("Import should fail.");
         } catch (RepositoryException e) {
             // expected
@@ -226,7 +225,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         testData.getNode("ref1").remove();
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
@@ -244,7 +243,7 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         session.getRootNode().addMixin("mix:referenceable");
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
@@ -258,14 +257,14 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(out.toByteArray());
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
         session.save();
 
         out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         in = new ByteArrayInputStream(out.toByteArray());
         referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior);
+        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
 
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
         assertEquals(2, testImport.getNodes(TEST_EXPORT_NODE).getSize());

@@ -213,6 +213,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTENTROOT = "hippo:contentroot";
 
+    public static final String HIPPO_CONTEXTPATHS = "hippo:contextpaths";
+
     public static final String HIPPO_CONTENTDELETE = "hippo:contentdelete";
 
     public static final String HIPPO_CONTENTPROPDELETE = "hippo:contentpropdelete";
@@ -394,6 +396,8 @@ public interface HippoNodeType {
     public static final String HIPPO_CONTENTPROPADD = "hippo:contentpropadd";
 
     public static final String HIPPO_STATUS = "hippo:status";
+
+    public static final String HIPPO_UPSTREAMITEMS = "hippo:upstreamitems";
 
     public static final String HIPPO_TIMESTAMP = "hippo:timestamp";
 

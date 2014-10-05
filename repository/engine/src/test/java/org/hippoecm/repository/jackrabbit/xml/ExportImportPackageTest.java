@@ -42,10 +42,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.junit.Test;
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.FileContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;
@@ -95,9 +94,10 @@ public class ExportImportPackageTest extends RepositoryTestCase {
             }
             ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
             esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
-            session.importEnhancedSystemViewXML("/test", esvIn, contentResourceLoader,
+            session.importEnhancedSystemViewXML("/test", esvIn,
                     ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW,
+                    contentResourceLoader);
             assertTrue(session.nodeExists("/test/test"));
             final Node test = session.getNode("/test/test");
             assertTrue(test.hasProperty("test"));
@@ -128,9 +128,10 @@ public class ExportImportPackageTest extends RepositoryTestCase {
             Map<String, File> entryFilesMap = unzipFileTo(session.exportEnhancedSystemViewPackage("/test", true), tempDir);
             xmlInput = new FileInputStream(entryFilesMap.get("esv.xml"));
             ContentResourceLoader contentResourceLoader = new FileContentResourceLoader(tempDir);
-            session.importEnhancedSystemViewXML("/test", xmlInput, contentResourceLoader,
+            session.importEnhancedSystemViewXML("/test", xmlInput,
                     ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW,
+                    contentResourceLoader);
             assertTrue(session.nodeExists("/test/test"));
             final Node test = session.getNode("/test/test");
             assertTrue(test.hasProperty("test"));

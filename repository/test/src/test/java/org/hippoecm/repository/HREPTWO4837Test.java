@@ -18,9 +18,7 @@ package org.hippoecm.repository;
 import javax.jcr.ImportUUIDBehavior;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -43,7 +41,7 @@ public class HREPTWO4837Test extends RepositoryTestCase {
         session.refresh(false);
         assertTrue(session.getRootNode().hasNode("test/aap/noot/noot/noot"));
         ((HippoSession)session).importEnhancedSystemViewXML("/test", getClass().getResourceAsStream("HREPTWO4837Test.xml"),
-                ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW);
+                ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, null);
         session.save();
         session.refresh(false);
         assertTrue(session.getRootNode().hasNode("test/aap/noot/noot/noot"));

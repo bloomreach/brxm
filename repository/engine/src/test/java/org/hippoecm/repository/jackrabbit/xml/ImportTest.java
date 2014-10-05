@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.sql.Ref;
 import java.util.Calendar;
 
 import javax.jcr.Binary;
@@ -29,6 +30,8 @@ import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +41,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
+import static org.hippoecm.repository.api.ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -80,7 +85,7 @@ public class ImportTest extends RepositoryTestCase {
         session.save();
 
         FileInputStream in = new FileInputStream(file);
-        session.importXML(test.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+        ((HippoSession)session).importEnhancedSystemViewXML(test.getPath(), in, IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_THROW, null);
         in.close();
         session.save();
 
@@ -104,11 +109,11 @@ public class ImportTest extends RepositoryTestCase {
         data = new byte[1024*125];
         testWhiteSpacesInBinary(data);
     }
-    
+
     @Test
     public void testNoFailureWithFaultyNamespaceDeclaration() throws Exception {
         InputStream in = getClass().getClassLoader().getResourceAsStream("import/faulty-namespace.xml");
-        session.importXML("/test", in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+        ((HippoSession)session).importEnhancedSystemViewXML("/test", in, IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_THROW, null);
     }
 
     static class ByteArrayBinary implements Binary {

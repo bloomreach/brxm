@@ -16,10 +16,13 @@
 package org.hippoecm.repository.impl;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 import javax.jcr.Node;
@@ -29,11 +32,13 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.PostStartupTask;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,13 +66,18 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTNODENAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.hippoecm.repository.impl.InitializationProcessorImpl.ContentFileInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -210,8 +220,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testContentResourceInitialization() throws Exception {
-        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/foo.xml").toString());
+    public void testPlainContentResourceInitialization() throws Exception {
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
         item.setProperty(HIPPO_CONTENTROOT, "/test");
         session.save();
         List<PostStartupTask> tasks = process(null);
@@ -234,6 +244,60 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         foo = test.getNode("foo");
         assertTrue(foo.hasProperty("jcr:created"));
         assertFalse(created.equals(foo.getProperty("jcr:created").getDate()));
+    }
+
+    @Test
+    public void testContentReloadWithDeltaCombines() throws Exception {
+        Node fooItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/foo", "hipposys:initializeitem");
+        fooItem.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
+        fooItem.setProperty(HIPPO_CONTENTROOT, "/test");
+        fooItem.setProperty(HIPPO_STATUS, "pending");
+        fooItem.setProperty(HIPPO_SEQUENCE, 1l);
+        Node barItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/bar", "hipposys:initializeitem");
+        barItem.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/bar.xml").toString());
+        barItem.setProperty(HIPPO_CONTENTROOT, "/test/foo");
+        barItem.setProperty(HIPPO_CONTEXTNODENAME, "bar");
+        barItem.setProperty(HIPPO_STATUS, "pending");
+        barItem.setProperty(HIPPO_SEQUENCE, 2l);
+        Node deltaItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/delta", "hipposys:initializeitem");
+        deltaItem.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
+        deltaItem.setProperty(HIPPO_CONTENTROOT, "/test");
+        deltaItem.setProperty(HIPPO_STATUS, "pending");
+        deltaItem.setProperty(HIPPO_SEQUENCE, 3l);
+        session.save();
+        process(null);
+//        session.exportSystemView("/test", System.out, true, false);
+        barItem.setProperty(HIPPO_RELOADONSTARTUP, true);
+        barItem.setProperty(HIPPO_VERSION, "1");
+        session.save();
+        InitializationProcessorImpl processor = new InitializationProcessorImpl();
+        Set<String> reloadItems = new HashSet<>();
+        reloadItems.add(barItem.getIdentifier());
+        processor.markReloadDownstreamItems(session, reloadItems);
+        assertEquals("pending", deltaItem.getProperty(HIPPO_STATUS).getString());
+        assertNotNull(deltaItem.getProperty(HIPPO_UPSTREAMITEMS));
+        assertEquals(1, deltaItem.getProperty(HIPPO_UPSTREAMITEMS).getValues().length);
+        assertEquals(barItem.getIdentifier(), deltaItem.getProperty(HIPPO_UPSTREAMITEMS).getValues()[0].getString());
+        process(null);
+        session.exportSystemView("/test", System.out, true, false);
+//        assertTrue(session.propertyExists("/test/foo/bar/baz"));
+    }
+
+    @Test
+    public void testCombineContentResourceInitialization() throws Exception {
+        test.addNode("foo").addNode("bar");
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
+        item.setProperty(HIPPO_CONTENTROOT, "/test");
+        session.save();
+        List<PostStartupTask> tasks = process(null);
+        assertEquals("There should be no post-startup tasks", 0, tasks.size());
+
+        assertTrue(test.hasNode("foo"));
+        assertTrue(item.hasProperty(HIPPO_CONTEXTPATHS));
+        final Value[] values = item.getProperty(HIPPO_CONTEXTPATHS).getValues();
+        assertEquals(2, values.length);
+        assertEquals("/test/foo", values[0].getString());
+        assertEquals("/test/foo/bar", values[1].getString());
     }
 
     @Test
@@ -351,13 +415,13 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testResolveDownstreamItems() throws Exception {
+    public void testResolveDownstreamItemsBasedOnContentRoot() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/");
         item.setProperty(HIPPO_CONTEXTNODENAME, "foo");
         session.save();
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/", "foo").iterator();
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItemsBasedOnContentRoot(session, "/", "foo").iterator();
         assertTrue(downstreamItems.hasNext());
         downstreamItems.next();
         assertFalse(downstreamItems.hasNext());
@@ -366,7 +430,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTEXTNODENAME, "bar");
         session.save();
 
-        downstreamItems = processor.resolveDownstreamItems(session, "/", "foo").iterator();
+        downstreamItems = processor.resolveDownstreamItemsBasedOnContentRoot(session, "/", "foo").iterator();
         assertTrue(downstreamItems.hasNext());
         downstreamItems.next();
         assertFalse(downstreamItems.hasNext());
@@ -375,13 +439,37 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTEXTNODENAME, "foobar");
         session.save();
 
-        downstreamItems = processor.resolveDownstreamItems(session, "/", "foo").iterator();
+        downstreamItems = processor.resolveDownstreamItemsBasedOnContentRoot(session, "/", "foo").iterator();
+        assertFalse(downstreamItems.hasNext());
+    }
+
+    @Test
+    public void testResolveDownstreamItemsBasedOnContextPaths() throws Exception {
+        item.setProperty(HIPPO_CONTENTROOT, "/");
+        item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo", "/foo/bar" } );
+        session.save();
+
+        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItemsBasedOnContextPaths(session, "/", "foo").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        downstreamItems = processor.resolveDownstreamItemsBasedOnContextPaths(session, "/foo", "bar").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foobar" } );
+        session.save();
+
+        downstreamItems = processor.resolveDownstreamItemsBasedOnContextPaths(session, "/", "foo").iterator();
         assertFalse(downstreamItems.hasNext());
     }
 
     @Test
     public void testReadContentFileInfo() throws Exception {
-        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/foo.xml").toString());
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
         session.save();
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
@@ -390,13 +478,23 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertEquals("foo", contentFileInfo.contextNodeName);
         assertNull(contentFileInfo.deltaDirective);
 
-        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/delta.xml").toString());
+        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
         session.save();
 
         contentFileInfo = processor.readContentFileInfo(item);
 
         assertEquals("foo", contentFileInfo.contextNodeName);
         assertEquals("combine", contentFileInfo.deltaDirective);
+    }
+
+    @Test
+    public void testGetPartialContentInputStream() throws Exception {
+        InitializationProcessorImpl processor = new InitializationProcessorImpl();
+        try (InputStream in = processor.getPartialContentInputStream(getClass().getResourceAsStream("/bootstrap/delta.xml"), "foo/bar")) {
+//            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" " +
+//                    "xmlns:esv=\"http://www.onehippo.org/jcr/xmlimport\" sv:name=\"bar\" esv:merge=\"combine\"/>", IOUtils.toString(in).trim());
+            System.out.println(IOUtils.toString(in));
+        }
     }
 
     /*

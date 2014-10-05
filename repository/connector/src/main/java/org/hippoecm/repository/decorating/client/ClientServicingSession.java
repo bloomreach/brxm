@@ -16,7 +16,6 @@
 package org.hippoecm.repository.decorating.client;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,9 +50,10 @@ import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ImportResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -136,21 +136,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-        importEnhancedSystemViewXML(path, xml, uuidBehavior, referenceBehavior);
-    }
-
-    @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
-        try {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            byte[] bytes = new byte[4096];
-            for (int n = in.read(bytes); n != -1; n = in.read(bytes)) {
-                buffer.write(bytes, 0, n);
-            }
-            remote.importEnhancedSystemViewXML(parentAbsPath, buffer.toByteArray(), uuidBehavior, referenceBehavior);
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
+        importEnhancedSystemViewXML(path, xml, uuidBehavior, referenceBehavior, null);
     }
 
     @Override
@@ -162,7 +148,9 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     }
 
     @Override
-    public void importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior) throws IOException, RepositoryException {
+    public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in,
+                                                    final int uuidBehavior, final int referenceBehavior,
+                                                    final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

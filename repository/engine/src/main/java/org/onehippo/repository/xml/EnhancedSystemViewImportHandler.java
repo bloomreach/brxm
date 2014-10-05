@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,6 +28,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.PropInfo;
@@ -38,7 +39,6 @@ import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.onehippo.repository.api.ContentResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -46,10 +46,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.FILE;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.LOCATION;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.MERGE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.FILE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.LOCATION;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
 
 public class EnhancedSystemViewImportHandler extends DefaultHandler {
     
@@ -83,9 +83,9 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
     private final Importer importer;
     private InternalHippoSession resolver;
 
-    public EnhancedSystemViewImportHandler(Importer importer, final ContentResourceLoader contentResourceLoader, InternalHippoSession session) throws RepositoryException {
-        this.importer = importer;
-        this.contentResourceLoader = contentResourceLoader;
+    public EnhancedSystemViewImportHandler(NodeImpl importTargetNode, ImportContext importContext, InternalHippoSession session) throws RepositoryException {
+        this.importer = new EnhancedSystemViewImporter(importTargetNode, importContext, session);
+        this.contentResourceLoader = importContext.getContentResourceLoader();
         this.valueFactory = session.getValueFactory();
         this.resolver = session;
     }

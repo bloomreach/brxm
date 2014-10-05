@@ -25,10 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
@@ -69,7 +66,7 @@ public class HREPTWO3870IssueTest extends RepositoryTestCase {
         InputStream in = new ByteArrayInputStream(tags.getBytes());
         ((HippoSession) session).importEnhancedSystemViewXML(test.getPath(), in,
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
+                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, null);
         session.save();
 
         // test integrity
@@ -88,7 +85,7 @@ public class HREPTWO3870IssueTest extends RepositoryTestCase {
         in = new ByteArrayInputStream(tags.getBytes());
         ((HippoSession) session).importEnhancedSystemViewXML(test.getPath(), in,
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
-                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
+                ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, null);
 
         try {
             session.save();

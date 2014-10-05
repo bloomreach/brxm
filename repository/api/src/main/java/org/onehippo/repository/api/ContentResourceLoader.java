@@ -15,55 +15,10 @@
  */
 package org.onehippo.repository.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * Strategy interface for loading resources (e.g, file system resources, zip entry resources or URI based resources).
+ * @deprecated please use {@link org.onehippo.repository.xml.ContentResourceLoader} instead
  */
-public interface ContentResourceLoader {
-
-    /**
-     * Returns a URL to the resource that is mapped to the given path.
-     *
-     * <p>The path must begin with a <tt>/</tt> and is interpreted
-     * as relative to the current content root.
-     * 
-     * <p>This method returns <code>null</code>
-     * if no resource is mapped to the pathname.
-     * 
-     * @param path a <code>String</code> specifying
-     * the path to the resource
-     *
-     * @return the resource located at the named path,
-     * or <code>null</code> if there is no resource at that path
-     *
-     * @exception MalformedURLException if the pathname is not given in 
-     * the correct form
-     */
-    public URL getResource(String path) throws MalformedURLException;
-
-    /**
-     * Returns the resource located at the named path as
-     * an <code>InputStream</code> object.
-     *
-     * <p>
-     * The path must be specified according
-     * to the rules given in <code>getResource</code>.
-     * This method returns <code>null</code> if no resource exists at
-     * the specified path. 
-     *
-     * @param path  a <code>String</code> specifying the path
-     *          to the resource
-     *
-     * @return the <code>InputStream</code> returned to the 
-     *         caller, or <code>null</code> if no resource
-     *         exists at the specified path
-     * 
-     * @throws IOException
-     */
-    public InputStream getResourceAsStream(String path) throws IOException;
-
+@Deprecated
+public interface ContentResourceLoader extends org.onehippo.repository.xml.ContentResourceLoader {
 }

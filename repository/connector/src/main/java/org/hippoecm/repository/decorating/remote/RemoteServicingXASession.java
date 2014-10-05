@@ -26,6 +26,7 @@ import javax.jcr.security.AccessControlException;
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteXASession;
+import org.onehippo.repository.xml.ImportResult;
 
 public interface RemoteServicingXASession extends RemoteXASession, Remote, Serializable {
 
@@ -37,7 +38,7 @@ public interface RemoteServicingXASession extends RemoteXASession, Remote, Seria
     public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse) throws IOException,
             RepositoryException, RemoteException;
 
-    public void importEnhancedSystemViewXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException, RemoteException;
+    public ImportResult importEnhancedSystemViewXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior) throws IOException, RepositoryException, RemoteException;
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 

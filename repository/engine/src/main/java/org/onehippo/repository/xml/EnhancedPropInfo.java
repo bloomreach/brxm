@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,11 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
-
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.SKIP;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.OVERRIDE;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.APPEND;
-import static org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewConstants.INSERT;
 
 /**
  * Information about a property being imported. This class is used
@@ -104,21 +99,21 @@ public class EnhancedPropInfo extends PropInfo {
     }
 
     private boolean mergeOverride() {
-        return OVERRIDE.equalsIgnoreCase(mergeBehavior);
+        return EnhancedSystemViewConstants.OVERRIDE.equalsIgnoreCase(mergeBehavior);
     }
 
     private boolean mergeCombine() {
-        return APPEND.equalsIgnoreCase(mergeBehavior) || INSERT.equalsIgnoreCase(mergeBehavior);
+        return EnhancedSystemViewConstants.APPEND.equalsIgnoreCase(mergeBehavior) || EnhancedSystemViewConstants.INSERT.equalsIgnoreCase(mergeBehavior);
     }
 
     private boolean mergeSkip() {
-        return SKIP.equalsIgnoreCase(mergeBehavior);
+        return EnhancedSystemViewConstants.SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
     private int mergeLocation(Value[] values) {
-        if(APPEND.equalsIgnoreCase(mergeBehavior)) {
+        if(EnhancedSystemViewConstants.APPEND.equalsIgnoreCase(mergeBehavior)) {
             return values.length;
-        } else if(INSERT.equalsIgnoreCase(mergeBehavior)) {
+        } else if(EnhancedSystemViewConstants.INSERT.equalsIgnoreCase(mergeBehavior)) {
             if(StringUtils.isEmpty(mergeLocation)) {
                 return 0;
             } else {

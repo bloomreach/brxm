@@ -24,7 +24,8 @@ import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.xml.ContentResourceLoader;
+
 
 /**
  * {@link ContentResourceLoader} implementation for loading resources from a zip file.
