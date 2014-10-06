@@ -64,7 +64,7 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
             try {
                 UUID.fromString(docBase);
             } catch (IllegalArgumentException e){
-                final String msg = String.format("Found a comment document '%s' without incorrect docbase in commentlink node. " +
+                final String msg = String.format("Found a comment document '%s' with incorrect docbase in commentlink node. " +
                                 "Cannot create a link for it.", document.getPath());
                 log.info(msg);
                 throw new LinkPathNotFoundException(msg);
@@ -78,13 +78,13 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                             node.getPath(), linkedPathInfo);
                     return linkedPathInfo;
                 } else {
-                    final String msg = String.format("Found a comment document '%s' without docbase '%s' that does" +
+                    final String msg = String.format("Found a comment document '%s' with docbase '%s' that does" +
                             "not point to a document (handle).", document.getPath(), docBase);
                     log.info(msg);
                     throw new LinkPathNotFoundException(msg);
                 }
             } catch (ItemNotFoundException e) {
-                final String msg = String.format("Found a comment document '%s' without docbase '%s' that does" +
+                final String msg = String.format("Found a comment document '%s' with docbase '%s' that does" +
                         "not point to an existing node.", document.getPath(), docBase);
                 log.info(msg);
                 throw new LinkPathNotFoundException(msg);
