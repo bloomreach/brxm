@@ -287,7 +287,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         if (log.isDebugEnabled()) {
             long start = System.nanoTime();
             final String path = linkRewritePathResolver.getPath(node, RequestContextProvider.get(), canonical, navigationStateful);
-            log.debug("LinkRewritePathResolver '{}' took '{}' to get linkr rewrite path '{}' for node '{}'",
+            log.debug("LinkRewritePathResolver '{}' took '{}' ms to get linkr rewrite path '{}' for node '{}'",
                     linkRewritePathResolver.getClass().getName(), String.valueOf((System.nanoTime() - start)/ 1000000D),
                     path, node.getPath());
             return path;
