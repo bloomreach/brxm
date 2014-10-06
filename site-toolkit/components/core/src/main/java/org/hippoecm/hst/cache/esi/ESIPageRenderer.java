@@ -17,11 +17,14 @@ package org.hippoecm.hst.cache.esi;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,6 +47,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -241,7 +245,16 @@ public class ESIPageRenderer implements ComponentManagerAware {
         if (localContainerURL.getComponentRenderingWindowReferenceNamespace() != null || localContainerURL.getResourceWindowReferenceNamespace() != null) {
             includeLocalESIPipelineURL(writer, uri, localContainerURL);
         } else {
-            includeLocalDispatchURL(writer, uri, localContainerURL);
+            HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+            String pathInfo = uri.getPath();
+
+            if (hstManager.isExcludedByHstFilterInitParameter(pathInfo) || RequestContextProvider.get().getVirtualHost().getVirtualHosts().isExcluded(pathInfo)) {
+                includeLocalDispatchURL(writer, uri, localContainerURL);
+            } else {
+                log.warn(
+                        "Ignoring ESI Include Tag. ESI Include Tag for a local HST navigational URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
+                        uri);
+            }
         }
     }
 
@@ -260,15 +273,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-
-            GenericResponseWrapper responseWrapper = new GenericResponseWrapper(requestContext.getServletResponse(), baos) {
-                private static final long serialVersionUID = 1L;
-                @Override
-                public boolean isCommitted() {
-                    return false;
-                }
-            };
-
+            ContentBufferingResponseWrapper responseWrapper = new ContentBufferingResponseWrapper(requestContext.getServletResponse(), baos);
             ((HstMutableRequestContext) requestContext).setServletResponse(responseWrapper);
             ((HstMutableRequestContext) requestContext).setBaseURL(localContainerURL);
 
@@ -310,9 +315,54 @@ public class ESIPageRenderer implements ComponentManagerAware {
     }
 
     protected void includeLocalDispatchURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
-        log.warn(
-                "Ignoring ESI Include Tag. ESI Include Tag for a local navigational URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
-                uri);
+        HstRequestContext requestContext = RequestContextProvider.get();
+
+        try {
+            RequestDispatcher disp = getRequestDispatcherForLocalURL(uri, localContainerURL);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+            ContentBufferingResponseWrapper responseWrapper = new ContentBufferingResponseWrapper(requestContext.getServletResponse(), baos);
+
+            disp.include(requestContext.getServletRequest(), responseWrapper);
+            responseWrapper.flush();
+
+            String charset = responseWrapper.getCharacterEncoding();
+
+            if (StringUtils.isEmpty(charset)) {
+                Map<String, String> params = MimeUtil.getHeaderParams(responseWrapper.getContentType());
+                charset = StringUtils.defaultIfEmpty(params.get("charset"), "UTF-8");
+            }
+
+            String contentBody = baos.toString(charset);
+            writer.write(contentBody);
+        } catch (ServletException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to include dispatcher for ESI Include Tag: '{}'.", uri, e);
+            } else {
+                log.warn("Failed to include dispatcher for ESI Include Tag: '{}'. {}", uri, e);
+            }
+        }
+    }
+
+    /**
+     * Get a <code>RequestDispatcher</code> to dispatch the request to include ESI content from a local URI.
+     * @param uri
+     * @param localContainerURL
+     * @return
+     * @throws IOException
+     */
+    protected RequestDispatcher getRequestDispatcherForLocalURL(URI uri, HstContainerURL localContainerURL) throws IOException {
+        HstRequestContext requestContext = RequestContextProvider.get();
+        String requestPath = localContainerURL.getRequestPath();
+        String contextRelPath;
+
+        if (StringUtils.isEmpty(uri.getRawQuery())) {
+            contextRelPath = requestPath;
+        } else {
+            contextRelPath = new StringBuilder(80).append(requestPath).append('?').append(uri.getRawQuery()).toString();
+        }
+
+        return requestContext.getServletContext().getRequestDispatcher(contextRelPath);
     }
 
     protected void includeRemoteURL(Writer writer, URI uri) throws IOException {
@@ -353,6 +403,20 @@ public class ESIPageRenderer implements ComponentManagerAware {
             writer.write(data);
         } catch (IOException e) {
             log.error("Failed to write data.", e);
+        }
+    }
+
+    private static class ContentBufferingResponseWrapper extends GenericResponseWrapper {
+
+        private static final long serialVersionUID = 1L;
+
+        private ContentBufferingResponseWrapper(final HttpServletResponse response, final OutputStream out) {
+            super(response, out);
+        }
+
+        @Override
+        public boolean isCommitted() {
+            return false;
         }
     }
 }
