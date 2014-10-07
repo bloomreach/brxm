@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -36,6 +37,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestSimpleBean extends AbstractBeanTestCase {
@@ -93,6 +95,46 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         
         resultBeans = doQuery(hstQuery);
         assertTrue("The query should not find any result with stopwords '" + query + "'.", resultBeans.isEmpty());
+    }
+
+    @Test
+    public void test_bean_by_uuid_of_handle() throws Exception {
+        ObjectConverter objectConverter = getObjectConverter();
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
+        HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
+        String handleUUID = session.getNode("/unittestcontent/documents/unittestproject/common/homepage").getIdentifier();
+        final HippoBean beanByUUID = folder.getBeanByUUID(handleUUID, HippoBean.class);
+        assertNotNull(beanByUUID);
+        assertTrue(beanByUUID instanceof PersistableTextPage);
+    }
+
+    @Test
+    public void test_bean_by_uuid_of_document() throws Exception {
+        ObjectConverter objectConverter = getObjectConverter();
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
+        HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
+        String documentUUID = session.getNode("/unittestcontent/documents/unittestproject/common/homepage/homepage").getIdentifier();
+        final HippoBean beanByUUID = folder.getBeanByUUID(documentUUID, HippoBean.class);
+        assertNotNull(beanByUUID);
+        assertTrue(beanByUUID instanceof PersistableTextPage);
+    }
+
+    @Test
+    public void test_bean_by_non_existing_uuid() throws Exception {
+        ObjectConverter objectConverter = getObjectConverter();
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
+        HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
+        final HippoBean beanByUUID = folder.getBeanByUUID(UUID.randomUUID().toString(), HippoBean.class);
+        assertNull(beanByUUID);
+    }
+
+    @Test
+    public void test_bean_by_invalid_uuid() throws Exception {
+        ObjectConverter objectConverter = getObjectConverter();
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
+        HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
+        final HippoBean beanByUUID = folder.getBeanByUUID("INVALID-UUID", HippoBean.class);
+        assertNull(beanByUUID);
     }
     
     private static List<HippoBean> doQuery(HstQuery hstQuery) throws Exception {

@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -227,16 +228,18 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     /**
      * Same as {@link #getLinkedBean(String, Class)} only now all linked beans found at <code>relPath</code> are returned.
      * When no linked beans found, an empty list is returned.
-     *
-     * @see {@link #getBean(String, Class)}
-     * @param <T>
-     * @param relPath (path not starting with a "/")
-     * @param beanMappingClass
-     * @return all linked {@link HippoBean}'s or empty list
      * @see {@link #getLinkedBean(String, Class)}
      */
     <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass);
-  
+
+    /**
+     * @param uuid the uuid of the node for which to get the {@link HippoBean}
+     * @param beanMappingClass the expected class of the linked bean
+     * @param <T> the type of the returned bean
+     * @return The {@link HippoBean} of type <code>T</code> for <code>uuid</code> or <code>null</code> if no node for
+     * <code>uuid</code> found or not of correct type
+     */
+    <T extends HippoBean> T getBeanByUUID(String uuid, Class<T> beanMappingClass);
     
     /**
      * Returns the parent bean wrt this bean. Note that this does not automatically imply

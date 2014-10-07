@@ -81,6 +81,10 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
+    public <T extends HippoBean> T getBeanByUUID(String uuid, Class<T> beanMappingClass) {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+
     public String getLocalizedName() {
         throw new UnsupportedOperationException("Not supported yet");
     }

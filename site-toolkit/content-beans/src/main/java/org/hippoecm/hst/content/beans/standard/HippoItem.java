@@ -30,7 +30,6 @@ import javax.jcr.Session;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.util.NOOPELMap;
@@ -451,6 +450,31 @@ public class HippoItem implements HippoBean {
             log.warn("RepositoryException" , e);
         }
         return childBeans;
+    }
+
+    @Override
+    public <T extends HippoBean> T getBeanByUUID(final String uuid, final Class<T> beanMappingClass) {
+        if (node == null) {
+            throw new IllegalStateException("Cannot get bean by uuid if jcr node is null");
+        }
+        try {
+            Object bean = this.objectConverter.getObject(uuid, node.getSession());
+            if (bean == null) {
+                log.debug("No bean found for uuid '{}' and session '{}'",uuid, node.getSession().getUserID());
+                return null;
+            }
+            if (!beanMappingClass.isAssignableFrom(bean.getClass())) {
+                log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(),
+                        bean.getClass().getName());
+                return null;
+            }
+            return (T) bean;
+        } catch (ObjectBeanManagerException e) {
+            log.debug("Could not get bean for '{}'", uuid, e);
+        } catch (RepositoryException e) {
+            log.debug("Could not get bean for '{}'", uuid, e);
+        }
+        return null;
     }
 
     public HippoBean getParentBean() {

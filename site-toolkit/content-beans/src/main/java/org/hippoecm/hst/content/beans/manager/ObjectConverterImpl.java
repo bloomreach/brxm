@@ -103,9 +103,9 @@ public class ObjectConverterImpl implements ObjectConverter {
             
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Cannot get object for node '"+nodePath+"' with relPath '"+relPath+"'" , e);
+                log.info("Cannot get object for node '"+nodePath+"' with relPath '"+relPath+"'" , e);
             } else {
-                log.warn("Cannot get object for node '{}' with relPath '{}'",nodePath , relPath);
+                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
             }
             return null;
         }
@@ -117,9 +117,9 @@ public class ObjectConverterImpl implements ObjectConverter {
             Node node = session.getNodeByIdentifier(uuid);
             return this.getObject(node);
         } catch (ItemNotFoundException e) {
-            log.warn("ItemNotFoundException for uuid '{}'. Return null.", uuid);
+            log.info("ItemNotFoundException for uuid '{}'. Return null.", uuid);
         } catch (RepositoryException e) {
-            log.error("RepositoryException for uuid '{}' : {}. Return null.",uuid, e);
+            log.info("RepositoryException for uuid '{}' : {}. Return null.",uuid, e);
         }
         return null;
     }
@@ -128,7 +128,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         try {
             return this.getObject(uuid, node.getSession());
         } catch (RepositoryException e) {
-            log.error("RepositoryException {}. Return null.", e);
+            log.info("RepositoryException {}. Return null.", e);
         }
         return null;
     }
