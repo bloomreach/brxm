@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.utils;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterValueConversionException;
@@ -32,26 +33,53 @@ public class ParameterUtils {
 
     public static final String PARAMETERS_INFO_ATTRIBUTE = ParameterUtils.class.getName() + ".parametersInfo";
 
+    /**
+     * ISO8601 formatter for date-time without time zone.
+     * The format used is <tt>yyyy-MM-dd'T'HH:mm:ss</tt>.
+     */
+    public static final String ISO_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+
+    /**
+     * ISO8601 formatter for date without time zone.
+     * The format used is <tt>yyyy-MM-dd</tt>.
+     */
+    public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
+
+    /**
+     * ISO8601 formatter for time without time zone.
+     * The format used is <tt>'T'HH:mm:ss</tt>.
+     */
+    public static final String ISO_TIME_FORMAT = "'T'HH:mm:ss";
+
+    /**
+     * All supported date string formats.
+     */
+    private static final String [] ISO8601_DATETIME_PATTERNS = {
+        ISO_DATETIME_FORMAT,
+        ISO_DATE_FORMAT,
+        ISO_TIME_FORMAT,
+    };
+
     public static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new HstParameterValueConverter(){
         @Override
         public Object convert(String parameterValue, Class<?> returnType) {
-            // ConvertUtils.convert cannot handle Calendar as returnType, however, we support it. 
-            // that's why we first convert to Date
             try {
-                if (returnType.equals(Calendar.class)) {
-                    Date date = (Date) ConvertUtils.convert(parameterValue, Date.class);
+                if (returnType == Date.class) {
+                    return DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
+                } else if (returnType == Calendar.class) {
                     Calendar cal = Calendar.getInstance();
+                    Date date = DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
                     cal.setTime(date);
                     return cal;
                 }
+
                 return ConvertUtils.convert(parameterValue, returnType);
-            } catch (ConversionException e) {
+            } catch (ParseException e) {
                 throw new HstParameterValueConversionException(e);
             }
         }
     };
-    
-    
+
     /**
      * Returns a proxy ParametersInfo object for the component class which resolves parameter from
      * HstComponentConfiguration : resolved means that possible property placeholders like ${1} or ${year}, where the
@@ -77,17 +105,17 @@ public class ParameterUtils {
             return parametersInfo;
         }
 
-          // first, try the new ParametersInfo annotation
+        // first, try the new ParametersInfo annotation
         ParametersInfo annotation = component.getClass().getAnnotation(ParametersInfo.class);
+
         if (annotation == null) {
             return null; 
         }
-        
+
         HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
         parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
         request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
-        return parametersInfo;            
-        
+
+        return parametersInfo;
     }
-    
 }
