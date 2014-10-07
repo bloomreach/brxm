@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +86,37 @@ public class TestHstParameterInfoProxyFactoryImpl {
         EasyMock.replay(request);
         EasyMock.replay(requestContext);
         EasyMock.replay(resolvedSiteMapItem);
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+
+        CombinedInfo combinedInfo1 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        int combinedInfo1HashCode = combinedInfo1.hashCode();
+        String combinedInfo1String = combinedInfo1.toString();
+
+        CombinedInfo combinedInfo2 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        int combinedInfo2HashCode = combinedInfo2.hashCode();
+        String combinedInfo2String = combinedInfo2.toString();
+
+        // We don't need to support #equals(o) on each getter properties.
+        // So, parameters info proxy should always return false on different instance.
+        assertFalse(combinedInfo1.equals(combinedInfo2));
+
+        assertFalse(combinedInfo1HashCode == 0);
+        assertFalse(combinedInfo2HashCode == 0);
+        assertFalse(combinedInfo1HashCode == combinedInfo2HashCode);
+
+        assertNotNull(combinedInfo1String);
+        assertFalse("".equals(combinedInfo1String.trim()));
+
+        assertNotNull(combinedInfo2String);
+        assertFalse("".equals(combinedInfo1String.trim()));
+
+        // We don't need to support #toString() by retrieving all the getter properties.
+        // So, a non-null string is good enough to indicate that this proxy instance is not null.
+        assertFalse(combinedInfo1String.equals(combinedInfo2String));
     }
 
     @Test

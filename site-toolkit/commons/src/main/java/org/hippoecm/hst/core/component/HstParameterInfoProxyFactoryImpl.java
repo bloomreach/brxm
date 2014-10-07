@@ -44,16 +44,16 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         if (!parametersInfoType.isInterface()) {
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
         }
-       
 
         InvocationHandler parameterInfoHandler =  createHstParameterInfoInvocationHandler(componentConfig, request, converter);
-        
+
         @SuppressWarnings("unchecked")
         T parametersInfoInterface = (T) Proxy.newProxyInstance(parametersInfoType.getClassLoader(),
                 new Class[] { parametersInfoType }, parameterInfoHandler);
+
         return parametersInfoInterface;
     }
-    
+
     /**
      * Override this method if a custom parameterInfoHandler is needed
      * @param componentConfig
@@ -84,10 +84,25 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         @Override
         public Object invoke(Object object, Method method, Object[] args) throws Throwable {
 
+            String methodName = method.getName();
+            int argCount = (args == null ? 0 : args.length);
+
+            if ("equals".equals(methodName) && argCount == 1) {
+                return super.equals(args[0]);
+            }
+
+            if ("hashCode".equals(methodName) && argCount == 0) {
+                return super.hashCode();
+            }
+
+            if ("toString".equals(methodName) && argCount == 0) {
+                return super.toString();
+            }
+
             if (isSetter(method, args)) {
                 throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
             }
- 
+
             if (!isGetter(method, args)) {
                 return null;
             }
@@ -147,7 +162,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             }
             return parameterValue;
         }
-        
+
         /**
          * This method can be overridden by subclasses of the {@link ParameterInfoInvocationHandler} to return 
          * a prefixed value
@@ -171,7 +186,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             return parameterName;
         }
     }
-    
+
     private static final boolean isGetter(final Method method, final Object[] args) {
         if (args == null || args.length == 0) {
             final String methodName = method.getName();
@@ -183,6 +198,4 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
     private static final boolean isSetter(final Method method, final Object[] args) {
         return (args != null && args.length == 1) && method.getName().startsWith("set");
     }
-
-
 }
