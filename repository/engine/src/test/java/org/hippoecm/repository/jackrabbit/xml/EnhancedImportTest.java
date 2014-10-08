@@ -159,12 +159,6 @@ public class EnhancedImportTest extends RepositoryTestCase {
         if (!operations.isEmpty()) {
             final PatchWriter patchWriter = new PatchWriter(patch, new OutputStreamWriter(System.out));
             patchWriter.writePatch();
-            for (Operation operation : operations) {
-                System.out.println(operation);
-            }
-
-            session.exportSystemView(node1.getPath(), System.out, true, false);
-            session.exportSystemView(node2.getPath(), System.out, true, false);
             return false;
         }
         return true;
