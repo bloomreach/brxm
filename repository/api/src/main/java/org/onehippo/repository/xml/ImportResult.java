@@ -30,12 +30,12 @@ public interface ImportResult {
      * or the path to a node the imported xml merged with. The concept of context
      * paths is important when the xml needs to be reapplied due to a reload later.
      */
-    public Collection<String> getContextPaths();
+    Collection<String> getContextPaths();
 
     /**
      * Return either the root of the subtree that was added
      * or the root of the subtree that was merged with in the case of a delta combine.
      */
-    public Node getBaseNode();
+    Node getBaseNode();
 
 }

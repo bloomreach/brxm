@@ -138,7 +138,7 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-        importEnhancedSystemViewXML(path, xml, uuidBehavior, referenceBehavior, null);
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in,
                                                     final int uuidBehavior, final int referenceBehavior,
                                                     final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -136,7 +136,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-        importEnhancedSystemViewXML(path, xml, uuidBehavior, referenceBehavior, null);
+        throw new UnsupportedOperationException();
     }
 
     @Override
