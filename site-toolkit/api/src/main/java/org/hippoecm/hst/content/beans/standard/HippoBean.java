@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
