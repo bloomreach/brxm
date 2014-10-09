@@ -108,6 +108,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     private boolean slowAlwaysExactSizedQueryResult = false;
 
+    private boolean useSimpleFSDirectory = true;
+
     /**
      * Whether similarity searches on String properties are supported.Supporting similarity on
      * Strings increases the Lucene index. If no similarity searches are needed, it is better
@@ -379,6 +381,16 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     public void setEnableConsistencyCheck(final boolean b) {
         super.setEnableConsistencyCheck(false);
         servicingConsistencyCheckEnabled = b;
+    }
+
+    @Override
+    public void setUseSimpleFSDirectory(final boolean useSimpleFSDirectory) {
+        this.useSimpleFSDirectory = useSimpleFSDirectory;
+    }
+
+    @Override
+    public boolean isUseSimpleFSDirectory() {
+        return useSimpleFSDirectory;
     }
 
     @Override
