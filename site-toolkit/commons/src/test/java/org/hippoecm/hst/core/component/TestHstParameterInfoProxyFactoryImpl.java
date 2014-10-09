@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.component;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,13 +111,13 @@ public class TestHstParameterInfoProxyFactoryImpl {
 
         assertNotNull(combinedInfo1String);
         assertFalse("".equals(combinedInfo1String.trim()));
+        assertTrue("ParametersInfo 'CombinedInfo' class name expected in String ",
+                combinedInfo1String.contains(CombinedInfo.class.getName()));
 
         assertNotNull(combinedInfo2String);
         assertFalse("".equals(combinedInfo1String.trim()));
 
-        // We don't need to support #toString() by retrieving all the getter properties.
-        // So, a non-null string is good enough to indicate that this proxy instance is not null.
-        assertFalse(combinedInfo1String.equals(combinedInfo2String));
+        assertEquals(combinedInfo1String, combinedInfo2String);
     }
 
     @Test

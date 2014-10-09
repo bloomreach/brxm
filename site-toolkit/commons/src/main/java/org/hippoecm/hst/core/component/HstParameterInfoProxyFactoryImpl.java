@@ -45,7 +45,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
         }
 
-        InvocationHandler parameterInfoHandler =  createHstParameterInfoInvocationHandler(componentConfig, request, converter);
+        InvocationHandler parameterInfoHandler =  createHstParameterInfoInvocationHandler(componentConfig, request, converter, parametersInfoType);
 
         @SuppressWarnings("unchecked")
         T parametersInfoInterface = (T) Proxy.newProxyInstance(parametersInfoType.getClassLoader(),
@@ -59,10 +59,14 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
      * @param componentConfig
      * @param request
      * @param converter
+     * @param parametersInfoType
      * @return the {@link InvocationHandler} used in the created proxy to handle the invocations
      */
-    protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter converter) {
-        return new ParameterInfoInvocationHandler(componentConfig, request, converter);
+    protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,
+                                                                        final HstRequest request,
+                                                                        final HstParameterValueConverter converter,
+                                                                        final Class<?> parametersInfoType) {
+        return new ParameterInfoInvocationHandler(componentConfig, request, converter, parametersInfoType);
     }
 
     /**
@@ -73,12 +77,15 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         private final ComponentConfiguration componentConfig;
         private final HstRequest request;
         private final HstParameterValueConverter converter;
+        private final Class<?> parametersInfoType;
 
         public ParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request, 
-                final HstParameterValueConverter converter) {
+                final HstParameterValueConverter converter,
+                final Class<?> parametersInfoType) {
             this.componentConfig = componentConfig;
             this.request = request;
             this.converter = converter;
+            this.parametersInfoType = parametersInfoType;
         }
 
         @Override
@@ -96,7 +103,9 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             }
 
             if ("toString".equals(methodName) && argCount == 0) {
-                return super.toString();
+                StringBuilder builder = new StringBuilder("ParameterInfoProxy [parametersInfoType=");
+                builder.append(parametersInfoType.getName()).append(", configuration=").append(componentConfig.toString()).append("]");
+                return  builder.toString();
             }
 
             if (isSetter(method, args)) {

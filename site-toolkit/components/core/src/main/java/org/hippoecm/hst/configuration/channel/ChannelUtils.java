@@ -41,10 +41,20 @@ public class ChannelUtils {
             public Object invoke(Object object, Method method, Object[] args) throws Throwable {
                 String methodName = method.getName();
 
-                if ("toString".equals(methodName) && (args == null || args.length == 0)) {
+                int argCount = (args == null ? 0 : args.length);
+
+                if ("toString".equals(methodName) && argCount == 0) {
                     StringBuilder builder = new StringBuilder("ChannelInfoProxy [parametersInfoType=");
                     builder.append(parametersInfoType.getName()).append(", properties=").append(values).append("]");
                     return  builder.toString();
+                }
+
+                if ("equals".equals(methodName) && argCount == 1) {
+                    return super.equals(args[0]);
+                }
+
+                if ("hashCode".equals(methodName) && argCount == 0) {
+                    return super.hashCode();
                 }
 
                 if ("getProperties".equals(methodName) && (args == null || args.length == 0)) {
