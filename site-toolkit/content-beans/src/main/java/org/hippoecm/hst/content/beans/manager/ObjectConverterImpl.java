@@ -103,9 +103,9 @@ public class ObjectConverterImpl implements ObjectConverter {
             
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
-                log.info("Cannot get object for node '"+nodePath+"' with relPath '"+relPath+"'" , e);
+                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath, e);
             } else {
-                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
+                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath);
             }
             return null;
         }
@@ -128,7 +128,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         try {
             return this.getObject(uuid, node.getSession());
         } catch (RepositoryException e) {
-            log.info("RepositoryException {}. Return null.", e);
+            log.info("Failed to get object for uuid '{}'. Return null.", uuid, e);
         }
         return null;
     }

@@ -460,19 +460,17 @@ public class HippoItem implements HippoBean {
         try {
             Object bean = this.objectConverter.getObject(uuid, node.getSession());
             if (bean == null) {
-                log.debug("No bean found for uuid '{}' and session '{}'",uuid, node.getSession().getUserID());
+                log.debug("No bean found for uuid '{}' and session '{}'. Return null.", uuid, node.getSession().getUserID());
                 return null;
             }
             if (!beanMappingClass.isAssignableFrom(bean.getClass())) {
-                log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(),
-                        bean.getClass().getName());
+                log.debug("Expected bean of type '{}' but found bean of type '{}'. Return null.",
+                        beanMappingClass.getName(), bean.getClass().getName());
                 return null;
             }
             return (T) bean;
-        } catch (ObjectBeanManagerException e) {
-            log.debug("Could not get bean for '{}'", uuid, e);
-        } catch (RepositoryException e) {
-            log.debug("Could not get bean for '{}'", uuid, e);
+        } catch (ObjectBeanManagerException|RepositoryException e) {
+            log.debug("Could not get bean for uuid '{}'", uuid, e);
         }
         return null;
     }
@@ -497,9 +495,7 @@ public class HippoItem implements HippoBean {
             } else {
                 log.info("Bean is not an instance of HippoBean but '{}'. Return null : ", o.getClass().getName());
             }
-        } catch (ObjectBeanManagerException e) {
-            log.warn("Failed to get parent object for '{}'", this.getPath());
-        } catch (RepositoryException e) {
+        } catch (ObjectBeanManagerException|RepositoryException e) {
             log.warn("Failed to get parent object for '{}'", this.getPath());
         }
         return null;
