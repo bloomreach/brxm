@@ -527,14 +527,6 @@ public class HstFilter implements Filter {
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        catch (Exception e) {
-            if(log.isDebugEnabled()) {
-                log.warn("Unknown error encountered while processing request '{}':", req.getRequestURI(), e);
-            } else {
-                log.warn("Unknown error encountered while processing request '{}': {}", req.getRequestURI(), e.toString());
-            }
-            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
         finally {
             // clears up the current thread's active request context object.
             if (requestContextSetToProvider) {
