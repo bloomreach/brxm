@@ -425,7 +425,9 @@ resources/src/main/webapp/css/inline-editing.css svneol=native#text/plain
 resources/src/main/webapp/examples/copyright.jsp -text
 resources/src/main/webapp/examples/custom_form_login.jsp -text
 resources/src/main/webapp/examples/errorprone.jsp -text
+resources/src/main/webapp/examples/esisingle.jsp -text
 resources/src/main/webapp/examples/poweredby.jsp -text
+resources/src/main/webapp/examples/sessioninfo.jsp -text
 resources/src/main/webapp/images/button_edit.gif -text
 resources/src/main/webapp/images/containerBack.gif -text
 resources/src/main/webapp/images/dropshadow.png -text svneol=unset#image/png

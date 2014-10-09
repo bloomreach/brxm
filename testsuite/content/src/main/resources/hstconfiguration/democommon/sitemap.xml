@@ -32,4 +32,15 @@
       <sv:value>common</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="esisinglepage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/esisinglepage</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:cacheable" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

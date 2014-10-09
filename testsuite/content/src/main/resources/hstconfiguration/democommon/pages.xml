@@ -487,5 +487,22 @@
     </sv:node>
   </sv:node>
 
+  <sv:node sv:name="esisinglepage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/single</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/esisinglecomponent</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
 </sv:node>
 
