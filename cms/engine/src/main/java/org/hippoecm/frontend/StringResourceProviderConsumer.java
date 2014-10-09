@@ -59,8 +59,7 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
             return null;
         }
         if (provider != null) {
-
-            final CacheKey cacheKey = new CacheKey(provider.getClass().getName(), key, locale, component.getStyle());
+            final CacheKey cacheKey = new CacheKey(provider.getClass().getName(), key, locale, component.getStyle(), provider.getResourceProviderKey());
             final Optional<String> optional = stringResourceCache.getIfPresent(cacheKey);
             if (optional != null) {
                 final String s = optional.orNull();
@@ -127,12 +126,14 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
         private final String key;
         private final Locale locale;
         private final String style;
+        private final String providerKey;
 
-        public CacheKey(final String className, final String key, final Locale locale, final String style) {
+        public CacheKey(final String className, final String key, final Locale locale, final String style, final String providerKey) {
             this.className = className;
             this.key = key;
             this.locale = locale;
             this.style = style;
+            this.providerKey = providerKey;
         }
 
         @Override
@@ -158,6 +159,9 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
             if (style != null ? !style.equals(cacheKey.style) : cacheKey.style != null) {
                 return false;
             }
+            if (providerKey != null ? !providerKey.equals(cacheKey.providerKey) : cacheKey.providerKey != null) {
+                return false;
+            }
 
             return true;
         }
@@ -168,6 +172,7 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
             result = 31 * result + key.hashCode();
             result = 31 * result + locale.hashCode();
             result = 31 * result + (style != null ? style.hashCode() : 0);
+            result = 31 * result + (providerKey != null ? providerKey.hashCode() : 0);
             return result;
         }
 
@@ -178,6 +183,7 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
                     ", key='" + key + '\'' +
                     ", locale=" + locale +
                     ", style='" + style + '\'' +
+                    ", providerKey='" + providerKey + '\'' +
                     '}';
         }
     }
