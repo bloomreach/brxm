@@ -30,7 +30,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -38,6 +37,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -83,7 +83,9 @@ import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.LocalHippoRepository;
@@ -108,10 +110,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NODE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
@@ -119,7 +121,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTNODENAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAMESPACE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPES;
@@ -132,6 +133,10 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
 import static org.onehippo.repository.util.JcrConstants.MIX_LOCKABLE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.COMBINE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.OVERLAY;
 
 public class InitializationProcessorImpl implements InitializationProcessor {
 
@@ -289,6 +294,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         try {
             log.debug("Attempting to release lock");
+            session.refresh(false);
             lockManager.unlock(INIT_PATH);
             log.debug("Lock successfully released");
         } catch (LockException e) {
@@ -540,11 +546,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return;
         }
 
-        ImportResult importResult = null;
         if (isReloadable(item)) {
-            final String contextNodeName = StringUtils.trim(JcrUtils.getStringProperty(item, HIPPO_CONTEXTNODENAME, null));
-            if (contextNodeName != null ) {
-                final String contextNodePath = contentRoot.equals("/") ? contentRoot + contextNodeName : contentRoot + "/" + contextNodeName;
+            final String[] contextNodePaths = JcrUtils.getMultipleStringProperty(item, HIPPO_CONTEXTPATHS, null);
+            if (contextNodePaths != null && contextNodePaths.length > 0) {
+                final String contextNodePath = contextNodePaths[0];
                 final int index = getNodeIndex(session, contextNodePath);
                 if (removeNode(session, contextNodePath, false)) {
                     InputStream is = null;
@@ -552,7 +557,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     try {
                         is = contentURL.openStream();
                         bis = new BufferedInputStream(is); 
-                        importResult = initializeNodecontent(session, contentRoot, bis, contentURL, pckg);
+                        initializeNodecontent(session, contentRoot, bis, contentURL, pckg);
                     } finally {
                         IOUtils.closeQuietly(bis);
                         IOUtils.closeQuietly(is);
@@ -578,12 +583,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         if (upstreamItemContextPaths != null && upstreamItemContextPaths.length > 0) {
                             upstreamItemContextPath = upstreamItemContextPaths[0];
                         } else {
-                            final String upstreamItemContentRoot = JcrUtils.getStringProperty(upstreamItem, HIPPO_CONTENTROOT, null);
-                            final String upstreamItemContextNodeName = JcrUtils.getStringProperty(upstreamItem, HIPPO_CONTEXTNODENAME, null);
-                            if (upstreamItemContentRoot == null || upstreamItemContextNodeName == null) {
-                                throw new RepositoryException("Unable to reload downstream item: can't determine upstream item context path");
-                            }
-                            upstreamItemContextPath = upstreamItemContentRoot.equals("/") ? "/" + upstreamItemContextNodeName : upstreamItemContentRoot + "/" + upstreamItemContextNodeName;
+                            log.warn("Failed to find reload item context path, cannot process downstream item.");
+                            continue;
                         }
                         in = contentURL.openStream();
                         String upstreamItemContentRoot = StringUtils.substringBeforeLast(upstreamItemContextPath, "/");
@@ -592,21 +593,15 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                             contentRoot = upstreamItemContentRoot;
                             in = getPartialContentInputStream(in, contextRelPath);
                         }
-                        importResult = initializeNodecontent(session, contentRoot, in, contentURL, pckg);
+                        initializeNodecontent(session, contentRoot, in, contentURL, pckg);
                         IOUtils.closeQuietly(in);
                     }
                 } else {
                     in = contentURL.openStream();
-                    importResult = initializeNodecontent(session, contentRoot, in, contentURL, pckg);
+                    initializeNodecontent(session, contentRoot, in, contentURL, pckg);
                 }
             } finally {
                 IOUtils.closeQuietly(in);
-            }
-        }
-        if (importResult != null) {
-            final Collection<String> contextPaths = importResult.getContextPaths();
-            if (!contextPaths.isEmpty()) {
-                item.setProperty(HIPPO_CONTEXTPATHS, contextPaths.toArray(new String[contextPaths.size()]));
             }
         }
     }
@@ -768,21 +763,24 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         List<Node> initializeItems = new ArrayList<Node>();
         for (String reloadItem : reloadItems) {
             final Node initItemNode = session.getNodeByIdentifier(reloadItem);
-            final String contextNodeName = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HIPPO_CONTEXTNODENAME, null));
-            final String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HIPPO_CONTENTROOT, "/"));
-            for (Node downStreamItem : resolveDownstreamItems(session, contentRoot, contextNodeName)) {
-                getLogger().info("Marking item {} pending because downstream from {}", new Object[] { downStreamItem.getName(), initItemNode.getName() });
-                downStreamItem.setProperty(HIPPO_STATUS, "pending");
-                Value[] upstreamItems;
-                if (downStreamItem.hasProperty(HIPPO_UPSTREAMITEMS)) {
-                    List<Value> values = new ArrayList<>(Arrays.asList(downStreamItem.getProperty(HIPPO_UPSTREAMITEMS).getValues()));
-                    values.add(session.getValueFactory().createValue(reloadItem));
-                    upstreamItems = values.toArray(new Value[values.size()]);
-                } else {
-                    upstreamItems = new Value[] { session.getValueFactory().createValue(reloadItem) };
+            final String[] contextPaths = JcrUtils.getMultipleStringProperty(initItemNode, HIPPO_CONTEXTPATHS, null);
+            if (contextPaths != null && contextPaths.length > 0) {
+                final String contextPath = contextPaths[0];
+                for (Node downStreamItem : resolveDownstreamItems(session, contextPath)) {
+                    getLogger().info("Marking item {} pending because downstream from {}", new Object[] { downStreamItem.getName(), initItemNode.getName() });
+                    downStreamItem.setProperty(HIPPO_STATUS, "pending");
+                    Value[] upstreamItems;
+                    if (downStreamItem.hasProperty(HIPPO_UPSTREAMITEMS)) {
+                        List<Value> values = new ArrayList<>(Arrays.asList(downStreamItem.getProperty(HIPPO_UPSTREAMITEMS).getValues()));
+                        values.add(session.getValueFactory().createValue(reloadItem));
+                        upstreamItems = values.toArray(new Value[values.size()]);
+                    } else {
+                        upstreamItems = new Value[] { session.getValueFactory().createValue(reloadItem) };
+                    }
+                    downStreamItem.setProperty(HIPPO_UPSTREAMITEMS, upstreamItems);
+                    initializeItems.add(downStreamItem);
                 }
-                downStreamItem.setProperty(HIPPO_UPSTREAMITEMS, upstreamItems);
-                initializeItems.add(downStreamItem);
+
             }
         }
         session.save();
@@ -883,7 +881,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
         ContentFileInfo info = initItemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? readContentFileInfo(initItemNode) : null;
         if (info != null) {
-            initItemNode.setProperty(HIPPO_CONTEXTNODENAME, info.contextNodeName);
+            initItemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
             initItemNode.setProperty(HippoNodeType.HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
             if (isReload) {
                 reloadItems.add(initItemNode.getIdentifier());
@@ -967,20 +965,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return null;
     }
 
-    private Iterable<Node> resolveDownstreamItems(final Session session, final String contentRoot, final String contextNodeName) throws RepositoryException {
-        List<Node> downStreamItems = resolveDownstreamItemsBasedOnContentRoot(session, contentRoot, contextNodeName);
-        downStreamItems.addAll(resolveDownstreamItemsBasedOnContextPaths(session, contentRoot, contextNodeName));
-        return downStreamItems;
-    }
-
-    List<Node> resolveDownstreamItemsBasedOnContextPaths(final Session session, final String contentRoot, final String contextNodeName) throws RepositoryException {
-        final String contextNodePath = contentRoot.equals("/") ? contentRoot + contextNodeName : contentRoot + "/" + contextNodeName;
+    List<Node> resolveDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
         QueryResult result = session.getWorkspace().getQueryManager().createQuery(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
                         "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
-                        HIPPO_CONTEXTPATHS + " LIKE '" + contextNodePath + "/%' OR " +
-                        HIPPO_CONTEXTPATHS + " = '" + contextNodePath + "')", Query.SQL
+                        HIPPO_CONTEXTPATHS + " LIKE '" + contextPath + "/%' OR " +
+                        HIPPO_CONTEXTPATHS + " = '" + contextPath + "')", Query.SQL
         ).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             downStreamItems.add(item);
@@ -988,62 +979,30 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return downStreamItems;
     }
 
-    List<Node> resolveDownstreamItemsBasedOnContentRoot(final Session session, final String contentRoot, final String contextNodeName) throws RepositoryException {
-        QueryResult result = session.getWorkspace().getQueryManager().createQuery(
-                "SELECT * FROM hipposys:initializeitem WHERE " +
-                        "jcr:path = '/hippo:configuration/hippo:initialize/%' AND " +
-                        HIPPO_CONTENTROOT + " LIKE '" + contentRoot + "%'", Query.SQL
-        ).execute();
-        final List<Node> downStreamItems = new ArrayList<>();
-        final String contextNodePath = contentRoot.equals("/") ? contentRoot + contextNodeName : contentRoot + "/" + contextNodeName;
-        for (Node item : new NodeIterable(result.getNodes())) {
-            final String dsContentRoot = StringUtils.trim(JcrUtils.getStringProperty(item, HIPPO_CONTENTROOT, null));
-            final String dsContextNodeName = StringUtils.trim(JcrUtils.getStringProperty(item, HIPPO_CONTEXTNODENAME, null));
-            final String dsContextNodePath = dsContentRoot.equals("/") ? dsContentRoot + dsContextNodeName : dsContentRoot + "/" + dsContextNodeName;
-            if (contextNodePath.equals(dsContextNodePath) || dsContextNodePath.startsWith(contextNodePath + "/")) {
-                downStreamItems.add(item);
-            }
-        }
-        return downStreamItems;
-    }
-
     ContentFileInfo readContentFileInfo(final Node item) {
+        ContentFileInfoReader contentFileInfoReader = null;
+        InputStream in = null;
         try {
             final String contentResource = StringUtils.trim(item.getProperty(HIPPO_CONTENTRESOURCE).getString());
             if (contentResource.endsWith(".zip") || contentResource.endsWith(".jar")) {
                 return null;
             }
-            URL contentURL = getResource(item, contentResource);
-            if (contentURL != null) {
-                InputStream is = null;
-                BufferedInputStream bis = null;
-                try {
-                    // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
-                    String contextNodeName = null;
-                    String deltaDirective = null;
-                    final XmlPullParser xpp = new MXParser();
-                    xpp.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-                    is = contentURL.openStream();
-                    bis = new BufferedInputStream(is);
-                    xpp.setInput(bis, null);
-                    while(xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
-                        if (xpp.getEventType() == XmlPullParser.START_TAG) {
-                            contextNodeName = xpp.getAttributeValue("http://www.jcp.org/jcr/sv/1.0", "name");
-                            deltaDirective = xpp.getAttributeValue("http://www.onehippo.org/jcr/xmlimport", "merge");
-                            break;
-                        }
-                        xpp.next();
-                    }
-                    return new ContentFileInfo(contextNodeName, deltaDirective);
-                } finally {
-                    IOUtils.closeQuietly(bis);
-                    IOUtils.closeQuietly(is);
-                }
+            final String contentRoot = StringUtils.trim(item.getProperty(HIPPO_CONTENTROOT).getString());
+            contentFileInfoReader = new ContentFileInfoReader(contentRoot);
+            URL contentResourceURL = getResource(item, contentResource);
+            if (contentResourceURL != null) {
+                in = contentResourceURL.openStream();
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                factory.setNamespaceAware(true);
+                factory.newSAXParser().parse(new InputSource(in), contentFileInfoReader);
             }
-        } catch (RepositoryException | XmlPullParserException | IOException e) {
+        } catch (ContentFileInfoReadingShortCircuitException ignore) {
+        } catch (FactoryConfigurationError | SAXException | ParserConfigurationException | IOException | RepositoryException e) {
             getLogger().error("Could not read root node name from content file", e);
+        } finally {
+            IOUtils.closeQuietly(in);
         }
-        return null;
+        return contentFileInfoReader != null ? contentFileInfoReader.getContentFileInfo() : null;
     }
 
     private URL getResource(final Node item, String resourcePath) throws RepositoryException, IOException {
@@ -1331,11 +1290,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     static class ContentFileInfo {
 
-        final String contextNodeName;
+        final List<String> contextPaths;
         final String deltaDirective;
 
-        private ContentFileInfo(final String contextNodeName, final String deltaDirective) {
-            this.contextNodeName = contextNodeName;
+        private ContentFileInfo(final List<String> contextPaths, final String deltaDirective) {
+            this.contextPaths = contextPaths;
             this.deltaDirective = deltaDirective;
         }
     }
@@ -1427,4 +1386,85 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     }
 
+    private static class ContentFileInfoReader extends DefaultHandler {
+
+        private final Stack<String> path = new Stack<>();
+        private final List<String> contextPaths = new ArrayList<>();
+        private final String contentRoot;
+        private String deltaDirective;
+        private int depth = -1;
+
+        private ContentFileInfoReader(final String contentRoot) {
+            this.contentRoot = contentRoot.equals("/") ? "" : contentRoot;
+        }
+
+        @Override
+        public void startElement(final String uri, final String localName, final String qName, final org.xml.sax.Attributes atts) throws SAXException {
+            final Name name = NameFactoryImpl.getInstance().create(uri, localName);
+            if (name.equals(SV_NODE)) {
+                if (skip()) {
+                    depth++;
+                    return;
+                }
+                final String svName = atts.getValue(SV_NAME.getNamespaceURI(), SV_NAME.getLocalName());
+                final String esvMerge = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
+                if (contextPaths.size() == 0) {
+                    path.push(svName);
+                    contextPaths.add(getCurrenContextPath());
+                    deltaDirective = esvMerge;
+                    if (!isMergeCombine(esvMerge)) {
+                        throw new ContentFileInfoReadingShortCircuitException();
+                    } else {
+                        depth++;
+                    }
+                } else {
+                    if (isMergeCombine(esvMerge)) {
+                        path.push(svName);
+                        contextPaths.add(getCurrenContextPath());
+                    } else {
+                        depth++;
+                    }
+                }
+            }
+        }
+
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+            final Name name = NameFactoryImpl.getInstance().create(uri, localName);
+            if (name.equals(SV_NODE)) {
+                if (skip()) {
+                    depth--;
+                }
+                if (!skip()) {
+                    path.pop();
+                }
+            }
+        }
+
+        private boolean isMergeCombine(final String esvMerge) {
+            return COMBINE.equals(esvMerge) || OVERLAY.equals(esvMerge);
+        }
+
+        private ContentFileInfo getContentFileInfo() {
+            if (!contextPaths.isEmpty()) {
+                return new ContentFileInfo(contextPaths, deltaDirective);
+            }
+            return null;
+        }
+
+        private String getCurrenContextPath() {
+            StringBuilder sb = new StringBuilder(contentRoot);
+            for (String pathElement : path) {
+                sb.append("/").append(pathElement);
+            }
+            return sb.toString();
+        }
+
+        private boolean skip() {
+            return depth > -1;
+        }
+    }
+
+    private static class ContentFileInfoReadingShortCircuitException extends SAXException {}
 }
