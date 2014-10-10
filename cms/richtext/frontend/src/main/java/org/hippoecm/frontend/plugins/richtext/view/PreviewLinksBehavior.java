@@ -23,13 +23,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.resource.loader.PackageStringResourceLoader;
 import org.apache.wicket.util.encoding.UrlDecoder;
 import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.string.*;
@@ -38,8 +38,6 @@ import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DELETED;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
 
@@ -122,6 +119,10 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
     }
 
     private boolean linkExists(String linkRelPath) {
+        if (StringUtils.startsWith(linkRelPath, "/")) {
+            // absolute path cannot be an internal link
+            return false;
+        }
         final Node node = model.getObject();
         try {
             if (node.hasNode(linkRelPath)) {
