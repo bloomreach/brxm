@@ -18,8 +18,10 @@ package org.hippoecm.hst.cache.esi;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.util.MimeUtil;
 import org.hippoecm.hst.configuration.hosting.MatchException;
@@ -97,6 +100,9 @@ public class ESIPageRenderer implements ComponentManagerAware {
             return;
         }
 
+        Map<ESIElementFragment, String> esiIncludeElementContents = new HashMap<ESIElementFragment, String>();
+        fetchESIIncludeElementContents(fragmentInfos, propertyParser, esiIncludeElementContents);
+
         int beginIndex = 0;
 
         for (ESIFragmentInfo fragmentInfo : fragmentInfos) {
@@ -124,23 +130,70 @@ public class ESIPageRenderer implements ComponentManagerAware {
 
                         if (embeddedFragmentType == ESIFragmentType.INCLUDE_TAG) {
                             ESIElementFragment embeddedElementFragment = (ESIElementFragment) embeddedFragment;
+                            String includeContent = esiIncludeElementContents.get(embeddedElementFragment);
+
+                            if (includeContent != null) {
+                                writeQuietly(writer, includeContent);
+                            }
+                        }
+                    }
+
+                    writeQuietly(writer, uncommentedSource.substring(embeddedFragmentInfos.get(embeddedFragmentInfos.size() - 1).getEndIndex()));
+                }
+            } else if (type == ESIFragmentType.INCLUDE_TAG) {
+                ESIElementFragment elementFragment = (ESIElementFragment) fragment;
+                String includeContent = esiIncludeElementContents.get(elementFragment);
+
+                if (includeContent != null) {
+                    writeQuietly(writer, includeContent);
+                }
+            } else if (type == ESIFragmentType.VARS_TAG) {
+                writeNonIncludeElementFragment(writer, (ESIElementFragment) fragment, propertyParser);
+            }
+        }
+
+        writeQuietly(writer, bodyContent.substring(fragmentInfos.get(fragmentInfos.size() - 1).getEndIndex()));
+    }
+
+    private void fetchESIIncludeElementContents(List<ESIFragmentInfo> fragmentInfos, PropertyParser propertyParser, Map<ESIElementFragment, String> esiIncludeElementContents) {
+        for (ESIFragmentInfo fragmentInfo : fragmentInfos) {
+            ESIFragment fragment = fragmentInfo.getFragment();
+            ESIFragmentType type = fragment.getType();
+
+            if (type == ESIFragmentType.COMMENT_BLOCK) {
+                if (((ESICommentFragmentInfo) fragmentInfo).hasAnyFragmentInfo()) {
+                    List<ESIFragmentInfo> embeddedFragmentInfos = ((ESICommentFragmentInfo) fragmentInfo).getFragmentInfos();
+
+                    for (ESIFragmentInfo embeddedFragmentInfo : embeddedFragmentInfos) {
+                        ESIFragment embeddedFragment = embeddedFragmentInfo.getFragment();
+                        ESIFragmentType embeddedFragmentType = embeddedFragment.getType();
+
+                        if (embeddedFragmentType == ESIFragmentType.INCLUDE_TAG) {
+                            ESIElementFragment embeddedElementFragment = (ESIElementFragment) embeddedFragment;
                             String onerror = embeddedElementFragment.getElement().getAttribute("onerror");
 
                             if (StringUtils.isNotEmpty(onerror) && !StringUtils.equals("continue", onerror)) {
                                 log.warn("The onerror attribute of <esi:include/> currently support only 'continue'. Other values ('{}') are NOT YET SUPPORTED.", onerror);
                             }
 
+                            StringWriter writer = null;
+
                             try {
+                                writer = new StringWriter(512);
                                 writeIncludeElementFragment(writer, embeddedElementFragment, propertyParser);
+
+                                if (writer.getBuffer().length() > 0) {
+                                    esiIncludeElementContents.put(embeddedElementFragment, writer.toString());
+                                }
                             } catch (IOException e) {
                                 if (!StringUtils.equals("continue", onerror)) {
                                     //
                                 }
+                            } finally {
+                                IOUtils.closeQuietly(writer);
                             }
                         }
                     }
-
-                    writeQuietly(writer, uncommentedSource.substring(embeddedFragmentInfos.get(embeddedFragmentInfos.size() - 1).getEndIndex()));
                 }
             } else if (type == ESIFragmentType.INCLUDE_TAG) {
                 ESIElementFragment elementFragment = (ESIElementFragment) fragment;
@@ -150,19 +203,24 @@ public class ESIPageRenderer implements ComponentManagerAware {
                     log.warn("The onerror attribute of <esi:include/> currently support only 'continue'. Other values ('{}') are NOT YET SUPPORTED.", onerror);
                 }
 
+                StringWriter writer = null;
+
                 try {
+                    writer = new StringWriter(512);
                     writeIncludeElementFragment(writer, elementFragment, propertyParser);
+
+                    if (writer.getBuffer().length() > 0) {
+                        esiIncludeElementContents.put(elementFragment, writer.toString());
+                    }
                 } catch (IOException e) {
                     if (!StringUtils.equals("continue", onerror)) {
                         //
                     }
+                } finally {
+                    IOUtils.closeQuietly(writer);
                 }
-            } else if (type == ESIFragmentType.VARS_TAG) {
-                writeNonIncludeElementFragment(writer, (ESIElementFragment) fragment, propertyParser);
             }
         }
-
-        writeQuietly(writer, bodyContent.substring(fragmentInfos.get(fragmentInfos.size() - 1).getEndIndex()));
     }
 
     protected void writeNonIncludeElementFragment(Writer writer, ESIElementFragment fragment, PropertyParser propertyParser) {
