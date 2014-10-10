@@ -994,6 +994,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 in = contentResourceURL.openStream();
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 factory.setNamespaceAware(true);
+                factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
                 factory.newSAXParser().parse(new InputSource(in), contentFileInfoReader);
             }
         } catch (ContentFileInfoReadingShortCircuitException ignore) {
@@ -1408,7 +1409,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
                 final String svName = atts.getValue(SV_NAME.getNamespaceURI(), SV_NAME.getLocalName());
                 final String esvMerge = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
-                if (contextPaths.size() == 0) {
+                if (contextPaths.isEmpty()) {
                     path.push(svName);
                     contextPaths.add(getCurrenContextPath());
                     deltaDirective = esvMerge;
