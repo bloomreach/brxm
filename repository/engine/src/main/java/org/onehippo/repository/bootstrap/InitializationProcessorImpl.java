@@ -1415,8 +1415,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     deltaDirective = esvMerge;
                     if (!isMergeCombine(esvMerge)) {
                         throw new ContentFileInfoReadingShortCircuitException();
-                    } else {
-                        depth++;
                     }
                 } else {
                     if (isMergeCombine(esvMerge)) {
@@ -1436,8 +1434,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             if (name.equals(SV_NODE)) {
                 if (skip()) {
                     depth--;
-                }
-                if (!skip()) {
+                } else {
                     path.pop();
                 }
             }
