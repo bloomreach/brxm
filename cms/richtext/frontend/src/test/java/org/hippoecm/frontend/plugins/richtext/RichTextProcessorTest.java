@@ -29,7 +29,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class RichTextProcessorTest {
 
@@ -75,25 +74,35 @@ public class RichTextProcessorTest {
     }
 
     @Test
-    public void mailtoLinksAreExternalLinks() {
-        String text = "<a href=\"mailto:info@onehippo.com\">link</a>";
+    public void testExternalLinks() {
+        assertExternalLink("/absolute/url/path");
+        assertExternalLink("#anchor");
+        assertExternalLink("mailto:info@onehippo.com");
+        assertExternalLink("callto:skypename");
+        assertExternalLink("about:blank");
+        assertExternalLink("tel:+310205224466");
+        assertExternalLink("funky+scheme-1.0:funkyvalue");
+    }
+
+    private void assertExternalLink(final String hrefValue) {
+        String text = "<a href=\"" + hrefValue + "\">external link</a>";
 
         final ILinkDecorator linkDecorator = EasyMock.createMock(ILinkDecorator.class);
-        expect(linkDecorator.externalLink(eq("mailto:info@onehippo.com"))).andReturn("href=\"mailto:processed\"");
+        expect(linkDecorator.externalLink(eq(hrefValue))).andReturn("href=\"" + hrefValue + "\"");
 
         replay(linkDecorator);
 
         String processed = RichTextProcessor.decorateLinkHrefs(text, linkDecorator);
 
-        assertEquals("<a href=\"mailto:processed\">link</a>", processed);
+        assertEquals("<a href=\"" + hrefValue + "\">external link</a>", processed);
         verify(linkDecorator);
     }
 
     @Test
     public void testGetInternalLinks() {
         String text = "testing 1 2 3 <a data-uuid=\"1234\">link 1</a>\n"+
-            "more text <a href=\"http://test\">test</a>\n"+
-            "and an image <img src=\"link-2/subnode\" data-uuid=\"5678\"/>";
+                "more text <a href=\"http://test\">test</a>\n"+
+                "and an image <img src=\"link-2/subnode\" data-uuid=\"5678\"/>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertTrue("Links should contain 1234", links.contains("1234"));
         assertTrue("Links should contain 5678", links.contains("5678"));
