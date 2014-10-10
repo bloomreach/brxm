@@ -20,19 +20,19 @@ package org.hippoecm.hst.cache.esi;
  */
 public enum ESIFragmentType {
 
-    /** ESI comment block. e.g., "<!--esi ... -->" */
+    /** ESI comment block. e.g., "&lt;!--esi ... --&gt;" */
     COMMENT_BLOCK,
 
-    /** ESI include tag block. e.g., "<esi:include .../>" */
+    /** ESI include tag block. e.g., "&lt;esi:include .../&gt;" */
     INCLUDE_TAG,
 
-    /** ESI comment tag block. e.g., "<esi:comment .../>" */
+    /** ESI comment tag block. e.g., "&lt;esi:comment .../&gt;" */
     COMMENT_TAG,
 
-    /** ESI remove tag block. e.g., "<esi:remove>...</esi:remove>" */
+    /** ESI remove tag block. e.g., "&lt;esi:remove&gt;...&lt;/esi:remove&gt;" */
     REMOVE_TAG,
 
-    /** ESI vars tag block. e.g., "<esi:vars> ... </esi:vars>" */
+    /** ESI vars tag block. e.g., "&lt;esi:vars&gt; ... &lt;/esi:vars&gt;" */
     VARS_TAG
 
 }
