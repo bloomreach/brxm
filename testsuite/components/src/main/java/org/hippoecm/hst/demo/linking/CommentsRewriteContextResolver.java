@@ -21,34 +21,36 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
-import org.hippoecm.hst.core.linking.LinkPathNotFoundException;
-import org.hippoecm.hst.core.linking.LinkRewritePathResolver;
+import org.hippoecm.hst.core.linking.RewriteContext;
+import org.hippoecm.hst.core.linking.RewriteContextException;
+import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePathResolver {
+public class CommentsRewriteContextResolver implements RewriteContextResolver {
 
-    private static final Logger log = LoggerFactory.getLogger(CommentsResolvingLinkRewritePathResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(CommentsRewriteContextResolver.class);
 
     @Override
-    public String getPath(final Node node, final HstRequestContext context,
+    public RewriteContext resolve(final Node node, final Mount mount, final HstRequestContext context,
                           final boolean canonical, final boolean navigationStateful) {
         try {
             if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                return node.getPath();
+                return new RewriteContext(node.getPath(), mount, canonical, navigationStateful);
             }
 
             final Node document = JcrUtils.getNodeIfExists(node, node.getName());
             if (document == null) {
-                return node.getPath();
+                return new RewriteContext(node.getPath(), mount, canonical, navigationStateful);
             }
 
             if (!document.isNodeType("demosite:commentdocument")) {
-                return node.getPath();
+                return new RewriteContext(node.getPath(), mount, canonical, navigationStateful);
             }
 
             final Node commentLink = JcrUtils.getNodeIfExists(document, "demosite:commentlink");
@@ -57,7 +59,7 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                 final String msg = String.format("Found a comment document '%s' without a commentlink node. " +
                                 "Cannot create a link for it.", document.getPath());
                 log.info(msg);
-                throw new LinkPathNotFoundException(msg);
+                throw new RewriteContextException(msg);
             }
 
             final String docBase = JcrUtils.getStringProperty(commentLink, HippoNodeType.HIPPO_DOCBASE, null);
@@ -67,7 +69,7 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                 final String msg = String.format("Found a comment document '%s' with incorrect docbase in commentlink node. " +
                                 "Cannot create a link for it.", document.getPath());
                 log.info(msg);
-                throw new LinkPathNotFoundException(msg);
+                throw new RewriteContextException(msg);
             }
 
             try {
@@ -76,18 +78,18 @@ public class CommentsResolvingLinkRewritePathResolver implements LinkRewritePath
                     String linkedPathInfo = linkedHandle.getPath();
                     log.info("For '{}' we found the referred document '{}'. Create a link for the referred document.",
                             node.getPath(), linkedPathInfo);
-                    return linkedPathInfo;
+                    return new RewriteContext(linkedPathInfo, mount, canonical, navigationStateful);
                 } else {
                     final String msg = String.format("Found a comment document '%s' with docbase '%s' that does" +
                             "not point to a document (handle).", document.getPath(), docBase);
                     log.info(msg);
-                    throw new LinkPathNotFoundException(msg);
+                    throw new RewriteContextException(msg);
                 }
             } catch (ItemNotFoundException e) {
                 final String msg = String.format("Found a comment document '%s' with docbase '%s' that does" +
                         "not point to an existing node.", document.getPath(), docBase);
                 log.info(msg);
-                throw new LinkPathNotFoundException(msg);
+                throw new RewriteContextException(msg);
             }
 
         } catch (RepositoryException e) {

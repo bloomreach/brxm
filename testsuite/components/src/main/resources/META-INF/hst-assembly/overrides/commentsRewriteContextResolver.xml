@@ -18,8 +18,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <bean id="org.hippoecm.hst.core.linking.LinkRewritePathResolver"
-        class="org.hippoecm.hst.demo.linking.CommentsResolvingLinkRewritePathResolver">
+  <bean id="org.hippoecm.hst.core.linking.RewriteContextResolver"
+        class="org.hippoecm.hst.demo.linking.CommentsRewriteContextResolver">
   </bean>
 
 </beans>
