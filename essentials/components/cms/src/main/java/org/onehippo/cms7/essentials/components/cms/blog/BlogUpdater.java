@@ -18,15 +18,22 @@ package org.onehippo.cms7.essentials.components.cms.blog;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
+import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.components.cms.handlers.HandlerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 
 /**
@@ -48,7 +55,35 @@ public final class BlogUpdater {
      * @throws javax.jcr.RepositoryException
      */
     public static boolean wants(final Node node, final String documentType) throws RepositoryException {
+        // check if namespace is registered namespace, skip otherwise:
+        if(Strings.isNullOrEmpty(documentType) || documentType.indexOf(':')==-1){
+            return false;
+        }
+        final Iterable<String> iterable = Splitter.on(':').omitEmptyStrings().trimResults().split(documentType);
+        final Iterator<String> iterator = iterable.iterator();
+        if(iterator.hasNext()){
+            final String namespacePrefix = iterator.next();
+            if(!namespacePrefixExists(node.getSession(), namespacePrefix)){
+                return false;
+            }
+        }
         return node.getPrimaryNodeType().isNodeType(documentType);
+    }
+
+    public static boolean namespacePrefixExists(final Session session, final String prefix) {
+
+        try {
+            final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+            // Check whether a URI is mapped for the prefix
+            final String p = namespaceRegistry.getURI(prefix);
+            return !Strings.isNullOrEmpty(p);
+        } catch (NamespaceException e) {
+            // expected:
+            return false;
+        } catch (RepositoryException e) {
+            log.error("Error while determining namespace check.", e);
+        }
+        return false;
     }
 
     /**
