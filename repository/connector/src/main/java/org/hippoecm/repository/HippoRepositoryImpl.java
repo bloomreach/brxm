@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.repository.api.InitializationProcessor;
+import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

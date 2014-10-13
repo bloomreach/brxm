@@ -22,6 +22,7 @@ api/src/main/java/org/onehippo/repository/RepositoryService.java -text
 api/src/main/java/org/onehippo/repository/api/ContentResourceLoader.java -text
 api/src/main/java/org/onehippo/repository/api/WorkflowTask.java -text
 api/src/main/java/org/onehippo/repository/api/annotation/WorkflowAction.java -text
+api/src/main/java/org/onehippo/repository/bootstrap/InitializationProcessor.java -text
 api/src/main/java/org/onehippo/repository/cluster/RepositoryClusterService.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableDaemonModule.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableSchedulingDaemonModule.java -text

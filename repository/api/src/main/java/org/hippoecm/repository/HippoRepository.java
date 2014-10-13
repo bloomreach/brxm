@@ -26,7 +26,7 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.hippoecm.repository.api.InitializationProcessor;
+import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
 

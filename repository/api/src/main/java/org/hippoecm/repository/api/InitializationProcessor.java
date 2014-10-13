@@ -15,80 +15,9 @@
  */
 package org.hippoecm.repository.api;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.slf4j.Logger;
-
 /**
- * Using an InitializationProcessor you can load hippoecm-extension.xml files into the repository, and execute
- * initialize items in order to bootstrap configuration.
+ * @deprecated use {@link org.onehippo.repository.bootstrap.InitializationProcessor} instead
  */
-public interface InitializationProcessor {
-
-    static final String INITIALIZATION_FOLDER = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
-
-    /**
-     * Load all hippoecm-extension.xml files that are on the current classpath into the repository.
-     *
-     * @param session the {@link Session} to use.
-     * @return  the {@link List} of initialize item {@link Node}s that are pending after loading
-     * @throws RepositoryException
-     * @throws IOException
-     */
-    List<Node> loadExtensions(Session session) throws RepositoryException, IOException;
-
-    /**
-     * Load a specific hippoecm-extension.xml file into the repository.
-     *
-     * @param session the {@link Session} to use.
-     * @param extension the hippoecm-extension.xml to load
-     * @return  the {@link List} of initialize item {@link Node}s that are pending after loading
-     * @throws RepositoryException
-     * @throws IOException
-     */
-    List<Node> loadExtension(Session session, URL extension) throws RepositoryException, IOException;
-
-    /**
-     * Process (execute) all pending initialize items currently loaded in the repository.
-     *
-     * @param session the {@link Session} to use.
-     */
-    List<PostStartupTask> processInitializeItems(Session session);
-
-    /**
-     * Process (execute) a specific list of initialize items.
-     *
-     * @param session the {@link Session} to use.
-     * @param initializeItems the items to process
-     */
-    List<PostStartupTask> processInitializeItems(Session session, List<Node> initializeItems);
-
-    /**
-     * Set alternative logger to write messages to.
-     *
-     * @param logger  the logger to use
-     */
-    void setLogger(Logger logger);
-
-    /**
-     * Obtain a cluster-wide lock on the initialization process to prevent concurrent initialization attempts.
-     * Waits until the lock becomes available if the lock is already held by another session.
-     *
-     * @return whether the lock was successfully obtained.
-     * @throws RepositoryException
-     */
-    boolean lock(Session session) throws RepositoryException;
-
-    /**
-     * Free the lock previously obtained by the {@link #lock(javax.jcr.Session)} method.
-     * @throws RepositoryException
-     */
-    void unlock(Session session) throws RepositoryException;
-
+@Deprecated
+public interface InitializationProcessor extends org.onehippo.repository.bootstrap.InitializationProcessor {
 }

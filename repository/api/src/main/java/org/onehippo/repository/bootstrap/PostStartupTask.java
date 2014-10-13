@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.api;
+package org.onehippo.repository.bootstrap;
 
 /**
  * Task that needs to be executed after the repository has been started.

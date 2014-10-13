@@ -36,7 +36,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.InitializationProcessor;
+import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.onehippo.repository.bootstrap.InitializationProcessorImpl;

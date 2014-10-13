@@ -34,8 +34,6 @@ import org.apache.commons.io.FileUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.InitializationProcessor;
-import org.hippoecm.repository.api.PostStartupTask;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
