@@ -441,9 +441,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return Optional.absent();
     }
 
-    private void processContentPropSet(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        Property contentSetProperty = node.getProperty(HIPPO_CONTENTPROPSET);
-        String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(node, HIPPO_CONTENTROOT, "/"));
+    private void processContentPropSet(final Node item, final Session session, final boolean dryRun) throws RepositoryException {
+        if (isDownstreamItem(item) && !areUpstreamItemsDone(item)) {
+            log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", item.getName());
+            return;
+        }
+        Property contentSetProperty = item.getProperty(HIPPO_CONTENTPROPSET);
+        String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(item, HIPPO_CONTENTROOT, "/"));
         getLogger().info("Contentpropset property " + contentRoot);
 
         if (session.propertyExists(contentRoot)) {
@@ -457,7 +461,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 } else if (values.length == 1) {
                     property.setValue(values[0]);
                 } else {
-                    log.warn("Initialize item {} wants to set multiple values on single valued property", node.getName());
+                    log.warn("Initialize item {} wants to set multiple values on single valued property", item.getName());
                 }
             }
         } else {
@@ -493,9 +497,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return false;
     }
 
-    private void processContentPropAdd(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        Property contentAddProperty = node.getProperty(HIPPO_CONTENTPROPADD);
-        String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(node, HIPPO_CONTENTROOT, "/"));
+    private void processContentPropAdd(final Node item, final Session session, final boolean dryRun) throws RepositoryException {
+        if (isDownstreamItem(item) && !areUpstreamItemsDone(item)) {
+            log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", item.getName());
+            return;
+        }
+        Property contentAddProperty = item.getProperty(HIPPO_CONTENTPROPADD);
+        String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(item, HIPPO_CONTENTROOT, "/"));
         getLogger().info("Contentpropadd property " + contentRoot);
 
         final Property property = session.getProperty(contentRoot);
@@ -578,12 +586,17 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 if (upstreamItemIds != null) {
                     for (Value upstreamItemId : upstreamItemIds.getValues()) {
                         Node upstreamItem = session.getNodeByIdentifier(upstreamItemId.getString());
+                        final String status = JcrUtils.getStringProperty(upstreamItem, HIPPO_STATUS, null);
+                        if (!"done".equals(status)) {
+                            log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", item.getName());
+                            continue;
+                        }
                         final String upstreamItemContextPath;
                         final String[] upstreamItemContextPaths = JcrUtils.getMultipleStringProperty(upstreamItem, HIPPO_CONTEXTPATHS, null);
                         if (upstreamItemContextPaths != null && upstreamItemContextPaths.length > 0) {
                             upstreamItemContextPath = upstreamItemContextPaths[0];
                         } else {
-                            log.warn("Failed to find reload item context path, cannot process downstream item.");
+                            log.warn("Cannot process downstream item {}: failed to find reload item context path.", item.getName());
                             continue;
                         }
                         in = contentURL.openStream();
@@ -674,22 +687,44 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return -1;
     }
 
-    private void processContentDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        final String path = StringUtils.trim(node.getProperty(HIPPO_CONTENTDELETE).getString());
-        final boolean immediateSave = !node.hasProperty(HIPPO_CONTENTRESOURCE) && !node.hasProperty(HIPPO_CONTENT);
-        getLogger().info("Delete content in initialization: {} {}", node.getName(), path);
+    private void processContentDelete(final Node item, final Session session, final boolean dryRun) throws RepositoryException {
+        if (isDownstreamItem(item) && !areUpstreamItemsDone(item)) {
+            log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", item.getName());
+            return;
+        }
+        final String path = StringUtils.trim(item.getProperty(HIPPO_CONTENTDELETE).getString());
+        final boolean immediateSave = !item.hasProperty(HIPPO_CONTENTRESOURCE) && !item.hasProperty(HIPPO_CONTENT);
+        getLogger().info("Delete content in initialization: {} {}", item.getName(), path);
         final boolean success = removeNode(session, path, immediateSave && !dryRun);
         if (!success) {
-            getLogger().error("Content delete in item {} failed", node.getName());
+            getLogger().error("Content delete in item {} failed", item.getName());
         }
     }
 
-    private void processContentPropDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        final String path = StringUtils.trim(node.getProperty(HIPPO_CONTENTPROPDELETE).getString());
-        getLogger().info("Delete content in initialization: {} {}", node.getName(), path);
+    private boolean areUpstreamItemsDone(final Node item) throws RepositoryException {
+        final String[] upstreamItems = JcrUtils.getMultipleStringProperty(item, HIPPO_UPSTREAMITEMS, new String[]{});
+        boolean done = true;
+        for (String upstreamItemId : upstreamItems) {
+            final Node upstreamItem = item.getSession().getNodeByIdentifier(upstreamItemId);
+            done &= "done".equals(JcrUtils.getStringProperty(upstreamItem, HIPPO_STATUS, null));
+        }
+        return done;
+    }
+
+    private boolean isDownstreamItem(final Node item) throws RepositoryException {
+        return JcrUtils.getMultipleStringProperty(item, HIPPO_UPSTREAMITEMS, new String[] {}).length > 0;
+    }
+
+    private void processContentPropDelete(final Node item, final Session session, final boolean dryRun) throws RepositoryException {
+        if (isDownstreamItem(item) && !areUpstreamItemsDone(item)) {
+            log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", item.getName());
+            return;
+        }
+        final String path = StringUtils.trim(item.getProperty(HIPPO_CONTENTPROPDELETE).getString());
+        getLogger().info("Delete content in initialization: {} {}", item.getName(), path);
         final boolean success = removeProperty(session, path, !dryRun);
         if (!success) {
-            getLogger().error("Property delete in item {} failed", node.getName());
+            getLogger().error("Property delete in item {} failed", item.getName());
         }
     }
 
@@ -853,7 +888,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final String existingItemVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HIPPO_VERSION, null) : null;
         final String itemVersion = JcrUtils.getStringProperty(tempInitItemNode, HIPPO_VERSION, null);
 
-        final boolean isReload = initItemNode != null && shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion);
+        final boolean isReload = initItemNode != null && !"done".equals(JcrUtils.getStringProperty(initItemNode, HIPPO_STATUS, null)) &&
+                shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion);
 
         if (isReload) {
             getLogger().info("Item {} needs to be reloaded", tempInitItemNode.getName());
