@@ -106,6 +106,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>14.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reload-on-startup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.28.00</sv:value>
+    </sv:property>
   </sv:node>
 
   <!-- Hippo namespace folder -->
