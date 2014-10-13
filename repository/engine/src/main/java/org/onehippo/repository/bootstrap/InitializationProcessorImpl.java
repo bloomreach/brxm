@@ -967,11 +967,39 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     List<Node> resolveDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
-        QueryResult result = session.getWorkspace().getQueryManager().createQuery(
+        downStreamItems.addAll(resolveContentResourceDownstreamItems(session, contextPath));
+        downStreamItems.addAll(resolveNonContentResourceDownstreamItems(session, contextPath));
+        return downStreamItems;
+    }
+
+    /**
+     * contentresource items operate on the context path
+     */
+    private List<Node> resolveContentResourceDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
+        final List<Node> downStreamItems = new ArrayList<>();
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
                         "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
                         HIPPO_CONTEXTPATHS + " LIKE '" + contextPath + "/%' OR " +
                         HIPPO_CONTEXTPATHS + " = '" + contextPath + "')", Query.SQL
+        ).execute();
+        for (Node item : new NodeIterable(result.getNodes())) {
+            downStreamItems.add(item);
+        }
+        return downStreamItems;
+    }
+
+    /**
+     * Non-contentresource items (contentpropset, contentdelete, etc.) operate directly on the content root
+     */
+    private List<Node> resolveNonContentResourceDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
+        final List<Node> downStreamItems = new ArrayList<>();
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
+                "SELECT * FROM hipposys:initializeitem WHERE " +
+                        "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
+                        HIPPO_CONTENTROOT + " LIKE '" + contextPath + "/%' OR " +
+                        HIPPO_CONTENTROOT + " = '" + contextPath + "') AND " +
+                        HIPPO_CONTENTRESOURCE + " IS NULL", Query.SQL
         ).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             downStreamItems.add(item);

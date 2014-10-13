@@ -16,7 +16,6 @@
 package org.onehippo.repository.bootstrap;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -32,7 +31,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -44,7 +42,6 @@ import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
-import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.testutils.ZipTestUtil;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
@@ -65,7 +62,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTNODENAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
@@ -410,8 +406,9 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testResolveDownstreamItems() throws Exception {
+    public void testResolveDownstreamContentResourceItems() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/");
+        item.setProperty(HIPPO_CONTENTRESOURCE, "fake");
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo", "/foo/bar" } );
         session.save();
 
@@ -431,6 +428,29 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
         assertFalse(downstreamItems.hasNext());
+    }
+
+    @Test
+    public void testResolveNonContentResourceDownstreamItems() throws Exception {
+        item.setProperty(HIPPO_CONTENTROOT, "/foo/bar");
+        session.save();
+
+        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        downstreamItems = processor.resolveDownstreamItems(session, "/foo/bar").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        item.setProperty(HIPPO_CONTENTROOT, "/foobar");
+        session.save();
+        downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        assertFalse(downstreamItems.hasNext());
+
     }
 
     @Test
