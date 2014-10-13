@@ -24,7 +24,7 @@
   <c:if test="${hstRequest.requestContext.cmsRequest}">
     <link rel="stylesheet" href="<hst:link  path="/css/cms-request.css"/>" type="text/css"/>
   </c:if>
-  <hst:headContributions categoryIncludes="componentsCss" xhtml="true"/>
+  <hst:headContributions categoryIncludes="htmlHead" xhtml="true"/>
   <hst:headContributions categoryIncludes="globalJavascript" xhtml="true"/>
 </head>
 <body>
