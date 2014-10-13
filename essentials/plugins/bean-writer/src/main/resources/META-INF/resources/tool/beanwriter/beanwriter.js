@@ -31,6 +31,18 @@
 
             $http.get($scope.endpoint + "imagesets").success(function (data) {
                 $scope.imageSets = data;
+                // check if we have custom image sets and preselect (first) one.
+                if ($scope.imageSets) {
+                    for (var i = 0; i < $scope.imageSets.length; i++) {
+                        var value = $scope.imageSets[i];
+                        if (value != 'HippoGalleryImageSet') {
+                            $scope.selectedImageSet = value;
+                            break;
+                        }
+                    }
+
+                }
+
             });
         })
 })();
