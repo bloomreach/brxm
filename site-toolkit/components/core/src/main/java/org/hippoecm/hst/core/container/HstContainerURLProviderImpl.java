@@ -316,47 +316,53 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         boolean includeSlash = true;
 
-        if (containerURL.getPathInfo().startsWith(pathSuffixDelimiter)) {
+        String containerUrlPathInfo = containerURL.getPathInfo();
+
+        if (containerUrlPathInfo.startsWith(pathSuffixDelimiter)) {
             includeSlash = false;
         }
 
-        String[] unencodedPaths = StringUtils.splitPreserveAllTokens(containerURL.getPathInfo(), '/');
+        if ("/".equals(containerUrlPathInfo) || StringUtils.isEmpty(containerUrlPathInfo)) {
+            url.append('/');
+        } else {
+            String[] unencodedPaths = StringUtils.splitPreserveAllTokens(containerUrlPathInfo, '/');
 
-        for (String path : unencodedPaths) {
-            if (StringUtils.isNotEmpty(path)) {
-                if (includeSlash) {
-                    url.append('/');
-                } else {
-                    // apparently due to pathSuffixDelimiter the first / was skipped. From now include it
-                    includeSlash = true;
-                }
-
-                // check if we have an anchor link and encode everything behind it, but leave first part as it is:
-                if (path.indexOf('#') != -1) {
-                    String[] hashParts = StringUtils.splitPreserveAllTokens(path, '#');
-
-                    // check if preceded with query
-                    if (hashParts[0].indexOf('?') != -1) {
-                        String[] parameterParts = StringUtils.splitPreserveAllTokens(hashParts[0], '?');
-                        url.append(URLEncoder.encode(parameterParts[0], characterEncoding))
-                                .append('?').append(parameterParts[1])
-                                .append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
+            for (String path : unencodedPaths) {
+                if (StringUtils.isNotEmpty(path)) {
+                    if (includeSlash) {
+                        url.append('/');
+                    } else {
+                        // apparently due to pathSuffixDelimiter the first / was skipped. From now include it
+                        includeSlash = true;
                     }
-                    else{
-                        url.append(URLEncoder.encode(hashParts[0], characterEncoding)).append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
+
+                    // check if we have an anchor link and encode everything behind it, but leave first part as it is:
+                    if (path.indexOf('#') != -1) {
+                        String[] hashParts = StringUtils.splitPreserveAllTokens(path, '#');
+
+                        // check if preceded with query
+                        if (hashParts[0].indexOf('?') != -1) {
+                            String[] parameterParts = StringUtils.splitPreserveAllTokens(hashParts[0], '?');
+                            url.append(URLEncoder.encode(parameterParts[0], characterEncoding))
+                                    .append('?').append(parameterParts[1])
+                                    .append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
+                        }
+                        else{
+                            url.append(URLEncoder.encode(hashParts[0], characterEncoding)).append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
+                        }
                     }
-                }
-                // check query parameters:
-                else if (path.indexOf('?') != -1) {
-                    String[] parameterParts = StringUtils.splitPreserveAllTokens(path, '?');
-                    url.append(URLEncoder.encode(parameterParts[0], characterEncoding)).append('?').append(parameterParts[1]);
-                } else {
-                    url.append(URLEncoder.encode(path, characterEncoding));
+                    // check query parameters:
+                    else if (path.indexOf('?') != -1) {
+                        String[] parameterParts = StringUtils.splitPreserveAllTokens(path, '?');
+                        url.append(URLEncoder.encode(parameterParts[0], characterEncoding)).append('?').append(parameterParts[1]);
+                    } else {
+                        url.append(URLEncoder.encode(path, characterEncoding));
+                    }
                 }
             }
         }
 
-        if (pathSuffixDelimiter != null && containerURL.getPathInfo().endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
+        if (pathSuffixDelimiter != null && containerUrlPathInfo.endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
             // the trailing slash is removed above, but for ./ we need to append the slash again
             url.append('/');
         }
