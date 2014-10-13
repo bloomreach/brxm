@@ -20,23 +20,21 @@
 
         .controller('hippo.channel.pages.AddPageCtrl', [
             '$scope',
+            '$filter',
             'hippo.channel.FeedbackService',
             'hippo.channel.PrototypeService',
             'hippo.channel.PageService',
             'hippo.channel.Container',
             'lowercaseFilter',
             'alphanumericFilter',
-            function ($scope, FeedbackService, PrototypeService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
-                var updateURLAutomatically = true;
+            function ($scope, $filter, FeedbackService, PrototypeService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
+                var updateURLAutomatically = true,
+                    translate = $filter('translate');
 
                 $scope.page = {
                     title: '',
                     url: '',
                     prototype: {}
-                };
-
-                $scope.title = {
-                    focus: true
                 };
 
                 $scope.validation = {
@@ -46,6 +44,19 @@
                 $scope.host = '';
                 $scope.mountPath = '';
                 $scope.prototypes = [];
+
+                $scope.tooltips = {
+                    url: function() {
+                        if ($scope.form.$dirty) {
+                            if ($scope.form.url.$error.required) {
+                                return translate('URL_REQUIRED');
+                            } else if ($scope.form.url.$error.illegalCharacters) {
+                                return translate('ILLEGAL_CHARACTERS', $scope.validation);
+                            }
+                        }
+                        return '';
+                    }
+                };
 
                 $scope.submit = function () {
                     var pageModel = {
@@ -58,7 +69,6 @@
                         ContainerService.showPage($scope.mountPath + '/' + pageModel.name);
                     }, function (errorResponse) {
                         $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-                        $scope.title.focus = true;
                     });
                 };
 

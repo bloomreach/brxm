@@ -29,15 +29,13 @@
             <label for="hippo.channel.menu.menuItem.add.title">{{ 'LABEL' | translate }}</label>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.add.title"
                    data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
-                   hippo.channel.menu.auto-focus
+                   data-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-focus="form.title.$setPristine();"
-                   data-ng-required="true">
-            <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
-                <div data-tooltip
-                     data-placement="top"
-                     data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
-            </div>
+                   data-ng-required="true"
+                   data-tooltip="{{ 'LABEL_REQUIRED' | translate }}"
+                   data-tooltip-trigger="show"
+                   data-tooltip-show="form.title.$dirty && form.title.$invalid">
             <i class="fa form-control-feedback"
                data-ng-class="{
             'fa-check': form.title.$dirty && form.title.$valid,
@@ -100,12 +98,10 @@
             <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.add.url"
                    data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                    data-ng-model="selectedMenuItem.link"
-                   data-ng-required="true">
-            <div class="tooltip-container" ng-show="form.url.$dirty && form.url.$invalid">
-                <div data-tooltip
-                     data-placement="top"
-                     data-title="{{ 'EXTERNAL_LINK_INVALID' | translate }}"></div>
-            </div>
+                   data-ng-required="true"
+                   data-tooltip="{{ 'EXTERNAL_LINK_INVALID' | translate }}"
+                   data-tooltip-trigger="show"
+                   data-tooltip-show="form.url.$dirty && form.url.$invalid">
             <i class="fa form-control-feedback"
                data-ng-show="form.url.$dirty"
                data-ng-class="{

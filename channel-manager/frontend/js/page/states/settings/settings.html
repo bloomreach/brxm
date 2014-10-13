@@ -53,12 +53,10 @@
                        data-ng-model="page.title"
                        data-ng-readonly="!state.isEditable"
                        data-ng-focus="form.title.$setPristine();"
-                       data-ng-required="true">
-                <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
-                    <div data-tooltip
-                         data-placement="top"
-                         data-title="{{ 'PAGE_TITLE_REQUIRED' | translate }}"></div>
-                </div>
+                       data-ng-required="true"
+                       data-tooltip="{{ 'PAGE_TITLE_REQUIRED' | translate }}"
+                       data-tooltip-trigger="show"
+                       data-tooltip-show="form.title.$dirty && form.title.$invalid">
                 <i class="fa form-control-feedback"
                    data-ng-class="{
                 'fa-check': form.title.$dirty && form.title.$valid,
@@ -76,19 +74,12 @@
                     <input type="text" name="url" class="form-control" id="page-url"
                            data-ng-model="page.url"
                            data-ng-readonly="!state.isEditable"
-                           data-illegal-characters="validation.illegalCharacters"
+                           data-illegal-characters="{{ validation.illegalCharacters }}"
                            data-ng-focus="form.url.$setPristine();"
-                           data-ng-required="true">
-                </div>
-                <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
-                    <div data-tooltip
-                         data-placement="top"
-                         data-title="{{ 'URL_REQUIRED' | translate }}"></div>
-                </div>
-                <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.illegalCharacters">
-                    <div data-tooltip
-                         data-placement="top"
-                         data-title="{{ 'URL_ILLEGAL_CHARACTERS' | translate:validation }}"></div>
+                           data-ng-required="true"
+                           data-tooltip="{{ tooltips.url() }}"
+                           data-tooltip-trigger="show"
+                           data-tooltip-show="form.url.$invalid">
                 </div>
                 <i class="fa form-control-feedback"
                    data-ng-class="{
@@ -128,7 +119,8 @@
                 <hr data-ng-show="!template.isVisible">
 
                 <button type="submit" class="btn btn-default"
-                        data-ng-click="submit()">{{ 'SAVE' | translate }}</button>
+                        data-ng-click="submit()"
+                        data-ng-disabled="form.$invalid">{{ 'SAVE' | translate }}</button>
                 <button type="submit" class="btn btn-link"
                         data-ng-click="closeContainer()">{{ 'CANCEL' | translate }}</button>
             </div>
@@ -137,11 +129,8 @@
 
     <div class="panel-footer clearfix">
          <div class="tooltip-newlines"
-             data-tooltip
-             data-placement="top"
-             data-title="{{ tooltip }}"
-             data-ng-mouseenter="showTooltip()"
-             data-ng-mouseleave="hideTooltip()">
+              data-tooltip="{{ tooltips.deleteButton() }}"
+              data-tooltip-trigger="mouseenter">
             <button class="btn btn-default btn-md"
                     data-ng-click="deletePage(page)"
                     data-ng-disabled="!state.isEditable || page.isHomepage">

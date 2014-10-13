@@ -27,11 +27,11 @@ describe('illegal character directive', function () {
     beforeEach(inject(function ($compile, $rootScope) {
         $scope = $rootScope;
         $scope.validation = {
-            illegalCharacters: ', 1 # ~ a xyz'
+            illegalCharacters: ',1#~axyz'
         };
         element = angular.element(
             '<form name="form">' +
-                '<input type="text" ng-model="model.validatedField" name="validatedField" data-illegal-characters="validation.illegalCharacters">' +
+                '<input type="text" ng-model="model.validatedField" name="validatedField" data-illegal-characters="{{ validation.illegalCharacters }}">' +
             '</form>');
 
         $scope.model = {validatedField: null};

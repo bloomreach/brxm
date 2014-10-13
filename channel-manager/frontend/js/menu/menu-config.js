@@ -18,39 +18,53 @@
 
     angular.module('hippo.channel.menu')
 
-        .config(['$stateProvider', '$translateProvider', function($stateProvider, $translateProvider) {
+        .config([
+            '$stateProvider',
+            '$translateProvider',
+            '$tooltipProvider',
+            function($stateProvider, $translateProvider, $tooltipProvider) {
 
-            // routing
-            $stateProvider
-                .state('loader', {
-                    url: '/loader',
-                    controller: 'hippo.channel.menu.LoaderCtrl',
-                    templateUrl: 'states/loader/loader.html'
-                })
+                // routing
+                $stateProvider
+                    .state('loader', {
+                        url: '/loader',
+                        controller: 'hippo.channel.menu.LoaderCtrl',
+                        templateUrl: 'states/loader/loader.html'
+                    })
 
-                .state('menu-item', {
-                    abstract: true,
-                    controller: 'hippo.channel.menu.MenuItemCtrl',
-                    templateUrl: 'states/menu-item/menu-item.html'
-                })
+                    .state('menu-item', {
+                        abstract: true,
+                        controller: 'hippo.channel.menu.MenuItemCtrl',
+                        templateUrl: 'states/menu-item/menu-item.html'
+                    })
 
-                .state('menu-item.add', {
-                    url: '/:menuItemId/add',
-                    controller: 'hippo.channel.menu.AddMenuItemCtrl',
-                    templateUrl: 'states/menu-item/add/add-menu-item.html'
-                })
+                    .state('menu-item.add', {
+                        url: '/:menuItemId/add',
+                        controller: 'hippo.channel.menu.AddMenuItemCtrl',
+                        templateUrl: 'states/menu-item/add/add-menu-item.html'
+                    })
 
-                .state('menu-item.edit', {
-                    url: '/:menuItemId/edit',
-                    controller: 'hippo.channel.menu.EditMenuItemCtrl',
-                    templateUrl: 'states/menu-item/edit/edit-menu-item.html'
+                    .state('menu-item.edit', {
+                        url: '/:menuItemId/edit',
+                        controller: 'hippo.channel.menu.EditMenuItemCtrl',
+                        templateUrl: 'states/menu-item/edit/edit-menu-item.html'
+                    });
+
+                // translations
+                $translateProvider.useStaticFilesLoader({
+                    prefix: 'i18n/',
+                    suffix: '.json'
                 });
 
-            // translations
-            $translateProvider.useStaticFilesLoader({
-                prefix: 'i18n/',
-                suffix: '.json'
-            });
-        }]);
+                // tooltips
+                $tooltipProvider.options({
+                    animation: false
+                });
+                $tooltipProvider.setTriggers({
+                    'show': 'hide'
+                });
+            }
+        ]
+    );
 
 }());

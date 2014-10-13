@@ -60,17 +60,15 @@
             'has-error': form.title.$dirty && !isSaving.title && (form.title.$invalid || !isSaved.title)
         }">
             <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
-            <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.title">
-                <div data-tooltip
-                     data-placement="top"
-                     data-title="{{ fieldFeedbackMessage.title }}"></div>
-            </div>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
                    data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
-                   data-hippo.channel.menu.auto-focus
+                   data-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
-                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';">
+                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';"
+                   data-tooltip="{{ fieldFeedbackMessage.title }}"
+                   data-tooltip-trigger="show"
+                   data-tooltip-show="form.title.$invalid">
             <i class="fa form-control-feedback"
                data-ng-show="form.title.$dirty"
                data-ng-class="{
@@ -150,16 +148,14 @@
         }">
             <label for="hippo.channel.menu.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
             <div class="input-group">
-                <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.link">
-                    <div data-tooltip
-                         data-placement="top"
-                         data-title="{{ fieldFeedbackMessage.link }}"></div>
-                </div>
                 <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.edit.url"
                        data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                        data-ng-model="selectedMenuItem.link"
                        data-ng-required="true"
-                       data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';">
+                       data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';"
+                       data-tooltip="{{ fieldFeedbackMessage.link }}"
+                       data-tooltip-trigger="show"
+                       data-tooltip-show="form.url.$invalid">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.url.$dirty"
                    data-ng-class="{

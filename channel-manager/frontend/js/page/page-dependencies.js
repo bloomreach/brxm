@@ -21,6 +21,7 @@
         'hippo.theme',
         'ngRoute',
         'pascalprecht.translate',
+        'ui.bootstrap',
         'ui.router'
     ]);
 

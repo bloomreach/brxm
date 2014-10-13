@@ -56,11 +56,31 @@
                     illegalCharacters: '/ :'
                 };
 
+                $scope.tooltips = {
+                    url: function() {
+                        if ($scope.form.$dirty) {
+                            if ($scope.form.url.$error.required) {
+                                return translate('URL_REQUIRED');
+                            } else if ($scope.form.url.$error.illegalCharacters) {
+                                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
+                            }
+                        }
+                        return '';
+                    },
+                    deleteButton: function() {
+                        if ($scope.page.isHomePage) {
+                            return translate('TOOLTIP_IS_HOMEPAGE');
+                        } else if (!$scope.state.isEditable) {
+                            return translate('TOOLTIP_NOT_EDITABLE');
+                        }
+                        return '';
+                    }
+                };
+
                 $scope.host = '';
                 $scope.mountPath = '';
                 $scope.isConfirmationVisible = false;
                 $scope.isHomePage = false;
-                $scope.tooltip = '';
 
                 // error feedback
                 function setErrorFeedback(errorResponse) {
@@ -89,17 +109,17 @@
                     ContainerService.performClose();
                 };
 
-                $scope.showTooltip = function() {
+                $scope.showDeleteBtnTooltip = function() {
                     if ($scope.page.isHomePage) {
-                        $scope.tooltip = translate('TOOLTIP_IS_HOMEPAGE');
+                        $scope.tooltip.deleteBtn = translate('TOOLTIP_IS_HOMEPAGE');
                     } else if (!$scope.state.isEditable) {
-                        $scope.tooltip = translate('TOOLTIP_NOT_EDITABLE');
+                        $scope.tooltip.deleteBtn = translate('TOOLTIP_NOT_EDITABLE');
                     } else {
-                        $scope.tooltip = '';
+                        $scope.tooltip.deleteBtn = '';
                     }
                 };
 
-                $scope.hideTooltip = function() {
+                $scope.hideDeleteBtnTooltip = function() {
                     $scope.tooltip = '';
                 };
 

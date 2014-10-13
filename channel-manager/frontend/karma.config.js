@@ -32,6 +32,7 @@ module.exports = function(config) {
             'components/jquery/dist/jquery.js',
             'components/underscore/underscore.js',
             'components/angular/angular.js',
+            'components/angular-bootstrap/ui-bootstrap.min.js',
             'components/angular-route/angular-route.js',
             'components/hippo-theme/dist/js/main.js',
             'components/angular-translate/angular-translate.js',

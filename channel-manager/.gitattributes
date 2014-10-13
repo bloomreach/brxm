@@ -41,7 +41,7 @@ frontend/js/shared/assets/images/loader.gif -text
 frontend/js/shared/directives/autofocus.spec.js -text
 frontend/js/shared/directives/illegalCharacter.spec.js -text
 frontend/js/shared/directives/illegalCharacters.js -text
-frontend/js/shared/directives/tooltip.js -text
+frontend/js/shared/directives/tooltipShow.js -text
 frontend/js/shared/filters/alphanumeric.js -text
 frontend/js/shared/filters/alphanumeric.spec.js -text
 frontend/js/shared/filters/placeholder.js -text

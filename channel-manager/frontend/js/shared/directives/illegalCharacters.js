@@ -29,47 +29,31 @@
          *
          * @description
          * Custom validator for elements that use ng-model.
-         * Modified version of: http://ericpanorel.net/2013/10/05/angularjs-password-match-form-validation/
          *
          * @param {string} hippo.channel.menu.illegalCharacters A string containing the space-separated invalid characters
          */
         .directive('illegalCharacters', [function () {
             return {
                 restrict: 'A',
-                require: '?ngModel',
-                scope: {
-                    characters: '=illegalCharacters'
-                },
+                require: 'ngModel',
                 link: function link(scope, elem, attrs, ngModel) {
-                    var directiveName = 'illegalCharacters';
-                    var validatorName = 'illegalCharacters';
-
-                    // do nothing if ng-model is not defined, or no illegal characters specified
-                    if (!ngModel || !attrs[directiveName]) {
-                        return;
-                    }
-
                     var validator = function (value) {
-                        var valid = true;
+                        var isValid = true;
                         value = value || '';
 
-                        angular.forEach(scope.characters.split(' '), function (character) {
+                        angular.forEach(attrs.illegalCharacters.split(''), function (character) {
                             if (value.indexOf(character) >= 0) {
-                                valid = false;
+                                isValid = false;
                             }
                         });
 
-                        ngModel.$setValidity(validatorName, valid);
+                        ngModel.$setValidity('illegalCharacters', isValid);
 
                         return value;
                     };
 
                     ngModel.$parsers.unshift(validator);
                     ngModel.$formatters.push(validator);
-
-                    scope.$watch(attrs[directiveName], function () {
-                        validator(ngModel.$viewValue);
-                    });
                 }
             };
         }]);

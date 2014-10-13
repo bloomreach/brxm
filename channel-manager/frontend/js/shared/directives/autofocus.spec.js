@@ -16,7 +16,8 @@
 
 describe('the autofocus directive', function () {
     'use strict';
-    var $scope, element;
+
+    var element;
 
     beforeEach(module('hippo.channel'));
 
@@ -27,23 +28,20 @@ describe('the autofocus directive', function () {
         });
     });
 
-    beforeEach(inject(function (_$compile_, _$rootScope_) {
-        $scope = _$rootScope_;
-        $scope.focus = true;
-        element = angular.element('<input auto-focus="focus">');
-        _$compile_(element)($scope);
+    beforeEach(inject(function (_$compile_, _$rootScope_, _$timeout_) {
+        element = angular.element('<input auto-focus>');
+        _$compile_(element)(_$rootScope_);
+        _$rootScope_.$digest();
+        element.appendTo(document.body);
+        _$timeout_.flush();
     }));
 
-    it('should update the scope value on blur', function () {
-        $scope.$digest();
-        element.blur();
-        expect($scope.focus).toBe(false);
+    afterEach(function () {
+        element.remove();
     });
 
-    it('should update the scope value on focus', function () {
-        $scope.$digest();
-        element.focus();
-        expect($scope.focus).toBe(true);
+    it('should focus an element', function () {
+        expect(element).toBeFocused();
     });
 
 });

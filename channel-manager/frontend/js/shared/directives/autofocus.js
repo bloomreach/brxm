@@ -19,45 +19,15 @@
 
     angular.module('hippo.channel')
 
-        // the directive is not namespaced, because the special notation causes an error with the isolated scope definition.
-        // Error: [$compile:iscp] Invalid isolate scope definition for directive 'hippo.channel.menu.autoFocus'.
-
         .directive('autoFocus', [
             '$timeout',
             function ($timeout) {
                 return {
                     restrict: 'A',
-                    scope: {
-                        focus: '=autoFocus'
-                    },
                     link: function(scope, element) {
-                        doFocus();
-
-                        scope.$watch('focus', function (value) {
-                            if (value) {
-                                doFocus();
-                            } else {
-                                doBlur();
-                            }
+                        $timeout(function () {
+                            element.focus();
                         });
-
-                        element.on('blur', function () {
-                            scope.$apply(function () {
-                                scope.focus = false;
-                            });
-                        });
-
-                        function doFocus() {
-                            $timeout(function () {
-                                element.focus();
-                            }, 0);
-                        }
-
-                        function doBlur() {
-                            $timeout(function () {
-                                element.blur();
-                            }, 0);
-                        }
                     }
                 };
             }

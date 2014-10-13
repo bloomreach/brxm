@@ -30,11 +30,8 @@
              data-ng-show="isAddPageVisible"
              data-ng-controller="hippo.channel.pages.NavigationCtrl">
             <div class="tooltip-newlines"
-                 data-tooltip
-                 data-placement="top"
-                 data-title="{{ tooltip }}"
-                 data-ng-mouseenter="showTooltip()"
-                 data-ng-mouseleave="hideTooltip()">
+                 data-tooltip="{{ !userIsEditing ? ('ADD_NEW_PAGE_DISABLED_TOOLTIP' | translate) : '' }}"
+                 data-tooltip-trigger="mouseenter">
                 <button class="btn btn-default btn-md"
                         data-ng-click="navigateTo('add-page')"
                         data-ng-disabled="!userIsEditing">

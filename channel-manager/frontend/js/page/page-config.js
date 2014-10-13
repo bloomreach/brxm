@@ -18,21 +18,35 @@
 
     angular.module('hippo.channel.page')
 
-        .config(['$stateProvider', '$translateProvider', function($stateProvider, $translateProvider) {
+        .config([
+            '$stateProvider',
+            '$translateProvider',
+            '$tooltipProvider',
+            function($stateProvider, $translateProvider, $tooltipProvider) {
 
-            // routing
-            $stateProvider
-                .state('settings', {
-                    url: '/settings',
-                    controller: 'hippo.channel.page.SettingsCtrl',
-                    templateUrl: 'states/settings/settings.html'
+                // routing
+                $stateProvider
+                    .state('settings', {
+                        url: '/settings',
+                        controller: 'hippo.channel.page.SettingsCtrl',
+                        templateUrl: 'states/settings/settings.html'
+                    });
+
+                // translations
+                $translateProvider.useStaticFilesLoader({
+                    prefix: 'i18n/',
+                    suffix: '.json'
                 });
 
-            // translations
-            $translateProvider.useStaticFilesLoader({
-                prefix: 'i18n/',
-                suffix: '.json'
-            });
-        }]);
+                // tooltips
+                $tooltipProvider.options({
+                    animation: false
+                });
+                $tooltipProvider.setTriggers({
+                    'show': 'hide'
+                });
+            }
+        ]
+    );
 
 }());
