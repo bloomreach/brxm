@@ -30,7 +30,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.InitializationProcessor;
+import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

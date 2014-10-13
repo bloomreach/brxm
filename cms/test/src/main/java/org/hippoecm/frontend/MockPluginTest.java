@@ -40,11 +40,11 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.onehippo.repository.mock.MockNode;
 
 /**
