@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import javax.jcr.Node;
 
+import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
 import org.hippoecm.repository.api.NodeNameCodec;
 
 /**
@@ -44,7 +45,7 @@ class InternalLinkHrefToUuidDecorator extends InternalLinkDecorator {
             return "href=\"" + href + "\"";
         }
 
-        return "href=\"http://\" data-uuid=\"" + uuidOrNull + "\"";
+        return "href=\"" + RichTextProcessor.INTERNAL_LINK_DEFAULT_HREF + "\" data-uuid=\"" + uuidOrNull + "\"";
     }
 
 }

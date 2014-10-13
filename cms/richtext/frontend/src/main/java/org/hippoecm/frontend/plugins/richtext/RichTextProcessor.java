@@ -68,8 +68,8 @@ public class RichTextProcessor {
     private static Pattern FACET_SELECT_PATTERN = Pattern.compile("data-facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
     private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(data-facetselect|data-type|src)=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
 
-    private static Pattern EXTERNAL_LINK_HREF_PATTERN = Pattern.compile("^(#|/|[a-zA-Z][a-zA-Z][a-zA-Z0-9+-.]*:)", Pattern.CASE_INSENSITIVE);
-    private static String INTERNAL_LINK_DEFAULT_HREF = "http://";
+    private static Pattern EXTERNAL_LINK_HREF_PATTERN = Pattern.compile("^(#|/|[a-z][a-z0-9+-.]+:)", Pattern.CASE_INSENSITIVE);
+    public static String INTERNAL_LINK_DEFAULT_HREF = "http://";
 
     private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
 
@@ -264,9 +264,11 @@ public class RichTextProcessor {
         return text.replaceAll("(<[a-z]+\\s)\\s*", "$1").replaceAll("\\s*>", ">").replaceFirst("\\s*/>$", "/>");
     }
 
+    /**
+     * @return true if the href value is an external link. The default internal link href value should not be handled
+     * as external link, see {@link org.hippoecm.frontend.plugins.richtext.jcr.InternalLinkHrefToUuidDecorator}
+     */
     private static boolean isExternalLink(String href) {
-        // default internal link href should not be handled as external link,
-        // see {@link org.hippoecm.frontend.plugins.richtext.jcr.InternalLinkHrefToUuidDecorator}
         return !INTERNAL_LINK_DEFAULT_HREF.equals(href) && EXTERNAL_LINK_HREF_PATTERN.matcher(href).find();
     }
 
