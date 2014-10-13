@@ -29,13 +29,13 @@
       </list>
     </property>
 
-    <property name="linkRewritePathResolver" ref="org.hippoecm.hst.core.linking.LinkRewritePathResolver"/>
+    <property name="rewriteContextResolver" ref="org.hippoecm.hst.core.linking.RewriteContextResolver"/>
     <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
     <property name="locationResolvers" ref="org.hippoecm.hst.core.linking.locationResolvers"/>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.linking.LinkRewritePathResolver"
-        class="org.hippoecm.hst.core.linking.DefaultLinkRewritePathResolver">
+  <bean id="org.hippoecm.hst.core.linking.RewriteContextResolver"
+        class="org.hippoecm.hst.core.linking.DefaultRewriteContextResolver">
   </bean>
 
 

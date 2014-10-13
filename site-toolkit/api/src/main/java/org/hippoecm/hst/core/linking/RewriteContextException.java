@@ -15,23 +15,24 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+public class RewriteContextException extends RuntimeException {
 
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
-import org.hippoecm.hst.core.request.HstRequestContext;
+    private static final long serialVersionUID = 1L;
 
-public class DefaultLinkRewritePathResolver implements LinkRewritePathResolver {
-
-    @Override
-    public String getPath(final Node node,
-                          final HstRequestContext context,
-                          final boolean canonical,
-                          final boolean navigationStateful) {
-        try {
-            return node.getPath();
-        } catch (RepositoryException e) {
-            throw new RuntimeRepositoryException(e);
-        }
+    public RewriteContextException() {
+        super();
     }
+
+    public RewriteContextException(String message) {
+        super(message);
+    }
+
+    public RewriteContextException(Throwable nested) {
+        super(nested);
+    }
+
+    public RewriteContextException(String msg, Throwable nested) {
+        super(msg, nested);
+    }
+
 }
