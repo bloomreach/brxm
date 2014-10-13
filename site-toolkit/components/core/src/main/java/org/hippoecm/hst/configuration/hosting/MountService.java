@@ -410,6 +410,10 @@ public class MountService implements ContextualizableMount, MutableMount {
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
             this.type = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_TYPE);
             type = StringPool.get(type);
+            if (!(Mount.LIVE_NAME.equals(type) || Mount.PREVIEW_NAME.equals(type))) {
+                log.error("Invalid type '{}' found for mount '{}'. Only supported values are '{}' or '{}'",
+                        type, jcrLocation, Mount.LIVE_NAME, Mount.PREVIEW_NAME);
+            }
         } else if(parent != null) {
             this.type = parent.getType();
         }
