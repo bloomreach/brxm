@@ -92,7 +92,7 @@ public abstract class CommonComponent extends BaseHstComponent {
      * NOTE: we first check if document is set through component interface,
      * otherwise we try o fetch mapped (sitemap) bean
      *
-     * @param documentPath
+     * @param documentPath document (content) path
      * @param request      HstRequest
      * @param response     HstResponse
      * @see #pageNotFound(org.hippoecm.hst.core.component.HstResponse)
@@ -111,6 +111,23 @@ public abstract class CommonComponent extends BaseHstComponent {
         request.setAttribute(REQUEST_ATTR_DOCUMENT, bean);
     }
 
+    /**
+     * Sets content bean onto request. If no bean is found, *no* 404 response will be set.
+     * NOTE: Only bean defined through component interface is used unlike within
+     * {@code setContentBean()} method
+     *
+     * @param documentPath document (content) path
+     * @param request      HstRequest
+     * @param response     HstResponse
+     * @see #setContentBean(String, org.hippoecm.hst.core.component.HstRequest, org.hippoecm.hst.core.component.HstResponse)
+     */
+    public void setContentBeanForPath(final String documentPath, HstRequest request, final HstResponse response) {
+        final HstRequestContext context = request.getRequestContext();
+        if (!Strings.isNullOrEmpty(documentPath)) {
+            final HippoBean root = context.getSiteContentBaseBean();
+            request.setAttribute(REQUEST_ATTR_DOCUMENT, root.getBean(documentPath));
+        }
+    }
 
 
     /**
@@ -159,7 +176,7 @@ public abstract class CommonComponent extends BaseHstComponent {
     /**
      * Find HippoBean for given path. If path is null or empty, site root bean will be returned
      *
-     * @param path    document (or folder) path relative to site-root
+     * @param path document (or folder) path relative to site-root
      * @return bean identified by path. Site root bean if path empty or no corresponding bean.
      */
     public static HippoBean getScopeBean(final String path) {
