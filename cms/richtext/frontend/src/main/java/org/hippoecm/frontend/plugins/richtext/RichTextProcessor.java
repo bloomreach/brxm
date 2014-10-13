@@ -68,7 +68,7 @@ public class RichTextProcessor {
     private static Pattern FACET_SELECT_PATTERN = Pattern.compile("data-facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
     private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(data-facetselect|data-type|src)=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
 
-    private static Pattern EXTERNAL_LINK_HREF_PATTERN = Pattern.compile("^(#|/|[a-z][a-z0-9+-.]+:)", Pattern.CASE_INSENSITIVE);
+    private static Pattern EXTERNAL_LINK_HREF_PATTERN = Pattern.compile("^(#|/|[a-z][a-z0-9+-.]*:)", Pattern.CASE_INSENSITIVE);
     public static String INTERNAL_LINK_DEFAULT_HREF = "http://";
 
     private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);

@@ -82,6 +82,7 @@ public class RichTextProcessorTest {
         assertExternalLink("about:blank");
         assertExternalLink("tel:+310205224466");
         assertExternalLink("funky+scheme-1.0:funkyvalue");
+        assertExternalLink("a:value-of-scheme-with-one-letter");
     }
 
     private void assertExternalLink(final String hrefValue) {
