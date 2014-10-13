@@ -233,6 +233,10 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject-preview/"));
                 assertTrue(liveSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             } else {
+                if (previewSiteMapItem.getQualifiedId().contains("hst:default")) {
+                    log.debug("Skip hst:default sitemap");
+                    continue;
+                }
                 assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
                 assertTrue(liveSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             }
