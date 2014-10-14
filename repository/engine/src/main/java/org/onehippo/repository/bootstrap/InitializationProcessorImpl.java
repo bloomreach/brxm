@@ -167,7 +167,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     HIPPO_STATUS + " LIKE 'pending%' " +
                     "ORDER BY " + HIPPO_SEQUENCE + " ASC";
 
-    private final static String GET_OLD_INITIALIZE_ITEMS = "SELECT * FROM hipposys:initializeitem " +
+    private final static String GET_MISSING_INITIALIZE_ITEMS = "SELECT * FROM hipposys:initializeitem " +
             "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
             HippoNodeType.HIPPO_TIMESTAMP + " IS NULL OR " +
             HippoNodeType.HIPPO_TIMESTAMP + " < {})";
@@ -786,7 +786,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder, reloadItems));
         }
         if (cleanup) {
-            cleanupInitializeItems(session, now);
+            markMissingInitializeItems(session, now);
         }
         initializeItems.addAll(markReloadDownstreamItems(session, reloadItems));
         return initializeItems;
@@ -820,19 +820,19 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return initializeItems;
     }
 
-    private void cleanupInitializeItems(final Session session, final long cleanBefore) throws RepositoryException {
+    private void markMissingInitializeItems(final Session session, final long markBefore) throws RepositoryException {
         try {
-            final String statement = GET_OLD_INITIALIZE_ITEMS.replace("{}", String.valueOf(cleanBefore));
+            final String statement = GET_MISSING_INITIALIZE_ITEMS.replace("{}", String.valueOf(markBefore));
             final Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL);
             for (Node node : new NodeIterable(query.execute().getNodes())) {
                 if (node != null) {
-                    log.info("Removing old initialize item {}", node.getName());
-                    node.remove();
+                    log.info("Marking missing initialize item {}", node.getName());
+                    node.setProperty(HIPPO_STATUS, "missing");
                 }
             }
             session.save();
         } catch (RepositoryException e) {
-            log.error("Exception occurred while cleaning up old initialize items", e);
+            log.error("Exception occurred while marking missing initialize items", e);
             session.refresh(false);
         }
     }
@@ -923,6 +923,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
 
         initItemNode.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
+        final String status = JcrUtils.getStringProperty(initItemNode, HIPPO_STATUS, null);
+        if ("missing".equals(status)) {
+            initItemNode.getProperty(HIPPO_STATUS).remove();
+        }
 
         return initializeItems;
     }
@@ -1015,7 +1019,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 "SELECT * FROM hipposys:initializeitem WHERE " +
                         "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
                         HIPPO_CONTEXTPATHS + " LIKE '" + contextPath + "/%' OR " +
-                        HIPPO_CONTEXTPATHS + " = '" + contextPath + "')", Query.SQL
+                        HIPPO_CONTEXTPATHS + " = '" + contextPath + "') AND " +
+                        HIPPO_STATUS + " <> 'missing'", Query.SQL
         ).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             downStreamItems.add(item);
@@ -1033,7 +1038,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
                         HIPPO_CONTENTROOT + " LIKE '" + contextPath + "/%' OR " +
                         HIPPO_CONTENTROOT + " = '" + contextPath + "') AND " +
-                        HIPPO_CONTENTRESOURCE + " IS NULL", Query.SQL
+                        HIPPO_CONTENTRESOURCE + " IS NULL AND " +
+                        HIPPO_STATUS + " <> 'missing'", Query.SQL
         ).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             downStreamItems.add(item);
