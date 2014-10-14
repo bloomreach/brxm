@@ -886,7 +886,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final String existingItemVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HIPPO_VERSION, null) : null;
         final String itemVersion = JcrUtils.getStringProperty(tempInitItemNode, HIPPO_VERSION, null);
 
-        final boolean isReload = initItemNode != null && !"done".equals(JcrUtils.getStringProperty(initItemNode, HIPPO_STATUS, null)) &&
+        final boolean isReload = initItemNode != null &&
                 shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion);
 
         if (isReload) {
