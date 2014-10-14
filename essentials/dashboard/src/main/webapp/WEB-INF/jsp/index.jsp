@@ -92,20 +92,20 @@
       <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">
-            <span class="fa fa-shopping-cart fa-fw"></span>
+            <span class="fa fa-shopping-cart fa-fw fa-color-primary"></span>
            Library
           </a>
         </li>
         <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
           <a href="#/installed-features">
-            <span class="fa fa-dropbox fa-fw"></span>
+            <span class="fa fa-dropbox fa-fw fa-color-success"></span>
             Installed features&nbsp;&nbsp;
             <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-danger" style="position:fixed">{{TOTAL_NEEDS_ATTENTION}}</span>
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
           <a href="#/tools">
-            <span class="fa fa-wrench fa-fw"></span>
+            <span class="fa fa-wrench fa-fw fa-color-info"></span>
             Tools
           </a>
         </li>
