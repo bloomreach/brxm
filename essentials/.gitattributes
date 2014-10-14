@@ -642,6 +642,7 @@ dashboard/src/main/webapp/components/underscore/underscore-min.map -text
 dashboard/src/main/webapp/components/underscore/underscore.js -text
 dashboard/src/main/webapp/css/main.css -text
 dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
+dashboard/src/main/webapp/directives/essentials-draft-warning.html -text
 dashboard/src/main/webapp/directives/essentials-feature-footer.html -text
 dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 dashboard/src/main/webapp/directives/essentials-help.html -text

@@ -18,11 +18,17 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.util.Set;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -33,6 +39,8 @@ import com.google.common.base.Strings;
 @XmlRootElement(name = "document")
 public class DocumentRestful implements Restful {
 
+    @XmlTransient
+    private static final Logger log = LoggerFactory.getLogger(DocumentRestful.class);
     private static final long serialVersionUID = 1L;
 
     private String javaName;
@@ -41,6 +49,7 @@ public class DocumentRestful implements Restful {
     private String name;
     private String prefix;
     private boolean mixin;
+    private boolean draftMode;
     private boolean compoundType;
     private Set<String> superTypes;
     private Set<String> fieldLocations;
@@ -52,13 +61,38 @@ public class DocumentRestful implements Restful {
         this.compoundType = contentType.isCompoundType();
         this.superTypes = contentType.getSuperTypes();
         this.name = extractName(fullName);
+        setDraftType(context, prefix, name);
+    }
+
+    /**
+     * Scheck if document is in draft mode:
+     */
+    private void setDraftType(final PluginContext context, final String prefix, final String name) {
+
+        final Session session = context.createSession();
+        try {
+            final String absPath = "/hippo:namespaces/" + prefix + '/' + name + "/hipposysedit:prototypes";
+            if (session.nodeExists(absPath)) {
+                final Node node = session.getNode(absPath);
+                final long size = node.getNodes().getSize();
+                if (size > 1) {
+                    // it holds more than one prototype (2):
+                    draftMode = true;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error checking draft node", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
     }
 
     private String extractPrefix(final String prefix, final String name) {
-        if(!Strings.isNullOrEmpty(prefix)){
+        if (!Strings.isNullOrEmpty(prefix)) {
             return prefix;
         }
-        if(Strings.isNullOrEmpty(name)){
+        if (Strings.isNullOrEmpty(name)) {
             return null;
         }
         final int idx = name.indexOf(':');
@@ -88,7 +122,8 @@ public class DocumentRestful implements Restful {
      * TODO: change once https://issues.onehippo.com/browse/CMS7-8249 is fixed
      * Extract project name first. For a project with {@code testproject} namespace,
      * ContentService can return something  like {@code [hippostd:taggable, testproject:mydocument]} so we want second name to be chosen.
-     * @param name name returned by content type service
+     *
+     * @param name    name returned by content type service
      * @param context plugin context
      * @return
      */
@@ -96,7 +131,7 @@ public class DocumentRestful implements Restful {
         final Iterable<String> split = Splitter.on(",").split(name);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         for (String aName : split) {
-            if(aName.startsWith(projectNamespacePrefix)){
+            if (aName.startsWith(projectNamespacePrefix)) {
                 return aName;
             }
         }
@@ -162,6 +197,15 @@ public class DocumentRestful implements Restful {
 
     public void setSuperTypes(final Set<String> superTypes) {
         this.superTypes = superTypes;
+    }
+
+
+    public boolean isDraftMode() {
+        return draftMode;
+    }
+
+    public void setDraftMode(final boolean draftMode) {
+        this.draftMode = draftMode;
     }
 
     @Override

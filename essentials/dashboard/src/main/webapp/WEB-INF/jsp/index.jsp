@@ -92,27 +92,27 @@
       <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">
-            <i class="fa fa-shopping-cart fa-2x fa-fw fa-middle"></i>
-            <span>Library</span>
+            <span class="fa fa-shopping-cart fa-fw"></span>
+           Library
           </a>
         </li>
         <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
           <a href="#/installed-features">
-            <i class="fa fa-dropbox fa-2x fa-fw fa-middle"></i>
-            <span>Installed features</span>
+            <span class="fa fa-dropbox fa-fw"></span>
+            Installed features&nbsp;&nbsp;
             <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-danger" style="position:fixed">{{TOTAL_NEEDS_ATTENTION}}</span>
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
           <a href="#/tools">
-            <i class="fa fa-wrench fa-2x fa-fw fa-middle"></i>
-            <span>Tools</span>
+            <span class="fa fa-wrench fa-fw"></span>
+            Tools
           </a>
         </li>
         <li>
           <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">
-            <i class="fa fa-pencil fa-2x fa-fw fa-middle"></i>
-            <span>Feedback</span></a>
+            <i class="fa fa-pencil fa-fw"></i>
+            Feedback</a>
         </li>
       </ul>
     </div>

@@ -424,6 +424,31 @@
                     $scope.hasMessages = !!$scope.plugin.packageFile;
                 }
             }
+        }).directive("essentialsDraftWarning", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                templateUrl: 'directives/essentials-draft-warning.html',
+                controller: function ($scope, $rootScope, $http) {
+                    $scope.hasDraftDocuments = false;
+                    $scope.isDraft = function (doc) {
+                        return doc.draftMode;
+                    };
+                    $http.get($rootScope.REST.documents).success(function (data) {
+                        $scope.documentTypes = data;
+                        if (data) {
+                            for (var i = 0; i < data.length; i++) {
+                                var val = data[i];
+                                if (val && val.draftMode) {
+                                    $scope.hasDraftDocuments = true;
+                                    break;
+                                }
+                            }
+                        }
+                    });
+
+                }
+            }
         })
 
 })();
