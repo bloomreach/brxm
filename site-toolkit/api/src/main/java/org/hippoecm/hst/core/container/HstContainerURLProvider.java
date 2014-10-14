@@ -144,7 +144,10 @@ public interface HstContainerURLProvider {
      * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
+     * @deprecated deprecated since 2.30.00 (CMS 7.10), use
+     * {@link #toURLString(HstContainerURL, org.hippoecm.hst.core.request.HstRequestContext)} instead
      */
+    @Deprecated
     String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
     
     /**
