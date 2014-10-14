@@ -60,6 +60,17 @@ public class RepoUtilsTest {
         assertEquals("//*[jcr:contains(.,'test')]", encodeXpath("//*[jcr:contains(.,'test')]"));
         assertEquals("//element(*,hippo:document)", encodeXpath("//element(*,hippo:document)"));
 
+        assertEquals(       "/jcr:root/foo/bar order by @jcr:score",
+                encodeXpath("/jcr:root/foo/bar order by @jcr:score"));
+        assertEquals(       "/jcr:root/foo/bar[@my:project = '456'] order by @jcr:score",
+                encodeXpath("/jcr:root/foo/bar[@my:project = '456'] order by @jcr:score"));
+
+        assertEquals(       "/jcr:root/foo/_x0037_8 order by @jcr:score",
+                encodeXpath("/jcr:root/foo/78 order by @jcr:score"));
+        assertEquals(       "/jcr:root/foo/_x0037_8[99/@my:project = '456'] order by @jcr:score",
+                encodeXpath("/jcr:root/foo/78[99/@my:project = '456'] order by @jcr:score"));
+
+
     }
 
 }

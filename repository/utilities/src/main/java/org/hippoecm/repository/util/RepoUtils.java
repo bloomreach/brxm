@@ -105,14 +105,18 @@ public class RepoUtils {
 
     public static String encodeXpath(String xpath) {
         final int whereClauseIndexStart = xpath.indexOf("[");
-        final int whereClauseIndexEnd =xpath.lastIndexOf("]");
+        final int whereClauseIndexEnd = xpath.lastIndexOf("]");
+        final String orderByString = " order by ";
         if (whereClauseIndexStart > -1 && whereClauseIndexEnd > -1) {
             String beforeWhere = xpath.substring(0, whereClauseIndexStart);
             String afterWhere = xpath.substring(whereClauseIndexEnd + 1, xpath.length());
             // in where clause we can have path constraints
             String whereClause = "[" + xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd) + "]";
             return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
-        } else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
+        } else if (xpath.indexOf(orderByString) > -1) {
+            int orderByIndex = xpath.indexOf(orderByString);
+            return encodePathConstraint(xpath.substring(0, orderByIndex)) + xpath.substring(orderByIndex);
+        }  else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
             // only path
             return encodePathConstraint(xpath);
         } else {
