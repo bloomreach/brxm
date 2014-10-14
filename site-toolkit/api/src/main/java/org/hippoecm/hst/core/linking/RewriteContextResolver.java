@@ -36,7 +36,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  *     {@link RewriteContextResolver}. Remember however that the implementation <b>must</b> be fast. Whenever
  *     the method {@link #resolve(Node, Mount, HstRequestContext, boolean, boolean)} takes more than a couple
  *     (say 2 to 3) milliseconds, you'll run into performance issues when a lot of links have to be created. Custom implementation
- *     can best always logs at debug level how long parts of the method takes to execute (default hst logs the total
+ *     can best always log at debug level how long parts of the method takes to execute (default hst logs the total
  *     time as well). Target time should be around 1/10 to 1 millisecond max.
  * </p>
  * <p>
