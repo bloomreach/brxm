@@ -142,7 +142,7 @@ public class TestHstLinkRewritingCrossScheme extends AbstractBeanTestCase {
             final String homepageHttpURLFullyQualified = homepageLink.toUrlForm(requestContext, true);
 
             assertEquals("link for homepage should be fully qualified http link as current request is https.",
-                    HTTP_SCHEME + "://localhost/site", homepageHttpURL);
+                    HTTP_SCHEME + "://localhost/site/", homepageHttpURL);
 
             assertTrue("scheme for homepage should be http and thus fully qualified links even when not explicitly set in toUrlForm",
                     homepageHttpURLFullyQualified.equals(homepageHttpURL));
@@ -186,9 +186,9 @@ public class TestHstLinkRewritingCrossScheme extends AbstractBeanTestCase {
                 final String homepageHttpURLFullyQualified = homepageLink.toUrlForm(requestContext, true);
 
                 assertEquals("link for homepage should be fully qualified http because cross mount on different port.",
-                        "/site", homepageHttpURL);
+                        "/site/", homepageHttpURL);
                 assertEquals("link for homepage should be fully qualified http because cross mount on different port.",
-                        HTTP_SCHEME + "://localhost/site", homepageHttpURLFullyQualified);
+                        HTTP_SCHEME + "://localhost/site/", homepageHttpURLFullyQualified);
 
             }
 

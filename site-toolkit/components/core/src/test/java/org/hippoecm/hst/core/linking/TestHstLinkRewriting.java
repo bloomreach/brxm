@@ -63,8 +63,8 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be '", "", homePageLink.getPath());
-        assertEquals("wrong absolute link for homepage", "/site", (homePageLink.toUrlForm(requestContext, false)));
-        assertEquals("wrong fully qualified url for homepage", "http://localhost/site", (homePageLink.toUrlForm(requestContext, true)));
+        assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
+        assertEquals("wrong fully qualified url for homepage", "http://localhost/site/", (homePageLink.toUrlForm(requestContext, true)));
 
 
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:80", "/home");
@@ -72,18 +72,18 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
-        assertEquals("wrong absolute link for homepage", "/site", (homePageLink.toUrlForm(requestContext, false)));
+        assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         // for absolute links, we do not include port 80 !!
-        assertEquals("wrong fully qualified url for homepage", "http://localhost/site", (homePageLink.toUrlForm(requestContext, true)));
+        assertEquals("wrong fully qualified url for homepage", "http://localhost/site/", (homePageLink.toUrlForm(requestContext, true)));
 
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:443", "/home");
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
-        assertEquals("wrong absolute link for homepage", "/site", (homePageLink.toUrlForm(requestContext, false)));
+        assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         // for absolute links, we do not include port 443 !!
-        assertEquals("wrong fully qualified url for homepage", "http://localhost/site", (homePageLink.toUrlForm(requestContext, true)));
+        assertEquals("wrong fully qualified url for homepage", "http://localhost/site/", (homePageLink.toUrlForm(requestContext, true)));
 
 
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
@@ -91,9 +91,9 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
-        assertEquals("wrong absolute link for homepage", "/site", (homePageLink.toUrlForm(requestContext, false)));
+        assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         // for absolute links, we do not include port 443 !!
-        assertEquals("wrong fully qualified url for homepage", "http://localhost:8080/site", (homePageLink.toUrlForm(requestContext, true)));
+        assertEquals("wrong fully qualified url for homepage", "http://localhost:8080/site/", (homePageLink.toUrlForm(requestContext, true)));
 
 
         // on port 8081 we have the preview mount
@@ -102,8 +102,8 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
-        assertEquals("wrong absolute link for homepage", "/site", (homePageLink.toUrlForm(requestContext, false)));
-        assertEquals("wrong fully qualified url for homepage", "http://localhost:8081/site", (homePageLink.toUrlForm(requestContext, true)));
+        assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
+        assertEquals("wrong fully qualified url for homepage", "http://localhost:8081/site/", (homePageLink.toUrlForm(requestContext, true)));
 
 
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");

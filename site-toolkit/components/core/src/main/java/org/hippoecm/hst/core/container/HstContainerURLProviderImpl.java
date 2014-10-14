@@ -323,7 +323,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         }
 
         if ("/".equals(containerUrlPathInfo) || StringUtils.isEmpty(containerUrlPathInfo)) {
-            url.append('/');
+            if (StringUtils.isEmpty(containerURL.getResolvedMountPath())) {
+                // make sure the created url has at least a '/' after the contextpath because
+                // containers typically send a 302 for urls the match only the contextpath (for example /site)
+                url.append('/');
+            }
         } else {
             String[] unencodedPaths = StringUtils.splitPreserveAllTokens(containerUrlPathInfo, '/');
 
