@@ -14,23 +14,29 @@
   limitations under the License.
   -->
 
-<div class="log-top alert alert-info" ng-show="visible" ng-class="{'alert-open': archiveOpen}" ng-click="toggleArchive($event)">
-    <button type="button" class="close"  ng-click="hide()">
-        <span aria-hidden="true">&times;</span>
-        <span class="sr-only">Close</span>
-    </button>
-    <p class="feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
-        {{message.date}} - <span class="fa fa-fw"
-              ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}">
+<div class="log-top" ng-class="{'log-visible': visible}">
+    <div class="alert alert-info"  ng-class="{'alert-open': archiveOpen}" ng-click="toggleArchive($event)">
+        <button type="button" class="close" ng-click="hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+
+        <p class="feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
+           <span ng-show="$index == 0" class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span>
+           <span ng-show="$index != 0" style="margin-left: 13px;"></span>
+
+            {{message.date}} - <span class="fa fa-fw"
+           ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}">
 
         </span> <span ng-bind-html="message.message"></span>
-        <span class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span>
-    </p>
-    <div class="log-messages ng-hide" ng-show="archiveOpen">
-        <p ng-repeat="message in archiveMessages">{{message.date}} - <span
-                ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}"
-                class="fa fa-fw">
+
+        </p>
+        <div class="log-messages ng-hide" ng-show="archiveOpen">
+            <p ng-repeat="message in archiveMessages">{{message.date}} - <span
+                    ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}"
+                    class="fa fa-fw">
                 </span><span ng-bind-html="message.message"></span></p>
+        </div>
     </div>
 </div>
 
