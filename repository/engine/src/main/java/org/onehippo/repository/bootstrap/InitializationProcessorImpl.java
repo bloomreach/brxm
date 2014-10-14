@@ -1006,7 +1006,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     List<Node> resolveDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
         downStreamItems.addAll(resolveContentResourceDownstreamItems(session, contextPath));
-        downStreamItems.addAll(resolveNonContentResourceDownstreamItems(session, contextPath));
+        downStreamItems.addAll(resolveContentPropSetAndAddDownstreamItems(session, contextPath));
+        downStreamItems.addAll(resolveContentDeleteAndContentPropDeleteDownstreamItems(session, contextPath));
         return downStreamItems;
     }
 
@@ -1029,9 +1030,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     /**
-     * Non-contentresource items (contentpropset, contentdelete, etc.) operate directly on the content root
+     * contentpropset, contentpropset operate directly on the content root
      */
-    private List<Node> resolveNonContentResourceDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
+    private List<Node> resolveContentPropSetAndAddDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
@@ -1045,6 +1046,26 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             downStreamItems.add(item);
         }
         return downStreamItems;
+    }
+
+    /**
+     * contentdelete, contentpropdelete operate use neither contextpath nor contentroot
+     */
+    private List<Node> resolveContentDeleteAndContentPropDeleteDownstreamItems(final Session session, final String contextPath) throws RepositoryException {
+        final List<Node> downStreamItems = new ArrayList<>();
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
+                "SELECT * FROM hipposys:initializeitem WHERE " +
+                        "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
+                        HIPPO_CONTENTDELETE + " LIKE '" + contextPath + "/%' OR " +
+                        HIPPO_CONTENTDELETE + " = '" + contextPath + "' OR " +
+                        HIPPO_CONTENTPROPDELETE + " LIKE '" + contextPath + "/%') AND " +
+                        HIPPO_STATUS + " <> 'missing'", Query.SQL
+        ).execute();
+        for (Node item : new NodeIterable(result.getNodes())) {
+            downStreamItems.add(item);
+        }
+        return downStreamItems;
+
     }
 
     ContentFileInfo readContentFileInfo(final Node item) {

@@ -429,7 +429,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testResolveNonContentResourceDownstreamItems() throws Exception {
+    public void testResolveContentPropSetAndAddDownstreamItems() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/foo/bar");
         session.save();
 
@@ -447,6 +447,28 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/foobar");
         session.save();
         downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        assertFalse(downstreamItems.hasNext());
+
+    }
+
+    @Test
+    public void testResolveContentDeleteAndContentPropDeleteDownstreamItems() throws Exception {
+        item.setProperty(HIPPO_CONTENTDELETE, "/foo/bar");
+        session.save();
+
+        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        downstreamItems = processor.resolveDownstreamItems(session, "/foo/bar").iterator();
+        assertTrue(downstreamItems.hasNext());
+        downstreamItems.next();
+        assertFalse(downstreamItems.hasNext());
+
+        session.save();
+        downstreamItems = processor.resolveDownstreamItems(session, "/foobar").iterator();
         assertFalse(downstreamItems.hasNext());
 
     }
