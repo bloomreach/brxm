@@ -65,16 +65,16 @@
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-      <sv:value>2013-11-12T11:00:49.503+01:00</sv:value>
+      <sv:value>2013-11-12T11:00:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-      <sv:value>2013-11-12T11:11:38.723+01:00</sv:value>
+      <sv:value>2013-11-12T11:11:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-      <sv:value>2013-11-12T12:16:37.850+01:00</sv:value>
+      <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:id" sv:type="String">
       <sv:value>0ceed7fe-2f8d-4af9-b200-a0c54b94dcbd</sv:value>
@@ -83,7 +83,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:date" sv:type="Date">
-      <sv:value>2013-11-12T08:00:43.459+01:00</sv:value>
+      <sv:value>2013-11-12T08:00:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:documenttype" sv:type="String">
       <sv:value>event</sv:value>

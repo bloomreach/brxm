@@ -55,16 +55,16 @@
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-      <sv:value>2013-11-12T12:50:35.268+01:00</sv:value>
+      <sv:value>2013-11-12T12:50:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-      <sv:value>2013-11-12T12:52:14.046+01:00</sv:value>
+      <sv:value>2013-11-12T12:52:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-      <sv:value>2013-11-12T12:52:16.038+01:00</sv:value>
+      <sv:value>2013-11-12T12:52:00.000+01:00</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:id" sv:type="String">
       <sv:value>82c5b19e-ea9c-4438-a89a-cb18a4b6986d</sv:value>

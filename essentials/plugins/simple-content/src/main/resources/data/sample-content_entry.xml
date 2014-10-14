@@ -67,7 +67,7 @@
         <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:mypublicationdate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:46.003+01:00</sv:value>
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value>Lorem</sv:value>
@@ -89,16 +89,16 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:15.870+01:00</sv:value>
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:47.441+01:00</sv:value>
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:49.622+01:00</sv:value>
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
         <sv:value>a9336b92-e50e-4386-8ae0-56f1cae52f92</sv:value>
@@ -184,7 +184,7 @@
         <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:mypublicationdate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:46.003+01:00</sv:value>
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value>Another Lorem</sv:value>
@@ -206,16 +206,16 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:15.870+01:00</sv:value>
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:57:24.563+01:00</sv:value>
+        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:57:26.356+01:00</sv:value>
+        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
         <sv:value>8bada0c5-02ea-4782-8a83-f0360f0c54c5</sv:value>

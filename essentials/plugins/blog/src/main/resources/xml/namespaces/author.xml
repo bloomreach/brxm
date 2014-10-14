@@ -205,10 +205,10 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-        <sv:value>2014-02-05T15:46:59.872+01:00</sv:value>
+        <sv:value>2014-02-05T15:46:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-        <sv:value>2014-02-05T15:46:59.871+01:00</sv:value>
+        <sv:value>2014-02-05T15:46:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
         <sv:value/>

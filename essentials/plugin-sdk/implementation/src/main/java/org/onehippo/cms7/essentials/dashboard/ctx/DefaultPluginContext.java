@@ -354,6 +354,8 @@ public class DefaultPluginContext implements PluginContext {
 
     private void setDatePlaceholder(final String placeholderName, final Calendar calendarInstance) {
         try {
+            calendarInstance.set(Calendar.SECOND, 0);
+            calendarInstance.set(Calendar.MILLISECOND, 0);
             final String jcrDate = ValueFactoryImpl.getInstance().createValue(calendarInstance).getString();
             placeholderData.put(placeholderName, jcrDate);
         } catch (RepositoryException e) {
