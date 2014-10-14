@@ -110,11 +110,11 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         } catch (LoginException e) {
-            log.warn("LoginException ", e.toString());
+            log.warn("LoginException while processing CMS REST credentails : {}", e.toString());
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         }  catch (RepositoryException e) {
-            log.warn("RepositoryException ", e.toString());
+            log.warn("RepositoryException while processing CMS REST credentails : {}", e.toString());
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         } finally {
