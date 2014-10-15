@@ -304,8 +304,8 @@ engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-merge.xml 
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-result.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/unittest.pdf -text
 engine/src/test/resources/org/hippoecm/repository/words_on_new_line_without_spaces.pdf -text
-engine/src/test/resources/org/onehippo/repository/bootstrap/PartialSystemViewFilterTest_expected.xml -text
-engine/src/test/resources/org/onehippo/repository/bootstrap/PartialSystemViewFilterTest_input.xml -text
+engine/src/test/resources/org/onehippo/repository/bootstrap/util/PartialSystemViewFilterTest_expected.xml -text
+engine/src/test/resources/org/onehippo/repository/bootstrap/util/PartialSystemViewFilterTest_input.xml -text
 engine/src/test/resources/repository-test.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
 ldap/src/main/resources/hippoldap.cnd -text
