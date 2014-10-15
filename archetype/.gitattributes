@@ -133,7 +133,6 @@ src/main/resources/archetype-resources/site/src/main/webapp/images/glyphicons-ha
 src/main/resources/archetype-resources/site/src/main/webapp/images/glyphicons-halflings.png -text
 src/main/resources/archetype-resources/site/src/main/webapp/images/hippo.gif -text
 src/main/resources/archetype-resources/site/src/main/webapp/images/onehippo.gif -text
-src/main/resources/archetype-resources/site/src/main/webapp/js/html5shiv.js -text
 src/main/resources/archetype-resources/site/src/test/resources/log4j.xml -text
 src/main/resources/archetype-resources/src/main/assembly/distribution.xml -text
 src/test/resources/projects/gettingstarted/archetype.properties -text
