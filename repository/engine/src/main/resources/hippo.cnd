@@ -130,7 +130,7 @@
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
 - hippo:reloadonstartup (boolean)
-- hippo:status (string) < 'pending', 'done', 'disabled', 'missing'
+- hippo:status (string) < 'pending', 'done', 'disabled', 'missing', 'failed'
 - hippo:contextnodename (string) // deprecated, replaced by hippo:contextpaths
 - hippo:contextpaths (string) multiple
 - hippo:upstreamitems (string) multiple

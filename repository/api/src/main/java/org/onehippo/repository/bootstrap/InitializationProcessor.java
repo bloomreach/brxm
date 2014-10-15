@@ -74,7 +74,9 @@ public interface InitializationProcessor {
      * Set alternative logger to write messages to.
      *
      * @param logger  the logger to use
+     * @deprecated
      */
+    @Deprecated
     void setLogger(Logger logger);
 
     /**

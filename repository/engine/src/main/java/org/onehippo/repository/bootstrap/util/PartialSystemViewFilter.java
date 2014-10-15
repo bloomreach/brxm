@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.bootstrap;
+package org.onehippo.repository.bootstrap.util;
 
 import java.util.Iterator;
 import java.util.Stack;
@@ -30,7 +30,7 @@ import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NODE;
 /**
  * ProxyContentHandler that forwards SAX events only below a certain node path.
  */
-class PartialSystemViewFilter extends ProxyContentHandler {
+public class PartialSystemViewFilter extends ProxyContentHandler {
 
     private final String startPath;
     private final Stack<String> currentPath = new Stack<>();

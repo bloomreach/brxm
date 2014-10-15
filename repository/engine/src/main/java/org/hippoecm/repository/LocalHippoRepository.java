@@ -59,6 +59,7 @@ import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.onehippo.repository.modules.ModuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -464,11 +465,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (IOException ex) {
             throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
         }
-        final List<PostStartupTask> postStartupTasks = initializationProcessor.processInitializeItems(systemSession);
-        if (log.isDebugEnabled()) {
-            initializationProcessor.dryRun(systemSession);
-        }
-        return postStartupTasks;
+        return initializationProcessor.processInitializeItems(systemSession);
     }
 
     /**
@@ -520,15 +517,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 if (!checksum.equals(checksumProperties.getProperty(cndName))) {
                     log.info("Initializing nodetypes from: " + cndName);
                     cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
-                    initializationProcessor.initializeNodetypes(syncSession.getWorkspace(), cndStream, cndName);
+                    BootstrapUtils.initializeNodetypes(syncSession.getWorkspace(), cndStream, cndName);
                     syncSession.save();
                     checksumProperties.setProperty(cndName, checksum);
                 } else {
                     log.info("No need to reload " + cndName + ": no changes");
                 }
-            } catch (ConstraintViolationException|InvalidItemStateException|ItemExistsException|LockException|
-                    NoSuchNodeTypeException|ParseException|VersionException|AccessDeniedException|
-                    NoSuchAlgorithmException|IOException ex) {
+            } catch (NoSuchAlgorithmException | RepositoryException | IOException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             } finally {
                 if (cndStream != null) { try { cndStream.close(); } catch (IOException ignore) {} }

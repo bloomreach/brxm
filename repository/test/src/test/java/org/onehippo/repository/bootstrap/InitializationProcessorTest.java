@@ -97,6 +97,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     @After
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:initialize/testnode");
+        removeNode("/hippo:configuration/hippo:initialize/upstream");
         removeNode("/webresources");
 
         HippoServiceRegistry.unregisterService(webResourcesService, WebResourcesService.class);
@@ -408,45 +409,56 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/");
         item.setProperty(HIPPO_CONTENTRESOURCE, "fake");
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo", "/foo/bar" } );
+        Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
-        downstreamItems.next();
+        assertFalse(upstreamItem.isSame(downstreamItems.next()));
         assertFalse(downstreamItems.hasNext());
 
-        downstreamItems = processor.resolveDownstreamItems(session, "/foo/bar").iterator();
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo/bar" } );
+        session.save();
+        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
-        downstreamItems.next();
+        assertFalse(upstreamItem.isSame(downstreamItems.next()));
         assertFalse(downstreamItems.hasNext());
 
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foobar" } );
         session.save();
 
-        downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertFalse(downstreamItems.hasNext());
     }
 
     @Test
     public void testResolveContentPropSetAndAddDownstreamItems() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/foo/bar");
+        Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
-        downstreamItems.next();
+        assertFalse(upstreamItem.isSame(downstreamItems.next()));
         assertFalse(downstreamItems.hasNext());
 
-        downstreamItems = processor.resolveDownstreamItems(session, "/foo/bar").iterator();
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo/bar" } );
+        session.save();
+        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
-        downstreamItems.next();
+        assertFalse(upstreamItem.isSame(downstreamItems.next()));
         assertFalse(downstreamItems.hasNext());
 
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        session.save();
         item.setProperty(HIPPO_CONTENTROOT, "/foobar");
         session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertFalse(downstreamItems.hasNext());
 
     }
@@ -454,23 +466,28 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     @Test
     public void testResolveContentDeleteAndContentPropDeleteDownstreamItems() throws Exception {
         item.setProperty(HIPPO_CONTENTDELETE, "/foo/bar");
+        Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, "/foo").iterator();
+        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
-        downstreamItems.next();
+        assertFalse(upstreamItem.isSame(downstreamItems.next()));
         assertFalse(downstreamItems.hasNext());
 
-        downstreamItems = processor.resolveDownstreamItems(session, "/foo/bar").iterator();
-        assertTrue(downstreamItems.hasNext());
-        downstreamItems.next();
-        assertFalse(downstreamItems.hasNext());
-
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo/bar" } );
         session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, "/foobar").iterator();
+        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        assertTrue(downstreamItems.hasNext());
+        assertFalse(upstreamItem.isSame(downstreamItems.next()));
         assertFalse(downstreamItems.hasNext());
 
+        item.setProperty(HIPPO_CONTENTDELETE, "/foobar");
+        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        session.save();
+        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        assertFalse(downstreamItems.hasNext());
     }
 
     @Test

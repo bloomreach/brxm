@@ -127,6 +127,25 @@ public class MockSession implements HippoSession {
     }
 
     @Override
+    public Property getProperty(final String absPath) throws RepositoryException {
+        Item item = getItem(absPath);
+        if (item.isNode()) {
+            throw new PathNotFoundException("No such node: " + absPath);
+        }
+        return (MockProperty) item;
+    }
+
+    @Override
+    public boolean propertyExists(final String absPath) throws RepositoryException {
+        try {
+            getProperty(absPath);
+        } catch (PathNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public Node getNodeByIdentifier(final String id) throws RepositoryException {
         if (id == null) {
             throw new IllegalArgumentException("id cannot be null");
@@ -237,16 +256,6 @@ public class MockSession implements HippoSession {
 
     @Override
     public Node getNodeByUUID(final String uuid) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Property getProperty(final String absPath) throws RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean propertyExists(final String absPath) {
         throw new UnsupportedOperationException();
     }
 

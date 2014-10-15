@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.bootstrap;
+package org.onehippo.repository.bootstrap.util;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.onehippo.repository.bootstrap.util.PartialSystemViewFilter;
 import org.onehippo.repository.xml.DefaultContentHandler;
 import org.xml.sax.InputSource;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.bootstrap;
+package org.onehippo.repository.bootstrap.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,16 +27,16 @@ import org.apache.commons.lang.StringUtils;
 /**
  * View on a subset of the entries in a zipfile below a certain path.
  */
-class PartialZipFile extends ZipFile {
+public class PartialZipFile extends ZipFile {
 
     private final String subPath;
 
-    PartialZipFile(final File file, final String subPath) throws IOException {
+    public PartialZipFile(final File file, final String subPath) throws IOException {
         super(file);
         this.subPath = StringUtils.removeEnd(subPath, "/");
     }
 
-    String getSubPath() {
+    public String getSubPath() {
         return subPath;
     }
 
