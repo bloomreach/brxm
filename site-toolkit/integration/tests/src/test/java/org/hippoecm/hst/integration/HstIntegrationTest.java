@@ -230,11 +230,13 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             assertNotNull(liveSiteMapItem);
 
             if (hasPreview) {
+                if (isFromDefaultSiteMap(previewSiteMapItem, liveSiteMapItem)) {
+                    continue;
+                }
                 assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject-preview/"));
                 assertTrue(liveSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             } else {
-                if (previewSiteMapItem.getQualifiedId().contains("hst:default")) {
-                    log.debug("Skip hst:default sitemap");
+                if (isFromDefaultSiteMap(previewSiteMapItem, liveSiteMapItem)) {
                     continue;
                 }
                 assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
@@ -242,6 +244,15 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             }
         }
 
+    }
+
+    private boolean isFromDefaultSiteMap(final HstSiteMapItem previewSiteMapItem, final HstSiteMapItem liveSiteMapItem) {
+        if (previewSiteMapItem.getQualifiedId().contains("hst:default") ||
+                liveSiteMapItem.getQualifiedId().contains("hst:default")) {
+            log.debug("Skip hst:default sitemap");
+            return true;
+        }
+        return false;
     }
 
     private void tryUntilModelReloaded(final VirtualHosts prevModel) throws ContainerException, InterruptedException {
