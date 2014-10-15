@@ -41,7 +41,7 @@
                         var isValid = true;
                         value = value || '';
 
-                        angular.forEach(attrs.illegalCharacters.split(''), function (character) {
+                        angular.forEach(attrs.illegalCharacters, function (character) {
                             if (value.indexOf(character) >= 0) {
                                 isValid = false;
                             }
