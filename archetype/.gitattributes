@@ -9,15 +9,6 @@ src/main/resources/archetype-resources/bootstrap/configuration/src/main/resource
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/modules/eventlogcleanup-module.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/queries/templates/new-subsite/__rootArtifactId__-subsite.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hippoecm-extension.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/abstractpages.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/pages.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/sitemap.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/workspace.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/workspace/containers.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/workspace/pages.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/workspace/sitemap.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/workspace/sitemenus.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/channels.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components.xml -text
