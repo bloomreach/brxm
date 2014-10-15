@@ -71,6 +71,13 @@
     </repository>
   </repositories>
 
+
+  <scm>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</url>
+  </scm>
+
   <build>
     <defaultGoal>package</defaultGoal>
     <extensions>
