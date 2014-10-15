@@ -109,20 +109,6 @@
                     ContainerService.performClose();
                 };
 
-                $scope.showDeleteBtnTooltip = function() {
-                    if ($scope.page.isHomePage) {
-                        $scope.tooltip.deleteBtn = translate('TOOLTIP_IS_HOMEPAGE');
-                    } else if (!$scope.state.isEditable) {
-                        $scope.tooltip.deleteBtn = translate('TOOLTIP_NOT_EDITABLE');
-                    } else {
-                        $scope.tooltip.deleteBtn = '';
-                    }
-                };
-
-                $scope.hideDeleteBtnTooltip = function() {
-                    $scope.tooltip = '';
-                };
-
                 $scope.deletePage = function () {
                     $scope.isConfirmationVisible = true;
                 };
