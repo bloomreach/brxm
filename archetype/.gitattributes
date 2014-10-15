@@ -81,10 +81,6 @@ src/main/resources/archetype-resources/site/src/main/java/beans/BaseDocument.jav
 src/main/resources/archetype-resources/site/src/main/java/channels/SubsiteInfo.java -text
 src/main/resources/archetype-resources/site/src/main/java/channels/SubsiteInfo.properties -text
 src/main/resources/archetype-resources/site/src/main/java/channels/SubsiteInfo_de.properties -text
-src/main/resources/archetype-resources/site/src/main/java/channels/WebsiteInfo.java -text
-src/main/resources/archetype-resources/site/src/main/java/channels/WebsiteInfo.properties -text
-src/main/resources/archetype-resources/site/src/main/java/channels/WebsiteInfo_de.properties -text
-src/main/resources/archetype-resources/site/src/main/java/components/Header.java -text
 src/main/resources/archetype-resources/site/src/main/java/components/subsite/SubsiteHeader.java -text
 src/main/resources/archetype-resources/site/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
 src/main/resources/archetype-resources/site/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml -text

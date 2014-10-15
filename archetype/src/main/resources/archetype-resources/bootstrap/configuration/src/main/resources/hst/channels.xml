@@ -9,9 +9,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:channel</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:channelinfoclass" sv:type="String">
-      <sv:value>${package}.channels.WebsiteInfo</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:name" sv:type="String">
       <sv:value>${projectName}</sv:value>
     </sv:property>
