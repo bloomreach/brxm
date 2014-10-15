@@ -29,14 +29,14 @@
   </instructionSet>
   <instructionSet group="jsp">
     <file action="copy" source="instructions/jsp/video-component.jsp" target="{{jspRoot}}/hstdefault/video-component.jsp"/>
-    <xml action="copy" source="instructions/xml/hst/video-component-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/video-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
 
   </instructionSet>
   <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="instructions/freemarker/video-component.ftl" target="{{freemarkerRoot}}/hstdefault/video-component.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="sampleData">

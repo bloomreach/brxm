@@ -23,13 +23,13 @@
     <file action="copy" binary="true" source="instructions/images/image.png" target="{{imagesRoot}}/essentials/catalog-component-icons/image.png"/>
   </instructionSet>
   <instructionSet group="jsp">
-    <file action="copy" source="instructions/jsp/image-component.jsp" target="{{jspRoot}}/{{namespace}}/image-component.jsp"/>
-    <xml action="copy" source="instructions/xml/hst/image-component-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="instructions/jsp/image-component.jsp" target="{{jspRoot}}/hstdefault/image-component.jsp"/>
+    <xml action="copy" source="instructions/xml/hst/image-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker, repository">
-    <freemarker action="copy" source="instructions/freemarker/image-component.ftl" target="{{freemarkerRoot}}/{{namespace}}/image-component.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/image-component.ftl" target="{{freemarkerRoot}}/hstdefault/image-component.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <xml action="copy" source="instructions/xml/hst/image-component-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/image-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 </instructions>
