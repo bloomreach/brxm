@@ -1,1 +1,1 @@
-Latest sync was up to and including r46659. (ARCHE-372 Remove html5shiv)
+Latest sync was up to and including r46743. (ARCHE-388 Update copyright statement in error jsps)
