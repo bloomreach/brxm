@@ -26,6 +26,7 @@ import java.util.jar.Manifest;
 import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 
 /**
@@ -113,8 +114,8 @@ public class RepoUtils {
             // in where clause we can have path constraints
             String whereClause = "[" + xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd) + "]";
             return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
-        } else if (xpath.indexOf(orderByString) > -1) {
-            int orderByIndex = xpath.indexOf(orderByString);
+        } else if (StringUtils.containsIgnoreCase(xpath, orderByString)) {
+            int orderByIndex = StringUtils.indexOfIgnoreCase(xpath, orderByString);
             return encodePathConstraint(xpath.substring(0, orderByIndex)) + xpath.substring(orderByIndex);
         }  else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
             // only path
