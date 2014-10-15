@@ -55,7 +55,7 @@ int autoRedirectSeconds = 2;
           </div>
         </form>
         <div class="hippo-login-panel-copyright">
-          &copy; 1999-2011 Hippo B.V.
+          &copy; 1999-2014 Hippo B.V.
         </div>
       </div>
     </div>

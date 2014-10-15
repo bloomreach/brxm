@@ -15,7 +15,7 @@
       <div class="hippo-login-panel">
         <fmt:message key="label.access.forbidden" />
         <div class="hippo-login-panel-copyright">
-          &copy; 1999-2011 Hippo B.V.
+          &copy; 1999-2014 Hippo B.V.
         </div>
       </div>
     </div>
