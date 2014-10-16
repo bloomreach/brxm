@@ -4,7 +4,6 @@
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/imports.ftl">
 {{/fileBased}}
-${response.setStatus(HttpServletResponse.SC_NOT_FOUND)}
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
