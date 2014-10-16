@@ -39,8 +39,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ERROR_MESSAGE_RELOAD_DISABLED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_FAILED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_PENDING;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.SYSTEM_RELOAD_PROPERTY;
 import static org.onehippo.repository.util.JcrConstants.NT_UNSTRUCTURED;
 
 public class InitializeItemTest {
@@ -89,7 +91,7 @@ public class InitializeItemTest {
         final Node itemNode = initializeFolder.addNode("initItem", NT_INITIALIZEITEM);
         itemNode.setProperty(HIPPO_VERSION, "1");
         final InitializeItem initializeItem = new InitializeItem(itemNode, tempItemNode, extension);
-        assertTrue(initializeItem.shouldReload());
+        assertTrue(initializeItem.isReloadRequested());
     }
 
     @Test
@@ -99,7 +101,7 @@ public class InitializeItemTest {
         Node itemNode = initializeFolder.addNode("initItem", NT_INITIALIZEITEM);
         itemNode.setProperty(HIPPO_VERSION, "2");
         final InitializeItem initializeItem = new InitializeItem(itemNode, tempItemNode, extension);
-        assertFalse(initializeItem.shouldReload());
+        assertFalse(initializeItem.isReloadRequested());
     }
 
     @Test
@@ -118,4 +120,24 @@ public class InitializeItemTest {
         assertTrue(itemNode.hasProperty(HIPPO_ERRORMESSAGE));
     }
 
+    @Test
+    public void testInitializeInitializeReloadItemReloadDisabledSetsStatus() throws Exception {
+        String systemReloadProperty = System.getProperty(SYSTEM_RELOAD_PROPERTY);
+        try {
+            System.setProperty(SYSTEM_RELOAD_PROPERTY, "false");
+            tempItemNode.setProperty(HIPPO_VERSION, "1");
+            tempItemNode.setProperty(HIPPO_RELOADONSTARTUP, true);
+            final Node initItem = initializeFolder.addNode("initItem", NT_INITIALIZEITEM);
+            InitializeItem initializeItem = new InitializeItem(tempItemNode, extension);
+            initializeItem.initialize();
+            assertTrue(initItem.hasProperty(HIPPO_STATUS));
+            assertEquals(ITEM_STATUS_FAILED, initItem.getProperty(HIPPO_STATUS).getString());
+            assertTrue(initItem.hasProperty(HIPPO_ERRORMESSAGE));
+            assertEquals(ERROR_MESSAGE_RELOAD_DISABLED, initItem.getProperty(HIPPO_ERRORMESSAGE).getString());
+        } finally {
+            if (systemReloadProperty != null) {
+                System.setProperty(SYSTEM_RELOAD_PROPERTY, systemReloadProperty);
+            }
+        }
+    }
 }

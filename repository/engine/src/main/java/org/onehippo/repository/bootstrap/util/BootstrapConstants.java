@@ -29,12 +29,15 @@ public class BootstrapConstants {
 
     public static Logger log = LoggerFactory.getLogger(InitializationProcessor.class.getPackage().getName());
 
+    public static final String SYSTEM_RELOAD_PROPERTY = "repo.bootstrap.reload-on-startup";
+
     public static final String INIT_FOLDER_PATH = "/" + CONFIGURATION_PATH + "/" + INITIALIZE_PATH;
     public static final String TEMP_FOLDER_PATH = "/"  + CONFIGURATION_PATH + "/" + TEMPORARY_PATH;
 
     public static final String ITEM_STATUS_DONE = "done";
+    public static final String ITEM_STATUS_MISSING = "missing";
     public static final String ITEM_STATUS_FAILED = "failed";
-    public static final String ITEM_STATUS_DISABLED = "disabled";
     public static final String ITEM_STATUS_PENDING = "pending";
 
+    public static final String ERROR_MESSAGE_RELOAD_DISABLED = "Reload requested but not enabled";
 }

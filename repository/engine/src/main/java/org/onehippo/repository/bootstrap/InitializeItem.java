@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -68,8 +69,11 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEITEM;
 import static org.onehippo.repository.bootstrap.InitializationProcessor.INITIALIZATION_FOLDER;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ERROR_MESSAGE_RELOAD_DISABLED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_DONE;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_FAILED;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_MISSING;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.SYSTEM_RELOAD_PROPERTY;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
 public class InitializeItem {
@@ -145,7 +149,13 @@ public class InitializeItem {
     }
 
     public String getName() throws RepositoryException {
-        return itemNode.getName();
+        if (itemNode != null) {
+            return itemNode.getName();
+        }
+        if (tempItemNode != null) {
+            return tempItemNode.getName();
+        }
+        return null;
     }
 
     public Node getItemNode() {
@@ -326,7 +336,16 @@ public class InitializeItem {
 
         final Node initializationFolder = tempItemNode.getSession().getNode(INITIALIZATION_FOLDER);
         itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
-        isReload = itemNode != null && shouldReload();
+
+        if (isReloadRequested()) {
+            if (isReloadEnabled()) {
+                isReload = true;
+            } else {
+                log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
+                itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
+                itemNode.setProperty(HIPPO_ERRORMESSAGE, ERROR_MESSAGE_RELOAD_DISABLED);
+            }
+        }
 
         if (isReload) {
             log.info("Item {} needs to be reloaded", tempItemNode.getName());
@@ -340,6 +359,7 @@ public class InitializeItem {
             itemNode.setProperty(HIPPO_STATUS, "pending");
         }
 
+        // set/update properties
         itemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, extension.getExtensionSource().toString());
         if (extension.getModuleVersion() != null) {
             itemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, extension.getModuleVersion());
@@ -357,14 +377,17 @@ public class InitializeItem {
 
         itemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
         final String status = JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null);
-        if ("missing".equals(status)) {
+        if (ITEM_STATUS_MISSING.equals(status)) {
             itemNode.getProperty(HIPPO_STATUS).remove();
         }
     }
 
-    boolean shouldReload() throws RepositoryException {
+    boolean isReloadRequested() throws RepositoryException {
         if (!isReloadable(tempItemNode)) {
-            log.debug("Item {} is not reloadable", tempItemNode.getName());
+            log.debug("Item {} is not reloadable", getName());
+            return false;
+        } else if (itemNode == null) {
+            log.debug("Reload is requested on item {} but item is new: proceeding with regular bootstrap", getName());
             return false;
         }
         final String itemVersion = getVersion(tempItemNode);
@@ -470,6 +493,11 @@ public class InitializeItem {
                 target.setProperty(propertyName, property.getValue());
             }
         }
+    }
+
+    private boolean isReloadEnabled() {
+        final String reloadProperty = System.getProperty(SYSTEM_RELOAD_PROPERTY, Boolean.TRUE.toString());
+        return BooleanUtils.toBoolean(reloadProperty);
     }
 
 }
