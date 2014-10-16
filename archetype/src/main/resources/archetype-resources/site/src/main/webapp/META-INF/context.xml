@@ -8,6 +8,11 @@
          useContextClassLoader="true"/>
   <Valve className="org.apache.catalina.authenticator.FormAuthenticator" characterEncoding="UTF-8"/>
 
+  <!-- enable RMI server -->
+  <!--
+  <Parameter name="start-remote-server" value="true" override="false"/>
+  <Parameter name="repository-address" value="rmi://127.0.0.1:1099/hipporepository" override="false"/>
+  -->
   <!-- JCR Session Pooling Repository provided by HST-2 Core Components -->
   <!-- If you want to use a pooling JCR repository from JNDI, uncomment the following and configure the correct jndiName. -->
   <!--
