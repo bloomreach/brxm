@@ -82,7 +82,6 @@ src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/jsp/errorpag
 src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/jspf/htmlTags.jspf -text
 src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/jspf/taglibs.jspf -text
 src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/web.xml -text
-src/main/resources/archetype-resources/site/src/main/webapp/css/style.css -text
 src/main/resources/archetype-resources/site/src/main/webapp/images/button_edit.gif -text
 src/main/resources/archetype-resources/site/src/main/webapp/images/catalog-list.png -text
 src/main/resources/archetype-resources/site/src/main/webapp/images/glyphicons-halflings-white.png -text
