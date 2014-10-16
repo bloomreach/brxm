@@ -32,7 +32,7 @@
     <sv:value>new-faq-list-document-folder</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>1eaaffaa-6e94-427f-9742-0dc11424c6ff</sv:value>
+    <sv:value>{{translationId}}</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
     <sv:value>en</sv:value>
@@ -81,7 +81,7 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>c9264183-29cd-4e27-83b6-8ef73e13eeba</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
@@ -158,7 +158,7 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>c9264183-29cd-4e27-83b6-8ef73e13eeba</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
@@ -226,7 +226,7 @@
         <sv:value>2014-06-20T12:09:21.822+02:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>c9264183-29cd-4e27-83b6-8ef73e13eeba</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
@@ -274,7 +274,7 @@
       <sv:value>new-faq-document-folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>f243b23c-39d8-475c-9bd0-59afeb02f550</sv:value>
+      <sv:value>{{translationId}}</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
       <sv:value>en</sv:value>
@@ -334,7 +334,7 @@
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>6589203f-a7d8-49ae-a8f8-f13a15ba901d</sv:value>
+          <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
@@ -395,7 +395,7 @@
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>6589203f-a7d8-49ae-a8f8-f13a15ba901d</sv:value>
+          <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
@@ -447,7 +447,7 @@
           <sv:value>2014-06-20T12:08:49.825+02:00</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>6589203f-a7d8-49ae-a8f8-f13a15ba901d</sv:value>
+          <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
@@ -509,7 +509,7 @@
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>6589203f-a7d8-49ae-a8f8-f13a15ba901d</sv:value>
+          <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
@@ -567,7 +567,7 @@
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>6589203f-a7d8-49ae-a8f8-f13a15ba901d</sv:value>
+          <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
@@ -619,7 +619,7 @@
           <sv:value>2014-06-20T12:09:03.635+02:00</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>6589203f-a7d8-49ae-a8f8-f13a15ba901d</sv:value>
+          <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>

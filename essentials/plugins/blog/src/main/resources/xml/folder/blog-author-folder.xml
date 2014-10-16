@@ -32,7 +32,7 @@
     <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>55b3284c-6da8-4249-88f7-49a17870ba90</sv:value>
+    <sv:value>{{translationId}}</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
     <sv:value>en</sv:value>

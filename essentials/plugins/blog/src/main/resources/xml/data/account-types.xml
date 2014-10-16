@@ -35,7 +35,7 @@
       <sv:value>preview</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>dd1fa305-8e7d-44cb-b5bb-a89c0c8515b1</sv:value>
+      <sv:value>{{translationId}}</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
       <sv:value>en</sv:value>

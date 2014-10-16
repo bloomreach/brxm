@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -44,6 +45,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -297,10 +299,22 @@ public class DefaultPluginContext implements PluginContext {
         setFolderPlaceholders(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM_NEXT_YEAR, EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_YEAR, nextYear);
         setDatePlaceholder(EssentialConst.PLACEHOLDER_JCR_DATE_NEXT_YEAR, nextYear);
         //############################################
-        //
+        // TRANSLATION ID (note: translationId or translationId.id can be used)
         //############################################
-
-
+        placeholderData.put(EssentialConst.PLACEHOLDER_TRANSLATION_ID, new Object() {
+            @Override
+            public String toString() {
+                return UUID.randomUUID().toString();
+            }
+            Function<String, String> id() {
+                return new Function<String, String>() {
+                    @Override
+                    public String apply(final String input) {
+                        return UUID.randomUUID().toString();
+                    }
+                };
+            }
+        });
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
         final String siteWebRoot = ProjectUtils.getSite().getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_ROOT;

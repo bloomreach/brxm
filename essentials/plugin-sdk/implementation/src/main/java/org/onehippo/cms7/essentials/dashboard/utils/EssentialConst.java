@@ -36,6 +36,10 @@ public final class EssentialConst {
      * Namespace placeholder name
      */
     public static final String PLACEHOLDER_NAMESPACE = "namespace";
+    /**
+     * Inserts random created translation id
+     */
+    public static final String PLACEHOLDER_TRANSLATION_ID = "translationId";
     public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
     public static final String PLACEHOLDER_DATE_REPO_YYYY_MM = "dateRepoYearMonth";
     public static final String PLACEHOLDER_DATE_FILE_YYYY_MM = "dateFileYearMonth";

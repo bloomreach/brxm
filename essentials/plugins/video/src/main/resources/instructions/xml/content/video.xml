@@ -31,7 +31,7 @@
     <sv:value>new-video-document</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>f35d5591-062f-4a22-8e60-cd2cf9a81b52</sv:value>
+    <sv:value>{{translationId}}</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
     <sv:value>en</sv:value>
@@ -86,7 +86,7 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>2b1a16b5-3738-45e9-99ee-1bd4d19ef370</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
@@ -145,7 +145,7 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>2b1a16b5-3738-45e9-99ee-1bd4d19ef370</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
@@ -195,7 +195,7 @@
         <sv:value>2014-06-10T14:58:39.120+02:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>2b1a16b5-3738-45e9-99ee-1bd4d19ef370</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>

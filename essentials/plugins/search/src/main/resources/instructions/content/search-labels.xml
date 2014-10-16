@@ -67,7 +67,7 @@
             <sv:value>2014-08-21T22:47:49.117+02:00</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>d0f5babc-a246-46c4-84b1-7d28e09091cf</sv:value>
+            <sv:value>{{translationId}}</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>document-type-locale</sv:value>

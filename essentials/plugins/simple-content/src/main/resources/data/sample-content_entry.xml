@@ -31,7 +31,7 @@
     <sv:value>new-content-document</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>a2d32186-51f3-414e-a0a8-0230d9d1dcba</sv:value>
+    <sv:value>{{translationId}}</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
     <sv:value>en</sv:value>
@@ -101,7 +101,7 @@
         <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>a9336b92-e50e-4386-8ae0-56f1cae52f92</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
@@ -218,7 +218,7 @@
         <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>8bada0c5-02ea-4782-8a83-f0360f0c54c5</sv:value>
+        <sv:value>{{translationId}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>

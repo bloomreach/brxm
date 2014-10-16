@@ -76,7 +76,7 @@
       <sv:value>{{jcrDate}}</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>d6750b1e-e2fa-40a4-a69e-35f243259887</sv:value>
+      <sv:value>{{translationId}}</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
       <sv:value>en</sv:value>
