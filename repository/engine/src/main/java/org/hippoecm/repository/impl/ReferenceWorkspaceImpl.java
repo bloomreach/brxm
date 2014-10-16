@@ -40,6 +40,7 @@ import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
+import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.xml.sax.InputSource;
 
 public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
@@ -73,12 +74,12 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
             final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
             if (!session.nodeExists("/hippo:configuration")) {
-                initializationProcessor.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), null);
+                BootstrapUtils.initializeNodecontent(session, "/", LocalHippoRepository.class.getResource("configuration.xml"));
             }
 
             session.save();
 
-            final List<Node> initializeItems = initializationProcessor.loadExtensions(session, session.getNode(InitializationProcessor.INITIALIZATION_FOLDER), false);
+            final List<Node> initializeItems = initializationProcessor.loadExtensions(session, false);
             final List<Node> contentItems = new ArrayList<Node>();
 
             for (Node initializeItem : initializeItems) {

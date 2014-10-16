@@ -30,3 +30,12 @@
 - hippo:d2 (date)
 + hippo:d1fields (hippostd:datefields) = hippostd:datefields mandatory autocreated
 + hippo:d2fields (hippostd:datefields) = hippostd:datefields
+
+[hippo:ntunstructured] > nt:unstructured
+
+[hippo:testdocument] > hippo:document
++ * (nt:base) = hippo:ntunstructured multiple
+- * (Date)
+- * (Long)
+- * (String)
+- * (String) multiple

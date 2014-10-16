@@ -79,14 +79,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-config</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -94,6 +86,12 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testcontent</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-workflow</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

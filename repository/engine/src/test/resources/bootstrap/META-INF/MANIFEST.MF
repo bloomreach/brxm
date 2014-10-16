@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Hippo B.V. (http://www.onehippo.com)
+Implementation-Title: Repository Test
+Implementation-Version: 2.27.00-SNAPSHOT
+Implementation-Vendor-Id: org.onehippo.cms7
+Specification-Vendor: Hippo B.V. (http://www.onehippo.com)
+Specification-Title: Repository Engine
+Created-By: Apache Maven 3.2.1
+Implementation-Build: 1

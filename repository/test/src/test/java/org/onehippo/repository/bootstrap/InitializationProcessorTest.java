@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.repository.bootstrap.util.BootstrapConstants;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.testutils.ZipTestUtil;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
@@ -68,7 +69,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
-import static org.onehippo.repository.bootstrap.InitializationProcessorImpl.ContentFileInfo;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -80,6 +81,9 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     private Node test;
     private Node item;
     private WebResourcesService webResourcesService;
+    private InitializationProcessor processor;
+    private LoggerRecordingWrapper loggingRecorder;
+    private Logger bootstrapLogger = BootstrapConstants.log;
 
     @Before
     public void setUp() throws Exception {
@@ -92,6 +96,13 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         webResourcesService = EasyMock.createMock(WebResourcesService.class);
         HippoServiceRegistry.registerService(webResourcesService, WebResourcesService.class);
+        if (bootstrapLogger.isInfoEnabled()) {
+            loggingRecorder = new LoggerRecordingWrapper(bootstrapLogger);
+        } else {
+            loggingRecorder = new LoggerRecordingWrapper(NOPLogger.NOP_LOGGER);
+        }
+        BootstrapConstants.log = loggingRecorder;
+        processor = new InitializationProcessorImpl();
     }
 
     @After
@@ -101,8 +112,12 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         removeNode("/webresources");
 
         HippoServiceRegistry.unregisterService(webResourcesService, WebResourcesService.class);
-
+        BootstrapConstants.log = bootstrapLogger;
         super.tearDown();
+    }
+
+    private List<PostStartupTask> process() {
+        return processor.processInitializeItems(session);
     }
 
     private void checkPropNode(String expected) throws RepositoryException {
@@ -124,17 +139,12 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         }
     }
 
-    private List<PostStartupTask> process(Logger logger) {
-        InitializationProcessor processor = new InitializationProcessorImpl(logger);
-        return processor.processInitializeItems(session);
-    }
-
     @Test
     public void testAddContentFromNode() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/test");
         item.setProperty(HIPPO_CONTENT, "<sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\" xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" sv:name=\"testnode\"><sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\"><sv:value>nt:unstructured</sv:value></sv:property></sv:node>");
         session.save();
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertTrue(session.nodeExists("/test/testnode"));
         assertEquals("done", item.getProperty(HIPPO_STATUS).getString());
@@ -145,7 +155,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final Node delete = test.addNode("delete");
         item.setProperty(HIPPO_CONTENTDELETE, delete.getPath());
         session.save();
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.nodeExists("/test/delete"));
     }
@@ -156,7 +166,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         test.addNode("sns");
         item.setProperty(HIPPO_CONTENTDELETE, sns.getPath());
         session.save();
-        final List<PostStartupTask> tasks = process(NOPLogger.NOP_LOGGER);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertEquals(2, test.getNodes("sns").getSize());
     }
@@ -166,7 +176,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final Property delete = test.setProperty("delete", "");
         item.setProperty(HippoNodeType.HIPPO_CONTENTPROPDELETE, delete.getPath());
         session.save();
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.propertyExists("/test/delete"));
     }
@@ -176,7 +186,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:single");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"a"});
         session.save();
-        final List<PostStartupTask> tasks = process(NOPLogger.NOP_LOGGER);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         assertFalse(session.propertyExists("/test/propnode/hippo:single"));
     }
@@ -187,7 +197,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:single");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"b"});
         session.save();
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         checkPropNode("b");
     }
@@ -198,7 +208,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:multi");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[]{"m", "n"});
         session.save();
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         checkPropNode(new String[]{"m", "n"});
     }
@@ -209,7 +219,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/test/propnode/hippo:multi");
         item.setProperty(HIPPO_CONTENTPROPADD, new String[] { "o", "p" });
         session.save();
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
         checkPropNode(new String[]{"m", "n", "o", "p"});
     }
@@ -219,7 +229,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
         item.setProperty(HIPPO_CONTENTROOT, "/test");
         session.save();
-        List<PostStartupTask> tasks = process(null);
+        List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
 
         assertTrue(test.hasNode("foo"));
@@ -232,7 +242,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/test/foo" });
         item.setProperty(HIPPO_STATUS, "pending");
         session.save();
-        tasks = process(null);
+        tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
 
         assertTrue(test.hasNode("foo"));
@@ -261,7 +271,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         deltaItem.setProperty(HIPPO_STATUS, "pending");
         deltaItem.setProperty(HIPPO_SEQUENCE, 3l);
         session.save();
-        process(null);
+        process();
 //        session.exportSystemView("/test", System.out, true, false);
         barItem.setProperty(HIPPO_RELOADONSTARTUP, true);
         barItem.setProperty(HIPPO_VERSION, "1");
@@ -274,7 +284,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertNotNull(deltaItem.getProperty(HIPPO_UPSTREAMITEMS));
         assertEquals(1, deltaItem.getProperty(HIPPO_UPSTREAMITEMS).getValues().length);
         assertEquals(barItem.getIdentifier(), deltaItem.getProperty(HIPPO_UPSTREAMITEMS).getValues()[0].getString());
-        process(null);
+        process();
 //        assertTrue(session.propertyExists("/test/foo/bar/baz"));
     }
 
@@ -284,7 +294,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
         item.setProperty(HIPPO_CONTENTROOT, "/test");
         session.save();
-        List<PostStartupTask> tasks = process(null);
+        List<PostStartupTask> tasks = process();
         assertEquals("There should be no post-startup tasks", 0, tasks.size());
 
         assertTrue(session.propertyExists("/test/foo/bar/baz"));
@@ -296,7 +306,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");
         session.save();
 
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be one post-startup task", 1, tasks.size());
 
         // test the post-startup task
@@ -325,7 +335,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_STATUS, "pending");
         session.save();
 
-        final List<PostStartupTask> reloadTasks = process(null);
+        final List<PostStartupTask> reloadTasks = process();
         assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
         final PostStartupTask reimportWebresources = reloadTasks.get(0);
 
@@ -346,7 +356,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_EXTENSIONSOURCE, testBundleUrl.toString());
         session.save();
 
-        final List<PostStartupTask> tasks = process(null);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be one post-startup task", 1, tasks.size());
 
         // test the post-startup task
@@ -365,7 +375,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_STATUS, "pending");
         session.save();
 
-        final List<PostStartupTask> reloadTasks = process(null);
+        final List<PostStartupTask> reloadTasks = process();
         assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
         final PostStartupTask reimportWebresources = reloadTasks.get(0);
 
@@ -386,8 +396,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_EXTENSIONSOURCE, testBundleUrl.toString());
         session.save();
 
-        final LoggerRecordingWrapper recordingLogger = new LoggerRecordingWrapper(NOPLogger.NOP_LOGGER);
-        final List<PostStartupTask> tasks = process(recordingLogger);
+        final List<PostStartupTask> tasks = process();
         assertEquals("There should be one post-startup task", 1, tasks.size());
 
         // test the post-startup task
@@ -401,7 +410,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         importWebResources.execute();
         verify(webResourcesService);
 
-        assertEquals("expected an error message to be logged", 1, recordingLogger.getErrorMessages().size());
+        assertEquals("expected an error message to be logged", 1, loggingRecorder.getErrorMessages().size());
     }
 
     @Test
@@ -413,7 +422,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();
 
-        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        InitializationProcessorImpl processor = new InitializationProcessorImpl();
         Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
         assertFalse(upstreamItem.isSame(downstreamItems.next()));
@@ -441,7 +450,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();
 
-        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        InitializationProcessorImpl processor = new InitializationProcessorImpl();
         Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
         assertFalse(upstreamItem.isSame(downstreamItems.next()));
@@ -470,7 +479,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();
 
-        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
+        InitializationProcessorImpl processor = new InitializationProcessorImpl();
         Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertTrue(downstreamItems.hasNext());
         assertFalse(upstreamItem.isSame(downstreamItems.next()));
@@ -488,48 +497,6 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         session.save();
         downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
         assertFalse(downstreamItems.hasNext());
-    }
-
-    @Test
-    public void testReadContentFileInfo() throws Exception {
-        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
-        item.setProperty(HIPPO_CONTENTROOT, "/test");
-        session.save();
-
-        InitializationProcessorImpl processor = new InitializationProcessorImpl(null);
-        ContentFileInfo contentFileInfo = processor.readContentFileInfo(item);
-
-        assertEquals(1, contentFileInfo.contextPaths.size());
-        assertEquals("/test/foo", contentFileInfo.contextPaths.get(0));
-        assertNull(contentFileInfo.deltaDirective);
-
-        item.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
-        session.save();
-
-        contentFileInfo = processor.readContentFileInfo(item);
-
-        assertEquals(2, contentFileInfo.contextPaths.size());
-        assertEquals("/test/foo", contentFileInfo.contextPaths.get(0));
-        assertEquals("/test/foo/bar", contentFileInfo.contextPaths.get(1));
-        assertEquals("combine", contentFileInfo.deltaDirective);
-    }
-
-    /*
-     * REPO-969: It works fine when the file: URL is on non-Windows system,
-     *           but it throws "IllegalArgumentException: URI is not hierarchical"
-     *           if the file: URL denotes a Windows URL like 'file:C:/a/b/c/...'.
-     */
-    @Test
-    public void testGetBaseZipFileFromURL() throws Exception {
-        URL url = new URL("file:/a/b/c.jar!/d/e/f.xml");
-        assertEquals("/a/b/c.jar!/d/e/f.xml", url.getFile());
-        File baseFile = new InitializationProcessorImpl().getBaseZipFileFromURL(url);
-        assertTrue(baseFile.getPath().endsWith("c.jar"));
-
-        url = new URL("file:C:/a/b/c.jar!/d/e/f.xml");
-        assertEquals("C:/a/b/c.jar!/d/e/f.xml", url.getFile());
-        baseFile = new InitializationProcessorImpl().getBaseZipFileFromURL(url);
-        assertTrue(baseFile.getPath().endsWith("c.jar"));
     }
 
 }

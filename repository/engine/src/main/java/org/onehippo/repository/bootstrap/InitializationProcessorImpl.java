@@ -31,13 +31,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import java.util.TreeSet;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -61,8 +57,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.bootstrap.util.BootstrapConstants;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
-import org.onehippo.repository.xml.ImportResult;
+import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 import org.slf4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -89,6 +84,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_FOLDER_PATH;
 import static org.onehippo.repository.util.JcrConstants.MIX_LOCKABLE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.COMBINE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
@@ -98,26 +94,8 @@ import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
 public class InitializationProcessorImpl implements InitializationProcessor {
 
-    private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
     private static final long LOCK_TIMEOUT = Long.getLong("repo.bootstrap.lock.timeout", 60 * 5);
     private static final long LOCK_ATTEMPT_INTERVAL = 1000 * 2;
-
-    private static final String[] INIT_ITEM_PROPERTIES = {
-            HIPPO_SEQUENCE,
-            HIPPO_NAMESPACE,
-            HIPPO_NODETYPESRESOURCE,
-            HIPPO_NODETYPES,
-            HIPPO_CONTENTRESOURCE,
-            HIPPO_CONTENT,
-            HIPPO_CONTENTROOT,
-            HIPPO_CONTENTDELETE,
-            HIPPO_CONTENTPROPDELETE,
-            HIPPO_CONTENTPROPSET,
-            HIPPO_CONTENTPROPADD,
-            HIPPO_RELOADONSTARTUP,
-            HIPPO_VERSION,
-            HIPPO_WEBRESOURCEBUNDLE
-    };
 
     private final static String GET_INITIALIZE_ITEMS = String.format(
             "SELECT * FROM hipposys:initializeitem " +
@@ -127,15 +105,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             "SELECT * FROM hipposys:initializeitem " +
             "WHERE %s IS NULL OR %s < %%s", HIPPO_TIMESTAMP, HIPPO_TIMESTAMP);
 
-    private static final double NO_HIPPO_SEQUENCE = -1.0;
-
     private static final Comparator<Node> initializeItemComparator = new Comparator<Node>() {
 
         @Override
         public int compare(final Node n1, final Node n2) {
             try {
-                final Double s1 = JcrUtils.getDoubleProperty(n1, HIPPO_SEQUENCE, NO_HIPPO_SEQUENCE);
-                final Double s2 = JcrUtils.getDoubleProperty(n2, HIPPO_SEQUENCE, NO_HIPPO_SEQUENCE);
+                final Double s1 = JcrUtils.getDoubleProperty(n1, HIPPO_SEQUENCE, -1.0);
+                final Double s2 = JcrUtils.getDoubleProperty(n2, HIPPO_SEQUENCE, -1.0);
                 final int result = s1.compareTo(s2);
                 if (result != 0) {
                     return result;
@@ -151,36 +127,59 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     public InitializationProcessorImpl() {}
 
-    public InitializationProcessorImpl(Logger logger) {
-        if (logger != null) {
-            BootstrapConstants.log = logger;
-        }
-    }
-
     @Override
     public List<Node> loadExtensions(final Session session) throws RepositoryException, IOException {
-        return loadExtensions(session, session.getNode(INITIALIZATION_FOLDER), true);
+        return loadExtensions(session, true);
+    }
+
+    public List<Node> loadExtensions(Session session, boolean markMissingItems) throws IOException, RepositoryException {
+        final Set<String> reloadItems = new HashSet<>();
+        final long now = System.currentTimeMillis();
+        final List<Extension> extensions = scanForExtensions(session);
+        final List<Node> initializeItems = new ArrayList<>();
+        for (final Extension extension : extensions) {
+            extension.load();
+            for (final InitializeItem initializeItem : extension.getInitializeItems()) {
+                if (initializeItem.isReload()) {
+                    reloadItems.add(initializeItem.getItemNode().getIdentifier());
+                }
+                initializeItems.add(initializeItem.getItemNode());
+            }
+        }
+        if (markMissingItems) {
+            markMissingInitializeItems(session, now);
+        }
+        initializeItems.addAll(markReloadDownstreamItems(session, reloadItems));
+        return initializeItems;
     }
 
     @Override
-    public List<Node> loadExtension(final Session session, final URL extension) throws RepositoryException, IOException {
-        return loadExtension(extension, session, session.getNode(INITIALIZATION_FOLDER), new HashSet<String>());
+    public List<Node> loadExtension(final Session session, final URL url) throws RepositoryException, IOException {
+        final Extension extension = new Extension(session, url);
+        extension.load();
+        return extension.getInitializeItemNodes();
     }
 
     @Override
     public List<PostStartupTask> processInitializeItems(Session session) {
         try {
-            final List<Node> initializeItems = new ArrayList<>();
-            final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
-            final NodeIterator nodes = getInitializeItems.execute().getNodes();
-            while(nodes.hasNext()) {
-                initializeItems.add(nodes.nextNode());
-            }
+            final List<Node> initializeItems = getPendingInitializeItemNodes(session);
             return doProcessInitializeItems(session, initializeItems);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage(), ex);
+        } catch (RepositoryException e) {
+            log.error("Failed to load pending initialize items", e);
             return Collections.emptyList();
         }
+    }
+
+    private List<Node> getPendingInitializeItemNodes(final Session session) throws RepositoryException {
+        final List<Node> initializeItems = new ArrayList<>();
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        final Query getInitializeItems = queryManager.createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
+        final NodeIterator nodes = getInitializeItems.execute().getNodes();
+        while(nodes.hasNext()) {
+            initializeItems.add(nodes.nextNode());
+        }
+        return initializeItems;
     }
 
     @Override
@@ -190,18 +189,18 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     @Override
     public void setLogger(final Logger logger) {
-        BootstrapConstants.log = logger;
+        logger.warn("Setting the logger on the InitializationProcessor is no longer supported");
     }
 
     @Override
     public boolean lock(final Session session) throws RepositoryException {
-        ensureIsLockable(session, INIT_PATH);
+        ensureIsLockable(session, INIT_FOLDER_PATH);
         final LockManager lockManager = session.getWorkspace().getLockManager();
         final long t1 = System.currentTimeMillis();
         while (true) {
             log.debug("Attempting to obtain lock");
             try {
-                lockManager.lock(INIT_PATH, false, false, LOCK_TIMEOUT, getClusterNodeId(session));
+                lockManager.lock(INIT_FOLDER_PATH, false, false, LOCK_TIMEOUT, getClusterNodeId(session));
                 log.debug("Lock successfully obtained");
                 return true;
             } catch (LockException e) {
@@ -224,7 +223,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         try {
             log.debug("Attempting to release lock");
             session.refresh(false);
-            lockManager.unlock(INIT_PATH);
+            lockManager.unlock(INIT_FOLDER_PATH);
             log.debug("Lock successfully released");
         } catch (LockException e) {
             log.warn("Current session no longer holds a lock, please set a longer repo.bootstrap.lock.timeout");
@@ -255,21 +254,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
         }
         return postStartupTasks;
-    }
-
-    public List<Node> loadExtensions(Session session, Node initializationFolder, boolean cleanup) throws IOException, RepositoryException {
-        final Set<String> reloadItems = new HashSet<>();
-        final long now = System.currentTimeMillis();
-        final List<URL> extensions = scanForExtensions();
-        final List<Node> initializeItems = new ArrayList<>();
-        for(final URL configurationURL : extensions) {
-            initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder, reloadItems));
-        }
-        if (cleanup) {
-            markMissingInitializeItems(session, now);
-        }
-        initializeItems.addAll(markReloadDownstreamItems(session, reloadItems));
-        return initializeItems;
     }
 
     List<Node> markReloadDownstreamItems(final Session session, final Set<String> reloadItems) throws RepositoryException {
@@ -312,170 +296,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    private List<Node> loadExtension(final URL configurationURL, final Session session, final Node initializationFolder, final Set<String> reloadItems) throws RepositoryException, IOException {
-        List<Node> initializeItems = new ArrayList<>();
-        log.info("Initializing extension "+configurationURL);
-        try {
-            initializeNodecontent(session, "/hippo:configuration/hippo:temporary", configurationURL.openStream(), configurationURL);
-            final Node tempInitFolderNode = session.getNode("/hippo:configuration/hippo:temporary/hippo:initialize");
-            final String moduleVersion = getModuleVersion(configurationURL);
-            for (final Node tempInitItemNode : new NodeIterable(tempInitFolderNode.getNodes())) {
-                initializeItems.addAll(initializeInitializeItem(tempInitItemNode, initializationFolder, moduleVersion, configurationURL, reloadItems));
-
-            }
-            if(tempInitFolderNode.hasProperty(HIPPO_VERSION)) {
-                Set<String> tags = new TreeSet<>();
-                if (initializationFolder.hasProperty(HIPPO_VERSION)) {
-                    for (Value value : initializationFolder.getProperty(HIPPO_VERSION).getValues()) {
-                        tags.add(value.getString());
-                    }
-                }
-                Value[] added = tempInitFolderNode.getProperty(HIPPO_VERSION).getValues();
-                for (Value value : added) {
-                    tags.add(value.getString());
-                }
-                initializationFolder.setProperty(HIPPO_VERSION, tags.toArray(new String[tags.size()]));
-            }
-            tempInitFolderNode.remove();
-            session.save();
-        } catch (PathNotFoundException ex) {
-            log.error("Rejected old style configuration content", ex);
-            for(NodeIterator removeTempIter = session.getRootNode().getNode("hippo:configuration/hippo:temporary").getNodes(); removeTempIter.hasNext(); ) {
-                removeTempIter.nextNode().remove();
-            }
-            session.save();
-        } catch (RepositoryException ex) {
-            throw new RepositoryException("Initializing extension " + configurationURL.getPath() + " failed", ex);
-        }
-        return initializeItems;
-    }
-
-    private List<Node> initializeInitializeItem(final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL, final Set<String> reloadItems) throws RepositoryException {
-
-        log.debug("Initializing item: " + tempInitItemNode.getName());
-
-        final List<Node> initializeItems = new ArrayList<Node>();
-        Node initItemNode = JcrUtils.getNodeIfExists(initializationFolder, tempInitItemNode.getName());
-        final String deprecatedExistingModuleVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_EXTENSIONBUILD, null) : null;
-        final String existingModuleVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_EXTENSIONVERSION, deprecatedExistingModuleVersion) : deprecatedExistingModuleVersion;
-        final String existingItemVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HIPPO_VERSION, null) : null;
-        final String itemVersion = JcrUtils.getStringProperty(tempInitItemNode, HIPPO_VERSION, null);
-
-        final boolean isReload = initItemNode != null &&
-                shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion);
-
-        if (isReload) {
-            log.info("Item {} needs to be reloaded", tempInitItemNode.getName());
-            initItemNode.remove();
-            initItemNode = null;
-        }
-
-        if (initItemNode == null) {
-            log.info("Item {} set to status pending", tempInitItemNode.getName());
-            initItemNode = initializationFolder.addNode(tempInitItemNode.getName(), HippoNodeType.NT_INITIALIZEITEM);
-            initItemNode.setProperty(HIPPO_STATUS, "pending");
-            initializeItems.add(initItemNode);
-        }
-
-        if (isExtension(configurationURL)) {
-            initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-            if (moduleVersion != null) {
-                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, moduleVersion);
-            }
-        }
-
-        for (String propertyName : INIT_ITEM_PROPERTIES) {
-            copyProperty(tempInitItemNode, initItemNode, propertyName);
-        }
-
-        ContentFileInfo info = initItemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? readContentFileInfo(initItemNode) : null;
-        if (info != null) {
-            initItemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
-            initItemNode.setProperty(HippoNodeType.HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
-            if (isReload) {
-                reloadItems.add(initItemNode.getIdentifier());
-            }
-        }
-
-        initItemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
-        final String status = JcrUtils.getStringProperty(initItemNode, HIPPO_STATUS, null);
-        if ("missing".equals(status)) {
-            initItemNode.getProperty(HIPPO_STATUS).remove();
-        }
-
-        return initializeItems;
-    }
-
-    private boolean isExtension(final URL configurationURL) {
-        return configurationURL.getFile().endsWith("hippoecm-extension.xml");
-    }
-
-    private List<URL> scanForExtensions() throws IOException {
-        final List<URL> extensions = new LinkedList<URL>();
-        Enumeration<URL> iter = Thread.currentThread().getContextClassLoader().getResources("org/hippoecm/repository/extension.xml");
-        while (iter.hasMoreElements()) {
-            extensions.add(iter.nextElement());
-        }
-        iter = Thread.currentThread().getContextClassLoader().getResources("hippoecm-extension.xml");
-        while (iter.hasMoreElements()) {
-            extensions.add(iter.nextElement());
+    private List<Extension> scanForExtensions(final Session session) throws IOException {
+        final List<Extension> extensions = new LinkedList<>();
+        final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources("hippoecm-extension.xml");
+        while (resources.hasMoreElements()) {
+            extensions.add(new Extension(session, resources.nextElement()));
         }
         return extensions;
-    }
-
-    private boolean shouldReload(final Node temp, final Node existing, final String moduleVersion, final String existingModuleVersion, final String itemVersion, final String existingItemVersion) throws RepositoryException {
-        if (!isReloadable(temp)) {
-            log.debug("Item {} is not reloadable", temp.getName());
-            return false;
-        }
-        if (itemVersion != null) {
-            final boolean isNewer = isNewerVersion(itemVersion, existingItemVersion);
-            log.debug("Comparing item versions of item {}: new version = {}; old version = {}; newer = {}", temp.getName(), itemVersion, existingItemVersion, isNewer);
-            if (!isNewer) {
-                return false;
-            }
-        } else {
-            final boolean isNewer = isNewerVersion(moduleVersion, existingModuleVersion);
-            log.debug("Comparing module versions of item {}: new module version {}; old module version = {}; newer = {}", temp.getName(), moduleVersion, existingModuleVersion, isNewer);
-            if (!isNewer) {
-                return false;
-            }
-        }
-        if ("disabled".equals(JcrUtils.getStringProperty(existing, HIPPO_STATUS, null))) {
-            log.debug("Item {} is disabled", temp.getName());
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isNewerVersion(final String version, final String existingVersion) {
-        if (version == null) {
-            return false;
-        }
-        if (existingVersion == null) {
-            return true;
-        }
-        try {
-            return new MavenComparableVersion(version).compareTo(new MavenComparableVersion(existingVersion)) > 0;
-        } catch (RuntimeException e) {
-            // version could not be parsed
-            log.error("Invalid version: " + version + " or existing: " + existingVersion);
-        }
-        return false;
-    }
-
-    private String getModuleVersion(URL configurationURL) {
-        String configurationURLString = configurationURL.toString();
-        if (configurationURLString.endsWith("hippoecm-extension.xml")) {
-            String manifestUrlString = configurationURLString.substring(0, configurationURLString.length() - "hippoecm-extension.xml".length()) + "META-INF/MANIFEST.MF";
-            try {
-                Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
-                return manifest.getMainAttributes().getValue(new Attributes.Name("Implementation-Build"));
-            } catch (IOException ex) {
-                // deliberate ignore, manifest file not available so no build number can be obtained
-            }
-        }
-        return null;
     }
 
     List<Node> resolveDownstreamItems(final Session session, final Node upstreamItem) throws RepositoryException {
@@ -497,8 +324,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final List<Node> downStreamItems = new ArrayList<>();
         final String statement = String.format(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
-                "jcr:path = '/hippo:configuration/hippo:initialize/%%' AND (" +
-                "%s LIKE '%s/%%' OR %s = '%s') AND %s <> 'missing'",
+                "(%s LIKE '%s/%%' OR %s = '%s') AND %s <> 'missing'",
                 HIPPO_CONTEXTPATHS, contextPath, HIPPO_CONTEXTPATHS, contextPath,
                 HIPPO_STATUS);
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -516,14 +342,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
      */
     private List<Node> resolveContentPropSetAndAddDownstreamItems(final Session session, final String contextPath, final Node upstreamItem) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
+        final String statement = String.format(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
-                        "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
-                        HIPPO_CONTENTROOT + " LIKE '" + contextPath + "/%' OR " +
-                        HIPPO_CONTENTROOT + " = '" + contextPath + "') AND " +
-                        HIPPO_CONTENTRESOURCE + " IS NULL AND " +
-                        HIPPO_STATUS + " <> 'missing'", Query.SQL
-        ).execute();
+                "(%s LIKE '%s/%%' OR %s = '%s') AND %s IS NULL AND %s <> 'missing'"
+                ,HIPPO_CONTENTROOT, contextPath, HIPPO_CONTENTROOT, contextPath, HIPPO_CONTENTRESOURCE, HIPPO_STATUS);
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             if (!upstreamItem.isSame(item)) {
                 downStreamItems.add(item);
@@ -537,14 +360,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
      */
     private List<Node> resolveContentDeleteAndContentPropDeleteDownstreamItems(final Session session, final String contextPath, final Node upstreamItem) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(
+        final String statement = String.format(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
-                        "jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
-                        HIPPO_CONTENTDELETE + " LIKE '" + contextPath + "/%' OR " +
-                        HIPPO_CONTENTDELETE + " = '" + contextPath + "' OR " +
-                        HIPPO_CONTENTPROPDELETE + " LIKE '" + contextPath + "/%') AND " +
-                        HIPPO_STATUS + " <> 'missing'", Query.SQL
-        ).execute();
+                "(%s LIKE '%s/%%' OR %s ='%s' OR %s LIKE '%s/%%') AND %s <> 'missing'",
+                HIPPO_CONTENTDELETE, contextPath, HIPPO_CONTENTDELETE, contextPath,
+                HIPPO_CONTENTPROPDELETE, contextPath, HIPPO_STATUS
+        );
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             if (!upstreamItem.isSame(item)) {
                 downStreamItems.add(item);
@@ -552,105 +374,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
         return downStreamItems;
 
-    }
-
-    ContentFileInfo readContentFileInfo(final Node item) {
-        ContentFileInfoReader contentFileInfoReader = null;
-        InputStream in = null;
-        try {
-            final String contentResource = StringUtils.trim(item.getProperty(HIPPO_CONTENTRESOURCE).getString());
-            if (contentResource.endsWith(".zip") || contentResource.endsWith(".jar")) {
-                return null;
-            }
-            final String contentRoot = StringUtils.trim(item.getProperty(HIPPO_CONTENTROOT).getString());
-            contentFileInfoReader = new ContentFileInfoReader(contentRoot);
-            URL contentResourceURL = getResource(item, contentResource);
-            if (contentResourceURL != null) {
-                in = contentResourceURL.openStream();
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                factory.setNamespaceAware(true);
-                factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-                factory.newSAXParser().parse(new InputSource(in), contentFileInfoReader);
-            }
-        } catch (ContentFileInfoReadingShortCircuitException ignore) {
-        } catch (FactoryConfigurationError | SAXException | ParserConfigurationException | IOException | RepositoryException e) {
-            log.error("Could not read root node name from content file", e);
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-        return contentFileInfoReader != null ? contentFileInfoReader.getContentFileInfo() : null;
-    }
-
-    private URL getResource(final Node item, String resourcePath) throws RepositoryException, IOException {
-        if (resourcePath.startsWith("file:")) {
-            return URI.create(resourcePath).toURL();
-        } else {
-            if (item.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
-                URL resource = new URL(item.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
-                resource = new URL(resource, resourcePath);
-                return resource;
-            } else {
-                return LocalHippoRepository.class.getResource(resourcePath);
-            }
-        }
-    }
-
-    public ImportResult initializeNodecontent(Session session, String parentAbsPath, InputStream istream, URL location) {
-        return BootstrapUtils.initializeNodecontent(session, parentAbsPath, istream, location, false);
-    }
-
-    /**
-     * Returns a {@link java.io.File} object which bases the input JAR / ZIP file URL.
-     * <P>
-     * For example, if the <code>url</code> represents "file:/a/b/c.jar!/d/e/f.xml", then
-     * this method will return a File object representing "file:/a/b/c.jar" from the input.
-     * </P>
-     * @param url
-     * @return
-     * @throws URISyntaxException
-     */
-    protected File getBaseZipFileFromURL(final URL url) throws URISyntaxException {
-        String file = url.getFile();
-        int offset = file.indexOf(".jar!");
-
-        if (offset == -1) {
-            throw new IllegalArgumentException("Not a jar or zip url: " + url);
-        }
-
-        file = file.substring(0, offset + 4);
-
-        if (!file.startsWith("file:")) {
-            if (file.startsWith("/")) {
-                file = "file://" + file;
-            } else {
-                file = "file:///" + file;
-            }
-        }
-
-        return new File(URI.create(file));
-    }
-
-    private boolean isReloadable(Node item) throws RepositoryException {
-        if (JcrUtils.getBooleanProperty(item, HIPPO_RELOADONSTARTUP, false)) {
-            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(item, HippoNodeType.HIPPOSYS_DELTADIRECTIVE, null));
-            if (deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"))) {
-                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", item.getName());
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private void copyProperty(Node source, Node target, String propertyName) throws RepositoryException {
-        final Property property = JcrUtils.getPropertyIfExists(source, propertyName);
-        if (property != null) {
-            if (property.getDefinition().isMultiple()) {
-                target.setProperty(propertyName, property.getValues(), property.getType());
-            } else {
-                target.setProperty(propertyName, property.getValue());
-            }
-        }
     }
 
     private void ensureIsLockable(final Session session, final String absPath) throws RepositoryException {
@@ -661,93 +384,4 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    static class ContentFileInfo {
-
-        final List<String> contextPaths;
-        final String deltaDirective;
-
-        private ContentFileInfo(final List<String> contextPaths, final String deltaDirective) {
-            this.contextPaths = contextPaths;
-            this.deltaDirective = deltaDirective;
-        }
-    }
-
-    private static class ContentFileInfoReader extends DefaultHandler {
-
-        private final Stack<String> path = new Stack<>();
-        private final List<String> contextPaths = new ArrayList<>();
-        private final String contentRoot;
-        private String deltaDirective;
-        private int depth = -1;
-
-        private ContentFileInfoReader(final String contentRoot) {
-            this.contentRoot = contentRoot.equals("/") ? "" : contentRoot;
-        }
-
-        @Override
-        public void startElement(final String uri, final String localName, final String qName, final org.xml.sax.Attributes atts) throws SAXException {
-            final Name name = NameFactoryImpl.getInstance().create(uri, localName);
-            if (name.equals(SV_NODE)) {
-                if (skip()) {
-                    depth++;
-                    return;
-                }
-                final String svName = atts.getValue(SV_NAME.getNamespaceURI(), SV_NAME.getLocalName());
-                final String esvMerge = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
-                if (contextPaths.isEmpty()) {
-                    path.push(svName);
-                    contextPaths.add(getCurrenContextPath());
-                    deltaDirective = esvMerge;
-                    if (!isMergeCombine(esvMerge)) {
-                        throw new ContentFileInfoReadingShortCircuitException();
-                    }
-                } else {
-                    if (isMergeCombine(esvMerge)) {
-                        path.push(svName);
-                        contextPaths.add(getCurrenContextPath());
-                    } else {
-                        depth++;
-                    }
-                }
-            }
-        }
-
-
-        @Override
-        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-            final Name name = NameFactoryImpl.getInstance().create(uri, localName);
-            if (name.equals(SV_NODE)) {
-                if (skip()) {
-                    depth--;
-                } else {
-                    path.pop();
-                }
-            }
-        }
-
-        private boolean isMergeCombine(final String esvMerge) {
-            return COMBINE.equals(esvMerge) || OVERLAY.equals(esvMerge);
-        }
-
-        private ContentFileInfo getContentFileInfo() {
-            if (!contextPaths.isEmpty()) {
-                return new ContentFileInfo(contextPaths, deltaDirective);
-            }
-            return null;
-        }
-
-        private String getCurrenContextPath() {
-            StringBuilder sb = new StringBuilder(contentRoot);
-            for (String pathElement : path) {
-                sb.append("/").append(pathElement);
-            }
-            return sb.toString();
-        }
-
-        private boolean skip() {
-            return depth > -1;
-        }
-    }
-
-    private static class ContentFileInfoReadingShortCircuitException extends SAXException {}
 }

@@ -109,21 +109,27 @@ public class BootstrapUtils {
         }
     }
 
-    public static ImportResult initializeNodecontent(Session session, String parentAbsPath, InputStream istream, URL location) {
-        return initializeNodecontent(session, parentAbsPath, istream, location, false);
+    public static ImportResult initializeNodecontent(Session session, String parentAbsPath, URL url)
+            throws RepositoryException {
+        return initializeNodecontent(session, parentAbsPath, url, false);
     }
 
-    public static ImportResult initializeNodecontent(Session session, String parentAbsPath, InputStream istream, URL location, boolean pckg) {
-        if (location != null) {
-            log.debug("Initializing content from: {} to {}", location, parentAbsPath);
-        } else {
-            log.debug("Initializing content to {}", parentAbsPath);
-        }
+    public static ImportResult initializeNodecontent(Session session, String parentAbsPath, URL url, boolean pckg)
+        throws RepositoryException {
+        return initializeNodecontent(session, parentAbsPath, null, url, pckg);
+    }
+
+    public static ImportResult initializeNodecontent(Session session, String parentAbsPath, InputStream in, URL url, boolean pckg)
+            throws RepositoryException {
+        log.debug("Initializing content from {} to {}", url, parentAbsPath);
         File tempFile = null;
         ZipFile zipFile = null;
         InputStream esvIn = null;
         FileOutputStream out = null;
         try {
+            if (in == null) {
+                in = url.openStream();
+            }
             if (session instanceof HippoSession) {
                 HippoSession hippoSession = (HippoSession) session;
                 int uuidBehaviour = ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
@@ -131,7 +137,7 @@ public class BootstrapUtils {
                 if (pckg) {
                     tempFile = File.createTempFile("package", ".zip");
                     out = new FileOutputStream(tempFile);
-                    IOUtils.copy(istream, out);
+                    IOUtils.copy(in, out);
                     out.close();
                     out = null;
                     zipFile = new ZipFile(tempFile);
@@ -140,28 +146,29 @@ public class BootstrapUtils {
                     return hippoSession.importEnhancedSystemViewXML(parentAbsPath, esvIn, uuidBehaviour, referenceBehaviour, contentResourceLoader);
                 } else {
                     ContentResourceLoader contentResourceLoader = null;
-                    if (location != null) {
-                        int offset = location.getFile().indexOf(".jar!");
+                    if (url != null) {
+                        int offset = url.getFile().indexOf(".jar!");
                         if (offset != -1) {
-                            zipFile = new ZipFile(getBaseZipFileFromURL(location));
+                            zipFile = new ZipFile(getBaseZipFileFromURL(url));
                             contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
-                        } else if (location.getProtocol().equals("file")) {
-                            File sourceFile = new File(location.toURI());
+                        } else if (url.getProtocol().equals("file")) {
+                            File sourceFile = new File(url.toURI());
                             contentResourceLoader = new FileContentResourceLoader(sourceFile.getParentFile());
                         }
                     }
-                    return hippoSession.importEnhancedSystemViewXML(parentAbsPath, istream, uuidBehaviour, referenceBehaviour, contentResourceLoader);
+                    return hippoSession.importEnhancedSystemViewXML(parentAbsPath, in, uuidBehaviour, referenceBehaviour, contentResourceLoader);
                 }
             } else {
                 throw new IllegalStateException("Not a HippoSession");
             }
         } catch (IOException | RepositoryException | URISyntaxException e) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for " + location + " in '" + parentAbsPath + "' : " + e, e);
+                log.error("Error initializing content for " + url + " in '" + parentAbsPath + "' : " + e, e);
             } else {
-                log.error("Error initializing content for " + location + " in '" + parentAbsPath + "' : " + e);
+                log.error("Error initializing content for " + url + " in '" + parentAbsPath + "' : " + e);
             }
         } finally {
+            IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
             IOUtils.closeQuietly(esvIn);
             if (zipFile != null) {
@@ -177,7 +184,7 @@ public class BootstrapUtils {
 
     public static void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws RepositoryException {
         try {
-            log.debug("Initializing nodetypes from: " + cndName);
+            log.debug("Initializing nodetypes from {} ", cndName);
             CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader =
                     new HippoCompactNodeTypeDefReader<>(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
             List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();

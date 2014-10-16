@@ -99,9 +99,8 @@
     <appender-ref ref="console"/>
   </category>
 
-  <category additivity="false" name="org.onehippo.repository.bootstrap.InitializationProcessorImpl">
+  <category name="org.onehippo.repository.bootstrap">
     <level value="warn"/>
-    <appender-ref ref="console"/>
   </category>
 
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">

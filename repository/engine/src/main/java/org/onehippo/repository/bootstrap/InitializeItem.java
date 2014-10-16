@@ -27,9 +27,16 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.repository.bootstrap.instructions.ContentDeleteInstruction;
 import org.onehippo.repository.bootstrap.instructions.ContentFromNodeInstruction;
 import org.onehippo.repository.bootstrap.instructions.ContentPropAddInstruction;
@@ -40,9 +47,10 @@ import org.onehippo.repository.bootstrap.instructions.NamespaceInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesResourceInstruction;
 import org.onehippo.repository.bootstrap.instructions.WebResourceBundleInstruction;
+import org.onehippo.repository.bootstrap.util.BootstrapConstants;
+import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 
 import static org.apache.commons.lang.StringUtils.trim;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DELTADIRECTIVE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
@@ -51,14 +59,20 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_ERRORMESSAGE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAMESPACE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPESRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TIMESTAMP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEITEM;
+import static org.onehippo.repository.bootstrap.InitializationProcessor.INITIALIZATION_FOLDER;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_DONE;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_FAILED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
@@ -78,18 +92,42 @@ public class InitializeItem {
             HIPPO_WEBRESOURCEBUNDLE
     };
 
+    private static final String[] INIT_ITEM_PROPERTIES = {
+            HIPPO_SEQUENCE,
+            HIPPO_NAMESPACE,
+            HIPPO_NODETYPESRESOURCE,
+            HIPPO_NODETYPES,
+            HIPPO_CONTENTRESOURCE,
+            HIPPO_CONTENT,
+            HIPPO_CONTENTROOT,
+            HIPPO_CONTENTDELETE,
+            HIPPO_CONTENTPROPDELETE,
+            HIPPO_CONTENTPROPSET,
+            HIPPO_CONTENTPROPADD,
+            HIPPO_RELOADONSTARTUP,
+            HIPPO_VERSION,
+            HIPPO_WEBRESOURCEBUNDLE
+    };
+
     private Node itemNode;
     private Node tempItemNode;
-    private Node initFolder;
+    private Extension extension;
     private List<InitializeInstruction> instructions;
+    private boolean isReload;
 
     public InitializeItem(final Node itemNode) {
         this.itemNode = itemNode;
     }
 
-    public InitializeItem(final Node tempItemNode, final Node initFolder) {
+    public InitializeItem(final Node tempItemNode, final Extension extension) {
         this.tempItemNode = tempItemNode;
-        this.initFolder = initFolder;
+        this.extension = extension;
+    }
+
+    InitializeItem(final Node itemNode, final Node tempItemNode, final Extension extension) {
+        this.itemNode = itemNode;
+        this.tempItemNode = tempItemNode;
+        this.extension = extension;
     }
 
     public void validate() throws RepositoryException {
@@ -113,6 +151,10 @@ public class InitializeItem {
 
     public String getName() throws RepositoryException {
         return itemNode.getName();
+    }
+
+    public Node getItemNode() {
+        return itemNode;
     }
 
     public String getContentResource() throws RepositoryException {
@@ -189,15 +231,7 @@ public class InitializeItem {
     }
 
     public boolean isReloadable() throws RepositoryException {
-        if (JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false)) {
-            final String deltaDirective = trim(JcrUtils.getStringProperty(itemNode, HIPPOSYS_DELTADIRECTIVE, null));
-            if (deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"))) {
-                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", itemNode.getName());
-                return false;
-            }
-            return true;
-        }
-        return false;
+        return isReloadable(itemNode);
     }
 
     public Collection<InitializeItem> getUpstreamItems() throws RepositoryException {
@@ -225,10 +259,6 @@ public class InitializeItem {
         return done;
     }
 
-    public void setContextPaths(Collection<String> contextPaths) throws RepositoryException {
-        itemNode.setProperty(HIPPO_CONTEXTPATHS, contextPaths.toArray(new String[contextPaths.size()]));
-    }
-
     public String getNamespace() throws RepositoryException {
         return trim(itemNode.getProperty(HIPPO_NAMESPACE).getString());
     }
@@ -253,12 +283,12 @@ public class InitializeItem {
         return itemNode.getProperty(HIPPO_CONTENTPROPADD);
     }
 
-    public boolean isDone() throws RepositoryException {
+    private boolean isDone() throws RepositoryException {
         return ITEM_STATUS_DONE.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
     }
 
-    private void setStatus(String status) throws RepositoryException {
-        itemNode.setProperty(HIPPO_STATUS, status);
+    public boolean isReload() {
+        return isReload;
     }
 
     private void clearUpstreamItems() throws RepositoryException {
@@ -281,10 +311,11 @@ public class InitializeItem {
                     postStartupTasks.add(postStartupTask);
                 }
             }
-            setStatus(ITEM_STATUS_DONE);
+            itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_DONE);
             return Collections.unmodifiableList(postStartupTasks);
         } catch (RepositoryException e) {
-            setStatus(ITEM_STATUS_FAILED);
+            itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
+            itemNode.setProperty(HIPPO_ERRORMESSAGE, e.getClass().toString() + ":" + e.getMessage());
             throw e;
         } finally {
             try {
@@ -296,6 +327,110 @@ public class InitializeItem {
     }
 
     void initialize() throws RepositoryException {
+        log.debug("Initializing item: " + tempItemNode.getName());
+
+        final Node initializationFolder = tempItemNode.getSession().getNode(INITIALIZATION_FOLDER);
+        itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
+        isReload = itemNode != null && shouldReload();
+
+        if (isReload) {
+            log.info("Item {} needs to be reloaded", tempItemNode.getName());
+            itemNode.remove();
+            itemNode = null;
+        }
+
+        if (itemNode == null) {
+            log.info("Item {} set to status pending", tempItemNode.getName());
+            itemNode = initializationFolder.addNode(tempItemNode.getName(), NT_INITIALIZEITEM);
+            itemNode.setProperty(HIPPO_STATUS, "pending");
+        }
+
+        itemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, extension.getExtensionSource().toString());
+        if (extension.getModuleVersion() != null) {
+            itemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, extension.getModuleVersion());
+        }
+
+        for (String propertyName : INIT_ITEM_PROPERTIES) {
+            copyProperty(tempItemNode, itemNode, propertyName);
+        }
+
+        ContentFileInfo info = itemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? ContentFileInfo.readInfo(itemNode) : null;
+        if (info != null) {
+            itemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
+            itemNode.setProperty(HippoNodeType.HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
+        }
+
+        itemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
+        final String status = JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null);
+        if ("missing".equals(status)) {
+            itemNode.getProperty(HIPPO_STATUS).remove();
+        }
+    }
+
+    boolean shouldReload() throws RepositoryException {
+        if (!isReloadable(tempItemNode)) {
+            log.debug("Item {} is not reloadable", tempItemNode.getName());
+            return false;
+        }
+        final String itemVersion = getVersion(tempItemNode);
+        if (itemVersion != null) {
+            final String existingItemVersion = getVersion(itemNode);
+            final boolean isNewer = isNewerVersion(itemVersion, existingItemVersion);
+            log.debug("Comparing item versions of item {}: new version = {}; old version = {}; newer = {}",
+                    getName(), itemVersion, existingItemVersion, isNewer);
+            if (!isNewer) {
+                return false;
+            }
+        } else {
+            final String existingModuleVersion = getModuleVersion(itemNode);
+            final String moduleVersion = extension.getModuleVersion();
+            final boolean isNewer = isNewerVersion(moduleVersion, existingModuleVersion);
+            log.debug("Comparing module versions of item {}: new module version {}; old module version = {}; newer = {}",
+                    getName(), moduleVersion, existingModuleVersion, isNewer);
+            if (!isNewer) {
+                return false;
+            }
+        }
+        if (BootstrapConstants.ITEM_STATUS_DISABLED.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null))) {
+            log.debug("Item {} is disabled", getName());
+            return false;
+        }
+        return true;
+    }
+
+    private String getVersion(Node itemNode) throws RepositoryException {
+        return itemNode != null ? JcrUtils.getStringProperty(itemNode, HIPPO_VERSION, null) : null;
+    }
+
+    private String getModuleVersion(Node itemNode) throws RepositoryException {
+        final String deprecatedModuleVersion = itemNode != null ? JcrUtils.getStringProperty(itemNode, HippoNodeType.HIPPO_EXTENSIONBUILD, null) : null;
+        return itemNode != null ? JcrUtils.getStringProperty(itemNode, HippoNodeType.HIPPO_EXTENSIONVERSION, deprecatedModuleVersion) : deprecatedModuleVersion;
+    }
+
+    private boolean isNewerVersion(final String version, final String existingVersion) throws RepositoryException {
+        if (version == null) {
+            return false;
+        }
+        if (existingVersion == null) {
+            return true;
+        }
+        try {
+            return new MavenComparableVersion(version).compareTo(new MavenComparableVersion(existingVersion)) > 0;
+        } catch (RuntimeException e) {
+            throw new RepositoryException("Invalid version: " + version + " or existing: " + existingVersion);
+        }
+    }
+
+    private boolean isReloadable(Node itemNode) throws RepositoryException {
+        if (JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false)) {
+            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(itemNode, HippoNodeType.HIPPOSYS_DELTADIRECTIVE, null));
+            if (deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"))) {
+                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", itemNode.getName());
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     private List<InitializeInstruction> createInstructions() throws RepositoryException {
@@ -333,6 +468,17 @@ public class InitializeItem {
             }
         }
         return properties;
+    }
+
+    private void copyProperty(Node source, Node target, String propertyName) throws RepositoryException {
+        final Property property = JcrUtils.getPropertyIfExists(source, propertyName);
+        if (property != null) {
+            if (property.getDefinition().isMultiple()) {
+                target.setProperty(propertyName, property.getValues(), property.getType());
+            } else {
+                target.setProperty(propertyName, property.getValue());
+            }
+        }
     }
 
 }

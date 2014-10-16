@@ -26,7 +26,6 @@ import org.onehippo.repository.bootstrap.PostStartupTask;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_FOLDER_PATH;
-import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.initializeNodecontent;
 
 public class ContentFromNodeInstruction extends InitializeInstruction {
@@ -47,7 +46,7 @@ public class ContentFromNodeInstruction extends InitializeInstruction {
             throw new RepositoryException(String.format("Bootstrapping content to %s is not supported", INIT_FOLDER_PATH));
         }
         final InputStream contentStream = item.getContent();
-        initializeNodecontent(session, contentRoot, contentStream, null);
+        initializeNodecontent(session, contentRoot, contentStream, null, false);
         return null;
     }
 

@@ -15,10 +15,13 @@
  */
 package org.onehippo.repository.bootstrap.util;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.INITIALIZE_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.TEMPORARY_PATH;
 
 public class BootstrapConstants {
 
@@ -26,9 +29,12 @@ public class BootstrapConstants {
 
     public static Logger log = LoggerFactory.getLogger(InitializationProcessor.class.getPackage().getName());
 
-    public static final String INIT_FOLDER_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
+    public static final String INIT_FOLDER_PATH = "/" + CONFIGURATION_PATH + "/" + INITIALIZE_PATH;
+    public static final String TEMP_FOLDER_PATH = "/"  + CONFIGURATION_PATH + "/" + TEMPORARY_PATH;
 
     public static final String ITEM_STATUS_DONE = "done";
     public static final String ITEM_STATUS_FAILED = "failed";
+    public static final String ITEM_STATUS_DISABLED = "disabled";
+    public static final String ITEM_STATUS_PENDING = "pending";
 
 }

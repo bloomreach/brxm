@@ -361,12 +361,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 initializeSystemNodeTypes(initializationProcessor, bootstrapSession, jackrabbitRepository.getFileSystem());
                 if (!bootstrapSession.getRootNode().hasNode("hippo:configuration")) {
                     log.info("Initializing configuration content");
-                    InputStream configuration = getClass().getResourceAsStream("configuration.xml");
-                    if (configuration != null) {
-                        initializationProcessor.initializeNodecontent(bootstrapSession, "/", configuration, null);
-                    } else {
-                        log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
-                    }
+                    BootstrapUtils.initializeNodecontent(bootstrapSession, "/", getClass().getResource("configuration.xml"));
                     bootstrapSession.save();
                 } else {
                     log.info("Initial configuration content already present");

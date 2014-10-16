@@ -90,11 +90,7 @@ public class ContentResourceInstruction extends InitializeInstruction {
                 if (session.nodeExists(contextNodePath)) {
                     removeNode(session, contextNodePath, false);
                 }
-                try (InputStream in = contentURL.openStream()) {
-                    initializeNodecontent(session, contentRoot, in, contentURL, pckg);
-                } catch (IOException e) {
-                    throw new RepositoryException("Failed to open content stream of item" + item.getName(), e);
-                }
+                initializeNodecontent(session, contentRoot, contentURL, pckg);
                 if (index != -1) {
                     reorderNode(session, contextNodePath, index);
                 }
@@ -121,8 +117,7 @@ public class ContentResourceInstruction extends InitializeInstruction {
                         IOUtils.closeQuietly(in);
                     }
                 } else {
-                    in = contentURL.openStream();
-                    initializeNodecontent(session, contentRoot, in, contentURL, pckg);
+                    initializeNodecontent(session, contentRoot, contentURL, pckg);
                 }
             } catch (IOException e) {
                 throw new RepositoryException("Failed to open content stream of item " + item.getName());

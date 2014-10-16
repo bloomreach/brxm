@@ -325,9 +325,7 @@
                 <!-- copied from Maven sources -->
                 <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
                 <!-- repository content XML -->
-                <exclude>engine/src/test/resources/export/*.xml</exclude>
-                <exclude>engine/src/test/resources/import/*.xml</exclude>
-                <exclude>engine/src/test/resources/org/onehippo/repository/bootstrap/util/*.xml</exclude>
+                <exclude>*/src/test/resources/**/*.xml</exclude>
                 <exclude>test/checker-repository.xml</exclude>
                 <exclude>test/checker-storage/**</exclude>
               </excludes>

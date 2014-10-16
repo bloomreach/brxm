@@ -52,7 +52,9 @@ public interface InitializationProcessor {
      * @return  the {@link java.util.List} of initialize item {@link javax.jcr.Node}s that are pending after loading
      * @throws javax.jcr.RepositoryException
      * @throws java.io.IOException
+     * @deprecated
      */
+    @Deprecated
     List<Node> loadExtension(Session session, URL extension) throws RepositoryException, IOException;
 
     /**

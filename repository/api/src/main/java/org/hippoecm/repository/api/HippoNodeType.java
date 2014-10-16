@@ -397,6 +397,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_STATUS = "hippo:status";
 
+    public static final String HIPPO_ERRORMESSAGE = "hippo:errormessage";
+
     public static final String HIPPO_UPSTREAMITEMS = "hippo:upstreamitems";
 
     public static final String HIPPO_TIMESTAMP = "hippo:timestamp";
