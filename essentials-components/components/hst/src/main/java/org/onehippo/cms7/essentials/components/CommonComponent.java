@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -31,6 +33,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
@@ -50,6 +53,7 @@ public abstract class CommonComponent extends BaseHstComponent {
      * Name of the content not found (404) redirect page
      */
     public static final String PAGE_404 = "404page";
+    public static final String PAGE_NOT_FOUND = "pagenotfound";
 
     /**
      * Attribute names used within Essentials
@@ -170,6 +174,23 @@ public abstract class CommonComponent extends BaseHstComponent {
             } catch (IOException e) {
                 log.warn("Error redirecting to 404 page: [{}]", PAGE_404);
             }
+        } else {
+            // check if we have pagenotfound config
+            final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
+            if (resolvedSiteMapItem == null) {
+                return;
+            }
+            final HstSiteMap siteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
+            final HstSiteMapItem pagenotfound = siteMap.getSiteMapItemByRefId(PAGE_NOT_FOUND);
+            if (pagenotfound != null) {
+                String link = pagenotfound.getValue();
+                try {
+                    response.forward('/' + link);
+                } catch (IOException e) {
+                    log.error("Error forwarding to "+ PAGE_NOT_FOUND +" page", e);
+                }
+            }
+
         }
     }
 
