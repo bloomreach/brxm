@@ -76,6 +76,9 @@ public class ContentResourceInstruction extends InitializeInstruction {
     public PostStartupTask execute() throws RepositoryException {
         final String contentResource = item.getContentResource();
         final URL contentURL = item.getContentResourceURL();
+        if (contentURL == null) {
+            throw new RepositoryException(String.format("Not found: %s", contentResource));
+        }
         boolean pckg = contentResource.endsWith(".zip") || contentResource.endsWith(".jar");
 
         String contentRoot = item.getContentRoot();

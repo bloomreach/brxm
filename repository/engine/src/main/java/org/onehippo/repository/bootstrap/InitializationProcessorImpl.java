@@ -15,11 +15,7 @@
  */
 package org.onehippo.repository.bootstrap;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,11 +26,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -43,54 +37,24 @@ import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.hippoecm.repository.LocalHippoRepository;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.repository.bootstrap.util.BootstrapConstants;
-import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 import org.slf4j.Logger;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
-import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NODE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPDELETE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAMESPACE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPES;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPESRESOURCE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TIMESTAMP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_FOLDER_PATH;
-import static org.onehippo.repository.util.JcrConstants.MIX_LOCKABLE;
-import static org.onehippo.repository.xml.EnhancedSystemViewConstants.COMBINE;
-import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
-import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
-import static org.onehippo.repository.xml.EnhancedSystemViewConstants.OVERLAY;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
+import static org.onehippo.repository.util.JcrConstants.MIX_LOCKABLE;
 
 public class InitializationProcessorImpl implements InitializationProcessor {
 

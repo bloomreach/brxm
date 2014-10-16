@@ -263,7 +263,7 @@ engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -tex
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/java/org/onehippo/repository/util/AnnotationUtilsTest.java -text
-engine/src/test/resources/InvalidJobDetail.ser -text
+engine/src/test/resources/bootstrap/path[!!-~]with[!!-~]spaces/SubZipFileTest.zip -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain
 engine/src/test/resources/export/expected.xml -text
@@ -271,7 +271,6 @@ engine/src/test/resources/group-everybody.xml svneol=native#text/plain
 engine/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 engine/src/test/resources/import/faulty-namespace.xml -text
 engine/src/test/resources/org/hippoecm/repository/RepositoryMapTest.xml -text
-engine/src/test/resources/org/hippoecm/repository/impl/path[!!-~]with[!!-~]spaces/SubZipFileTest.zip -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-result.xml svneol=native#text/plain

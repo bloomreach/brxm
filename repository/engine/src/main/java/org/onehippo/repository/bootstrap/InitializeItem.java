@@ -27,10 +27,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
@@ -47,7 +43,6 @@ import org.onehippo.repository.bootstrap.instructions.NamespaceInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesResourceInstruction;
 import org.onehippo.repository.bootstrap.instructions.WebResourceBundleInstruction;
-import org.onehippo.repository.bootstrap.util.BootstrapConstants;
 import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 
 import static org.apache.commons.lang.StringUtils.trim;
@@ -305,7 +300,7 @@ public class InitializeItem {
             }
             final List<PostStartupTask> postStartupTasks = new ArrayList<>();
             for (InitializeInstruction instruction : getInstructions()) {
-                log.info("Executing " + instruction);
+                log.info("Executing {}", instruction);
                 final PostStartupTask postStartupTask = instruction.execute();
                 if (postStartupTask != null) {
                     postStartupTasks.add(postStartupTask);
@@ -327,7 +322,7 @@ public class InitializeItem {
     }
 
     void initialize() throws RepositoryException {
-        log.debug("Initializing item: " + tempItemNode.getName());
+        log.debug("Initializing item: {}", tempItemNode.getName());
 
         final Node initializationFolder = tempItemNode.getSession().getNode(INITIALIZATION_FOLDER);
         itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
@@ -390,10 +385,6 @@ public class InitializeItem {
             if (!isNewer) {
                 return false;
             }
-        }
-        if (BootstrapConstants.ITEM_STATUS_DISABLED.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null))) {
-            log.debug("Item {} is disabled", getName());
-            return false;
         }
         return true;
     }

@@ -29,15 +29,13 @@ import org.onehippo.cms7.services.webresources.WebResourceException;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.onehippo.repository.bootstrap.InitializeInstruction;
 import org.onehippo.repository.bootstrap.InitializeItem;
-import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.onehippo.repository.bootstrap.PostStartupTask;
+import org.onehippo.repository.bootstrap.util.PartialZipFile;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
-import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getNodeIndex;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.removeNode;
-import static org.onehippo.repository.bootstrap.util.BootstrapUtils.reorderNode;
 
 public class WebResourceBundleInstruction extends InitializeInstruction {
 

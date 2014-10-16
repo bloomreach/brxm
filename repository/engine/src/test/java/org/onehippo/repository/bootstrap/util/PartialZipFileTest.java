@@ -24,7 +24,6 @@ import java.util.zip.ZipEntry;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.onehippo.repository.testutils.ZipTestUtil;
 
 import static junit.framework.Assert.fail;
@@ -40,7 +39,7 @@ public class PartialZipFileTest {
 
     @Before
     public void setUp() throws Exception {
-        testZipFile = FileUtils.toFile(getClass().getResource("/org/hippoecm/repository/impl/path with spaces/SubZipFileTest.zip"));
+        testZipFile = FileUtils.toFile(getClass().getResource("/bootstrap/path with spaces/SubZipFileTest.zip"));
     }
 
     @Test

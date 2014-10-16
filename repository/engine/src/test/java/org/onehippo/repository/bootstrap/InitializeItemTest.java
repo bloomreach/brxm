@@ -18,12 +18,16 @@ package org.onehippo.repository.bootstrap;
 import java.net.URL;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_ERRORMESSAGE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
@@ -34,7 +38,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.fail;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_FAILED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_PENDING;
 import static org.onehippo.repository.util.JcrConstants.NT_UNSTRUCTURED;
 
@@ -50,7 +55,6 @@ public class InitializeItemTest {
         initializeFolder = root.addNode(CONFIGURATION_PATH, NT_UNSTRUCTURED).addNode(INITIALIZE_PATH, NT_INITIALIZEFOLDER);
         tempItemNode = root.addNode("initItem", NT_INITIALIZEITEM);
         final URL extensionURL = getClass().getResource("/bootstrap/hippoecm-extension.xml");
-        assumeTrue(extensionURL != null);
         extension = new Extension(root.getSession(), extensionURL);
 
     }
@@ -96,6 +100,22 @@ public class InitializeItemTest {
         itemNode.setProperty(HIPPO_VERSION, "2");
         final InitializeItem initializeItem = new InitializeItem(itemNode, tempItemNode, extension);
         assertFalse(initializeItem.shouldReload());
+    }
+
+    @Test
+    public void testProcessingItemFailedSetsStatus() throws Exception {
+        Node itemNode = initializeFolder.addNode("initItem", NT_INITIALIZEITEM);
+        itemNode.setProperty(HIPPO_CONTENTROOT, "/");
+        itemNode.setProperty(HIPPO_CONTENTRESOURCE, "missing.xml");
+        final InitializeItem initializeItem = new InitializeItem(itemNode);
+        try {
+            initializeItem.process();
+            fail("Processing item with missing content resource should throw exception");
+        } catch (RepositoryException expected) {
+        }
+        assertTrue(itemNode.hasProperty(HIPPO_STATUS));
+        assertEquals(ITEM_STATUS_FAILED, itemNode.getProperty(HIPPO_STATUS).getString());
+        assertTrue(itemNode.hasProperty(HIPPO_ERRORMESSAGE));
     }
 
 }
