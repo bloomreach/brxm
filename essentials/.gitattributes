@@ -27,6 +27,7 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsL
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsListPickerComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsMenuComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsNewsComponent.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsPageNotFoundComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsSearchComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsVideoComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
@@ -1418,6 +1419,7 @@ plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphic
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 plugins/skeleton-package/src/main/resources/instructions/content/global-labels.xml -text
 plugins/skeleton-package/src/main/resources/instructions/content/homepage-labels.xml -text
+plugins/skeleton-package/src/main/resources/instructions/content/pagenotfound-labels.xml -text
 plugins/skeleton-package/src/main/resources/instructions/content/pagination-labels.xml -text
 plugins/skeleton-package/src/main/resources/instructions/content/untranslated-folder.xml -text
 plugins/skeleton-package/src/main/resources/instructions/css/cms-request.css -text
@@ -1426,6 +1428,7 @@ plugins/skeleton-package/src/main/resources/instructions/freemarker/base-layout.
 plugins/skeleton-package/src/main/resources/instructions/freemarker/base-top-menu.ftl -text
 plugins/skeleton-package/src/main/resources/instructions/freemarker/homepage-main.ftl -text
 plugins/skeleton-package/src/main/resources/instructions/freemarker/imports.ftl -text
+plugins/skeleton-package/src/main/resources/instructions/freemarker/pagenotfound-main.ftl -text
 plugins/skeleton-package/src/main/resources/instructions/freemarker/pagination.ftl -text
 plugins/skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 plugins/skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text
@@ -1435,11 +1438,15 @@ plugins/skeleton-package/src/main/resources/instructions/jsp/base-layout.jsp -te
 plugins/skeleton-package/src/main/resources/instructions/jsp/base-top-menu.jsp -text
 plugins/skeleton-package/src/main/resources/instructions/jsp/homepage-main.jsp -text
 plugins/skeleton-package/src/main/resources/instructions/jsp/imports.jsp -text
+plugins/skeleton-package/src/main/resources/instructions/jsp/pagenotfound-main.jsp -text
 plugins/skeleton-package/src/main/resources/instructions/jsp/pagination.jsp -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/catalog/essentials-catalog.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/menu/main.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/pages/base.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/pages/homepage.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/hst/pages/pagenotfound.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/hst/sitemap/any.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/hst/sitemap/pagenotfound.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/sitemap/root.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-footer-freemarker.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-footer-jsp.xml -text
@@ -1449,8 +1456,11 @@ plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-top-menu-jsp.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/homepage-main-freemarker.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/homepage-main-jsp.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/pagenotfound-main-freemarker.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/pagenotfound-main-jsp.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/base.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/homepage.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/pagenotfound.xml -text
 plugins/skeleton-package/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsInstructionPackageTest.java -text
 plugins/skeleton-package/src/test/resources/log4j.xml -text
 plugins/tagging/pom.xml -text

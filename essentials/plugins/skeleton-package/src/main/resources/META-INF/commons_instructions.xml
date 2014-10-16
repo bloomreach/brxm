@@ -29,6 +29,7 @@
     <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/global-labels.xml" target="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/homepage-labels.xml" target="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/pagenotfound-labels.xml" target="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/pagination-labels.xml" target="/content/documents/administration/labels"/>
   </instructionSet>
 
@@ -41,12 +42,14 @@
     <file action="copy" source="instructions/jsp/base-top-menu.jsp" target="{{jspRoot}}/{{namespace}}/base-top-menu.jsp"/>
     <file action="copy" source="instructions/jsp/base-footer.jsp" target="{{jspRoot}}/{{namespace}}/base-footer.jsp"/>
     <file action="copy" source="instructions/jsp/homepage-main.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main.jsp"/>
+    <file action="copy" source="instructions/jsp/pagenotfound-main.jsp" target="{{jspRoot}}/{{namespace}}/pagenotfound-main.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-footer-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/homepage-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="freemarker, repository">
@@ -58,12 +61,14 @@
     <freemarker action="copy" source="instructions/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/base-footer.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/homepage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/pagenotfound-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/pagenotfound-main.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-footer-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/homepage-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
   <!--
@@ -77,12 +82,16 @@
     <file action="copy" overwrite="true" source="instructions/jsp/ErrorPage404.jsp" target="{{jspRoot}}/errorpages/ErrorPage404.jsp"/>
     <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- common -->
     <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/any.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
 
     <xml action="copy" source="instructions/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
     <xml action="copy" source="instructions/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- default-->
     <xml action="copy" source="instructions/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
 
