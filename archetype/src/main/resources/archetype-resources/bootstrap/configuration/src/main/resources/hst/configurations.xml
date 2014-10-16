@@ -69,9 +69,4 @@
       <sv:value>../common</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-subsite-common">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:configuration</sv:value>
-    </sv:property>
-  </sv:node>
 </sv:node>
