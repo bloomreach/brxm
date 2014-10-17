@@ -359,7 +359,6 @@ public class RepositoryServlet extends HttpServlet {
             }
 
             templateParams.put("rootNode", rootNode);
-            templateParams.put("currentNodePath", currentNodePath);
             templateParams.put("currentNode", currentNode);
 
             if (currentNode.isSame(rootNode)) {
@@ -382,10 +381,10 @@ public class RepositoryServlet extends HttpServlet {
                 boolean isXPathQuery = false;
                 String queryString = "";
 
-                if ("textquery".equals(searchType)) {
-                    limit = req.getParameter("textquery-limit");
+                if ("text".equals(searchType)) {
+                    limit = req.getParameter("text-limit");
                     isXPathQuery = true;
-                    queryString = req.getParameter("textquery");
+                    queryString = req.getParameter("text");
                     templateParams.put("originalQuery", queryString);
                     queryString = "//*[jcr:contains(* , '" + queryString + "') ]";
                     queryString = addOrderbyClause(queryString, true);

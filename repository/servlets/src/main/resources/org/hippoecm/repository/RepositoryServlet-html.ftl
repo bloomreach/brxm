@@ -23,122 +23,72 @@ ${response.setContentType("text/html;charset=UTF-8")}
     <title>Hippo Repository Browser</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="${request.contextPath}/repository-servlet.css" />
-    <script type="text/javascript" src="${request.contextPath}/repository-servlet.js"></script>
   </head>
 
-  <body onload="addKeydownListeners()">
-    <div class="hippo-header"></div>
-    <table id="infotable" width="100%">
-      <tr>
-        <td class="header">
-          <h3>Search by ...</h3>
-          <form name="queryForm" method="get" action="" accept-charset="UTF-8">
-            <table style="params" summary="searching">
+  <body>
+    <div class="hippo-header">
+      <#if jcrSession??>
+        <div class="username-box"><noscript>Logged in as:</noscript>${jcrSession.userID}</div>
+      </#if>
+      <div class="logout">
+        <a href="${request.contextPath}/repository/?logout">Log out</a>
+      </div>
+    </div>
 
-              <#--UUID-->
-              <tr>
-                <th>UUID: </th>
-                <td>
-                  <input name="uuid" type="text" size="40" value="${request.getParameter('uuid')!}"/>
-                  <input type="button" value="Fetch" onclick="setActiveQueryAndSubmit('uuid')"/>
-                  <span class="vertical-spacer"/>
-                </td>
-              </tr>
+    <div>
+      <h3>Search by ...</h3>
+      <form name="queryForm" method="get" action="" accept-charset="UTF-8">
 
-              <#--FREE TEXT-->
-              <tr>
-                <th>Text: </th>
-                <td>
-                  <input name="textquery" type="text" size="40" value="${request.getParameter('textquery')!}"/>
-                </td>
-              </tr>
-              <tr>
-                <td>Limit: </td>
-                <td>
-                  <input name="textquery-limit" type="text" size="5" value="${request.getParameter('textquery-limit')!1000?c}"/>
-                  <input type="button" value="Search" onclick="setActiveQueryAndSubmit('textquery')"/>
-                  <span class="vertical-spacer"/>
-                </td>
-              </tr>
+        <#assign searchType = request.getParameter('search-type')!'xpath'/>
+        <div class="search-type-selector">
 
-              <#--XPATH-->
-              <tr>
-                <th>XPath: </th>
-                <td>
-                  <input name="xpath" type="text" size="75" value="${request.getParameter('xpath')!}"/>
-                </td>
-              </tr>
-              <tr>
-                <td>Limit: </td>
-                <td>
-                  <input name="xpath-limit" type="text" size="5" value="${request.getParameter('xpath-limit')!1000?c}"/>
-                  <input type="button" value="Search" onclick="setActiveQueryAndSubmit('xpath')"/>
-                  <span class="vertical-spacer"/>
-                </td>
-              </tr>
+          <!-- Lynx compatibility (no css, no javascript) -->
+          <noscript><div>Please select operation:</div></noscript>
 
-              <#--SQL2-->
-              <tr>
-                <th>SQL: </th>
-                <td>
-                  <input name="sql" type="text" size="75" value="${request.getParameter('sql')!}"/>
-                </td>
-              </tr>
-              <tr>
-                <td>Limit: </td>
-                <td>
-                  <input name="sql-limit" type="text" size="5" value="${request.getParameter('sql-limit')!1000?c}"/>
-                  <input type="button" value="Search" onclick="setActiveQueryAndSubmit('sql')"/>
-                  <span class="vertical-spacer"/>
-                </td>
-              </tr>
+          <input class="typeInput" id="uuid-select" type="radio" value="uuid" name="search-type" <#if searchType == 'uuid'>checked="checked"</#if>>
+          <label class="typeLabel" for="uuid-select">UUID</label>
+          <input class="typeInput" id="text-select" type="radio" value="text" name="search-type" <#if searchType == 'text'>checked="checked"</#if>>
+          <label class="typeLabel" for="text-select">Text</label>
+          <input class="typeInput" id="xpath-select" type="radio" value="xpath" name="search-type" <#if searchType == 'xpath'>checked="checked"</#if>>
+          <label class="typeLabel" for="xpath-select">XPath</label>
+          <input class="typeInput" id="sql-select" type="radio" value="sql" name="search-type" <#if searchType == 'sql'>checked="checked"</#if>>
+          <label class="typeLabel" for="sql-select">SQL</label>
+          <hr>
 
-              <input name="search-type" type="hidden" value=""/>
+          <div class="search-params">
+            <#--UUID-->
+            <div class="uuid-tab">
+              <noscript>UUID:&nbsp;</noscript>
+              <input name="uuid" type="text" size="60" value="${request.getParameter('uuid')!}" placeholder="UUID"/>
+            </div>
 
-            </table>
-          </form>
-        </td>
+            <#--FREE TEXT-->
+            <div class="text-tab">
+              <noscript><div>&nbsp;</div>Text:&nbsp;</noscript>
+              <input name="text" type="text" size="60" value="${request.getParameter('text')!}" placeholder="Text search"/><br/>
+              Limit<noscript> (text search)</noscript>: <input name="text-limit" type="text" size="5" value="${request.getParameter('text-limit')!1000?c}"/>
+            </div>
 
-        <td class="header">
-          <h3>Request Information</h3>
-          <table class="params" summary="request parameters">
-            <tr>
-              <th>Name</th>
-              <th>Value</th>
-            </tr>
-            <tr>
-              <td>Servlet Path : </td>
-              <td><code>${request.servletPath!}</code></td>
-            </tr>
-            <tr>
-              <td>Request URI : </td>
-              <td><code>${request.requestURI!}</code></td>
-            </tr>
-            <tr>
-              <td>Relative Path : </td>
-              <td><code>${currentNodePath!}</code></td>
-            </tr>
-          </table>
-        </td>
-        <td class="header">
-          <h3>Login Information</h3>
-          <table class="params" summary="login parameters">
-            <tr>
-              <th>Logged in as : </th>
-              <td>
-                  <#if jcrSession??>
-                    <code>${jcrSession.userID}</code>
-                  </#if>
-              </td>
-            </tr>
-            <tr>
-              <th><br/><a class="logout" href="${request.contextPath}/repository/?logout">Logout</a></th>
-              <td></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+            <#--XPATH-->
+            <div class="xpath-tab">
+              <noscript><div>&nbsp;</div>XPath:</noscript>
+              <input name="xpath" type="text" size="60" value="${request.getParameter('xpath')!}" placeholder="XPath query"/><br/>
+              Limit<noscript> (XPath query)</noscript>: <input name="xpath-limit" type="text" size="5" value="${request.getParameter('xpath-limit')!1000?c}"/>
+            </div>
+
+            <#--SQL2-->
+            <div class="sql-tab">
+              <noscript><div>&nbsp;</div>SQL:&nbsp;&nbsp;</noscript>
+              <input name="sql" type="text" size="60" value="${request.getParameter('sql')!}" placeholder="SQL query"/><br/>
+              Limit<noscript> (SQL query)</noscript>: <input name="sql-limit" type="text" size="5" value="${request.getParameter('sql-limit')!1000?c}"/>
+            </div>
+          </div>
+
+          <noscript><div>&nbsp;</div></noscript>
+          <input type="submit" value="Search"/>
+        </div>
+      </form>
+    </div>
 
     <#if exception??>
       <div id="error">
@@ -150,32 +100,30 @@ ${response.setContentType("text/html;charset=UTF-8")}
 
     <#if currentNode??>
         <h3>Referenced node</h3>
-        Accessing node : &nbsp;&nbsp;
-
+        Accessing node:&nbsp;
         <code>
           <#assign baseRelPath = "./">
-          <#if currentNode.isSame(rootNode)>
-            /<a href="${baseRelPath}">root</a>/
+          <#if currentNode.isSame(rootNode)>/<a href="${baseRelPath}">root</a>/
           <#else>
             <#assign distance = ancestorNodes?size>
             <#assign baseRelPath = "">
             <#list 0..distance as d>
               <#assign baseRelPath = "../${baseRelPath}">
             </#list>
-            /<a href="${baseRelPath}">root</a>/
-
+            /<a href="${baseRelPath}">root</a>/<#t>
             <#assign distance = ancestorNodes?size>
             <#list ancestorNodes as ancestor>
               <#assign ancestorLink = "">
               <#list 1..distance as d>
                 <#assign ancestorLink = "../${ancestorLink}">
               </#list>
-              <a href="${ancestorLink}">${ancestor.name!html}</a>/
+              <a href="${ancestorLink}">${ancestor.name!html}</a>/<#t>
               <#assign distance = distance - 1>
             </#list>
-            <a href="./">${currentNode.name!html}</a>/
+            <a href="./">${currentNode.name!html}</a>/<#t>
           </#if>
         </code>
+
 
         <ul>
           <#list currentNode.nodes as child>
@@ -223,7 +171,16 @@ ${response.setContentType("text/html;charset=UTF-8")}
       <h3>Query executed</h3>
 
       <blockquote>
+        <#if searchType == 'text'>
+          Text query:&nbsp;
+        <#elseif searchType == 'xpath'>
+          XPath query:&nbsp;
+        <#elseif searchType == 'sql'>
+          SQL2 query:&nbsp;
+        </#if>
+
         ${originalQuery?html}
+
       </blockquote>
 
       <#assign queryResultNodes = queryResult.nodes>

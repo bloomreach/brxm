@@ -339,6 +339,7 @@ scripts/src/main/resources/hippoecm-extension.xml -text
 scripts/src/main/resources/remove-translations-nodes.xml -text
 scripts/src/main/resources/versions-cleaner.xml -text
 servlets/pom.xml svneol=native#text/plain
+servlets/src/main/resources/META-INF/resources/hippo-icon.png -text svneol=unset#image/png
 servlets/src/main/resources/org/hippoecm/repository/LoggingServlet-ftl.properties -text
 servlets/src/main/resources/org/hippoecm/repository/LoggingServlet-html.ftl -text
 servlets/src/main/resources/org/hippoecm/repository/RepositoryServlet-ftl.properties -text
