@@ -28,7 +28,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
   <body>
     <div class="hippo-header">
       <#if jcrSession??>
-        <div class="username-box"><noscript>Logged in as:</noscript>${jcrSession.userID}</div>
+        <div class="username-box"><noscript>Logged in as: </noscript>${jcrSession.userID}</div>
       </#if>
       <div class="logout">
         <a href="${request.contextPath}/repository/?logout">Log out</a>
