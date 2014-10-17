@@ -245,16 +245,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         };
 
-        // dynamic update of related components when name is updated
-        nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                target.add(ddChoice);
-                target.add(checkBox);
-            }
-        });
         nameField.setRequired(true);
         add(nameField);
 
@@ -345,6 +335,19 @@ public class PropertyDialog extends AbstractDialog<Node> {
                     values.clear();
                     values.add(first);
                 }
+            }
+        });
+
+        // dynamic update of related components when name is updated
+        nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.add(ddChoice);
+                target.add(checkBox);
+                target.add(valuesContainer);
+                focusOnLatestValue = true;
             }
         });
 
