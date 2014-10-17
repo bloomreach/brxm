@@ -38,7 +38,6 @@
         if (message.command === "reloadPage") {
             console.debug("Hippo auto-reload is reloading page...");
             isReloadingPage = true;
-            websocket.close();
             reloadPage();
         } else {
             console.debug("Hippo auto-reload received unknown message:", message);
