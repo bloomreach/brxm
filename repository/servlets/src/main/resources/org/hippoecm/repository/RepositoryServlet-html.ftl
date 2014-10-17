@@ -251,7 +251,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
 
         <h3>Get node by UUID</h3>
         <blockquote>
-          UUID = ${request.getParameter("uuid")!}
+          UUID: ${request.getParameter("uuid")!}
         </blockquote>
         <ol>
           <li>
