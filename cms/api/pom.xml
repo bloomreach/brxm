@@ -204,6 +204,10 @@
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.ico</include>
+          <include>**/*.eot</include>
+          <include>**/*.svg</include>
+          <include>**/*.ttf</include>
+          <include>**/*.woff</include>
         </includes>
       </resource>
     </resources>
@@ -272,6 +276,72 @@
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.lesscss</groupId>
+        <artifactId>lesscss-maven-plugin</artifactId>
+        <version>1.7.0.1.1</version>
+        <executions>
+          <execution>
+            <id>Hippo CMS Theme</id>
+            <configuration>
+              <sourceDirectory>${project.basedir}/src/main/styling/src/less</sourceDirectory>
+              <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/css</outputDirectory>
+              <compress>false</compress>
+              <includes>
+                <include>main.less</include>
+              </includes>
+              <outputFileFormat>hippo-cms-theme.css</outputFileFormat>
+            </configuration>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.samaxes.maven</groupId>
+        <artifactId>minify-maven-plugin</artifactId>
+        <version>1.7.4</version>
+        <executions>
+          <execution>
+            <id>default-minify</id>
+            <configuration>
+              <webappSourceDir>${basedir}/src/main/resources/skin/hippo-cms</webappSourceDir>
+              <webappTargetDir>${project.build.outputDirectory}/skin/hippo-cms</webappTargetDir>
+              <skipMerge>true</skipMerge>
+              <cssSourceFiles>
+                <cssSourceFile>hippo-cms-theme.css</cssSourceFile>
+              </cssSourceFiles>
+              <cssFinalFile>hippo-cms-theme.min.css</cssFinalFile>
+            </configuration>
+            <goals>
+              <goal>minify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Copy fonts -->
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/fonts</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/styling/src/fonts</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
