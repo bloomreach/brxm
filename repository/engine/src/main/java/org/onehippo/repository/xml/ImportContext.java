@@ -16,11 +16,15 @@
 package org.onehippo.repository.xml;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 
 public class ImportContext {
 
@@ -29,20 +33,20 @@ public class ImportContext {
     private final int uuidBehaviour;
     private final int referenceBehaviour;
     private final ContentResourceLoader contentResourceLoader;
-    private final String startPath;
     private final Collection<String> contextPaths = new ArrayList<>();
+    private final ResultExporter resultExporter;
     private Node baseNode;
 
     public ImportContext(final String parentAbsPath, final InputStream inputStream,
                          final int uuidBehaviour, final int referenceBehaviour,
                          final ContentResourceLoader contentResourceLoader,
-                         final String startPath) {
+                         final InternalHippoSession internalHippoSession) throws RepositoryException {
         this.parentAbsPath = parentAbsPath;
         this.inputStream = inputStream;
         this.uuidBehaviour = uuidBehaviour;
         this.referenceBehaviour = referenceBehaviour;
         this.contentResourceLoader = contentResourceLoader;
-        this.startPath = startPath;
+        this.resultExporter = new ResultExporter(internalHippoSession);
     }
 
     public String getParentAbsPath() {
@@ -65,10 +69,6 @@ public class ImportContext {
         return contentResourceLoader;
     }
 
-    public String getStartPath() {
-        return startPath;
-    }
-
     public ImportResultImpl getImportResult() {
         return new ImportResultImpl();
     }
@@ -81,6 +81,10 @@ public class ImportContext {
         contextPaths.add(contextPath);
     }
 
+    ResultExporter getResultExporter() {
+        return resultExporter;
+    }
+
     private class ImportResultImpl implements ImportResult {
 
         @Override
@@ -91,6 +95,11 @@ public class ImportContext {
         @Override
         public Node getBaseNode() {
             return baseNode;
+        }
+
+        @Override
+        public void exportResult(final OutputStream out) throws RepositoryException {
+            resultExporter.exportResult(out);
         }
     }
 }

@@ -563,6 +563,11 @@ final public class UpdaterSession implements HippoSession {
     }
 
     @Override
+    public void revertImport(final InputStream in) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
         throw new UpdaterException("illegal method");
     }

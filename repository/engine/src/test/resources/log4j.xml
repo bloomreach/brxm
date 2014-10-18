@@ -43,18 +43,10 @@
   <category name="org.apache.jackrabbit">
     <level value="warn"/>
   </category>
-<!--
-  <category name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
-    <level value="error"/>
-  </category>
-  <category name="org.apache.jackrabbit.core.state.ItemStateMap">
-    <level value="error"/>
-  </category>
-  <category name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
-    <level value="error"/>
-  </category>
--->
   <category name="org.hippoecm.repository">
+    <level value="warn"/>
+  </category>
+  <category name="org.onehippo.repository.bootstrap">
     <level value="warn"/>
   </category>
 

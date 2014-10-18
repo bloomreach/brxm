@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ESV_URI;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.FILE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.LOCATION;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
@@ -81,11 +81,13 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
     private final ContentResourceLoader contentResourceLoader;
     private final ValueFactory valueFactory;
     private final Importer importer;
+    private final ImportContext importContext;
     private InternalHippoSession resolver;
 
     public EnhancedSystemViewImportHandler(NodeImpl importTargetNode, ImportContext importContext, InternalHippoSession session) throws RepositoryException {
         this.importer = new EnhancedSystemViewImporter(importTargetNode, importContext, session);
         this.contentResourceLoader = importContext.getContentResourceLoader();
+        this.importContext = importContext;
         this.valueFactory = session.getValueFactory();
         this.resolver = session;
     }
@@ -195,8 +197,8 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
 
             // push new ImportState instance onto the stack
             ImportState state = new ImportState();
-            state.mergeBehavior = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
-            state.location = atts.getValue(ENHANCED_IMPORT_URI, LOCATION);
+            state.mergeBehavior = atts.getValue(ESV_URI, MERGE);
+            state.location = atts.getValue(ESV_URI, LOCATION);
             try {
                 state.nodeName = resolver.getQName(svName);
                 state.index = index;
@@ -237,8 +239,8 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
                 currentPropMultiple = Boolean.valueOf(multiple);
             }
             
-            currentMergeBehavior = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
-            currentMergeLocation = atts.getValue(ENHANCED_IMPORT_URI, LOCATION);
+            currentMergeBehavior = atts.getValue(ESV_URI, MERGE);
+            currentMergeLocation = atts.getValue(ESV_URI, LOCATION);
             try {
                 currentPropType = PropertyType.valueFromName(type);
             } catch (IllegalArgumentException e) {
@@ -246,7 +248,7 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
             }
         } else if (name.equals(NameConstants.SV_VALUE)) {
             // sv:value element
-            final String fileName = atts.getValue(ENHANCED_IMPORT_URI, FILE);
+            final String fileName = atts.getValue(ESV_URI, FILE);
             if (fileName != null) {
                 try {
                     currentBinaryPropValueURL = contentResourceLoader != null ? contentResourceLoader.getResource(fileName) : null;
@@ -353,7 +355,7 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
             } else {
                 EnhancedPropInfo prop = new EnhancedPropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
                         .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation,
-                        currentBinaryPropValueURLs.toArray(new URL[currentBinaryPropValueURLs.size()]), valueFactory);
+                        currentBinaryPropValueURLs.toArray(new URL[currentBinaryPropValueURLs.size()]), valueFactory, importContext);
                 state.props.add(prop);
             }
             // reset temp fields

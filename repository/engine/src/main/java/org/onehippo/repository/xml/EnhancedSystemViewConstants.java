@@ -17,8 +17,12 @@ package org.onehippo.repository.xml;
 
 public class EnhancedSystemViewConstants {
 
-    public static final String ENHANCED_IMPORT_URI = "http://www.onehippo.org/jcr/xmlimport";
-    public static final String ENHANCED_IMPORT_PREFIX = "esv";
+    private EnhancedSystemViewConstants() {}
+
+    public static final String ESV_URI = "http://www.onehippo.org/jcr/xmlimport";
+    public static final String ESV_PREFIX = "esv";
+    public static final String SV_URI = "http://www.jcp.org/jcr/sv/1.0";
+    public static final String SV_PREFIX = "sv";
 
     public static final String MERGE = "merge";
     public static final String LOCATION = "location";

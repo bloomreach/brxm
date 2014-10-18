@@ -44,7 +44,7 @@ import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NODE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.COMBINE;
-import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ENHANCED_IMPORT_URI;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ESV_URI;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.OVERLAY;
 
@@ -119,7 +119,7 @@ public class ContentFileInfo {
                     return;
                 }
                 final String svName = atts.getValue(SV_NAME.getNamespaceURI(), SV_NAME.getLocalName());
-                final String esvMerge = atts.getValue(ENHANCED_IMPORT_URI, MERGE);
+                final String esvMerge = atts.getValue(ESV_URI, MERGE);
                 if (contextPaths.isEmpty()) {
                     path.push(svName);
                     contextPaths.add(getCurrenContextPath());

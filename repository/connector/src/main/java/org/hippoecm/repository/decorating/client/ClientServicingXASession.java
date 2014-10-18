@@ -157,6 +157,11 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     }
 
     @Override
+    public void revertImport(final InputStream in) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }

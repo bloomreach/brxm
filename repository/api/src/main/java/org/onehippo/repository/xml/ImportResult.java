@@ -15,9 +15,11 @@
  */
 package org.onehippo.repository.xml;
 
+import java.io.OutputStream;
 import java.util.Collection;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 /**
  * Encapsulates different aspects of the result of importing an enhanced system view xml document.
@@ -37,5 +39,13 @@ public interface ImportResult {
      * or the root of the subtree that was merged with in the case of a delta combine.
      */
     Node getBaseNode();
+
+    /**
+     * Creates an undo descriptor that can be used to revert the changes made
+     * during this import. See {@link org.hippoecm.repository.api.HippoSession#revertImport(java.io.InputStream)}
+     * @param out
+     * @throws RepositoryException
+     */
+    void exportResult(final OutputStream out) throws RepositoryException;
 
 }

@@ -16,6 +16,9 @@
 package org.onehippo.repository.xml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +60,7 @@ public class EnhancedSystemViewImporter implements Importer {
     private final String importPath;
     private final NamePathResolver resolver;
     private final ImportContext importContext;
+    private ResultExporter resultExporter;
     private boolean isRootReferenceable;
     private long startTime;
 
@@ -90,21 +94,28 @@ public class EnhancedSystemViewImporter implements Importer {
     protected NodeImpl mergeOrCreateNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, EnhancedNodeInfo nodeInfo)
             throws RepositoryException {
         NodeImpl node;
-
+        Collection<Name> newMixins = mixinNames != null ? new ArrayList<>(Arrays.asList(mixinNames)) : Collections.<Name>emptyList();
         if (nodeInfo.mergeCombine()) {
             node = nodeInfo.getOrigin();
             importContext.addContextPath(node.safeGetJCRPath());
+            resultExporter.mergeNode(node);
         } else if (nodeInfo.mergeOverlay()) {
             node = nodeInfo.getOrigin();
-            for (Name name : node.getMixinTypeNames()) {
-                node.removeMixin(name);
-            }
-            if (nodeTypeName != null) {
-                node.setPrimaryType(nodeTypeName.toString());
-            }
             importContext.addContextPath(node.safeGetJCRPath());
+            resultExporter.mergeNode(node);
+            final Collection<Name> oldMixins = node.getMixinTypeNames();
+            final boolean mixinsChanged = removeMixins(node, oldMixins, newMixins);
+            if (mixinsChanged) {
+                resultExporter.setMixins(node.getIdentifier(), oldMixins);
+            }
+            final Name oldPrimaryType = node.getPrimaryNodeTypeName();
+            if (nodeTypeName != null && !nodeTypeName.equals(oldPrimaryType)) {
+                node.setPrimaryType(nodeTypeName.toString());
+                resultExporter.setPrimaryType(node.getIdentifier(), oldPrimaryType);
+            }
         } else {
             node = parent.addNode(nodeName, nodeTypeName, id);
+            resultExporter.addNode(node);
             if (importPath.equals(parent.safeGetJCRPath())) {
                 importContext.addContextPath(node.safeGetJCRPath());
             }
@@ -119,6 +130,19 @@ public class EnhancedSystemViewImporter implements Importer {
             importContext.setBaseNode(node);
         }
         return node;
+    }
+
+    private boolean removeMixins(final NodeImpl node, final Collection<Name> oldMixins, final Collection<Name> newMixins) throws RepositoryException {
+        boolean mixinsChanged = false;
+        for (Name oldMixin : oldMixins) {
+            if (newMixins.contains(oldMixin)) {
+                newMixins.remove(oldMixin);
+            } else {
+                mixinsChanged = true;
+                node.removeMixin(oldMixin);
+            }
+        }
+        return mixinsChanged && newMixins.isEmpty();
     }
 
     /**
@@ -242,6 +266,7 @@ public class EnhancedSystemViewImporter implements Importer {
 
     public void start() throws RepositoryException {
         startTime = System.currentTimeMillis();
+        resultExporter = importContext.getResultExporter();
     }
 
     public void startNode(NodeInfo info, List propInfos) throws RepositoryException {

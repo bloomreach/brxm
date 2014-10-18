@@ -49,6 +49,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.APPEND;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.INSERT;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.OVERRIDE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.SKIP;
 
 /**
  * Information about a property being imported. This class is used
@@ -75,10 +79,11 @@ public class EnhancedPropInfo extends PropInfo {
     private final TextValue[] values;
     private final URL[] binaryURLs;
     private final ValueFactory valueFactory;
+    private final ResultExporter resultExporter;
 
 
     public EnhancedPropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior,
-                            String mergeLocation, final URL[] binaryURLs, final ValueFactory valueFactory) {
+                            String mergeLocation, final URL[] binaryURLs, final ValueFactory valueFactory, final ImportContext importContext) {
         super(name, type, values);
         this.multiple = multiple != null ? multiple : Boolean.FALSE;
         this.mergeBehavior = mergeBehavior;
@@ -96,24 +101,25 @@ public class EnhancedPropInfo extends PropInfo {
         this.resolver = resolver;
         this.binaryURLs = binaryURLs;
         this.valueFactory = valueFactory;
+        this.resultExporter = importContext.getResultExporter();
     }
 
     private boolean mergeOverride() {
-        return EnhancedSystemViewConstants.OVERRIDE.equalsIgnoreCase(mergeBehavior);
+        return OVERRIDE.equalsIgnoreCase(mergeBehavior);
     }
 
     private boolean mergeCombine() {
-        return EnhancedSystemViewConstants.APPEND.equalsIgnoreCase(mergeBehavior) || EnhancedSystemViewConstants.INSERT.equalsIgnoreCase(mergeBehavior);
+        return APPEND.equalsIgnoreCase(mergeBehavior) || INSERT.equalsIgnoreCase(mergeBehavior);
     }
 
     private boolean mergeSkip() {
-        return EnhancedSystemViewConstants.SKIP.equalsIgnoreCase(mergeBehavior);
+        return SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
     private int mergeLocation(Value[] values) {
-        if(EnhancedSystemViewConstants.APPEND.equalsIgnoreCase(mergeBehavior)) {
+        if(APPEND.equalsIgnoreCase(mergeBehavior)) {
             return values.length;
-        } else if(EnhancedSystemViewConstants.INSERT.equalsIgnoreCase(mergeBehavior)) {
+        } else if(INSERT.equalsIgnoreCase(mergeBehavior)) {
             if(StringUtils.isEmpty(mergeLocation)) {
                 return 0;
             } else {
@@ -230,26 +236,27 @@ public class EnhancedPropInfo extends PropInfo {
         }
 
         // convert serialized values to Value objects
-        Value[] va = getValues(getTargetType(def), resolver);
-
+        Value[] values = getValues(getTargetType(def), resolver);
+        Value[] oldValues = null;
+        boolean oldMultiple = false;
         if (node.hasProperty(name)) {
+            final Property oldProperty = node.getProperty(name);
+            if (oldProperty.isMultiple()) {
+                oldMultiple = true;
+                oldValues = oldProperty.getValues();
+            } else {
+                oldValues = new Value[1];
+                oldValues[0] = oldProperty.getValue();
+            }
             if (mergeOverride()) {
-                node.getProperty(name).remove();
+                oldProperty.remove();
             } else if (mergeCombine()) {
-                Property oldProperty = node.getProperty(name);
-                Value[] oldValues;
-                if (oldProperty.isMultiple()) {
-                    oldValues = oldProperty.getValues();
-                } else {
-                    oldValues = new Value[1];
-                    oldValues[0] = oldProperty.getValue();
-                }
-                Value[] newValues = new Value[va.length + oldValues.length];
+                Value[] newValues = new Value[values.length + oldValues.length];
                 int pos = mergeLocation(oldValues);
                 System.arraycopy(oldValues, 0, newValues, 0, pos);
-                System.arraycopy(va, 0, newValues, pos, va.length);
-                System.arraycopy(oldValues, pos, newValues, pos+va.length, oldValues.length-pos);
-                va = newValues;
+                System.arraycopy(values, 0, newValues, pos, values.length);
+                System.arraycopy(oldValues, pos, newValues, pos+values.length, oldValues.length-pos);
+                values = newValues;
             } else if (mergeSkip()) {
                 log.debug("skipping existing property {}", name);
                 return;
@@ -261,7 +268,7 @@ public class EnhancedPropInfo extends PropInfo {
         }
 
         if (isPathReference) {
-            Reference ref =  new Reference(name, va, def.isMultiple());
+            Reference ref =  new Reference(name, values, def.isMultiple());
             if (derefNodes.containsKey(node.getNodeId())) {
                 List<Reference> refs = derefNodes.get(node.getNodeId());
                 refs.add(ref);
@@ -290,26 +297,27 @@ public class EnhancedPropInfo extends PropInfo {
             }
 
             // single value mandatory property, temporary set ref to rootNode
-            Value rootRef = node.getSession().getValueFactory().createValue(node.getSession().getRootNode().getUUID(), PropertyType.REFERENCE);
+            Value rootRef = node.getSession().getValueFactory().createValue(node.getSession().getRootNode().getIdentifier(), PropertyType.REFERENCE);
             node.setProperty(name, rootRef);
 
             return;
         }
 
-        if (!multiple && va.length == 1 && !def.isMultiple()) {
+        if (!multiple && values.length == 1 && !def.isMultiple()) {
             try {
                 // set single-value
-                node.setProperty(name, va[0]);
+                node.setProperty(name, values[0]);
             } catch (ValueFormatException | ConstraintViolationException e) {
                 // setting single-value failed, try setting value array
                 // as a last resort (in case there are ambiguous property
                 // definitions)
-                node.setProperty(name, va, type);
+                node.setProperty(name, values, type);
             }
         } else {
             // can only be multi-valued (n == 0 || n > 1)
-            node.setProperty(name, va, type);
+            node.setProperty(name, values, type);
         }
+        resultExporter.setProperty(node.getIdentifier(), name, oldValues, oldMultiple);
     }
 
     private boolean isGeneratedProperty(Name name) throws RepositoryException {
