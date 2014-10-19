@@ -20,13 +20,15 @@ class ResultConstants {
     private ResultConstants() {}
 
     static final String RESULT = "result";
-    static final String ADD = "add";
-    static final String MERGE = "merge";
-    static final String PROP = "prop";
+    static final String NEWNODE = "newnode";
+    static final String MERGENODE = "mergenode";
+    static final String NEWPROP = "newprop";
+    static final String MERGEPROP = "mergeprop";
     static final String VAL = "val";
     static final String MIXIN = "mixin";
     static final String PTYPE = "ptype";
     static final String NAME = "name";
+    static final String TYPE = "type";
     static final String ID = "id";
     static final String NEW = "new";
     static final String MULTI = "multi";

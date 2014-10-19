@@ -239,6 +239,7 @@ public class EnhancedPropInfo extends PropInfo {
         Value[] values = getValues(getTargetType(def), resolver);
         Value[] oldValues = null;
         boolean oldMultiple = false;
+        int oldType = -1;
         if (node.hasProperty(name)) {
             final Property oldProperty = node.getProperty(name);
             if (oldProperty.isMultiple()) {
@@ -248,6 +249,7 @@ public class EnhancedPropInfo extends PropInfo {
                 oldValues = new Value[1];
                 oldValues[0] = oldProperty.getValue();
             }
+            oldType = oldProperty.getType();
             if (mergeOverride()) {
                 oldProperty.remove();
             } else if (mergeCombine()) {
@@ -317,7 +319,7 @@ public class EnhancedPropInfo extends PropInfo {
             // can only be multi-valued (n == 0 || n > 1)
             node.setProperty(name, values, type);
         }
-        resultExporter.setProperty(node.getIdentifier(), name, oldValues, oldMultiple);
+        resultExporter.setProperty(node.getIdentifier(), name, oldValues, oldMultiple, oldType);
     }
 
     private boolean isGeneratedProperty(Name name) throws RepositoryException {

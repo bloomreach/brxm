@@ -50,9 +50,10 @@ public class RevertImportHandler extends DefaultHandler {
     private Property property;
     private List<TextValue> values;
     private List<String> mixins;
-    private BufferedStringValue type;
+    private BufferedStringValue nodeType;
     private BufferedStringValue value;
     private Boolean multiple;
+    private int propertyType;
 
     public RevertImportHandler(final InternalHippoSession session) {
         this.session = session;
@@ -62,20 +63,19 @@ public class RevertImportHandler extends DefaultHandler {
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
             throws SAXException {
         switch (localName) {
-            case ADD:
+            case NEWNODE:
                 removeNode(attributes.getValue(ID));
                 break;
-            case MERGE:
+            case MERGENODE:
                 lookupNode(attributes.getValue(ID));
                 break;
-            case PROP:
-                final String name = attributes.getValue(NAME);
-                if (BooleanUtils.toBoolean(attributes.getValue(NEW))) {
-                    removeProperty(name);
-                } else {
-                    final boolean multiple = BooleanUtils.toBoolean(attributes.getValue(MULTI));
-                    lookupProperty(name, multiple);
-                }
+            case NEWPROP:
+                removeProperty(attributes.getValue(NAME));
+                break;
+            case MERGEPROP:
+                final boolean multi = BooleanUtils.toBoolean(attributes.getValue(MULTI));
+                final int type = Integer.valueOf(attributes.getValue(TYPE));
+                lookupProperty(attributes.getValue(NAME), multi, type);
                 break;
             case VAL:
                 startValueRecording();
@@ -92,10 +92,10 @@ public class RevertImportHandler extends DefaultHandler {
     @Override
     public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         switch (localName) {
-            case MERGE:
+            case MERGENODE:
                 updateNode();
                 break;
-            case PROP:
+            case MERGEPROP:
                 setProperty();
                 break;
             case VAL:
@@ -135,8 +135,8 @@ public class RevertImportHandler extends DefaultHandler {
             if (value != null) {
                 value.append(ch, start, length);
             }
-            if (type != null) {
-                type.append(ch, start, length);
+            if (nodeType != null) {
+                nodeType.append(ch, start, length);
             }
         } catch (IOException e) {
             throw new SAXException("Error while processing property value", e);
@@ -159,15 +159,15 @@ public class RevertImportHandler extends DefaultHandler {
 
     private void startMixinRecording() {
         if (mixins != null) {
-            type = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
+            nodeType = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
         }
     }
 
     private void stopMixinRecording() throws SAXException {
         try {
-            if (type != null) {
-                mixins.add(type.getValue(PropertyType.STRING, session).getString());
-                type = null;
+            if (nodeType != null) {
+                mixins.add(nodeType.getValue(PropertyType.STRING, session).getString());
+                nodeType = null;
             }
         } catch (RepositoryException e) {
             throw new SAXException(e);
@@ -176,14 +176,14 @@ public class RevertImportHandler extends DefaultHandler {
 
     private void startPrimaryTypeRecording() {
         if (node != null) {
-            type = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
+            nodeType = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
         }
     }
 
     private void setPrimaryType() throws SAXException {
         try {
-            if (type != null) {
-                node.setPrimaryType(type.getValue(PropertyType.STRING, session).getString());
+            if (nodeType != null) {
+                node.setPrimaryType(nodeType.getValue(PropertyType.STRING, session).getString());
             }
         } catch (RepositoryException e) {
             throw new SAXException(e);
@@ -193,35 +193,28 @@ public class RevertImportHandler extends DefaultHandler {
     private void setProperty() throws SAXException {
         try {
             if (property != null) {
+                final String propName = property.getName();
+                property.remove();
                 if (multiple) {
-                    Value[] values = new Value[this.values.size()];
+                    final Value[] values = new Value[this.values.size()];
                     for (int i = 0; i < values.length; i++) {
-                        values[i] = this.values.get(i).getValue(property.getType(), session);
+                        values[i] = this.values.get(i).getValue(propertyType, session);
                     }
-                    if (property.isMultiple()) {
-                        property.setValue(values);
-                    } else {
-                        log.debug("Reversing property override that changed multi-valued property" +
-                                " into single-valued property");
-                        String propName = property.getName();
-                        property.remove();
-                        node.setProperty(propName, values);
-                    }
+                    node.setProperty(propName, values);
                 } else {
-                    final Value value;
+                    Value value = null;
                     if (values.isEmpty()) {
-                        value = node.getSession().getValueFactory().createValue(StringUtils.EMPTY);
+                        if (propertyType == PropertyType.STRING) {
+                            value = node.getSession().getValueFactory().createValue(StringUtils.EMPTY);
+                        } else {
+                            log.warn("Cannot set empty value on property of type {}"
+                                    + PropertyType.nameFromValue(propertyType));
+                        }
                     } else {
-                        value = values.get(0).getValue(property.getType(), session);
+                        value = values.get(0).getValue(propertyType, session);
                     }
-                    if (property.isMultiple()) {
-                        log.debug("Reversing property override that changed single-valued property" +
-                                " into multi-valued property");
-                        String propName = property.getName();
-                        property.remove();
+                    if (value != null) {
                         node.setProperty(propName, value);
-                    } else {
-                        property.setValue(value);
                     }
                 }
                 property = null;
@@ -233,13 +226,14 @@ public class RevertImportHandler extends DefaultHandler {
         }
     }
 
-    private void lookupProperty(final String name, final boolean multi) throws SAXException {
+    private void lookupProperty(final String name, final boolean multi, final int type) throws SAXException {
         try {
             if (node != null) {
                 if (node.hasProperty(name)) {
                     property = node.getProperty(name);
                     values = new ArrayList<>();
                     multiple = multi;
+                    this.propertyType = type;
                 } else {
                     log.warn("Cannot undo property {}/{}: not found", node.getPath(), name);
                 }

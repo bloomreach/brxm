@@ -19,4 +19,7 @@
     <sv:value>b</sv:value>
     <sv:value>c</sv:value>
   </sv:property>
+  <sv:property sv:name="p2" sv:type="String" h:merge="override">
+    <sv:value>s</sv:value>
+  </sv:property>
 </sv:node>

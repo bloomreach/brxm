@@ -28,5 +28,8 @@
       <sv:value>c</sv:value>
       <sv:value>d</sv:value>
     </sv:property>
+    <sv:property sv:name="p2" sv:type="String">
+      <sv:value>s</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>

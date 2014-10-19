@@ -22,6 +22,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:ntunstructured</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:emptymixin</sv:value>
+    </sv:property>
     <sv:property sv:name="tijn" sv:type="String">
       <sv:value>daphne</sv:value>
     </sv:property>
