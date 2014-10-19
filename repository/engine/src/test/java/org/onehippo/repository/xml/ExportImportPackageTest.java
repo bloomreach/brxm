@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.junit.Test;
-import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.FileContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;

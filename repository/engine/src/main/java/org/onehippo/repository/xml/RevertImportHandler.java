@@ -39,7 +39,17 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static org.onehippo.repository.xml.ResultConstants.*;
+import static org.onehippo.repository.xml.ResultConstants.ID;
+import static org.onehippo.repository.xml.ResultConstants.MERGENODE;
+import static org.onehippo.repository.xml.ResultConstants.MERGEPROP;
+import static org.onehippo.repository.xml.ResultConstants.MIXIN;
+import static org.onehippo.repository.xml.ResultConstants.MULTI;
+import static org.onehippo.repository.xml.ResultConstants.NAME;
+import static org.onehippo.repository.xml.ResultConstants.NEWNODE;
+import static org.onehippo.repository.xml.ResultConstants.NEWPROP;
+import static org.onehippo.repository.xml.ResultConstants.PTYPE;
+import static org.onehippo.repository.xml.ResultConstants.TYPE;
+import static org.onehippo.repository.xml.ResultConstants.VAL;
 
 public class RevertImportHandler extends DefaultHandler {
 

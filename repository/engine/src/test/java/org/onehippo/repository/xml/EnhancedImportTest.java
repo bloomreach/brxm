@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.xml;
+package org.onehippo.repository.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -109,7 +109,7 @@ public class EnhancedImportTest extends RepositoryTestCase {
 
     private ImportResult importXML(final String path, final String resource) throws Exception {
         final ImportResult importResult = ((HippoSession) session).
-                importEnhancedSystemViewXML(path, getClass().getResourceAsStream(resource),
+                importEnhancedSystemViewXML(path, getClass().getResourceAsStream("/import/" + resource),
                         IMPORT_UUID_CREATE_NEW, IMPORT_REFERENCE_NOT_FOUND_REMOVE, null);
         session.save();
         return importResult;
