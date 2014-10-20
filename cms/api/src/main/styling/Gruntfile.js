@@ -60,7 +60,7 @@ module.exports = function (grunt) {
             },
             livereload: {
                 files: ['<%= cfg.dest %>/**/*.css'],
-                tasks: ['copy:classpath', 'shell:notify']
+                tasks: ['copy:theme', 'copy:classpath', 'shell:notify']
             }
         },
 
@@ -176,7 +176,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: 'src/fonts',
-                        src: ['**/*.{otf,eot,svg,ttf,woff}'],
+                        src: ['**/*.{css,otf,eot,svg,ttf,woff}'],
                         dest: '<%= cfg.dest %>/fonts/'
                     }
                 ]

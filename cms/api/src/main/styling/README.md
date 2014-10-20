@@ -60,13 +60,12 @@ It will copy the build resources in 'skin/theme' into the classpath folder, so W
 ## Future additions
 
 ####1. Manage open-sans dependency with Bower
-This works out of the box but is postponed for now due to Maven integration issues. For now I managed these as follows:
+This works out of the box but is postponed due to Maven integration issues. For now I managed these as follows:
 
     $ cd lib
     $ git clone https://github.com/FontFaceKit/open-sans.git
     $ cd open-sans
     $ cp -r fonts/Bold fonts/BoldItalic fonts/Italic fonts/Light fonts/LightItalic fonts/Regular ../../src/fonts/open-sans
-    $ cp open-sans.less ../../src/less/open-sans
+    $ cp open-sans.css ../../src/fonts
     
-Now edit 'src/fonts/open-sans.less' and remove SemiBold and ExtraBold font-face declarations. Also change the value of 
-@OpenSansPath to "../fonts/open-sans";  
+Now edit 'src/fonts/open-sans.css' and remove SemiBold and ExtraBold font-face declarations. Replace './open-sans' with 'open-sans'
