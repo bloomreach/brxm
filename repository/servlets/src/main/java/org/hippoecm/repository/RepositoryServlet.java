@@ -392,14 +392,14 @@ public class RepositoryServlet extends HttpServlet {
                 } else if ("xpath".equals(searchType)) {
                     limit = req.getParameter("xpath-limit");
                     isXPathQuery = true;
-                    queryString = req.getParameter("xpath");
+                    queryString = req.getParameter("xpath").trim();
                     templateParams.put("originalQuery", queryString);
                     queryString = addOrderbyClause(queryString, true);
 
                 } else if ("sql".equals(searchType)) {
                     limit = req.getParameter("sql-limit");
                     isXPathQuery = false;
-                    queryString = req.getParameter("sql");
+                    queryString = req.getParameter("sql").trim();
                     templateParams.put("originalQuery", queryString);
                     queryString = addOrderbyClause(queryString, false);
                 }
