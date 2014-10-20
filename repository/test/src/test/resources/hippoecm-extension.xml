@@ -18,7 +18,17 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-  <!-- Test node types configuration -->
+  <sv:node sv:name="test">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/jcr/hippo/test/nt/1.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903.0</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="test-repository-test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -58,7 +68,6 @@
       <sv:value>905.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- sample namespace -->
   <sv:node sv:name="sample">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -73,7 +82,6 @@
       <sv:value>1000.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- sample content -->
   <sv:node sv:name="sample-content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
