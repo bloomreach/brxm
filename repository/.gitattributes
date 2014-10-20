@@ -216,7 +216,6 @@ engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterInfo.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterRegistry.java -text
 engine/src/main/java/org/onehippo/repository/util/AnnotationUtils.java -text
-engine/src/main/java/org/onehippo/repository/xml/BufferedStringValue.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/repository/xml/DereferencedSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/repository/xml/EnhancedPropInfo.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/repository/xml/EnhancedSystemViewConstants.java -text
@@ -262,7 +261,6 @@ engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest
 engine/src/test/java/org/onehippo/repository/util/AnnotationUtilsTest.java -text
 engine/src/test/java/org/onehippo/repository/xml/DereferencedExportTest.java -text
 engine/src/test/java/org/onehippo/repository/xml/ExportImportPackageTest.java -text
-engine/src/test/java/org/onehippo/repository/xml/ImportTest.java -text
 engine/src/test/resources/bootstrap/path[!!-~]with[!!-~]spaces/SubZipFileTest.zip -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain

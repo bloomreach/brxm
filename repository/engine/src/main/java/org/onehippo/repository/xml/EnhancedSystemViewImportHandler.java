@@ -28,14 +28,15 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.xml.BufferedTextValue;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.PropInfo;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
@@ -46,43 +47,30 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.JCR_UUID;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_MULTIPLE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NODE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_PROPERTY;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_TYPE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_VALUE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ESV_URI;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.FILE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.LOCATION;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
 
 public class EnhancedSystemViewImportHandler extends DefaultHandler {
-    
-    private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
 
     private static Logger log = LoggerFactory.getLogger(EnhancedSystemViewImportHandler.class);
 
-    /**
-     * stack of ImportState instances; an instance is pushed onto the stack
-     * in the startElement method every time a sv:node element is encountered;
-     * the same instance is popped from the stack in the endElement method
-     * when the corresponding sv:node element is encountered.
-     */
-    private final Stack<ImportState> stack = new Stack<ImportState>();
-
-    /**
-     * fields used temporarily while processing sv:property and sv:value elements
-     */
-    private Name currentPropName;
-    private int currentPropType = PropertyType.UNDEFINED;
-    private Boolean currentPropMultiple = null;
-    private String currentMergeBehavior = null;
-    private String currentMergeLocation = null;
-    // list of AppendableValue objects
-    private ArrayList<BufferedStringValue> currentPropValues = new ArrayList<BufferedStringValue>();
-    private BufferedStringValue currentPropValue;
-    private ArrayList<URL> currentBinaryPropValueURLs = new ArrayList<>();
-    private URL currentBinaryPropValueURL;
+    private final Stack<Node> stack = new Stack<Node>();
     private final ContentResourceLoader contentResourceLoader;
     private final ValueFactory valueFactory;
     private final Importer importer;
     private final ImportContext importContext;
-    private InternalHippoSession resolver;
+    private final InternalHippoSession resolver;
 
     public EnhancedSystemViewImportHandler(NodeImpl importTargetNode, ImportContext importContext, InternalHippoSession session) throws RepositoryException {
         this.importer = new EnhancedSystemViewImporter(importTargetNode, importContext, session);
@@ -91,8 +79,6 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
         this.valueFactory = session.getValueFactory();
         this.resolver = session;
     }
-
-    //---------------------------------------------------------< ErrorHandler >
 
     public void warning(SAXParseException e) throws SAXException {
         log.warn("warning encountered at line: " + e.getLineNumber()
@@ -113,45 +99,52 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
         throw e;
     }
 
-    private void processNode(ImportState state, boolean start, boolean end) throws SAXException {
-        if (!start && !end) {
-            return;
-        }
-        Name[] mixinNames = null;
-        if (state.mixinNames != null) {
-            mixinNames = state.mixinNames.toArray(new Name[state.mixinNames.size()]);
-        }
-        NodeId id = null;
-        if (state.uuid != null) {
-            id = NodeId.valueOf(state.uuid);
-        }
-        EnhancedNodeInfo node = new EnhancedNodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id, state.mergeBehavior, state.location, state.index);
-        // call Importer
-        try {
-            if (start) {
-                importer.startNode(node, state.props);
-                // dispose temporary property values
-                for (org.apache.jackrabbit.core.xml.PropInfo pi : state.props) {
-                    pi.dispose();
-                }
-
-            }
-            if (end) {
-                importer.endNode(node);
-            }
-        } catch (RepositoryException re) {
-            throw new SAXException(re);
-        }
-    }
-
-    //-------------------------------------------------------< ContentHandler >
-
     @Override
     public void startDocument() throws SAXException {
         try {
             importer.start();
         } catch (RepositoryException re) {
             throw new SAXException(re);
+        }
+    }
+
+    @Override
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        final Name name = getName(namespaceURI, localName);
+        if (name.equals(SV_NODE)) {
+            startNode(atts);
+        } else if (name.equals(SV_PROPERTY)) {
+            startProperty(atts);
+        } else if (name.equals(SV_VALUE)) {
+            startValue(atts);
+        } else {
+            throw new SAXException(new InvalidSerializedDataException(
+                    "Unexpected element in system view xml document: " + name));
+        }
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        appendValue(ch, start, length);
+    }
+
+    @Override
+    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+        appendValue(ch, start, length);
+    }
+
+    @Override
+    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+        final Name name = getName(namespaceURI, localName);
+        if (name.equals(SV_NODE)) {
+            endNode();
+        } else if (name.equals(SV_PROPERTY)) {
+            endProperty();
+        } else if (name.equals(SV_VALUE)) {
+            endValue();
+        } else {
+            throw new SAXException(new InvalidSerializedDataException(
+                    "Unexpected element in system view xml document: " + name));
         }
     }
 
@@ -164,247 +157,356 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
         }
     }
 
-    @Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-        Name name = NameFactoryImpl.getInstance().create(namespaceURI, localName);
-        // check element name
-        if (name.equals(NameConstants.SV_NODE)) {
-            // sv:node element
+    private void startNode(final Attributes atts) throws SAXException {
+        if (!stack.isEmpty()) {
+            final Node current = stack.peek();
+            if (!current.started) {
+                current.start();
+            }
+        }
+        stack.push(new Node(atts));
+    }
 
-            // node name (value of sv:name attribute)
-            int index = 1;
-            String svName = getAttribute(atts, NameConstants.SV_NAME);
+    private void startProperty(final Attributes atts) throws SAXException {
+        final Node node = getCurrentNode();
+        if (node != null) {
+            node.startProperty(atts);
+        } else {
+            throw new SAXException(new InvalidSerializedDataException("property definition outside node definition"));
+        }
+    }
+
+    private void startValue(final Attributes atts) throws SAXException {
+        final Property property = getCurrentProperty();
+        if (property != null) {
+            property.startValue(atts);
+        } else {
+            throw new SAXException(new InvalidSerializedDataException("value definition outside property definition"));
+        }
+    }
+
+    private void endNode() throws SAXException {
+        final Node node = getCurrentNode();
+        if (node != null) {
+            if (!node.started) {
+                node.start();
+                node.end();
+            } else {
+                node.end();
+            }
+            stack.pop();
+        }
+    }
+
+    private void endProperty() throws SAXException {
+        final Property property = getCurrentProperty();
+        if (property != null) {
+            property.end();
+        }
+    }
+
+    private void endValue() throws SAXException {
+        final Value value = getCurrentValue();
+        if (value != null) {
+            value.end();
+        }
+    }
+
+    private void appendValue(final char[] ch, final int start, final int length) throws SAXException {
+        final Value value = getCurrentValue();
+        if (value != null) {
+            value.append(ch, start, length);
+        }
+    }
+
+    private Node getCurrentNode() {
+        if (!stack.isEmpty()) {
+            return stack.peek();
+        }
+        return null;
+    }
+
+    private Property getCurrentProperty() throws SAXException {
+        final Node node = getCurrentNode();
+        if (node != null) {
+            return node.currentProperty;
+        }
+        return null;
+    }
+
+    private Value getCurrentValue() throws SAXException {
+        final Property currentProperty = getCurrentProperty();
+        if (currentProperty != null) {
+            return currentProperty.currentValue;
+        }
+        return null;
+    }
+
+    private static Name getName(final String namespaceURI, final String localName) {
+        return NameFactoryImpl.getInstance().create(namespaceURI, localName);
+    }
+
+    private static String getAttribute(Attributes attributes, Name name) {
+        return attributes.getValue(name.getNamespaceURI(), name.getLocalName());
+    }
+
+    private class Node {
+
+        private Name name;
+        private Name type;
+        private Name[] mixins;
+        private NodeId uuid;
+        private int index;
+        private boolean started = false;
+        private String merge;
+        private String location;
+
+        private Property currentProperty;
+        private List<Property> properties = new ArrayList<>();
+
+        private Node(final Attributes atts) throws SAXException {
+            String svName = getAttribute(atts, SV_NAME);
             if (svName == null) {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:name attribute of element sv:node"));
             }
-
+            index = 1;
             int offset = svName.indexOf('[');
             if (offset != -1) {
                 index = Integer.valueOf(svName.substring(offset+1, svName.length()-1));
                 svName = svName.substring(0, offset);
             }
-
-            if (!stack.isEmpty()) {
-                // process current node first
-                ImportState current = stack.peek();
-                // need to start current node
-                if (!current.started) {
-                    processNode(current, true, false);
-                    current.started = true;
-                }
-            }
-
-            // push new ImportState instance onto the stack
-            ImportState state = new ImportState();
-            state.mergeBehavior = atts.getValue(ESV_URI, MERGE);
-            state.location = atts.getValue(ESV_URI, LOCATION);
             try {
-                state.nodeName = resolver.getQName(svName);
-                state.index = index;
+                name = resolver.getQName(svName);
             } catch (NameException | NamespaceException e) {
                 throw new SAXException(new InvalidSerializedDataException("illegal node name: " + svName, e));
             }
-            stack.push(state);
-        } else if (name.equals(NameConstants.SV_PROPERTY)) {
-            // sv:property element
+            merge = atts.getValue(ESV_URI, MERGE);
+            location = atts.getValue(ESV_URI, LOCATION);
+        }
 
-            // reset temp fields
-            currentPropValues.clear();
+        private void start() throws SAXException {
+            try {
+                final List<PropInfo> propInfos = getPropInfos();
+                importer.startNode(createNodeInfo(), propInfos);
+                for (PropInfo pi : propInfos) {
+                    pi.dispose();
+                }
+                started = true;
+            } catch (RepositoryException e) {
+                throw new SAXException(e);
+            }
+        }
 
-            // property name (value of sv:name attribute)
-            String svName = getAttribute(atts, NameConstants.SV_NAME);
-            if (svName == null) {
+        private void end() throws SAXException {
+            try {
+                importer.endNode(createNodeInfo());
+            } catch (RepositoryException e) {
+                throw new SAXException(e);
+            }
+        }
+
+        private EnhancedNodeInfo createNodeInfo() {
+            return new EnhancedNodeInfo(name, type, mixins, uuid, merge, location, index);
+        }
+
+        private void startProperty(Attributes atts) throws SAXException {
+            currentProperty = new Property(this);
+            currentProperty.start(atts);
+            properties.add(currentProperty);
+        }
+
+        private List<PropInfo> getPropInfos() {
+            List<PropInfo> infos = new ArrayList<>();
+            for (Property property : properties) {
+                if (property.info != null) {
+                    infos.add(property.info);
+                }
+            }
+            return infos;
+        }
+    }
+
+    private class Property {
+
+        private final Node node;
+
+        private Name name;
+        private int type;
+        private Boolean multiple;
+        private String merge;
+        private String location;
+
+        private Value currentValue;
+        private List<Value> values = new ArrayList<>();
+
+        private EnhancedPropInfo info;
+
+        private Property(final Node node) {
+            this.node = node;
+        }
+
+        private void start(final Attributes atts) throws SAXException {
+            String svName = getAttribute(atts, SV_NAME);
+            if (StringUtils.isEmpty(svName)) {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:name attribute of element sv:property"));
             }
             try {
-                currentPropName = resolver.getQName(svName);
+                name = resolver.getQName(svName);
             } catch (NameException | NamespaceException e) {
                 throw new SAXException(new InvalidSerializedDataException("illegal property name: " + svName, e));
             }
-
-            // property type (sv:type attribute)
-            String type = getAttribute(atts, NameConstants.SV_TYPE);
-            if (type == null) {
+            String strType = getAttribute(atts, SV_TYPE);
+            if (StringUtils.isEmpty(strType)) {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:type attribute of element sv:property"));
             }
-            
-            // property multiple (sv:multiple attribute)
-            String multiple = getAttribute(atts, SV_MULTIPLE);
-            if (multiple == null || multiple.equals("")) {
-                currentPropMultiple = null;
-            } else {
-                currentPropMultiple = Boolean.valueOf(multiple);
-            }
-            
-            currentMergeBehavior = atts.getValue(ESV_URI, MERGE);
-            currentMergeLocation = atts.getValue(ESV_URI, LOCATION);
             try {
-                currentPropType = PropertyType.valueFromName(type);
+                type = PropertyType.valueFromName(strType);
             } catch (IllegalArgumentException e) {
-                throw new SAXException(new InvalidSerializedDataException("Unknown property type: " + type, e));
+                throw new SAXException(new InvalidSerializedDataException("Unknown property type: " + strType, e));
             }
-        } else if (name.equals(NameConstants.SV_VALUE)) {
-            // sv:value element
+            String strMultiple = getAttribute(atts, SV_MULTIPLE);
+            if (!StringUtils.isEmpty(strMultiple)) {
+                multiple = Boolean.valueOf(strMultiple);
+            }
+            merge = atts.getValue(ESV_URI, MERGE);
+            location = atts.getValue(ESV_URI, LOCATION);
+        }
+
+        private void end() throws SAXException {
+            if (name.equals(JCR_PRIMARYTYPE)) {
+                setPrimaryType();
+            } else if (name.equals(JCR_MIXINTYPES)) {
+                setMixinTypes();
+            } else if (name.equals(JCR_UUID)) {
+                setUuid();
+            } else {
+                createPropInfo();
+            }
+        }
+
+        private void createPropInfo() {
+            info = new EnhancedPropInfo(resolver, name, type, multiple, getTextValues(), merge, location,
+                    getURLValues(), valueFactory, importContext);
+        }
+
+        private void setUuid() throws SAXException {
+            if(!values.isEmpty()) {
+                String strUuid = null;
+                try {
+                    strUuid = values.get(0).text.retrieve();
+                    node.uuid = NodeId.valueOf(strUuid);
+                } catch (IOException e) {
+                    throw new SAXException("error while retrieving value", e);
+                } catch (IllegalArgumentException e) {
+                    throw new SAXException(new InvalidSerializedDataException("illegal uuid: " + strUuid, e));
+                }
+            } else {
+                throw new SAXException(new InvalidSerializedDataException("missing value for property jcr:uuid"));
+            }
+        }
+
+        private void setMixinTypes() throws SAXException {
+            if (!values.isEmpty()) {
+                node.mixins = new Name[values.size()];
+                for (int i = 0; i < values.size(); i++) {
+                    String strName = null;
+                    try {
+                        strName = values.get(i).text.retrieve();
+                        node.mixins[i] = resolver.getQName(strName);
+                    } catch (IOException ioe) {
+                        throw new SAXException("error while retrieving value", ioe);
+                    } catch (NameException | NamespaceException e) {
+                        throw new SAXException(new InvalidSerializedDataException("illegal mixin type name: " + strName, e));
+                    }
+                }
+            }
+        }
+
+        private void setPrimaryType() throws SAXException {
+            if (!values.isEmpty()) {
+                String strName = null;
+                try {
+                    strName = values.get(0).text.retrieve();
+                    node.type = resolver.getQName(strName);
+                } catch (IOException ioe) {
+                    throw new SAXException("error while retrieving value", ioe);
+                } catch (NameException | NamespaceException e) {
+                    throw new SAXException(new InvalidSerializedDataException("illegal node type name: " + strName, e));
+                }
+            } else {
+                throw new SAXException("missing value for property jcr:primaryType");
+            }
+        }
+
+        private void startValue(Attributes atts) throws SAXException {
+            currentValue = new Value(this);
+            currentValue.start(atts);
+            values.add(currentValue);
+        }
+
+        private TextValue[] getTextValues() {
+            final List<TextValue> result = new ArrayList<>();
+            for (Value value : values) {
+                if (value.text != null) {
+                    result.add(value.text);
+                }
+            }
+            return result.toArray(new TextValue[result.size()]);
+        }
+
+        private URL[] getURLValues() {
+            final List<URL> result = new ArrayList<>();
+            for (Value value : values) {
+                if (value.url != null) {
+                    result.add(value.url);
+                }
+            }
+            return result.toArray(new URL[result.size()]);
+        }
+    }
+
+    private class Value {
+        private final Property property;
+        private URL url;
+        private BufferedTextValue text;
+
+        private Value(final Property property) {
+            this.property = property;
+        }
+
+        private void start(final Attributes atts) throws SAXException {
             final String fileName = atts.getValue(ESV_URI, FILE);
             if (fileName != null) {
                 try {
-                    currentBinaryPropValueURL = contentResourceLoader != null ? contentResourceLoader.getResource(fileName) : null;
-                    if (currentBinaryPropValueURL == null) {
+                    url = contentResourceLoader != null ? contentResourceLoader.getResource(fileName) : null;
+                    if (url == null) {
                         throw new SAXException("Missing file resource: " + fileName);
                     }
                 } catch (MalformedURLException e) {
                     throw new SAXException("Malformed file resource path: " + fileName);
                 }
             } else {
-                currentPropValue = new BufferedStringValue(resolver, ValueFactoryImpl.getInstance());
-            }
-        } else {
-            throw new SAXException(new InvalidSerializedDataException(
-                    "Unexpected element in system view xml document: " + name));
-        }
-    }
-
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        if (currentPropValue != null) {
-            // property value (character data of sv:value element)
-            try {
-                currentPropValue.append(ch, start, length);
-            } catch (IOException ioe) {
-                throw new SAXException("error while processing property value", ioe);
+                text = new BufferedTextValue(resolver, ValueFactoryImpl.getInstance());
             }
         }
-    }
 
-    @Override
-    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-        if (currentPropValue != null) {
-            // property value
-
-            // data reported by the ignorableWhitespace event within
-            // sv:value tags is considered part of the value
-            try {
-                currentPropValue.append(ch, start, length);
-            } catch (IOException ioe) {
-                throw new SAXException("error while processing property value", ioe);
-            }
+        private void end() {
+            property.currentValue = null;
         }
-    }
 
-    @Override
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-        Name name = NameFactoryImpl.getInstance().create(namespaceURI, localName);
-        // check element name
-        ImportState state = stack.peek();
-        if (name.equals(NameConstants.SV_NODE)) {
-            // sv:node element
-            if (!state.started) {
-                // need to start & end current node
-                processNode(state, true, true);
-                state.started = true;
-            } else {
-                // need to end current node
-                processNode(state, false, true);
-            }
-            // pop current state from stack
-            stack.pop();
-        } else if (name.equals(NameConstants.SV_PROPERTY)) {
-            // sv:property element
-
-            // check if all system properties (jcr:primaryType, jcr:uuid etc.)
-            // have been collected and create node as necessary
-            if (currentPropName.equals(NameConstants.JCR_PRIMARYTYPE)) {
-                BufferedStringValue val = currentPropValues.get(0);
-                String s = null;
+        private void append(final char[] ch, final int start, final int length) throws SAXException {
+            if (text != null) {
                 try {
-                    s = val.retrieve();
-                    state.nodeTypeName = resolver.getQName(s);
+                    text.append(ch, start, length);
                 } catch (IOException ioe) {
-                    throw new SAXException("error while retrieving value", ioe);
-                } catch (NameException | NamespaceException e) {
-                    throw new SAXException(new InvalidSerializedDataException("illegal node type name: " + s, e));
+                    throw new SAXException("error while processing property value", ioe);
                 }
-            } else if (currentPropName.equals(NameConstants.JCR_MIXINTYPES)) {
-                if (state.mixinNames == null) {
-                    state.mixinNames = new ArrayList<Name>(currentPropValues.size());
-                }
-                for (BufferedStringValue val : currentPropValues) {
-                    String s = null;
-                    try {
-                        s = val.retrieve();
-                        Name mixin = resolver.getQName(s);
-                        state.mixinNames.add(mixin);
-                    } catch (IOException ioe) {
-                        throw new SAXException("error while retrieving value", ioe);
-                    } catch (NameException | NamespaceException e) {
-                        throw new SAXException(new InvalidSerializedDataException("illegal mixin type name: " + s, e));
-                    }
-                }
-            } else if (currentPropName.equals(NameConstants.JCR_UUID)) {
-                if(currentPropValues.size() > 0) {
-                    BufferedStringValue val = currentPropValues.get(0);
-                    try {
-                        state.uuid = val.retrieve();
-                    } catch (IOException ioe) {
-                        throw new SAXException("error while retrieving value", ioe);
-                    }
-                }
-            } else {
-                EnhancedPropInfo prop = new EnhancedPropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
-                        .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation,
-                        currentBinaryPropValueURLs.toArray(new URL[currentBinaryPropValueURLs.size()]), valueFactory, importContext);
-                state.props.add(prop);
             }
-            // reset temp fields
-            currentPropValues.clear();
-            currentBinaryPropValueURLs.clear();
-        } else if (name.equals(NameConstants.SV_VALUE)) {
-            // sv:value element
-            if (currentPropValue != null) {
-                currentPropValues.add(currentPropValue);
-            }
-            if (currentBinaryPropValueURL != null) {
-                currentBinaryPropValueURLs.add(currentBinaryPropValueURL);
-            }
-            // reset temp fields
-            currentPropValue = null;
-            currentBinaryPropValueURL = null;
-        } else {
-            throw new SAXException(new InvalidSerializedDataException("invalid element in system view xml document: "
-                    + localName));
         }
-    }
 
-    //--------------------------------------------------------< inner classes >
-
-    class ImportState {
-
-        Name nodeName;
-        Name nodeTypeName;
-        ArrayList<Name> mixinNames;
-        String uuid;
-        int index;
-        List<PropInfo> props = new ArrayList<>();
-        boolean started = false;
-        String mergeBehavior;
-        String location;
-    }
-
-    //-------------------------------------------------------------< private >
-
-    /**
-    * Returns the value of the named XML attribute.
-    *
-    * @param attributes set of XML attributes
-    * @param name attribute name
-    * @return attribute value,
-    *         or <code>null</code> if the named attribute is not found
-    */
-    private static String getAttribute(Attributes attributes, Name name) {
-        return attributes.getValue(name.getNamespaceURI(), name.getLocalName());
     }
 
 }

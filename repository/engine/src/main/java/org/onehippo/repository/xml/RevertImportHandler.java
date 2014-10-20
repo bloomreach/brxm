@@ -30,6 +30,7 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.core.xml.BufferedTextValue;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
@@ -60,8 +61,8 @@ public class RevertImportHandler extends DefaultHandler {
     private Property property;
     private List<TextValue> values;
     private List<String> mixins;
-    private BufferedStringValue nodeType;
-    private BufferedStringValue value;
+    private BufferedTextValue nodeType;
+    private BufferedTextValue value;
     private Boolean multiple;
     private int propertyType;
 
@@ -156,7 +157,7 @@ public class RevertImportHandler extends DefaultHandler {
 
     private void startValueRecording() {
         if (values != null) {
-            value = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
+            value = new BufferedTextValue(session, ValueFactoryImpl.getInstance());
         }
     }
 
@@ -169,7 +170,7 @@ public class RevertImportHandler extends DefaultHandler {
 
     private void startMixinRecording() {
         if (mixins != null) {
-            nodeType = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
+            nodeType = new BufferedTextValue(session, ValueFactoryImpl.getInstance());
         }
     }
 
@@ -186,7 +187,7 @@ public class RevertImportHandler extends DefaultHandler {
 
     private void startPrimaryTypeRecording() {
         if (node != null) {
-            nodeType = new BufferedStringValue(session, ValueFactoryImpl.getInstance());
+            nodeType = new BufferedTextValue(session, ValueFactoryImpl.getInstance());
         }
     }
 
