@@ -27,6 +27,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
@@ -303,6 +304,7 @@ public class InitializeItem {
     }
 
     List<PostStartupTask> process() throws RepositoryException {
+        final Session session = itemNode.getSession();
         try {
             if (isDownstreamItem() && !areUpstreamItemsDone()) {
                 log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", getName());
@@ -317,10 +319,13 @@ public class InitializeItem {
                 }
             }
             itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_DONE);
+            session.save();
             return Collections.unmodifiableList(postStartupTasks);
         } catch (RepositoryException e) {
+            session.refresh(false);
             itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
             itemNode.setProperty(HIPPO_ERRORMESSAGE, e.getClass().toString() + ":" + e.getMessage());
+            session.save();
             throw e;
         } finally {
             try {

@@ -204,14 +204,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 try {
                     initializeItem.validate();
                     postStartupTasks.addAll(initializeItem.process());
-                    session.save();
                 } catch (RepositoryException e) {
                     if (log.isDebugEnabled()) {
                         log.error("Failed to initialize item {}", initializeItem.getName(), e);
                     } else {
                         log.error("Failed to process initialize item {}: {}", initializeItem.getName(), e.toString());
                     }
-                    session.refresh(false);
                 }
             }
         } catch (RepositoryException e) {
