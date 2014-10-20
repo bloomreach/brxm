@@ -26,7 +26,7 @@
                 <strong>Use the following image set for <span class="alert-info">new methods</span> of image return type:</strong>
             </p>
             <ul class="list-group">
-                <li class="list-group-item" ng-repeat="image in imageSets" ng-switch="image==selectedImageSet">
+                <li class="list-group-item" ng-repeat="image in imageSets | orderBy:identity" ng-switch="image==selectedImageSet">
                     <input type="radio" name="selectedImage" ng-model="$parent.selectedImageSet" ng-value="image"/>
                     <strong ng-switch-when="true">{{image}}</strong>
                     <span ng-switch-default>{{image}}</span>

@@ -28,6 +28,7 @@
                 $http.post($scope.endpoint, payload).success(function (data) {
                 });
             };
+            $scope.identity = angular.identity; // for sorting the imageSets in the UI.
 
             $http.get($scope.endpoint + "imagesets").success(function (data) {
                 $scope.imageSets = data;
