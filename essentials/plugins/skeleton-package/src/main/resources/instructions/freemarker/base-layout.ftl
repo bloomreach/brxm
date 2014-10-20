@@ -29,7 +29,6 @@
       <link rel="stylesheet" href="<@hst.link  path="/css/cms-request.css"/>" type="text/css"/>
     </#if>
 <@hst.headContributions categoryIncludes="htmlHead" xhtml=true/>
-<@hst.headContributions categoryIncludes="globalJavascript" xhtml=true/>
 </head>
 <body>
 <div class="container">
@@ -46,6 +45,6 @@
         <@hst.include ref="footer"/>
     </div>
 </div>
-<@hst.headContributions categoryIncludes="componentsJavascript" xhtml=true/>
+<@hst.headContributions categoryIncludes="htmlBodyEnd" xhtml=true/>
 </body>
 </html>
