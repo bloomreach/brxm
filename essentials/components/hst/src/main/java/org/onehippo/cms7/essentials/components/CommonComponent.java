@@ -54,7 +54,7 @@ public abstract class CommonComponent extends BaseHstComponent {
      */
     public static final String PAGE_404 = "404page";
     /**
-     * HST sitemap reference id fot 404 pages
+     * HST site-map item reference id for 404 pages
      */
     public static final String PAGE_NOT_FOUND = "pagenotfound";
 
