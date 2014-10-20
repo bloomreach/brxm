@@ -52,7 +52,7 @@ public class NamespaceInstruction extends InitializeInstruction {
         try {
             String currentURI = registry.getURI(prefix);
             if (currentURI.equals(uri)) {
-                log.debug("Namespace already exists: " + prefix + ":" + uri);
+                log.debug("Namespace already exists: {}:{}", prefix, uri);
             } else {
                 throw new RepositoryException("Prefix already used for different namespace: " + prefix + ":" + uri);
             }
