@@ -28,7 +28,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.xml.BufferedTextValue;
 import org.apache.jackrabbit.core.xml.TextValue;
@@ -84,7 +83,7 @@ public class RevertImportHandler extends DefaultHandler {
                 removeProperty(attributes.getValue(NAME));
                 break;
             case MERGEPROP:
-                final boolean multi = BooleanUtils.toBoolean(attributes.getValue(MULTI));
+                final boolean multi = Boolean.parseBoolean(attributes.getValue(MULTI));
                 final int type = Integer.valueOf(attributes.getValue(TYPE));
                 lookupProperty(attributes.getValue(NAME), multi, type);
                 break;

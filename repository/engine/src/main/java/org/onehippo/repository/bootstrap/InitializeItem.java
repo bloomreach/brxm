@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -47,6 +46,7 @@ import org.onehippo.repository.bootstrap.instructions.WebResourceBundleInstructi
 import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 
 import static org.apache.commons.lang.StringUtils.trim;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DELTADIRECTIVE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
@@ -236,7 +236,7 @@ public class InitializeItem {
     }
 
     public boolean isReloadable() throws RepositoryException {
-        return isReloadable(itemNode);
+        return isReloadOnStartup(itemNode) && !isDeltaMerge(itemNode);
     }
 
     public Collection<InitializeItem> getUpstreamItems() throws RepositoryException {
@@ -337,13 +337,17 @@ public class InitializeItem {
         final Node initializationFolder = tempItemNode.getSession().getNode(INITIALIZATION_FOLDER);
         itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
 
-        if (isReloadRequested()) {
-            if (isReloadEnabled()) {
-                isReload = true;
+        if (itemNode != null && isReloadRequested()) {
+            if (!isDeltaMerge(itemNode)) {
+                if (isReloadEnabled()) {
+                    isReload = true;
+                } else {
+                    log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
+                    itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
+                    itemNode.setProperty(HIPPO_ERRORMESSAGE, ERROR_MESSAGE_RELOAD_DISABLED);
+                }
             } else {
-                log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
-                itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
-                itemNode.setProperty(HIPPO_ERRORMESSAGE, ERROR_MESSAGE_RELOAD_DISABLED);
+                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", getName());
             }
         }
 
@@ -372,7 +376,7 @@ public class InitializeItem {
         ContentFileInfo info = itemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? ContentFileInfo.readInfo(itemNode) : null;
         if (info != null) {
             itemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
-            itemNode.setProperty(HippoNodeType.HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
+            itemNode.setProperty(HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
         }
 
         itemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
@@ -383,11 +387,8 @@ public class InitializeItem {
     }
 
     boolean isReloadRequested() throws RepositoryException {
-        if (!isReloadable(tempItemNode)) {
+        if (!isReloadOnStartup(tempItemNode)) {
             log.debug("Item {} is not reloadable", getName());
-            return false;
-        } else if (itemNode == null) {
-            log.debug("Reload is requested on item {} but item is new: proceeding with regular bootstrap", getName());
             return false;
         }
         final String itemVersion = getVersion(tempItemNode);
@@ -435,16 +436,13 @@ public class InitializeItem {
         }
     }
 
-    private boolean isReloadable(Node itemNode) throws RepositoryException {
-        if (JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false)) {
-            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(itemNode, HippoNodeType.HIPPOSYS_DELTADIRECTIVE, null));
-            if (deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"))) {
-                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", itemNode.getName());
-                return false;
-            }
-            return true;
-        }
-        return false;
+    private boolean isReloadOnStartup(Node itemNode) throws RepositoryException {
+        return JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false);
+    }
+
+    private boolean isDeltaMerge(final Node itemNode) throws RepositoryException {
+        final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(this.itemNode, HIPPOSYS_DELTADIRECTIVE, null));
+        return deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"));
     }
 
     private List<InitializeInstruction> createInstructions() throws RepositoryException {
@@ -497,7 +495,7 @@ public class InitializeItem {
 
     private boolean isReloadEnabled() {
         final String reloadProperty = System.getProperty(SYSTEM_RELOAD_PROPERTY, Boolean.TRUE.toString());
-        return BooleanUtils.toBoolean(reloadProperty);
+        return Boolean.parseBoolean(reloadProperty);
     }
 
 }
