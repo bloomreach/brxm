@@ -12,6 +12,8 @@ api/local.properties
 api/nbproject
 api/repository
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/.AbstractListingPlugin.java.swp
+api/src/main/resources/skin/hippo-cms
+api/src/main/styling/node_modules
 api/target
 api/tm.epoch
 api/tm.out
