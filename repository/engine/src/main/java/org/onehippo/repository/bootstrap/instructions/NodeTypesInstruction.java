@@ -30,6 +30,8 @@ import static org.onehippo.repository.bootstrap.util.BootstrapUtils.initializeNo
 
 public class NodeTypesInstruction extends InitializeInstruction {
 
+    private static final String INTERNAL_CND_NAME = "<<internal>>";
+
     public NodeTypesInstruction(final InitializeItem item, final Session session) {
         super(item, session);
     }
@@ -41,9 +43,8 @@ public class NodeTypesInstruction extends InitializeInstruction {
 
     @Override
     public PostStartupTask execute() throws RepositoryException {
-        String cndName = "<<internal>>";
         try (InputStream cndStream = item.getNodetypes()) {
-            initializeNodetypes(session.getWorkspace(), cndStream, cndName);
+            initializeNodetypes(session.getWorkspace(), cndStream, INTERNAL_CND_NAME);
         } catch (IOException e) {
             throw new RepositoryException("Failed to read cnd", e);
         }
