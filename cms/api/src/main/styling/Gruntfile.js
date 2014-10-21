@@ -48,7 +48,7 @@ module.exports = function (grunt) {
                     livereload: false
                 },
                 files: ['<%= cfg.src %>/**/*.less'],
-                tasks: ['less', 'autoprefixer', 'csslint', 'copy:css', 'clean:tmp']
+                tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:tmp']
             },
             livereload: {
                 files: ['<%= cfg.dest %>/**'],
@@ -61,6 +61,12 @@ module.exports = function (grunt) {
             main: {
                 files: {
                     '<%= cfg.tmp %>/css/<%= cfg.file %>.css': '<%= cfg.src %>/less/main.less'
+                }
+            },
+            vendors: {
+                files: {
+                    '<%= cfg.tmp %>/css/open-sans.css': '<%= cfg.src %>/less/lib/open-sans.less',
+                    '<%= cfg.tmp %>/css/normalize.css': '<%= cfg.src %>/less/lib/normalize.less'
                 }
             }
         },
@@ -93,23 +99,27 @@ module.exports = function (grunt) {
             },
             theme: {
                 files: {
-                    '<%= cfg.tmp %>/css/<%= cfg.file %>.min.css': ['<%= cfg.tmp %>/css/<%= cfg.file %>.css']
+                    '<%= cfg.dest %>/css/<%= cfg.file %>.min.css': ['<%= cfg.dest %>/css/<%= cfg.file %>.css']
                 }
             }
         },
 
-        copy: {
-            css: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= cfg.tmp %>',
-                        src: ['**/*.css'],
-                        dest: '<%= cfg.dest %>/'
-                    }
-                ]
+        // Concat files
+        concat: {
+            options: {
+                stripBanners: true
             },
-            
+            css: {
+                src: [
+                    '<%= cfg.tmp %>/css/open-sans.css', 
+                    '<%= cfg.tmp %>/css/normalize.css', 
+                    '<%= cfg.tmp %>/css/<%= cfg.file %>.css'
+                ],
+                dest: '<%= cfg.dest %>/css/<%= cfg.file %>.css'
+            }
+        },
+
+        copy: {
             fonts: {
                 files: [
                     {
@@ -159,8 +169,8 @@ module.exports = function (grunt) {
         'less',
         'autoprefixer',
         'csslint',
+        'concat',
         'cssmin:theme',
-        'copy:css',
         'copy:fonts',
         'clean:tmp'
     ]);
