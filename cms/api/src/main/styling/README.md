@@ -66,6 +66,4 @@ This works out of the box but is postponed due to Maven integration issues. For 
     $ git clone https://github.com/FontFaceKit/open-sans.git
     $ cd open-sans
     $ cp -r fonts/Bold fonts/BoldItalic fonts/Italic fonts/Light fonts/LightItalic fonts/Regular ../../src/fonts/open-sans
-    $ cp open-sans.css ../../src/fonts
     
-Now edit 'src/fonts/open-sans.css' and remove SemiBold and ExtraBold font-face declarations. Replace './open-sans' with 'open-sans'
