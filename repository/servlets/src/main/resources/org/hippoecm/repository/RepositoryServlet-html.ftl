@@ -143,7 +143,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
           <#list currentNode.properties as prop>
             <li type="disc">
               [name="${prop.name}"] =
-              <#if prop.definition.oldMultiple>
+              <#if prop.definition.multiple>
                 [
                   <#list prop.values as value>
                     <#if value.type != 2>
