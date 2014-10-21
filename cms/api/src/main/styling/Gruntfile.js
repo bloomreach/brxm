@@ -44,8 +44,15 @@ module.exports = function (grunt) {
                 files: ['Gruntfile.js']
             },
             less: {
+                options: {
+                    livereload: false
+                },
                 files: ['<%= cfg.src %>/**/*.less'],
-                tasks: ['less', 'autoprefixer', 'csslint', 'copy:css', 'copy:classpath', 'clean:tmp', 'shell:notify']
+                tasks: ['less', 'autoprefixer', 'csslint', 'copy:css', 'clean:tmp']
+            },
+            livereload: {
+                files: ['<%= cfg.dest %>/**'],
+                tasks: ['copy:classpath', 'shell:notify']
             }
         },
 
