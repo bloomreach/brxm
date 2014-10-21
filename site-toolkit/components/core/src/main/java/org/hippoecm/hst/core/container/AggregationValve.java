@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -582,6 +584,14 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public void setContentLength(int len) {}
         @Override public void setContentType(String type) {}
         @Override public void setLocale(Locale loc) {}
+
+        /*
+         * Servlet Spec 3.0 APIs
+         */
+        public int getStatus() { return HttpServletResponse.SC_OK; }
+        public String getHeader(String name) { return null; }
+        public Collection<String> getHeaders(String name) { return Collections.emptyList(); }
+        public Collection<String> getHeaderNames() { return Collections.emptyList(); }
     }
 
 }
