@@ -1132,6 +1132,7 @@ api/src/main/styling/src/less/_mixins.less -text
 api/src/main/styling/src/less/_scaffolding.less -text
 api/src/main/styling/src/less/_variables.less -text
 api/src/main/styling/src/less/main.less -text
+api/src/main/styling/src/less/open-sans.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
 api/src/test/java/org/hippoecm/frontend/model/TraceMonitorTest.java -text

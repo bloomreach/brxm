@@ -32,7 +32,6 @@ public class CmsHeaderItem extends HeaderItem {
 
     private static final ResourceReference SCREEN_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/screen.css")).setContextRelative(true);
     private static final ResourceReference SCREEN_IE_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/screen_ie.css")).setContextRelative(true);
-    private static final ResourceReference FONTS_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/hippo-cms/fonts/fonts.css")).setContextRelative(true);
     private static final ResourceReference THEME_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/hippo-cms/css/hippo-cms-theme.css")).setContextRelative(true);
     private static final ResourceReference THEME_MIN_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/hippo-cms/css/hippo-cms-theme.min.css")).setContextRelative(true);
     private static final ResourceReference FUTURE_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/future.js");
@@ -60,8 +59,6 @@ public class CmsHeaderItem extends HeaderItem {
             CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
         }
         
-        CssHeaderItem.forReference(FONTS_CSS).render(response);
-
         if (Application.get().usesDeploymentConfig()) {
             CssHeaderItem.forReference(THEME_MIN_CSS).render(response);
         } else {
