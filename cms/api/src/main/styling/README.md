@@ -57,13 +57,27 @@ After it is installed, run
     
 It will copy the build resources in 'skin/theme' into the classpath folder, so Wicket will load the new resource.
 
-## Future additions
+## Dependencies
 
-####1. Manage open-sans dependency with Bower
-This works out of the box but is postponed due to Maven integration issues. For now I managed these as follows:
+####1. Open-Sans 1.1.0
+A custom .less file is currently used to define the font-face's. The font files still have to be installed manually.
 
     $ cd lib
     $ git clone https://github.com/FontFaceKit/open-sans.git
     $ cd open-sans
     $ cp -r fonts/Bold fonts/BoldItalic fonts/Italic fonts/Light fonts/LightItalic fonts/Regular ../../src/fonts/open-sans
     
+####2. Normalize.css 3.0.2
+Use the less version from bootstrap.
+
+    $ cd lib
+    $ git clone https://github.com/twbs/bootstrap.git
+    $ cd bootstrap
+    $ cp less/normalize.less ../../src/less/lib/
+
+
+## Future additions
+
+####1. Manage dependencies with Bower
+This works out of the box but is postponed due to Maven integration issues.
+

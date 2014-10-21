@@ -194,9 +194,7 @@ public class RootPlugin extends TabsPlugin {
     public void render(PluginRequestTarget target) {
         if (!rendered) {
             WebAppSettings settings = new WebAppSettings();
-            settings.setLoadCssFonts(true);
             settings.setLoadCssGrids(true);
-            settings.setLoadCssReset(true);
             getPage().add(new WebAppBehavior(settings));
             rendered = true;
         }
