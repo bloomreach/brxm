@@ -137,9 +137,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     @Override
     public List<Node> loadExtension(final Session session, final URL url) throws RepositoryException, IOException {
-        final Extension extension = new Extension(session, url);
-        extension.load();
-        return extension.getInitializeItemNodes();
+        log.error("loadExtension no longer functional, noop implementation always returning empty list.");
+        return Collections.emptyList();
     }
 
     @Override
@@ -220,7 +219,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             for (Node initializeItemNode : initializeItems) {
                 InitializeItem initializeItem = new InitializeItem(initializeItemNode);
                 try {
-                    initializeItem.validate();
                     postStartupTasks.addAll(initializeItem.process());
                 } catch (RepositoryException e) {
                     if (log.isDebugEnabled()) {

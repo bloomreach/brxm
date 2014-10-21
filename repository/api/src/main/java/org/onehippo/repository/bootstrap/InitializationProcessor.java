@@ -52,7 +52,8 @@ public interface InitializationProcessor {
      * @return  the {@link java.util.List} of initialize item {@link javax.jcr.Node}s that are pending after loading
      * @throws javax.jcr.RepositoryException
      * @throws java.io.IOException
-     * @deprecated
+     * @deprecated No longer functional as of 7.10. Always returning an empty List.
+     * Use {@link #loadExtensions(javax.jcr.Session)} instead.
      */
     @Deprecated
     List<Node> loadExtension(Session session, URL extension) throws RepositoryException, IOException;
@@ -76,7 +77,7 @@ public interface InitializationProcessor {
      * Set alternative logger to write messages to.
      *
      * @param logger  the logger to use
-     * @deprecated
+     * @deprecated No longer functional. Do not use.
      */
     @Deprecated
     void setLogger(Logger logger);

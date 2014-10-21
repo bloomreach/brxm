@@ -130,7 +130,7 @@ public class InitializeItem {
         this.extension = extension;
     }
 
-    public void validate() throws RepositoryException {
+    private void validate() throws RepositoryException {
         List<InitializeInstruction> instructions = getInstructions();
         if (instructions.isEmpty()) {
             throw new RepositoryException("No instructions");
@@ -141,9 +141,11 @@ public class InitializeItem {
         if (instructions.size() == 2) {
             if (!instructions.get(0).canCombine(instructions.get(1))) {
                 if (instructions.get(1).canCombine(instructions.get(0))) {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException(String.format("Instructions %s and %s are disjunct in their " +
+                                    "configuration of allowing to be combined or not",
+                            instructions.get(0).getName(), instructions.get(1).getName()));
                 }
-                throw new RepositoryException(String.format("%s cannot be combined with %s",
+                throw new RepositoryException(String.format("Instruction %s cannot be combined with %s",
                         instructions.get(0).getName(), instructions.get(1).getName()));
             }
         }
@@ -306,6 +308,7 @@ public class InitializeItem {
     List<PostStartupTask> process() throws RepositoryException {
         final Session session = itemNode.getSession();
         try {
+            validate();
             if (isDownstreamItem() && !areUpstreamItemsDone()) {
                 log.debug("Not executing downstream item {}: upstream item unsuccessfully executed", getName());
                 return Collections.emptyList();
