@@ -44,61 +44,8 @@ module.exports = function (grunt) {
                 files: ['Gruntfile.js']
             },
             less: {
-                options: { 
-                    livereload: false 
-                },
                 files: ['<%= cfg.src %>/**/*.less'],
-                tasks: ['less', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
-            },
-            js: {
-                files: ['<%= cfg.src %>/**/*.js', '!**/*.spec.js'],
-                tasks: ['concat:js', 'uglify:js']
-            },
-            images: {
-                files: ['<%= cfg.src %>/images/**/*.{png,jpg,gif}'],
-                tasks: ['newer:imagemin']
-            },
-            livereload: {
-                files: ['<%= cfg.dest %>/**/*.css'],
-                tasks: ['copy:theme', 'copy:classpath', 'shell:notify']
-            }
-        },
-
-        // clean destination folder and bower components
-        clean: {
-            bower: [ 'components/**' ],
-            tmp: [ '<%= cfg.tmp %>/**' ]
-        },
-
-        // Check if JS files are according to conventions specified in .jshintrc
-        jshint: {
-            options: {
-                'jshintrc': true,
-                reporter: require('jshint-stylish')
-            },
-            all: ['<%= cfg.src %>/**/*.js', '!**/*.spec.js']
-        },
-
-        // Concat files
-        concat: {
-            options: {
-                stripBanners: true
-            },
-            css: {
-                src: ['<%= cfg.tmp %>/css/**/*.css'],
-                dest: '<%= cfg.dest %>/css/<%= cfg.file %>.css'
-            }
-        },
-
-        // Minify JS files
-        uglify: {
-            options: {
-                preserveComments: 'some'
-            },
-            theme: {
-                files: {
-                    '<%= cfg.dest %>/js/<%= cfg.file %>.min.js': ['<%= cfg.dest %>/js/<%= cfg.file %>.js']
-                }
+                tasks: ['less', 'autoprefixer', 'csslint', 'copy:css', 'copy:classpath', 'clean:tmp', 'shell:notify']
             }
         },
 
@@ -108,24 +55,6 @@ module.exports = function (grunt) {
                 files: {
                     '<%= cfg.tmp %>/css/<%= cfg.file %>.css': '<%= cfg.src %>/less/main.less'
                 }
-            }
-/*
-            , vendors: {
-                files: {
-                    '<%= cfg.tmp %>/css/open-sans.css': '<%= cfg.src %>/less/open-sans.less'
-                }
-            }
-*/
-        },
-
-        // Lint the css output
-        csslint: {
-            lessOutput: {
-                options: {
-                    csslintrc: '.csslintrc'
-                },
-
-                src: ['<%= cfg.tmp %>/css/<%= cfg.file %>.css']
             }
         },
 
@@ -140,6 +69,16 @@ module.exports = function (grunt) {
             }
         },
 
+        // Lint the css output
+        csslint: {
+            lessOutput: {
+                options: {
+                    csslintrc: '.csslintrc'
+                },
+                src: ['<%= cfg.tmp %>/css/<%= cfg.file %>.css']
+            }
+        },
+
         // Minify CSS files
         cssmin: {
             options: {
@@ -147,40 +86,34 @@ module.exports = function (grunt) {
             },
             theme: {
                 files: {
-                    '<%= cfg.dest %>/css/<%= cfg.file %>.min.css': ['<%= cfg.dest %>/css/<%= cfg.file %>.css']
+                    '<%= cfg.tmp %>/css/<%= cfg.file %>.min.css': ['<%= cfg.tmp %>/css/<%= cfg.file %>.css']
                 }
             }
         },
 
-        // Minify images
-        imagemin: {
-            src: {
-                files: [{
-                    expand: true,
-                    cwd: '<%= cfg.src %>/images/',
-                    src: ['**/*.{png,jpg,gif,svg}'],
-                    dest: '<%= cfg.src %>/images/'
-                }]
-            }
-        },
-
         copy: {
-            theme: {
+            css: {
                 files: [
                     {
                         expand: true,
-                        cwd: 'src/images',
-                        src: ['**/*.{png,jpg,gif}'],
-                        dest: '<%= cfg.dest %>/images/'
-                    },
+                        cwd: '<%= cfg.tmp %>',
+                        src: ['**/*.css'],
+                        dest: '<%= cfg.dest %>/'
+                    }
+                ]
+            },
+            
+            fonts: {
+                files: [
                     {
                         expand: true,
                         cwd: 'src/fonts',
-                        src: ['**/*.{css,otf,eot,svg,ttf,woff}'],
+                        src: ['**/*.{otf,eot,svg,ttf,woff}'],
                         dest: '<%= cfg.dest %>/fonts/'
                     }
                 ]
             },
+
             classpath: { // Copy resources to classpath so Wicket will pick them up 
                 expand: true,
                 cwd: '<%= cfg.dest %>',
@@ -191,6 +124,11 @@ module.exports = function (grunt) {
                     return fs.existsSync(cfg.cp + '/skin/hippo-cms');
                 }
             }
+        },
+
+        // clean destination folder and bower components
+        clean: {
+            tmp: [ '<%= cfg.tmp %>/**' ]
         },
 
         // Execute shell commands
@@ -210,19 +148,20 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['build', 'watch']);
 
     // build theme
-    grunt.registerTask('build:theme', 'Build the theme', [
-        'jshint',
+    grunt.registerTask('build', 'Build the theme', [
         'less',
         'autoprefixer',
         'csslint',
-        'imagemin',
-        'copy:theme',
-        'concat',
-        'uglify:theme',
         'cssmin:theme',
-        'copy:classpath',
+        'copy:css',
+        'copy:fonts',
         'clean:tmp'
     ]);
-    
+
+    // install
+    grunt.registerTask('install:theme', 'Build and install the theme', [
+        'build',
+        'copy:classpath'
+    ]);
     
 };

@@ -1107,7 +1107,6 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
 api/src/main/styling/.csslintrc -text
-api/src/main/styling/.jshintrc -text
 api/src/main/styling/README.md -text
 api/src/main/styling/package.json -text
 api/src/main/styling/src/fonts/open-sans/Bold/OpenSans-Bold.eot -text
