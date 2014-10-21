@@ -446,6 +446,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     @Test
     public void testResolveContentPropSetAndAddDownstreamItems() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/foo/bar");
+        item.setProperty(HIPPO_CONTENTPROPSET, new String[] { "<dummy>" });
         Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
         upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
         session.save();

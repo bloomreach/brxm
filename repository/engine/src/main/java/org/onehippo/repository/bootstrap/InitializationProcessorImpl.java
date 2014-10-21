@@ -63,13 +63,29 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private static final long LOCK_TIMEOUT = Long.getLong("repo.bootstrap.lock.timeout", 60 * 5);
     private static final long LOCK_ATTEMPT_INTERVAL = 1000 * 2;
 
-    private final static String GET_INITIALIZE_ITEMS = String.format(
+    private final static String PENDING_INITIALIZE_ITEMS_QUERY = String.format(
             "SELECT * FROM hipposys:initializeitem " +
             "WHERE %s = 'pending' ORDER BY %s ASC", HIPPO_STATUS, HIPPO_SEQUENCE);
 
-    private final static String GET_MISSING_INITIALIZE_ITEMS = String.format(
+    private final static String MISSING_INITIALIZE_ITEMS_QUERY = String.format(
             "SELECT * FROM hipposys:initializeitem " +
             "WHERE %s IS NULL OR %s < %%s", HIPPO_TIMESTAMP, HIPPO_TIMESTAMP);
+
+    private static final String DOWNSTREAM_CONTENT_RESOURCE_QUERY = String.format(
+            "SELECT * FROM hipposys:initializeitem " +
+                    "WHERE (%s LIKE '$contextPath/%%' OR %s = '$contextPath') AND %s IS NOT NULL AND %s <> 'missing'",
+            HIPPO_CONTEXTPATHS, HIPPO_CONTEXTPATHS, HIPPO_CONTENTRESOURCE, HIPPO_STATUS);
+
+    private static final String DOWNSTREAM_CONTENT_PROPSET_PROPADD_QUERY = String.format(
+            "SELECT * FROM hipposys:initializeitem WHERE " +
+             "(%s LIKE '$contextPath/%%' OR %s = '$contextPath') AND (%s IS NOT NULL OR %s IS NOT NULL) AND %s <> 'missing'",
+            HIPPO_CONTENTROOT, HIPPO_CONTENTROOT, HIPPO_CONTENTPROPSET, HIPPO_CONTENTPROPADD, HIPPO_STATUS);
+
+    private static final String DOWNSTREAM_CONTENTDELETE_CONTENTPROPDELETE_QUERY = String.format(
+            "SELECT * FROM hipposys:initializeitem WHERE " +
+             "(%s LIKE '$contextPath/%%' OR %s ='$contextPath' OR %s LIKE '$contextPath/%%') AND %s <> 'missing'",
+            HIPPO_CONTENTDELETE, HIPPO_CONTENTDELETE, HIPPO_CONTENTPROPDELETE, HIPPO_STATUS
+    );
 
     private static final Comparator<Node> initializeItemComparator = new Comparator<Node>() {
 
@@ -140,7 +156,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private List<Node> getPendingInitializeItemNodes(final Session session) throws RepositoryException {
         final List<Node> initializeItems = new ArrayList<>();
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final Query getInitializeItems = queryManager.createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
+        final Query getInitializeItems = queryManager.createQuery(PENDING_INITIALIZE_ITEMS_QUERY, Query.SQL);
         final NodeIterator nodes = getInitializeItems.execute().getNodes();
         while(nodes.hasNext()) {
             initializeItems.add(nodes.nextNode());
@@ -245,7 +261,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private void markMissingInitializeItems(final Session session, final long markBefore) throws RepositoryException {
         try {
-            final String statement = String.format(GET_MISSING_INITIALIZE_ITEMS, String.valueOf(markBefore));
+            final String statement = String.format(MISSING_INITIALIZE_ITEMS_QUERY, String.valueOf(markBefore));
             final Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL);
             for (Node node : new NodeIterable(query.execute().getNodes())) {
                 if (node != null) {
@@ -276,25 +292,19 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             // First contextPath is the 'root' content path of the content resource, possible additional contextPaths
             // (in case of multiple delta imports) are always children so do no need to be checked for downstream items.
             final String contextPath = contextPaths[0];
-            downStreamItems.addAll(resolveContentResourceDownstreamItems(session, contextPath, upstreamItem));
-            downStreamItems.addAll(resolveContentPropSetAndAddDownstreamItems(session, contextPath, upstreamItem));
-            downStreamItems.addAll(resolveContentDeleteAndContentPropDeleteDownstreamItems(session, contextPath, upstreamItem));
+            downStreamItems.addAll(resolveDownstreamItems(session, contextPath, upstreamItem, DOWNSTREAM_CONTENT_RESOURCE_QUERY));
+            downStreamItems.addAll(resolveDownstreamItems(session, contextPath, upstreamItem, DOWNSTREAM_CONTENT_PROPSET_PROPADD_QUERY));
+            downStreamItems.addAll(resolveDownstreamItems(session, contextPath, upstreamItem, DOWNSTREAM_CONTENTDELETE_CONTENTPROPDELETE_QUERY));
         }
         return downStreamItems;
     }
 
-    /**
-     * contentresource items operate on the context path
-     */
-    private List<Node> resolveContentResourceDownstreamItems(final Session session, final String contextPath, final Node upstreamItem) throws RepositoryException {
+    private List<Node> resolveDownstreamItems(final Session session, final String contextPath, final Node upstreamItem, final String statement) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
-        final String statement = String.format(
-                "SELECT * FROM hipposys:initializeitem WHERE " +
-                "(%s LIKE '%s/%%' OR %s = '%s') AND %s IS NOT NULL AND %s <> 'missing'",
-                HIPPO_CONTEXTPATHS, contextPath, HIPPO_CONTEXTPATHS, contextPath,
-                HIPPO_CONTENTRESOURCE, HIPPO_STATUS);
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final QueryResult result = queryManager.createQuery(statement, Query.SQL).execute();
+        final Query query = queryManager.createQuery(statement, Query.SQL);
+        query.bindValue("contextPath", session.getValueFactory().createValue(contextPath));
+        final QueryResult result = query.execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             if (!upstreamItem.isSame(item)) {
                 downStreamItems.add(item);
@@ -303,45 +313,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return downStreamItems;
     }
 
-    /**
-     * contentpropset, contentpropadd operate directly on the content root
-     */
-    private List<Node> resolveContentPropSetAndAddDownstreamItems(final Session session, final String contextPath, final Node upstreamItem) throws RepositoryException {
-        final List<Node> downStreamItems = new ArrayList<>();
-        final String statement = String.format(
-                "SELECT * FROM hipposys:initializeitem WHERE " +
-                "(%s LIKE '%s/%%' OR %s = '%s') AND (%s IS NOT NULL OR %s IS NOT NULL) AND %s <> 'missing'",
-                HIPPO_CONTENTROOT, contextPath, HIPPO_CONTENTROOT, contextPath,
-                HIPPO_CONTENTPROPSET, HIPPO_CONTENTPROPADD, HIPPO_STATUS);
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL).execute();
-        for (Node item : new NodeIterable(result.getNodes())) {
-            if (!upstreamItem.isSame(item)) {
-                downStreamItems.add(item);
-            }
-        }
-        return downStreamItems;
-    }
-
-    /**
-     * contentdelete, contentpropdelete operate use neither contextpath nor contentroot
-     */
-    private List<Node> resolveContentDeleteAndContentPropDeleteDownstreamItems(final Session session, final String contextPath, final Node upstreamItem) throws RepositoryException {
-        final List<Node> downStreamItems = new ArrayList<>();
-        final String statement = String.format(
-                "SELECT * FROM hipposys:initializeitem WHERE " +
-                "(%s LIKE '%s/%%' OR %s ='%s' OR %s LIKE '%s/%%') AND %s <> 'missing'",
-                HIPPO_CONTENTDELETE, contextPath, HIPPO_CONTENTDELETE, contextPath,
-                HIPPO_CONTENTPROPDELETE, contextPath, HIPPO_STATUS
-        );
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL).execute();
-        for (Node item : new NodeIterable(result.getNodes())) {
-            if (!upstreamItem.isSame(item)) {
-                downStreamItems.add(item);
-            }
-        }
-        return downStreamItems;
-
-    }
 
     private void ensureIsLockable(final Session session, final String absPath) throws RepositoryException {
         final Node node = session.getNode(absPath);
