@@ -1127,8 +1127,11 @@ api/src/main/styling/src/fonts/open-sans/LightItalic/OpenSans-LightItalic.woff -
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.eot -text
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.ttf -text
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.woff -text
+api/src/main/styling/src/less/_legacy.less -text
 api/src/main/styling/src/less/_mixins.less -text
 api/src/main/styling/src/less/_scaffolding.less -text
+api/src/main/styling/src/less/_styletest.less -text
+api/src/main/styling/src/less/_typography.less -text
 api/src/main/styling/src/less/_variables.less -text
 api/src/main/styling/src/less/lib/normalize.less -text
 api/src/main/styling/src/less/lib/open-sans.less -text

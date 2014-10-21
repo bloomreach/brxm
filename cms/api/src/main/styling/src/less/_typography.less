@@ -14,25 +14,9 @@
  * limitations under the License.
  */
 
-// WebKit-style focus
-.tab-focus() {
-  // Default
-  outline: thin dotted;
-  // WebKit
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
-}
-
-.font-size(@sizeValue) {
-  @remValue: @sizeValue;
-  @pxValue: (@sizeValue * 10);
-  font-size: ~"@{pxValue}px";
-  font-size: ~"@{remValue}rem";
-}
-
-.line-height(@sizeValue) {
-  @remValue: @sizeValue;
-  @pxValue: (@sizeValue * 10);
-  line-height: ~"@{pxValue}px";
-  line-height: ~"@{remValue}rem";
-}
+h1, .h1 { font-size: @font-size-h1; }
+h2, .h2 { font-size: @font-size-h2; }
+h3, .h3 { font-size: @font-size-h3; }
+h4, .h4 { font-size: @font-size-h4; }
+h5, .h5 { font-size: @font-size-h5; }
+h6, .h6 { font-size: @font-size-h6; }

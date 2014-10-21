@@ -14,11 +14,44 @@
  * limitations under the License.
  */
 
-html, body {
-  height: 100%;
-  width: 100%;
+// Body reset
+html {
+  font-size: 10px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-.hippo-root {
-  font-family: @font-family-opensans;
+body {
+  font-family: @font-family-base;
+  font-size: @font-size-base;
+  line-height: @line-height-base;
+  color: @text-color;
+  background-color: @body-bg;
+}
+
+// Reset fonts for relevant elements
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+
+// Links
+
+a {
+  color: @link-color;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: @link-hover-color;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    .tab-focus();
+  }
 }

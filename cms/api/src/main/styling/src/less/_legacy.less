@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-// WebKit-style focus
-.tab-focus() {
-  // Default
-  outline: thin dotted;
-  // WebKit
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+// TODO: check if needed
+/*
+* {
+  padding: 0;
+}
+*/
+
+// Removes list-style from lists, lists are more often used without a list style
+// TODO: Probably better to do this when needed
+ol, ul {
+  list-style: none;
 }
 
-.font-size(@sizeValue) {
-  @remValue: @sizeValue;
-  @pxValue: (@sizeValue * 10);
-  font-size: ~"@{pxValue}px";
-  font-size: ~"@{remValue}rem";
+// Normalizes font-size for headers
+// Handled in _typography.less 
+//h1, h2, h3, h4, h5, h6 {
+//  font-size: 100%;
+//}
+
+// Removes border from fieldset and img
+fieldset {
+  border: 0;
 }
 
-.line-height(@sizeValue) {
-  @remValue: @sizeValue;
-  @pxValue: (@sizeValue * 10);
-  line-height: ~"@{pxValue}px";
-  line-height: ~"@{remValue}rem";
+// Left-aligns text in caption and th
+caption, th {
+  text-align: left;
 }

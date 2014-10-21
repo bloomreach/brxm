@@ -13,48 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Defaults */
-* {
-  margin: 0;
-  padding: 0;
-}
-
-/* Normalizes font-size for headers */
-h1, h2, h3, h4, h5, h6 {
-  font-size: 100%;
-}
-
-/* Removes list-style from lists, lists are more often used without a list style */
-ol, ul {
-  list-style: none;
-}
-
-/* no underlined links by default */
-a {
-  text-decoration: none
-}
-
-/* Normalizes font-style and font-weight to normal */
-address, caption, cite, code, dfn, th, var {
-  font-style: normal;
-  font-weight: normal;
-}
-
-/* Default tables don't have borders */
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-/* Removes border from fieldset and img */
-fieldset, img {
-  border: 0;
-}
-
-/* Left-aligns text in caption and th */
-caption, th {
-  text-align: left;
-}
 
 /* ======================================== */
 
@@ -135,18 +93,21 @@ body.hippo-root #doc3 {
 }
 
 /* Global font setting */
-
+/*
 .hippo-root,
 .hippo-root table tr td,
 .hippo-root table tr th {
   font-family: tahoma, arial, sans-serif, helvetica;
   font-size: 11px;
 }
+*/
 
 /* default Link colour */
+/*
 .hippo-root a {
   color: #333333;
 }
+*/
 
 .wicket-modal a {
   color: #000066;
