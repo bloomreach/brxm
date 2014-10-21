@@ -44,6 +44,8 @@ import org.slf4j.Logger;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPDELETE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
@@ -271,6 +273,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final List<Node> downStreamItems = new ArrayList<>();
         final String[] contextPaths = JcrUtils.getMultipleStringProperty(upstreamItem, HIPPO_CONTEXTPATHS, null);
         if (contextPaths != null && contextPaths.length > 0) {
+            // First contextPath is the 'root' content path of the content resource, possible additional contextPaths
+            // (in case of multiple delta imports) are always children so do no need to be checked for downstream items.
             final String contextPath = contextPaths[0];
             downStreamItems.addAll(resolveContentResourceDownstreamItems(session, contextPath, upstreamItem));
             downStreamItems.addAll(resolveContentPropSetAndAddDownstreamItems(session, contextPath, upstreamItem));
@@ -286,9 +290,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final List<Node> downStreamItems = new ArrayList<>();
         final String statement = String.format(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
-                "(%s LIKE '%s/%%' OR %s = '%s') AND %s <> 'missing'",
+                "(%s LIKE '%s/%%' OR %s = '%s') AND %s IS NOT NULL AND %s <> 'missing'",
                 HIPPO_CONTEXTPATHS, contextPath, HIPPO_CONTEXTPATHS, contextPath,
-                HIPPO_STATUS);
+                HIPPO_CONTENTRESOURCE, HIPPO_STATUS);
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final QueryResult result = queryManager.createQuery(statement, Query.SQL).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
@@ -300,14 +304,15 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     /**
-     * contentpropset, contentpropset operate directly on the content root
+     * contentpropset, contentpropadd operate directly on the content root
      */
     private List<Node> resolveContentPropSetAndAddDownstreamItems(final Session session, final String contextPath, final Node upstreamItem) throws RepositoryException {
         final List<Node> downStreamItems = new ArrayList<>();
         final String statement = String.format(
                 "SELECT * FROM hipposys:initializeitem WHERE " +
-                "(%s LIKE '%s/%%' OR %s = '%s') AND %s IS NULL AND %s <> 'missing'"
-                ,HIPPO_CONTENTROOT, contextPath, HIPPO_CONTENTROOT, contextPath, HIPPO_CONTENTRESOURCE, HIPPO_STATUS);
+                "(%s LIKE '%s/%%' OR %s = '%s') AND (%s IS NOT NULL OR %s IS NOT NULL) AND %s <> 'missing'",
+                HIPPO_CONTENTROOT, contextPath, HIPPO_CONTENTROOT, contextPath,
+                HIPPO_CONTENTPROPSET, HIPPO_CONTENTPROPADD, HIPPO_STATUS);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL).execute();
         for (Node item : new NodeIterable(result.getNodes())) {
             if (!upstreamItem.isSame(item)) {
@@ -345,5 +350,4 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             session.save();
         }
     }
-
 }
