@@ -55,7 +55,7 @@ class AutoReloadScriptLoader {
     private String readString(final InputStream in, final String encoding) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final byte[] buffer = new byte[1024];
-        int length = 0;
+        int length;
         while ((length = in.read(buffer)) != -1) {
             out.write(buffer, 0, length);
         }

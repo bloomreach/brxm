@@ -17,16 +17,13 @@ package org.onehippo.cms7.services.autoreload;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AutoReloadServiceConfigTest {
 

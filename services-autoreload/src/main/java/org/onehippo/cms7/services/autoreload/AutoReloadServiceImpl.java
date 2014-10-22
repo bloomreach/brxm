@@ -23,14 +23,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class AutoReloadServiceImpl implements AutoReloadService {
 
     private final AutoReloadServiceConfig config;
-    private final AutoReloadScriptLoader scriptLoader;
     private final AutoReloadServer autoReloadServer;
     private final AtomicBoolean enabled;
     private final String cachedJavaScript;
 
     AutoReloadServiceImpl(final AutoReloadServiceConfig config, final AutoReloadScriptLoader scriptLoader, final AutoReloadServer autoReloadServer) {
         this.config = config;
-        this.scriptLoader = scriptLoader;
         this.autoReloadServer = autoReloadServer;
         enabled = new AtomicBoolean(config.isEnabled());
         cachedJavaScript = scriptLoader.getJavaScript();
