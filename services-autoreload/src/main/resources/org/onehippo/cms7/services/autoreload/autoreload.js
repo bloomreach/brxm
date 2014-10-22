@@ -16,6 +16,7 @@
 (function(window, console) {
 
     var AUTO_RELOAD_PATH = "/autoreload",
+        CONTEXT_PATH = "/site",
         RECONNECT_DELAY_MILLIS = 5000,
         MAX_RECONNECT_ATTEMPTS = 120,  // retry for 120 * 5000 ms = 10 minutes
         isReloadingPage,
@@ -84,11 +85,7 @@
     }
 
     function serverUrl() {
-        var contextPath = document.location.pathname.split('/').slice(0, 2).join('/');
-        return "ws://" + document.location.host + contextPath + AUTO_RELOAD_PATH;
-    }
-
-    function init() {
+        return "ws://" + document.location.host + CONTEXT_PATH + AUTO_RELOAD_PATH;
     }
 
     if (window.addEventListener && window.WebSocket) {

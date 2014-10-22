@@ -18,6 +18,7 @@ package org.onehippo.cms7.services.autoreload;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,13 +55,51 @@ public class AutoReloadServiceImplTest {
     @Test
     public void uses_javascript_from_loader() {
         AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl(DUMMY_JAVASCRIPT);
-        assertEquals(DUMMY_JAVASCRIPT, autoReload.getJavaScript());
+        assertEquals(DUMMY_JAVASCRIPT, autoReload.getJavaScript("/site"));
+    }
+
+    @Test
+    public void uses_context_path_in_loaded_javascript() {
+        String script = "var CONTEXT_PATH = \"" + AutoReloadServiceImpl.DEFAULT_CONTEXT_PATH_VALUE + "\";";
+        AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl(script);
+        assertEquals("var CONTEXT_PATH = \"/intranet\";", autoReload.getJavaScript("/intranet"));
+    }
+
+    @Test
+    public void uses_empty_context_path_in_loaded_javascript() {
+        String script = "var CONTEXT_PATH = \"" + AutoReloadServiceImpl.DEFAULT_CONTEXT_PATH_VALUE + "\";";
+        AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl(script);
+        assertEquals("var CONTEXT_PATH = \"\";", autoReload.getJavaScript(""));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void context_path_that_is_null_throws_exception() {
+        AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl("");
+        autoReload.getJavaScript(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void context_path_that_does_not_start_with_slash_throws_exception() {
+        AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl("");
+        autoReload.getJavaScript("wrongContextPath");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void context_path_that_ends_with_slash_throws_exception() {
+        AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl("");
+        autoReload.getJavaScript("wrongContextPath/");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void context_path_that_is_only_a_slash_throws_exception() {
+        AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl("");
+        autoReload.getJavaScript("/");
     }
 
     @Test
     public void uses_null_javascript_when_loading_fails() {
         AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl(null);
-        assertNull(autoReload.getJavaScript());
+        assertNull(autoReload.getJavaScript(""));
     }
 
     @Test
@@ -115,7 +154,7 @@ public class AutoReloadServiceImplTest {
         String script = DUMMY_JAVASCRIPT;
         AutoReloadServiceImpl autoReload = createAutoReloadServiceImpl(script);
         autoReload.setEnabled(false);
-        assertEquals(script, autoReload.getJavaScript());
+        assertEquals(script, autoReload.getJavaScript(""));
     }
 
     @Test
@@ -144,6 +183,15 @@ public class AutoReloadServiceImplTest {
         autoReload.broadcastPageReload();
 
         verify(autoReloadServer);
+    }
+
+    @Test
+    public void replaces_context_path_value_once_in_real_script() {
+        AutoReloadScriptLoader realScriptLoader = new AutoReloadScriptLoader();
+        final AutoReloadServiceImpl autoReload = new AutoReloadServiceImpl(config, realScriptLoader, autoReloadServer);
+        final String javaScript = autoReload.getJavaScript("/veryLongAndUniqueContextPath");
+        assertEquals("the context path should have been replaced only once in the loaded script",
+                1, StringUtils.countMatches(javaScript, "/veryLongAndUniqueContextPath"));
     }
 
 }

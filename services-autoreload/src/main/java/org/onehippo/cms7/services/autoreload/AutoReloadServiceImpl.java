@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class AutoReloadServiceImpl implements AutoReloadService {
 
+    static final String DEFAULT_CONTEXT_PATH_VALUE = "/site";
+
     private final AutoReloadServiceConfig config;
     private final AutoReloadServer autoReloadServer;
     private final AtomicBoolean enabled;
@@ -45,8 +47,17 @@ class AutoReloadServiceImpl implements AutoReloadService {
     }
 
     @Override
-    public String getJavaScript() {
-        return cachedJavaScript;
+    public String getJavaScript(final String contextPath) {
+        if (contextPath == null) {
+            throw new IllegalArgumentException("context path cannot be null");
+        }
+        if (!contextPath.isEmpty() && (!contextPath.startsWith("/") || contextPath.endsWith("/"))) {
+            throw new IllegalArgumentException("illegal context path: '" + contextPath + "'");
+        }
+        if (cachedJavaScript != null) {
+            return cachedJavaScript.replace(DEFAULT_CONTEXT_PATH_VALUE, contextPath);
+        }
+        return null;
     }
 
     @Override
