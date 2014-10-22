@@ -56,12 +56,25 @@ public class AutoReloadResponseAppender extends AbstractComponentWindowResponseA
         }
 
         if (!response.containsHeadElement(AUTO_RELOAD_HEAD_KEY_HINT)) {
-            log.info("Append auto-reload script");
-            Element headScript = response.createElement("script");
-            headScript.setAttribute("type","text/javascript");
-            headScript.setTextContent(autoReload.getJavaScript());
-            response.addHeadElement(headScript, AUTO_RELOAD_HEAD_KEY_HINT);
+            final Element autoReloadScript = getAutoReloadScriptElement(request, response, autoReload);
+            if (autoReloadScript != null) {
+                log.info("Append auto-reload script");
+                response.addHeadElement(autoReloadScript, AUTO_RELOAD_HEAD_KEY_HINT);
+            }
         }
+    }
+
+    private Element getAutoReloadScriptElement(final HstRequest request, final HstResponse response, final AutoReloadService autoReload) {
+        try {
+            final String script = autoReload.getJavaScript(request.getContextPath());
+            final Element headElement = response.createElement("script");
+            headElement.setAttribute("type", "text/javascript");
+            headElement.setTextContent(script);
+            return headElement;
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to append auto-reload script", e);
+        }
+        return null;
     }
 
 }
