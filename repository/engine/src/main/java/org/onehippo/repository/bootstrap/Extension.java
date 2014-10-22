@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -44,10 +46,12 @@ public class Extension {
     private final Session session;
     private final URL extensionURL;
     private final List<InitializeItem> initializeItems = new ArrayList<>();
+    private final Map<String, String> itemNames;
 
-    Extension(final Session session, final URL extensionURL) {
+    Extension(final Session session, final URL extensionURL, final Map<String, String> itemNames) {
         this.session = session;
         this.extensionURL = extensionURL;
+        this.itemNames = itemNames;
     }
 
     void load() throws RepositoryException {
@@ -60,9 +64,16 @@ public class Extension {
             BootstrapUtils.initializeNodecontent(session, TEMP_FOLDER_PATH, extensionURL);
             final Node tempInitFolderNode = temporaryFolder.getNode(INITIALIZE_PATH);
             for (final Node tempInitItemNode : new NodeIterable(tempInitFolderNode.getNodes())) {
-                InitializeItem item = new InitializeItem(tempInitItemNode, this);
-                item.initialize();
-                initializeItems.add(item);
+                final String itemName = tempInitItemNode.getName();
+                if (itemNames.containsKey(itemName)) {
+                    log.error("Error during loading of extension {}: initialize item {} already defined in {}",
+                            this, itemName, itemNames.get(itemName));
+                } else {
+                    InitializeItem item = new InitializeItem(tempInitItemNode, this);
+                    item.initialize();
+                    initializeItems.add(item);
+                    itemNames.put(itemName, this.toString());
+                }
             }
             if(tempInitFolderNode.hasProperty(HIPPO_VERSION)) {
                 updateVersionTags(initializationFolder, tempInitFolderNode);

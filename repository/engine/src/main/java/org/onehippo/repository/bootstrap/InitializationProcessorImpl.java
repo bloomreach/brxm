@@ -22,9 +22,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -242,11 +244,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private List<Extension> scanForExtensions(final Session session) throws IOException {
+        final Map<String, String> itemNames = new HashMap<>();
         final List<Extension> extensions = new LinkedList<>();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final Enumeration<URL> resources = classLoader.getResources(EXTENSION_FILE_NAME);
         while (resources.hasMoreElements()) {
-            extensions.add(new Extension(session, resources.nextElement()));
+            extensions.add(new Extension(session, resources.nextElement(), itemNames));
         }
         return extensions;
     }
