@@ -138,13 +138,6 @@
         //############################################
         // DEFAULTS
         //############################################
-        $scope.locales = [
-            {"locale": "en", "description": "English"},
-            {"locale": "fr", "description": "Français"},
-            {"locale": "nl", "description": "Nederlands"},
-            {"locale": "it", "description": "Italiano"},
-            {"locale": "de", "description": "Deutsch"}
-        ];
         $scope.compressionValues = [
             {value: 1, description: "default (uncompressed)", selected: true},
             {value: 0.95, description: "best"},
