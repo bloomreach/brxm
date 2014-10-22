@@ -78,6 +78,7 @@ public class HstFilter implements Filter {
     private static final String REQUEST_PARAM_UUID = "uuid";
     private static final String REQUEST_PARAM_TYPE = "type";
     private static final String DEFAULT_REQUEST_PARAM_TYPE = "live";
+    public static final String AUTORELOAD_PATHINFO = "/autoreload";
 
     private FilterConfig filterConfig;
 
@@ -289,6 +290,12 @@ public class HstFilter implements Filter {
 
             // Sets up the container request wrapper
             HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
+
+            if (isAutoReloadEndpoint(containerRequest)) {
+                log.info("Auto reload websocket endpoint request, skip hst request processing");
+                chain.doFilter(request, response);
+                return;
+            }
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
             if((containerRequest.getPathSuffix() == null && hstManager.isExcludedByHstFilterInitParameter(containerRequest.getPathInfo()))) {
@@ -537,6 +544,13 @@ public class HstFilter implements Filter {
                 HDC.cleanUp();
             }
         }
+    }
+
+    private boolean isAutoReloadEndpoint(final HstContainerRequest containerRequest) {
+        if (AUTORELOAD_PATHINFO.equals(containerRequest.getPathInfo()) && containerRequest.getHeader("Sec-WebSocket-Key") != null) {
+            return true;
+        }
+        return false;
     }
 
     private void setHstServletPath(final GenericHttpServletRequestWrapper request, final ResolvedMount resolvedMount) {
