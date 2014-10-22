@@ -48,9 +48,15 @@ public interface AutoReloadService {
     void setEnabled(boolean isEnabled);
 
     /**
+     * @param contextPath the current context path of the page in which the JavaScript will be included. The context
+     *                    path can be an empty string when the page is served at URL path '/' (e.g. when the web
+     *                    application is deployed as ROOT.war). When the context path is not empty, it must start with
+     *                    a slash, followed by the context path string. The context path must not end with a slash.
+     *                    For example, valid context paths are "/site", "/intranet" and "".
      * @return the JavaScript to include in a browser that handles the auto-reloading.
+     * @throws IllegalArgumentException if the context path is not well-formed.
      */
-    String getJavaScript();
+    String getJavaScript(String contextPath);
 
     /**
      * Reloads the current page in all connected browsers. If auto-reload is disabled, nothing happens.
