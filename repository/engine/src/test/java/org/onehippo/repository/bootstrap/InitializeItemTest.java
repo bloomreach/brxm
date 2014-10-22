@@ -59,7 +59,7 @@ public class InitializeItemTest {
         initializeFolder = root.addNode(CONFIGURATION_PATH, NT_UNSTRUCTURED).addNode(INITIALIZE_PATH, NT_INITIALIZEFOLDER);
         tempItemNode = root.addNode("initItem", NT_INITIALIZEITEM);
         final URL extensionURL = getClass().getResource("/bootstrap/hippoecm-extension.xml");
-        extension = new Extension(root.getSession(), extensionURL, new HashMap<String, String>());
+        extension = new Extension(root.getSession(), extensionURL);
 
     }
 

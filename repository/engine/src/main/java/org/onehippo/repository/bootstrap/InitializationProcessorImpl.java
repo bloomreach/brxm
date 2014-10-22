@@ -151,9 +151,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final long now = System.currentTimeMillis();
         final List<Extension> extensions = scanForExtensions(session);
         final List<InitializeItem> initializeItems = new ArrayList<>();
+        final Map<String, String> itemNames = new HashMap<>();
         for (final Extension extension : extensions) {
-            extension.load();
-            for (final InitializeItem initializeItem : extension.getInitializeItems()) {
+            for (final InitializeItem initializeItem : extension.load(itemNames)) {
                 if (initializeItem.isReload()) {
                     reloadItems.add(initializeItem);
                 }
@@ -244,12 +244,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private List<Extension> scanForExtensions(final Session session) throws IOException {
-        final Map<String, String> itemNames = new HashMap<>();
         final List<Extension> extensions = new LinkedList<>();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final Enumeration<URL> resources = classLoader.getResources(EXTENSION_FILE_NAME);
         while (resources.hasMoreElements()) {
-            extensions.add(new Extension(session, resources.nextElement(), itemNames));
+            extensions.add(new Extension(session, resources.nextElement()));
         }
         return extensions;
     }

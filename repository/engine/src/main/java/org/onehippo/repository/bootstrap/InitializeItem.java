@@ -122,7 +122,7 @@ public class InitializeItem {
         this.itemNode = itemNode;
     }
 
-    public InitializeItem(final Node tempItemNode, final Extension extension) {
+    InitializeItem(final Node tempItemNode, final Extension extension) {
         this.tempItemNode = tempItemNode;
         this.extension = extension;
     }

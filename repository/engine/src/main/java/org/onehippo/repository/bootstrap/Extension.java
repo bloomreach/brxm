@@ -18,6 +18,7 @@ package org.onehippo.repository.bootstrap;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,21 +46,19 @@ public class Extension {
 
     private final Session session;
     private final URL extensionURL;
-    private final List<InitializeItem> initializeItems = new ArrayList<>();
-    private final Map<String, String> itemNames;
 
-    Extension(final Session session, final URL extensionURL, final Map<String, String> itemNames) {
+    Extension(final Session session, final URL extensionURL) {
         this.session = session;
         this.extensionURL = extensionURL;
-        this.itemNames = itemNames;
     }
 
-    void load() throws RepositoryException {
+    List<InitializeItem> load(final Map<String, String> itemNames) throws RepositoryException {
         if (log.isInfoEnabled()) {
             log.info("Loading extension {}", this);
         }
         final Node initializationFolder = session.getNode(INIT_FOLDER_PATH);
         final Node temporaryFolder = session.getNode(TEMP_FOLDER_PATH);
+        final List<InitializeItem> initializeItems = new ArrayList<>();
         try {
             BootstrapUtils.initializeNodecontent(session, TEMP_FOLDER_PATH, extensionURL);
             final Node tempInitFolderNode = temporaryFolder.getNode(INITIALIZE_PATH);
@@ -83,6 +82,7 @@ public class Extension {
         } catch (RepositoryException e) {
             throw new RepositoryException(String.format("Initializing extension %s failed", this), e);
         }
+        return initializeItems;
     }
 
     static void updateVersionTags(final Node initializationFolder, final Node tempInitFolderNode) throws RepositoryException {
@@ -112,10 +112,6 @@ public class Extension {
             }
         }
         return null;
-    }
-
-    List<InitializeItem> getInitializeItems() {
-        return initializeItems;
     }
 
     URL getExtensionSource() {

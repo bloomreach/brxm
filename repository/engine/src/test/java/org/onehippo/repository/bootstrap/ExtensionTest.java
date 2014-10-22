@@ -16,8 +16,6 @@
 package org.onehippo.repository.bootstrap;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.jcr.Value;
 
@@ -35,7 +33,7 @@ public class ExtensionTest {
     @Test
     public void testGetModuleVersion() {
         final URL url = getClass().getResource("/bootstrap/hippoecm-extension.xml");
-        final Extension extension = new Extension(null, url, new HashMap<String, String>());
+        final Extension extension = new Extension(null, url);
         assertEquals("1", extension.getModuleVersion());
     }
 

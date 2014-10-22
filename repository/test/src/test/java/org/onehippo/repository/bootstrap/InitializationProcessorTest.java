@@ -19,8 +19,10 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 import javax.jcr.Node;
@@ -87,7 +89,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
         test = session.getRootNode().addNode("test");
-        item = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
+        item = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testitem", "hipposys:initializeitem");
         item.setProperty(HIPPO_STATUS, "pending");
         session.getRootNode().addNode("webresources");
         session.save();
@@ -105,7 +107,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
     @After
     public void tearDown() throws Exception {
-        removeNode("/hippo:configuration/hippo:initialize/testnode");
+        removeNode("/hippo:configuration/hippo:initialize/testitem");
         removeNode("/hippo:configuration/hippo:initialize/upstream");
         removeNode("/webresources");
 
@@ -498,6 +500,15 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         session.save();
         downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertFalse(downstreamItems.hasNext());
+    }
+
+    @Test
+    public void testDetectDuplicateItems() throws Exception {
+        final Extension extension = new Extension(session, getClass().getResource("/bootstrap/hippoecm-extension.xml"));
+        final Map<String, String> itemNames = new HashMap<String, String>() {{ put("duplicate", "<extension>"); }};
+        final List<InitializeItem> load = extension.load(itemNames);
+        assertEquals(0, load.size());
+        assertEquals(1, loggingRecorder.getErrorMessages().size());
     }
 
 }
