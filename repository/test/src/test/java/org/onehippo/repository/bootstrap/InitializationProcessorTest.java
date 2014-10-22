@@ -17,11 +17,10 @@ package org.onehippo.repository.bootstrap;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.ZipFile;
 
 import javax.jcr.Node;
@@ -73,7 +72,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class InitializationProcessorTest extends RepositoryTestCase {
@@ -253,39 +251,37 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
     @Test
     public void testContentReloadWithDeltaCombines() throws Exception {
-        Node fooItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/foo", "hipposys:initializeitem");
-        fooItem.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
-        fooItem.setProperty(HIPPO_CONTENTROOT, "/test");
-        fooItem.setProperty(HIPPO_STATUS, "pending");
-        fooItem.setProperty(HIPPO_SEQUENCE, 1l);
-        Node barItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/bar", "hipposys:initializeitem");
-        barItem.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/bar.xml").toString());
-        barItem.setProperty(HIPPO_CONTENTROOT, "/test/foo");
-        barItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/test/foo/bar" } );
-        barItem.setProperty(HIPPO_STATUS, "pending");
-        barItem.setProperty(HIPPO_SEQUENCE, 2l);
-        Node deltaItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/delta", "hipposys:initializeitem");
-        deltaItem.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
-        deltaItem.setProperty(HIPPO_CONTENTROOT, "/test");
-        deltaItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/test/foo", "/test/foo/bar" } );
-        deltaItem.setProperty(HIPPO_STATUS, "pending");
-        deltaItem.setProperty(HIPPO_SEQUENCE, 3l);
+        Node fooItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/foo", "hipposys:initializeitem");
+        fooItemNode.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/foo.xml").toString());
+        fooItemNode.setProperty(HIPPO_CONTENTROOT, "/test");
+        fooItemNode.setProperty(HIPPO_STATUS, "pending");
+        fooItemNode.setProperty(HIPPO_SEQUENCE, 1l);
+        Node barItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/bar", "hipposys:initializeitem");
+        barItemNode.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/bar.xml").toString());
+        barItemNode.setProperty(HIPPO_CONTENTROOT, "/test/foo");
+        barItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/test/foo/bar"});
+        barItemNode.setProperty(HIPPO_STATUS, "pending");
+        barItemNode.setProperty(HIPPO_SEQUENCE, 2l);
+        Node deltaItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/delta", "hipposys:initializeitem");
+        deltaItemNode.setProperty(HIPPO_CONTENTRESOURCE, getClass().getResource("/bootstrap/delta.xml").toString());
+        deltaItemNode.setProperty(HIPPO_CONTENTROOT, "/test");
+        deltaItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/test/foo", "/test/foo/bar"});
+        deltaItemNode.setProperty(HIPPO_STATUS, "pending");
+        deltaItemNode.setProperty(HIPPO_SEQUENCE, 3l);
         session.save();
         process();
-//        session.exportSystemView("/test", System.out, true, false);
-        barItem.setProperty(HIPPO_RELOADONSTARTUP, true);
-        barItem.setProperty(HIPPO_VERSION, "1");
+        barItemNode.setProperty(HIPPO_RELOADONSTARTUP, true);
+        barItemNode.setProperty(HIPPO_VERSION, "1");
         session.save();
+        List<InitializeItem> initializeItems = Arrays.asList(new InitializeItem(fooItemNode), new InitializeItem(barItemNode), new InitializeItem(deltaItemNode));
         InitializationProcessorImpl processor = new InitializationProcessorImpl();
-        Set<String> reloadItems = new HashSet<>();
-        reloadItems.add(barItem.getIdentifier());
-        processor.markReloadDownstreamItems(session, reloadItems);
-        assertEquals("pending", deltaItem.getProperty(HIPPO_STATUS).getString());
-        assertNotNull(deltaItem.getProperty(HIPPO_UPSTREAMITEMS));
-        assertEquals(1, deltaItem.getProperty(HIPPO_UPSTREAMITEMS).getValues().length);
-        assertEquals(barItem.getIdentifier(), deltaItem.getProperty(HIPPO_UPSTREAMITEMS).getValues()[0].getString());
+        List<InitializeItem> reloadItems = Arrays.asList(new InitializeItem(barItemNode));
+        processor.markReloadDownstreamItems(session, initializeItems, reloadItems);
+        assertEquals("pending", deltaItemNode.getProperty(HIPPO_STATUS).getString());
+        assertNotNull(deltaItemNode.getProperty(HIPPO_UPSTREAMITEMS));
+        assertEquals(1, deltaItemNode.getProperty(HIPPO_UPSTREAMITEMS).getValues().length);
+        assertEquals(barItemNode.getIdentifier(), deltaItemNode.getProperty(HIPPO_UPSTREAMITEMS).getValues()[0].getString());
         process();
-//        assertTrue(session.propertyExists("/test/foo/bar/baz"));
     }
 
     @Test
@@ -418,28 +414,32 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTROOT, "/");
         item.setProperty(HIPPO_CONTENTRESOURCE, "fake");
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo", "/foo/bar" } );
-        Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        Node upstreamItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         session.save();
+
+        InitializeItem upstreamItem = new InitializeItem(upstreamItemNode);
+        InitializeItem downstreamItem = new InitializeItem(item);
+        final List<InitializeItem> initializeItems = Arrays.asList(downstreamItem, upstreamItem);
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl();
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        Iterator<InitializeItem> downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertTrue(downstreamItems.hasNext());
-        assertFalse(upstreamItem.isSame(downstreamItems.next()));
+        assertFalse(upstreamItemNode.isSame(downstreamItems.next().getItemNode()));
         assertFalse(downstreamItems.hasNext());
 
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo/bar" } );
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo/bar"});
         session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertTrue(downstreamItems.hasNext());
-        assertFalse(upstreamItem.isSame(downstreamItems.next()));
+        assertFalse(upstreamItemNode.isSame(downstreamItems.next().getItemNode()));
         assertFalse(downstreamItems.hasNext());
 
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foobar" } );
         session.save();
 
-        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertFalse(downstreamItems.hasNext());
     }
 
@@ -447,56 +447,56 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     public void testResolveContentPropSetAndAddDownstreamItems() throws Exception {
         item.setProperty(HIPPO_CONTENTROOT, "/foo/bar");
         item.setProperty(HIPPO_CONTENTPROPSET, new String[] { "<dummy>" });
-        Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        Node upstreamItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         session.save();
+
+        InitializeItem upstreamItem = new InitializeItem(upstreamItemNode);
+        InitializeItem downstreamItem = new InitializeItem(item);
+        List<InitializeItem> initializeItems = Arrays.asList(downstreamItem, upstreamItem);
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl();
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        Iterator<InitializeItem> downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertTrue(downstreamItems.hasNext());
-        assertFalse(upstreamItem.isSame(downstreamItems.next()));
+        assertFalse(upstreamItemNode.isSame(downstreamItems.next().getItemNode()));
         assertFalse(downstreamItems.hasNext());
 
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo/bar" } );
-        session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
-        assertTrue(downstreamItems.hasNext());
-        assertFalse(upstreamItem.isSame(downstreamItems.next()));
-        assertFalse(downstreamItems.hasNext());
-
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         session.save();
         item.setProperty(HIPPO_CONTENTROOT, "/foobar");
         session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertFalse(downstreamItems.hasNext());
-
     }
 
     @Test
     public void testResolveContentDeleteAndContentPropDeleteDownstreamItems() throws Exception {
         item.setProperty(HIPPO_CONTENTDELETE, "/foo/bar");
-        Node upstreamItem = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        Node upstreamItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         session.save();
+
+        InitializeItem upstreamItem = new InitializeItem(upstreamItemNode);
+        InitializeItem downstreamItem = new InitializeItem(item);
+        List<InitializeItem> initializeItems = Arrays.asList(downstreamItem, upstreamItem);
 
         InitializationProcessorImpl processor = new InitializationProcessorImpl();
-        Iterator<Node> downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        Iterator<InitializeItem> downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertTrue(downstreamItems.hasNext());
-        assertFalse(upstreamItem.isSame(downstreamItems.next()));
+        assertFalse(upstreamItemNode.isSame(downstreamItems.next().getItemNode()));
         assertFalse(downstreamItems.hasNext());
 
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo/bar" } );
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo/bar"});
         session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertTrue(downstreamItems.hasNext());
-        assertFalse(upstreamItem.isSame(downstreamItems.next()));
+        assertFalse(upstreamItemNode.isSame(downstreamItems.next().getItemNode()));
         assertFalse(downstreamItems.hasNext());
 
         item.setProperty(HIPPO_CONTENTDELETE, "/foobar");
-        upstreamItem.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo" } );
+        upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         session.save();
-        downstreamItems = processor.resolveDownstreamItems(session, upstreamItem).iterator();
+        downstreamItems = processor.resolveDownstreamItems(upstreamItem, initializeItems).iterator();
         assertFalse(downstreamItems.hasNext());
     }
 

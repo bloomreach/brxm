@@ -39,6 +39,8 @@ import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
 public class Extension {
 
+    static final String EXTENSION_FILE_NAME = "hippoecm-extension.xml";
+
     private final Session session;
     private final URL extensionURL;
     private final List<InitializeItem> initializeItems = new ArrayList<>();
@@ -90,8 +92,8 @@ public class Extension {
 
     String getModuleVersion() {
         String extensionURLString = extensionURL.toString();
-        if (extensionURLString.contains("hippoecm-extension.xml")) {
-            String manifestUrlString = StringUtils.substringBefore(extensionURLString, "hippoecm-extension.xml") + "META-INF/MANIFEST.MF";
+        if (extensionURLString.contains(EXTENSION_FILE_NAME)) {
+            String manifestUrlString = StringUtils.substringBefore(extensionURLString, EXTENSION_FILE_NAME) + "META-INF/MANIFEST.MF";
             try {
                 final Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
                 return manifest.getMainAttributes().getValue(new Attributes.Name("Implementation-Build"));
@@ -103,14 +105,6 @@ public class Extension {
 
     List<InitializeItem> getInitializeItems() {
         return initializeItems;
-    }
-
-    List<Node> getInitializeItemNodes() {
-        List<Node> itemNodes = new ArrayList<>(initializeItems.size());
-        for (InitializeItem initializeItem : initializeItems) {
-            itemNodes.add(initializeItem.getItemNode());
-        }
-        return itemNodes;
     }
 
     URL getExtensionSource() {

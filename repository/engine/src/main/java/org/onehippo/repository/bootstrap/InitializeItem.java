@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
@@ -74,6 +76,7 @@ import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ERROR_ME
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_DONE;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_FAILED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_MISSING;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_PENDING;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.SYSTEM_RELOAD_PROPERTY;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
@@ -239,7 +242,7 @@ public class InitializeItem {
     }
 
     public boolean isReloadable() throws RepositoryException {
-        return isReloadOnStartup(itemNode) && !isDeltaMerge(itemNode);
+        return isReloadOnStartup(itemNode) && !isDeltaMerge();
     }
 
     public Collection<InitializeItem> getUpstreamItems() throws RepositoryException {
@@ -272,11 +275,11 @@ public class InitializeItem {
     }
 
     public String getContentDeletePath() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_CONTENTDELETE).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_CONTENTDELETE, null));
     }
 
     public String getContentPropDeletePath() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_CONTENTPROPDELETE).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_CONTENTPROPDELETE, null));
     }
 
     public String getWebResourceBundle() throws RepositoryException {
@@ -284,11 +287,11 @@ public class InitializeItem {
     }
 
     public Property getContentPropSetProperty() throws RepositoryException {
-        return itemNode.getProperty(HIPPO_CONTENTPROPSET);
+        return JcrUtils.getPropertyIfExists(itemNode, HIPPO_CONTENTPROPSET);
     }
 
     public Property getContentPropAddProperty() throws RepositoryException {
-        return itemNode.getProperty(HIPPO_CONTENTPROPADD);
+        return JcrUtils.getPropertyIfExists(itemNode, HIPPO_CONTENTPROPADD);
     }
 
     private boolean isDone() throws RepositoryException {
@@ -346,7 +349,7 @@ public class InitializeItem {
         itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
 
         if (itemNode != null && isReloadRequested()) {
-            if (!isDeltaMerge(itemNode)) {
+            if (!isDeltaMerge()) {
                 if (isReloadEnabled()) {
                     isReload = true;
                 } else {
@@ -448,7 +451,7 @@ public class InitializeItem {
         return JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false);
     }
 
-    private boolean isDeltaMerge(final Node itemNode) throws RepositoryException {
+    private boolean isDeltaMerge() throws RepositoryException {
         final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(this.itemNode, HIPPOSYS_DELTADIRECTIVE, null));
         return deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"));
     }
@@ -506,4 +509,65 @@ public class InitializeItem {
         return Boolean.parseBoolean(reloadProperty);
     }
 
+    boolean isDownstreamItem(final InitializeItem upstreamItem) throws RepositoryException {
+        if (itemNode.isSame(upstreamItem.getItemNode())) {
+            return false;
+        }
+        final String reloadPath = upstreamItem.getContextPath();
+        if (reloadPath == null) {
+            return false;
+        }
+        final String contentResource = getContentResource();
+        if (contentResource != null) {
+            final String[] contextPaths = getContextPaths();
+            if (contextPaths != null) {
+                for (String contextPath : contextPaths) {
+                    if (contextPath.equals(reloadPath) || contextPath.startsWith(reloadPath + "/")) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if (getContentPropAddProperty() != null || getContentPropSetProperty() != null) {
+            final String contentRoot = getContentRoot();
+            if (contentRoot.startsWith(reloadPath + "/")) {
+                return true;
+            }
+        }
+        final String contentDeletePath = getContentDeletePath();
+        if (contentDeletePath != null && (contentDeletePath.equals(reloadPath) || contentDeletePath.startsWith(reloadPath + "/"))) {
+            return true;
+        }
+        final String contentPropDeletePath = getContentPropDeletePath();
+        if (contentPropDeletePath != null && (contentPropDeletePath.equals(reloadPath) || contentPropDeletePath.startsWith(reloadPath + "/"))) {
+            return true;
+        }
+        return false;
+    }
+
+    boolean isPending() throws RepositoryException {
+        return ITEM_STATUS_PENDING.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
+    }
+
+    void markDownstream(final InitializeItem reloadItem) throws RepositoryException {
+        final Value[] upstreamItemIds;
+        final Value upstreamItemId = itemNode.getSession().getValueFactory().createValue(reloadItem.getItemNode().getIdentifier());
+        if (itemNode.hasProperty(HIPPO_UPSTREAMITEMS)) {
+            List<Value> values = new ArrayList<>(Arrays.asList(itemNode.getProperty(HIPPO_UPSTREAMITEMS).getValues()));
+            values.add(upstreamItemId);
+            upstreamItemIds = values.toArray(new Value[values.size()]);
+        } else {
+            upstreamItemIds = new Value[] { upstreamItemId };
+        }
+        itemNode.setProperty(HIPPO_UPSTREAMITEMS, upstreamItemIds);
+        itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_PENDING);
+    }
+
+    long getTimestamp() throws RepositoryException {
+        return JcrUtils.getLongProperty(itemNode, HIPPO_TIMESTAMP, -1l);
+    }
+
+    void markMissing() throws RepositoryException {
+        itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_MISSING);
+    }
 }

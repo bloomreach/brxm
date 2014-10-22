@@ -34,6 +34,7 @@ import java.util.Properties;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -455,12 +456,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     }
 
     private List<PostStartupTask> contentBootstrap(final InitializationProcessorImpl initializationProcessor, final Session systemSession) throws RepositoryException {
+        final List<Node> pendingItems;
         try {
-            initializationProcessor.loadExtensions(systemSession);
+            pendingItems = initializationProcessor.loadExtensions(systemSession);
         } catch (IOException ex) {
             throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
         }
-        return initializationProcessor.processInitializeItems(systemSession);
+        return initializationProcessor.processInitializeItems(systemSession, pendingItems);
     }
 
     /**
