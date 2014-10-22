@@ -32,22 +32,4 @@
       <sv:value>13</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="autoreload-hst-hosts-prefix-exclusion">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:hosts/hst:prefixexclusions</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>/autoreload</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <!--
-        /hst:hst/hst:hosts is bootstrapped in end projects, so use a very high
-        sequence number to ensure this initialize item is bootstrapped later
-       -->
-      <sv:value>100000</sv:value>
-    </sv:property>
-  </sv:node>
 </sv:node>
