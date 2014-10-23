@@ -190,7 +190,6 @@ public class TestSpringComponentManager {
     @Test
     public void testGetComponentsOfType() {
         Configuration configuration = new PropertiesConfiguration();
-        configuration.setProperty("existing.key", "some value");
         SpringComponentManager componentManager = new SpringComponentManager(configuration);
         String [] configurationResources = new String [] { SIMPLE_BEANS_4 };
         componentManager.setConfigurationResources(configurationResources);
