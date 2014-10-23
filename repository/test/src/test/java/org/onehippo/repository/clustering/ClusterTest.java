@@ -51,10 +51,12 @@ import static org.junit.Assume.assumeTrue;
  * are shared with the test classes.
  * <p>
  *     By default starts an h2 database server as a backend for
- *     the repositories. MySQL can also be used by running with the option
+ *     the repositories on port 9001. MySQL can also be used by running with the option
  *     -Dorg.onehippo.repository.clustering.ClusterTest.dbtype=mysql
  *     An empty database called jcr must be present and accessible to
  *     user root with an empty password.
+ *     You can also change the port on which h2 is started by using the option
+ *     -Dorg.onehippo.repository.clustering.ClusterTest.dbport
  * </p>
  * <p>
  *     To control whether the repositories and database be cleaned out before
@@ -69,6 +71,7 @@ public abstract class ClusterTest {
 
     private static final Boolean cleanup = Boolean.getBoolean(ClusterTest.class.getName() + ".cleanup");
     private static final String dbtype = System.getProperty(ClusterTest.class.getName() + ".dbtype", "h2");
+    private static final String dbport = System.getProperty(ClusterTest.class.getName() + ".dbport", "9001");
     private static final String repo1Config = "/org/onehippo/repository/clustering/node1-repository-" + dbtype + ".xml";
     private static final String repo2Config = "/org/onehippo/repository/clustering/node2-repository-" + dbtype + ".xml";
 
@@ -112,7 +115,7 @@ public abstract class ClusterTest {
             cleanup();
         }
         if (dbtype.equals("h2")) {
-            server = Server.createTcpServer("-tcpPort", "9001", "-baseDir", h2Path).start();
+            server = Server.createTcpServer("-tcpPort", dbport, "-baseDir", h2Path).start();
         }
         final String repoPathSysProp = System.getProperty("repo.path", "");
         System.setProperty("repo.path", "");
