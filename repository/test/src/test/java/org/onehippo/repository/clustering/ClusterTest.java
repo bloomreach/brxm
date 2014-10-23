@@ -119,6 +119,7 @@ public abstract class ClusterTest {
         }
         final String repoPathSysProp = System.getProperty("repo.path", "");
         System.setProperty("repo.path", "");
+        System.setProperty("rep.dbport", dbport);
         if (repo1 == null) {
             repo1 = createRepository(repo1Path, repo1Config);
         }

@@ -23,7 +23,7 @@
   <DataSources>
     <DataSource name="ds1">
       <param name="driver" value="org.h2.Driver"/>
-      <param name="url" value="jdbc:h2:tcp://127.0.0.1:9001/db"/>
+      <param name="url" value="jdbc:h2:tcp://127.0.0.1:${rep.dbport}/db"/>
       <param name="databaseType" value="h2"/>
       <param name="validationQuery" value="select 1"/>
       <param name="maxPoolSize" value="10"/>
