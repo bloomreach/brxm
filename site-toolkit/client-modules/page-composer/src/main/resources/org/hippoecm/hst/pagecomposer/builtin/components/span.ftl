@@ -17,16 +17,22 @@
 
 <@hst.defineObjects/>
 <#if hstRequest.requestContext.cmsRequest>
-    <#assign containerClass = " class=\"hst-container\"">
-    <#assign containerItemClass = " class=\"hst-container-item\"">
+    <div class="hst-container">
+        <#list hstResponseChildContentNames as childContentName>
+            <span class="hst-container-item">
+                <@hst.include ref="${childContentName}"/>
+            </span>
+        </#list>
+    </div>
 <#else>
-    <#assign containerClass = "">
-    <#assign containerItemClass = "">
+    <div>
+        <#list hstResponseChildContentNames as childContentName>
+            <@hst.include ref="${childContentName}" var="output"/>
+            <#if output?has_content >
+                <span>
+                ${output}
+                </span>
+            </#if>
+        </#list>
+    </div>
 </#if>
-<div${containerClass}>
-<#list hstResponseChildContentNames as childContentName>
-    <span${containerItemClass}>
-        <@hst.include ref="${childContentName}"/>
-    </span>
-</#list>
-</div>

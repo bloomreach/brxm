@@ -1,5 +1,5 @@
 <#--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -17,16 +17,22 @@
 
 <@hst.defineObjects/>
 <#if hstRequest.requestContext.cmsRequest>
-    <#assign containerClass = " class=\"hst-container\"">
-    <#assign containerItemClass = " class=\"hst-container-item\"">
+    <div class="hst-container">
+        <#list hstResponseChildContentNames as childContentName>
+            <div class="hst-container-item">
+                <@hst.include ref="${childContentName}"/>
+            </div>
+        </#list>
+    </div>
 <#else>
-    <#assign containerClass = "">
-    <#assign containerItemClass = "">
+    <div>
+        <#list hstResponseChildContentNames as childContentName>
+            <@hst.include ref="${childContentName}" var="output"/>
+            <#if output?has_content >
+                <div>
+                    ${output}
+                </div>
+            </#if>
+        </#list>
+    </div>
 </#if>
-<div${containerClass}>
-  <#list hstResponseChildContentNames as childContentName>
-  <div${containerItemClass}>
-    <@hst.include ref="${childContentName}"/>
-  </div>
-  </#list>
-</div>
