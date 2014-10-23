@@ -145,7 +145,11 @@ module.exports = function (grunt) {
 
         // clean destination folder and bower components
         clean: {
-            tmp: [ '<%= cfg.tmp %>/**' ]
+            tmp: {
+                files: [
+                    {src: [ '<%= cfg.tmp %>/**' ], nonull: true}
+                ]
+            }
         },
 
         // Execute shell commands
