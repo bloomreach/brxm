@@ -321,10 +321,10 @@
             </aggregation>
           </aggregations>
           <includes>
-            <includes>css/hippo-cms-theme.css</includes>
+            <includes>hippo-cms-theme.css</includes>
           </includes>
-          <sourceDirectory>${project.basedir}/src/main/resources/skin/hippo-cms</sourceDirectory>
-          <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms</outputDirectory>
+          <sourceDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/css</sourceDirectory>
+          <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/css</outputDirectory>
           <suffix>.min</suffix>
         </configuration>
         <executions>
@@ -375,7 +375,6 @@
               <resources>
                 <resource>
                   <directory>${project.basedir}/src/main/styling/src/fonts</directory>
-                  <filtering>true</filtering>
                 </resource>
               </resources>
             </configuration>
