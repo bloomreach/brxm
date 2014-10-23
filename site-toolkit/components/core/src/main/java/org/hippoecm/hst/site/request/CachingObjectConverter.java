@@ -87,7 +87,7 @@ class CachingObjectConverter implements ObjectConverter {
     @Override
     public Object getObject(final Node node, final String relPath) throws ObjectBeanManagerException {
         if (StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
-            log.warn("'{}' is not a valid relative path. Return null.", relPath);
+            log.info("'{}' is not a valid relative path. Return null.", relPath);
             return null;
         }
         if (node == null) {
