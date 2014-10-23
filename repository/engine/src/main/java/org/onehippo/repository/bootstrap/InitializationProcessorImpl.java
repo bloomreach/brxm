@@ -39,6 +39,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.bootstrap.util.BootstrapConstants;
 import org.slf4j.Logger;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
@@ -148,7 +150,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     public List<Node> loadExtensions(Session session, boolean markMissingItems) throws IOException, RepositoryException {
         final Set<InitializeItem> reloadItems = new HashSet<>();
-        final long now = System.currentTimeMillis();
         final List<Extension> extensions = scanForExtensions(session);
         final List<InitializeItem> initializeItems = new ArrayList<>();
         final Map<String, String> itemNames = new HashMap<>();
@@ -161,7 +162,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
         }
         if (markMissingItems) {
-            markMissingInitializeItems(session, now, initializeItems);
+            markMissingInitializeItems(session, itemNames.keySet());
         }
         markReloadDownstreamItems(session, initializeItems, reloadItems);
         return getPendingItemNodes(initializeItems);
@@ -194,8 +195,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             throws RepositoryException {
         for (InitializeItem reloadItem : reloadItems) {
             for (InitializeItem downstreamItem : resolveDownstreamItems(reloadItem, initializeItems)) {
-                log.info("Marking item {} pending because downstream from {}", new Object[] { downstreamItem.getName(), reloadItem.getName() });
-                downstreamItem.markDownstream(reloadItem);
+                if (!downstreamItem.isMissing()) {
+                    log.info("Marking item {} pending because downstream from {}", new Object[] { downstreamItem.getName(), reloadItem.getName() });
+                    downstreamItem.markDownstream(reloadItem);
+                }
             }
         }
         session.save();
@@ -233,11 +236,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return initializeItems;
     }
 
-    private void markMissingInitializeItems(final Session session, final long markBefore, final List<InitializeItem> initializeItems) throws RepositoryException {
-        for (InitializeItem initializeItem : initializeItems) {
-            if (initializeItem.getTimestamp() < markBefore) {
-                log.info("Marking missing initialize item {}", initializeItem.getName());
-                initializeItem.markMissing();
+    private void markMissingInitializeItems(final Session session, final Set<String> itemNames) throws RepositoryException {
+        final Node initializeFolder = session.getNode(BootstrapConstants.INIT_FOLDER_PATH);
+        for (Node item : new NodeIterable(initializeFolder.getNodes())) {
+            if (!itemNames.contains(item.getName())) {
+                log.info("Marking missing initialize item {}", item.getName());
+                InitializeItem.markMissing(item);
             }
         }
         session.save();

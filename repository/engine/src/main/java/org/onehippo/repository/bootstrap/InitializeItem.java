@@ -325,6 +325,7 @@ public class InitializeItem {
                 }
             }
             itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_DONE);
+            itemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
             session.save();
             return Collections.unmodifiableList(postStartupTasks);
         } catch (RepositoryException e) {
@@ -390,7 +391,6 @@ public class InitializeItem {
             itemNode.setProperty(HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
         }
 
-        itemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
         final String status = JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null);
         if (ITEM_STATUS_MISSING.equals(status)) {
             itemNode.getProperty(HIPPO_STATUS).remove();
@@ -567,7 +567,11 @@ public class InitializeItem {
         return JcrUtils.getLongProperty(itemNode, HIPPO_TIMESTAMP, -1l);
     }
 
-    void markMissing() throws RepositoryException {
+    static void markMissing(final Node itemNode) throws RepositoryException {
         itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_MISSING);
+    }
+
+    public boolean isMissing() throws RepositoryException {
+        return ITEM_STATUS_MISSING.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
     }
 }
