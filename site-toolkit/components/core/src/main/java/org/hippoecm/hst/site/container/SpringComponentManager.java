@@ -43,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * SpringComponentManager
@@ -59,6 +61,8 @@ public class SpringComponentManager implements ComponentManager {
     public static final String SYSTEM_PROPERTIES_MODE = SpringComponentManager.class.getName() + ".systemPropertiesMode";
     
     public static final String BEAN_REGISTER_CONDITION = SpringComponentManager.class.getName() + ".registerCondition";
+
+    private static final String FALLBACK_ROOT_WEBAPP_CONTEXT_PROPERTY = "component.fallback.root.web.application.context";
     
     protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected Configuration configuration;
@@ -76,6 +80,8 @@ public class SpringComponentManager implements ComponentManager {
     private ServletContext servletContext;
 
     private EventBus containerEventBus = new EventBus();
+
+    private boolean fallbackRootApplicationContextLookup;
 
     public SpringComponentManager() {
         this(new PropertiesConfiguration());
@@ -117,7 +123,12 @@ public class SpringComponentManager implements ComponentManager {
     
     public void initialize() {
         applicationContext = new DefaultComponentManagerApplicationContext(this, containerConfiguration);
-        
+
+        fallbackRootApplicationContextLookup = containerConfiguration.getBoolean(FALLBACK_ROOT_WEBAPP_CONTEXT_PROPERTY, false);
+        if (fallbackRootApplicationContextLookup) {
+            log.info("Component fallback to root webapplication context if available is enabled.");
+        }
+
         String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, getConfigurationResources());
         
         if (ArrayUtils.isEmpty(checkedConfigurationResources)) {
@@ -233,7 +244,23 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 bean = (T) applicationContext.getBean(name);
             } catch (Exception e) {
-                log.warn("The requested bean doesn't exist: '{}'", name);
+                if (fallbackRootApplicationContextLookup && servletContext != null) {
+                    WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+                    if (rootWebAppContext != null) {
+                        log.info("The requested bean '{}' doesn't exist in HST spring core component manager. Trying " +
+                                "fallback to the root application context", name);
+                        try {
+                            return (T) rootWebAppContext.getBean(name);
+                        } catch (Exception e2) {
+                            log.warn("The requested bean '{}' doesn't exist in HST spring component manager nor in " +
+                                    "the fallback root application context.", name);
+                        }
+                    } else {
+                        log.warn("The requested bean '{}' doesn't exist.", name);
+                    }
+                } else {
+                    log.warn("The requested bean '{}' doesn't exist.", name);
+                }
             }
         } else {
             if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
@@ -274,9 +301,25 @@ public class SpringComponentManager implements ComponentManager {
 
         if (addonModuleNames == null || addonModuleNames.length == 0) {
             try {
-                bean = (T) applicationContext.getBean(requiredType);
+                bean = applicationContext.getBean(requiredType);
             } catch (Exception e) {
-                log.warn("The requested bean doesn't exist by the required type: '{}'", requiredType);
+                if (fallbackRootApplicationContextLookup && servletContext != null) {
+                    WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+                    if (rootWebAppContext != null) {
+                        log.info("The requested bean by type '{}' doesn't exist in HST spring core component manager. Trying " +
+                                "fallback to the root application context", requiredType);
+                        try {
+                            return rootWebAppContext.getBean(requiredType);
+                        } catch (Exception e2) {
+                            log.warn("The requested bean by type '{}' doesn't exist in HST spring component manager nor in " +
+                                    "the fallback root application context.", requiredType);
+                        }
+                    } else {
+                        log.warn("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
+                    }
+                } else {
+                    log.warn("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
+                }
             }
         } else {
             if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
@@ -298,7 +341,7 @@ public class SpringComponentManager implements ComponentManager {
             }
 
             try {
-                bean = (T) moduleInstance.getComponent(requiredType);
+                bean = moduleInstance.getComponent(requiredType);
             } catch (Exception e) {
                 log.warn("The requested bean doesn't exist by the required type: '{}' in the addon module context, '{}'.",
                         requiredType, ArrayUtils.toString(addonModuleNames));
