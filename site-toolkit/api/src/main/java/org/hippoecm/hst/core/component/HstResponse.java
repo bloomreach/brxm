@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.component;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
@@ -203,6 +204,14 @@ public interface HstResponse extends HttpServletResponse {
      * @throws IOException
      */
     void flushChildContent(String name) throws IOException;
+
+    /**
+     * Flushes the child window, and writes its content to the {@link Writer}. Note that not everything that gets
+     * flushed ends up in the <code>writer</code>, for example head contributions not.
+     * @param name the name of the child window to flush
+     * @param writer the {@link Writer} the content gets flushed to
+     */
+    void flushChildContent(String name, Writer writer) throws IOException;
     
     /**
      * Returns the flushable child content window names.

@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -408,13 +409,22 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     public void setServeResourcePath(String serveResourcePath) {
         throw new UnsupportedOperationException("hst response is not allowed to invoke setServeResourcePath().");
     }
-    
+
     public void flushChildContent(String name) throws IOException {
         HstComponentWindow childWindow = this.componentWindow.getChildWindow(name);
         if (childWindow == null) {
             log.debug("Cannot find child window with name '{}' for current window '{}'. Skip child.", name, this.componentWindow.getName());
         } else {
             childWindow.getResponseState().flush();
+        }
+    }
+
+    public void flushChildContent(String name, Writer writer) throws IOException {
+        HstComponentWindow childWindow = this.componentWindow.getChildWindow(name);
+        if (childWindow == null) {
+            log.debug("Cannot find child window with name '{}' for current window '{}'. Skip child.", name, this.componentWindow.getName());
+        } else {
+            childWindow.getResponseState().flush(writer);
         }
     }
     

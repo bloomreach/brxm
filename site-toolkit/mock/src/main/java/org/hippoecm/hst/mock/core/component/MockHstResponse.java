@@ -16,6 +16,7 @@
 package org.hippoecm.hst.mock.core.component;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -225,6 +226,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     }
 
     public void flushChildContent(String name) throws IOException {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public void flushChildContent(final String name, final Writer writer) throws IOException {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

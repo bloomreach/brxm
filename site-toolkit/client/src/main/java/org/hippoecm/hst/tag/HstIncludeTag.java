@@ -16,11 +16,12 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.component.HstResponse;
@@ -39,12 +40,16 @@ public class HstIncludeTag extends TagSupport {
     private final static Logger log = LoggerFactory.getLogger(HstIncludeTag.class);
 
     protected String ref = null;
+    protected String var;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
     @Override
     public int doStartTag() throws JspException{
+        if (var != null) {
+            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+        }
         return EVAL_BODY_INCLUDE;
     }
     
@@ -64,9 +69,14 @@ public class HstIncludeTag extends TagSupport {
             }
 
             try {
-                JspWriter writer = pageContext.getOut();
-                writer.flush();
-                hstResponse.flushChildContent(ref);
+                pageContext.getOut().flush();
+                if (var == null) {
+                    hstResponse.flushChildContent(ref);
+                } else {
+                    StringWriter writer = new StringWriter();
+                    hstResponse.flushChildContent(ref, writer);
+                    pageContext.setAttribute(var, writer.toString(), PageContext.PAGE_SCOPE);
+                }
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Exception happened while including child content for '"+ref+"'.", e);
@@ -83,6 +93,7 @@ public class HstIncludeTag extends TagSupport {
 
     protected void cleanup() {
         ref = null;
+        var = null;
     }
 
     /**
@@ -101,5 +112,12 @@ public class HstIncludeTag extends TagSupport {
     public void setRef(String ref) {
         this.ref = ref;
     }
-    
+
+    public String getVar() {
+        return var;
+    }
+
+    public void setVar(final String var) {
+        this.var = var;
+    }
 }

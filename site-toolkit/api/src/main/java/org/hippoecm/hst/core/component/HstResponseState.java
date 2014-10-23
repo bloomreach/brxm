@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
 
@@ -149,6 +150,8 @@ public interface HstResponseState
     void clear();
 
     void flush() throws IOException;
+
+    void flush(Writer writer) throws IOException;
 
     boolean isFlushed();
 

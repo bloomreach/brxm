@@ -24,10 +24,20 @@
   <uri>http://www.hippoecm.org/jsp/hst/core</uri>
 
   <tag>
-    <description>A HstComponent can include the content of its child HstComponent with this tag.</description>
+    <description>A HstComponent can include the content of its child HstComponent with this tag. If the 'var' attribute
+      is missing, child content will be directly written to the location of this hst:include tag. If 'var' attribute is
+      defined, the output will be stored in the variable define by 'var'.
+    </description>
     <name>include</name>
     <tag-class>org.hippoecm.hst.tag.HstIncludeTag</tag-class>
     <body-content>empty</body-content>
+    <attribute>
+      <description>The variable name containing the content of the child HstComponent</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
     <attribute>
       <description>The name of the child HstComponent to be included.</description>
       <name>ref</name>
@@ -46,7 +56,10 @@
             <hst:include ref="content"/>
           </td>
           <td class="rightmenu">
-            <hst:include ref="right"/>
+            <hst:include ref="right" var="rightContent"/>
+            <c:if test="${not empty fn:trim(rightContent)}">
+              ${rightContent}
+            </c:if>
           </td>
         </tr>
        </table>

@@ -716,6 +716,14 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public void flush() throws IOException {
+        doFlush(getParentWriter());
+    }
+
+    public void flush(Writer writer) throws IOException {
+        doFlush(writer);
+    }
+
+    private void doFlush(Writer writer) throws IOException {
         if (flushed) {
             //throw new IllegalStateException("Already flushed");
             // Just ignore...
@@ -800,7 +808,6 @@ public class HstServletResponseState implements HstResponseState {
                         outputStream.flush();
                     }
 
-                    Writer writer = getParentWriter();
                     int len = byteOutputBuffer.size();
                     if (contentLength > -1 && contentLength < len) {
                         len = contentLength;
@@ -825,7 +832,6 @@ public class HstServletResponseState implements HstResponseState {
                     if (!closed) {
                         printWriter.flush();
 
-                        Writer writer = getParentWriter();
                         printPreambleComments(preambleComments);
                         printPreambleElements(preambleElements);
                         if (wrapperElement == null) {

@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -480,6 +481,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public Comment createComment(String comment) {return null;}
         @Override public Element createElement(String tagName) {return null;}
         @Override public void flush() throws IOException {}
+        @Override public void flush(final Writer writer) throws IOException {}
         @Override public void flushBuffer() throws IOException {}
         @Override public void forward(String pathInfo) throws IOException {}
         @Override public int getBufferSize() {return 0;}
@@ -542,6 +544,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public HstURL createResourceURL() {return null;}
         @Override public HstURL createResourceURL(String referenceNamespace) {return null;}
         @Override public void flushChildContent(String name) throws IOException {}
+        @Override public void flushChildContent(final String name, final Writer writer) throws IOException {}
         @Override public void forward(String pathInfo) throws IOException {}
         @Override public List<String> getChildContentNames() {return null;}
         @Override public List<Element> getHeadElements() {return null;}
