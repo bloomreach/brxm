@@ -19,9 +19,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:channelinfo</sv:value>
       </sv:property>
-      <sv:property sv:name="headerName" sv:type="String">
-        <sv:value>HST Website</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>
