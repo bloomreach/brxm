@@ -277,6 +277,7 @@
           </archive>
         </configuration>
       </plugin>
+      <!-- Compile less files to css in ./tmp/css -->
       <plugin>
         <groupId>org.lesscss</groupId>
         <artifactId>lesscss-maven-plugin</artifactId>
@@ -286,12 +287,13 @@
             <id>Hippo CMS Theme</id>
             <configuration>
               <sourceDirectory>${project.basedir}/src/main/styling/src/less</sourceDirectory>
-              <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/css</outputDirectory>
+              <outputDirectory>${project.basedir}/src/main/styling/.tmp/css</outputDirectory>
               <compress>false</compress>
               <includes>
+                <include>lib/open-sans.less</include>
+                <include>lib/normalize.less</include>
                 <include>main.less</include>
               </includes>
-              <outputFileFormat>hippo-cms-theme.css</outputFileFormat>
             </configuration>
             <goals>
               <goal>compile</goal>
@@ -299,6 +301,43 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Concat the compiled css files in ./tmp/css into hippo-cms-theme.css -->
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <version>1.3.2</version>
+        <configuration>
+          <preProcessAggregates>true</preProcessAggregates>
+          <aggregations>
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <output>${project.basedir}/src/main/resources/skin/hippo-cms/css/hippo-cms-theme.css</output>
+              <inputDir>${basedir}/src/main/styling/.tmp/css</inputDir>
+              <includes>
+                <include>lib/open-sans.css</include>
+                <include>lib/normalize.css</include>
+                <include>main.css</include>
+              </includes>
+            </aggregation>
+          </aggregations>
+          <includes>
+            <includes>css/hippo-cms-theme.css</includes>
+          </includes>
+          <sourceDirectory>${project.basedir}/src/main/resources/skin/hippo-cms</sourceDirectory>
+          <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms</outputDirectory>
+          <suffix>.min</suffix>
+        </configuration>
+        <executions>
+          <execution>
+            <id>compress_css</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Minify css -->
       <plugin>
         <groupId>com.samaxes.maven</groupId>
         <artifactId>minify-maven-plugin</artifactId>
@@ -321,8 +360,8 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Copy fonts -->
       <plugin>
-        <!-- Copy fonts -->
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
@@ -342,6 +381,31 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.4.1</version>
+        <executions>
+          <execution>
+            <id>auto-clean</id>
+            <phase>install</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/src/main/styling/.tmp/</directory>
+              <followSymlinks>false</followSymlinks>
+              <includes>
+                <include>**</include>
+              </includes>
+            </fileset>
+          </filesets>
+          <excludeDefaultDirectories>true</excludeDefaultDirectories>
+        </configuration>
       </plugin>
     </plugins>
   </build>
