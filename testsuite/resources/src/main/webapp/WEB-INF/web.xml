@@ -351,7 +351,7 @@
   </error-page>
 
   <error-page>
-    <exception-type>Exception</exception-type>
+    <exception-type>java.lang.Exception</exception-type>
     <location>/WEB-INF/jsp/errorpages/ErrorPage500.jsp</location>
   </error-page>
 
