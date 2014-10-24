@@ -34,7 +34,7 @@ public class H2ServerServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            h2Server = Server.createTcpServer("-tcpPort", "9001", "-tcpAllowOthers");
+            h2Server = Server.createTcpServer("-tcpPort", "9876", "-tcpAllowOthers");
             h2Server.start();
         } catch (SQLException e) {
             log.error("Failed to start H2 database server");
