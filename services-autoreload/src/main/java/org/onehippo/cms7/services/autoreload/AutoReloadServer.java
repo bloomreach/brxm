@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.autoreload;
 
 import java.io.IOException;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.websocket.OnClose;
@@ -38,7 +39,7 @@ public class AutoReloadServer {
     private static final Logger log = LoggerFactory.getLogger(AutoReloadServer.class);
     private static AutoReloadServer instance = null;
 
-    private final ConcurrentLinkedQueue<Session> sessions;
+    private final Queue<Session> sessions;
 
     private AutoReloadServer() {
         sessions = new ConcurrentLinkedQueue();
