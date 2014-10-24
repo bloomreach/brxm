@@ -302,17 +302,12 @@ public class ESIPageRenderer implements ComponentManagerAware {
     protected void includeLocalURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
         if (localContainerURL.getComponentRenderingWindowReferenceNamespace() != null || localContainerURL.getResourceWindowReferenceNamespace() != null) {
             includeLocalESIPipelineURL(writer, uri, localContainerURL);
-        } else {
-            HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-            String pathInfo = uri.getPath();
-
-            if (hstManager.isExcludedByHstFilterInitParameter(pathInfo) || RequestContextProvider.get().getVirtualHost().getVirtualHosts().isExcluded(pathInfo)) {
+        } else if (RequestContextProvider.get().getVirtualHost().getVirtualHosts().isExcluded(uri.getPath())) {
                 includeLocalDispatchURL(writer, uri, localContainerURL);
-            } else {
-                log.warn(
-                        "Ignoring ESI Include Tag. ESI Include Tag for a local HST navigational URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
-                        uri);
-            }
+        } else {
+            log.warn("Ignoring ESI Include Tag. ESI Include Tag for a local HST navigational " +
+                            "URL (neither componentRendering nor resource URL) is not supported yet: '{}'.",
+                    uri);
         }
     }
 
