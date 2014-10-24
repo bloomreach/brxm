@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 class AutoReloadScriptLoader {
 
     private static final String AUTO_RELOAD_SCRIPT = "autoreload.js";
+    private static final int READ_BUF_SIZE = 1024;
 
     private static final Logger log = LoggerFactory.getLogger(AutoReloadScriptLoader.class);
 
@@ -54,7 +55,7 @@ class AutoReloadScriptLoader {
 
     private String readString(final InputStream in, final String encoding) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final byte[] buffer = new byte[1024];
+        final byte[] buffer = new byte[READ_BUF_SIZE];
         int length;
         while ((length = in.read(buffer)) != -1) {
             out.write(buffer, 0, length);
