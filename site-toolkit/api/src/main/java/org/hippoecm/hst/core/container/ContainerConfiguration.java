@@ -47,76 +47,90 @@ public interface ContainerConfiguration {
     /**
      * Get a boolean associated with the given configuration key.
      * @param key
-     * @return
+     * @return boolean associated for <code>key</code> and <code>false</code> if key is missing
+     * @throws java.lang.RuntimeException if key is present but mapped to wrong type
      */
     boolean getBoolean(String key);
     
     /**
      * Get a boolean associated with the given configuration key. 
-     * If the key doesn't map to an existing object, the default value is returned.
+     * If the key doesn't map to an existing object or to an object that is not a boolean/Boolean, the default value is returned.
      * @param key
      * @param defaultValue
-     * @return
+     * @return boolean associated with configuration <code>key</code> and if <code>key</code> maps to object that does not
+     * map to a boolean/Boolean or is missing, <code>defaultValue</code> is returned
      */
     boolean getBoolean(String key, boolean defaultValue);
     
     /**
      * Get a string associated with the given configuration key.
      * @param key
-     * @return
+     * @return String associated for <code>key</code> and <code>null</code> if key is missing
+     * @throws java.lang.RuntimeException if key is present but mapped to wrong type
      */
     String getString(String key);
     
     /**
      * Get a string associated with the given configuration key.
+     * If the key doesn't map to an existing object or to an object that is not a String, the default value is returned.
      * @param key
      * @param defaultValue
-     * @return
+     * @return String associated with configuration <code>key</code> and if <code>key</code> maps to object that does not
+     * map to a string or is missing, <code>defaultValue</code> is returned
      */
     String getString(String key, String defaultValue);
     
     /**
      * Get a double associated with the given configuration key. 
      * @param key
-     * @return
+     * @return double associated for <code>key</code> and <code>0D</code> if key is missing
+     * @throws java.lang.RuntimeException if key is present but mapped to wrong type
      */
     double getDouble(String key);
     
     /**
-     * Get a Double associated with the given configuration key.
+     * Get a double associated with the given configuration key.
+     * If the key doesn't map to an existing object or to an object that is not a double/Double, the default value is returned.
      * @param key
      * @param defaultValue
-     * @return
+     * @return double associated with configuration <code>key</code> and if <code>key</code> maps to object that does not
+     * map to a double/Double or is missing, <code>defaultValue</code> is returned
      */
     double getDouble(String key, double defaultValue);
     
     /**
      * Get a float associated with the given configuration key.
      * @param key
-     * @return
+     * @return float associated for <code>key</code> and <code>0F</code> if key is missing
+     * @throws java.lang.RuntimeException if key is present but mapped to wrong type
      */
     float getFloat(String key);
     
     /**
-     * Get a Float associated with the given configuration key. 
+     * Get a float associated with the given configuration key.
+     * If the key doesn't map to an existing object or to an object that is not a float/Float, the default value is returned.
      * @param key
      * @param defaultValue
-     * @return
+     * @return double associated with configuration <code>key</code> and if <code>key</code> maps to object that does not
+     * map to a float/Float or is missing, <code>defaultValue</code> is returned
      */
     float getFloat(String key, float defaultValue);
     
     /**
      * Get a int associated with the given configuration key.
      * @param key
-     * @return
+     * @return int associated for <code>key</code> and <code>0</code> if key is missing
+     * @throws java.lang.RuntimeException if key is present but mapped to wrong type
      */
     int getInt(String key);
     
     /**
-     * Get a int associated with the given configuration key. 
+     * Get a int associated with the given configuration key.
+     * If the key doesn't map to an existing object or to an object that is not a int/Int, the default value is returned.
      * @param key
      * @param defaultValue
-     * @return
+     * @return int associated with configuration <code>key</code> and if <code>key</code> maps to object that does not
+     * map to a int/Int or is missing, <code>defaultValue</code> is returned
      */
     int getInt(String key, int defaultValue);
     
@@ -130,15 +144,18 @@ public interface ContainerConfiguration {
     /**
      * Get a long associated with the given configuration key. 
      * @param key
-     * @return
+     * @return long associated for <code>key</code> and <code>0L</code> if key is missing
+     * @throws java.lang.RuntimeException if key is present but mapped to wrong type
      */
     long getLong(String key);
     
     /**
      * Get a long associated with the given configuration key.
+     * If the key doesn't map to an existing object or to an object that is not a long/Long, the default value is returned.
      * @param key
      * @param defaultValue
-     * @return
+     * @return int associated with configuration <code>key</code> and if <code>key</code> maps to object that does not
+     * map to a long/Long or is missing, <code>defaultValue</code> is returned
      */
     long getLong(String key, long defaultValue);
     

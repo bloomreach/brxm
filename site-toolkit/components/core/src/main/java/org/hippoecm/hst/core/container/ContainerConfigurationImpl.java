@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Container Configuration
@@ -31,6 +34,8 @@ import org.apache.commons.configuration.ConfigurationConverter;
  * @version $Id$
  */
 public class ContainerConfigurationImpl implements ContainerConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(ContainerConfigurationImpl.class);
 
     protected Configuration configuration;
 
@@ -47,35 +52,76 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     }
     
     public boolean getBoolean(String key, boolean defaultValue) {
-        return configuration.getBoolean(key, defaultValue);
+        try {
+            return configuration.getBoolean(key, defaultValue);
+        } catch (Exception e) {
+            log.info("Return default value '{}' for '{}' because of '{}'", defaultValue, key , e.toString());
+            return defaultValue;
+        }
     }
 
     public boolean getBoolean(String key) {
-        return configuration.getBoolean(key);
+        try {
+            return configuration.getBoolean(key);
+        } catch (NoSuchElementException e) {
+            log.info("Return 'false' for '{}' because of '{}'", key , e.toString());
+            return false;
+        }
     }
 
     public double getDouble(String key, double defaultValue) {
-        return configuration.getDouble(key, defaultValue);
+        try {
+            return configuration.getDouble(key, defaultValue);
+        } catch (Exception e) {
+            log.info("Return default value '{}' for '{}' because of '{}'", defaultValue,  key , e.toString());
+            return defaultValue;
+        }
     }
 
     public double getDouble(String key) {
-        return configuration.getDouble(key);
+        try {
+            return configuration.getDouble(key);
+        } catch (NoSuchElementException e) {
+            log.info("Return '0D' for '{}' because of '{}'", key , e.toString());
+            return 0D;
+        }
+
     }
 
     public float getFloat(String key, float defaultValue) {
-        return configuration.getFloat(key, defaultValue);
+        try {
+            return configuration.getFloat(key, defaultValue);
+        } catch (Exception e) {
+            log.info("Return default value '{}' for '{}' because of '{}'", defaultValue, key , e.toString());
+            return defaultValue;
+        }
     }
 
     public float getFloat(String key) {
-        return configuration.getFloat(key);
+        try {
+            return configuration.getFloat(key);
+        } catch (NoSuchElementException e) {
+            log.info("Return '0F' for '{}' because of '{}'", key , e.toString());
+            return 0F;
+        }
     }
 
     public int getInt(String key, int defaultValue) {
-        return configuration.getInt(key, defaultValue);
+        try {
+            return configuration.getInt(key, defaultValue);
+        } catch (Exception e) {
+            log.info("Return default value '{}' for '{}' because of '{}'", defaultValue, key , e.toString());
+            return defaultValue;
+        }
     }
 
     public int getInt(String key) {
-        return configuration.getInt(key);
+        try {
+            return configuration.getInt(key);
+        } catch (NoSuchElementException e) {
+            log.info("Return '0' for '{}' because of '{}'", key , e.toString());
+            return 0;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -92,7 +138,11 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     }
 
     public String getString(String key, String defaultValue) {
-        return configuration.getString(key, defaultValue);
+        try {
+            return configuration.getString(key, defaultValue);
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
     public String getString(String key) {
