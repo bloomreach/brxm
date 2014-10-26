@@ -20,14 +20,18 @@
   padding: 0;
 }
 */
+//implement margin:0 & padding:0 per case
+ol, ul {
+  margin: 0;
+  padding: 0;
+} 
 
 // Removes list-style from lists, lists are more often used without a list style
 // TODO: Probably better to do this when needed
 ol, ul {
   list-style: none;
-  // more specific than * from above
-  padding: 0;
 }
+
 
 // Normalizes font-size for headers
 // Handled in _typography.less 

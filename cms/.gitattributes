@@ -1102,6 +1102,7 @@ api/src/main/resources/skin/images/state-changed-16.gif -text
 api/src/main/resources/skin/images/tab-active.png -text
 api/src/main/resources/skin/images/tabs-vertical-back.png -text
 api/src/main/resources/skin/images/tabs-vertical-top-back.png -text
+api/src/main/resources/skin/images/tmp/border-top.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/transparent2.png -text
 api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/screen.css svneol=native#text/css
@@ -1127,8 +1128,12 @@ api/src/main/styling/src/fonts/open-sans/LightItalic/OpenSans-LightItalic.woff -
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.eot -text
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.ttf -text
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.woff -text
+api/src/main/styling/src/less/_ajax_loader.less -text
+api/src/main/styling/src/less/_footer.less -text
+api/src/main/styling/src/less/_home_menu.less -text
 api/src/main/styling/src/less/_legacy.less -text
 api/src/main/styling/src/less/_mixins.less -text
+api/src/main/styling/src/less/_perspectives_switcher.less -text
 api/src/main/styling/src/less/_scaffolding.less -text
 api/src/main/styling/src/less/_styletest.less -text
 api/src/main/styling/src/less/_typography.less -text

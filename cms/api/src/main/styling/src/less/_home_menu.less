@@ -1,0 +1,38 @@
+.hippo-home-menu {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: @home-menu-width;
+  height: @home-menu-height;
+  //TODO: add high res
+  //TODO: fix images path aka copy to new theme
+  background: url("../../images/hippologo.png") no-repeat;
+  background-color: @home-menu-background-color;
+  background-size: 37px;
+  background-position: 50%;
+
+  .hippo-menu {
+    display: none;
+
+    .hippo-menu-username {
+/*
+      position: absolute;
+      left: 40px;
+      top: 5px;
+*/
+      color: white;
+      font-weight: bold;
+    }
+  }
+}
+
+/* AutoExport states */
+/* ================= */
+.auto-export-state-disabled {
+  color: #ff3f4b;
+}
+
+.auto-export-state-enabled {
+  color: #7fff1d;
+}
+

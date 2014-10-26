@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,11 @@ body.hippo-root #doc3 {
   display: none;
 }
 
+/* Hide the wicket debugger for now */
+#wicketDebugLink {
+  display: none;
+}
+
 /* Hippo Global CSS tools */
 /* ================================================ */
 .hippo-global-fullwidth {
@@ -82,10 +87,6 @@ body.hippo-root #doc3 {
 
 /* Auke's hippo skin global css */
 /* ================================================ */
-.hippo-root {
-  background: url("images/headerBack.png") repeat-x top left;
-  background-attachment: scroll
-}
 
 /* remove the background in dialog windows */
 .hippo-window {
@@ -170,6 +171,8 @@ body.hippo-root #doc3 {
 
 /* Wicket Ajaxloader */
 /* ================================================ */
+/* Moved to _ajax_loader.less */
+/*
 .hippo-root .wicket-ajax-indicator {
   position: absolute;
   top: 0;
@@ -188,17 +191,21 @@ body.hippo-root #doc3 {
   background: transparent;
   top: auto;
 }
+*/
 
-.hippo-window
+/*.hippo-window*/
 
 /* Header */
 /* ================================================ */
+/* TODO: Can be removed, maybe for modal?
 .hippo-header {
   height: 25px;
   background: url("images/headerBack.png") repeat-x top left;
 }
+*/
 
-.hippo-header-home {
+/* Not used afaics 
+ .hippo-header-home {
   background: url("images/hippologo.png") no-repeat;
   text-indent: -9999px;
   width: 29px;
@@ -206,15 +213,20 @@ body.hippo-root #doc3 {
   margin-left: 5px;
   display: block;
 }
+*/
 
-.hippo-logout-username {
+/*
+.hippo-menu-username {
   position: absolute;
   left: 40px;
   top: 5px;
   color: white;
   font-weight: bold;
 }
+*/
 
+/* replaced by hippo-menu */
+/*
 .hippo-header-items-right {
   position: absolute;
   right: 0;
@@ -237,9 +249,11 @@ body.hippo-root #doc3 {
 .hippo-header-items-right span span a {
     color: #ffffff;
 }
+*/
 
 /* AutoExport states */
 /* ================= */
+/* Copied to _home_menu.less
 .auto-export-state-disabled {
     color: #ff3f4b;
 }
@@ -247,9 +261,11 @@ body.hippo-root #doc3 {
 .auto-export-state-enabled {
     color: #7fff1d;
 }
+*/
 
 /* TabsPlugin perspective switcher (left buttons) */
 /* ================================================ */
+/*
 .tabbed-panel-layout-left {
   background: url("images/tabs-vertical-back.png") repeat-y
 }
@@ -278,9 +294,11 @@ body.hippo-root #doc3 {
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a span {
   display: none;
 }
+*/
 
 /* TabsPlugin Document switcher */
 /* ================================================ */
+/* Moved to _tabs.less
 .hippo-tabs-documents-top .tab-row {
 }
 
@@ -371,6 +389,7 @@ body.hippo-root #doc3 {
   margin-right: 3px;
   vertical-align: -4px;
 }
+*/
 
 /* Logout */
 /* ================================================ */

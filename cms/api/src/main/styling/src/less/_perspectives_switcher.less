@@ -1,0 +1,41 @@
+/* TabsPlugin perspective switcher (left buttons) */
+/* ================================================ */
+
+.tabbed-panel-layout-left {
+  background-color: @main-menu-background-color;
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
+  top: 0;
+  left: 0;
+  padding-top: 4px;
+
+  li div a {
+    display: table;
+    color: @main-menu-text-color;
+
+    img {
+      margin: 24px 0 4px 16px;
+      // Temp filter to turn images into grayscale
+      .greyscale-image();
+    }
+    span {
+      font-size: @font-size-tiny;
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+    }
+  }
+  
+  li:first-child div a img {
+    margin-top: 4px; 
+  }
+
+  .selected div a {
+    color: @main-menu-selected-text-color;
+    
+    img {
+      filter: none;
+    }
+  }
+}
