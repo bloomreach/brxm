@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -322,12 +322,15 @@ public class TabbedPanel extends WebMarkupContainer {
             protected String load() {
                 IModel<String> titleModel = tabModel.getObject().getTitle();
                 if (titleModel != null) {
+                    //CMS7R-REMOVE Check if truncate works on all browser, then remove
+                    /*
                     String title = titleModel.getObject();
                     if (title.length() > maxTabLength) {
                         // leave space for two .. then add them
                         title = title.substring(0, maxTabLength - 2) + "..";
                     }
-                    return title;
+                     */
+                    return titleModel.getObject();
                 }
                 return "title";
             }

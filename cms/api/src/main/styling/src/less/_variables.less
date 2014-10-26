@@ -14,37 +14,68 @@
  * limitations under the License.
  */
 
-// Colors
-@aqua:                    #02a8e7;
-@black:                   #000000;
-@cool-shale:              #444954;
-@mercury:                 #e9ebee; 
-@marble:                  #f5f5f5;
+// Paths
+@images_path:                       '../../images';
 
-@body-bg:                 #fff;
-@text-color:              #33424b;
-@link-color:              @aqua;
-@link-hover-color:        @cool-shale;
+// Colors
+@white:                             #ffffff;
+@black:                             #000000;
+@aqua:                              #02a8e7;
+@cool-shale:                        #444954;
+@mercury:                           #e9ebee;
+@marble:                            #f5f5f5;
+
+@border-gray:                       #999;
+@text-gray:                         #33424b;
+@widget-gray:                       #858585;
+@widget-active:                     @black;
+
+@body-bg:                           @white;
+@text-color:                        @text-gray;
+@link-color:                        @aqua;
+@link-hover-color:                  @cool-shale;
+@border-color:                      @border-gray;
+
+//main
+@main-menu-text-color:              @white;
+@main-menu-selected-text-color:     @aqua;
+@main-menu-background-color:        @cool-shale;
+@home-menu-background-color:        @main-menu-background-color;
+
+//footer
+@document-tab-font-size:            @font-size-small;
+@document-tab-title-color:          @text-gray;
+@document-tab-close-color:          @widget-gray;
+@document-tab-close-color-hover:    @widget-active;
+
+//editor
+@editor-background-color:               @white;
+@editor-preview-field-background-color: @white;
 
 // Typography
-@font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
-@font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
-@font-family-base:        "Open Sans", @font-family-sans-serif;
+@font-family-sans-serif:            "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-monospace:             Menlo, Monaco, Consolas, "Courier New", monospace;
+@font-family-base:                  "Open Sans", @font-family-sans-serif;
 
-@font-size-base:          13px;
-@font-size-large:         ceil((@font-size-base * 1.25)); // ~18px
-@font-size-small:         ceil((@font-size-base * 0.85)); // ~12px
+@font-size-base:                    13px;
+@font-size-large:                   ceil((@font-size-base * 1.25)); // ~18px
+@font-size-small:                   ceil((@font-size-base * 0.85)); // ~12px
+@font-size-tiny:                    ceil((@font-size-base * 0.75)); // ~10px
 
-@font-size-h1:            floor((@font-size-base * 2.6)); // ~36px
-@font-size-h2:            floor((@font-size-base * 2.15)); // ~30px
-@font-size-h3:            ceil((@font-size-base * 1.7)); // ~24px
-@font-size-h4:            ceil((@font-size-base * 1.25)); // ~18px
-@font-size-h5:            @font-size-base;
-@font-size-h6:            ceil((@font-size-base * 0.85)); // ~12px
+@font-size-h1:                      floor((@font-size-base * 2.6)); // ~33px
+@font-size-h2:                      floor((@font-size-base * 2.15)); // ~27px
+@font-size-h3:                      ceil((@font-size-base * 1.7)); // ~23px
+@font-size-h4:                      ceil((@font-size-base * 1.25)); // ~17px
+@font-size-h5:                      @font-size-base;
+@font-size-h6:                      ceil((@font-size-base * 0.85)); // ~12px
 
-//** Unit-less `line-height` for use in components like buttons.
-@line-height-base:        1.53846153846154; // 20/13
-//** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
-@line-height-computed:    floor((@font-size-base * @line-height-base)); // ~20px
+@line-height-base:                  1;
+@line-height-computed:              floor((@font-size-base * @line-height-base)); // ~20px
 
-@rebuild: 'yes';
+// Sizes
+@main-menu-width:                   64px;
+@footer-menu-height:                28px;
+@home-menu-width:                   @main-menu-width;
+@home-menu-height:                  40px;
+
+@rebuild: 'dude..';

@@ -12,7 +12,7 @@
   "fallback-colors": 2,
   "floats": false,
   "font-faces": 2,
-  "font-sizes": 2,
+  "font-sizes": false,
   "gradients": 2,
   "ids": 2,
   "import": 2,

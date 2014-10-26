@@ -1,0 +1,68 @@
+/* TabsPlugin Document switcher */
+/* ================================================ */
+
+.hippo-tabs-documents {
+  width: auto;
+  position: absolute;
+  text-align: left;
+  right: 0;
+
+  ul {
+    //height: @footer-menu-height;
+    margin-left: 4px;
+
+    li {
+      height: @footer-menu-height;
+      display: block;
+      float: left;
+      position: relative;
+      width: 180px;
+      border-left: 1px solid @border-color;
+    }
+
+    .selected {
+      background-color: #fff;
+
+      .hippo-tabs-documents-close {  
+        visibility: hidden;
+      }
+    }
+    li:hover {
+      .hippo-tabs-documents-close {
+        visibility: visible;
+        color: @document-tab-close-color-hover;
+      }
+    }
+  }
+
+  .hippo-tabs-documents-tab {
+    color: @document-tab-title-color;
+    font-size: @document-tab-font-size;
+    text-decoration: none;
+    white-space: nowrap;
+    display: block;
+    .truncate();
+    float: left;
+    width: 156px;
+    padding: 6px 0 0 8px;
+    
+    img {
+      margin-right: 3px;
+      vertical-align: -4px;
+      .greyscale-image();
+    }
+  }
+
+  .hippo-tabs-documents-close {
+    position: absolute;
+    right: 8px;
+    top: 7px;
+    color: @document-tab-close-color;
+    font-size: @font-size-tiny;
+    text-decoration: none;
+  }
+
+  .hippo-tabs-documents-close:hover {
+    color: @document-tab-close-color-hover;
+  }
+}
