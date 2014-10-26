@@ -102,11 +102,6 @@ public class RootPlugin extends TabsPlugin {
             add(new Pinger("pinger"));
         }
 
-        String userID = getSession().getJcrSession().getUserID();
-        username = new User(userID).getDisplayName();
-
-        add(new Label("username", new PropertyModel(this, "username")));
-
         services = new LinkedList<IRenderService>();
 
         final IDataProvider<IRenderService> provider = new ListDataProvider<IRenderService>(services) {
@@ -174,7 +169,16 @@ public class RootPlugin extends TabsPlugin {
         extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());
         add(extWidgetRegistry);
 
-        addExtensionPoint("top");
+        String userID = getSession().getJcrSession().getUserID();
+        username = new User(userID).getDisplayName();
+        add(new Label("username", new PropertyModel(this, "username")));
+
+        if (config.containsKey("top")) {
+            log.warn("Usage of property 'top' on the RootPlugin is deprecated. The documents tabs is now configured " +
+                    "as an extension. Add a value to property wicket.extensions named 'extension.tabs.documents' and " +
+                    "add a property named 'extension.tabs.documents' with the value of the document tabs service, " +
+                    "by default it's 'service.browse.tabscontainer'.");
+        }
 
         TabbedPanel tabbedPanel = getTabbedPanel();
         tabbedPanel.setIconType(IconSize.SMALL);
@@ -183,10 +187,15 @@ public class RootPlugin extends TabsPlugin {
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
 
-        PageLayoutSettings plSettings = new PageLayoutSettings();
-        plSettings.setHeaderHeight(25);
-        // TODO: update settings from config
-        add(new PageLayoutBehavior(plSettings));
+        PageLayoutSettings pageLayoutSettings;
+        if (config.getPluginConfig("layout.page") != null) {
+            pageLayoutSettings = new PageLayoutSettings(config.getPluginConfig("layout.page"));
+        } else {
+            log.warn("Could not find page layout settings at node 'layout.page', falling back to baked settings");
+            pageLayoutSettings = new PageLayoutSettings();
+            pageLayoutSettings.setFooterHeight(28);
+        }
+        add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
     }
 

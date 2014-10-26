@@ -18,6 +18,7 @@
 
 #lt { border-right: 1px solid #666666; border-left: 1px solid #666666; border-bottom: 1px solid #666666; }
 
+/* TODO: this will probably break after the work on the CMS root plugin, replace #layout-doc with .layout-doc should be enough */
 #layout-doc > div.yui-layout-unit-center > div.yui-layout-wrap { border-right: 1px solid #666666; border-bottom: 1px solid #666666; }
 
 .hippo-root{font-size: 12px; background: white;}

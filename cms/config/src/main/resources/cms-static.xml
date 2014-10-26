@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -408,17 +408,26 @@
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
+    <!-- CMS7R-REMOVE prop top replaced with extension.tabs.documents -->
+    <!--
     <sv:property sv:name="top" sv:type="String">
       <sv:value>service.browse.tabscontainer</sv:value>
     </sv:property>
+    -->
     <sv:property sv:name="item" sv:type="String">
       <sv:value>header.bar.right</sv:value>
     </sv:property>
     <sv:property sv:name="extension.logout" sv:type="String">
       <sv:value>service.logout</sv:value>
     </sv:property>
+    <!-- CMS7R-ADD add property extension.tabs.document: service.browse.tabscontainer -->
+    <sv:property sv:name="extension.tabs.documents" sv:type="String">
+      <sv:value>service.browse.tabscontainer</sv:value>
+    </sv:property>
     <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.logout</sv:value>
+      <!-- CMS7R-ADD added value extension.tabs.documents -->
+      <sv:value>extension.tabs.documents</sv:value>
     </sv:property>
     <sv:node sv:name="browser.ie">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -439,13 +448,21 @@
         <sv:value>id=tabbed-panel-layout-center,height=1000</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-left,width=50,gutter=0px 3px 0px 0px</sv:value>
+        <sv:value>id=tabbed-panel-layout-left,width=64</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>tabbed-panel-layout</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="layout.page">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="footer.height" sv:type="Long">
+        <sv:value>28</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

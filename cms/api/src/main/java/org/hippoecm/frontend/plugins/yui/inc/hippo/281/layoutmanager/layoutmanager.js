@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             //Skip onwindow resize handling here
             //Event.on(window, 'resize', this.resize, this, true);
             Dom.addClass(this._doc, 'yui-layout-doc');
+
+            //CMS7R-TODO: check if really needed
+            var logo = Dom.get('hippo-home-menu');
+            if (logo !== null) {
+                document.body.appendChild(logo);
+            }
         };
 
 
@@ -334,7 +340,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
         YAHOO.hippo.BaseWireframe.prototype = {
             render: function() {
-                if(this.layout === null) {
+                if (this.layout === null) {
 
                     this.enhanceIds();
                     this.prepareConfig();
@@ -416,7 +422,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
 
                 for (i = 0, len = this.config.units.length; i < len; ++i) {
-                    if(this.config.units[i].position !== 'center') {
+                    if (this.config.units[i].position !== 'center') {
                         this.storeDimension(this.config.units[i]);
                     }
                 }
@@ -441,7 +447,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 var val, ar;
 
                 val = YAHOO.util.Cookie.getSub(this.DIM_COOKIE, this.name + ':' + pos);
-                if(val === null) {
+                if (val === null) {
                     return false;
                 }
                 ar = val.split(',');
@@ -486,16 +492,16 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 newWidth = unit.get('width');
                 offset = minWidth !== null ? minWidth : 20;
 
-                if((sizes.doc.w-offset) < newWidth) {
-                    unit.set('width', sizes.doc.w-offset);
+                if ((sizes.doc.w - offset) < newWidth) {
+                    unit.set('width', sizes.doc.w - offset);
                 } else {
                     //else check if the new width isn't rendering nested layout's units invisible.
                     //if a number less than zero is returned, it resembles the offset of the least
                     //visible unit. This offset + the new width will make the unit still invisible, so
                     //we add 20 pixels to it to define the new width
                     diff = this.newWidthIsOk();
-                    if(diff < 0) {
-                        unit.set('width', (newWidth-diff)+20);
+                    if (diff < 0) {
+                        unit.set('width', (newWidth - diff) + 20);
                     }
                 }
 
@@ -512,9 +518,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         result = unitWidth;
                     }
                 }
-                this.children.forEach(this, function(key, wireframe){
+                this.children.forEach(this, function(key, wireframe) {
                     var diff = wireframe.newWidthIsOk();
-                    if(diff < result) {
+                    if (diff < result) {
                         result = diff;
                     }
                 });
@@ -583,7 +589,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             getUnitConfigByPosition : function(position) {
                 var i, len;
                 for (i = 0, len = this.config.units.length; i < len; ++i) {
-                    if(this.config.units[i].position === position) {
+                    if (this.config.units[i].position === position) {
                         return this.config.units[i];
                     }
                 }
@@ -604,15 +610,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             }
             units.push(body);
 
-            if(Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
+            if (Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
                 header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: config.headerScroll, resize: config.headerResize, grids: true};
                 if (config.headerGutter !== null) {
-                  header.gutter = config.headerGutter;
+                    header.gutter = config.headerGutter;
                 }
                 units.push(header);
             }
 
-            if(Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
+            if (Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
                 left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll, resize: config.leftResize };
                 if (config.leftGutter !== null) {
                     left.gutter = config.leftGutter;
@@ -628,7 +634,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             if(Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
                 footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: config.footerScroll, resize: config.footerResize, grids: true};
                 if (config.footerGutter !== null) {
-                  footer.gutter = config.footerGutter;
+                    footer.gutter = config.footerGutter;
                 }
                 units.push(footer);
             }
@@ -639,7 +645,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
         YAHOO.extend(YAHOO.hippo.GridsRootWireframe, YAHOO.hippo.BaseWireframe, {
             render: function() {
-                if(this.layout === null) {
+                if (this.layout === null) {
                     this.prepareConfig();
                     this.layout = new YAHOO.widget.Layout(this.config);
                     this.initLayout();
@@ -718,7 +724,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
         YAHOO.extend(YAHOO.hippo.PortletWireframe, YAHOO.hippo.BaseWireframe, {
             render: function() {
-                if(this.layout === null) {
+                if (this.layout === null) {
                     this.prepareConfig();
                     this.layout = new YAHOO.widget.Layout(this.id, this.config);
                     this.initLayout();
@@ -763,7 +769,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             prepareConfig : function() {
                 YAHOO.hippo.Wireframe.superclass.prepareConfig.call(this);
 
-                if(this.config.linkedWithParent) {
+                if (this.config.linkedWithParent) {
                     this.parent = YAHOO.hippo.LayoutManager.getWireframe(this.config.parentId);
                     this.parent.registerChild(this);
                     this.config.parent = this.parent.layout;
@@ -851,7 +857,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 w = unit.width;
                 if (Lang.isUndefined(w)) {
                     r.w = 1;
-                } else if(Lang.isString(w) && w.indexOf('%') > -1) {
+                } else if (Lang.isString(w) && w.indexOf('%') > -1) {
                     r.w = parseInt(w.substr(0, w.indexOf('%')), 10) / 100;
                 }
                 h = unit.height;

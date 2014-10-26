@@ -20,21 +20,6 @@
     </wicket:head>
     <wicket:panel>
       <div class="hippo-root-cms" id="doc3">
-        <div id="hd">
-          <div class="headerplugin">
-            <div class="hippo-header">
-              <a class="hippo-header-home">Hippo CMS 7</a>
-              <div wicket:id="top" class="hippo-tabs-documents hippo-tabs-documents-top">tabs container here please</div>
-              <div class="hippo-header-logout">
-                <span class="hippo-logout-username" wicket:id="username">[ user ]</span>
-                <ul class="hippo-header-items-right">
-                  <li class="hippo-header-item" wicket:id="view"><span wicket:id="item" /></li>
-                  <li class="hippo-header-item" wicket:id="extension.logout" />
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
         <div id="bd">
           <div id="yui-main">
             <div class="yui-b">
@@ -66,7 +51,23 @@
             </div>
           </div>
         </div>
-      </div>  
+        <div id="ft" class="hippo-footer">
+          <div wicket:id="extension.tabs.documents" class="hippo-tabs-documents">tabs container here please</div>
+        </div>
+      </div>
+      
+      <div id="hippo-home-menu" class="hippo-home-menu">
+        <div class="hippo-menu">
+          <span class="hippo-menu-username" wicket:id="username">[ user ]</span>
+          <ul class="hippo-menu-items">
+            <li class="hippo-menu-item" wicket:id="view">
+              <span wicket:id="item" />
+            </li>
+            <li class="hippo-menu-item" wicket:id="extension.logout" />
+          </ul>
+        </div>
+      </div>
+      
       <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>
