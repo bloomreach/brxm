@@ -90,7 +90,7 @@
 
     if (window.addEventListener && window.WebSocket) {
         window.addEventListener("load", connect);
-        window.addEventListener("unload", disconnect);
+        window.addEventListener("beforeunload", disconnect);
     } else if (console.log) {
         console.log("Hippo auto-reload is not available because this browser does not support WebSockets")
     }
