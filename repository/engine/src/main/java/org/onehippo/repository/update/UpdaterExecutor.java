@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
@@ -41,7 +42,10 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -94,6 +98,7 @@ public class UpdaterExecutor implements EventListener {
         try {
             if (updater instanceof BaseNodeUpdateVisitor) {
                 ((BaseNodeUpdateVisitor) updater).setLogger(getLogger());
+                ((BaseNodeUpdateVisitor) updater).setParametersMap(jsonToParamsMap(updaterInfo.getParameters()));
             }
             updater.initialize(session);
             report.start();
@@ -560,7 +565,6 @@ public class UpdaterExecutor implements EventListener {
         return message;
     }
 
-
     private Logger getLogger() {
         if (report.getLogger() != null) {
             return report.getLogger();
@@ -568,4 +572,11 @@ public class UpdaterExecutor implements EventListener {
         return log;
     }
 
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> jsonToParamsMap(final String paramsInJson) {
+        if (StringUtils.isBlank(paramsInJson)) {
+            return Collections.emptyMap();
+        }
+        return JSONObject.fromObject(paramsInJson);
+    }
 }

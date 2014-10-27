@@ -15,6 +15,9 @@
  */
 package org.onehippo.repository.update;
 
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,9 +35,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyCodeSource;
-
 /**
  * Encapsulates meta data for running an {@link NodeUpdateVisitor}
  */
@@ -48,9 +48,16 @@ class UpdaterInfo {
 
     private final String identifier;
     private final String name;
+    private final String description;
     private final String path;
     private final String query;
     private final String language;
+
+    /**
+     * Parameters in JSON string
+     */
+    private final String parameters;
+
     private final boolean revert;
     private final long throttle;
     private final long batchSize;
@@ -77,9 +84,11 @@ class UpdaterInfo {
         }
         identifier = node.getIdentifier();
         name = node.getName();
+        description = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_DESCRIPTION, null);
         path = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_PATH, null);
         query = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_QUERY, null);
         language = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_LANGUAGE, DEFAULT_QUERY_LANGUAGE);
+        parameters = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_PARAMETERS, null);
 
         boolean hasPath = path != null && !path.isEmpty();
         boolean hasQuery = query != null && !query.isEmpty();
@@ -131,6 +140,13 @@ class UpdaterInfo {
     }
 
     /**
+     * The description of this updater
+     */
+    String getDescription() {
+        return name;
+    }
+
+    /**
      * The path that should be visited
      */
     String getPath() {
@@ -149,6 +165,13 @@ class UpdaterInfo {
      */
     String getLanguage() {
         return language;
+    }
+
+    /**
+     * The parameters as JSON string.
+     */
+    String getParameters() {
+        return parameters;
     }
 
     /**

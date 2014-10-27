@@ -263,9 +263,11 @@
 - hipposys:location (string)
 
 [hipposys:updaterinfo] > nt:base
+- hipposys:description (string)
 - hipposys:path (string)
 - hipposys:query (string)
 - hipposys:language (string)
+- hipposys:parameters (string)
 - hipposys:script (string)
 - hipposys:class (string)
 - hipposys:revert (boolean)

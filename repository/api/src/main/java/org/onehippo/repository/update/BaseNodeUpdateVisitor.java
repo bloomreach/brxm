@@ -15,6 +15,8 @@
  */
 package org.onehippo.repository.update;
 
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -26,9 +28,14 @@ import org.slf4j.Logger;
 public abstract class BaseNodeUpdateVisitor implements NodeUpdateVisitor {
 
     protected Logger log;
+    protected Map<String, Object> parametersMap;
 
     public void setLogger(Logger log) {
         this.log = log;
+    }
+
+    public void setParametersMap(Map<String, Object> parametersMap) {
+        this.parametersMap = parametersMap;
     }
 
     @Override

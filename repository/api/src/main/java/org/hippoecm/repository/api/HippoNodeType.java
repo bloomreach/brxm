@@ -406,11 +406,15 @@ public interface HippoNodeType {
     /** @deprecated replaced by {@link #HIPPO_CONTEXTPATHS} */
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
+    public static final String HIPPOSYS_DESCRIPTION = "hipposys:description";
+
     public static final String HIPPOSYS_PATH = "hipposys:path";
 
     public static final String HIPPOSYS_QUERY = "hipposys:query";
 
     public static final String HIPPOSYS_LANGUAGE = "hipposys:language";
+
+    public static final String HIPPOSYS_PARAMETERS = "hipposys:parameters";
 
     public static final String HIPPOSYS_SCRIPT = "hipposys:script";
 

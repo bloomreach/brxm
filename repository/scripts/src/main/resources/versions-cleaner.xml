@@ -18,6 +18,15 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
+  <sv:property sv:name="hipposys:description" sv:type="String">
+    <sv:value>VersionsCleaner is a script that visits document nodes and deletes their version history.&#xd;
+It can retain retainCount number and daysToKeep days of latest versions.&#xd;
+For each node it checks all its versions: if the age of the version is older&#xd;
+than the daysToKeep and there are more versions than retainCount then delete the version.&#xd;</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:parameters" sv:type="String">
+    <sv:value>{ "retainCount": 2, "daysToKeep": 30 }</sv:value>
+  </sv:property>
   <sv:property sv:name="hipposys:batchsize" sv:type="Long">
     <sv:value>10</sv:value>
   </sv:property>
@@ -56,18 +65,20 @@ import java.util.List&#xd;
 class VersionsCleaner extends BaseNodeUpdateVisitor {&#xd;
 &#xd;
   /** The number of versions to retain. Must be at least 1. */&#xd;
-  int retainCount = 2;&#xd;
+  int defaultRetainCount = 2;&#xd;
   /** The number of days to keep versions. Must be at least 1 to keep history or 0 in which case only retainCount is used. */&#xd;
-  int daysToKeep = 30;&#xd;
+  int defaultDaysToKeep = 30;&#xd;
   &#xd;
   boolean doUpdate(Node node) {&#xd;
+    def retainCount = parametersMap.get("retainCount", defaultRetainCount)&#xd;
+    def daysToKeep = parametersMap.get("daysToKeep", defaultDaysToKeep)&#xd;
     if (retainCount &lt; 1) {&#xd;
       retainCount = 1&#xd;
     }&#xd;
     if (daysToKeep &lt; 0) {&#xd;
       daysToKeep = 0&#xd;
     }&#xd;
-    log.debug "Updating node ${node.path}"&#xd;
+    log.debug "Updating node ${node.path} (retainCount: ${retainCount}, daysToKeep: ${daysToKeep})"&#xd;
     &#xd;
     // gather versions&#xd;
     List versions = new ArrayList()&#xd;
