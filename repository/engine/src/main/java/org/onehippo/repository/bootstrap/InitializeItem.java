@@ -216,6 +216,10 @@ public class InitializeItem {
         return trim(JcrUtils.getStringProperty(itemNode, HIPPO_NODETYPESRESOURCE, null));
     }
 
+    private boolean isNodetypesResource() throws RepositoryException {
+        return getNodetypesResource() != null;
+    }
+
     public URL getNodetypesResourceURL() throws RepositoryException {
         final String nodetypesResource = getNodetypesResource();
         return nodetypesResource != null ? getResourceURL(nodetypesResource) : null;
@@ -351,7 +355,7 @@ public class InitializeItem {
 
         if (itemNode != null && isReloadRequested()) {
             if (!isDeltaMerge()) {
-                if (isReloadEnabled()) {
+                if (isReloadEnabled() || isNodetypesResource()) {
                     isReload = true;
                 } else {
                     log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
