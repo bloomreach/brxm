@@ -27,6 +27,8 @@ import org.hippoecm.repository.util.JcrUtils;
 
 public class UpdaterHistoryEditor extends UpdaterEditor {
 
+    private static final long serialVersionUID = 1L;
+
     public UpdaterHistoryEditor(IModel<?> model, final IPluginContext context, Panel container) {
         super(model, context, container);
     }
@@ -75,12 +77,22 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
     }
 
     @Override
+    protected boolean isDescriptionFieldEnabled() {
+        return false;
+    }
+
+    @Override
     protected boolean isPathFieldEnabled() {
         return false;
     }
 
     @Override
     protected boolean isQueryFieldEnabled() {
+        return false;
+    }
+
+    @Override
+    protected boolean isParametersFieldEnabled() {
         return false;
     }
 
@@ -107,5 +119,10 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
     @Override
     protected boolean isPathFieldVisible() {
         return "path".equals(method);
+    }
+
+    @Override
+    protected boolean isScriptEditorReadOnly() {
+        return true;
     }
 }

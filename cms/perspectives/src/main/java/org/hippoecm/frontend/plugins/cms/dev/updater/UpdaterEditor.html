@@ -32,15 +32,21 @@
       <span wicket:id="radios">
           <table width="100%">
               <tr wicket:id="name"/>
+              <tr wicket:id="description"/>
               <tr wicket:id="path"/>
               <tr wicket:id="query"/>
+              <tr wicket:id="parameters"/>
               <tr wicket:id="batch-size"/>
               <tr wicket:id="throttle"/>
               <tr wicket:id="dryrun"/>
           </table>
       </span>
       <p>&nbsp;</p>
-      <p>Script</p>
+      <p>
+        Script
+        <a id="update-editor-toggle" href="#" 
+           onclick="var _ure = $('.updater-registry-editor'); var _ue = $('.updater-editor'); var _uf = $('.updater-feedback'); var _uet = $('#update-editor-toggle'); if (_ure && _ure.length) { _ure.toggleClass('updater-registry-editor-visible'); } else if (_ue && _ue.length) { _ue.toggleClass('updater-editor-visible'); _uf.toggleClass('updater-feedback-shorter'); } if (_uet.text() == '&gt;&gt;&gt;') { _uet.text('&lt;&lt;&lt;'); } else { _uet.text('&gt;&gt;&gt;'); } return;">&gt;&gt;&gt;</a>
+      </p>
       <p>&nbsp;</p>
       <fieldset id="script">
         <textarea wicket:id="script-editor"></textarea>

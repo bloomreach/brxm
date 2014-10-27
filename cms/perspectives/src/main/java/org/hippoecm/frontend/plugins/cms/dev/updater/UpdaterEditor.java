@@ -22,6 +22,10 @@ import javax.jcr.Value;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,7 +33,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioGroup;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -46,6 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UpdaterEditor extends Panel {
+
+    private static final long serialVersionUID = 1L;
 
     protected final static Logger log = LoggerFactory.getLogger(UpdaterEditor.class);
 
@@ -65,9 +70,11 @@ public class UpdaterEditor extends Panel {
     protected String script;
 
     protected String name;
+    protected String description;
     protected String visitorPath;
     protected String visitorQuery;
     protected String method = DEFAULT_METHOD;
+    protected String parameters;
     protected String batchSize = String.valueOf(DEFAULT_BATCH_SIZE);
     protected String throttle = String.valueOf(DEFAULT_THOTTLE);
     protected boolean dryRun = false;
@@ -217,6 +224,19 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(nameField);
 
+        final LabelledTextAreaTableRow descriptionField = new LabelledTextAreaTableRow("description", new Model<String>("Description"), new PropertyModel<String>(this, "description")) {
+            @Override
+            public boolean isEnabled() {
+                return isDescriptionFieldEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isDescriptionFieldVisible();
+            }
+        };
+        radios.add(descriptionField);
+
         final RadioLabelledInputFieldTableRow pathField = new RadioLabelledInputFieldTableRow("path", radios, new Model<String>("Path"), new PropertyModel<String>(this, "visitorPath")) {
             @Override
             public boolean isEnabled() {
@@ -252,6 +272,19 @@ public class UpdaterEditor extends Panel {
             }
         };
         radios.add(queryField);
+
+        final LabelledTextAreaTableRow parametersField = new LabelledTextAreaTableRow("parameters", new Model<String>("Parameters"), new PropertyModel<String>(this, "parameters")) {
+            @Override
+            public boolean isEnabled() {
+                return isParametersFieldEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isParametersFieldVisible();
+            }
+        };
+        radios.add(parametersField);
 
         final LabelledInputFieldTableRow batchSizeField = new LabelledInputFieldTableRow("batch-size", new Model<String>("Batch Size"), new PropertyModel<String>(this, "batchSize")) {
             @Override
@@ -295,7 +328,8 @@ public class UpdaterEditor extends Panel {
 
         script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
 
-        final TextArea<String> scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(), new PropertyModel<String>(this, "script"));
+        final CodeMirrorEditor scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(), new PropertyModel<String>(this, "script"));
+        scriptEditor.setReadOnly(isScriptEditorReadOnly());
         form.add(scriptEditor);
 
         final Component updaterOutput = createOutputComponent("updater-output");
@@ -327,6 +361,8 @@ public class UpdaterEditor extends Panel {
         } else {
             name = null;
         }
+        description = getStringProperty(HippoNodeType.HIPPOSYS_DESCRIPTION, null);
+        parameters = getStringProperty(HippoNodeType.HIPPOSYS_PARAMETERS, null);
         visitorPath = getStringProperty(HippoNodeType.HIPPOSYS_PATH, null);
         visitorQuery = getStringProperty(HippoNodeType.HIPPOSYS_QUERY, null);
         batchSize = String.valueOf(getLongProperty(HippoNodeType.HIPPOSYS_BATCHSIZE, DEFAULT_BATCH_SIZE));
@@ -415,6 +451,9 @@ public class UpdaterEditor extends Panel {
             if (!validateName()) {
                 return false;
             }
+            if (!validateParameters()) {
+                return false;
+            }
             if (isPathMethod()) {
                 if (!validateVisitorPath()) {
                     return false;
@@ -441,6 +480,8 @@ public class UpdaterEditor extends Panel {
             if (!node.getName().equals(name)) {
                 rename();
             }
+            node.setProperty(HippoNodeType.HIPPOSYS_DESCRIPTION, StringUtils.defaultString(description));
+            node.setProperty(HippoNodeType.HIPPOSYS_PARAMETERS, StringUtils.defaultString(parameters));
             node.getSession().save();
             return true;
         } catch (RepositoryException e) {
@@ -457,6 +498,19 @@ public class UpdaterEditor extends Panel {
             return false;
         }
         return true;
+    }
+
+    private boolean validateParameters() {
+        if (StringUtils.isBlank(parameters)) {
+            return true;
+        }
+        try {
+            JSONObject json = JSONObject.fromObject(parameters);
+            return json != null;
+        } catch (JSONException e) {
+            error("Parameters are in invalid JSON string.");
+            return false;
+        }
     }
 
     private boolean validateThrottle() {
@@ -652,6 +706,14 @@ public class UpdaterEditor extends Panel {
         return true;
     }
 
+    protected boolean isDescriptionFieldEnabled() {
+        return true;
+    }
+
+    protected boolean isDescriptionFieldVisible() {
+        return true;
+    }
+
     protected boolean isPathFieldEnabled() {
         return true;
     }
@@ -665,6 +727,14 @@ public class UpdaterEditor extends Panel {
     }
 
     protected boolean isQueryFieldVisible() {
+        return true;
+    }
+
+    protected boolean isParametersFieldEnabled() {
+        return true;
+    }
+
+    protected boolean isParametersFieldVisible() {
         return true;
     }
 
@@ -690,6 +760,10 @@ public class UpdaterEditor extends Panel {
 
     protected boolean isDryRunCheckBoxVisible() {
         return true;
+    }
+
+    protected boolean isScriptEditorReadOnly() {
+        return false;
     }
 
     protected String getEditorName() {
