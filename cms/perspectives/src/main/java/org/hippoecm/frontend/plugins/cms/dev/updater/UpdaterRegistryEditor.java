@@ -22,6 +22,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class UpdaterRegistryEditor extends UpdaterEditor {
 
+    private static final long serialVersionUID = 1L;
+
     public UpdaterRegistryEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super(model, context, container);
     }
@@ -89,6 +91,11 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
     @Override
     protected boolean isDryRunCheckBoxVisible() {
         return false;
+    }
+
+    @Override
+    protected boolean isScriptEditorReadOnly() {
+        return isUpdater();
     }
 
     @Override

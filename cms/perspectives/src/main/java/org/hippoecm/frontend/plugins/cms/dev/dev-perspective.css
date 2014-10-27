@@ -27,13 +27,17 @@
 
 .updater-feedback {
     position: relative;
-    height:160px;
+    height:450px;
     border:1px #EEE solid;
     font-size: 1.2em;
     display: block;
     overflow-x: auto;
     overflow-y: auto;
     padding: 4px;
+}
+
+.updater-feedback-shorter {
+    height:160px;
 }
 
 .updater-tree {
@@ -98,8 +102,21 @@
 }
 
 .updater-editor {
+    height: 1px !important;
+    visibility: hidden;
+}
+
+.updater-editor-visible {
+    height: 300px !important;
+    visibility: visible;
 }
 
 .updater-registry-editor {
+    height: 1px !important;
+    visibility: hidden;
+}
+
+.updater-registry-editor-visible {
     height: 500px !important;
+    visibility: visible;
 }

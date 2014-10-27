@@ -33,7 +33,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioGroup;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -329,7 +328,8 @@ public class UpdaterEditor extends Panel {
 
         script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
 
-        final TextArea<String> scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(), new PropertyModel<String>(this, "script"));
+        final CodeMirrorEditor scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(), new PropertyModel<String>(this, "script"));
+        scriptEditor.setReadOnly(isScriptEditorReadOnly());
         form.add(scriptEditor);
 
         final Component updaterOutput = createOutputComponent("updater-output");
@@ -760,6 +760,10 @@ public class UpdaterEditor extends Panel {
 
     protected boolean isDryRunCheckBoxVisible() {
         return true;
+    }
+
+    protected boolean isScriptEditorReadOnly() {
+        return false;
     }
 
     protected String getEditorName() {

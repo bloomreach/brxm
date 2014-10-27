@@ -23,6 +23,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class UpdaterQueueEditor extends UpdaterEditor {
 
+    private static final long serialVersionUID = 1L;
+
     public UpdaterQueueEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super(model, context, container);
     }
@@ -105,5 +107,10 @@ public class UpdaterQueueEditor extends UpdaterEditor {
     @Override
     protected boolean isQueryFieldVisible() {
         return "query".equals(method);
+    }
+
+    @Override
+    protected boolean isScriptEditorReadOnly() {
+        return true;
     }
 }
