@@ -25,26 +25,27 @@ import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.commons.cnd.DefinitionBuilderFactory;
 import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
+import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.util.VersionNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoCompactNodeTypeDefReader<T,N> extends CompactNodeTypeDefReader<T,N> {
+public class HippoCompactNodeTypeDefReader extends CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> {
 
     static final Logger log = LoggerFactory.getLogger(HippoCompactNodeTypeDefReader.class);
 
-    public HippoCompactNodeTypeDefReader(Reader reader, String systemId, NamespaceRegistry registry, DefinitionBuilderFactory<T,N> factory) throws ParseException {
-        super(reader, systemId, (N) new HippoNamespaceMapping(registry), factory);
+    public HippoCompactNodeTypeDefReader(Reader reader, String systemId, NamespaceRegistry registry) throws ParseException {
+        super(reader, systemId, new HippoNamespaceMapping(registry), new QDefinitionBuilderFactory());
     }
 
     private static class HippoNamespaceMapping<N> extends NamespaceMapping {
-        static Set<String> autoCompatibleNamespaces = new TreeSet<String>(Arrays.asList(new String[] {"hippo", "hipposys", "hipposysedit", "hippofacnav"}));
+        private static Set<String> autoCompatibleNamespaces = new TreeSet<>(Arrays.asList(new String[] {"hippo", "hipposys", "hipposysedit", "hippofacnav"}));
         private NamespaceRegistry registry;
 
-        HippoNamespaceMapping(NamespaceRegistry registry) {
+        private HippoNamespaceMapping(NamespaceRegistry registry) {
             this.registry = registry;
         }
 
@@ -82,7 +83,7 @@ public class HippoCompactNodeTypeDefReader<T,N> extends CompactNodeTypeDefReader
                 // deliberate fall through
             }
             if (log.isDebugEnabled()) {
-                log.debug("set mapping of {} to {}", new Object[] {prefix, uri});
+                log.debug("set mapping of {} to {}", prefix, uri);
             }
             super.setMapping(prefix, uri);
         }
