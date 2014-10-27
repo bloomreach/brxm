@@ -70,7 +70,8 @@ module.exports = function (grunt) {
             vendors: {
                 files: {
                     '<%= cfg.tmp %>/css/open-sans.css': '<%= cfg.src %>/less/lib/open-sans.less',
-                    '<%= cfg.tmp %>/css/normalize.css': '<%= cfg.src %>/less/lib/normalize.less'
+                    '<%= cfg.tmp %>/css/normalize.css': '<%= cfg.src %>/less/lib/normalize.less',
+                    '<%= cfg.tmp %>/css/wicket.css': '<%= cfg.src %>/less/lib/wicket.less'
                 }
             }
         },
@@ -117,6 +118,7 @@ module.exports = function (grunt) {
                 src: [
                     '<%= cfg.tmp %>/css/open-sans.css', 
                     '<%= cfg.tmp %>/css/normalize.css', 
+                    '<%= cfg.tmp %>/css/wicket.css', 
                     '<%= cfg.tmp %>/css/<%= cfg.file %>.css'
                 ],
                 dest: '<%= cfg.dest %>/css/<%= cfg.file %>.css'

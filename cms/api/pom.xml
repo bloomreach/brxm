@@ -292,6 +292,7 @@
               <includes>
                 <include>lib/open-sans.less</include>
                 <include>lib/normalize.less</include>
+                <include>lib/wicket.less</include>
                 <include>main.less</include>
               </includes>
             </configuration>
@@ -317,6 +318,7 @@
               <includes>
                 <include>lib/open-sans.css</include>
                 <include>lib/normalize.css</include>
+                <include>lib/wicket.css</include>
                 <include>main.css</include>
               </includes>
             </aggregation>

@@ -22,8 +22,10 @@
  */
 
 var logInitFunc = function() {
+  /*
   var log = new YAHOO.widget.LogReader();
   log.collapse();
   YAHOO.log("New LogReader created");
+  */
 };
 Wicket.Event.add(window,"domready", logInitFunc);

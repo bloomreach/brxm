@@ -32,23 +32,6 @@ body.hippo-root #doc3 {
   text-align: left
 }
 
-#wicketAjaxDebugWindow {
-  text-align: left;
-}
-
-.hippo-window #wicketDebugLink {
-  display: none;
-}
-
-.hippo-window #wicketDebugLink {
-  display: none;
-}
-
-/* Hide the wicket debugger for now */
-#wicketDebugLink {
-  display: none;
-}
-
 /* Hippo Global CSS tools */
 /* ================================================ */
 .hippo-global-fullwidth {

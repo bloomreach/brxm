@@ -1145,6 +1145,7 @@ api/src/main/styling/src/less/_typography.less -text
 api/src/main/styling/src/less/_variables.less -text
 api/src/main/styling/src/less/lib/normalize.less -text
 api/src/main/styling/src/less/lib/open-sans.less -text
+api/src/main/styling/src/less/lib/wicket.less -text
 api/src/main/styling/src/less/main.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
