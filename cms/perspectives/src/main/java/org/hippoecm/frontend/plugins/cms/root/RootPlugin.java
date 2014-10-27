@@ -27,7 +27,6 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -64,9 +63,6 @@ public class RootPlugin extends TabsPlugin {
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
-
-    @SuppressWarnings("unused")
-    private String username;
 
     private AbstractView<IRenderService> view;
     private List<IRenderService> services;
@@ -170,8 +166,7 @@ public class RootPlugin extends TabsPlugin {
         add(extWidgetRegistry);
 
         String userID = getSession().getJcrSession().getUserID();
-        username = new User(userID).getDisplayName();
-        add(new Label("username", new PropertyModel(this, "username")));
+        add(new Label("username", getString("menu.username.label", Model.of(new User(userID)))));
 
         if (config.containsKey("top")) {
             log.warn("Usage of property 'top' on the RootPlugin is deprecated. The documents tabs is now configured " +

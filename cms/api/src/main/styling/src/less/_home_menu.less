@@ -4,24 +4,30 @@
   bottom: 0;
   width: @home-menu-width;
   height: @home-menu-height;
+  background-size: 37px;
+  background: @home-menu-background-color url("@{images_path_legacy}/hippologo.png") no-repeat 50%;
   //TODO: add high res
   //TODO: fix images path aka copy to new theme
-  background: url("../../images/hippologo.png") no-repeat;
-  background-color: @home-menu-background-color;
-  background-size: 37px;
-  background-position: 50%;
 
   .hippo-menu {
     display: none;
+    background: none repeat scroll 0 0 #fff;
+    border-radius: 4px;
+    bottom: 20px;
+    left: 48px;
+    position: absolute;
+    width: 180px;
+    text-align: left;
+    padding: 4px;
+    color: @text-color;
+    box-shadow: 10px 10px 5px #888888;
+    
+    li {
+      padding: 4px;
+    }
 
     .hippo-menu-username {
-/*
-      position: absolute;
-      left: 40px;
-      top: 5px;
-*/
-      color: white;
-      font-weight: bold;
+      margin-bottom: 8px;
     }
   }
 }
