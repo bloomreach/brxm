@@ -51,10 +51,18 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             //Event.on(window, 'resize', this.resize, this, true);
             Dom.addClass(this._doc, 'yui-layout-doc');
 
-            //CMS7R-TODO: check if really needed
-            var logo = Dom.get('hippo-home-menu');
+            //CMS7R-TODO: check if move of node is really needed
+            var logo = Dom.get('hippo-home-menu'),
+                menu = Dom.getFirstChild(logo);
             if (logo !== null) {
                 document.body.appendChild(logo);
+                YAHOO.util.Event.on(logo, 'click', function(e) {
+                    Dom.setStyle(menu, 'display', 'block');
+                    YAHOO.util.Event.stopEvent(e);
+                });
+                YAHOO.util.Event.on(document.body, 'click', function(e) {
+                    Dom.setStyle(menu, 'display', 'none');
+                });
             }
         };
 
