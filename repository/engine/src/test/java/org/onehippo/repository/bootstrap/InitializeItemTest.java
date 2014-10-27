@@ -124,7 +124,7 @@ public class InitializeItemTest {
 
     @Test
     public void testInitializeInitializeReloadItemReloadDisabledSetsStatus() throws Exception {
-        String systemReloadProperty = System.getProperty(SYSTEM_RELOAD_PROPERTY);
+        final String systemReloadProperty = System.getProperty(SYSTEM_RELOAD_PROPERTY, "true");
         try {
             System.setProperty(SYSTEM_RELOAD_PROPERTY, "false");
             tempItemNode.setProperty(HIPPO_VERSION, "1");
@@ -137,9 +137,7 @@ public class InitializeItemTest {
             assertTrue(initItem.hasProperty(HIPPO_ERRORMESSAGE));
             assertEquals(ERROR_MESSAGE_RELOAD_DISABLED, initItem.getProperty(HIPPO_ERRORMESSAGE).getString());
         } finally {
-            if (systemReloadProperty != null) {
-                System.setProperty(SYSTEM_RELOAD_PROPERTY, systemReloadProperty);
-            }
+            System.setProperty(SYSTEM_RELOAD_PROPERTY, systemReloadProperty);
         }
     }
 }
