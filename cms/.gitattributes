@@ -1128,6 +1128,7 @@ api/src/main/styling/src/fonts/open-sans/LightItalic/OpenSans-LightItalic.woff -
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.eot -text
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.ttf -text
 api/src/main/styling/src/fonts/open-sans/Regular/OpenSans-Regular.woff -text
+api/src/main/styling/src/images/footer/background.png -text svneol=unset#image/png
 api/src/main/styling/src/less/_ajax_loader.less -text
 api/src/main/styling/src/less/_editor.less -text
 api/src/main/styling/src/less/_editor_preview.less -text
