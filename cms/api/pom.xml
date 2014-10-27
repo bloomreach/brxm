@@ -295,6 +295,7 @@
                 <include>main.less</include>
               </includes>
             </configuration>
+            <phase>compile</phase>
             <goals>
               <goal>compile</goal>
             </goals>
@@ -330,42 +331,19 @@
         <executions>
           <execution>
             <id>compress_css</id>
-            <phase>process-resources</phase>
+            <phase>compile</phase>
             <goals>
               <goal>compress</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-      <!-- Minify css -->
-      <!--<plugin>
-        <groupId>com.samaxes.maven</groupId>
-        <artifactId>minify-maven-plugin</artifactId>
-        <version>1.7.4</version>
-        <executions>
-          <execution>
-            <id>default-minify</id>
-            <configuration>
-              <webappSourceDir>${basedir}/src/main/resources/skin/hippo-cms</webappSourceDir>
-              <webappTargetDir>${project.build.outputDirectory}/skin/hippo-cms</webappTargetDir>
-              <skipMerge>true</skipMerge>
-              <cssSourceFiles>
-                <cssSourceFile>hippo-cms-theme.css</cssSourceFile>
-              </cssSourceFiles>
-              <cssFinalFile>hippo-cms-theme.min.css</cssFinalFile>
-            </configuration>
-            <goals>
-              <goal>minify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>-->
-      <!-- Copy binaries -->
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
+          <!-- Copy binaries of Hippo CMS styling -->
           <execution>
-            <id>copy-resources</id>
+            <id>copy-images-and-fonts</id>
             <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -378,6 +356,22 @@
                   <excludes>
                     <exclude>**/*.less</exclude>
                   </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <!-- copy compiled/minified css -->
+          <execution>
+            <id>copy-comiled-and-minified-css</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/classes/skin/hippo-cms/css</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/resources/skin/hippo-cms/css</directory>
                 </resource>
               </resources>
             </configuration>
