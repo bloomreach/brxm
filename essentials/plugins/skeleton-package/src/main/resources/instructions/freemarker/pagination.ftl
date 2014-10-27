@@ -23,6 +23,7 @@
 <#if pageable??>
 <ul class="pagination">
     <li class="disabled"><a href="#">${pageable.total} document(s)</a></li>
+  <#if pageable.totalPages gt 1>
     <#list pageable.pageNumbersArray as pageNr>
         <@hst.renderURL var="pageUrl">
             <@hst.param name="page" value="${pageNr}"/>
@@ -49,5 +50,6 @@
             <li><a href="${pageUrlNext}">next</a></li>
         </#if>
     </#list>
+  </#if>
 </ul>
 </#if>
