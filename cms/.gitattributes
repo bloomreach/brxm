@@ -2380,6 +2380,8 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/Labelle
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledCheckBoxTableRow.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledInputFieldTableRow.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledInputFieldTableRow.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledTextAreaTableRow.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledTextAreaTableRow.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/RadioLabelledInputFieldTableRow.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/RadioLabelledInputFieldTableRow.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterEditor.html -text

@@ -63,12 +63,22 @@ public class UpdaterQueueEditor extends UpdaterEditor {
     }
 
     @Override
+    protected boolean isDescriptionFieldEnabled() {
+        return false;
+    }
+
+    @Override
     protected boolean isPathFieldEnabled() {
         return false;
     }
 
     @Override
     protected boolean isQueryFieldEnabled() {
+        return false;
+    }
+
+    @Override
+    protected boolean isParametersFieldEnabled() {
         return false;
     }
 

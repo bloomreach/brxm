@@ -57,12 +57,22 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
     }
 
     @Override
+    protected boolean isDescriptionFieldEnabled() {
+        return isUpdater();
+    }
+
+    @Override
     protected boolean isPathFieldEnabled() {
         return isUpdater();
     }
 
     @Override
     protected boolean isQueryFieldEnabled() {
+        return isUpdater();
+    }
+
+    @Override
+    protected boolean isParametersFieldEnabled() {
         return isUpdater();
     }
 
