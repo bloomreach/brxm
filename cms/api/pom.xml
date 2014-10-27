@@ -360,7 +360,7 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Copy fonts -->
+      <!-- Copy binaries -->
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
@@ -371,10 +371,13 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/fonts</outputDirectory>
+              <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${project.basedir}/src/main/styling/src/fonts</directory>
+                  <directory>${project.basedir}/src/main/styling/src</directory>
+                  <excludes>
+                    <exclude>**/*.less</exclude>
+                  </excludes>
                 </resource>
               </resources>
             </configuration>

@@ -50,6 +50,10 @@ module.exports = function (grunt) {
                 files: ['<%= cfg.src %>/**/*.less'],
                 tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:tmp']
             },
+            images: {
+                files: ['src/images/**/*.{png,jpg,gif}'],
+                tasks: ['newer:imagemin']
+            },
             livereload: {
                 files: ['<%= cfg.dest %>/**'],
                 tasks: ['copy:classpath', 'shell:notify']
@@ -119,14 +123,32 @@ module.exports = function (grunt) {
             }
         },
 
+        // Minify images
+        imagemin: {
+            src: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/images',
+                    src: ['**/*.{png,jpg,gif}'],
+                    dest: 'src/images/'
+                }]
+            }
+        },
+
         copy: {
-            fonts: {
+            binaries: {
                 files: [
                     {
                         expand: true,
                         cwd: 'src/fonts',
                         src: ['**/*.{otf,eot,svg,ttf,woff}'],
                         dest: '<%= cfg.dest %>/fonts/'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'src/images',
+                        src: ['**/*'],
+                        dest: '<%= cfg.dest %>/images/'
                     }
                 ]
             },
@@ -175,12 +197,13 @@ module.exports = function (grunt) {
         'csslint',
         'concat',
         'cssmin:theme',
-        'copy:fonts',
+        'imagemin',
+        'copy:binaries',
         'clean:tmp'
     ]);
 
     // install
-    grunt.registerTask('install:theme', 'Build and install the theme', [
+    grunt.registerTask('install', 'Build and install the theme', [
         'build',
         'copy:classpath'
     ]);
