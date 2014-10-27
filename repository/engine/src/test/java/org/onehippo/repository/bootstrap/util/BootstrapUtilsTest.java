@@ -19,12 +19,35 @@ package org.onehippo.repository.bootstrap.util;
 import java.io.File;
 import java.net.URL;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
+import org.slf4j.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class BootstrapUtilsTest {
+public class BootstrapUtilsTest extends RepositoryTestCase {
+
+    private Logger bootstrapLogger = BootstrapConstants.log;
+    private LoggerRecordingWrapper loggingRecorder;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        loggingRecorder = new LoggerRecordingWrapper(bootstrapLogger);
+        BootstrapConstants.log = loggingRecorder;
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        BootstrapConstants.log = bootstrapLogger;
+        super.tearDown();
+    }
 
     /*
      * REPO-969: It works fine when the file: URL is on non-Windows system,
@@ -44,5 +67,11 @@ public class BootstrapUtilsTest {
         assertTrue(baseFile.getPath().endsWith("c.jar"));
     }
 
+    @Test
+    public void testReplaceNodeTypeDefinition() throws Exception {
+        BootstrapUtils.initializeNodetypes(session, getClass().getResourceAsStream("/bootstrap/test.cnd"), "test.cnd");
+        assertEquals(2, loggingRecorder.getDebugMessages().size());
+        assertTrue(loggingRecorder.getDebugMessages().get(1).startsWith("Replacing"));
+    }
 
 }

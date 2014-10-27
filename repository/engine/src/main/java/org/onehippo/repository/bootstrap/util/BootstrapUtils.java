@@ -27,12 +27,11 @@ import java.util.List;
 import java.util.zip.ZipFile;
 
 import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +42,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
-import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
@@ -161,12 +159,8 @@ public class BootstrapUtils {
             } else {
                 throw new IllegalStateException("Not a HippoSession");
             }
-        } catch (IOException | RepositoryException | URISyntaxException e) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for " + url + " in '" + parentAbsPath + "' : " + e, e);
-            } else {
-                log.error("Error initializing content for " + url + " in '" + parentAbsPath + "' : " + e);
-            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RepositoryException("Error initializing content for " + url + " in '" + parentAbsPath + "': " + e, e);
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
@@ -179,45 +173,28 @@ public class BootstrapUtils {
             }
             FileUtils.deleteQuietly(tempFile);
         }
-        return null;
     }
 
-    public static void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws RepositoryException {
+    public static void initializeNodetypes(Session session, InputStream cndStream, String cndName) throws RepositoryException {
         try {
             log.debug("Initializing nodetypes from {} ", cndName);
-            CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader =
-                    new HippoCompactNodeTypeDefReader<>(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
-            List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
-            NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
-            NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+            final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+            final CompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping> cndReader =
+                    new HippoCompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName, namespaceRegistry);
+            final List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
+            final NodeTypeRegistry nodeTypeRegistry = ((NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager()).getNodeTypeRegistry();
 
             for (QNodeTypeDefinition ntd : ntdList) {
                 try {
-                    ntreg.registerNodeType(ntd);
-                    log.debug("Registered node type: " + ntd.getName().getLocalName());
-                } catch (NamespaceException ex) {
-                    log.error(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), ex);
-                } catch (InvalidNodeTypeDefException ex) {
-                    if (ex.getMessage().endsWith("already exists")) {
-                        try {
-                            ntreg.reregisterNodeType(ntd);
-                            log.debug("Replaced node type: " + ntd.getName().getLocalName());
-                        } catch (NamespaceException e) {
-                            log.error(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
-                        } catch (InvalidNodeTypeDefException e) {
-                            log.info(e.getMessage() + ". In " + cndName + " for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
-                        } catch (RepositoryException e) {
-                            if (!e.getMessage().equals("not yet implemented")) {
-                                log.warn(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
-                            }
-                        }
+                    if (!nodeTypeRegistry.isRegistered(ntd.getName())) {
+                        log.debug("Registering node type {}", ntd.getName());
+                        nodeTypeRegistry.registerNodeType(ntd);
                     } else {
-                        log.error(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), ex);
+                        log.debug("Replacing node type {}", ntd.getName());
+                        nodeTypeRegistry.reregisterNodeType(ntd);
                     }
-                } catch (RepositoryException ex) {
-                    if (!ex.getMessage().equals("not yet implemented")) {
-                        log.warn(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), ex);
-                    }
+                } catch (InvalidNodeTypeDefException e) {
+                    throw new RepositoryException("Invalid node type definition for node type " + ntd.getName(), e);
                 }
             }
         } catch (ParseException e) {

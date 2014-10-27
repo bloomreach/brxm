@@ -49,7 +49,7 @@ public class NodeTypesResourceInstruction extends InitializeInstruction {
     public PostStartupTask execute() throws RepositoryException {
         final URL cndURL = item.getNodetypesResourceURL();
         try (InputStream is = cndURL.openStream()) {
-            initializeNodetypes(session.getWorkspace(), is, cndURL.toString());
+            initializeNodetypes(session, is, cndURL.toString());
         } catch (IOException e) {
             throw new RepositoryException("Failed to read cnd " + cndURL.toString(), e);
         }

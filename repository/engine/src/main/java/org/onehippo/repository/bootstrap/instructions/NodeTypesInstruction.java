@@ -44,7 +44,7 @@ public class NodeTypesInstruction extends InitializeInstruction {
     @Override
     public PostStartupTask execute() throws RepositoryException {
         try (InputStream cndStream = item.getNodetypes()) {
-            initializeNodetypes(session.getWorkspace(), cndStream, INTERNAL_CND_NAME);
+            initializeNodetypes(session, cndStream, INTERNAL_CND_NAME);
         } catch (IOException e) {
             throw new RepositoryException("Failed to read cnd", e);
         }

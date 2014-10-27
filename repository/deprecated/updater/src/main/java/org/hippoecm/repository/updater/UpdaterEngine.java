@@ -1104,7 +1104,7 @@ public class UpdaterEngine {
                 // deliberate ignore
             }
            if(definition.cndReader != null) {
-               this.cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(definition.cndReader, cndName, nsReg, new QDefinitionBuilderFactory());
+               this.cndReader = new HippoCompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
                initialize();
            } else
                this.cndReader = null;
@@ -1113,7 +1113,7 @@ public class UpdaterEngine {
         void initialize(Workspace workspace) throws NamespaceException, RepositoryException, ParseException {
             try {
                 String cndString = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(workspace, namespace);
-                this.cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(new StringReader(cndString), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
+                this.cndReader = new HippoCompactNodeTypeDefReader(new StringReader(cndString), cndName, workspace.getNamespaceRegistry());
             } catch (IOException ex) {
                 log.error("cannot autogenerate cnd", ex);
             }

@@ -514,7 +514,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 if (!checksum.equals(checksumProperties.getProperty(cndName))) {
                     log.info("Initializing nodetypes from: " + cndName);
                     cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
-                    BootstrapUtils.initializeNodetypes(syncSession.getWorkspace(), cndStream, cndName);
+                    BootstrapUtils.initializeNodetypes(syncSession, cndStream, cndName);
                     syncSession.save();
                     checksumProperties.setProperty(cndName, checksum);
                 } else {
