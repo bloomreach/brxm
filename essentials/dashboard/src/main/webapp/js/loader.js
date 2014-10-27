@@ -51,7 +51,6 @@
     hippoLoader.loadModules = function (items, prefix) {
 
         $.each(items, function (index, component) {
-            console.log(component);
             var folder, files;
 
             if (typeof component !== 'string') {
