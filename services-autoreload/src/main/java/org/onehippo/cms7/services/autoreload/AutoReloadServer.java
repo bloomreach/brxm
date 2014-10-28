@@ -26,8 +26,6 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +41,6 @@ public class AutoReloadServer {
 
     private AutoReloadServer() {
         sessions = new ConcurrentLinkedQueue();
-        HippoServiceRegistry.registerService(this, HippoEventBus.class);
         log.info("auto-reload server created");
     }
 
