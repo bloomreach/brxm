@@ -7,24 +7,36 @@ files that will eventually replace the screen.css beast.
 ## Development environment setup
 #### Prerequisites
 
+* Java 7
+* Maven 3.x
+* [NodeJS](https://nodejs.org/) (NodeJS)
 * [Node Package Manager](https://npmjs.org/) (NPM)
+
+#####Windows specific instructions
+You can automate the installation of NPM using Chocolatey package manager:
+https://chocolatey.org/
+
+The package for Node.js can be installed using:
+
+  $ cinst nodejs.install
+
+Then install Bower and Grunt with NPM as explained before.
 
 #### Dependencies
 
 * [Grunt](http://gruntjs.com/) (task automation)
-<!--* [Bower](http://bower.io/) (package management)-->
+* [Bower](http://bower.io/) (package management)
 
 #### Installation
 Run the commands below in the project root directory.
 #####1. Install Grunt and Bower
 
-<!-- $ sudo npm install -g grunt-cli bower -->
-    $ sudo npm install -g grunt-cli
+    $ sudo npm install -g grunt-cli bower
     
 #####2. Install project dependencies
 
     $ npm install
-<!-- $ bower install -->
+    $ bower install
 
 #### Maven
 For now we will not call 'grunt build:theme' when building the API module using Maven. Instead, the less files

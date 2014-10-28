@@ -277,107 +277,53 @@
           </archive>
         </configuration>
       </plugin>
-      <!-- Compile less files to css in ./tmp/css -->
+      
+      <!-- Use NPM/Bower to install/build Hippo theme -->
       <plugin>
-        <groupId>org.lesscss</groupId>
-        <artifactId>lesscss-maven-plugin</artifactId>
-        <version>1.7.0.1.1</version>
-        <executions>
-          <execution>
-            <id>Hippo CMS Theme</id>
-            <configuration>
-              <sourceDirectory>${project.basedir}/src/main/styling/src/less</sourceDirectory>
-              <outputDirectory>${project.basedir}/src/main/styling/.tmp/css</outputDirectory>
-              <compress>false</compress>
-              <includes>
-                <include>lib/open-sans.less</include>
-                <include>lib/normalize.less</include>
-                <include>lib/wicket.less</include>
-                <include>main.less</include>
-              </includes>
-            </configuration>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- Concat the compiled css files in ./tmp/css into hippo-cms-theme.css -->
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>yuicompressor-maven-plugin</artifactId>
-        <version>1.3.2</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.plugin.exec.version}</version>
         <configuration>
-          <preProcessAggregates>true</preProcessAggregates>
-          <aggregations>
-            <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <output>${project.basedir}/src/main/resources/skin/hippo-cms/css/hippo-cms-theme.css</output>
-              <inputDir>${basedir}/src/main/styling/.tmp/css</inputDir>
-              <includes>
-                <include>lib/open-sans.css</include>
-                <include>lib/normalize.css</include>
-                <include>lib/wicket.css</include>
-                <include>main.css</include>
-              </includes>
-            </aggregation>
-          </aggregations>
-          <includes>
-            <includes>hippo-cms-theme.css</includes>
-          </includes>
-          <sourceDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/css</sourceDirectory>
-          <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms/css</outputDirectory>
-          <suffix>.min</suffix>
+          <workingDirectory>src/main/styling</workingDirectory>
         </configuration>
         <executions>
           <execution>
-            <id>compress_css</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <!-- Copy binaries of Hippo CMS styling -->
-          <execution>
-            <id>copy-images-and-fonts</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
+            <id>npm-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
             <configuration>
-              <outputDirectory>${project.basedir}/src/main/resources/skin/hippo-cms</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/styling/src</directory>
-                  <excludes>
-                    <exclude>**/*.less</exclude>
-                  </excludes>
-                </resource>
-              </resources>
+              <executable>npm</executable>
+              <commandlineArgs>install</commandlineArgs>
             </configuration>
           </execution>
-          <!-- copy compiled/minified css -->
           <execution>
-            <id>copy-comiled-and-minified-css</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
+            <id>bower-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
             <configuration>
-              <outputDirectory>${basedir}/target/classes/skin/hippo-cms/css</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/resources/skin/hippo-cms/css</directory>
-                </resource>
-              </resources>
+              <executable>bower</executable>
+              <commandlineArgs>install</commandlineArgs>
             </configuration>
           </execution>
+          <execution>
+            <id>grunt-build</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>grunt</executable>
+              <commandlineArgs>build</commandlineArgs>
+            </configuration>
+          </execution>
+          <!--<execution>
+            <id>grunt-test</id>
+            <phase>test</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>grunt</executable>
+              <commandlineArgs>test</commandlineArgs>
+              <skip>${skipTests}</skip>
+            </configuration>
+          </execution>-->
         </executions>
       </plugin>
     </plugins>
