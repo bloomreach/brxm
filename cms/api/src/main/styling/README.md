@@ -60,7 +60,7 @@ It will copy the build resources in 'skin/theme' into the classpath folder, so W
 ## Dependencies
 
 ####1. Open-Sans 1.1.0
-A custom .less file is currently used to define the font-face's. The font files still have to be installed manually.
+A custom .less file is currently used to define the font-faces. The font files still have to be installed manually.
 
     $ cd lib
     $ git clone https://github.com/FontFaceKit/open-sans.git
