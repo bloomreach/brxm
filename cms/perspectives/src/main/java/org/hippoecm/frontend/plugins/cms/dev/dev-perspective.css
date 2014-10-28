@@ -95,6 +95,14 @@
     resize: vertical;
 }
 
+.updater-details form textarea[name="radios:description:textarea"] {
+    height: 80px;
+}
+
+.updater-details form textarea[name="radios:parameters:textarea"] {
+    height: 30px;
+}
+
 .updater-details .labelcell {
     width: 100px;
     overflow: hidden;
