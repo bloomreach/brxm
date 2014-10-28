@@ -19,10 +19,10 @@
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value>VersionsCleaner is a script that visits document nodes and deletes their version history.&#xd;
+    <sv:value>VersionsCleaner is a script that visits document nodes and cleans up the version history.&#xd;
 It can retain retainCount number and daysToKeep days of latest versions.&#xd;
-For each node it checks all its versions: if the age of the version is older&#xd;
-than the daysToKeep and there are more versions than retainCount then delete the version.&#xd;</sv:value>
+For each node, it checks all its versions: if the age of the version is older than the daysToKeep and 
+there are more versions than retainCount, then it deletes the version.&#xd;</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:parameters" sv:type="String">
     <sv:value>{ "retainCount": 2, "daysToKeep": 30 }</sv:value>
@@ -39,10 +39,10 @@ than the daysToKeep and there are more versions than retainCount then delete the
   <sv:property sv:name="hipposys:script" sv:type="String">
 <sv:value>
 /**&#xd;
- * VersionsCleaner is a script that visits document nodes and deletes their version history.&#xd;
+ * VersionsCleaner is a script that visits document nodes and cleans up the version history.&#xd;
  * It can retain retainCount number and daysToKeep days of latest versions.&#xd;
- * For each node it checks all its versions: if the age of the version is older&#xd;
- * than the daysToKeep and there are more versions than retainCount then delete the version.&#xd;
+ * For each node, it checks all its versions: if the age of the version is older&#xd;
+ * than the daysToKeep and there are more versions than retainCount, then it deletes the version.&#xd;
  */&#xd;
 &#xd;
 package org.hippoecm.frontend.plugins.cms.dev.updater&#xd;
@@ -64,21 +64,31 @@ import java.util.List&#xd;
  */&#xd;
 class VersionsCleaner extends BaseNodeUpdateVisitor {&#xd;
 &#xd;
-  /** The number of versions to retain. Must be at least 1. */&#xd;
+  /** The default number of versions to retain.*/&#xd;
   int defaultRetainCount = 2;&#xd;
-  /** The number of days to keep versions. Must be at least 1 to keep history or 0 in which case only retainCount is used. */&#xd;
+  /** The default number of days to keep versions.*/&#xd;
   int defaultDaysToKeep = 30;&#xd;
   &#xd;
-  boolean doUpdate(Node node) {&#xd;
-    def retainCount = parametersMap.get("retainCount", defaultRetainCount)&#xd;
-    def daysToKeep = parametersMap.get("daysToKeep", defaultDaysToKeep)&#xd;
+  /** The number of versions to retain. Must be at least 1. */&#xd;
+  int retainCount;&#xd;
+  /** The number of days to keep versions. Must be at least 1 to keep history or 0 in which case only retainCount is used. */&#xd;
+  int daysToKeep;&#xd;
+  &#xd;
+  void initialize(Session session) {&#xd;
+    retainCount = parametersMap.get("retainCount", defaultRetainCount)&#xd;
+    daysToKeep = parametersMap.get("daysToKeep", defaultDaysToKeep)&#xd;
     if (retainCount &lt; 1) {&#xd;
       retainCount = 1&#xd;
     }&#xd;
     if (daysToKeep &lt; 0) {&#xd;
       daysToKeep = 0&#xd;
     }&#xd;
-    log.debug "Updating node ${node.path} (retainCount: ${retainCount}, daysToKeep: ${daysToKeep})"&#xd;
+    log.info "VersionsCleaner initialized with parameters: { retainCount: ${retainCount}, daysToKeep: ${daysToKeep} }"&#xd;
+    &#xd;
+  }&#xd;
+  &#xd;
+  boolean doUpdate(Node node) {&#xd;
+    log.debug "Updating node ${node.path}"&#xd;
     &#xd;
     // gather versions&#xd;
     List versions = new ArrayList()&#xd;
