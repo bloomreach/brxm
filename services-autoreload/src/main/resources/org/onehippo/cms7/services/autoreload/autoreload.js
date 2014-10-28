@@ -28,20 +28,26 @@
         window.document.location.reload();
     }
 
+    function log(msg) {
+        if (typeof console.log === "function") {
+            console.log(msg);
+        }
+    }
+
     function onOpen() {
         isReloadingPage = false;
         isReconnecting = false;
-        console.debug("Hippo auto-reload enabled");
+        log("Hippo auto-reload enabled");
     }
 
     function onMessage(event) {
         var message = JSON.parse(event.data);
         if (message.command === "reloadPage") {
-            console.debug("Hippo auto-reload is reloading page...");
+            log("Hippo auto-reload is reloading page...");
             isReloadingPage = true;
             reloadPage();
         } else {
-            console.debug("Hippo auto-reload received unknown message:", message);
+            log("Hippo auto-reload received unknown message:", message);
         }
     }
 
@@ -51,7 +57,7 @@
             if (event.data) {
                 warning += ": " + event.data;
             }
-            console.debug(warning);
+            log(warning);
         }
     }
 
@@ -75,11 +81,11 @@
             if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                 isReconnecting = true;
                 reconnectAttempts++;
-                console.debug("Hippo auto-reload disconnected, trying to reconnect...");
+                log("Hippo auto-reload disconnected, trying to reconnect...");
                 window.setTimeout(connect, RECONNECT_DELAY_MILLIS);
             } else {
                 isReconnecting = false;
-                console.debug("Hippo auto-reload stopped trying to reconnect.");
+                log("Hippo auto-reload stopped trying to reconnect.");
             }
         }
     }
@@ -91,8 +97,8 @@
     if (window.addEventListener && window.WebSocket) {
         window.addEventListener("load", connect);
         window.addEventListener("beforeunload", disconnect);
-    } else if (console.log) {
-        console.log("Hippo auto-reload is not available because this browser does not support WebSockets")
+    } else {
+        log("Hippo auto-reload is not available because this browser does not support WebSockets");
     }
 
 }(window, console));
