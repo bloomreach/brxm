@@ -376,6 +376,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>902.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.27.00</sv:value>
+    </sv:property>
   </sv:node>
   <!-- CMS builtin reports -->
   <sv:node sv:name="cms-reports">
