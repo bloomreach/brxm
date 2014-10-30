@@ -162,7 +162,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<PluginRestful> fetchPlugins(@Context ServletContext servletContext) {
-        return getAllPlugins(servletContext);
+        return getAllPlugins(servletContext, true);
     }
 
 
@@ -182,7 +182,7 @@ public class PluginResource extends BaseResource {
         }
         try {
             systemInfo.setInitialized(initialized);
-            final List<PluginRestful> plugins = getPlugins(servletContext);
+            final List<PluginRestful> plugins = getPlugins(servletContext, false);
             for (PluginRestful plugin : plugins) {
                 systemInfo.incrementPlugins();
                 final String installState = plugin.getInstallState();
@@ -320,7 +320,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/plugins/{pluginId}")
     public Plugin getPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
-        final List<PluginRestful> pluginList = getPlugins(servletContext);
+        final List<PluginRestful> pluginList = getPlugins(servletContext, false);
         for (Plugin plugin : pluginList) {
             if (plugin.getId().equals(pluginId)) {
                 return plugin;
@@ -338,7 +338,7 @@ public class PluginResource extends BaseResource {
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
 
         final MessageRestful message = new MessageRestful();
-        final RestfulList<PluginRestful> pluginList = getAllPlugins(servletContext);
+        final RestfulList<PluginRestful> pluginList = getAllPlugins(servletContext, false);
         for (PluginRestful plugin : pluginList.getItems()) {
             final String id = plugin.getId();
             if (Strings.isNullOrEmpty(id)) {
@@ -453,7 +453,7 @@ public class PluginResource extends BaseResource {
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) throws Exception {
 
         final RestfulList<ControllerRestful> controllers = new RestList<>();
-        final List<PluginRestful> plugins = getPlugins(servletContext);
+        final List<PluginRestful> plugins = getPlugins(servletContext, false);
         for (Plugin plugin : plugins) {
             final String pluginLink = plugin.getId();
             if (Strings.isNullOrEmpty(pluginLink)) {
@@ -504,7 +504,7 @@ public class PluginResource extends BaseResource {
     @Path("/modules")
     public PluginModuleRestful getModule(@Context ServletContext servletContext) throws Exception {
         final PluginModuleRestful modules = new PluginModuleRestful();
-        final List<PluginRestful> plugins = getPlugins(servletContext);
+        final List<PluginRestful> plugins = getPlugins(servletContext, false);
         for (PluginRestful plugin : plugins) {
             final List<PluginModuleRestful.PrefixedLibrary> libraries = plugin.getLibraries();
 
@@ -572,7 +572,8 @@ public class PluginResource extends BaseResource {
     //############################################
 
     private void processPlugins(final RestfulList<PluginRestful> plugins, final Iterable<PluginRestful> items,
-                                final Collection<String> restClasses, final PluginConfigService service, final PluginContext context) {
+                                final Collection<String> restClasses, final PluginConfigService service,
+                                final PluginContext context, final boolean process) {
         for (PluginRestful item : items) {
             plugins.add(item);
 
@@ -585,7 +586,7 @@ public class PluginResource extends BaseResource {
             // The test should be executed for each plugin upon "initialization", i.e. after a rebuild/restart.
             // For this, this piece of code should move into a method that clearly indicates that it's doing
             // initialization (like initializing the dynamic REST endpoints e.g.).
-            if (PluginInstallationState.ONBOARD.equals(installState) && !initialized) {
+            if (process && PluginInstallationState.ONBOARD.equals(installState) && !initialized) {
                 setupIfPossible(item, context); // Ignore error messages
             }
 
@@ -772,7 +773,7 @@ public class PluginResource extends BaseResource {
             return null;
         }
 
-        final List<PluginRestful> plugins = getPlugins(context);
+        final List<PluginRestful> plugins = getPlugins(context, false);
         for (final PluginRestful plugin : plugins) {
             final String pluginId = plugin.getId();
             if (Strings.isNullOrEmpty(pluginId)) {
@@ -795,12 +796,21 @@ public class PluginResource extends BaseResource {
     }
 
 
-    private List<PluginRestful> getPlugins(final ServletContext servletContext) {
-        return getAllPlugins(servletContext).getItems();
+    /**
+     * Fetch all plugins.
+     * @param servletContext context
+     * @param process if true, plugins will be processed (rest classes will be registered,any pending install state will be executed)
+     * @return list of plugins
+     */
+    private List<PluginRestful> getPlugins(final ServletContext servletContext, final boolean process) {
+        return getAllPlugins(servletContext, process).getItems();
     }
 
 
-    private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext) {
+    /**
+     * @see #getPlugins(javax.servlet.ServletContext, boolean)
+     */
+    private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext, final boolean process) {
         final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<PluginRestful> items = getLocalPlugins();
         final Collection<String> restClasses = new ArrayList<>();
@@ -825,7 +835,7 @@ public class PluginResource extends BaseResource {
 
 
         try (PluginConfigService service = new FilePluginService(context)) {
-            processPlugins(plugins, items, restClasses, service, context);
+            processPlugins(plugins, items, restClasses, service, context, process);
         } catch (Exception e) {
             log.error("Error processing plugins", e);
         }
