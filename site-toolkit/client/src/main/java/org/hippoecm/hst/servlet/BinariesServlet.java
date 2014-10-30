@@ -39,8 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.container.HstFilter;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
@@ -574,24 +572,8 @@ public class BinariesServlet extends HttpServlet {
     }
 
     private void initBinariesCache() {
-        HstCache cache = null;
-        
         binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
-        ComponentManager clientComponentManager = (ComponentManager) getServletContext().getAttribute(HstFilter.CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM);
-        
-        if (clientComponentManager != null) {
-            cache = clientComponentManager.getComponent(binariesCacheComponentName);
-            if (cache != null) {
-                log.warn("ClientComponentManager is deprecated. Use HstService#getComponentManager() instead and replace " +
-                        "client-assembly spring configuration with hst-assemply/overrides configuration. Remove " +
-                        "clientComponentManagerClass init-param from web.xml for HstFilter as well.");
-            }
-        }
-        
-        if (cache == null) {
-            cache = HstServices.getComponentManager().getComponent(binariesCacheComponentName);
-        }
-        
+        HstCache cache = HstServices.getComponentManager().getComponent(binariesCacheComponentName);
         binariesCache = new BinariesCache(cache);
         binariesCache.setMaxObjectSizeBytes(getLongInitParameter(CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM,
                 BinariesCache.DEFAULT_MAX_OBJECT_SIZE_BYTES));

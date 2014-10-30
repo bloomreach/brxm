@@ -18,7 +18,6 @@ package org.hippoecm.hst.jaxrs.services;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
@@ -26,6 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * <p>
@@ -48,8 +49,10 @@ public abstract class AbstractJaxrsSpringTestCase
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site");
+        ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
+                .setServletContext(servletContext);
     }
 
     @After

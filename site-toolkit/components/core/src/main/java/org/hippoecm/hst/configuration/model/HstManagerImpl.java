@@ -18,6 +18,8 @@ package org.hippoecm.hst.configuration.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
@@ -31,8 +33,9 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.ServletContextAware;
 
-public class HstManagerImpl implements MutableHstManager {
+public class HstManagerImpl implements MutableHstManager, ServletContextAware {
     
     private static final Logger log = LoggerFactory.getLogger(HstManagerImpl.class);
 
@@ -81,8 +84,9 @@ public class HstManagerImpl implements MutableHstManager {
 
     private String[] hstFilterPrefixExclusions;
     private String[] hstFilterSuffixExclusions;
-    private String contextPath;
-    
+
+    private ServletContext servletContext;
+
     /**
      * The list of implicit configuration augmenters which can provide extra hst configuration after the {@link VirtualHosts} object 
      * has been created
@@ -175,11 +179,7 @@ public class HstManagerImpl implements MutableHstManager {
     }
 
     public String getContextPath() {
-        return contextPath;
-    }
-
-    public void setContextPath(final String contextPath) {
-        this.contextPath = contextPath;
+        return servletContext.getContextPath();
     }
 
     public void setStaleConfigurationSupported(boolean staleConfigurationSupported) {
@@ -361,6 +361,11 @@ public class HstManagerImpl implements MutableHstManager {
                 state = BuilderState.STALE;
             }
         }
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
 }

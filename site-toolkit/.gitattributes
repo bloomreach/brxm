@@ -453,6 +453,7 @@ client/src/test/resources/org/hippoecm/hst/component/support/bean/TestBaseHstCom
 client/src/test/resources/org/hippoecm/hst/utils/TestMessageUtils.properties -text
 commons/pom.xml svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/cache/NOOPHstCache.java -text
+commons/src/main/java/org/hippoecm/hst/container/DelegatingFilter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/container/HstContainerConfigImpl.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstContainerRequestImpl.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstFilter.java svneol=native#text/plain
@@ -578,6 +579,8 @@ components/core/src/main/java/org/hippoecm/hst/configuration/sitemapitemhandler/
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuItemConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenusConfigurationService.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/container/AbstractFilterBean.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/container/HstDelegateeFilterBean.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/channelmanager/CmsComponentWindowResponseAppender.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstComponentMetadataReader.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstRequestImpl.java svneol=native#text/plain
@@ -706,6 +709,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-content-beans.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-esi.xml -text
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-front.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain

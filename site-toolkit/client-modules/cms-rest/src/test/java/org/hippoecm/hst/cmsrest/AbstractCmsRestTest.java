@@ -24,13 +24,14 @@ import javax.jcr.SimpleCredentials;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 public abstract class AbstractCmsRestTest {
 
@@ -46,8 +47,10 @@ public abstract class AbstractCmsRestTest {
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
 
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site");
         this.hstManager = getComponentManager().getComponent(HstManager.class.getName());
-        ((MutableHstManager)hstManager).setContextPath("/site");
+        ((ServletContextAware)hstManager).setServletContext(servletContext);
     }
 
     @After
