@@ -97,12 +97,6 @@ body.hippo-root #doc3 {
   color: #000066;
 }
 
-/* default buttons */
-.hippo-root button, .hippo-root input[type="button"], .hippo-root input[type="submit"] {
-  font-size: 12px;
-  padding: 4px;
-  margin: 2px;
-}
 
 /* highlights */
 .hippo-global-highlight li,
