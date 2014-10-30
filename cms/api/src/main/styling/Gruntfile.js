@@ -23,10 +23,15 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
     // display execution time of each task
     require('time-grunt')(grunt);
+    
+    var buildConfig = require('./build.config.js');
+    function classPathExists() {
+        return fs.existsSync(buildConfig.cp + '/skin/hippo-cms');
+    }
 
     grunt.initConfig({
 
-        build: require('./build.config.js'),
+        build: buildConfig,
         
         // Watch for file changes and run corresponding tasks
         watch: {
@@ -141,7 +146,7 @@ module.exports = function (grunt) {
                 dest: '<%= build.cp %>/skin/hippo-cms/',
                 filter: function() {
                     //little hack to force it to only copy when dest exists
-                    return fs.existsSync(build.cp + '/skin/hippo-cms');
+                    return classPathExists(); 
                 }
             }
         },
