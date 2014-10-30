@@ -302,11 +302,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/panel
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective_de.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective_it.properties -text
-api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-16.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-24.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-32.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-48.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/search/QueryResultModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/search/TextSearchBuilder.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/search/TextSearchDataProvider.java svneol=native#text/plain
@@ -814,6 +809,18 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-16.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-24.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-32.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-48.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-64.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-128.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-16.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-24.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-32.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-48.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-64.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/accordion-unit-back.png -text
 api/src/main/resources/skin/images/accordion-unit-back2.png -text
 api/src/main/resources/skin/images/addfolder.png -text svneol=unset#image/png
@@ -2308,12 +2315,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSecti
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/DocumentCollectionView.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/Navigator.java svneol=native#text/plain
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-128.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-16.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-24.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-48.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DefaultListColumnProviderPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.properties -text
@@ -2383,11 +2384,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/C
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_it.properties -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-128.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-16.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-24.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-32.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-48.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_de.properties -text
@@ -2463,6 +2459,14 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.htm
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-active-32.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-active-64.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-32.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-64.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-active-32.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-active-64.png -text svneol=unset#image/png
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/DomainDataProviderTest.java -text
