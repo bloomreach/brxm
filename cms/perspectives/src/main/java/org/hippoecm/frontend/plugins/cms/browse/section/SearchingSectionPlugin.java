@@ -416,7 +416,13 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
     }
 
+    @Override
     public ResourceReference getIcon(IconSize type) {
+        return null;
+    }
+    
+    @Override
+    public ResourceReference getActiveIcon(IconSize type) {
         return null;
     }
 

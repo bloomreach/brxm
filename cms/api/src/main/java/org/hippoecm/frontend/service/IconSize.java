@@ -20,7 +20,7 @@ package org.hippoecm.frontend.service;
  */
 public enum IconSize {
 
-    TINY(16), SMALL(32), MEDIUM(48), LARGE(64), HUGE(128);
+    TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), BIG(96), HUGE(128);
 
     /**
      * Finds the most appropriate IconType for a particular configuration value.
@@ -50,6 +50,15 @@ public enum IconSize {
         return MEDIUM;
     }
 
+    public static IconSize getHighRes(IconSize size) {
+        for (IconSize type : values()) {
+            if (type.size == size.size * 2) {
+                return type;
+            }
+        }
+        return null;
+    }
+    
     private int size;
 
     private IconSize(int size) {

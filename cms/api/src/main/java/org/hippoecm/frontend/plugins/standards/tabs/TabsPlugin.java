@@ -521,11 +521,12 @@ public class TabsPlugin extends RenderPlugin {
             return null;
         }
 
-        public ResourceReference getIcon(IconSize type) {
-            if (decorator != null) {
-                return decorator.getIcon(type);
-            }
-            return null;
+        public ResourceReference getIcon(IconSize size) {
+            return decorator != null ? decorator.getIcon(size) : null;
+        }
+
+        public ResourceReference getActiveIcon(final IconSize size) {
+            return decorator != null ? decorator.getActiveIcon(size) : null;
         }
 
         public Panel getPanel(String panelId) {

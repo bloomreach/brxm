@@ -47,5 +47,7 @@ public interface ITitleDecorator extends IClusterable {
      * @return
      */
     ResourceReference getIcon(IconSize type);
+    
+    ResourceReference getActiveIcon(IconSize type);
 
 }

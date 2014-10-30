@@ -10,15 +10,27 @@
   left: 0;
   padding-top: 4px;
 
+  li {
+    margin-bottom: 20px;
+  }
+  
   li div a {
     display: table;
     color: @main-menu-text-color;
 
     img {
-      margin: 24px 0 4px 16px;
-      // Temp filter to turn images into grayscale
-      .greyscale-image();
+      display: none;
     }
+
+    .hippo-tabs-tab-icon {
+      width: 64px;
+      min-height: 32px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 32px 32px;
+      margin-bottom: 4px;
+    }
+
     span {
       font-size: @font-size-tiny;
       display: inline-block;
@@ -27,15 +39,11 @@
     }
   }
   
-  li:first-child div a img {
+  li:first-child div {
     margin-top: 4px; 
   }
 
   .selected div a {
     color: @main-menu-selected-text-color;
-    
-    img {
-      filter: none;
-    }
   }
 }

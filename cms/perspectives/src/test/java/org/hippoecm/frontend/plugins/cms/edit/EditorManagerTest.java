@@ -71,10 +71,17 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 throw new RuntimeException("failed to determine node name", ex);
             }
         }
-
+        
+        @Override
         public ResourceReference getIcon(IconSize type) {
             return null;
         }
+
+        @Override
+        public ResourceReference getActiveIcon(IconSize type) {
+            return null;
+        }
+
     }
 
     private List<IRenderService> getPreviews() {

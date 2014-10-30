@@ -138,8 +138,14 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
     public IModel<String> getTitle() {
         return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
     }
-
+    
+    @Override
     public ResourceReference getIcon(IconSize type) {
+        return null;
+    }
+
+    @Override
+    public ResourceReference getActiveIcon(IconSize type) {
         return null;
     }
 

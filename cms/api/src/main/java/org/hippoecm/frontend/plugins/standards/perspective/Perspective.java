@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -40,9 +41,15 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
 
+    public static final String DEFAULT_ACTIVE_SUFFIX = "Active";
+    public static final String DEFAULT_IMAGE_EXTENSION = "png";
+
     private IModel<String> title = new Model<String>("title");
 
     private boolean rendered;
+
+    private String activeSuffix;
+    private String imageExtension;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -50,6 +57,9 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         if (config.getString(TITLE) != null) {
             title = new StringResourceModel(config.getString(TITLE), this, null);
         }
+        
+        activeSuffix = config.getString("active.suffix", DEFAULT_ACTIVE_SUFFIX);
+        imageExtension = config.getString("image.extension", DEFAULT_IMAGE_EXTENSION);
     }
 
     // ITitleDecorator
@@ -64,8 +74,50 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         tag.append("class", "perspective", " ");
     }
 
+    @Override
     public ResourceReference getIcon(IconSize size) {
-        return new PackageResourceReference(Perspective.class, "perspective-" + size.getSize() + ".png");
+        String image = toImageName(getClass().getSimpleName(), size, imageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        image = toImageName(Perspective.class.getSimpleName(), size, DEFAULT_IMAGE_EXTENSION);
+        if (PackageResource.exists(Perspective.class, image, null, null, null)) {
+            return new PackageResourceReference(Perspective.class, image);
+        }
+
+        return null;
+    }
+
+    @Override
+    public ResourceReference getActiveIcon(IconSize size) {
+        String image = toImageName(getClass().getSimpleName() + activeSuffix, size, imageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        image = toImageName(Perspective.class.getSimpleName() + DEFAULT_ACTIVE_SUFFIX, size, DEFAULT_IMAGE_EXTENSION);
+        if (PackageResource.exists(Perspective.class, image, null, null, null)) {
+            return new PackageResourceReference(Perspective.class, image);
+        }
+
+        return null;
+    }
+
+    protected String toImageName(final String camelCaseString, final IconSize size, final String extension) {
+        StringBuilder name = new StringBuilder(camelCaseString.length());
+        name.append(Character.toLowerCase(camelCaseString.charAt(0)));
+        for (int i = 1; i < camelCaseString.length(); i++) {
+            char c = camelCaseString.charAt(i);
+            if (Character.isUpperCase(c)) {
+                name.append('-').append(Character.toLowerCase(c));
+            } else {
+                name.append(c);
+            }
+        }
+        name.append('-').append(size.getSize()).append('.').append(extension);
+        
+        return name.toString();
     }
 
     protected void setTitle(String title) {

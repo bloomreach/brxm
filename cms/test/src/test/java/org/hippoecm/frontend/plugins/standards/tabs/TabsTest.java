@@ -65,6 +65,12 @@ public class TabsTest extends PluginTest {
                     return null;
                 }
 
+                @Override
+                public ResourceReference getActiveIcon(final IconSize type) {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+
             }, context.getReference(this).getServiceId());
         }
 
