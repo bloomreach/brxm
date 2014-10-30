@@ -17,6 +17,7 @@
 module.exports = {
     target: 'target',
     source: '.',
+    bower: './components',
     
     file: 'hippo-cms-theme',
     src: 'src',

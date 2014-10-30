@@ -126,9 +126,9 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'src/fonts',
+                        cwd: '<%= build.bower %>/open-sans-fontface/fonts',
                         src: ['**/*.{otf,eot,svg,ttf,woff}'],
-                        dest: '<%= build.dest %>/fonts/'
+                        dest: '<%= build.dest %>/fonts/open-sans/'
                     },
                     {
                         expand: true,
@@ -159,11 +159,11 @@ module.exports = function (grunt) {
 
             // clean bower components
             bower: {
-                src: '<%= build.source %>/components/**'
+                src: '<%= build.bower %>/**'
             },
             
             all: {
-                src: ['<%= build.target %>', '<%= build.source %>/components/**']
+                src: ['<%= build.target %>', '<%= build.bower%>/**']
             }
         },
 
