@@ -66,7 +66,7 @@ module.exports = function (grunt) {
             vendors: {
                 files: {
                     '<%= build.tmp %>/css/open-sans.css': '<%= build.src %>/less/lib/open-sans.less',
-                    '<%= build.tmp %>/css/normalize.css': '<%= build.src %>/less/lib/normalize.less',
+                    //'<%= build.tmp %>/css/normalize.css': '<%= build.src %>/less/lib/normalize.less',
                     '<%= build.tmp %>/css/wicket.css': '<%= build.src %>/less/lib/wicket.less'
                 }
             }
@@ -113,7 +113,7 @@ module.exports = function (grunt) {
             css: {
                 src: [
                     '<%= build.tmp %>/css/open-sans.css', 
-                    '<%= build.tmp %>/css/normalize.css', 
+                    '<%= build.bower %>/normalize.css/normalize.css', 
                     '<%= build.tmp %>/css/wicket.css', 
                     '<%= build.tmp %>/css/<%= build.file %>.css'
                 ],
