@@ -33,10 +33,18 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.RepositoryException;
 
 public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
 
+    private static final Logger log = LoggerFactory.getLogger(PathHistoryBehavior.class);
+
     private static final String PATH_PARAMETER = "path";
+    private static final String UUID_PARAMETER = "uuid";
 
     private IModelReference reference;
     private transient boolean myUpdate;
@@ -44,10 +52,10 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
     public PathHistoryBehavior(IModelReference reference) {
         this.reference = reference;
 
-        setPathFromRequest();
+        setReferenceModelFromRequest();
     }
 
-    private void setPathFromRequest() {
+    private void setReferenceModelFromRequest() {
         final RequestCycle requestCycle = RequestCycle.get();
         StringValue path = requestCycle.getRequest().getQueryParameters().getParameterValue(PATH_PARAMETER);
         if (!path.isNull()) {
@@ -60,6 +68,16 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
                 reference.setModel(nodeModel);
             } finally {
                 myUpdate = false;
+            }
+        } else {
+            StringValue uuid = requestCycle.getRequest().getQueryParameters().getParameterValue(UUID_PARAMETER);
+            if (!uuid.isNull()) {
+                try {
+                    reference.setModel(new JcrNodeModel(
+                            UserSession.get().getJcrSession().getNodeByIdentifier(uuid.toString())));
+                } catch (RepositoryException e) {
+                    log.info("Could not find node by uuid: {}", uuid);
+                }
             }
         }
     }
@@ -88,7 +106,7 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
-        setPathFromRequest();
+        setReferenceModelFromRequest();
     }
 
     @Override

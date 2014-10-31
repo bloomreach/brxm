@@ -95,10 +95,10 @@ public class UrlControllerBehavior extends AbstractDefaultAjaxBehavior {
                 throw new RuntimeException("Unable to parse parameters from '" + value + "'", e);
             }
         }
-        onRequest(parameters);
+        onRequest(requestParameters);
     }
 
-    protected void onRequest(Map<String, String> parameters) {
+    protected void onRequest(IRequestParameters parameters) {
     }
 
 }

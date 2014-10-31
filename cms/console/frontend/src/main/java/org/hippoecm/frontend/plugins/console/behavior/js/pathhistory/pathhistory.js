@@ -20,7 +20,8 @@
 
     if (!Hippo.PathHistory) {
 
-        var PathHistoryImpl = function () {
+        var Lang = YAHOO.lang,
+            PathHistoryImpl = function () {
             this.initialized = false;
         };
 
@@ -47,12 +48,16 @@
             },
 
             onUrlChange: function () {
-                var path;
-                path = this.getParameter('path');
-                if (path === undefined) {
-                    path = "/";
+                var parameter, url;
+                if (! Lang.isUndefined(parameter = this.getParameter('path'))) {
+                    url = this.url + "&path=" + parameter;
+                } else if (! Lang.isUndefined(parameter = this.getParameter('uuid'))) {
+                    url = this.url + "&uuid=" + parameter;
+                } else {
+                    url = this.url + "&path=/";
                 }
-                this.callback(path);
+
+                this.callback(url);
             },
 
             getParameter: function (name) {
