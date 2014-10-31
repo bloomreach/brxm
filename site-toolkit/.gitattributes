@@ -723,74 +723,74 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager.properties svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager.xml svneol=native#text/plain
 components/core/src/site/site.xml -text
-components/core/src/test/java/org/hippoecm/hst/cache/ehcache/TestHstCache.java -text
+components/core/src/test/java/org/hippoecm/hst/cache/ehcache/HstCacheIT.java -text
 components/core/src/test/java/org/hippoecm/hst/cache/esi/TestESIPageRenderer.java -text
 components/core/src/test/java/org/hippoecm/hst/cache/esi/TestESIPageScanner.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/ConcurrentChannelManagerAndHstManagerLoadTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/ConcurrentChannelManagerAndHstManagerLoadIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/ContainerComponentConfigurationsIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/HstComponentsConfigurationModelsIT.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/configuration/MatchHostAndUrlIT.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/configuration/NoChannelsOrBlueprintsIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/SiteMapItemHandlerIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestConfigurationUtils.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/TestContainerComponentConfigurations.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/TestHstComponentsConfigurationModels.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/configuration/TestNoChannelsOrBlueprints.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/AbstractHstLoadingCacheTestCase.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCacheIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/HstNodeLoadingCacheIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/PendingChangesHippoSessionIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestEventCache.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstConfigurationLoadingCache.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstNodeLoadingCache.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestPendingChangesHippoSession.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintHandlerTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintHandlerIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelManagerOtherContextPath.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelManagerOtherContextPathIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtilsTest.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/menu/TestHstMenuModels.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/model/TestBrokenModelConfigurations.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/mount/TestMountService.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/pages/TestPagesModels.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/site/TestSiteService.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/menu/HstMenuModelsIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/model/BrokenModelConfigurationsIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/mount/MountServiceIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/pages/PagesModelsIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/site/SiteServiceIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/SiteMapModelsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/TestHstSiteMapItemIntegerPlaceHolders.java -text
-components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/TestSiteMapModels.java -text
 components/core/src/test/java/org/hippoecm/hst/core/beans/AbstractBeanTestCase.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/beans/NewsBean.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/beans/TestRequestContextBeansCaching.java -text
+components/core/src/test/java/org/hippoecm/hst/core/beans/RequestContextBeansCachingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/beans/TextBean.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/component/HstRequestIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstComponentMetadataReader.java -text
-components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/AbstractPipelineTestCase.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/ContainerURLProviderIT.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/container/DefaultPipelineIT.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/PageCachingValveIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowFilter.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerConfiguration.java -text
-components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerURLProvider.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/container/TestDefaultPipeline.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/container/TestFactoryComponentInstanceCreation.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericResponseHeadersValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstComponentWindowImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstContainerURL.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstNavigationalStateCodec.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstSitePipeline.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageCacheContextAndKey.java -text
-components/core/src/test/java/org/hippoecm/hst/core/container/TestPageCachingValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValveImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
-components/core/src/test/java/org/hippoecm/hst/core/hosting/TestCustomMountAndVirtualCmsHostAugmenter.java -text
-components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
-components/core/src/test/java/org/hippoecm/hst/core/jcr/TestSessionSecurityDelegation.java -text
-components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text
-components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewritingCrossScheme.java -text
+components/core/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenterIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositoryIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkForCmsRequestIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingCrossSchemeIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/AlwaysFailingOnStartBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/MyServletContextAwareSpringBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/SingleBean.java -text
+components/core/src/test/java/org/hippoecm/hst/site/container/SystemDefaultSessionPoolConfigurationsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescriptorUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManagerWithAddonModules.java -text
-components/core/src/test/java/org/hippoecm/hst/site/container/TestSystemDefaultSessionPoolConfigurations.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/session/SessionIdStoringApplicationListener.java -text
 components/core/src/test/java/org/hippoecm/hst/site/content/ObjectConverterFactoryBeanTest.java -text
 components/core/src/test/java/org/hippoecm/hst/site/content/beans/NewsArticleBean.java -text
@@ -837,16 +837,16 @@ components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/servl
 components/core/src/test/resources/META-INF/hst-assembly/addon/servletctxaware-module.xml -text
 components/core/src/test/resources/log4j-filters.txt -text
 components/core/src/test/resources/log4j.xml -text
-components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
+components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/HstCacheIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/esi/esi-result-page-1.html -text
 components/core/src/test/resources/org/hippoecm/hst/cache/esi/esi-source-page-1.html -text
-components/core/src/test/resources/org/hippoecm/hst/core/component/TestHstRequest.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/core/component/HstRequestIT.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml -text
-components/core/src/test/resources/org/hippoecm/hst/core/container/TestContainerURLProvider.xml svneol=native#text/plain
-components/core/src/test/resources/org/hippoecm/hst/core/container/TestDefaultPipeline.xml svneol=native#text/plain
-components/core/src/test/resources/org/hippoecm/hst/core/container/TestFactoryComponentInstanceCreation.xml -text
-components/core/src/test/resources/org/hippoecm/hst/core/container/TestPageCachingValve.xml -text
-components/core/src/test/resources/org/hippoecm/hst/site/container/TestSystemDefaultSessionPoolConfigurations.xml -text
+components/core/src/test/resources/org/hippoecm/hst/core/container/ContainerURLProviderIT.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/core/container/DefaultPipelineIT.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.xml -text
+components/core/src/test/resources/org/hippoecm/hst/core/container/PageCachingValveIT.xml -text
+components/core/src/test/resources/org/hippoecm/hst/site/container/SystemDefaultSessionPoolConfigurationsIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/AbstractTestConfigurations.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
