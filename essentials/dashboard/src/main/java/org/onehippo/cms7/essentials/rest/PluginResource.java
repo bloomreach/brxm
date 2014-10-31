@@ -16,8 +16,11 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,6 +97,7 @@ import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
@@ -120,7 +124,21 @@ public class PluginResource extends BaseResource {
 
 
     /**
-     * Plugin cache to avoid remote calls
+     * Plugin cache to avoid remote calls, loads from following protocols:
+     * <p/>
+     * <p>Remote url "http(s):"</p>
+     * Below are ones supported by  {@code ResourceUtils}
+     * <p>CLASSPATH_URL_PREFIX  Pseudo URL prefix for loading from the class path: "classpath:"</p>
+     * <p>FILE_URL_PREFIX  URL prefix for loading from the file system: "file:"</p>
+     * <p>JAR_URL_SEPARATOR  Separator between JAR URL and file path within the JAR</p>
+     * <p>URL_PROTOCOL_CODE_SOURCE  URL protocol for an entry from an OC4J jar file: "code-source"</p>
+     * <p>URL_PROTOCOL_FILE  URL protocol for a file in the file system: "file"</p>
+     * <p>URL_PROTOCOL_JAR  URL protocol for an entry from a jar file: "jar"</p>
+     * <p>URL_PROTOCOL_VFSZIP  URL protocol for an entry from a JBoss jar file: "vfszip"</p>
+     * <p>URL_PROTOCOL_WSJAR   URL protocol for an entry from a WebSphere jar file: "wsjar"</p>
+     * <p>URL_PROTOCOL_ZIP  URL protocol for an entry from a zip file: "zip"</p>
+     *
+     * @see ResourceUtils
      */
     private final LoadingCache<String, RestfulList<PluginRestful>> pluginCache = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
@@ -128,8 +146,29 @@ public class PluginResource extends BaseResource {
             .build(new CacheLoader<String, RestfulList<PluginRestful>>() {
                 @Override
                 public RestfulList<PluginRestful> load(final String url) throws Exception {
-                    RestClient client = new RestClient(url);
-                    return client.getPlugins();
+                    if (url.startsWith("http")) {
+                        RestClient client = new RestClient(url);
+                        return client.getPlugins();
+                    } else {
+                        final URI resourceUri = URI.create(url);
+                        try {
+                            final File file = ResourceUtils.getFile(resourceUri);
+                            final String pluginDescriptor = GlobalUtils.readStreamAsText(new FileInputStream(file));
+                            if (Strings.isNullOrEmpty(pluginDescriptor)) {
+                                return new RestfulList<>();
+                            }
+                            final ObjectMapper mapper = new ObjectMapper();
+                            @SuppressWarnings("unchecked")
+                            final RestfulList<PluginRestful> restfulList = mapper.readValue(pluginDescriptor, RestfulList.class);
+                            return restfulList;
+
+
+                        } catch (Exception e) {
+                            log.error(MessageFormat.format("Error loading plugins from repository: {0}", url), e);
+                        }
+                        return new RestfulList<>();
+                    }
+
                 }
 
 
@@ -800,6 +839,16 @@ public class PluginResource extends BaseResource {
     }
 
 
+    /**
+     * Loads plugin descriptors from different resources. Current support is:
+     * <p>HTTP (remote plugin descriptor)</p>
+     * <p>Class path (built in/bundled plugins)</p>
+     * <p>File system: starting with file://</p>
+     * <p>Classpath: starting with classpath://</p>
+     *
+     * @param servletContext
+     * @return
+     */
     private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext) {
         final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<PluginRestful> items = getLocalPlugins();
@@ -809,18 +858,17 @@ public class PluginResource extends BaseResource {
         final ProjectSettings projectSettings = getProjectSettings(servletContext);
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
-            if (pluginRepository.startsWith("http")) {
-                try {
-                    final RestfulList<PluginRestful> myPlugins = pluginCache.get(pluginRepository);
-                    log.debug("{}", pluginCache.stats());
-                    if (myPlugins != null) {
-                        final List<PluginRestful> myPluginsItems = myPlugins.getItems();
-                        CollectionUtils.addAll(items, myPluginsItems.iterator());
-                    }
-                } catch (Exception e) {
-                    log.error(MessageFormat.format("Error loading plugins from repository: {0}", pluginRepository), e);
+            try {
+                final RestfulList<PluginRestful> myPlugins = pluginCache.get(pluginRepository);
+                log.debug("{}", pluginCache.stats());
+                if (myPlugins != null) {
+                    final List<PluginRestful> myPluginsItems = myPlugins.getItems();
+                    CollectionUtils.addAll(items, myPluginsItems.iterator());
                 }
+            } catch (Exception e) {
+                log.error(MessageFormat.format("Error loading plugins from repository: {0}", pluginRepository), e);
             }
+
         }
 
 
