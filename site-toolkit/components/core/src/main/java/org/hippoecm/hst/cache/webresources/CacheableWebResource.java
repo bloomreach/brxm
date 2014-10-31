@@ -32,7 +32,7 @@ public class CacheableWebResource implements WebResource, Serializable {
     private final String encoding;
     private final Calendar lastModified;
     private final String mimeType;
-    private final CacheableBinary binary;
+    private final Binary binary;
 
     public CacheableWebResource(final WebResource resource) throws IOException {
         path = resource.getPath();

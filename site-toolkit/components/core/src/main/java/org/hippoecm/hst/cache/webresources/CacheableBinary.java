@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.services.webresources.Binary;
@@ -55,6 +53,6 @@ public class CacheableBinary implements Binary, Serializable {
 
     @Override
     public void dispose() {
-        // nothing to dispose
+        data = null;
     }
 }

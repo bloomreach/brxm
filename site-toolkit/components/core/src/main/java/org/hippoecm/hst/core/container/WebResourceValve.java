@@ -15,10 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
@@ -28,12 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.webresources.CacheableWebResource;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.WebResourceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webresources.Binary;
@@ -59,14 +54,14 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
     @Override
     public void invoke(final ValveContext context) throws ContainerException {
         final HstRequestContext requestContext = context.getRequestContext();
-        final HttpServletRequest request = context.getServletRequest();
         final HttpServletResponse response = context.getServletResponse();
 
         try {
-            final CacheableWebResource webResource = getCachedWebResource(requestContext);
+            final WebResource webResource = getWebResource(requestContext);
             setHeaders(response, webResource);
             writeWebResource(response, webResource);
         } catch (WebResourceException e) {
+            final HttpServletRequest request = context.getServletRequest();
             if (log.isDebugEnabled()) {
                 log.info("Cannot serve binary '{}'", request.getPathInfo(), e);
             } else {
@@ -81,12 +76,12 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         context.invokeNext();
     }
 
-    private CacheableWebResource getCachedWebResource(final HstRequestContext requestContext) throws RepositoryException, ContainerException, IOException, WebResourceException {
+    private WebResource getWebResource(final HstRequestContext requestContext) throws RepositoryException, ContainerException, IOException, WebResourceException {
         final WebResourcesService service = getWebResourcesService();
 
         final Session session = requestContext.getSession();
         final String bundleName = WebResourceUtils.getBundleName(requestContext);
-        log.info("Trying to get web resource bundle '{}' with session user '{}'", bundleName, session.getUserID());
+        log.debug("Trying to get web resource bundle '{}' with session user '{}'", bundleName, session.getUserID());
         final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
 
         final String contentPath = "/" + requestContext.getResolvedSiteMapItem().getRelativeContentPath();
@@ -115,7 +110,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         final String version = requestContext.getResolvedSiteMapItem().getParameter("version");
         if (version == null) {
             String msg = String.format("Cannot serve web resource '%s' for mount '%s' because sitemap item" +
-                    "'%s' does not contain version param.", contentPath,
+                            "'%s' does not contain version param.", contentPath,
                     requestContext.getResolvedMount().getMount(),
                     requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getQualifiedId());
             throw new WebResourceException(msg);
@@ -129,9 +124,9 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         return cacheKeyBuilder.toString();
     }
 
-    private CacheableWebResource cacheWebResource(final WebResourceBundle webResourceBundle, final String contentPath, final String version, final String cacheKey) throws IOException {
+    private WebResource cacheWebResource(final WebResourceBundle webResourceBundle, final String contentPath, final String version, final String cacheKey) throws IOException {
         try {
-            final WebResource webResource = getWebResource(webResourceBundle, contentPath, version);
+            final WebResource webResource = getWebResourceFromBundle(webResourceBundle, contentPath, version);
             final CacheableWebResource cacheableWebResource = new CacheableWebResource(webResource);
             final CacheElement element = webResourceCache.createElement(cacheKey, cacheableWebResource);
             webResourceCache.put(element);
@@ -142,7 +137,7 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private WebResource getWebResource(final WebResourceBundle webResourceBundle, final String contentPath, final String version) throws IOException {
+    private WebResource getWebResourceFromBundle(final WebResourceBundle webResourceBundle, final String contentPath, final String version) throws IOException {
         if (version.equals(webResourceBundle.getAntiCacheValue())) {
             return webResourceBundle.get(contentPath);
         } else {
@@ -151,8 +146,8 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
     }
 
     /**
-     * Blocking EhCache creates a lock during a #get that returns null. Hence if after the get the creation for the
-     * web resource fails, we need to clear the lock for the cacheKey
+     * Blocking EhCache creates a lock during a #get that returns null. Hence if after the get the creation for the web
+     * resource fails, we need to clear the lock for the cacheKey
      */
     private void clearBlockingLock(final String cacheKey) {
         log.debug("Clear lock for {}", cacheKey);

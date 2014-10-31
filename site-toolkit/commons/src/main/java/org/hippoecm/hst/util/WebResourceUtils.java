@@ -19,7 +19,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class WebResourceUtils {
 
-    private static final String DEFAULT_BUNDLE_NAME = "site";
+    public static final String DEFAULT_BUNDLE_NAME = "site";
 
     public static String getBundleName(HstRequestContext requestContext) {
         String bundleName = requestContext.getResolvedMount().getMount().getContextPath();
