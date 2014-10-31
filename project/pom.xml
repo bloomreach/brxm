@@ -36,8 +36,9 @@
   </organization>
 
   <properties>
-    <!-- use UTF-8 encoding for filtered file copy -->
+    <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <notice.project.name>${project.name}</notice.project.name>
 
@@ -90,6 +91,7 @@
     <maven.plugin.deploy.version>2.8.1</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.9</maven.plugin.eclipse.version>
     <maven.plugin.exec.version>1.3.2</maven.plugin.exec.version>
+    <maven.plugin.failsafe.version>2.17</maven.plugin.failsafe.version>
     <maven.plugin.install.version>2.5.1</maven.plugin.install.version>
     <maven.plugin.jar.version>2.4</maven.plugin.jar.version>
     <maven.plugin.javadoc.version>2.9.1</maven.plugin.javadoc.version>
@@ -551,6 +553,25 @@
           <artifactId>maven-surefire-report-plugin</artifactId>
           <version>${maven.plugin.surefire-report.version}</version>
           <inherited>true</inherited>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven.plugin.failsafe.version}</version>
+          <executions>
+            <execution>
+              <id>integration-test</id>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>verify</id>
+              <goals>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
