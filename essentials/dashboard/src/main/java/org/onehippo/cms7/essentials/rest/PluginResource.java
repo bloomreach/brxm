@@ -856,7 +856,7 @@ public class PluginResource extends BaseResource {
      * @param servletContext
      * @return
      */
-    private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext) {
+    private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext, final boolean process) {
         final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<PluginRestful> items = getLocalPlugins();
         final Collection<String> restClasses = new ArrayList<>();
