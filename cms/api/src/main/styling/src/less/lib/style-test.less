@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
+@import "../_variables";
+
 .style-test {
   background: none repeat scroll 0 0 #fff;
   position: absolute;
-  right: 0;
-  top: 0;
-  width: 400px;
+  top: 40px;
+  right: 40px;
+  width: 25vw;
+  height: 87vh;
   padding: 8px;
+  overflow: auto;
+  box-shadow: 6px 6px 10px #333;
+  border-radius: 16px;
   
   li {
     padding: 4px 0;
@@ -50,7 +56,7 @@
   .font-bold {
     font-weight: bold;
   }
-  
+
   .color-aqua {
     background-color: @aqua;
   }
@@ -74,5 +80,11 @@
   .color-block {
     display: inline-block;
     width: 280px;
+  }
+  
+  .text-sizes {
+    h1, h2, h3, h4, h5, h6 {
+      margin: 0;
+    }
   }
 }

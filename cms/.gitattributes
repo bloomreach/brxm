@@ -1132,11 +1132,12 @@ api/src/main/styling/src/less/_legacy.less -text
 api/src/main/styling/src/less/_mixins.less -text
 api/src/main/styling/src/less/_perspectives_switcher.less -text
 api/src/main/styling/src/less/_scaffolding.less -text
-api/src/main/styling/src/less/_styletest.less -text
 api/src/main/styling/src/less/_tabs.less -text
 api/src/main/styling/src/less/_typography.less -text
 api/src/main/styling/src/less/_variables.less -text
+api/src/main/styling/src/less/lib/font-awesome.less -text
 api/src/main/styling/src/less/lib/open-sans.less -text
+api/src/main/styling/src/less/lib/style-test.less -text
 api/src/main/styling/src/less/lib/wicket.less -text
 api/src/main/styling/src/less/main.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
