@@ -1351,8 +1351,7 @@ body .hippo-picker-properties div.text-input input {
   background: transparent
 }
 
-.hippo-browser-documents-small .hippo-browser-docum
-ents-small-folders h3 {
+.hippo-browser-documents-small .hippo-browser-documents-small-folders h3 {
   background: transparent url(images/filelistHeaderback.png) repeat-x;
   font-weight: normal;
   padding: 2px;
@@ -1397,111 +1396,7 @@ ents-small-folders h3 {
   padding: 1px;
 }
 
-/* Tree Plugin */
-
-/* overriding standard wicket tree styling */
-/*
-.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
-*/
-
-/* remove margins */
-.hippo-tree div.wicket-tree {
-  margin: 0;
-  border: none;
-  width: auto;
-}
-
-/* make sure the first folder level in the tree doens't have a left padding */
-.hippo-tree div.wicket-tree div.a_ {
-  padding-left: 0;
-}
-
-.hippo-tree div.wicket-tree div.a_ div.a_ {
-  padding-left: 1em
-}
-
-/* make the rows expand so it will activate the scrolling of the .hippotree div */
-.hippo-tree div.wicket-tree,
-.hippo-tree div.wicket-tree div.row,
-.hippo-tree div.wicket-tree div.row-selected {
-  overflow: visible;
-  white-space: nowrap
-}
-
-.hippo-console-tree .hippo-tree div.wicket-tree {
-  width: auto;
-}
-
-/* set row height to a little higher for better clickability */
-.hippo-tree div.wicket-tree div.row,
-.hippo-tree div.wicket-tree div.row-selected {
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown,
-.hippo-tree div.wicket-tree div.row-selected .hippo-tree-dropdown {
-  visibility: hidden;
-  float: right;
-}
-
-.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {
-  background: transparent;
-}
-
-.hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
-.hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
-  background: url("images/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
-}
-
-.hippo-tree div.wicket-tree div.row-selected {
-  background-image: url("images/controls/folder-background-selected.png");
-}
-
-.hippo-tree div.wicket-tree div.row a,
-.hippo-tree div.wicket-tree div.row-selected a {
-  font-weight: normal;
-  color: black;
-}
-
-/* IE6 workaround */
-.hippo-tree div.wicket-tree div.context-hover .hippo-tree-dropdown-icon-container {
-  background-image: url("images/controls/folder-workflow-icon.png");
-  background-repeat: no-repeat;
-  background-position: -1px -2px;
-}
-
-.hippo-tree div.wicket-tree div.context-hover-selected .hippo-tree-dropdown-icon-container {
-  background-image: url("images/controls/folder-workflow-icon.png");
-  background-repeat: no-repeat;
-  background-position: -1px -2px;
-
-}
-
-.hippo-tree .wicket-tree span.plus,
-.hippo-tree .wicket-tree span.minus {
-  background-image: url("images/tree-icons.png");
-  width: 14px;
-}
-
-.hippo-tree .wicket-tree span.junction,
-.hippo-tree .wicket-tree span.junction-last,
-.hippo-tree .wicket-tree span.corner,
-.hippo-tree .wicket-tree span.indent-line,
-.hippo-tree .wicket-tree span.indent-blank {
-  background-image: none;
-  width: 14px;
-}
-
-.hippo-tree .icon-16 {
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  display: block;
-  float: left;
-  margin-right: 5px;
-  margin-left: 3px;
-}
+/* Tree moved to _tree.less */
 
 /* mimetypes icons */
 table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
@@ -1513,17 +1408,11 @@ table tr.selected span.document-virtual-16, .document-virtual-16{background-imag
 table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("images/icons/folder-virtual-16.gif")}
 
 /* Accordion */
+/* Moved to _navigator.less
 .hippo-accordion-unit {
   background: #f4f4f4;
 }
-
-/* change the tree if he's inside an accordion */
-.hippo-accordion-unit .hippo-tree .wicket-tree {
-/*min-height: 100px;*/
-  margin-bottom: 0;
-  padding-left: 0;
-  padding-top: 0;
-}
+*/
 
 .hippo-accordion-unit h2 {
   background-image: url("images/accordion-unit-back2.png");

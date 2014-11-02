@@ -1,0 +1,293 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Tree Plugin */
+
+/* overriding standard wicket tree styling */
+/*
+.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
+*/
+
+
+/* remove margins */
+.hippo-tree div.wicket-tree {
+  margin: 0;
+  border: none;
+  width: auto;
+}
+
+/* change the tree if he's inside an accordion */
+.hippo-accordion-unit .hippo-tree .wicket-tree {
+  /*min-height: 100px;*/
+  //margin-bottom: 0;
+  // TODO: maybe merge with above?
+  padding-left: 0;
+  padding-top: 0;
+}
+
+
+/* make sure the first folder level in the tree doens't have a left padding */
+.hippo-tree div.wicket-tree div.a_ {
+  padding-left: 0;
+}
+
+.hippo-tree div.wicket-tree div.a_ div.a_ {
+  padding-left: 1em
+}
+
+/* make the rows expand so it will activate the scrolling of the .hippotree div */
+.hippo-tree div.wicket-tree,
+.hippo-tree div.wicket-tree div.row,
+.hippo-tree div.wicket-tree div.row-selected {
+  overflow: visible;
+  white-space: nowrap
+}
+
+.hippo-console-tree .hippo-tree div.wicket-tree {
+  width: auto;
+}
+
+/* set row height to a little higher for better clickability */
+.hippo-tree div.wicket-tree div.row,
+.hippo-tree div.wicket-tree div.row-selected {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown,
+.hippo-tree div.wicket-tree div.row-selected .hippo-tree-dropdown {
+  visibility: hidden;
+  float: right;
+}
+
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {
+  background: transparent;
+}
+
+.hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
+.hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
+  background: url("images/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
+}
+
+.hippo-tree div.wicket-tree div.row-selected {
+  background-image: url("images/controls/folder-background-selected.png");
+}
+
+.hippo-tree div.wicket-tree div.row a,
+.hippo-tree div.wicket-tree div.row-selected a {
+  font-weight: normal;
+  color: black;
+}
+
+/* IE6 workaround */
+// We can get rid of this I hope
+/*
+.hippo-tree div.wicket-tree div.context-hover .hippo-tree-dropdown-icon-container {
+  background-image: url("images/controls/folder-workflow-icon.png");
+  background-repeat: no-repeat;
+  background-position: -1px -2px;
+}
+
+.hippo-tree div.wicket-tree div.context-hover-selected .hippo-tree-dropdown-icon-container {
+  background-image: url("images/controls/folder-workflow-icon.png");
+  background-repeat: no-repeat;
+  background-position: -1px -2px;
+
+}
+*/
+
+.hippo-tree .wicket-tree .plus,
+.hippo-tree .wicket-tree .minus {
+  //background-image: url("images/tree-icons.png");
+  width: 14px;
+}
+
+.hippo-tree .wicket-tree .junction,
+.hippo-tree .wicket-tree .junction-last,
+.hippo-tree .wicket-tree .corner,
+.hippo-tree .wicket-tree .indent-line,
+.hippo-tree .wicket-tree .indent-blank {
+  // hide wicket background
+  background-image: none;
+  width: 14px;
+}
+
+.hippo-tree .icon-16 {
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  margin-left: 3px;
+}
+
+
+/**
+ * Merge of tree.css
+ */
+
+div.wicket-tree {
+  white-space: nowrap;
+  border: 1px solid #ccc;
+  width: 20em;
+  overflow: auto;
+  margin: 10px;
+  line-height: 1.5em;
+}
+
+div.wicket-tree a {
+  text-decoration: none;
+  color: #3311aa;
+  float: left;
+}
+
+div.wicket-tree div.row,
+div.wicket-tree div.row-selected {
+  height: 1.5em;
+  overflow:hidden;
+  width: 100%;
+  padding: 0; margin: 0;
+}
+
+div.wicket-tree div.a_ {
+  /* prevent hiding text */
+  padding-left: 1em; margin: 0;
+  /*width: 2000px;*/
+}
+
+div.wicket-tree span.junction,
+div.wicket-tree span.junction-last,
+div.wicket-tree span.plus,
+div.wicket-tree span.minus,
+div.wicket-tree span.corner,
+div.wicket-tree span.indent-line,
+div.wicket-tree span.icon {
+  float: left;
+  width: 18px;
+  height: 1.5em;
+  min-height: 18px;
+}
+
+div.wicket-tree span.junction,
+div.wicket-tree span.junction-last {
+  // Hack not needed anymore \0/
+  //_margin-left: 3px; /* ie 3px bug fix*/
+  cursor: pointer;
+}
+
+// can go 
+div.wicket-tree span.junction {
+  //background-image: url("tree-images.png");
+  //background-position: -36px 0;
+  //background-repeat: repeat-y;
+}
+
+div.wicket-tree span.junction-last {
+  //background-image: url("tree-images.png");
+  //background-position: -72px 0;
+  //background-repeat: no-repeat;
+}
+
+div.wicket-tree span.plus,
+div.wicket-tree span.minus,
+div.wicket-tree span.corner {
+  //background-repeat: no-repeat;
+}
+
+div.wicket-tree span.plus {
+  //background-image: url("tree-images.png");
+  //background-position: 0 center;
+}
+
+div.wicket-tree span.minus {
+  //background-image: url("tree-images.png");
+  //background-position: -18px center;
+}
+
+div.wicket-tree span.corner {
+  //background-image: url("tree-images.png");
+  //background-position: -54px center;
+}
+div.wicket-tree .indent {
+  clear: left;
+  float: left;
+}
+
+div.wicket-tree a:hover {
+  text-decoration: underline;
+}
+
+
+div.wicket-tree span.icon {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  margin-left: 2px;
+  margin-top: -1px;
+}
+
+div.wicket-tree a {
+  -moz-outline: none;
+}
+
+div.wicket-tree span.indent-blank {
+  width: 18px;
+  height: 1em;
+  float: left;
+}
+
+div.wicket-tree span.indent-line {
+  // Hack not needed anymore \0/
+  //_margin-left: 3px;	/* ie 3px bug fix*/
+  overflow: hidden;
+  //background-image: url("tree-images.png");
+  //background-position: -36px 0;
+  //background-repeat: repeat-y;
+}
+
+div.wicket-tree div.row,
+div.wicket-tree div.row-selected {
+  overflow: hidden;
+  clear: both;
+}
+
+div.wicket-tree div.row-selected {
+  background-color: #E0E8FF;
+  font-weight: bold;
+}
+
+
+// Caret icons
+
+// move fa into position
+.hippo-tree .wicket-tree .junction,
+.hippo-tree .wicket-tree .junction-last,
+.hippo-tree .wicket-tree .corner {
+  .fa {
+    position: relative;
+    left: 8px;
+    top: 4px;
+    color: @tree-caret-color;
+  }
+  .fa-circle {
+    font-size: 6px;
+    left: 7px;
+  }
+
+  .fa-caret-down {
+    left: 6px;
+  }
+}

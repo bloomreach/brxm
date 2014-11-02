@@ -1130,9 +1130,11 @@ api/src/main/styling/src/less/_footer.less -text
 api/src/main/styling/src/less/_home_menu.less -text
 api/src/main/styling/src/less/_legacy.less -text
 api/src/main/styling/src/less/_mixins.less -text
+api/src/main/styling/src/less/_navigator.less -text
 api/src/main/styling/src/less/_perspectives_switcher.less -text
 api/src/main/styling/src/less/_scaffolding.less -text
 api/src/main/styling/src/less/_tabs.less -text
+api/src/main/styling/src/less/_tree.less -text
 api/src/main/styling/src/less/_typography.less -text
 api/src/main/styling/src/less/_variables.less -text
 api/src/main/styling/src/less/lib/font-awesome.less -text

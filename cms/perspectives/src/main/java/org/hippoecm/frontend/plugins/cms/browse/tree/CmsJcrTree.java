@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,12 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
@@ -111,6 +115,41 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             IModel<String> titleModel = new Model<String>(treeNodeTranslator.getTitleName(node));
             nodeLink.add(new AttributeAppender("title", true, titleModel, " "));
         }
+    }
+
+    
+    protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
+                                               final TreeNode node)
+    {
+        return (MarkupContainer)new WebMarkupContainer(id)
+        {
+            private static final long serialVersionUID = 1L;
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void onComponentTag(final ComponentTag tag)
+            {
+                super.onComponentTag(tag);
+
+                final String caret = isLeaf(node) ? "fa-circle" : 
+                        isNodeExpanded(node) ? "fa-caret-down" : "fa-caret-right";
+                final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
+
+                Response response = RequestCycle.get().getResponse();
+                response.write("<span class=\"" + cssClassOuter + "\"><i class=\"fa " + caret + "\"></i></span>");
+            }
+        }.setRenderBodyOnly(true);
+    }
+    
+    private boolean isNodeLast(TreeNode node) {
+        TreeNode parent = node.getParent();
+        return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
+    }
+    
+    private boolean isLeaf(TreeNode node) {
+        return node.getChildCount() == 0;
     }
 
 }

@@ -26,32 +26,49 @@
 @mercury:                           #e9ebee;
 @marble:                            #f5f5f5;
 
+// Color picker tool so not final 
+@editor_grey:                       #F2F2F2;
+@white_legacy:                      #fcfcfc;
+@white_legacy2:                     #FEFEFE;
+
+// Main colors
 @border-gray:                       #999;
 @text-gray:                         #33424b;
 @widget-gray:                       #858585;
 @widget-active:                     @black;
 
-@body-bg:                           @white;
+// Color assignments
+// Main
+@body-bg:                           @white_legacy2;
 @text-color:                        @text-gray;
 @link-color:                        @aqua;
 @link-hover-color:                  @cool-shale;
 @border-color:                      @border-gray;
 
-//main
+// Main menu
 @main-menu-text-color:              @white;
 @main-menu-selected-text-color:     @white;
-@main-menu-background-color:        @cool-shale;
-@home-menu-background-color:        @main-menu-background-color;
+@main-menu-bgcolor:                 @cool-shale;
+@home-menu-bgcolor:                 @main-menu-bgcolor;
 
-//footer
+// Footer
+@footer-bgcolor:                    #E4E6EA;
+@document-tab-selected-bgcolor:     #FBFBFB;
 @document-tab-font-size:            @font-size-small;
 @document-tab-title-color:          @text-gray;
 @document-tab-close-color:          @widget-gray;
 @document-tab-close-color-hover:    @widget-active;
 
-//editor
-@editor-background-color:               @white;
-@editor-preview-field-background-color: @white;
+// Navigator
+@navigator-bgcolor:                 @white;
+
+// Tree
+@tree-bgcolor:                      @white;
+@tree-caret-color:                  @cool-shale;
+
+// Editor
+@editor-bgcolor:                    @editor_grey;
+@editor-preview-field-bgcolor:      @editor_grey;
 
 // Typography
 @font-family-sans-serif:            "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -79,4 +96,4 @@
 @home-menu-width:                   @main-menu-width;
 @home-menu-height:                  40px;
 
-@rebuild: 'dude..';
+@rebuild: 'yes';
