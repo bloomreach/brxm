@@ -59,7 +59,7 @@
         <sv:value>robotstxt:section</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="robotstxt:disallow" sv:type="String">
-        <sv:value>noindex</sv:value>
+        <sv:value>/</sv:value>
       </sv:property>
       <sv:property sv:name="robotstxt:useragent" sv:type="String">
         <sv:value>*</sv:value>
