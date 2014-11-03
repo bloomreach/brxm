@@ -144,17 +144,6 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public String getIssuesLink() {
-        return null;
-    }
-
-    @Override
-    public void setIssuesLink(final String issuesLink) {
-
-    }
-
-
-    @Override
     public String getName() {
         return getClass().getName();
     }
@@ -181,16 +170,6 @@ public class DummyTestPlugin implements Plugin {
 
     @Override
     public void setDependencies(final List<EssentialsDependency> dependencies) {
-
-    }
-
-    @Override
-    public String getTitle() {
-        return null;
-    }
-
-    @Override
-    public void setTitle(final String title) {
 
     }
 

@@ -41,18 +41,16 @@ public class PluginRestful implements Plugin, Restful {
     private Vendor vendor;
     private List<EssentialsDependency> dependencies;
     private List<Repository> repositories;
-    private String title;
     private String name;
     private String introduction;
     private String description;
     private List<String> imageUrls;
     private String id;
-    private String packageClass; // TODO: no longer used?
+    private String packageClass;
     private String parameterServiceClass;
     private boolean hasConfiguration = false;
     private String packageFile;
     private String type;
-    private boolean installed;
     private String installState;
     private String icon;
     private Calendar dateInstalled;
@@ -208,17 +206,6 @@ public class PluginRestful implements Plugin, Restful {
         this.documentationLink = documentationLink;
     }
 
-    @Override
-    public String getIssuesLink() {
-        return null;
-    }
-
-    @Override
-    public void setIssuesLink(final String issuesLink) {
-
-    }
-
-
     @XmlElementRef(type = DependencyRestful.class)
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
@@ -248,16 +235,6 @@ public class PluginRestful implements Plugin, Restful {
             repositories = new ArrayList<>();
         }
         repositories.add(repository);
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public void setTitle(final String title) {
-        this.title = title;
     }
 
     @Override
@@ -345,12 +322,10 @@ public class PluginRestful implements Plugin, Restful {
         sb.append("restClasses=").append(restClasses);
         sb.append(", vendor=").append(vendor);
         sb.append(", dependencies=").append(dependencies);
-        sb.append(", title='").append(title).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
         sb.append(", id='").append(id).append('\'');
         sb.append(", type='").append(type).append('\'');
-        sb.append(", installed=").append(installed);
         sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();

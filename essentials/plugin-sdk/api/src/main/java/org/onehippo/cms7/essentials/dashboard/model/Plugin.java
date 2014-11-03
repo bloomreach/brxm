@@ -77,10 +77,6 @@ public interface Plugin extends Serializable {
 
     void setDocumentationLink(String documentationLink);
 
-    String getIssuesLink();
-
-    void setIssuesLink(String issuesLink);
-
     String getType();
 
     void setType(String type);
@@ -89,10 +85,6 @@ public interface Plugin extends Serializable {
     List<EssentialsDependency> getDependencies();
 
     void setDependencies(List<EssentialsDependency> dependencies);
-
-    String getTitle();
-
-    void setTitle(String title);
 
     String getIntroduction();
 
