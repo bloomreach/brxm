@@ -542,7 +542,7 @@ abstract class SessionImplHelper {
     /**
      * {@inheritDoc}
      */
-    public ContentHandler getDereferencedImportContentHandler(ImportContext importContext) throws PathNotFoundException, ConstraintViolationException,
+    public ContentHandler getEnhancedSystemViewImportHandler(ImportContext importContext) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
 
         // check sanity of this session
@@ -550,21 +550,7 @@ abstract class SessionImplHelper {
             throw new RepositoryException("this session has been closed");
         }
 
-        NodeImpl parent;
-        String parentAbsPath = importContext.getParentAbsPath();
-        try {
-            Path p = session.getQPath(parentAbsPath).getNormalizedPath();
-            if (!p.isAbsolute()) {
-                throw new RepositoryException("not an absolute path: " + parentAbsPath);
-            }
-            parent = session.getItemManager().getNode(p);
-        } catch (NameException e) {
-            String msg = parentAbsPath + ": invalid path";
-            log.debug(msg);
-            throw new RepositoryException(msg, e);
-        } catch (AccessDeniedException ade) {
-            throw new PathNotFoundException(parentAbsPath);
-        }
+        NodeImpl parent = importContext.getImportTargetNode();
 
         // verify that parent node is checked-out
         if (!parent.isNew()) {
@@ -572,7 +558,7 @@ abstract class SessionImplHelper {
             while (node.getDepth() != 0) {
                 if (node.hasProperty(NameConstants.JCR_ISCHECKEDOUT)) {
                     if (!node.getProperty(NameConstants.JCR_ISCHECKEDOUT).getBoolean()) {
-                        String msg = parentAbsPath + ": cannot add a child to a checked-in node";
+                        String msg = parent.safeGetJCRPath() + ": cannot add a child to a checked-in node";
                         log.debug(msg);
                         throw new VersionException(msg);
                     }
@@ -584,7 +570,7 @@ abstract class SessionImplHelper {
 
         // check protected flag of parent node
         if (parent.getDefinition().isProtected()) {
-            String msg = parentAbsPath + ": cannot add a child to a protected node";
+            String msg = parent.safeGetJCRPath() + ": cannot add a child to a protected node";
             log.debug(msg);
             throw new ConstraintViolationException(msg);
         }
@@ -594,7 +580,7 @@ abstract class SessionImplHelper {
             context.getWorkspace().getInternalLockManager().checkLock(parent);
         }
 
-        return new EnhancedSystemViewImportHandler(parent, importContext, session);
+        return new EnhancedSystemViewImportHandler(importContext, session);
     }
 
     public Node getCanonicalNode(NodeImpl node) throws RepositoryException {

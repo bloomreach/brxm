@@ -57,7 +57,7 @@ import static org.onehippo.repository.xml.ResultConstants.RESULT;
 import static org.onehippo.repository.xml.ResultConstants.TYPE;
 import static org.onehippo.repository.xml.ResultConstants.VAL;
 
-class ResultExporter {
+class ChangeRecorder {
 
     private static final String CDATA = "CDATA";
     
@@ -66,7 +66,7 @@ class ResultExporter {
     private final Map<String, NodeInfo> added = new HashMap<>();
     private final Map<String, NodeInfo> merged = new HashMap<>();
 
-    ResultExporter(final NameResolver resolver) {
+    ChangeRecorder(final NameResolver resolver) {
         this.resolver = resolver;
     }
 
@@ -154,14 +154,14 @@ class ResultExporter {
     private void emitProperty(final PropertyInfo propertyInfo) throws SAXException, RepositoryException, IOException {
         AttributesImpl attributes = new AttributesImpl();
         attributes.addAttribute(null, NAME, NAME, CDATA, resolver.getJCRName(propertyInfo.name));
-        attributes.addAttribute(null, TYPE, TYPE, CDATA, String.valueOf(propertyInfo.type));
-        if (propertyInfo.multiple) {
-            attributes.addAttribute(null, MULTI, MULTI, CDATA, Boolean.TRUE.toString());
-        }
         if (propertyInfo.values == null) {
             startElement(NEWPROP, attributes);
             endElement(NEWPROP);
         } else {
+            attributes.addAttribute(null, TYPE, TYPE, CDATA, String.valueOf(propertyInfo.type));
+            if (propertyInfo.multiple) {
+                attributes.addAttribute(null, MULTI, MULTI, CDATA, Boolean.TRUE.toString());
+            }
             startElement(MERGEPROP, attributes);
             for (Value oldValue : propertyInfo.values) {
                 emitValue(oldValue);
@@ -206,7 +206,7 @@ class ResultExporter {
         endElement(NEWNODE);
     }
 
-    void addNode(final Node node) throws RepositoryException {
+    void nodeAdded(final Node node) throws RepositoryException {
         if (!ancestorAdded(node)) {
             added.put(node.getIdentifier(), new NodeInfo(node.getIdentifier()));
         }
@@ -230,14 +230,14 @@ class ResultExporter {
         }
     }
 
-    void mergeNode(final Node node) throws RepositoryException {
+    void nodeMerged(final Node node) throws RepositoryException {
         merged.put(node.getIdentifier(), new NodeInfo(node.getIdentifier()));
     }
 
-    void setProperty(final String id, final Name name, final Value[] values, final Boolean multiple, final int type) {
+    void propertySet(final String id, final Name name, final Value[] oldValues, final Boolean oldMultiple, final int oldType) {
         final NodeInfo nodeInfo = merged.get(id);
         if (nodeInfo != null) {
-            nodeInfo.addProperty(new PropertyInfo(name, values, multiple, type));
+            nodeInfo.addProperty(new PropertyInfo(name, oldValues, oldMultiple, oldType));
         }
     }
 

@@ -60,7 +60,7 @@ public class EnhancedSystemViewImporter implements Importer {
     private final String importPath;
     private final NamePathResolver resolver;
     private final ImportContext importContext;
-    private ResultExporter resultExporter;
+    private ChangeRecorder changeRecorder;
     private boolean isRootReferenceable;
     private long startTime;
 
@@ -98,24 +98,24 @@ public class EnhancedSystemViewImporter implements Importer {
         if (nodeInfo.mergeCombine()) {
             node = nodeInfo.getOrigin();
             importContext.addContextPath(node.safeGetJCRPath());
-            resultExporter.mergeNode(node);
+            changeRecorder.nodeMerged(node);
         } else if (nodeInfo.mergeOverlay()) {
             node = nodeInfo.getOrigin();
             importContext.addContextPath(node.safeGetJCRPath());
-            resultExporter.mergeNode(node);
+            changeRecorder.nodeMerged(node);
             final Collection<Name> oldMixins = node.getMixinTypeNames();
             final boolean mixinsChanged = removeMixins(node, oldMixins, newMixins);
             if (mixinsChanged) {
-                resultExporter.setMixins(node.getIdentifier(), oldMixins);
+                changeRecorder.setMixins(node.getIdentifier(), oldMixins);
             }
             final Name oldPrimaryType = node.getPrimaryNodeTypeName();
             if (nodeTypeName != null && !nodeTypeName.equals(oldPrimaryType)) {
                 node.setPrimaryType(nodeTypeName.toString());
-                resultExporter.setPrimaryType(node.getIdentifier(), oldPrimaryType);
+                changeRecorder.setPrimaryType(node.getIdentifier(), oldPrimaryType);
             }
         } else {
             node = parent.addNode(nodeName, nodeTypeName, id);
-            resultExporter.addNode(node);
+            changeRecorder.nodeAdded(node);
             if (importPath.equals(parent.safeGetJCRPath())) {
                 importContext.addContextPath(node.safeGetJCRPath());
             }
@@ -266,7 +266,7 @@ public class EnhancedSystemViewImporter implements Importer {
 
     public void start() throws RepositoryException {
         startTime = System.currentTimeMillis();
-        resultExporter = importContext.getResultExporter();
+        changeRecorder = importContext.getChangeRecorder();
     }
 
     public void startNode(NodeInfo info, List propInfos) throws RepositoryException {

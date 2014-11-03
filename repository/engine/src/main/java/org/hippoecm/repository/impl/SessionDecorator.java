@@ -26,7 +26,6 @@ import java.util.Collection;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.LoginException;
@@ -67,9 +66,11 @@ import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.onehippo.repository.xml.ChangeRecordingImporter;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.DefaultContentHandler;
 import org.onehippo.repository.xml.DereferencedSysViewSAXEventGenerator;
+import org.onehippo.repository.xml.EnhancedSystemViewImporter;
 import org.onehippo.repository.xml.EnhancedSystemViewPackage;
 import org.onehippo.repository.xml.HippoDocumentViewExporter;
 import org.onehippo.repository.xml.ImportResult;
@@ -77,6 +78,7 @@ import org.onehippo.repository.xml.PhysicalSysViewSAXEventGenerator;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ImportContext;
+import org.onehippo.repository.xml.ResultRecordingShortCircuitException;
 import org.onehippo.repository.xml.RevertImportHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,7 +205,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                                                     final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
         try {
             ImportContext importContext = new ImportContext(parentAbsPath, in, uuidBehavior, referenceBehavior,
-                    referredResourceLoader, getInternalHippoSession());
+                    referredResourceLoader, getInternalHippoSession(), EnhancedSystemViewImporter.class);
             postMountEnabled(false);
             getInternalHippoSession().importEnhancedSystemViewXML(importContext);
             derivedEngine.save();
@@ -218,8 +220,23 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         new DefaultContentHandler(new RevertImportHandler(getInternalHippoSession())).parse(in);
     }
 
+    public ImportResult inferPreviousImportResult(final String parentAbsPath, final InputStream in)
+            throws IOException, RepositoryException {
+        final ImportContext importContext = new ImportContext(parentAbsPath, in, -1, -1, null,
+                getInternalHippoSession(), ChangeRecordingImporter.class);
+        try {
+            postMountEnabled(false);
+            getInternalHippoSession().importEnhancedSystemViewXML(importContext);
+        } catch (ResultRecordingShortCircuitException ignore) {
+        } finally {
+            postMountEnabled(true);
+        }
+        return importContext.getImportResult();
+    }
+
     @Override
-    public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+    public void importXML(String parentAbsPath, InputStream in, int uuidBehavior)
+            throws IOException, RepositoryException {
         try {
             postMountEnabled(false);
             super.importXML(parentAbsPath, in, uuidBehavior);

@@ -199,7 +199,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     @Override
     public void importEnhancedSystemViewXML(ImportContext importContext)
             throws IOException, RepositoryException {
-        ContentHandler handler = helper.getDereferencedImportContentHandler(importContext);
+        ContentHandler handler = helper.getEnhancedSystemViewImportHandler(importContext);
         new DefaultContentHandler(handler).parse(importContext.getInputStream());
     }
 

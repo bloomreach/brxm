@@ -34,6 +34,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.PropertyImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.state.NodeState;
@@ -79,8 +80,21 @@ public class EnhancedPropInfo extends PropInfo {
     private final TextValue[] values;
     private final URL[] binaryURLs;
     private final ValueFactory valueFactory;
-    private final ResultExporter resultExporter;
+    private final ChangeRecorder changeRecorder;
 
+    EnhancedPropInfo(TextValue[] values, String mergeBehavior, String mergeLocation, boolean multiple) {
+        super(null, -1, values);
+        this.mergeBehavior = mergeBehavior;
+        this.mergeLocation = mergeLocation;
+        this.values = values;
+        this.multiple = multiple;
+        resolver = null;
+        name = null;
+        type = -1;
+        binaryURLs = null;
+        valueFactory = null;
+        changeRecorder = null;
+    }
 
     public EnhancedPropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior,
                             String mergeLocation, final URL[] binaryURLs, final ValueFactory valueFactory, final ImportContext importContext) {
@@ -101,26 +115,34 @@ public class EnhancedPropInfo extends PropInfo {
         this.resolver = resolver;
         this.binaryURLs = binaryURLs;
         this.valueFactory = valueFactory;
-        this.resultExporter = importContext.getResultExporter();
+        this.changeRecorder = importContext.getChangeRecorder();
     }
 
     private boolean mergeOverride() {
         return OVERRIDE.equalsIgnoreCase(mergeBehavior);
     }
 
+    private boolean mergeAppend() {
+        return APPEND.equalsIgnoreCase(mergeBehavior);
+    }
+
+    private boolean mergeInsert() {
+        return INSERT.equalsIgnoreCase(mergeBehavior);
+    }
+
     private boolean mergeCombine() {
-        return APPEND.equalsIgnoreCase(mergeBehavior) || INSERT.equalsIgnoreCase(mergeBehavior);
+        return mergeAppend() || mergeInsert();
     }
 
     private boolean mergeSkip() {
         return SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
-    private int mergeLocation(Value[] values) {
-        if(APPEND.equalsIgnoreCase(mergeBehavior)) {
+    public int mergeLocation(Value[] values) {
+        if (mergeAppend()) {
             return values.length;
-        } else if(INSERT.equalsIgnoreCase(mergeBehavior)) {
-            if(StringUtils.isEmpty(mergeLocation)) {
+        } else if (mergeInsert()) {
+            if (StringUtils.isEmpty(mergeLocation)) {
                 return 0;
             } else {
                 return Integer.parseInt(mergeLocation);
@@ -253,12 +275,7 @@ public class EnhancedPropInfo extends PropInfo {
             if (mergeOverride()) {
                 oldProperty.remove();
             } else if (mergeCombine()) {
-                Value[] newValues = new Value[values.length + oldValues.length];
-                int pos = mergeLocation(oldValues);
-                System.arraycopy(oldValues, 0, newValues, 0, pos);
-                System.arraycopy(values, 0, newValues, pos, values.length);
-                System.arraycopy(oldValues, pos, newValues, pos+values.length, oldValues.length-pos);
-                values = newValues;
+                values = calculateNewValues(values, oldValues);
             } else if (mergeSkip()) {
                 log.debug("skipping existing property {}", name);
                 return;
@@ -319,11 +336,98 @@ public class EnhancedPropInfo extends PropInfo {
             // can only be multi-valued (n == 0 || n > 1)
             node.setProperty(name, values, type);
         }
-        resultExporter.setProperty(node.getIdentifier(), name, oldValues, oldMultiple, oldType);
+        changeRecorder.propertySet(node.getIdentifier(), name, oldValues, oldMultiple, oldType);
+    }
+
+    public void record(NodeImpl node) throws RepositoryException {
+        QPropertyDefinition def = getApplicablePropertyDef(node.getEffectiveNodeType());
+        if (def.isProtected()) {
+            log.debug("skipping protected property {}", name);
+            return;
+        }
+        if (isGeneratedProperty(name)) {
+            log.debug("skipping auto-generated property {}", name);
+            return;
+        }
+
+        if (node.hasProperty(getName())) {
+            final PropertyImpl existing = node.getProperty(getName());
+            if (mergeOverride()) {
+                log.debug("Can't determine change that was made to property {}: old value(s) were overridden", existing.safeGetJCRPath());
+            } else if (mergeSkip()) {
+                log.debug("Can't determine change that was made to property {}: whether skipped or not", existing.safeGetJCRPath());
+            } else if (mergeCombine()) {
+                final Value[] oldValues = calculateOldValues(existing);
+                changeRecorder.propertySet(node.getIdentifier(), getName(), oldValues, existing.isMultiple(), existing.getType());
+            } else {
+                changeRecorder.propertySet(node.getIdentifier(), getName(), null, false, -1);
+            }
+        } else {
+            log.debug("Expected to find property {}/{} but didn't", node.safeGetJCRPath(), getName());
+        }
+    }
+
+    Value[] calculateNewValues(Value[] addValues, final Value[] oldValues) {
+        Value[] newValues = new Value[addValues.length + oldValues.length];
+        int location = mergeLocation(oldValues);
+        if (validateLocation(location, oldValues.length)) {
+            System.arraycopy(oldValues, 0, newValues, 0, location);
+            System.arraycopy(addValues, 0, newValues, location, addValues.length);
+            System.arraycopy(oldValues, location, newValues, location+addValues.length, oldValues.length-location);
+            return newValues;
+        } else {
+            return oldValues;
+        }
+    }
+
+    Value[] calculateOldValues(final Property existing) throws RepositoryException {
+        if (!existing.isMultiple()) {
+            log.warn("Failed to calculate old values of property {}: expected multiple property but found single", existing.getPath());
+            return new Value[] {};
+        }
+        final int added = getNumberOfNewValues();
+        if (added == 0) {
+            return existing.getValues();
+        }
+        final Value[] existingValues = existing.getValues();
+        if (existingValues.length < added) {
+            log.warn("Failed to calculate old values of property {}: less current values than were added", existing.getPath());
+            return new Value[] {};
+        }
+        final Value[] oldValues = new Value[existingValues.length - added];
+        if (mergeAppend()) {
+            System.arraycopy(existingValues, 0, oldValues, 0, oldValues.length);
+        }
+        if (mergeInsert()) {
+            final int location = mergeLocation(existingValues);
+            if (validateLocation(location, oldValues.length)) {
+                System.arraycopy(existingValues, 0, oldValues, 0, location);
+                System.arraycopy(existingValues, location+added, oldValues, location, existingValues.length-location-1);
+            } else {
+                return existingValues;
+            }
+        }
+        return oldValues;
+    }
+
+    private boolean validateLocation(final int location, final int length) {
+        if (location < 0) {
+            log.warn("Invalid insert location {}", location);
+            return false;
+        }
+        if (location > length) {
+            log.warn("Invalid insert location {}: beyond values length", location);
+            return false;
+        }
+        return true;
     }
 
     private boolean isGeneratedProperty(Name name) throws RepositoryException {
         final String jcrName = resolver.getJCRName(name);
         return HIPPO_PATHS.equals(jcrName) || HIPPO_RELATED.equals(jcrName);
+    }
+
+    private int getNumberOfNewValues() {
+        return binaryURLs == null ? values == null ? 0 : values.length : binaryURLs.length;
     }
 }

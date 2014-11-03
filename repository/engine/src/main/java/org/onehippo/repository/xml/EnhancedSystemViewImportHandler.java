@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,8 +72,8 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
     private final ImportContext importContext;
     private final InternalHippoSession resolver;
 
-    public EnhancedSystemViewImportHandler(NodeImpl importTargetNode, ImportContext importContext, InternalHippoSession session) throws RepositoryException {
-        this.importer = new EnhancedSystemViewImporter(importTargetNode, importContext, session);
+    public EnhancedSystemViewImportHandler(ImportContext importContext, InternalHippoSession session) throws RepositoryException {
+        this.importer = importContext.createImporter();
         this.contentResourceLoader = importContext.getContentResourceLoader();
         this.importContext = importContext;
         this.valueFactory = session.getValueFactory();
@@ -158,11 +158,9 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
     }
 
     private void startNode(final Attributes atts) throws SAXException {
-        if (!stack.isEmpty()) {
-            final Node current = stack.peek();
-            if (!current.started) {
-                current.start();
-            }
+        final Node current = getCurrentNode();
+        if (current != null && !current.started) {
+            current.start();
         }
         stack.push(new Node(atts));
     }
@@ -190,10 +188,8 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
         if (node != null) {
             if (!node.started) {
                 node.start();
-                node.end();
-            } else {
-                node.end();
             }
+            node.end();
             stack.pop();
         }
     }
@@ -228,18 +224,12 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
 
     private Property getCurrentProperty() throws SAXException {
         final Node node = getCurrentNode();
-        if (node != null) {
-            return node.currentProperty;
-        }
-        return null;
+        return node != null ? node.currentProperty : null;
     }
 
     private Value getCurrentValue() throws SAXException {
         final Property currentProperty = getCurrentProperty();
-        if (currentProperty != null) {
-            return currentProperty.currentValue;
-        }
-        return null;
+        return currentProperty != null ? currentProperty.currentValue : null;
     }
 
     private static Name getName(final String namespaceURI, final String localName) {
@@ -317,7 +307,7 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
         }
 
         private List<PropInfo> getPropInfos() {
-            List<PropInfo> infos = new ArrayList<>();
+            final List<PropInfo> infos = new ArrayList<>();
             for (Property property : properties) {
                 if (property.info != null) {
                     infos.add(property.info);

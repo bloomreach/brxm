@@ -211,7 +211,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     @Override
     public void importEnhancedSystemViewXML(ImportContext importContext)
             throws IOException, RepositoryException {
-        ContentHandler handler = helper.getDereferencedImportContentHandler(importContext);
+        ContentHandler handler = helper.getEnhancedSystemViewImportHandler(importContext);
         new DefaultContentHandler(handler).parse(importContext.getInputStream());
     }
 
