@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="webresources-bundle" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:domainrule</sv:value>
+  </sv:property>
+  <sv:node sv:name="type-webresources-bundle">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:facetrule</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:equals" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:facet" sv:type="String">
+      <sv:value>jcr:primaryType</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:filter" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:type" sv:type="String">
+      <sv:value>Name</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:value" sv:type="String">
+      <sv:value>webresources:bundle</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>

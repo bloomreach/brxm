@@ -124,6 +124,14 @@
     </layout>
  </appender>
 
+  <!-- messages -->
+  <appender name="messages" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss} %m%n"/>
+    </layout>
+  </appender>
+
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
@@ -232,11 +240,21 @@
   <logger name="org.hippoecm.repository.jackrabbit.persistence">
     <level value="info"/>
   </logger>
-  <logger name="org.hippoecm.repository.updater">
+  <logger name="org.hippoecm.repository.updater" additivity="false">
     <level value="info"/>
+    <appender-ref ref="messages"/>
   </logger>
-  <logger name="org.hippoecm.repository.export">
+  <logger name="org.onehippo.cms7.autoexport" additivity="false">
     <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.services.webresources.watch.WebResourcesWatcher" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.services.autoreload.AutoReloadServiceModule" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
   </logger>
 
   <root>

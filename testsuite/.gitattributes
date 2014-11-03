@@ -317,7 +317,6 @@ intranet/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage404.jsp -text
 intranet/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage500.jsp -text
 intranet/src/main/webapp/WEB-INF/jsp/errorpages/component-error-page.jsp -text
 intranet/src/main/webapp/WEB-INF/jsp/home/main/content.jsp -text
-intranet/src/main/webapp/WEB-INF/jsp/layout/webpage.jsp -text
 intranet/src/main/webapp/WEB-INF/jsp/news/main/content.jsp -text
 intranet/src/main/webapp/WEB-INF/jsp/notfound/main/content.jsp -text
 intranet/src/main/webapp/WEB-INF/jsp/one-column/main/content.jsp -text
@@ -337,7 +336,6 @@ intranet/src/main/webapp/WEB-INF/tags/menuitem.tag -text
 intranet/src/main/webapp/WEB-INF/tags/pagenotfound.tag -text
 intranet/src/main/webapp/WEB-INF/tags/pages.tag -text
 intranet/src/main/webapp/WEB-INF/web.xml -text
-intranet/src/main/webapp/css/style.css -text
 intranet/src/main/webapp/images/button_edit.gif -text
 intranet/src/main/webapp/images/catalog-list.png -text
 intranet/src/main/webapp/images/glyphicons-halflings-white.png -text

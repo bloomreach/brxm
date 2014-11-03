@@ -18,19 +18,26 @@ limitations under the License. -->
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-testsuite</artifactId>
+    <artifactId>hippo-intranet-bootstrap</artifactId>
     <version>1.07.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Testsuite Intranet Bootstrap</name>
-  <description>Hippo Testsuite Intranet Bootstrap</description>
-  <artifactId>hippo-intranet-bootstrap</artifactId>
-  <packaging>pom</packaging>
+  <name>My Hippo Project Bootstrap Web Resources</name>
+  <description>My Hippo Project Bootstrap Web Resources</description>
+  <artifactId>hippo-intranet-bootstrap-webresources</artifactId>
 
-  <modules>
-    <module>configuration</module>
-    <module>content</module>
-    <module>webresources</module>
-  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven.plugin.resources.version}</version>
+        <configuration>
+          <includeEmptyDirs>true</includeEmptyDirs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 
 </project>

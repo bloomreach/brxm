@@ -77,6 +77,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-webresources</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>
       <version>${project.version}</version>
     </dependency>

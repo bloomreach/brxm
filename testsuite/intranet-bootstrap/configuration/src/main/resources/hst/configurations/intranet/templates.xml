@@ -78,7 +78,7 @@ limitations under the License. -->
       <sv:value>hst:template</sv:value>
     </sv:property>
     <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/layout/webpage.jsp</sv:value>
+      <sv:value>webresource:/ftl/layout/webpage.ftl</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="news.main.content">

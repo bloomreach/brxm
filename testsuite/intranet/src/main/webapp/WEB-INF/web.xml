@@ -110,10 +110,6 @@ limitations under the License. -->
       in general by suffixExclusions -->
       <param-value>/ping/, /binaries/, /login/, /hst/pagecomposer/sources/</param-value>
     </init-param>
-    <init-param>
-      <param-name>suffixExclusions</param-name>
-      <param-value>.do, .jsp, .css, .js, .pdf, .ico, .gif, .GIF, .jpg, .jpeg, .JPEG, .JPG, .png, .PNG</param-value>
-    </init-param>
   </filter>
 
   <filter-mapping>
