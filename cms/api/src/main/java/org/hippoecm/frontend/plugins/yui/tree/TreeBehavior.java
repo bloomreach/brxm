@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -73,14 +73,14 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
         StringValue action = requestCycle.getRequest().getRequestParameters().getParameterValue("action");
         StringValue uuid = requestCycle.getRequest().getRequestParameters().getParameterValue("UUID");
 
-        if (action.equals("click")) {
-            if (!uuid.isNull() && uuid.toString().length() > 0) {
-                onClick(target, uuid.toString());
-            }
-        } else if (action.equals("dblClick")) {
-            if (!uuid.isNull() && uuid.toString().length() > 0) {
-                onDblClick(target, uuid.toString());
-            }
+        if (action.isNull() || uuid.isNull() || uuid.toString().length() == 0) {
+            return;
+        }
+
+        if (action.toString().equals("click")) {
+            onClick(target, uuid.toString());
+        } else if (action.toString().equals("dblClick")) {
+            onDblClick(target, uuid.toString());
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,4 +44,13 @@
 .development-content-wizard fieldset {
   border-top: 1px solid #e3e3e3;
   font-size: 1.1em;
+}
+
+.hippo-window .hippo-root table.modal-contents {
+  margin-left: 0;
+}
+
+.modal-contents .select-types {
+  margin-left: 25px;
+  margin-top: 20px;
 }

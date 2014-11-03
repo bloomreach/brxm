@@ -35,8 +35,8 @@ public class SizeComparator extends PropertyComparator {
         long size1 = 0;
         long size2 = 0;
         try {
-            size1 = p1.getLength();
-            size2 = p2.getLength();
+            size1 = p1 == null ? 0 : p1.getLength();
+            size2 = p2 == null ? 0 : p2.getLength();
         } catch (RepositoryException e) {
         }
 

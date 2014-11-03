@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.hippoecm.frontend.plugins.development.content.wizard;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
@@ -41,9 +45,6 @@ import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NameSett
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NodeTypeSettings;
 import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 import org.hippoecm.frontend.plugins.yui.tree.YuiJcrTree;
-
-import java.util.Collection;
-import java.util.List;
 
 public abstract class DevelopmentContentWizard extends AjaxWizard {
     private static final long serialVersionUID = 1L;
@@ -144,17 +145,15 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             final WebMarkupContainer container = new WebMarkupContainer("typesContainer");
             container.setOutputMarkupId(true);
-            add(container);
-
-            CheckGroup group = new CheckGroup<String>("typesGroup", new PropertyModel<Collection<String>>(settings, "types")) {
-                private static final long serialVersionUID = 1L;
-
+            container.add(AttributeModifier.replace("style", new AbstractReadOnlyModel<String>() {
                 @Override
-                public boolean isVisible() {
-                    return !settings.isRandom();
+                public String getObject() {
+                    return settings.isRandom() ? "display: none;" : "display: block;";
                 }
-
-            };
+            }));
+            add(container);
+            
+            CheckGroup group = new CheckGroup<String>("typesGroup", new PropertyModel<Collection<String>>(settings, "types"));
             container.add(group);
 
             //group.add(new CheckGroupSelector("groupselector"));

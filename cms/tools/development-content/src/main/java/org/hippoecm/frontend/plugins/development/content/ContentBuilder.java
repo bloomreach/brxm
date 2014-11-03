@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.development.content.names.Names;
@@ -70,7 +71,6 @@ public class ContentBuilder implements IClusterable {
 
     private List<String> frequentlyUsedTags;
     private List<String> lessUsedTags;
-
 
     public static class NameSettings implements IClusterable {
         private static final long serialVersionUID = 1L;
@@ -381,24 +381,46 @@ public class ContentBuilder implements IClusterable {
 
     public List<String> getFolderTypes(String folderUUID) {
         updateFolder(folderUUID);
-        return getTypes(DEFAULT_NEW_FOLDER_CATEGORY, new LinkedList<String>(), getFolderWorkflow(folderUUID));
+
+        List<String> categories = getCategories("-folder-");
+        return getTypes(categories, new LinkedList<String>(), getFolderWorkflow(folderUUID));
     }
 
     public List<String> getDocumentTypes(String folderUUID) {
         updateFolder(folderUUID);
-        return getTypes(DEFAULT_NEW_DOCUMENT_CATEGORY, new LinkedList<String>(), getFolderWorkflow(folderUUID));
+
+        List<String> categories = getCategories("-document-");
+        return getTypes(categories, new LinkedList<String>(), getFolderWorkflow(folderUUID));
+    }
+
+    private List<String> getCategories(final String hint) {
+        List<String> categories = new LinkedList<>();
+        Session session = UserSession.get().getJcrSession();
+        try {
+            Node node = session.getRootNode().getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
+            for (Value v : node.getProperty("hippostd:foldertype").getValues()) {
+                if (v.getString().contains(hint)) {
+                    categories.add(v.getString());
+                }
+            }
+        } catch ( RepositoryException e) {
+            log.error("Failed to retrieve foldertype", e);
+        }
+        return categories;
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> getTypes(String category, List<String> types, FolderWorkflow folderWorkflow) {
+    private List<String> getTypes(List<String> categories, List<String> types, FolderWorkflow folderWorkflow) {
         if (folderWorkflow != null) {
             Map<String, Serializable> hints;
             try {
                 hints = folderWorkflow.hints();
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
-                if (prototypes.containsKey(category)) {
-                    for (String s : prototypes.get(category)) {
-                        types.add(s);
+                for (String category : categories) {
+                    if (prototypes.containsKey(category)) {
+                        for (String s : prototypes.get(category)) {
+                            types.add(s);
+                        }
                     }
                 }
             } catch (RemoteException e) {
@@ -468,7 +490,7 @@ public class ContentBuilder implements IClusterable {
     private String uuid2path(String uuid) {
         Session jcrSession = UserSession.get().getJcrSession();
         try {
-            Node node = jcrSession.getNodeByUUID(uuid);
+            Node node = jcrSession.getNodeByIdentifier(uuid);
             return node.getPath();
         } catch (ItemNotFoundException e) {
             log.error("Node node found for uuid " + uuid, e);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,21 +33,29 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
+import javax.jcr.RepositoryException;
+
+public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
+
+    private static final Logger log = LoggerFactory.getLogger(ParameterHistoryBehavior.class);
 
     private static final String PATH_PARAMETER = "path";
+    private static final String UUID_PARAMETER = "uuid";
 
     private IModelReference reference;
     private transient boolean myUpdate;
 
-    public PathHistoryBehavior(IModelReference reference) {
+    public ParameterHistoryBehavior(IModelReference reference) {
         this.reference = reference;
 
-        setPathFromRequest();
+        setReferenceModelFromRequest();
     }
 
-    private void setPathFromRequest() {
+    private void setReferenceModelFromRequest() {
         final RequestCycle requestCycle = RequestCycle.get();
         StringValue path = requestCycle.getRequest().getQueryParameters().getParameterValue(PATH_PARAMETER);
         if (!path.isNull()) {
@@ -61,6 +69,16 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
             } finally {
                 myUpdate = false;
             }
+        } else {
+            StringValue uuid = requestCycle.getRequest().getQueryParameters().getParameterValue(UUID_PARAMETER);
+            if (!uuid.isNull()) {
+                try {
+                    reference.setModel(new JcrNodeModel(
+                            UserSession.get().getJcrSession().getNodeByIdentifier(uuid.toString())));
+                } catch (RepositoryException e) {
+                    log.info("Could not find node by uuid: {}", uuid);
+                }
+            }
         }
     }
 
@@ -68,11 +86,11 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
     public void renderHead(final Component component, final IHeaderResponse response) {
         super.renderHead(component, response);
 
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PathHistoryBehavior.class, "js/pathhistory/pathhistory.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(ParameterHistoryBehavior.class, "js/parameterhistory/parameterhistory.js")));
 
         String attributesAsJson = renderAjaxAttributes(component).toString();
         response.render(OnLoadHeaderItem.forScript(
-                "Hippo.PathHistory.init(function(path) {\n"
+                "Hippo.ParameterHistory.init(function(path) {\n"
                         + "    var call = new Wicket.Ajax.Call(),"
                         + "        attributes = jQuery.extend({}, " + attributesAsJson + ");\n"
                         + "    call.ajax(attributes);\n"
@@ -88,7 +106,7 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
-        setPathFromRequest();
+        setReferenceModelFromRequest();
     }
 
     @Override
@@ -102,7 +120,7 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
             JcrNodeModel nodeModel = (JcrNodeModel) reference.getModel();
             String path = nodeModel.getItemModel().getPath();
             AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
-            ajax.appendJavaScript("Hippo.PathHistory.setPath('" + path + "')");
+            ajax.appendJavaScript("Hippo.ParameterHistory.setPath('" + path + "')");
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.extensions.wizard.WizardButtonBar;
 import org.apache.wicket.markup.html.form.Form;
 
+import wicket.contrib.input.events.EventType;
+import wicket.contrib.input.events.InputBehavior;
+import wicket.contrib.input.events.key.KeyType;
+
 public class AjaxWizardButtonBar extends WizardButtonBar {
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +48,8 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
 
         public CancelButton(final Wizard wizard) {
             super("cancel", wizard, "cancel");
+            
+            add(new InputBehavior(new KeyType[] {KeyType.Escape}, EventType.click));
         }
 
         @Override

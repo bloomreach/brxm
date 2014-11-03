@@ -139,7 +139,7 @@ public class ButtonWrapper implements IClusterable {
                     super.onRemove(component);
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.appendJavaScript("shortcut.remove('" + getKeyType().getKeyCode() + "');");
+                        target.appendJavaScript("if (window['shortcut']) { shortcut.remove('" + getKeyType().getKeyCode() + "'); }");
                     }
                 }
             });

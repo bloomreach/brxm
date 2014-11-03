@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -14,25 +14,22 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-	  <table class="modal-contents">
-	    <tr>
-	      <td>Randomly choose between available document types:</td>
-	      <td><input type="checkbox" wicket:id="randomDocs"/></td>
-	    </tr>
-	    
-	    <tr>
-	      <td>&#160;</td>
-	      <td>
-	        <div wicket:id="typesContainer"> 
-	          <ul wicket:id="typesGroup">
-	            <li wicket:id="types">
-	          <input type="checkbox" wicket:id="check"/> <label wicket:id="name"></label>
-	            </li>
-	          </ul>
-	        </div>  
-	      </td>
-	    </tr>
-    </table>  
-  </wicket:panel>
+<wicket:panel>
+	<table class="modal-contents">
+		<tr>
+			<td>Randomly choose between available document types:</td>
+			<td>
+				<input type="checkbox" wicket:id="randomDocs"/>
+			</td>
+		</tr>
+	</table>
+	<div wicket:id="typesContainer" class="select-types">
+		<p>Available types</p><br/>
+		<ul wicket:id="typesGroup">
+			<li wicket:id="types">
+				<input type="checkbox" wicket:id="check"/> <label wicket:id="name"></label>
+			</li>
+		</ul>
+	</div>
+</wicket:panel>
 </html>

@@ -32,8 +32,8 @@ public class CalendarComparator extends PropertyComparator {
     @Override
     protected int compare(Property p1, Property p2) {
         try {
-            Calendar c1 = p1.getDate();
-            Calendar c2 = p2.getDate();
+            Calendar c1 = p1 == null ? null : p1.getDate();
+            Calendar c2 = p2 == null ? null : p2.getDate();
             if (c1 == null) {
                 if (c2 == null) {
                     return 0;

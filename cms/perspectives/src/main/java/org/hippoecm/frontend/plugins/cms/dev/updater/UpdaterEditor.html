@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
 <!--
 
-    Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -17,42 +17,66 @@
 
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <form wicket:id="updater-form">
-        <div wicket:id="feedback" class="hippo-modal-feedback">[info/warn/error messages]</div>
-        <div>
-            <input type="submit" value="Save" wicket:id="save-button"/>
-            <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
-            <input type="submit" value="Execute" wicket:id="execute-button"/>
-            <input type="submit" value="Undo" wicket:id="undo-button"/>
-            <input type="submit" value="Stop" wicket:id="stop-button"/>
-            <input type="submit" value="Delete" wicket:id="delete-button"/>
-        </div>
+  <wicket:head>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $._toggleUpdaterScriptEditor = function() {
+          var regEditor = $('.updater-registry-editor');
+          var nonRegEditor = $('.updater-editor');
+          var feedback = $('.updater-feedback');
+          var toggleLink = $('#update-editor-toggle');
+          if (regEditor && regEditor.length) {
+            regEditor.toggleClass('updater-registry-editor-visible');
+          } else if (nonRegEditor && nonRegEditor.length) {
+            nonRegEditor.toggleClass('updater-editor-visible');
+            feedback.toggleClass('updater-feedback-shorter');
+          }
+          if (toggleLink.text() !== '>>>') {
+            toggleLink.text('>>>');
+          } else {
+            toggleLink.text('<<<');
+          }
+          return;
+        }
+      });
+    </script>
+  </wicket:head>
+  <body>
+    <wicket:panel>
+      <form wicket:id="updater-form">
+          <div wicket:id="feedback" class="hippo-modal-feedback">[info/warn/error messages]</div>
+          <div>
+              <input type="submit" value="Save" wicket:id="save-button"/>
+              <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
+              <input type="submit" value="Execute" wicket:id="execute-button"/>
+              <input type="submit" value="Undo" wicket:id="undo-button"/>
+              <input type="submit" value="Stop" wicket:id="stop-button"/>
+              <input type="submit" value="Delete" wicket:id="delete-button"/>
+          </div>
+          <p>&nbsp;</p>
+        <span wicket:id="radios">
+            <table width="100%">
+                <tr wicket:id="name"/>
+                <tr wicket:id="description"/>
+                <tr wicket:id="path"/>
+                <tr wicket:id="query"/>
+                <tr wicket:id="parameters"/>
+                <tr wicket:id="batch-size"/>
+                <tr wicket:id="throttle"/>
+                <tr wicket:id="dryrun"/>
+            </table>
+        </span>
         <p>&nbsp;</p>
-      <span wicket:id="radios">
-          <table width="100%">
-              <tr wicket:id="name"/>
-              <tr wicket:id="description"/>
-              <tr wicket:id="path"/>
-              <tr wicket:id="query"/>
-              <tr wicket:id="parameters"/>
-              <tr wicket:id="batch-size"/>
-              <tr wicket:id="throttle"/>
-              <tr wicket:id="dryrun"/>
-          </table>
-      </span>
-      <p>&nbsp;</p>
-      <p>
-        Script
-        <a id="update-editor-toggle" href="#" 
-           onclick="var _ure = $('.updater-registry-editor'); var _ue = $('.updater-editor'); var _uf = $('.updater-feedback'); var _uet = $('#update-editor-toggle'); if (_ure && _ure.length) { _ure.toggleClass('updater-registry-editor-visible'); } else if (_ue && _ue.length) { _ue.toggleClass('updater-editor-visible'); _uf.toggleClass('updater-feedback-shorter'); } if (_uet.text() == '&gt;&gt;&gt;') { _uet.text('&lt;&lt;&lt;'); } else { _uet.text('&gt;&gt;&gt;'); } return;">&gt;&gt;&gt;</a>
-      </p>
-      <p>&nbsp;</p>
-      <fieldset id="script">
-        <textarea wicket:id="script-editor"></textarea>
-      </fieldset>
-      <p>&nbsp;</p>
-      <div wicket:id="updater-output"/>
-    </form>
-  </wicket:panel>
+        <p>
+          Script <a id="update-editor-toggle" href="#" onclick="return $._toggleUpdaterScriptEditor();">&gt;&gt;&gt;</a>
+        </p>
+        <p>&nbsp;</p>
+        <fieldset id="script">
+          <textarea wicket:id="script-editor"></textarea>
+        </fieldset>
+        <p>&nbsp;</p>
+        <div wicket:id="updater-output"/>
+      </form>
+    </wicket:panel>
+  </body>
 </html>

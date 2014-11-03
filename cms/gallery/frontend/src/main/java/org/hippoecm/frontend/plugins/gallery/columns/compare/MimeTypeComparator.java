@@ -32,8 +32,8 @@ public class MimeTypeComparator extends PropertyComparator {
     @Override
     protected int compare(Property p1, Property p2) {
         try {
-            String mime1 = p1.getString();
-            String mime2 = p2.getString();
+            String mime1 = p1 == null ? "" : p1.getString();
+            String mime2 = p2 == null ? "" :p2.getString();
             return String.CASE_INSENSITIVE_ORDER.compare(mime1, mime2);
         } catch (RepositoryException e) {
         }

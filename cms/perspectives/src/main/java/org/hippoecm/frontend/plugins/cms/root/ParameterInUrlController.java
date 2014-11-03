@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.json.JSONException;
+import org.apache.wicket.ajax.json.JSONObject;
+import org.apache.wicket.ajax.json.JSONTokener;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.util.string.StringValue;
@@ -33,17 +37,20 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class PathInUrlController extends UrlControllerBehavior implements IObserver<IModelReference<Node>> {
+class ParameterInUrlController extends UrlControllerBehavior implements IObserver<IModelReference<Node>> {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(PathInUrlController.class);
+    private static final Logger log = LoggerFactory.getLogger(ParameterInUrlController.class);
 
     private static final String MODE_PARAM = "mode";
     private static final String MODE_VALUE_EDIT = "edit";
     private static final String PATH_PARAM = "path";
+    private static final String UUID_PARAM = "uuid";
+    private static final String URL_PARAMETERS = "parameters";
 
     private final IModelReference<Node> modelReference;
     private final IBrowseService browseService;
@@ -51,7 +58,7 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
 
     private transient boolean browsing = false;
 
-    public PathInUrlController(final IModelReference<Node> modelReference, IBrowseService browseService, IEditorManager editorMgr) {
+    public ParameterInUrlController(final IModelReference<Node> modelReference, IBrowseService browseService, IEditorManager editorMgr) {
         this.modelReference = modelReference;
         this.browseService = browseService;
         this.editorMgr = editorMgr;
@@ -63,20 +70,62 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
     }
 
     public void init(IRequestParameters parameters) {
-        final StringValue pathValue = parameters.getParameterValue(PATH_PARAM);
-        if (!pathValue.isNull() && !pathValue.isEmpty()) {
-            String jcrPath = pathValue.toString();
-            IEditor.Mode mode = IEditor.Mode.VIEW;
+        process(parameters);
+    }
 
-            final StringValue modeValue = parameters.getParameterValue(MODE_PARAM);
-            if (!modeValue.isEmpty() && !modeValue.isNull()) {
+    public void process(IRequestParameters requestParameters) {
+
+        Map<String, String> parameters = getParametersMap(requestParameters);
+
+        String jcrPath = getJcrPath(parameters);
+        if(jcrPath != null){
+            IEditor.Mode mode = IEditor.Mode.VIEW;
+            final String modeValue = parameters.get(MODE_PARAM);
+            if (modeValue != null && !modeValue.isEmpty()) {
                 if (modeValue.toString().equals(MODE_VALUE_EDIT)) {
                     mode = IEditor.Mode.EDIT;
                 }
             }
-
             browseTo(jcrPath, mode);
         }
+    }
+
+    protected String getJcrPath(final Map<String, String> parameters) {
+        final String path = parameters.get(PATH_PARAM);
+        if (path != null && !path.isEmpty()) {
+            return path;
+        }
+
+        final String uuid = parameters.get(UUID_PARAM);
+        if (uuid != null && !uuid.isEmpty()) {
+            try {
+                return UserSession.get().getJcrSession().getNodeByIdentifier(uuid).getPath();
+            } catch (RepositoryException e) {
+                log.info("Could not find document with uuid: {}", uuid);
+            }
+        }
+        return null;
+    }
+
+    protected Map<String, String> getParametersMap(IRequestParameters requestParameters){
+        final StringValue paramsValue = requestParameters.getParameterValue(URL_PARAMETERS);
+
+        Map<String, String> parameters = new HashMap<>();
+        if (!paramsValue.isNull() && !paramsValue.isEmpty()) {
+            final String value = paramsValue.toString();
+            try {
+                final JSONObject jsonObject = new JSONObject(new JSONTokener(value));
+                final Iterator keys = jsonObject.keys();
+                while (keys.hasNext()) {
+                    final String next = (String) keys.next();
+                    parameters.put(next, jsonObject.getString(next));
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException("Unable to parse parameters from '" + value + "'", e);
+            }
+        }
+
+        return parameters;
     }
 
     @Override
@@ -98,20 +147,8 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
     }
 
     @Override
-    protected void onRequest(Map<String, String> parameters) {
-        String jcrPath = parameters.get(PATH_PARAM);
-
-        IEditor.Mode mode = IEditor.Mode.VIEW;
-        if (parameters.containsKey(MODE_PARAM)) {
-            String modeStr = parameters.get(MODE_PARAM);
-            if (modeStr != null) {
-                if (MODE_VALUE_EDIT.equals(modeStr)) {
-                    mode = IEditor.Mode.EDIT;
-                }
-            }
-        }
-
-        browseTo(jcrPath, mode);
+    protected void onRequest(IRequestParameters parameters) {
+        process(parameters);
     }
 
     public void browseTo(String jcrPath, IEditor.Mode mode) {

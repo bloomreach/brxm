@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@
 
     window.Hippo = window.Hippo || {};
 
-    if (!Hippo.PathHistory) {
+    if (!Hippo.ParameterHistory) {
 
-        var PathHistoryImpl = function () {
+        var Lang = YAHOO.lang,
+            ParameterHistoryImpl = function () {
             this.initialized = false;
         };
 
-        PathHistoryImpl.prototype = {
+        ParameterHistoryImpl.prototype = {
 
             init: function (callback) {
                 if (this.initialized) {
@@ -47,12 +48,16 @@
             },
 
             onUrlChange: function () {
-                var path;
-                path = this.getParameter('path');
-                if (path === undefined) {
-                    path = "/";
+                var parameter, url;
+                if (! Lang.isUndefined(parameter = this.getParameter('path'))) {
+                    url = this.url + "&path=" + parameter;
+                } else if (! Lang.isUndefined(parameter = this.getParameter('uuid'))) {
+                    url = this.url + "&uuid=" + parameter;
+                } else {
+                    url = this.url + "&path=/";
                 }
-                this.callback(path);
+
+                this.callback(url);
             },
 
             getParameter: function (name) {
@@ -65,7 +70,7 @@
             }
         };
 
-        Hippo.PathHistory = new PathHistoryImpl();
+        Hippo.ParameterHistory = new ParameterHistoryImpl();
     }
 
 }());
