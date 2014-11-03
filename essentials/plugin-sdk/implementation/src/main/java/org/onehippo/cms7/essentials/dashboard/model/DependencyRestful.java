@@ -29,8 +29,6 @@ public class DependencyRestful implements EssentialsDependency, Restful {
     private static final long serialVersionUID = 1L;
     private String groupId;
     private String artifactId;
-    private String repositoryId;
-    private String repositoryUrl;
     private String version;
     private String scope;
     private String type;
@@ -55,26 +53,6 @@ public class DependencyRestful implements EssentialsDependency, Restful {
     @Override
     public void setArtifactId(final String artifactId) {
         this.artifactId = artifactId;
-    }
-
-    @Override
-    public String getRepositoryId() {
-        return repositoryId;
-    }
-
-    @Override
-    public void setRepositoryId(final String repositoryId) {
-        this.repositoryId = repositoryId;
-    }
-
-    @Override
-    public String getRepositoryUrl() {
-        return repositoryUrl;
-    }
-
-    @Override
-    public void setRepositoryUrl(final String repositoryUrl) {
-        this.repositoryUrl = repositoryUrl;
     }
 
     @Override
@@ -139,8 +117,6 @@ public class DependencyRestful implements EssentialsDependency, Restful {
         final StringBuilder sb = new StringBuilder("DependencyRestful{");
         sb.append("groupId='").append(groupId).append('\'');
         sb.append(", artifactId='").append(artifactId).append('\'');
-        sb.append(", repositoryId='").append(repositoryId).append('\'');
-        sb.append(", repositoryUrl='").append(repositoryUrl).append('\'');
         sb.append(", version='").append(version).append('\'');
         sb.append(", scope='").append(scope).append('\'');
         sb.append(", type='").append(type).append('\'');

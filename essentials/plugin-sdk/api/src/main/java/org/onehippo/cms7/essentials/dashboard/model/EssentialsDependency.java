@@ -31,14 +31,6 @@ public interface EssentialsDependency {
 
     void setArtifactId(String artifactId);
 
-    String getRepositoryId();
-
-    void setRepositoryId(String repositoryId);
-
-    String getRepositoryUrl();
-
-    void setRepositoryUrl(String repositoryUrl);
-
     String getVersion();
 
     void setVersion(String version);

@@ -523,7 +523,7 @@
             "/essentials/images/screenshots/search01.png",
             "/essentials/images/screenshots/search02.png"
         ],
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/search-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/search-component.html",
         "packageFile": "/META-INF/searchPlugin_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -550,7 +550,7 @@
             "/essentials/images/screenshots/image01.png",
             "/essentials/images/screenshots/image02.png"
         ],
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/image-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/image-component.html",
         "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -579,7 +579,7 @@
             "/essentials/images/screenshots/video02.png",
             "/essentials/images/screenshots/video03.png"
         ],
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/video-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/video-component.html",
         "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -631,7 +631,7 @@
         "name": "Banners",
         "icon" : "/essentials/images/icons/bundle.png",
         "introduction": "With Banner, you add banners and carousels to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/document-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/document-component.html",
         "imageUrls": [
             "/essentials/images/screenshots/banner01.png",
             "/essentials/images/screenshots/banner02.png",
@@ -661,7 +661,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/menu01.png"
         ],
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/menu-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/menu-component.html",
         "packageFile": "/META-INF/menu_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -685,7 +685,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/simplecontent01.png"
         ],
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/document-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/document-component.html",
         "packageFile": "/META-INF/simpleContent_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -733,7 +733,7 @@
         "icon" : "/essentials/images/icons/events.png",
         "introduction": "With Events, you can easily integrate events functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
         "description": "<ul><li>This feature installs a new document type 'eventsdocument' in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocuments&gt;</li><li>A drag-and-drop component 'events list' is added to the Document template editor. This events list component can be configured.</li><li>Some sample events articles are installed and a page (with corresponding menu entry) with an example eventslist is created.</li></ul>",
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/events-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/events-component.html",
         "imageUrls": [
             "/essentials/images/screenshots/events01.png",
             "/essentials/images/screenshots/events02.png",
@@ -764,7 +764,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/genericlist01.png"
         ],
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/list-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/list-component.html",
         "packageFile": "/META-INF/list_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -788,7 +788,7 @@
         "icon" : "/essentials/images/icons/news.png",
         "introduction": "With News, you can easily integrate news functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
         "description": "<ul><li>This feature installs a new document type 'newsdocument' in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component 'newslist' is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>",
-        "documentationLink": "http://www.onehippo.org/library/essentials/hst-components/news-component.html",
+        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/news-component.html",
         "imageUrls": [
                 "/essentials/images/screenshots/news01.png",
                 "/essentials/images/screenshots/news02.png",
