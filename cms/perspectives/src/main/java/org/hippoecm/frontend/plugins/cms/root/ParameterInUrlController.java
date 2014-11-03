@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,10 +41,10 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class PathInUrlController extends UrlControllerBehavior implements IObserver<IModelReference<Node>> {
+class ParameterInUrlController extends UrlControllerBehavior implements IObserver<IModelReference<Node>> {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(PathInUrlController.class);
+    private static final Logger log = LoggerFactory.getLogger(ParameterInUrlController.class);
 
     private static final String MODE_PARAM = "mode";
     private static final String MODE_VALUE_EDIT = "edit";
@@ -58,7 +58,7 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
 
     private transient boolean browsing = false;
 
-    public PathInUrlController(final IModelReference<Node> modelReference, IBrowseService browseService, IEditorManager editorMgr) {
+    public ParameterInUrlController(final IModelReference<Node> modelReference, IBrowseService browseService, IEditorManager editorMgr) {
         this.modelReference = modelReference;
         this.browseService = browseService;
         this.editorMgr = editorMgr;

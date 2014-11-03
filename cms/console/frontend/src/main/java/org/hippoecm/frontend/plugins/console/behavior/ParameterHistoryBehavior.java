@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 
-public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
+public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
 
-    private static final Logger log = LoggerFactory.getLogger(PathHistoryBehavior.class);
+    private static final Logger log = LoggerFactory.getLogger(ParameterHistoryBehavior.class);
 
     private static final String PATH_PARAMETER = "path";
     private static final String UUID_PARAMETER = "uuid";
@@ -49,7 +49,7 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
     private IModelReference reference;
     private transient boolean myUpdate;
 
-    public PathHistoryBehavior(IModelReference reference) {
+    public ParameterHistoryBehavior(IModelReference reference) {
         this.reference = reference;
 
         setReferenceModelFromRequest();
@@ -86,11 +86,11 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
     public void renderHead(final Component component, final IHeaderResponse response) {
         super.renderHead(component, response);
 
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PathHistoryBehavior.class, "js/pathhistory/pathhistory.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(ParameterHistoryBehavior.class, "js/parameterhistory/parameterhistory.js")));
 
         String attributesAsJson = renderAjaxAttributes(component).toString();
         response.render(OnLoadHeaderItem.forScript(
-                "Hippo.PathHistory.init(function(path) {\n"
+                "Hippo.ParameterHistory.init(function(path) {\n"
                         + "    var call = new Wicket.Ajax.Call(),"
                         + "        attributes = jQuery.extend({}, " + attributesAsJson + ");\n"
                         + "    call.ajax(attributes);\n"
@@ -120,7 +120,7 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
             JcrNodeModel nodeModel = (JcrNodeModel) reference.getModel();
             String path = nodeModel.getItemModel().getPath();
             AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
-            ajax.appendJavaScript("Hippo.PathHistory.setPath('" + path + "')");
+            ajax.appendJavaScript("Hippo.ParameterHistory.setPath('" + path + "')");
         }
     }
 }

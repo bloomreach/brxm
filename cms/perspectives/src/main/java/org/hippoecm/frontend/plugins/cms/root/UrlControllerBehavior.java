@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.apache.wicket.util.string.StringValue;
 public class UrlControllerBehavior extends AbstractDefaultAjaxBehavior {
 
     private static final JavaScriptResourceReference URLCONTROLLER_JS =
-            new JavaScriptResourceReference(PathInUrlController.class, "UrlHistory.js");
+            new JavaScriptResourceReference(ParameterInUrlController.class, "UrlHistory.js");
 
     private static final String URL_PARAMETERS = "parameters";
 

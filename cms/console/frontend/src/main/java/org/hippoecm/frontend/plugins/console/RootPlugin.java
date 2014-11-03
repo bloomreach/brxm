@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.console.behavior.PathHistoryBehavior;
+import org.hippoecm.frontend.plugins.console.behavior.ParameterHistoryBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
@@ -41,8 +41,6 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.util.MappingException;
 import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.hippoecm.frontend.widgets.Pinger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RootPlugin extends RenderPlugin {
 
@@ -51,7 +49,7 @@ public class RootPlugin extends RenderPlugin {
     public static final CssResourceReference CSS = new CssResourceReference(RootPlugin.class, "screen-console.css");
 
     private boolean rendered = false;
-    private PathHistoryBehavior pathHistoryBehavior;
+    private ParameterHistoryBehavior parameterHistoryBehavior;
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -67,9 +65,9 @@ public class RootPlugin extends RenderPlugin {
             ModelReference modelService = new ModelReference(modelId, new JcrNodeModel("/"));
             modelService.init(context);
 
-            pathHistoryBehavior = new PathHistoryBehavior(modelService);
-            context.registerService(pathHistoryBehavior, IObserver.class.getName());
-            add(pathHistoryBehavior);
+            parameterHistoryBehavior = new ParameterHistoryBehavior(modelService);
+            context.registerService(parameterHistoryBehavior, IObserver.class.getName());
+            add(parameterHistoryBehavior);
         }
 
         PageLayoutSettings plSettings = new PageLayoutSettings();

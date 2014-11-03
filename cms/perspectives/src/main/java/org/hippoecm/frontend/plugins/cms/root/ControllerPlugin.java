@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,17 +31,17 @@ import org.hippoecm.frontend.service.IEditorManager;
 public class ControllerPlugin extends Plugin implements IController {
 
     private static final long serialVersionUID = 1L;
-    private PathInUrlController controller;
+    private ParameterInUrlController controller;
 
     public ControllerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         context.registerService(this, IController.class.getName());
 
-        registerPathInUrlController(context, config);
+        registerParameterInUrlController(context, config);
     }
 
-    private void registerPathInUrlController(final IPluginContext context, IPluginConfig config) {
+    private void registerParameterInUrlController(final IPluginContext context, IPluginConfig config) {
         @SuppressWarnings("unchecked")
         final IModelReference<Node> modelReference = context.getService("model.browse.document", IModelReference.class);
 
@@ -49,7 +49,7 @@ public class ControllerPlugin extends Plugin implements IController {
             IBrowseService browseService = context.getService(config.getString("browser.id", "service.browse"), IBrowseService.class);
             IEditorManager editorMgr = context.getService(config.getString("editor.id", "service.edit"), IEditorManager.class);
 
-            controller = new PathInUrlController(modelReference, browseService, editorMgr);
+            controller = new ParameterInUrlController(modelReference, browseService, editorMgr);
             context.registerService(controller, IObserver.class.getName());
             context.registerService(controller, Behavior.class.getName());
         }
