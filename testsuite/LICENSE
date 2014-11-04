@@ -206,7 +206,7 @@ Hippo Test Suite includes a number of sub-components with separate copyright not
 Your use of the code for the these sub-components is subject to the terms and conditions of the following licenses.
 
 ------------------------------------------------------------------------------------------------------------------------
-testsuite/components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml
+components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml
 
     Creative Commons Attribution-ShareAlike 3.0 Unported License Agreement
 
@@ -468,7 +468,18 @@ testsuite/components/src/main/resources/enwiki-20081008-pages-articles.xml.100.t
     Creative Commons may be contacted at http://creativecommons.org/.
 
 ------------------------------------------------------------------------------------------------------------------------
-testsuite/resources/src/main/webapp/css/yui-2.8.1-reset-fonts-grids.css
+intranet-bootstrap/webresources/src/main/resources/intranet/css/style.css
+
+    Bootstrap v2.0.3
+
+    Copyright 2012 Twitter, Inc
+    Licensed under the Apache License v2.0
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Designed and built with all the love in the world @twitter by @mdo and @fat.
+
+------------------------------------------------------------------------------------------------------------------------
+resources/src/main/webapp/css/yui-2.8.1-reset-fonts-grids.css
 
     Copyright © 2013 Yahoo! Inc. All rights reserved.
 
