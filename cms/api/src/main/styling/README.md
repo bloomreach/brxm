@@ -63,6 +63,13 @@ After it is installed, run
     
 It will copy the build resources in 'skin/hippo-cms' into the classpath folder, so Wicket will load the new resource.
 
+####Starting Wicket in development mode so it picks up Grunt changes
+
+Run the CMS with Wicket development mode args:
+
+    $ mvn -P cargo.run -Djrebel -Drepo.path=repo -Dcargo.jvm.args='-Dwicket.configuration=development'
+
+
 ####Run tests
 The tests need to pass in order to build the theme.
 
