@@ -41,8 +41,9 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
 
-    public static final String DEFAULT_ACTIVE_SUFFIX = "-active";
-    public static final String DEFAULT_IMAGE_EXTENSION = "png";
+    public static final String ACTIVE_SUFFIX = "-active";
+    public static final String IMAGE_EXTENSION = "svg";
+    public static final String FALLBACK_IMAGE_EXTENSION = "png";
 
     private IModel<String> title = new Model<String>("title");
 
@@ -50,6 +51,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     private String activeSuffix;
     private String imageExtension;
+    private String fallbackImageExtension;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -57,9 +59,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         if (config.getString(TITLE) != null) {
             title = new StringResourceModel(config.getString(TITLE), this, null);
         }
-        
-        activeSuffix = config.getString("active.suffix", DEFAULT_ACTIVE_SUFFIX);
-        imageExtension = config.getString("image.extension", DEFAULT_IMAGE_EXTENSION);
+
+        activeSuffix = config.getString("active.suffix", ACTIVE_SUFFIX);
+        imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
+        fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
     }
 
     // ITitleDecorator
@@ -76,12 +79,26 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     @Override
     public ResourceReference getIcon(IconSize size) {
-        String image = toImageName(getClass().getSimpleName(), size);
+        // try (name)-(size).svg
+        String image = toImageName(getClass().getSimpleName(), size, imageExtension);
         if (PackageResource.exists(getClass(), image, null, null, null)) {
             return new PackageResourceReference(getClass(), image);
         }
 
-        image = toImageName(Perspective.class.getSimpleName(), size);
+        // try (name).svg
+        image = toImageName(getClass().getSimpleName(), null, imageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // try (name)-(size).png
+        image = toImageName(getClass().getSimpleName(), size, fallbackImageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // use built-in picture
+        image = toImageName(Perspective.class.getSimpleName(), size, fallbackImageExtension);
         if (PackageResource.exists(Perspective.class, image, null, null, null)) {
             return new PackageResourceReference(Perspective.class, image);
         }
@@ -91,12 +108,26 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     @Override
     public ResourceReference getActiveIcon(IconSize size) {
-        String image = toImageName(getClass().getSimpleName() + activeSuffix, size);
+        // try (name)-active-(size).svg
+        String image = toImageName(getClass().getSimpleName() + activeSuffix, size, imageExtension);
         if (PackageResource.exists(getClass(), image, null, null, null)) {
             return new PackageResourceReference(getClass(), image);
         }
 
-        image = toImageName(Perspective.class.getSimpleName() + activeSuffix, size);
+        // try (name)-active.svg
+        image = toImageName(getClass().getSimpleName() + activeSuffix, null, imageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // try (name)-active-(size).png
+        image = toImageName(getClass().getSimpleName() + activeSuffix, size, fallbackImageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // use built-in active picture
+        image = toImageName(Perspective.class.getSimpleName() + activeSuffix, size, fallbackImageExtension);
         if (PackageResource.exists(Perspective.class, image, null, null, null)) {
             return new PackageResourceReference(Perspective.class, image);
         }
@@ -104,7 +135,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         return null;
     }
 
-    protected String toImageName(final String camelCaseString, final IconSize size) {
+    protected String toImageName(final String camelCaseString, final IconSize size, final String extension) {
         StringBuilder name = new StringBuilder(camelCaseString.length());
         name.append(Character.toLowerCase(camelCaseString.charAt(0)));
         for (int i = 1; i < camelCaseString.length(); i++) {
@@ -115,8 +146,11 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
                 name.append(c);
             }
         }
-        name.append('-').append(size.getSize()).append('.').append(imageExtension);
-        
+        if (size != null) {
+            name.append('-').append(size.getSize());    
+        }
+        name.append('.').append(extension);
+
         return name.toString();
     }
 

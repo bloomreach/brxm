@@ -115,7 +115,10 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
+          <include>**/*.jpg</include>
+          <include>**/*.gif</include>
           <include>**/*.png</include>
+          <include>**/*.svg</include>
         </includes>
       </resource>
     </resources>

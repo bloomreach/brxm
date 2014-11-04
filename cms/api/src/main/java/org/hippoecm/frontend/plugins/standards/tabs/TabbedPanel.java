@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -34,11 +33,9 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.Loop;
@@ -50,15 +47,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.PackageResource;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
@@ -67,8 +61,6 @@ import org.hippoecm.frontend.service.render.ICardView;
 public class TabbedPanel extends WebMarkupContainer {
 
     private static final long serialVersionUID = 1L;
-
-    private static final String MEDIA_QUERY = "@media (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (min-resolution: 1.5dppx)";
 
     abstract static class CloseLink<T> extends AbstractLink {
 
@@ -268,7 +260,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 if (cssClass == null) {
                     cssClass = " ";
                 }
-                cssClass += " tab" + getIndex() + " " + tabs.get(tabIndex).getDecoratorId();
+                cssClass += " tab" + getIndex();
 
                 if (getIndex() == getSelectedTab()) {
                     cssClass += " selected";
@@ -279,55 +271,6 @@ public class TabbedPanel extends WebMarkupContainer {
                 tag.put("class", cssClass.trim());
             }
         };
-    }
-
-    @Override
-    public void renderHead(final HtmlHeaderContainer container) {
-        super.renderHead(container);
-        
-        // css for binding icons to background-image
-        StringBuilder css = new StringBuilder();
-        IconSize hiResSize = IconSize.getHighRes(iconType);
-
-        for (TabsPlugin.Tab tab : tabs) {
-            String id = tab.getDecoratorId();
-            String defaultSelector = "." + id + " .hippo-tabs-tab-icon";
-            String activeSelector = "." + id + ".selected .hippo-tabs-tab-icon";
-            
-            ResourceReference defaultIcon = tab.getIcon(iconType);
-            appendBackgroundCss(css, defaultIcon, defaultSelector);
-
-            ResourceReference activeIcon = tab.getActiveIcon(iconType);
-            appendBackgroundCss(css, activeIcon, activeSelector);
-
-            if (hiResSize != null) {
-                css.append(MEDIA_QUERY).append(" {\n");
-
-                ResourceReference defaultHiResIcon = tab.getIcon(hiResSize);
-                appendBackgroundCss(css, defaultHiResIcon, defaultSelector);
-
-                ResourceReference activeHiResIcon = tab.getActiveIcon(hiResSize);
-                appendBackgroundCss(css, activeHiResIcon, activeSelector);
-
-                css.append("}\n");
-            }
-        }
-        
-        container.getHeaderResponse().render(CssHeaderItem.forCSS(css.toString(), getMarkupId() + "-icons"));
-    }
-
-    private void appendBackgroundCss(final StringBuilder css, ResourceReference image, String selector) {
-        if (image != null && PackageResource.exists(image.getKey())) {
-            css.append(selector).append(" { background-image: url('").append(urlFor(image, null)).append("'); }\n");
-        }
-    }
-
-    private ResourceReference getHighResIcon(final TabsPlugin.Tab tab) {
-        IconSize highRes = IconSize.getHighRes(iconType);
-        if (highRes != null) {
-            return tab.getIcon(highRes);
-        }
-        return null;
     }
 
     // used by superclass to add title to the container
@@ -356,18 +299,11 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         };
 
-        ResourceReference iconResource = tab.getIcon(iconType);
-        Component image;
-        if (iconResource == null) {
-            image = new EmptyPanel("icon");
-            image.setVisible(false);
-        } else {
-            image = new CachingImage("icon", iconResource);
+        Component icon = index == getSelectedTab() ? tab.getActiveIcon("icon", iconType) : tab.getIcon("icon", iconType);
+        if (icon == null) {
+            icon = new EmptyPanel("icon").setRenderBodyOnly(true);
         }
-        IModel<String> sizeModel = new Model<String>(Integer.valueOf(iconType.getSize()).toString());
-        image.add(new AttributeModifier("width", true, sizeModel));
-        image.add(new AttributeModifier("height", true, sizeModel));
-        link.add(image);
+        link.add(icon);
 
         link.add(new Label("title", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
