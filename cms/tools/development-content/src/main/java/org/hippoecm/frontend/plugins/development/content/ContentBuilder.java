@@ -382,14 +382,14 @@ public class ContentBuilder implements IClusterable {
     public List<String> getFolderTypes(String folderUUID) {
         updateFolder(folderUUID);
 
-        List<String> categories = getCategories("-folder-");
+        List<String> categories = getCategories("folder");
         return getTypes(categories, new LinkedList<String>(), getFolderWorkflow(folderUUID));
     }
 
     public List<String> getDocumentTypes(String folderUUID) {
         updateFolder(folderUUID);
 
-        List<String> categories = getCategories("-document-");
+        List<String> categories = getCategories("document");
         return getTypes(categories, new LinkedList<String>(), getFolderWorkflow(folderUUID));
     }
 
