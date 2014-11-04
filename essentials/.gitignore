@@ -365,6 +365,13 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/classes
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/hippo-plugins.iws
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/target
 dashboard/src/main/java/org/onehippo/cms7/essentials/target
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/*.iml
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/.DS_Store
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/.idea
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/atlassian-ide-plugin.xml
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/classes
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/hippo-plugins.iws
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/target
 dashboard/src/main/java/org/onehippo/cms7/hippo-plugins.iws
 dashboard/src/main/java/org/onehippo/cms7/target
 dashboard/src/main/java/org/onehippo/hippo-plugins.iws

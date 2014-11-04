@@ -20,13 +20,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 
 /**
@@ -78,14 +76,7 @@ public class RestClient {
         setTimeouts(client, connectionTimeout, receiveTimeout);
         try {
             final String json = client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
-            if (Strings.isNullOrEmpty(json)) {
-                return new RestfulList<>();
-            }
-            final ObjectMapper mapper = new ObjectMapper();
-
-            @SuppressWarnings("unchecked")
-            final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
-            return restfulList;
+            return RestUtils.parsePlugins(json);
         } catch (Exception e) {
             log.error("Error parsing remote plugins for repository: " + baseResourceUri, e);
         }

@@ -94,6 +94,7 @@ import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
+import org.onehippo.cms7.essentials.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -154,15 +155,7 @@ public class PluginResource extends BaseResource {
                         try {
                             final File file = ResourceUtils.getFile(resourceUri);
                             final String pluginDescriptor = GlobalUtils.readStreamAsText(new FileInputStream(file));
-                            if (Strings.isNullOrEmpty(pluginDescriptor)) {
-                                return new RestfulList<>();
-                            }
-                            final ObjectMapper mapper = new ObjectMapper();
-                            @SuppressWarnings("unchecked")
-                            final RestfulList<PluginRestful> restfulList = mapper.readValue(pluginDescriptor, RestfulList.class);
-                            return restfulList;
-
-
+                            return RestUtils.parsePlugins(pluginDescriptor);
                         } catch (Exception e) {
                             log.error(MessageFormat.format("Error loading plugins from repository: {0}", url), e);
                         }

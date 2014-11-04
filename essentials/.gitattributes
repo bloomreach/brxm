@@ -98,6 +98,7 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/DynamicRestPointsAp
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndpointsRestApplication.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/RestServlet.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/utils/RestUtils.java -text
 dashboard/src/main/resources/applicationContext.xml -text
 dashboard/src/main/resources/jackson.xml -text
 dashboard/src/main/resources/plugin_descriptor.json -text
