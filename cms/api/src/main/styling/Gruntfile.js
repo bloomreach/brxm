@@ -186,7 +186,8 @@ module.exports = function (grunt) {
 
             // Notify user when reloading. Currently only works on OSX with terminal-notifier installed (brew install terminal-notifier)
             notify: {
-                command: "command -v terminal-notifier >/dev/null 2>&1 && terminal-notifier -group 'Hippo CMS' -title 'Grunt build' -subtitle 'Finished' -message 'LiveReloading'"
+              command: "command -v terminal-notifier >/dev/null 2>&1 && terminal-notifier -group 'Hippo CMS' -title 'Grunt build' -subtitle 'Finished' -message 'LiveReloading' || echo 'done'"
+              //command: "command -v cat 'done'"
             }
         }
     });
