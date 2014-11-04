@@ -1,3 +1,4 @@
+<#ftl encoding="UTF-8">
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -13,7 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<#ftl encoding="UTF-8">
 <#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"] >
 <#assign fmt=JspTaglibs ["http://java.sun.com/jsp/jstl/fmt"] >
 <@hst.defineObjects />
