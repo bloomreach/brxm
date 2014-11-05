@@ -254,7 +254,6 @@ intranet-bootstrap/content/src/main/resources/content/documents/intranet/news.xm
 intranet-bootstrap/content/src/main/resources/content/gallery/intranet.xml -text
 intranet-bootstrap/content/src/main/resources/hippoecm-extension.xml -text
 intranet-bootstrap/pom.xml -text
-intranet-bootstrap/webresources/hippo-intranet-bootstrap-webresources.iml -text
 intranet-bootstrap/webresources/src/main/resources/intranet/images/glyphicons-halflings-white.png -text
 intranet-bootstrap/webresources/src/main/resources/intranet/images/glyphicons-halflings.png -text
 intranet-bootstrap/webresources/src/main/resources/intranet/js/script.js -text
