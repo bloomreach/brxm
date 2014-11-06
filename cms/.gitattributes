@@ -2190,8 +2190,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspect
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/ListGroupsPanel$AjaxGroupViewActionLinkLabel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/ViewGroupActionLink.java -text
@@ -2398,7 +2396,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/them
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/neat.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-32.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.java -text
@@ -2446,6 +2443,8 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPlugin
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-active-32.png -text svneol=unset#image/png
@@ -2454,6 +2453,7 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dash
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-64.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-active-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-active-64.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-32.png -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/DomainDataProviderTest.java -text
