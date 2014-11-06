@@ -48,7 +48,7 @@ module.exports = function (grunt) {
                     livereload: false
                 },
                 files: ['<%= build.src %>/**/*.less'],
-                tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:target']
+                tasks: ['less', 'autoprefixer', /*'csslint',*/ 'concat', 'clean:target']
             },
             livereload: {
                 files: ['<%= build.dest %>/**'],
@@ -197,7 +197,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', 'Build the theme', [
         'less',
         'autoprefixer',
-        'csslint',
+        //'csslint',
         'concat',
         'cssmin:theme',
         'copy:binaries',
