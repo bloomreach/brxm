@@ -352,7 +352,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 return "WorkflowInvocationHandler[" + category + ", " + workflowName + "]";
             }
 
-            WorkflowPostActions postActions = null;
             boolean resetInteraction = false;
             String interaction = tlInteraction.get();
             String interactionId = tlInteractionId.get();
@@ -366,7 +365,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
             Method targetMethod = null;
             try {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, subjectId);
                 returnObject = targetMethod.invoke(upstream, args);
                 if (objectPersist && !targetMethod.getName().equals("hints")) {
                     rootSession.save();
@@ -374,9 +372,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (returnObject instanceof Document) {
                     // only return a simple Document instance
                     returnObject = new Document((Document)returnObject);
-                }
-                if (postActions != null) {
-                    postActions.execute(returnObject);
                 }
                 return returnObject;
             } catch (NoSuchMethodException | IllegalAccessException e) {
@@ -394,9 +389,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (resetInteraction) {
                     tlInteraction.remove();
                     tlInteractionId.remove();
-                }
-                if (postActions != null) {
-                    postActions.dispose();
                 }
                 WorkflowAction wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
                 if (wfActionAnno == null || wfActionAnno.loggable()) {
