@@ -15,13 +15,11 @@
  */
 
 module.exports = {
-    target: 'target',
-    source: 'src/main/styling',
-    bower: 'src/main/styling/components',
-    
-    file: 'hippo-cms-theme',
-    src: 'src/main/styling',
-    dest: 'src/main/resources/skin/hippo-cms',
-    cp: 'target/classes',
-    tmp: 'target/.tmp'
+    bower:      'src/main/styling/components',
+    file:       'hippo-cms-theme',
+    images:     'src/main/resources/org/hippoecm/frontend/skin/images/',
+    skin:       'src/main/resources/skin/hippo-cms',
+    src:        'src/main/styling',
+    target:     'target',
+    tmp:        'target/.tmp'
 };

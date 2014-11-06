@@ -26,7 +26,7 @@ module.exports = function (grunt) {
     
     var buildConfig = require('./build.config.js');
     function classPathExists() {
-        return fs.existsSync(buildConfig.cp + '/skin/hippo-cms');
+        return fs.existsSync(buildConfig.target + '/classes/skin/hippo-cms');
     }
 
     grunt.initConfig({
@@ -48,10 +48,10 @@ module.exports = function (grunt) {
                     livereload: false
                 },
                 files: ['<%= build.src %>/**/*.less'],
-                tasks: ['less', 'autoprefixer', /*'csslint',*/ 'concat', 'clean:target']
+                tasks: ['less', 'autoprefixer', /*'csslint',*/ 'concat', 'clean:tmp']
             },
             livereload: {
-                files: ['<%= build.dest %>/**'],
+                files: ['<%= build.skin %>/**'],
                 tasks: ['copy:classpath', 'shell:notify']
             }
         },
@@ -101,7 +101,7 @@ module.exports = function (grunt) {
             },
             theme: {
                 files: {
-                    '<%= build.dest %>/css/<%= build.file %>.min.css': ['<%= build.dest %>/css/<%= build.file %>.css']
+                    '<%= build.skin %>/css/<%= build.file %>.min.css': ['<%= build.skin %>/css/<%= build.file %>.css']
                 }
             }
         },
@@ -116,11 +116,11 @@ module.exports = function (grunt) {
                     '<%= build.tmp %>/css/open-sans.css', 
                     '<%= build.tmp %>/css/font-awesome.css', 
                     '<%= build.bower %>/normalize.css/normalize.css', 
-                    '<%= build.tmp %>/css/wicket.css', 
                     '<%= build.tmp %>/css/style-test.css', 
-                    '<%= build.tmp %>/css/<%= build.file %>.css'
+                    '<%= build.tmp %>/css/<%= build.file %>.css',
+                    '<%= build.tmp %>/css/wicket.css'
                 ],
-                dest: '<%= build.dest %>/css/<%= build.file %>.css'
+                dest: '<%= build.skin %>/css/<%= build.file %>.css'
             }
         },
 
@@ -131,28 +131,30 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= build.bower %>/open-sans-fontface/fonts',
                         src: ['**/*.{otf,eot,svg,ttf,woff}'],
-                        dest: '<%= build.dest %>/fonts/open-sans/'
+                        dest: '<%= build.skin %>/fonts/open-sans/'
                     },
                     {
                         expand: true,
                         cwd: '<%= build.bower %>/font-awesome/fonts',
                         src: ['**/*'],
-                        dest: '<%= build.dest %>/fonts/font-awesome/'
+                        dest: '<%= build.skin %>/fonts/font-awesome/'
                     },
                     {
+                        // images go into the package relative to Skin.java
                         expand: true,
-                        cwd: 'src/images',
+                        nonull: true,
+                        cwd: '<%= build.src %>/images',
                         src: ['**/*'],
-                        dest: '<%= build.dest %>/images/'
+                        dest: '<%= build.images %>'
                     }
                 ]
             },
 
             classpath: { // Copy resources to classpath so Wicket will pick them up 
                 expand: true,
-                cwd: '<%= build.dest %>',
+                cwd: '<%= build.skin %>',
                 src: ['**'],
-                dest: '<%= build.cp %>/skin/hippo-cms/',
+                dest: '<%= build.target %>/classes/skin/hippo-cms/',
                 filter: function() {
                     //little hack to force it to only copy when dest exists
                     return classPathExists(); 
@@ -161,18 +163,18 @@ module.exports = function (grunt) {
         },
 
         clean: {
-            // clean target folder
-            target: {
-                src: '<%= build.target %>'
+            // clean tmp folder
+            tmp: {
+                src: '<%= build.tmp %>'
             },
 
             // clean bower components
             bower: {
-                src: '<%= build.bower %>/**'
+                src: '<%= build.bower %>'
             },
             
             all: {
-                src: ['<%= build.target %>', '<%= build.bower%>/**']
+                src: ['<%= build.tmp%>', '<%= build.bower%>']
             }
         },
 
@@ -201,7 +203,7 @@ module.exports = function (grunt) {
         'concat',
         'cssmin:theme',
         'copy:binaries',
-        'clean:target'
+        'clean:tmp'
     ]);
 
     // install
