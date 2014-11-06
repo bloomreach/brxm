@@ -283,9 +283,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>${maven.plugin.exec.version}</version>
-        <configuration>
-          <workingDirectory>src/main/styling</workingDirectory>
-        </configuration>
         <executions>
           <execution>
             <id>npm-install</id>
@@ -314,16 +311,6 @@
               <commandlineArgs>build</commandlineArgs>
             </configuration>
           </execution>
-          <!--<execution>
-            <id>grunt-test</id>
-            <phase>test</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>grunt</executable>
-              <commandlineArgs>test</commandlineArgs>
-              <skip>${skipTests}</skip>
-            </configuration>
-          </execution>-->
         </executions>
       </plugin>
     </plugins>
@@ -333,12 +320,43 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
+        <artifactId>mavgren-javadoc-plugin</artifactId>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>clean-bower</id>
+      <activation>
+        <file>
+          <exists>node_modules/grunt</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${maven.plugin.exec.version}</version>
+            <executions>
+              <execution>
+                <id>clean-bower</id>
+                <phase>clean</phase>
+                <goals><goal>exec</goal></goals>
+                <configuration>
+                  <executable>grunt</executable>
+                  <commandlineArgs>clean:bower</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

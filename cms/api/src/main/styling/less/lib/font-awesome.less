@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-// Variable overrides
-@import "_variables";
-@import "_mixins";
-
 // Font Awesome variables and mixins
 @import "../../components/font-awesome/less/variables";
 @import "../../components/font-awesome/less/mixins";
 
-@import "../../components/retina.js/src/retina";
+@fa-font-path:   "../fonts/font-awesome";
 
-@import "_legacy";
-@import "_typography";
-@import "_scaffolding";
-@import "_buttons";
+// Variable overrides
+@import "../_variables";
+@import "../_mixins";
 
-@import "_ajax_loader";
-@import "_home_menu";
-@import "_perspectives_switcher";
-@import "_tabs";
-@import "_navigator";
-@import "_tree";
-@import "_footer";
-
-@import "_editor";
+// Font Awesome les files
+@import "../../components/font-awesome/less/path";
+@import "../../components/font-awesome/less/core";
+@import "../../components/font-awesome/less/larger";
+@import "../../components/font-awesome/less/fixed-width";
+@import "../../components/font-awesome/less/list";
+@import "../../components/font-awesome/less/bordered-pulled";
+@import "../../components/font-awesome/less/spinning";
+@import "../../components/font-awesome/less/rotated-flipped";
+@import "../../components/font-awesome/less/stacked";
+@import "../../components/font-awesome/less/icons";

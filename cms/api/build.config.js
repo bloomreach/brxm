@@ -16,12 +16,12 @@
 
 module.exports = {
     target: 'target',
-    source: '.',
-    bower: './components',
+    source: 'src/main/styling',
+    bower: 'src/main/styling/components',
     
     file: 'hippo-cms-theme',
-    src: 'src',
-    dest: '../resources/skin/hippo-cms',
-    cp: '../../../target/classes',
+    src: 'src/main/styling',
+    dest: 'src/main/resources/skin/hippo-cms',
+    cp: 'target/classes',
     tmp: 'target/.tmp'
 };

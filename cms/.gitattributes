@@ -1,5 +1,10 @@
 * text=auto !eol
 /README -text
+api/.bowerrc -text
+api/.csslintrc -text
+api/README.md -text
+api/bower.json -text
+api/package.json -text
 api/pom.xml -text
 api/src/main/appended-resources/META-INF/LICENSE -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DestinationDialog.properties -text
@@ -1114,34 +1119,29 @@ api/src/main/resources/skin/images/transparent2.png -text
 api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
-api/src/main/styling/.bowerrc -text
-api/src/main/styling/.csslintrc -text
-api/src/main/styling/README.md -text
-api/src/main/styling/bower.json -text
-api/src/main/styling/package.json -text
-api/src/main/styling/src/images/footer/background.png -text svneol=unset#image/png
-api/src/main/styling/src/images/logo/hippo-gray.png -text svneol=unset#image/png
-api/src/main/styling/src/images/logo/hippo-gray@2x.png -text svneol=unset#image/png
-api/src/main/styling/src/less/_ajax_loader.less -text
-api/src/main/styling/src/less/_buttons.less -text
-api/src/main/styling/src/less/_editor.less -text
-api/src/main/styling/src/less/_editor_preview.less -text
-api/src/main/styling/src/less/_footer.less -text
-api/src/main/styling/src/less/_home_menu.less -text
-api/src/main/styling/src/less/_legacy.less -text
-api/src/main/styling/src/less/_mixins.less -text
-api/src/main/styling/src/less/_navigator.less -text
-api/src/main/styling/src/less/_perspectives_switcher.less -text
-api/src/main/styling/src/less/_scaffolding.less -text
-api/src/main/styling/src/less/_tabs.less -text
-api/src/main/styling/src/less/_tree.less -text
-api/src/main/styling/src/less/_typography.less -text
-api/src/main/styling/src/less/_variables.less -text
-api/src/main/styling/src/less/lib/font-awesome.less -text
-api/src/main/styling/src/less/lib/open-sans.less -text
-api/src/main/styling/src/less/lib/style-test.less -text
-api/src/main/styling/src/less/lib/wicket.less -text
-api/src/main/styling/src/less/main.less -text
+api/src/main/styling/images/footer/background.png -text svneol=unset#image/png
+api/src/main/styling/images/logo/hippo-gray.png -text svneol=unset#image/png
+api/src/main/styling/images/logo/hippo-gray@2x.png -text svneol=unset#image/png
+api/src/main/styling/less/_ajax_loader.less -text
+api/src/main/styling/less/_buttons.less -text
+api/src/main/styling/less/_editor.less -text
+api/src/main/styling/less/_editor_preview.less -text
+api/src/main/styling/less/_footer.less -text
+api/src/main/styling/less/_home_menu.less -text
+api/src/main/styling/less/_legacy.less -text
+api/src/main/styling/less/_mixins.less -text
+api/src/main/styling/less/_navigator.less -text
+api/src/main/styling/less/_perspectives_switcher.less -text
+api/src/main/styling/less/_scaffolding.less -text
+api/src/main/styling/less/_tabs.less -text
+api/src/main/styling/less/_tree.less -text
+api/src/main/styling/less/_typography.less -text
+api/src/main/styling/less/_variables.less -text
+api/src/main/styling/less/lib/font-awesome.less -text
+api/src/main/styling/less/lib/open-sans.less -text
+api/src/main/styling/less/lib/style-test.less -text
+api/src/main/styling/less/lib/wicket.less -text
+api/src/main/styling/less/main.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
 api/src/test/java/org/hippoecm/frontend/model/TraceMonitorTest.java -text
