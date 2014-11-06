@@ -58,7 +58,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private final static String PENDING_INITIALIZE_ITEMS_QUERY = String.format(
             "SELECT * FROM hipposys:initializeitem " +
-            "WHERE %s = 'pending' ORDER BY %s ASC", HIPPO_STATUS, HIPPO_SEQUENCE);
+            "WHERE %s = 'pending' OR %s = 'reload' ORDER BY %s ASC",
+            HIPPO_STATUS, HIPPO_STATUS, HIPPO_SEQUENCE);
 
     private static final Comparator<Node> initializeItemComparator = new Comparator<Node>() {
         @Override
@@ -92,7 +93,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     @Override
     public List<PostStartupTask> processInitializeItems(Session session) {
         try {
-            final List<Node> initializeItems = getPendingItemNodes(session);
+            final List<Node> initializeItems = getItemNodesToBeExecuted(session);
             return doProcessInitializeItems(session, initializeItems);
         } catch (RepositoryException e) {
             log.error("Failed to load pending initialize items", e);
@@ -165,7 +166,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             markMissingInitializeItems(session, itemNames.keySet());
         }
         markReloadDownstreamItems(session, initializeItems, reloadItems);
-        return getPendingItemNodes(initializeItems);
+        return getItemNodesToBeExecuted(initializeItems);
     }
 
     private List<PostStartupTask> doProcessInitializeItems(final Session session, final List<Node> initializeItems) {
@@ -196,7 +197,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         for (InitializeItem reloadItem : reloadItems) {
             for (InitializeItem downstreamItem : resolveDownstreamItems(reloadItem, initializeItems)) {
                 if (!downstreamItem.isMissing()) {
-                    log.info("Marking item {} pending because downstream from {}", new Object[] { downstreamItem.getName(), reloadItem.getName() });
+                    log.info("Marking item {} pending because downstream from {}", downstreamItem.getName(), reloadItem.getName());
                     downstreamItem.markDownstream(reloadItem);
                 }
             }
@@ -215,17 +216,17 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return downstreamItems;
     }
 
-    private List<Node> getPendingItemNodes(final List<InitializeItem> initializeItems) throws RepositoryException {
+    private List<Node> getItemNodesToBeExecuted(final List<InitializeItem> initializeItems) throws RepositoryException {
         List<Node> pendingItems = new ArrayList<>();
         for (InitializeItem initializeItem : initializeItems) {
-            if (initializeItem.isPending()) {
+            if (initializeItem.isPending() || initializeItem.isReload()) {
                 pendingItems.add(initializeItem.getItemNode());
             }
         }
         return pendingItems;
     }
 
-    private List<Node> getPendingItemNodes(final Session session) throws RepositoryException {
+    private List<Node> getItemNodesToBeExecuted(final Session session) throws RepositoryException {
         final List<Node> initializeItems = new ArrayList<>();
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query getInitializeItems = queryManager.createQuery(PENDING_INITIALIZE_ITEMS_QUERY, Query.SQL);

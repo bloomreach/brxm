@@ -106,12 +106,12 @@ public class EnhancedSystemViewImporter implements Importer {
             final Collection<Name> oldMixins = node.getMixinTypeNames();
             final boolean mixinsChanged = removeMixins(node, oldMixins, newMixins);
             if (mixinsChanged) {
-                changeRecorder.setMixins(node.getIdentifier(), oldMixins);
+                changeRecorder.mixinsSet(node.getIdentifier(), oldMixins);
             }
             final Name oldPrimaryType = node.getPrimaryNodeTypeName();
             if (nodeTypeName != null && !nodeTypeName.equals(oldPrimaryType)) {
                 node.setPrimaryType(nodeTypeName.toString());
-                changeRecorder.setPrimaryType(node.getIdentifier(), oldPrimaryType);
+                changeRecorder.primaryTypeSet(node.getIdentifier(), oldPrimaryType);
             }
         } else {
             node = parent.addNode(nodeName, nodeTypeName, id);
@@ -286,8 +286,8 @@ public class EnhancedSystemViewImporter implements Importer {
             parents.push(null);
             return;
         }
-        if (parent.hasNode(nodeName, index)) {
-            final NodeImpl existing = parent.getNode(nodeName, index);
+        final NodeImpl existing = getExistingNode(parent, nodeInfo);
+        if (existing != null) {
             nodeInfo = resolveMergeConflict(existing, nodeInfo);
             if (nodeInfo == null) {
                 parents.push(null);
@@ -337,6 +337,18 @@ public class EnhancedSystemViewImporter implements Importer {
         }
 
         parents.push(node);
+    }
+
+    private NodeImpl getExistingNode(final NodeImpl parent, final EnhancedNodeInfo nodeInfo) throws RepositoryException {
+        try {
+            if (nodeInfo.getIndex() == -1) {
+                return parent.getNode(nodeInfo.getName());
+            } else {
+                return parent.getNode(nodeInfo.getName(), nodeInfo.getIndex());
+            }
+        } catch (ItemNotFoundException e) {
+            return null;
+        }
     }
 
     /**

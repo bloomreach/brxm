@@ -67,7 +67,7 @@ public class WebResourceBundleInstruction extends InitializeInstruction {
 
         try {
             final PostStartupTask importTask = createImportWebResourceTask(extensionSource, bundlePath, session);
-            if (importTask != null && item.isReloadable()) {
+            if (importTask != null && item.isReload()) {
                 final String bundleName = bundlePath.indexOf('/') == -1 ? bundlePath : bundlePath.substring(bundlePath.lastIndexOf('/') + 1);
                 final String contextNodePath = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName;
                 if (session.nodeExists(contextNodePath)) {

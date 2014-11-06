@@ -260,7 +260,7 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:name attribute of element sv:node"));
             }
-            index = 1;
+            index = -1;
             int offset = svName.indexOf('[');
             if (offset != -1) {
                 index = Integer.valueOf(svName.substring(offset+1, svName.length()-1));

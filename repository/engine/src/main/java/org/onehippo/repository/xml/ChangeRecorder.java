@@ -50,7 +50,6 @@ import static org.onehippo.repository.xml.ResultConstants.MERGENODE;
 import static org.onehippo.repository.xml.ResultConstants.MIXIN;
 import static org.onehippo.repository.xml.ResultConstants.MULTI;
 import static org.onehippo.repository.xml.ResultConstants.NAME;
-import static org.onehippo.repository.xml.ResultConstants.NEW;
 import static org.onehippo.repository.xml.ResultConstants.NEWPROP;
 import static org.onehippo.repository.xml.ResultConstants.PTYPE;
 import static org.onehippo.repository.xml.ResultConstants.RESULT;
@@ -241,12 +240,16 @@ class ChangeRecorder {
         }
     }
 
-    public void setMixins(final String identifier, final Collection<Name> oldMixins) {
+    void mixinsSet(final String identifier, final Collection<Name> oldMixins) {
         merged.get(identifier).mixins = oldMixins;
     }
 
-    public void setPrimaryType(final String identifier, final Name oldPrimaryType) {
+    void primaryTypeSet(final String identifier, final Name oldPrimaryType) {
         merged.get(identifier).primaryType = oldPrimaryType;
+    }
+
+    boolean isMerged() {
+        return !merged.isEmpty();
     }
 
     private final static class NodeInfo {

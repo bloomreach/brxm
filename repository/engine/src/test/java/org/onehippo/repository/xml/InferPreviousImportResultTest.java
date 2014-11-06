@@ -59,7 +59,7 @@ public class InferPreviousImportResultTest extends RepositoryTestCase {
 
     private Document getResultDOM(final ImportResult importResult) throws RepositoryException, SAXException, IOException, ParserConfigurationException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        importResult.exportResult(out);
+        importResult.exportChangeRecord(out);
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 //        System.out.println(out.toString());
         return factory.newDocumentBuilder().parse(new ByteArrayInputStream(out.toByteArray()));

@@ -42,6 +42,8 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
+import org.hippoecm.repository.LocalHippoRepository;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
@@ -199,6 +201,20 @@ public class BootstrapUtils {
             }
         } catch (ParseException e) {
             throw new RepositoryException("Failed to parse cnd " + cndName, e);
+        }
+    }
+
+    public static URL getResource(final Node item, String resourcePath) throws RepositoryException, IOException {
+        if (resourcePath.startsWith("file:")) {
+            return URI.create(resourcePath).toURL();
+        } else {
+            if (item.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
+                URL resource = new URL(item.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
+                resource = new URL(resource, resourcePath);
+                return resource;
+            } else {
+                return LocalHippoRepository.class.getResource(resourcePath);
+            }
         }
     }
 

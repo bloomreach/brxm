@@ -46,6 +46,11 @@ public interface ImportResult {
      * @param out
      * @throws RepositoryException
      */
-    void exportResult(final OutputStream out) throws RepositoryException;
+    void exportChangeRecord(final OutputStream out) throws RepositoryException;
+
+    /**
+     * Whether import was a delta combine or delta overlay.
+     */
+    boolean isMerge();
 
 }

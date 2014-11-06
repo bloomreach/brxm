@@ -138,7 +138,7 @@ public class EnhancedPropInfo extends PropInfo {
         return SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
-    public int mergeLocation(Value[] values) {
+    private int mergeLocation(Value[] values) {
         if (mergeAppend()) {
             return values.length;
         } else if (mergeInsert()) {
@@ -353,9 +353,13 @@ public class EnhancedPropInfo extends PropInfo {
         if (node.hasProperty(getName())) {
             final PropertyImpl existing = node.getProperty(getName());
             if (mergeOverride()) {
-                log.debug("Can't determine change that was made to property {}: old value(s) were overridden", existing.safeGetJCRPath());
+                throw new ChangeRecordingLimitationException(
+                        String.format("Can't determine change that was made to property %s: old value(s) were overridden",
+                                existing.safeGetJCRPath()));
             } else if (mergeSkip()) {
-                log.debug("Can't determine change that was made to property {}: whether skipped or not", existing.safeGetJCRPath());
+                throw new ChangeRecordingLimitationException(
+                        String.format("Can't determine change that was made to property %s: whether skipped or not",
+                                existing.safeGetJCRPath()));
             } else if (mergeCombine()) {
                 final Value[] oldValues = calculateOldValues(existing);
                 changeRecorder.propertySet(node.getIdentifier(), getName(), oldValues, existing.isMultiple(), existing.getType());
@@ -363,6 +367,7 @@ public class EnhancedPropInfo extends PropInfo {
                 changeRecorder.propertySet(node.getIdentifier(), getName(), null, false, -1);
             }
         } else {
+            // unexpected but doesn't invalidate the change record
             log.debug("Expected to find property {}/{} but didn't", node.safeGetJCRPath(), getName());
         }
     }

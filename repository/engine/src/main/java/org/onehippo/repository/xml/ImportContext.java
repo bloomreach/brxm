@@ -135,8 +135,13 @@ public class ImportContext {
         }
 
         @Override
-        public void exportResult(final OutputStream out) throws RepositoryException {
+        public void exportChangeRecord(final OutputStream out) throws RepositoryException {
             changeRecorder.exportResult(out);
+        }
+
+        @Override
+        public boolean isMerge() {
+            return changeRecorder.isMerged();
         }
     }
 }

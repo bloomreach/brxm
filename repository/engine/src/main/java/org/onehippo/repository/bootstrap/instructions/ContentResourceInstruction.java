@@ -15,6 +15,8 @@
  */
 package org.onehippo.repository.bootstrap.instructions;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,11 +44,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ClosedInputStream;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.bootstrap.InitializeInstruction;
 import org.onehippo.repository.bootstrap.InitializeItem;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.onehippo.repository.bootstrap.util.PartialSystemViewFilter;
 import org.onehippo.repository.xml.DefaultContentHandler;
+import org.onehippo.repository.xml.ImportResult;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -85,20 +89,26 @@ public class ContentResourceInstruction extends InitializeInstruction {
         if (contentRoot.equals(INIT_FOLDER_PATH) || contentRoot.startsWith(INIT_FOLDER_PATH + "/")) {
             throw new RepositoryException(String.format("Bootstrapping content to %s is not supported", INIT_FOLDER_PATH));
         }
-
-        if (item.isReloadable()) {
-            final String contextNodePath = item.getContextPath();
-            if (contextNodePath != null ) {
-                final int index = getNodeIndex(session, contextNodePath);
-                if (session.nodeExists(contextNodePath)) {
-                    removeNode(session, contextNodePath, false);
-                }
-                initializeNodecontent(session, contentRoot, contentURL, pckg);
-                if (index != -1) {
-                    reorderNode(session, contextNodePath, index);
-                }
+        ImportResult importResult = null;
+        if (item.isReload()) {
+            final String changeRecord = item.getChangeRecord();
+            if (changeRecord != null) {
+                undoChanges(changeRecord);
+                importResult = initializeNodecontent(session, contentRoot, contentURL, pckg);
             } else {
-                throw new RepositoryException("Cannot reload item because context node could not be determined");
+                final String contextNodePath = item.getContextPath();
+                if (contextNodePath != null ) {
+                    final int index = getNodeIndex(session, contextNodePath);
+                    if (session.nodeExists(contextNodePath)) {
+                        removeNode(session, contextNodePath, false);
+                    }
+                    importResult = initializeNodecontent(session, contentRoot, contentURL, pckg);
+                    if (index != -1) {
+                        reorderNode(session, contextNodePath, index);
+                    }
+                } else {
+                    throw new RepositoryException("Cannot reload item because context node could not be determined");
+                }
             }
         } else {
             InputStream in = null;
@@ -116,19 +126,33 @@ public class ContentResourceInstruction extends InitializeInstruction {
                             contentRoot = upstreamItemContentRoot;
                             in = getPartialContentInputStream(in, contextRelPath);
                         }
-                        initializeNodecontent(session, contentRoot, in, contentURL, pckg);
+                        importResult = initializeNodecontent(session, contentRoot, in, contentURL, pckg);
                         IOUtils.closeQuietly(in);
                     }
                 } else {
-                    initializeNodecontent(session, contentRoot, contentURL, pckg);
+                    importResult = initializeNodecontent(session, contentRoot, contentURL, pckg);
                 }
             } catch (IOException e) {
-                throw new RepositoryException("Failed to open content stream of item " + item.getName());
+                throw new RepositoryException("Failed to open content stream");
             } finally {
                 IOUtils.closeQuietly(in);
             }
         }
+        if (importResult != null && importResult.isMerge()) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            importResult.exportChangeRecord(out);
+            item.setChangeRecord(out.toString());
+        }
         return null;
+    }
+
+    private void undoChanges(final String changeRecord) throws RepositoryException {
+        final HippoSession session = (HippoSession) this.session;
+        try {
+            session.revertImport(new ByteArrayInputStream(changeRecord.getBytes()));
+        } catch (IOException e) {
+            throw new RepositoryException("Failed to undo changes to item: " + e.toString(), e);
+        }
     }
 
     InputStream getPartialContentInputStream(InputStream in, final String contextRelPath) throws IOException, RepositoryException {

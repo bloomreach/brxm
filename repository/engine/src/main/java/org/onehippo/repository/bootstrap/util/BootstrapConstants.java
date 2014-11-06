@@ -38,6 +38,7 @@ public class BootstrapConstants {
     public static final String ITEM_STATUS_MISSING = "missing";
     public static final String ITEM_STATUS_FAILED = "failed";
     public static final String ITEM_STATUS_PENDING = "pending";
+    public static final String ITEM_STATUS_RELOAD = "reload";
 
     public static final String ERROR_MESSAGE_RELOAD_DISABLED = "Reload requested but not enabled";
 }

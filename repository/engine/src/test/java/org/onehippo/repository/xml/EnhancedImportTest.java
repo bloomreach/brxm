@@ -41,7 +41,6 @@ import org.onehippo.cms7.jcrdiff.match.MatcherItemInfo;
 import org.onehippo.cms7.jcrdiff.match.PatchFactory;
 import org.onehippo.cms7.jcrdiff.serialization.PatchWriter;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-import org.onehippo.repository.xml.ImportResult;
 
 import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
 import static org.hippoecm.repository.api.ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
@@ -101,7 +100,7 @@ public class EnhancedImportTest extends RepositoryTestCase {
 
     private void reverseImport(final ImportResult importResult) throws RepositoryException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        importResult.exportResult(out);
+        importResult.exportChangeRecord(out);
         final byte[] buf = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
         ((HippoSession) session).revertImport(in);

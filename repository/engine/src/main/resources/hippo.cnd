@@ -130,7 +130,7 @@
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
 - hippo:reloadonstartup (boolean)
-- hippo:status (string) < 'pending', 'done', 'disabled', 'missing', 'failed'
+- hippo:status (string) < 'pending', 'reload', 'done', 'disabled', 'missing', 'failed'
 - hippo:errormessage (string)
 - hippo:contextnodename (string) // deprecated, replaced by hippo:contextpaths
 - hippo:contextpaths (string) multiple
@@ -138,6 +138,7 @@
 - hippo:version (string)
 - hippo:timestamp (long)
 - hippo:webresourcebundle (string)
+- hippo:changerecord (string)
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time

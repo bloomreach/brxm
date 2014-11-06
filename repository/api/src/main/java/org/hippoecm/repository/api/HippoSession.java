@@ -225,7 +225,7 @@ public interface HippoSession extends Session {
 
     /**
      * Undo the changes of a previous import by providing the undo descriptor that
-     * was obtained from {@link org.onehippo.repository.xml.ImportResult#exportResult(java.io.OutputStream)}.
+     * was obtained from {@link org.onehippo.repository.xml.ImportResult#exportChangeRecord(java.io.OutputStream)}.
      *
      * @param in the input stream from which to read the undo descriptor
      * @throws IOException

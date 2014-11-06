@@ -67,6 +67,7 @@ import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.onehippo.repository.xml.ChangeRecordingImporter;
+import org.onehippo.repository.xml.ChangeRecordingShortCircuitException;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.DefaultContentHandler;
 import org.onehippo.repository.xml.DereferencedSysViewSAXEventGenerator;
@@ -78,7 +79,6 @@ import org.onehippo.repository.xml.PhysicalSysViewSAXEventGenerator;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ImportContext;
-import org.onehippo.repository.xml.ResultRecordingShortCircuitException;
 import org.onehippo.repository.xml.RevertImportHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,7 +227,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         try {
             postMountEnabled(false);
             getInternalHippoSession().importEnhancedSystemViewXML(importContext);
-        } catch (ResultRecordingShortCircuitException ignore) {
+        } catch (ChangeRecordingShortCircuitException ignore) {
         } finally {
             postMountEnabled(true);
         }

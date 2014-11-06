@@ -30,7 +30,6 @@ class ResultConstants {
     static final String NAME = "name";
     static final String TYPE = "type";
     static final String ID = "id";
-    static final String NEW = "new";
     static final String MULTI = "multi";
 
 }

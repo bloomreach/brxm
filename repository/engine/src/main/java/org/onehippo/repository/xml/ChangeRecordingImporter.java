@@ -19,6 +19,7 @@ package org.onehippo.repository.xml;
 import java.util.List;
 import java.util.Stack;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeImpl;
@@ -57,30 +58,51 @@ public class ChangeRecordingImporter implements Importer {
             return;
         }
 
-        if (parent.hasNode(nodeInfo.getName(), nodeInfo.getIndex())) {
-            final NodeImpl existingNode = parent.getNode(nodeInfo.getName(), nodeInfo.getIndex());
-            if (!isMerge(nodeInfo)) {
+        final NodeImpl existingNode = getExistingNode(parent, nodeInfo);
+        if (existingNode != null) {
+            if (hasSameNameSiblings(existingNode)) {
+                throw new ChangeRecordingLimitationException(
+                        String.format("Can't determine change to node %s: same name sibling",
+                                existingNode.safeGetJCRPath()));
+            } else if (!isMerge(nodeInfo)) {
                 if (nodeInfo.mergeSkip()) {
-                    log.debug("Can't determine change to node {}: whether skipped or not", existingNode.safeGetJCRPath());
+                    throw new ChangeRecordingLimitationException(
+                            String.format("Can't determine change to node %s: whether skipped or not",
+                                    existingNode.safeGetJCRPath()));
                 } else {
                     changeRecorder.nodeAdded(existingNode);
                 }
                 if (parent.isSame(importTargetNode)) {
-                    throw new ResultRecordingShortCircuitException();
+                    throw new ChangeRecordingShortCircuitException();
                 }
                 parents.push(null);
             } else {
                 changeRecorder.nodeMerged(existingNode);
                 for (PropInfo propInfo : propInfos) {
-                    if (existingNode.hasProperty(propInfo.getName())) {
-                        ((EnhancedPropInfo) propInfo).record(existingNode);
-                    }
+                    ((EnhancedPropInfo) propInfo).record(existingNode);
                 }
                 parents.push(existingNode);
             }
         } else {
+            // unexpected but doesn't invalidate the change record
             log.debug("Expected to find node {}/{}[{}] but didn't", parent.safeGetJCRPath(), nodeInfo.getName(), nodeInfo.getIndex());
             parents.push(null);
+        }
+    }
+
+    private boolean hasSameNameSiblings(final NodeImpl existingNode) throws RepositoryException {
+        return existingNode.getParent().getNodes(existingNode.getName()).getSize() > 1;
+    }
+
+    private NodeImpl getExistingNode(final NodeImpl parent, final EnhancedNodeInfo nodeInfo) throws RepositoryException {
+        try {
+            if (nodeInfo.getIndex() == -1) {
+                return parent.getNode(nodeInfo.getName());
+            } else {
+                return parent.getNode(nodeInfo.getName(), nodeInfo.getIndex());
+            }
+        } catch (ItemNotFoundException e) {
+            return null;
         }
     }
 

@@ -16,4 +16,4 @@
 
 package org.onehippo.repository.xml;
 
-public class ResultRecordingShortCircuitException extends RuntimeException {}
+public class ChangeRecordingShortCircuitException extends RuntimeException {}

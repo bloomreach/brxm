@@ -33,8 +33,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.hippoecm.repository.LocalHippoRepository;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -43,6 +41,7 @@ import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
 import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NODE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
+import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getResource;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.COMBINE;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.ESV_URI;
 import static org.onehippo.repository.xml.EnhancedSystemViewConstants.MERGE;
@@ -56,6 +55,10 @@ public class ContentFileInfo {
     private ContentFileInfo(final List<String> contextPaths, final String deltaDirective) {
         this.contextPaths = contextPaths;
         this.deltaDirective = deltaDirective;
+    }
+
+    public boolean isMerge() {
+        return "combine".equals(deltaDirective) || "overlay".equals(deltaDirective);
     }
 
     public static ContentFileInfo readInfo(final Node item) throws RepositoryException {
@@ -85,19 +88,6 @@ public class ContentFileInfo {
         return contentFileInfoReader.getContentFileInfo();
     }
 
-    private static URL getResource(final Node item, String resourcePath) throws RepositoryException, IOException {
-        if (resourcePath.startsWith("file:")) {
-            return URI.create(resourcePath).toURL();
-        } else {
-            if (item.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
-                URL resource = new URL(item.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
-                resource = new URL(resource, resourcePath);
-                return resource;
-            } else {
-                return LocalHippoRepository.class.getResource(resourcePath);
-            }
-        }
-    }
     private static class ContentFileInfoReader extends DefaultHandler {
 
         private final Stack<String> path = new Stack<>();
