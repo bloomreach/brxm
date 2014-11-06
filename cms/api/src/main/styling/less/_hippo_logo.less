@@ -14,49 +14,16 @@
  * limitations under the License.
  */
 
-.hippo-home-menu {
+.hippo-logo {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: @home-menu-width;
-  height: @home-menu-height;
+  width: @hippo-logo-width;
+  height: @hippo-logo-height;
 
   //align logo in center horizontally with 12 px between window.bottom and hippo-feet
-  .at2x("@{images_path}/logo/hippo-gray.png", 36px, 36px);
+  .at2x("@{images_path}/logo/hippo-logo.png", 36px, 36px);
   background-repeat: no-repeat;
-  background-position: 50% -1px;
-  background-color: @home-menu-bgcolor;
-
-  .hippo-menu {
-    display: none;
-    background: none repeat scroll 0 0 #fff;
-    border-radius: 4px;
-    bottom: 20px;
-    left: 48px;
-    position: absolute;
-    width: 180px;
-    text-align: left;
-    padding: 4px;
-    color: @text-color;
-    box-shadow: 10px 10px 5px #888888;
-    
-    li {
-      padding: 4px;
-    }
-
-    .hippo-menu-username {
-      margin-bottom: 8px;
-    }
-  }
+  background-position: 50% 0;
+  background-color: @hippo-logo-bgcolor;
 }
-
-/* AutoExport states */
-/* ================= */
-.auto-export-state-disabled {
-  color: #ff3f4b;
-}
-
-.auto-export-state-enabled {
-  color: #7fff1d;
-}
-

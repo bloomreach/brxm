@@ -1120,14 +1120,14 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
 api/src/main/styling/images/footer/background.png -text svneol=unset#image/png
-api/src/main/styling/images/logo/hippo-gray.png -text svneol=unset#image/png
-api/src/main/styling/images/logo/hippo-gray@2x.png -text svneol=unset#image/png
+api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
+api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_ajax_loader.less -text
 api/src/main/styling/less/_buttons.less -text
 api/src/main/styling/less/_editor.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_footer.less -text
-api/src/main/styling/less/_home_menu.less -text
+api/src/main/styling/less/_hippo_logo.less -text
 api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_navigator.less -text
