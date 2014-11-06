@@ -66,16 +66,16 @@
 + hipposys:types (hipposys:types) = hipposys:types // deprecated
 + hipposys:config (nt:unstructured) = nt:unstructured
 
-[hipposys:workflowevent] > hipposys:workflow
+[hipposys:workflowevent] > hipposys:workflow // deprecated
 
-[hipposys:workflowsimplequeryevent] > hipposys:workflowevent
+[hipposys:workflowsimplequeryevent] > hipposys:workflowevent // deprecated
 - hipposys:eventconditionoperator (string) mandatory
 - hipposys:eventdocument (path)
 + hipposys:eventprecondition (nt:query)
 + hipposys:eventpostcondition (nt:query)
 + hipposys:eventdocument (nt:query)
 
-[hipposys:workflowboundmethodevent] > hipposys:workflowevent
+[hipposys:workflowboundmethodevent] > hipposys:workflowevent // deprecated
 - hipposys:eventconditioncategory (string)
 - hipposys:eventconditionmethod (string)
 - hipposys:eventdocument (path)
