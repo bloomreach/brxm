@@ -66,9 +66,9 @@ import javax.transaction.xa.XAResource;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.impl.NodeDecorator;
-import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.ImportResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -559,11 +559,6 @@ final public class UpdaterSession implements HippoSession {
 
     @Override
     public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void revertImport(final InputStream in) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

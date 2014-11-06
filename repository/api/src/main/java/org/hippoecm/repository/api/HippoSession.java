@@ -222,17 +222,6 @@ public interface HippoSession extends Session {
                                                     ContentResourceLoader referredResourceLoader)
             throws IOException, RepositoryException;
 
-
-    /**
-     * Undo the changes of a previous import by providing the undo descriptor that
-     * was obtained from {@link org.onehippo.repository.xml.ImportResult#exportChangeRecord(java.io.OutputStream)}.
-     *
-     * @param in the input stream from which to read the undo descriptor
-     * @throws IOException
-     * @throws RepositoryException
-     */
-    public void revertImport(InputStream in) throws IOException, RepositoryException;
-
     public File exportEnhancedSystemViewPackage(String parentAbsPath, boolean recurse)
             throws IOException, RepositoryException;
 

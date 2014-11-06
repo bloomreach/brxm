@@ -60,7 +60,6 @@ public class EnhancedSystemViewImporter implements Importer {
     private final String importPath;
     private final NamePathResolver resolver;
     private final ImportContext importContext;
-    private ChangeRecorder changeRecorder;
     private boolean isRootReferenceable;
     private long startTime;
 
@@ -94,28 +93,22 @@ public class EnhancedSystemViewImporter implements Importer {
     protected NodeImpl mergeOrCreateNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, EnhancedNodeInfo nodeInfo)
             throws RepositoryException {
         NodeImpl node;
-        Collection<Name> newMixins = mixinNames != null ? new ArrayList<>(Arrays.asList(mixinNames)) : Collections.<Name>emptyList();
         if (nodeInfo.mergeCombine()) {
             node = nodeInfo.getOrigin();
             importContext.addContextPath(node.safeGetJCRPath());
-            changeRecorder.nodeMerged(node);
         } else if (nodeInfo.mergeOverlay()) {
             node = nodeInfo.getOrigin();
             importContext.addContextPath(node.safeGetJCRPath());
-            changeRecorder.nodeMerged(node);
             final Collection<Name> oldMixins = node.getMixinTypeNames();
-            final boolean mixinsChanged = removeMixins(node, oldMixins, newMixins);
-            if (mixinsChanged) {
-                changeRecorder.mixinsSet(node.getIdentifier(), oldMixins);
-            }
+            final Collection<Name> newMixins = mixinNames != null ?
+                    new ArrayList<>(Arrays.asList(mixinNames)) : Collections.<Name>emptyList();
+            removeMixins(node, oldMixins, newMixins);
             final Name oldPrimaryType = node.getPrimaryNodeTypeName();
             if (nodeTypeName != null && !nodeTypeName.equals(oldPrimaryType)) {
                 node.setPrimaryType(nodeTypeName.toString());
-                changeRecorder.primaryTypeSet(node.getIdentifier(), oldPrimaryType);
             }
         } else {
             node = parent.addNode(nodeName, nodeTypeName, id);
-            changeRecorder.nodeAdded(node);
             if (importPath.equals(parent.safeGetJCRPath())) {
                 importContext.addContextPath(node.safeGetJCRPath());
             }
@@ -266,7 +259,6 @@ public class EnhancedSystemViewImporter implements Importer {
 
     public void start() throws RepositoryException {
         startTime = System.currentTimeMillis();
-        changeRecorder = importContext.getChangeRecorder();
     }
 
     public void startNode(NodeInfo info, List propInfos) throws RepositoryException {

@@ -15,8 +15,6 @@
  */
 package org.onehippo.repository.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
@@ -26,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -85,25 +82,6 @@ public class EnhancedImportTest extends RepositoryTestCase {
         }
         importXML("/compare", name + "-result.xml");
         assertTrue(compare(session.getNode("/test"), session.getNode("/compare/test")));
-        // reverse
-        clearNode("/compare/test");
-        importXML("/compare/test", name + "-fixture.xml");
-        reverseImport(importResult);
-        assertTrue(compare(session.getNode("/test"), session.getNode("/compare/test")));
-    }
-
-    private void clearNode(final String absPath) throws RepositoryException {
-        for (Node node : new NodeIterable(session.getNode(absPath).getNodes())) {
-            node.remove();
-        }
-    }
-
-    private void reverseImport(final ImportResult importResult) throws RepositoryException, IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        importResult.exportChangeRecord(out);
-        final byte[] buf = out.toByteArray();
-        ByteArrayInputStream in = new ByteArrayInputStream(buf);
-        ((HippoSession) session).revertImport(in);
     }
 
     private ImportResult importXML(final String path, final String resource) throws Exception {

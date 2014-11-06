@@ -66,20 +66,15 @@ import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.onehippo.repository.xml.ChangeRecordingImporter;
-import org.onehippo.repository.xml.ChangeRecordingShortCircuitException;
-import org.onehippo.repository.xml.ContentResourceLoader;
-import org.onehippo.repository.xml.DefaultContentHandler;
-import org.onehippo.repository.xml.DereferencedSysViewSAXEventGenerator;
-import org.onehippo.repository.xml.EnhancedSystemViewImporter;
-import org.onehippo.repository.xml.EnhancedSystemViewPackage;
-import org.onehippo.repository.xml.HippoDocumentViewExporter;
-import org.onehippo.repository.xml.ImportResult;
-import org.onehippo.repository.xml.PhysicalSysViewSAXEventGenerator;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ContentResourceLoader;
+import org.onehippo.repository.xml.DereferencedSysViewSAXEventGenerator;
+import org.onehippo.repository.xml.EnhancedSystemViewPackage;
+import org.onehippo.repository.xml.HippoDocumentViewExporter;
 import org.onehippo.repository.xml.ImportContext;
-import org.onehippo.repository.xml.RevertImportHandler;
+import org.onehippo.repository.xml.ImportResult;
+import org.onehippo.repository.xml.PhysicalSysViewSAXEventGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -205,7 +200,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                                                     final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
         try {
             ImportContext importContext = new ImportContext(parentAbsPath, in, uuidBehavior, referenceBehavior,
-                    referredResourceLoader, getInternalHippoSession(), EnhancedSystemViewImporter.class);
+                    referredResourceLoader, getInternalHippoSession());
             postMountEnabled(false);
             getInternalHippoSession().importEnhancedSystemViewXML(importContext);
             derivedEngine.save();
@@ -213,25 +208,6 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         } finally {
             postMountEnabled(true);
         }
-    }
-
-    @Override
-    public void revertImport(final InputStream in) throws IOException, RepositoryException {
-        new DefaultContentHandler(new RevertImportHandler(getInternalHippoSession())).parse(in);
-    }
-
-    public ImportResult inferPreviousImportResult(final String parentAbsPath, final InputStream in)
-            throws IOException, RepositoryException {
-        final ImportContext importContext = new ImportContext(parentAbsPath, in, -1, -1, null,
-                getInternalHippoSession(), ChangeRecordingImporter.class);
-        try {
-            postMountEnabled(false);
-            getInternalHippoSession().importEnhancedSystemViewXML(importContext);
-        } catch (ChangeRecordingShortCircuitException ignore) {
-        } finally {
-            postMountEnabled(true);
-        }
-        return importContext.getImportResult();
     }
 
     @Override

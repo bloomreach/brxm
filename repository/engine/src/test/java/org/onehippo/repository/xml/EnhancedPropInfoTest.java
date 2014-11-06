@@ -27,51 +27,6 @@ import static org.junit.Assert.assertEquals;
 public class EnhancedPropInfoTest {
 
     @Test
-    public void testCalculateOldValuesFromAppend() throws Exception {
-        final MockNode root = MockNode.root();
-        root.setProperty("test", new String[] { "0", "1", "2" });
-
-        EnhancedPropInfo appendPropInfo = new EnhancedPropInfo(new TextValue[1], "append", null, true);
-        Value[] oldValues = appendPropInfo.calculateOldValues(root.getProperty("test"));
-
-        assertEquals(2, oldValues.length);
-        assertEquals("0", oldValues[0].getString());
-        assertEquals("1", oldValues[1].getString());
-
-        appendPropInfo = new EnhancedPropInfo(new TextValue[3], "append", null, true);
-        oldValues = appendPropInfo.calculateOldValues(root.getProperty("test"));
-        assertEquals(0, oldValues.length);
-    }
-
-    @Test
-    public void testCalculateOldValuesFromInsert() throws Exception {
-        final MockNode root = MockNode.root();
-        root.setProperty("test", new String[] { "0", "1", "2" });
-
-        EnhancedPropInfo insertPropInfo = new EnhancedPropInfo(new TextValue[1], "insert", "1", true);
-        Value[] oldValues = insertPropInfo.calculateOldValues(root.getProperty("test"));
-        assertEquals(2, oldValues.length);
-        assertEquals("0", oldValues[0].getString());
-        assertEquals("2", oldValues[1].getString());
-
-        insertPropInfo = new EnhancedPropInfo(new TextValue[1], "insert", "0", true);
-        oldValues = insertPropInfo.calculateOldValues(root.getProperty("test"));
-        assertEquals(2, oldValues.length);
-        assertEquals("1", oldValues[0].getString());
-        assertEquals("2", oldValues[1].getString());
-
-        insertPropInfo = new EnhancedPropInfo(new TextValue[1], "insert", "2", true);
-        oldValues = insertPropInfo.calculateOldValues(root.getProperty("test"));
-        assertEquals(2, oldValues.length);
-        assertEquals("0", oldValues[0].getString());
-        assertEquals("1", oldValues[1].getString());
-
-        insertPropInfo = new EnhancedPropInfo(new TextValue[1], "insert", "3", true);
-        oldValues = insertPropInfo.calculateOldValues(root.getProperty("test"));
-        assertEquals(3, oldValues.length);
-    }
-
-    @Test
     public void testNewValuesFromAppend() throws Exception {
         final MockNode root = MockNode.root();
         root.setProperty("test", new String[] { "0" });

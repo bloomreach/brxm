@@ -16,9 +16,6 @@
 package org.onehippo.repository.xml;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +26,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
@@ -42,24 +38,19 @@ public class ImportContext {
     private final int referenceBehaviour;
     private final ContentResourceLoader contentResourceLoader;
     private final Collection<String> contextPaths = new ArrayList<>();
-    private final ChangeRecorder changeRecorder;
     private final InternalHippoSession session;
-    private final Class<? extends Importer> importerClass;
     private Node baseNode;
 
     public ImportContext(final String parentAbsPath, final InputStream inputStream,
                          final int uuidBehaviour, final int referenceBehaviour,
                          final ContentResourceLoader contentResourceLoader,
-                         final InternalHippoSession session,
-                         final Class<? extends Importer> importerClass) throws RepositoryException {
+                         final InternalHippoSession session) throws RepositoryException {
         this.parentAbsPath = parentAbsPath;
         this.inputStream = inputStream;
         this.uuidBehaviour = uuidBehaviour;
         this.referenceBehaviour = referenceBehaviour;
         this.contentResourceLoader = contentResourceLoader;
-        this.changeRecorder = new ChangeRecorder(session);
         this.session = session;
-        this.importerClass = importerClass;
     }
 
     public String getParentAbsPath() {
@@ -94,10 +85,6 @@ public class ImportContext {
         contextPaths.add(contextPath);
     }
 
-    ChangeRecorder getChangeRecorder() {
-        return changeRecorder;
-    }
-
     public NodeImpl getImportTargetNode() throws RepositoryException {
         try {
             Path p = session.getQPath(parentAbsPath).getNormalizedPath();
@@ -113,15 +100,6 @@ public class ImportContext {
         }
     }
 
-    Importer createImporter() throws RepositoryException {
-        try {
-            final Constructor<? extends Importer> constructor = importerClass.getConstructor(NodeImpl.class, ImportContext.class, InternalHippoSession.class);
-            return constructor.newInstance(getImportTargetNode(), this, session);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RepositoryException(e);
-        }
-    }
-
     private class ImportResultImpl implements ImportResult {
 
         @Override
@@ -134,14 +112,5 @@ public class ImportContext {
             return baseNode;
         }
 
-        @Override
-        public void exportChangeRecord(final OutputStream out) throws RepositoryException {
-            changeRecorder.exportResult(out);
-        }
-
-        @Override
-        public boolean isMerge() {
-            return changeRecorder.isMerged();
-        }
     }
 }

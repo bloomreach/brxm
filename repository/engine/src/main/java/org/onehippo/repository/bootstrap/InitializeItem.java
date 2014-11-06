@@ -15,9 +15,6 @@
  */
 package org.onehippo.repository.bootstrap;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -28,19 +25,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.repository.bootstrap.instructions.ContentDeleteInstruction;
@@ -54,14 +47,9 @@ import org.onehippo.repository.bootstrap.instructions.NodeTypesInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesResourceInstruction;
 import org.onehippo.repository.bootstrap.instructions.WebResourceBundleInstruction;
 import org.onehippo.repository.bootstrap.util.ContentFileInfo;
-import org.onehippo.repository.xml.ChangeRecordingLimitationException;
-import org.onehippo.repository.xml.ImportResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import static org.apache.commons.lang.StringUtils.trim;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CHANGERECORD;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DELTADIRECTIVE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
@@ -92,7 +80,6 @@ import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STA
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_RELOAD;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.SYSTEM_RELOAD_PROPERTY;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
-import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getResource;
 
 public class InitializeItem {
 
@@ -130,7 +117,6 @@ public class InitializeItem {
     private Node tempItemNode;
     private Extension extension;
     private List<InitializeInstruction> instructions;
-    private String[] reloadPaths;
 
     public InitializeItem(final Node itemNode) {
         this.itemNode = itemNode;
@@ -256,47 +242,11 @@ public class InitializeItem {
     }
 
     private String[] getContextPaths() throws RepositoryException {
-        return JcrUtils.getMultipleStringProperty(itemNode, HIPPO_CONTEXTPATHS, new String[] {});
+        return JcrUtils.getMultipleStringProperty(itemNode, HIPPO_CONTEXTPATHS, null);
     }
 
-    public String getChangeRecord() throws RepositoryException {
-        return JcrUtils.getStringProperty(itemNode, HIPPO_CHANGERECORD, null);
-    }
-
-    private String[] getReloadPaths() throws RepositoryException {
-        if (reloadPaths != null) {
-            return reloadPaths;
-        }
-        final String changeRecord = getChangeRecord();
-        if (changeRecord != null) {
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            final ByteArrayInputStream in = new ByteArrayInputStream(changeRecord.getBytes());
-            final List<String> reloadPaths = new ArrayList<>();
-            try {
-                final Document document = factory.newDocumentBuilder().parse(in);
-                final NodeList newnodes = document.getElementsByTagName("newnode");
-                final Session session = itemNode.getSession();
-                for (int i = 0; i < newnodes.getLength(); i++) {
-                    final String newNodeId = newnodes.item(i).getAttributes().getNamedItem("id").getNodeValue();
-                    try {
-                        reloadPaths.add(session.getNodeByIdentifier(newNodeId).getPath());
-                    } catch (ItemNotFoundException e) {
-                        log.info("Change record of item {} contains node no longer in repository", getName());
-                    }
-                }
-            } catch (SAXException | IOException | ParserConfigurationException e) {
-                log.error("Could not parse change record of item {}", getName(), e);
-            }
-            this.reloadPaths = reloadPaths.toArray(new String[reloadPaths.size()]);
-        } else {
-            final String contextPath = getContextPath();
-            if (contextPath != null) {
-                this.reloadPaths = new String[] { contextPath };
-            } else {
-                this.reloadPaths = new String[] {};
-            }
-        }
-        return reloadPaths;
+    public boolean isReloadable() throws RepositoryException {
+        return isReloadOnStartup(itemNode) && !isDeltaMerge();
     }
 
     public Collection<InitializeItem> getUpstreamItems() throws RepositoryException {
@@ -349,11 +299,19 @@ public class InitializeItem {
     }
 
     private boolean isDone() throws RepositoryException {
-        return ITEM_STATUS_DONE.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
+        return isStatus(ITEM_STATUS_DONE);
     }
 
-    public boolean isReload() throws RepositoryException {
-        return ITEM_STATUS_RELOAD.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
+    boolean isMissing() throws RepositoryException {
+        return isStatus(ITEM_STATUS_MISSING);
+    }
+
+    boolean isReload() throws RepositoryException {
+        return isStatus(ITEM_STATUS_RELOAD);
+    }
+
+    private boolean isStatus(final String status) throws RepositoryException {
+        return status.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
     }
 
     private void clearUpstreamItems() throws RepositoryException {
@@ -404,25 +362,25 @@ public class InitializeItem {
         itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
 
         if (itemNode != null && isReloadRequested()) {
-            if (isReloadEnabled() || isNodetypesResource()) {
-                itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_RELOAD);
-                log.info("Existing item {} to be reloaded", tempItemNode.getName());
+            if (isDeltaMerge()) {
+                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", getName());
             } else {
-                log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
-                itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
-                itemNode.setProperty(HIPPO_ERRORMESSAGE, ERROR_MESSAGE_RELOAD_DISABLED);
+                if (isReloadEnabled() || isNodetypesResource()) {
+                    itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_RELOAD);
+                } else {
+                    log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
+                    itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
+                    itemNode.setProperty(HIPPO_ERRORMESSAGE, ERROR_MESSAGE_RELOAD_DISABLED);
+                }
             }
         }
 
-        boolean isNew = false;
         if (itemNode == null) {
-            isNew = true;
-            log.info("New item {} to be loaded", tempItemNode.getName());
+            log.info("Item {} set to status pending", tempItemNode.getName());
             itemNode = initializationFolder.addNode(tempItemNode.getName(), NT_INITIALIZEITEM);
             itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_PENDING);
         }
 
-        // set/update properties
         itemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, extension.getExtensionSource().toString());
         if (extension.getModuleVersion() != null) {
             itemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, extension.getModuleVersion());
@@ -435,44 +393,12 @@ public class InitializeItem {
         final ContentFileInfo info = itemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? ContentFileInfo.readInfo(itemNode) : null;
         if (info != null) {
             itemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
-            if (!isNew && info.isMerge() && !itemNode.hasProperty(HIPPO_CHANGERECORD)) {
-                log.info("Inferring change record of item {}", getName());
-                final String changeRecord = inferChangeRecord();
-                if (changeRecord != null) {
-                    itemNode.setProperty(HIPPO_CHANGERECORD, changeRecord);
-                } else {
-                    if (isReload()) {
-                        final String msg = String.format("Cannot reload item %s: inferring change record failed", getName());
-                        log.warn(msg);
-                        itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
-                        itemNode.setProperty(HIPPO_ERRORMESSAGE, msg);
-                    }
-                }
-            }
+            itemNode.setProperty(HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
         }
 
         final String status = JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null);
         if (ITEM_STATUS_MISSING.equals(status)) {
             itemNode.getProperty(HIPPO_STATUS).remove();
-        }
-    }
-
-    private String inferChangeRecord() throws RepositoryException {
-        try {
-            final SessionDecorator session = (SessionDecorator) itemNode.getSession();
-            final String contentResource = StringUtils.trim(itemNode.getProperty(HIPPO_CONTENTRESOURCE).getString());
-            final String contentRoot = StringUtils.trim(itemNode.getProperty(HIPPO_CONTENTROOT).getString());
-            final URL contentResourceURL = getResource(itemNode, contentResource);
-            final ImportResult importResult = session.inferPreviousImportResult(contentRoot, contentResourceURL.openStream());
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            importResult.exportChangeRecord(out);
-            return out.toString();
-        } catch (IOException e) {
-            log.error("Failed to infer change record for item {}", getName(), e);
-            return null;
-        } catch (ChangeRecordingLimitationException e) {
-            log.info("Failed to infer change record for item {}: {}", getName(), e.getMessage());
-            return null;
         }
     }
 
@@ -530,6 +456,10 @@ public class InitializeItem {
         return JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false);
     }
 
+    private boolean isDeltaMerge() throws RepositoryException {
+        final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(this.itemNode, HIPPOSYS_DELTADIRECTIVE, null));
+        return deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"));
+    }
 
     private List<InitializeInstruction> createInstructions() throws RepositoryException {
         List<InitializeInstruction> instructions = new ArrayList<>();
@@ -588,51 +518,34 @@ public class InitializeItem {
         if (itemNode.isSame(upstreamItem.getItemNode())) {
             return false;
         }
-        final String[] reloadPaths = upstreamItem.getReloadPaths();
-        if (reloadPaths.length == 0) {
+        final String reloadPath = upstreamItem.getContextPath();
+        if (reloadPath == null) {
             return false;
         }
-        if (getContentResource() != null) {
-            for (String contextPath : getContextPaths()) {
-                if (equalsOrStartsWith(contextPath, reloadPaths)) {
-                    return true;
+        final String contentResource = getContentResource();
+        if (contentResource != null) {
+            final String[] contextPaths = getContextPaths();
+            if (contextPaths != null) {
+                for (String contextPath : contextPaths) {
+                    if (contextPath.equals(reloadPath) || contextPath.startsWith(reloadPath + "/")) {
+                        return true;
+                    }
                 }
             }
         }
         if (getContentPropAddProperty() != null || getContentPropSetProperty() != null) {
-            if (startsWith(getContentRoot(), reloadPaths)) {
+            final String contentRoot = getContentRoot();
+            if (contentRoot.startsWith(reloadPath + "/")) {
                 return true;
             }
         }
-        if (equalsOrStartsWith(getContentDeletePath(), reloadPaths)) {
+        final String contentDeletePath = getContentDeletePath();
+        if (contentDeletePath != null && (contentDeletePath.equals(reloadPath) || contentDeletePath.startsWith(reloadPath + "/"))) {
             return true;
         }
-        if (equalsOrStartsWith(getContentPropDeletePath(), reloadPaths)) {
+        final String contentPropDeletePath = getContentPropDeletePath();
+        if (contentPropDeletePath != null && (contentPropDeletePath.equals(reloadPath) || contentPropDeletePath.startsWith(reloadPath + "/"))) {
             return true;
-        }
-        return false;
-    }
-
-    private boolean startsWith(final String contextPath, final String[] reloadPaths) {
-        if (contextPath == null) {
-            return false;
-        }
-        for (String reloadPath : reloadPaths) {
-            if (contextPath.startsWith(reloadPath + "/")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean equalsOrStartsWith(final String contextPath, final String[] reloadPaths) {
-        if (contextPath == null) {
-            return false;
-        }
-        for (String reloadPath : reloadPaths) {
-            if (contextPath.equals(reloadPath) || contextPath.startsWith(reloadPath + "/")) {
-                return true;
-            }
         }
         return false;
     }
@@ -661,13 +574,5 @@ public class InitializeItem {
 
     static void markMissing(final Node itemNode) throws RepositoryException {
         itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_MISSING);
-    }
-
-    public boolean isMissing() throws RepositoryException {
-        return ITEM_STATUS_MISSING.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
-    }
-
-    public void setChangeRecord(final String changeRecord) throws RepositoryException {
-        itemNode.setProperty(HIPPO_CHANGERECORD, changeRecord);
     }
 }

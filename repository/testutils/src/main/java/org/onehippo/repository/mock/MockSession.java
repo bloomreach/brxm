@@ -43,9 +43,9 @@ import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.ImportResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -371,11 +371,6 @@ public class MockSession implements HippoSession {
 
     @Override
     public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void revertImport(final InputStream in) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.BufferedTextValue;
 import org.apache.jackrabbit.core.xml.Importer;
@@ -73,7 +72,7 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
     private final InternalHippoSession resolver;
 
     public EnhancedSystemViewImportHandler(ImportContext importContext, InternalHippoSession session) throws RepositoryException {
-        this.importer = importContext.createImporter();
+        this.importer = new EnhancedSystemViewImporter(importContext.getImportTargetNode(), importContext, session);
         this.contentResourceLoader = importContext.getContentResourceLoader();
         this.importContext = importContext;
         this.valueFactory = session.getValueFactory();
