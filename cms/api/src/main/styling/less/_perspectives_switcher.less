@@ -33,10 +33,14 @@
   li div a {
     color: @main-menu-text-color;
 
-    img {
+    img, svg {
       display: block;
       margin-left: auto;
       margin-right: auto;
+    }
+
+    svg path {
+      fill: @perspective-icon;
     }
 
     span {
@@ -53,5 +57,9 @@
 
   .selected div a {
     color: @main-menu-selected-text-color;
+    
+    svg path {
+      fill: @main-menu-selected-text-color;
+    }
   }
 }
