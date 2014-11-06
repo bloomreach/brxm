@@ -25,10 +25,10 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -39,9 +39,10 @@ import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Skin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,13 +52,15 @@ import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
 import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class AutoExportPlugin extends RenderPlugin<Node> {
-
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(LOGGER_NAME);
-    private JcrPropertyModel enabledModel;
 
-    private static final ResourceReference ON_IMG = new PackageResourceReference(AutoExportPlugin.class, "autoexport_on.png");
-    private static final ResourceReference OFF_IMG = new PackageResourceReference(AutoExportPlugin.class, "autoexport_off.png");
+    private static final Logger log = LoggerFactory.getLogger(LOGGER_NAME);
+
+    //private static final ResourceReference ON_IMG = new PackageResourceReference(AutoExportPlugin.class, "autoexport_on.png");
+    //private static final ResourceReference OFF_IMG = new PackageResourceReference(AutoExportPlugin.class, "autoexport_off.png");
+    private static final ResourceReference BULLET = new PackageResourceReference(Skin.class, "images/icons/bullet-extralarge.svg");
+
+    private JcrPropertyModel enabledModel;
 
     public AutoExportPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -67,19 +70,22 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             private final String unavailable = new StringResourceModel("unavailable", AutoExportPlugin.this, null).getObject();
-            private final String disable = new StringResourceModel("disable", AutoExportPlugin.this, null).getObject();
-            private final String enable = new StringResourceModel("enable", AutoExportPlugin.this, null).getObject();
+            //private final String disable = new StringResourceModel("disable", AutoExportPlugin.this, null).getObject();
+            //private final String enable = new StringResourceModel("enable", AutoExportPlugin.this, null).getObject();
+            private final String on = new StringResourceModel("on", AutoExportPlugin.this, null).getObject();
+            private final String off = new StringResourceModel("off", AutoExportPlugin.this, null).getObject();
 
             @Override
             public String getObject() {
                 if (!isExportAvailable()) {
                     return unavailable;
                 }
-                return isExportEnabled() ? disable : enable;
+                return isExportEnabled() ? on : off;
             }
         });
         label.setOutputMarkupId(true);
-        label.add(new AttributeModifier("class", true, new Model<String>() {
+        
+        add(AttributeModifier.append("class", new Model<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -90,7 +96,12 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
                 return isExportEnabled() ? "auto-export-state-enabled" : "auto-export-state-disabled";
             }
         }));
+        
+        add(AttributeModifier.append("class", "auto-export-dev-extension"));
+
         // set up icon component
+        final Component icon = new HippoIcon("icon", BULLET);
+/*
         final Image icon = new CachingImage("icon") {
             private static final long serialVersionUID = 1L;
 
@@ -100,6 +111,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
                 return isExportEnabled() ? ON_IMG : OFF_IMG;
             }
         };
+*/
         icon.setOutputMarkupId(true);
         icon.setVisible(isExportAvailable());
         add(icon);

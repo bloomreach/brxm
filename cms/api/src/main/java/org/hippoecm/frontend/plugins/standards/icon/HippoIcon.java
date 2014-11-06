@@ -26,24 +26,34 @@ import org.hippoecm.frontend.service.IconSize;
 
 public class HippoIcon extends Panel {
     
-    // For now we don't inline SVG
-    private boolean inlineSvg;
-    
-    public HippoIcon(final String id, final ResourceReference reference, final IconSize size) {
+    public HippoIcon(final String id, final ResourceReference reference) {
+        this(id, reference, null, null);
+    }
+
+    public HippoIcon(final String id, final ResourceReference reference, IconSize size) {
+        this(id, reference, size.getSize(), size.getSize());
+    }
+
+    public HippoIcon(final String id, final ResourceReference reference, final Integer width, final Integer height) {
         super(id);
         
         setRenderBodyOnly(true);
 
         Fragment fragment;
-        if (reference.getExtension().equalsIgnoreCase("svg") && inlineSvg) {
+        if (reference.getExtension().equalsIgnoreCase("svg")) {
             fragment = new  Fragment ("container", "svgFragment", this);
             fragment.add(new InlineSvgImage("svg", reference));
         } else {
             fragment = new  Fragment ("container", "imageFragment", this);
             Image image = new CachingImage("image", reference);
-            image.add(AttributeModifier.replace("width", size.getSize()));
-            image.add(AttributeModifier.replace("height", size.getSize()));
             fragment.add(image);
+            
+            if (width != null) {
+                image.add(AttributeModifier.replace("width", width));
+            }
+            if (height != null) {
+                image.add(AttributeModifier.replace("height", height));
+            }
         }
 
         fragment.setRenderBodyOnly(true);
