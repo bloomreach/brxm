@@ -17,4 +17,5 @@ will not break, but anything else that implements ITitleDecorator will have to a
 ## Root plugin
 - The document tabs were served by a built-in extension named top, configured with property top. This is now handled as
 a plugin extension configured with the wicket.extensions property.
-- The logout button will be visible as a perspective switcher in the new UI.
+- The logout button will be visible as a perspective switcher in the new UI. For this the configuration of the RootPlugin
+has changed (the logout.extension is removed) and a new LogoutPerspective is added to cms-static
