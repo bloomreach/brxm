@@ -310,6 +310,10 @@ public class InitializeItem {
         return isStatus(ITEM_STATUS_RELOAD);
     }
 
+    boolean isPending() throws RepositoryException {
+        return ITEM_STATUS_PENDING.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
+    }
+
     private boolean isStatus(final String status) throws RepositoryException {
         return status.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
     }
@@ -548,10 +552,6 @@ public class InitializeItem {
             return true;
         }
         return false;
-    }
-
-    boolean isPending() throws RepositoryException {
-        return ITEM_STATUS_PENDING.equals(JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null));
     }
 
     void markDownstream(final InitializeItem reloadItem) throws RepositoryException {

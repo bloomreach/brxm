@@ -16,8 +16,6 @@
 package org.onehippo.repository.bootstrap;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -44,6 +42,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ERROR_MESSAGE_RELOAD_DISABLED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_FAILED;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_PENDING;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ITEM_STATUS_RELOAD;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.SYSTEM_RELOAD_PROPERTY;
 import static org.onehippo.repository.util.JcrConstants.NT_UNSTRUCTURED;
 
@@ -83,7 +82,7 @@ public class InitializeItemTest {
         assertNotNull(initializeItem.getItemNode());
         assertEquals("initItem", initializeItem.getName());
         assertTrue(initializeItem.getItemNode().hasProperty(HIPPO_STATUS));
-        assertEquals(ITEM_STATUS_PENDING, initializeItem.getItemNode().getProperty(HIPPO_STATUS).getString());
+        assertEquals(ITEM_STATUS_RELOAD, initializeItem.getItemNode().getProperty(HIPPO_STATUS).getString());
     }
 
     @Test
