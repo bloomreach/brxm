@@ -15,7 +15,7 @@
  */
 
 // Paths
-@images_path:                       '../images';
+@images_path:                       '../../../wicket/resource/org.hippoecm.frontend.skin.Skin/images';
 @images_path_legacy:                '../../images';
 
 // Colors
@@ -31,14 +31,46 @@
 @white_legacy:                      #fcfcfc;
 @white_legacy2:                     #FEFEFE;
 
-// Main colors
+// Color picker overrides
+@cool-shale:                        #565b65;
+@aqua:                              #0b9ed6;
+@grey-at-the-bottom:                #e9ebee;
+@red-alert:                         #da1c5c;
+@perspective-icon:                  #cccdd0;
+
+// Tmp colors 
 @border-gray:                       #999;
 @text-gray:                         #33424b;
 @widget-gray:                       #858585;
 @widget-active:                     @black;
 
-// Color assignments
-// Main
+
+// Typography
+@font-family-sans-serif:            "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-monospace:             Menlo, Monaco, Consolas, "Courier New", monospace;
+@font-family-base:                  "Open Sans", @font-family-sans-serif;
+
+// Font sizes
+@font-size-base:                    13px;
+@font-size-large:                   ceil((@font-size-base * 1.25)); // ~18px
+@font-size-small:                   ceil((@font-size-base * 0.85)); // ~12px
+@font-size-tiny:                    ceil((@font-size-base * 0.75)); // ~10px
+
+@font-size-h1:                      floor((@font-size-base * 2.6)); // ~33px
+@font-size-h2:                      floor((@font-size-base * 2.15)); // ~27px
+@font-size-h3:                      ceil((@font-size-base * 1.7)); // ~23px
+@font-size-h4:                      ceil((@font-size-base * 1.25)); // ~17px
+@font-size-h5:                      @font-size-base;
+@font-size-h6:                      ceil((@font-size-base * 0.85)); // ~12px
+
+// Line height
+@line-height-base:                  1;
+@line-height-computed:              floor((@font-size-base * @line-height-base)); // ~20px
+
+
+// Colors and sizes
+
+// Global
 @body-bg:                           @white_legacy2;
 @text-color:                        @text-gray;
 @link-color:                        @aqua;
@@ -49,10 +81,23 @@
 @main-menu-text-color:              @white;
 @main-menu-selected-text-color:     @white;
 @main-menu-bgcolor:                 @cool-shale;
-@home-menu-bgcolor:                 @main-menu-bgcolor;
+@main-menu-width:                   64px;
+
+// Hippo logo
+@hippo-logo-bgcolor:                @main-menu-bgcolor;
+@hippo-logo-width:                  @main-menu-width;
+@hippo-logo-height:                 40px;
+
+// Developer extensions
+@hippo-dev-extensions-width:        @main-menu-width;
+@hippo-dev-extensions-bottom:       76px;
+@hippo-dev-extensions-bgcolor:      @grey-at-the-bottom;
 
 // Footer
-@footer-bgcolor:                    #E4E6EA;
+@footer-bgcolor:                    @grey-at-the-bottom;
+@footer-height:                     28px;
+
+// Document tabs
 @document-tab-selected-bgcolor:     #FBFBFB;
 @document-tab-font-size:            @font-size-small;
 @document-tab-title-color:          @text-gray;
@@ -69,31 +114,3 @@
 // Editor
 @editor-bgcolor:                    @editor_grey;
 @editor-preview-field-bgcolor:      @editor_grey;
-
-// Typography
-@font-family-sans-serif:            "Helvetica Neue", Helvetica, Arial, sans-serif;
-@font-family-monospace:             Menlo, Monaco, Consolas, "Courier New", monospace;
-@font-family-base:                  "Open Sans", @font-family-sans-serif;
-
-@font-size-base:                    13px;
-@font-size-large:                   ceil((@font-size-base * 1.25)); // ~18px
-@font-size-small:                   ceil((@font-size-base * 0.85)); // ~12px
-@font-size-tiny:                    ceil((@font-size-base * 0.75)); // ~10px
-
-@font-size-h1:                      floor((@font-size-base * 2.6)); // ~33px
-@font-size-h2:                      floor((@font-size-base * 2.15)); // ~27px
-@font-size-h3:                      ceil((@font-size-base * 1.7)); // ~23px
-@font-size-h4:                      ceil((@font-size-base * 1.25)); // ~17px
-@font-size-h5:                      @font-size-base;
-@font-size-h6:                      ceil((@font-size-base * 0.85)); // ~12px
-
-@line-height-base:                  1;
-@line-height-computed:              floor((@font-size-base * @line-height-base)); // ~20px
-
-// Sizes
-@main-menu-width:                   64px;
-@footer-menu-height:                28px;
-@home-menu-width:                   @main-menu-width;
-@home-menu-height:                  40px;
-
-@rebuild: 'yes';
