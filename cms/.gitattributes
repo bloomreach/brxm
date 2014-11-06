@@ -2438,12 +2438,12 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-48.pn
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspective.css svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutPlugin.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutLink.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_de.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPlugin.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_de.properties -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png

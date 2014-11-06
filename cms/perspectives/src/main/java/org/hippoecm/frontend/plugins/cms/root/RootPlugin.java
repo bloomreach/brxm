@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -34,7 +33,6 @@ import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -165,9 +163,6 @@ public class RootPlugin extends TabsPlugin {
         extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());
         add(extWidgetRegistry);
 
-        String userID = getSession().getJcrSession().getUserID();
-        add(new Label("username", getString("menu.username.label", Model.of(new User(userID)))));
-
         if (config.containsKey("top")) {
             log.warn("Usage of property 'top' on the RootPlugin is deprecated. The documents tabs is now configured " +
                     "as an extension. Add a value to property wicket.extensions named 'extension.tabs.documents' and " +
@@ -186,7 +181,7 @@ public class RootPlugin extends TabsPlugin {
         if (config.getPluginConfig("layout.page") != null) {
             pageLayoutSettings = new PageLayoutSettings(config.getPluginConfig("layout.page"));
         } else {
-            log.warn("Could not find page layout settings at node 'layout.page', falling back to baked settings");
+            log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
             pageLayoutSettings = new PageLayoutSettings();
             pageLayoutSettings.setFooterHeight(28);
         }
