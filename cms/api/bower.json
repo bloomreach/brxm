@@ -1,6 +1,6 @@
 {
   "name": "hippo-cms-theme",
-  "version": "1.01.00-SNAPSHOT",
+  "version": "0",
   "private": true,
   "devDependencies": {
       "font-awesome": "4.2.0",
