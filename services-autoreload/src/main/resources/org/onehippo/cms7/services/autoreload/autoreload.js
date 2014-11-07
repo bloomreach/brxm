@@ -19,6 +19,7 @@
         CONTEXT_PATH = "/site",
         RECONNECT_DELAY_MILLIS = 5000,
         MAX_RECONNECT_ATTEMPTS = 120,  // retry for 120 * 5000 ms = 10 minutes
+        hasBeenConnected = false,
         isReloadingPage,
         isReconnecting,
         reconnectAttempts = 0,
@@ -30,30 +31,31 @@
 
     function log(msg) {
         if (typeof console.log === "function") {
-            console.log(msg);
+            console.log("Hippo auto-reload " + msg);
         }
     }
 
     function onOpen() {
         isReloadingPage = false;
         isReconnecting = false;
-        log("Hippo auto-reload enabled");
+        hasBeenConnected = true;
+        log("connected");
     }
 
     function onMessage(event) {
         var message = JSON.parse(event.data);
         if (message.command === "reloadPage") {
-            log("Hippo auto-reload is reloading page...");
+            log("is reloading page...");
             isReloadingPage = true;
             reloadPage();
         } else {
-            log("Hippo auto-reload received unknown message:", message);
+            log("received unknown message:", message);
         }
     }
 
     function onError(event) {
         if (!isReconnecting) {
-            var warning = "Hippo auto-reload error";
+            var warning = "error";
             if (event.data) {
                 warning += ": " + event.data;
             }
@@ -62,6 +64,7 @@
     }
 
     function connect() {
+        log("connecting...");
         websocket = new window.WebSocket(serverUrl());
         websocket.onopen = onOpen;
         websocket.onmessage = onMessage;
@@ -76,17 +79,21 @@
         }
     }
 
+    function reconnect() {
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            isReconnecting = true;
+            reconnectAttempts++;
+            log("disconnected, trying to reconnect...");
+            window.setTimeout(connect, RECONNECT_DELAY_MILLIS);
+        } else {
+            isReconnecting = false;
+            log("stopped trying to reconnect.");
+        }
+    }
+
     function onClose(event) {
-        if (!isReloadingPage) {
-            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                isReconnecting = true;
-                reconnectAttempts++;
-                log("Hippo auto-reload disconnected, trying to reconnect...");
-                window.setTimeout(connect, RECONNECT_DELAY_MILLIS);
-            } else {
-                isReconnecting = false;
-                log("Hippo auto-reload stopped trying to reconnect.");
-            }
+        if (!isReloadingPage && hasBeenConnected) {
+            reconnect();
         }
     }
 
@@ -98,7 +105,7 @@
         window.addEventListener("load", connect);
         window.addEventListener("beforeunload", disconnect);
     } else {
-        log("Hippo auto-reload is not available because this browser does not support WebSockets");
+        log("is not available because this browser does not support WebSockets");
     }
 
 }(window, console));
