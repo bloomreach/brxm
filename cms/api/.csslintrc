@@ -17,7 +17,7 @@
   "ids": 2,
   "import": 2,
   "important": false,
-  "known-properties": 2,
+  "known-properties": false,
   "outline-none": 2,
   "overqualified-elements": 2,
   "qualified-headings": 2,
