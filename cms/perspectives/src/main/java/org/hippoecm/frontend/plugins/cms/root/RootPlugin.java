@@ -177,16 +177,21 @@ public class RootPlugin extends TabsPlugin {
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
 
-        PageLayoutSettings pageLayoutSettings;
-        if (config.getPluginConfig("layout.page") != null) {
-            pageLayoutSettings = new PageLayoutSettings(config.getPluginConfig("layout.page"));
-        } else {
-            log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
-            pageLayoutSettings = new PageLayoutSettings();
-            pageLayoutSettings.setFooterHeight(28);
-        }
+        final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
+    }
+
+    private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
+        final IPluginConfig pageLayoutConfig = config.getPluginConfig("layout.page");
+        if (pageLayoutConfig != null) {
+            return new PageLayoutSettings(pageLayoutConfig);
+        } else {
+            log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
+            PageLayoutSettings settings = new PageLayoutSettings();
+            settings.setFooterHeight(28);
+            return settings;
+        }
     }
 
     @Override
