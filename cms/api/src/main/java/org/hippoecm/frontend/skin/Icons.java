@@ -15,8 +15,14 @@
  */
 package org.hippoecm.frontend.skin;
 
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+
 /**
- * Marker interface for images coming from the styling
+ * References to icons.
  */
-public interface Skin {
+public interface Icons {
+
+    static final ResourceReference BULLET_XL = new PackageResourceReference(Icons.class, "images/icons/bullet-extralarge.svg");
+
 }

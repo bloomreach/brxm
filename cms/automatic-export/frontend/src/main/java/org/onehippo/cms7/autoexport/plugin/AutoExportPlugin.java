@@ -31,8 +31,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
@@ -42,7 +40,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.skin.Skin;
+import org.hippoecm.frontend.skin.Icons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +53,6 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(LOGGER_NAME);
-
-    private static final ResourceReference BULLET = new PackageResourceReference(Skin.class, "images/icons/bullet-extralarge.svg");
 
     private JcrPropertyModel enabledModel;
 
@@ -113,7 +109,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         add(link);
 
         // set up icon component
-        final Component icon = new HippoIcon("icon", BULLET);
+        final Component icon = new HippoIcon("icon", Icons.BULLET_XL);
         icon.setOutputMarkupId(true);
         icon.setVisible(isExportAvailable());
         link.add(icon);
