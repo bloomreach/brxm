@@ -63,7 +63,7 @@ public class LogoutPerspective extends Perspective {
                 session.save();
             }
         } catch (RepositoryException e) {
-            log.warn("Problem saving session while logging out {}", e);
+            log.warn("Problem saving session while logging out", e);
         }
 
         userSession.logout();
