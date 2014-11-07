@@ -9,21 +9,11 @@
     "angular-translate-loader-static-files": "2.2.0",
     "angular-ui-router": "0.2.11",
     "angular-ui-tree": "2.1.5",
-    "respond": "1.4.2",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
-    "es5-shim": "4.0.3",
-    "fastclick": "1.0.3",
-    "html5shiv": "3.7.2",
     "jasmine-jquery": "2.0.3",
     "jquery": "1.11.1"
   },
   "resolutions": {
-    "angular": "1.2.23",
-    "angular-mocks": "1.2.23",
-    "es5-shim": "4.0.3",
-    "fastclick": "1.0.3",
-    "html5shiv": "3.7.2",
-    "jasmine-jquery": "2.0.3",
-    "jquery": "1.11.1"
+    "angular": "1.2.23"
   }
 }
