@@ -173,11 +173,11 @@ module.exports = function (grunt) {
                 src: '<%= build.bower %>'
             },
             
-            all: {
-                src: ['<%= build.tmp%>', '<%= build.bower%>']
+            // clean up copied image, font and css files
+            copies: {
+                src: ['<%= build.images %>', '<%= build.skin %>']
             }
         },
-
 
         // Execute shell commands
         shell: {

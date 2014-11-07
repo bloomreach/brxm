@@ -47,6 +47,8 @@ public class InlineSvgImage extends WebComponent {
     protected void onComponentTag(final ComponentTag tag) {
         try {
             String data = IOUtils.toString(reference.getResource().getResourceStream().getInputStream());
+            //skip everything (comments, xml declaration and dtd definition) before <svg element
+            data = data.substring(data.indexOf("<svg "));
             RequestCycle.get().getResponse().write(data);
         } catch (IOException | ResourceStreamNotFoundException e) {
             log.error("Failed to load svg image[" + reference.getName() + "]", e);

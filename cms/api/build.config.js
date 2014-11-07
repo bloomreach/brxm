@@ -17,7 +17,7 @@
 module.exports = {
     bower:      'src/main/styling/components',
     file:       'hippo-cms-theme',
-    images:     'src/main/resources/org/hippoecm/frontend/skin/images/',
+    images:     'src/main/resources/org/hippoecm/frontend/skin/images',
     skin:       'src/main/resources/skin/hippo-cms',
     src:        'src/main/styling',
     target:     'target',

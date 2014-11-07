@@ -516,9 +516,9 @@
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!--  files without license header  -->
-                <exclude>api/src/main/styling/.bowerrc</exclude>
-                <exclude>api/src/main/styling/.csslintrc</exclude>
-                <exclude>api/src/main/styling/README.md</exclude>
+                <exclude>api/.bowerrc</exclude>
+                <exclude>api/.csslintrc</exclude>
+                <exclude>api/README.md</exclude>
                 <exclude>upgrade_notes.txt</exclude>
               </excludes>
             </configuration>
