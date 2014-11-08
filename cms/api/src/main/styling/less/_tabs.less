@@ -17,6 +17,13 @@
 /* TabsPlugin Document switcher */
 /* ================================================ */
 
+@tab-width: 184;
+@tab-height: @footer-height;
+@tab-padding-left: 8;
+@tab-padding-right: 28;
+@tab-padding-top: @tab-height / 2 - 8;
+//@tab-padding-top: 9;
+
 .hippo-tabs-documents {
   width: auto;
   position: absolute;
@@ -25,61 +32,88 @@
 
   ul {
     //height: @footer-menu-height;
-    margin-left: 4px;
     display: flex;
 
     li {
-      height: @footer-height;
+      height: unit(@footer-height, px);
       display: block;
       float: left;
       position: relative;
-      width: 180px;
+      width: unit(@tab-width, px);
       border-left: 1px solid @border-color;
     }
 
+    li:hover {
+      .hippo-tabs-documents-close {
+        //visibility: visible;
+        color: @document-tab-close-color-hover;
+        background-image: url('@{images_path}/icons/tabs/tab-close-black.svg');
+      }
+      .hippo-tabs-documents-close:hover {
+        background-image: url('@{images_path}/icons/tabs/tab-close-blue.svg');
+      }
+      
+    }
+    
+    li:last-child {
+      border-right: 0;
+    }
+
     .selected {
+      border-left-color: @document-tab-selected-bgcolor;
       background-color: @document-tab-selected-bgcolor;
 
       .hippo-tabs-documents-close {  
-        visibility: hidden;
+        //visibility: hidden;
       }
     }
-    li:hover {
-      .hippo-tabs-documents-close {
-        visibility: visible;
-        color: @document-tab-close-color-hover;
-      }
+
+    .selected + li {
+      border-left-color: @footer-bgcolor;
     }
   }
 
   .hippo-tabs-documents-tab {
+    display: block;
+    width: unit(@tab-width - @tab-padding-left, px);
+    height: unit(@tab-height - @tab-padding-top, px);
+    padding-left: unit(@tab-padding-left, px);
+    //padding-top: unit(@tab-padding-top, px);
+    float: left;
     color: @document-tab-title-color;
-    font-size: @document-tab-font-size;
     text-decoration: none;
     white-space: nowrap;
-    display: block;
-    .truncate();
-    float: left;
-    width: 156px;
-    padding: 6px 0 0 8px;
+
+    span {
+      width: unit(@tab-width - @tab-padding-left - @tab-padding-right - 20, px);
+      height: 20px;
+      padding-top: 15px;
+      display: inline-block;
+      .truncate();
+    }
     
     img {
       margin-right: 3px;
-      vertical-align: -4px;
-      .greyscale-image();
+      vertical-align: 5px;
+      //.greyscale-image();
     }
   }
 
   .hippo-tabs-documents-close {
     position: absolute;
     right: 8px;
-    top: 7px;
-    color: @document-tab-close-color;
-    font-size: @font-size-tiny;
+    top: 13px;
+    //TODO: replace with inline svg and hover/selected color change through css
+    //color: @document-tab-close-color;
     text-decoration: none;
+    background-image: url('@{images_path}/icons/tabs/tab-close-grey.svg');
+    width: 15px;
+    height: 15px;
+    //background: @footer-bgcolor url('@{images_path}/footer/background.png') repeat-x;
   }
 
   .hippo-tabs-documents-close:hover {
     color: @document-tab-close-color-hover;
+    //background-image: url('@{images_path}/icons/tabs/tab-close-blue.svg');
   }
 }

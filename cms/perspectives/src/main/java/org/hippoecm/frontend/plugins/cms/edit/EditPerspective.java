@@ -251,6 +251,11 @@ public class EditPerspective extends Perspective {
         return super.getIcon(iconSize);
     }
 
+    @Override
+    public ResourceReference getActiveIcon(final IconSize size) {
+        return getIcon(size);
+    }
+
     protected ILocaleProvider getLocaleProvider() {
         return getPluginContext().getService(
                 getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),

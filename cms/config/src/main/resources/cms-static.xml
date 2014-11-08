@@ -463,12 +463,13 @@
         <sv:value>tabbed-panel-layout</sv:value>
       </sv:property>
     </sv:node>
+    <!-- CMS7R-ADD: the page layout is now configurable form console -->
     <sv:node sv:name="layout.page">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="footer.height" sv:type="Long">
-        <sv:value>28</sv:value>
+        <sv:value>40</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
