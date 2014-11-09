@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 	
 	Hippo.Set = function() {
 		this.entries = [];
-	}
+	};
 	
 	Hippo.Set.prototype = {
 		add : function (entry) {
@@ -57,23 +57,26 @@
 	        }
 	        return -1;
 	    }
-	}
+	};
+    
+    var menus = new Hippo.Set();
 
-	var menus = new Hippo.Set();
+	Hippo.ContextMenu = {
+        currentContentLink: null,
+        isShowing: false
+    };
 
-	Hippo.ContextMenu = new Object();
-	
-	Hippo.ContextMenu.init = function() {
-	    if(document.getElementById('context-menu-container') == null) {
+    Hippo.ContextMenu.init = function() {
+	    if (document.getElementById('context-menu-container') == null) {
 	        var x = document.createElement('div');
 	        x.id = "context-menu-container";
 	        document.body.appendChild(x);
 	    }
-	}
+	};
 
 	Hippo.ContextMenu.show = function(id) {
 	    menus.add(id);
-	}
+	};
 
 	Hippo.ContextMenu.hide = function(id) {
         menus.remove(id);
@@ -81,42 +84,44 @@
         var el = YUID.get('context-menu-container');
 	    el.innerHTML = '';
 	    YUID.setXY(el, [-100, -100]);
-	}
+	};
 
 	Hippo.ContextMenu.isShown = function(id) {
 		return menus.contains(id);
-	}
+	};
 	
 	Hippo.ContextMenu.renderInTree = function(id) {
 	    var xy = this.getContextPosition(id);
-	    this.renderAtPosition(id, xy[0] + 12, xy[1] + 5);
-	}
+	    this.renderAtPosition(id, xy[0] + 13, xy[1] - 13);
+	};
 	
 	Hippo.ContextMenu.renderAtPosition = function(id, posX, posY) {
         var YUID = YAHOO.util.Dom;
         var container = YUID.get('context-menu-container');
+        var menu = YUID.get(id);
+        var ul = YUID.getElementsByClassName('hippo-toolbar-menu-item', 'ul', menu);
 
-        //reset container
+        //reset container and append menu for correct size calculation
         container.innerHTML = '';
-        
-        var menuHeight = 120; //middle ground fallback
-        var uls = YUID.getElementsByClassName('hippo-toolbar-menu-item', 'ul', YUID.get(id));
-        if(uls.length > 0) {
-            var r = YUID.getRegion(uls[0]);
-            menuHeight = r.height + 5;
-        }
-        
+        container.appendChild(menu);
+
+        var viewWidth = YUID.getViewportWidth();
         var viewHeight = YUID.getViewportHeight();
-        if(posY + menuHeight > viewHeight) {
-            posY -= (menuHeight - 10);
+        var region = YUID.getRegion(ul);
+        var menuWidth = region[0].width,
+            menuHeight = region[0].height;
+
+        if (posY + menuHeight > viewHeight) {
+            posY -= menuHeight;
         }
-        container.appendChild(YUID.get(id));
+
+        if (posX + menuWidth > viewWidth) {
+            posX -= menuWidth;
+        }
+
         YUID.setXY(container, [posX,posY]);
         YUID.setStyle(id, 'visibility', 'visible');
-    }
-    
-    Hippo.ContextMenu.currentContentLink = null;
-    Hippo.ContextMenu.isShowing = false;
+    };
     
     Hippo.ContextMenu.showContextLink = function(id) {
         var YUID = YAHOO.util.Dom, YUIL = YAHOO.lang;
@@ -137,33 +142,7 @@
             this.currentContentLink = el;
         }
         this.isShowing = true;
-    }
-    
-    Hippo.ContextMenu.getContextPosition = function(id) {
-        var YUID = YAHOO.util.Dom;
-        var el = YUID.get(id);
-        
-        var unit  = this.getLayoutUnit(el); 
-        if(unit != null) {
-            var layoutRegion = YUID.getRegion(unit.get('element'));
-            var myY = YUID.getRegion(el).top +2;
-            var myX = layoutRegion.right - 20;
-            if(YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 8) {
-                //IE needs more whitespace @ the right of this widget
-                //because else it will interfere with the resize handler
-                myX -= 10; 
-                
-            }
-            
-            var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
-            var layoutDim = YUID.getRegion(layout);
-            var treeDim = YUID.getRegion(YUID.getAncestorByClassName(el, 'hippo-tree'));
-            if (treeDim.height > layoutDim.height) {
-                myX -= 15;
-            }
-            return [myX, myY];
-        }
-    }
+    };
     
     Hippo.ContextMenu.hideContextLink = function(id) {
         var YUID = YAHOO.util.Dom;
@@ -178,10 +157,30 @@
             YUID.removeClass(el, 'container-selected');
         }
         this.isShowing = false;
-    }
+    };
+
+    Hippo.ContextMenu.getContextPosition = function(id) {
+        var YUID = YAHOO.util.Dom;
+        var el = YUID.get(id);
+
+        var unit  = this.getLayoutUnit(el);
+        if(unit != null) {
+            var layoutRegion = YUID.getRegion(unit.get('element'));
+            var myY = YUID.getRegion(el).top + 2;
+            var myX = layoutRegion.right - 20;
+
+            var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
+            var layoutDim = YUID.getRegion(layout);
+            var treeDim = YUID.getRegion(YUID.getAncestorByClassName(el, 'hippo-tree'));
+            if (treeDim.height > layoutDim.height) {
+                myX -= 15;
+            }
+            return [myX, myY];
+        }
+    };
     
     Hippo.ContextMenu.getLayoutUnit = function(el) {
         return YAHOO.hippo.LayoutManager.findLayoutUnit(el);
-    }
+    };
 
 })();
