@@ -25,6 +25,10 @@
         reconnectAttempts = 0,
         websocket;
 
+    function serverUrl() {
+        return "ws://" + document.location.host + CONTEXT_PATH + AUTO_RELOAD_PATH;
+    }
+
     function reloadPage() {
         window.document.location.reload();
     }
@@ -63,6 +67,12 @@
         }
     }
 
+    function onClose(event) {
+        if (!isReloadingPage && hasBeenConnected) {
+            reconnect();
+        }
+    }
+
     function connect() {
         log("connecting...");
         websocket = new window.WebSocket(serverUrl());
@@ -89,16 +99,6 @@
             isReconnecting = false;
             log("stopped trying to reconnect.");
         }
-    }
-
-    function onClose(event) {
-        if (!isReloadingPage && hasBeenConnected) {
-            reconnect();
-        }
-    }
-
-    function serverUrl() {
-        return "ws://" + document.location.host + CONTEXT_PATH + AUTO_RELOAD_PATH;
     }
 
     if (window.addEventListener && window.WebSocket) {

@@ -43,6 +43,7 @@
     <commons-io.version>1.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <easymock.version>3.0</easymock.version>
+    <jslint.plugin.version>1.0.1</jslint.plugin.version>
     <junit.version>4.11</junit.version>
   </properties>
 
@@ -123,5 +124,30 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <version>${jslint.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>jslint</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
+          <predefinedVars>
+            console,
+            reconnect, <!-- ignore valid circular function dependency: connect -> onClose -> reconnect -->
+            window
+          </predefinedVars>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
