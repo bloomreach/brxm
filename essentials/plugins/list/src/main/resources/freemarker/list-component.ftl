@@ -33,7 +33,7 @@
       </article>
     </#if>
   </#list>
-  <#if pageable.showPagination??>
+  <#if pageable.showPagination>
 {{#repositoryBased}}
     <#include "../../hst:default/hst:templates/pagination.ftl">
 {{/repositoryBased}}
