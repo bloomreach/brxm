@@ -212,11 +212,6 @@ upgrade/.classpath
 upgrade/.project
 upgrade/.settings
 upgrade/bin
-upgrade/handlemigration/.classpath
-upgrade/handlemigration/.project
-upgrade/handlemigration/.settings
-upgrade/handlemigration/hippo-repository-handle-migration.iml
-upgrade/handlemigration/target
 upgrade/local.properties
 upgrade/nbproject
 upgrade/target
@@ -226,12 +221,6 @@ upgrade/tm.out.1
 upgrade/tm.out.lck
 upgrade/tmlog.lck
 upgrade/wdbp-error-log.txt
-upgrade/xml-upgrade/*.iml
-upgrade/xml-upgrade/.classpath
-upgrade/xml-upgrade/.project
-upgrade/xml-upgrade/.settings
-upgrade/xml-upgrade/bin
-upgrade/xml-upgrade/target
 utilities/*.iml
 utilities/*.tmp
 utilities/.classpath

@@ -332,7 +332,6 @@ resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_confi
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 scripts/pom.xml -text
 scripts/src/main/resources/hippoecm-extension.xml -text
-scripts/src/main/resources/remove-translations-nodes.xml -text
 scripts/src/main/resources/versions-cleaner.xml -text
 servlets/pom.xml svneol=native#text/plain
 servlets/src/main/resources/META-INF/resources/hippo-icon.png -text svneol=unset#image/png
@@ -475,27 +474,6 @@ testutils/src/test/java/org/onehippo/repository/testutils/ExecuteOnLogLevelTest.
 testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilterTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapperTest.java -text
 testutils/src/test/resources/log4j-filters.txt -text
-upgrade/handlemigration/pom.xml -text
-upgrade/handlemigration/src/main/java/org/apache/jackrabbit/core/version/VersionHistoryRemover.java -text
-upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/BaseContentUpdateVisitor.java -text
-upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/HardDocumentUpdateVisitor.java -text
-upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/HardHandleUpdateVisitor.java -text
-upgrade/handlemigration/src/main/resources/harddocument-updater.xml -text
-upgrade/handlemigration/src/main/resources/hardhandle-updater.xml -text
-upgrade/handlemigration/src/main/resources/hippoecm-extension.xml -text
-upgrade/handlemigration/src/main/resources/org/onehippo/cms7/repository/upgrade/handlemigration-workspace.xml -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedBasicReviewedActionsWorkflow.java -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedBasicReviewedActionsWorkflowImpl.java -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedFullReviewedActionsWorkflowImpl.java -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/PublicationRequest.java -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/PublishableDocument.java -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HardDocumentUpdateVisitorTest.java -text
-upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HardHandleUpdateVisitorTest.java -text
-upgrade/handlemigration/src/test/resources/deprecated-versioning-workflows.xml svneol=native#text/plain
-upgrade/handlemigration/src/test/resources/hippoecm-extension.xml -text
-upgrade/handlemigration/src/test/resources/legacy-document-template.xml -text
-upgrade/handlemigration/src/test/resources/log4j-filters.txt -text
-upgrade/handlemigration/src/test/resources/org/onehippo/cms7/repository/upgrade/hippo-old.cnd -text
 upgrade/pom.xml svneol=native#text/plain
 utilities/pom.xml svneol=native#text/plain
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text

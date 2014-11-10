@@ -27,8 +27,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>handlemigration</module>
-    <module>xml-upgrade</module>
   </modules>
 
 </project>
