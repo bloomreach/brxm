@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class MimeTypeComparator extends PropertyComparator {
     protected int compare(Property p1, Property p2) {
         try {
             String mime1 = p1 == null ? "" : p1.getString();
-            String mime2 = p2 == null ? "" :p2.getString();
+            String mime2 = p2 == null ? "" : p2.getString();
             return String.CASE_INSENSITIVE_ORDER.compare(mime1, mime2);
         } catch (RepositoryException e) {
         }
