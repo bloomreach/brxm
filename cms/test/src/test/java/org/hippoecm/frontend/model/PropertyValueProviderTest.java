@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -29,6 +30,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.value.DateValue;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -78,6 +80,7 @@ public class PropertyValueProviderTest extends PluginTest {
     @Test
     public void testAddNewAddsNoDefaultPropertyForDateField() throws RepositoryException {
         Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
+
         JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:date");
         IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:date", new JavaTypeDescriptor("date",
                 "Date", null));
@@ -85,20 +88,23 @@ public class PropertyValueProviderTest extends PluginTest {
                 .getItemModel());
         provider.addNew();
 
-        assertFalse("No date property expected, but a date property was found.",session.itemExists(testNode.getPath() + "/frontendtest:date"));
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
 
+        DateValue defaultDate = DateValue.valueOf(PropertyValueProvider.NULL_DATE_VALUE);
+        assertEquals(defaultDate.getDate().getTime(), pvm.getObject());
         provider.detach();
         assertEquals(1, provider.size());
         pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
+        assertEquals(defaultDate.getDate().getTime(), pvm.getObject());
     }
 
     @Test
     public void testAddedNewDateStoresDate() throws RepositoryException {
         Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:relaxed");
+        final Calendar today = Calendar.getInstance();
+        testNode.setProperty("frontendtest:date", today);
+
         JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:date");
         IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:date", new JavaTypeDescriptor("date",
                 "Date", null));
@@ -108,7 +114,7 @@ public class PropertyValueProviderTest extends PluginTest {
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
+        assertEquals(today.getTime(), pvm.getObject());
         Date date = new Date();
         pvm.setObject(date);
         provider.detach();

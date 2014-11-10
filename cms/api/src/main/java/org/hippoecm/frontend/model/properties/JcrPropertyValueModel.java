@@ -29,12 +29,14 @@ import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
+import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,8 +261,10 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                 switch (value.getType()) {
                 case PropertyType.BOOLEAN:
                     return (T) Boolean.valueOf(value.getBoolean());
-                case PropertyType.DATE:
-                    return (T) value.getDate().getTime();
+                case PropertyType.DATE: {
+                    Date date = value.getDate().getTime();
+                    return date.compareTo(PropertyValueProvider.NULL_DATE) == 0 ? null : (T)date;
+                }
                 case PropertyType.DOUBLE:
                     return (T) Double.valueOf(value.getDouble());
                 case PropertyType.LONG:
@@ -343,7 +347,9 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
     private Value createNullValue() throws UnsupportedRepositoryOperationException, RepositoryException {
         ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
         int propertyType = getType();
-        return factory.createValue("", (propertyType == PropertyType.UNDEFINED ? PropertyType.STRING : propertyType));
+        propertyType  = (propertyType == PropertyType.UNDEFINED) ? PropertyType.STRING : propertyType;
+        String propertyValue = (propertyType == PropertyType.DATE) ? PropertyValueProvider.NULL_DATE_VALUE : StringUtils.EMPTY;
+        return factory.createValue(propertyValue, propertyType);
     }
 
     private void load() {
