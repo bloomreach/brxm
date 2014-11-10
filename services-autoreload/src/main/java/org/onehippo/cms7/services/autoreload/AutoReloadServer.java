@@ -34,7 +34,7 @@ public class AutoReloadServer {
 
     private static final String RELOAD_PAGE_MESSAGE_JSON = "{\"command\":\"reloadPage\"}";
 
-    private static final Logger log = LoggerFactory.getLogger(AutoReloadServer.class);
+    static Logger log = LoggerFactory.getLogger(AutoReloadServer.class);
     private static AutoReloadServer instance = null;
 
     private final Queue<Session> sessions;
@@ -59,7 +59,7 @@ public class AutoReloadServer {
 
     @OnMessage
     public void onMessage(final Session session, final String msg) {
-        log.warn("closing auto-reload connection, unexpected message: '{}'", msg);
+        log.warn("closing auto-reload connection '{}', unexpected message: '{}'", session.getId(), msg);
         closeQuitely(session);
     }
 
@@ -74,7 +74,7 @@ public class AutoReloadServer {
     @OnClose
     public void onClose(final Session session) {
         sessions.remove(session);
-        log.info("auto-reload connection '{}' closed, #connections = {}, ", session.getId(), sessions.size());
+        log.info("auto-reload connection '{}' closed, #connections = {}", session.getId(), sessions.size());
     }
 
     @OnError
@@ -91,6 +91,10 @@ public class AutoReloadServer {
         for (Session session : sessions) {
             session.getAsyncRemote().sendText(message);
         }
+    }
+
+    void clearSessions() {
+        sessions.clear();
     }
 
 }
