@@ -8,8 +8,7 @@
     "angular-ui-router": ["release/angular-ui-router.min.js"],
     "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
     "chosen": ["chosen.jquery.min.js"],
-    "es5-shim": ["es5-shim.min.js","es5-shim.map"],
-    "fastclick": [],
+    "es5-shim": [],
     "flot": [],
     "google-code-prettify": [],
     "hippo-theme": [
@@ -18,9 +17,7 @@
       "dist/images/*",
       "dist/fonts/*"
     ],
-    "html5shiv": [],
     "jasmine-jquery": [],
     "jquery": ["dist/jquery.min.js", "dist/jquery.min.map"],
-    "respond": ["dest/respond.min.js"],
     "underscore": ["underscore-min.js", "underscore-min.map"]
 }
