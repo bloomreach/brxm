@@ -515,6 +515,31 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="bodycontactspringcontextformpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
+    </sv:property>
+    <sv:node sv:name="content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>contactspring</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.component.support.spring.SpringBridgeHstComponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parameternames" sv:type="String">
+        <sv:value>spring-delegated-bean</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>org.springframework.web.servlet.FrameworkServlet.CONTEXT.springapp::contextContactBean</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
   <sv:node sv:name="bodycontactdispatchformpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
