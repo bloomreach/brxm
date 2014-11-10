@@ -15,8 +15,8 @@
  */
 
 // Paths
-@images_path:                       '../../../wicket/resource/org.hippoecm.frontend.skin.Icons/images';
-@images_path_legacy:                '../../images';
+@images:                            '../../../wicket/resource/org.hippoecm.frontend.skin.Icons/images';
+@images_legacy:                     '../../images';
 
 // Colors
 @white:                             #ffffff;
@@ -37,6 +37,7 @@
 @grey-at-the-bottom:                #e9ebee;
 @red-alert:                         #da1c5c;
 @perspective-icon:                  #cccdd0;
+@tab-hover:                         #d9dadb;
 
 // Tmp colors 
 @border-gray:                       #d7d9db;
@@ -78,15 +79,15 @@
 @border-color:                      @border-gray;
 
 // Main menu
+@main-menu-width:                   64px;
 @main-menu-text-color:              @white;
 @main-menu-selected-text-color:     @white;
 @main-menu-bgcolor:                 @cool-shale;
-@main-menu-width:                   64px;
 
 // Hippo logo
-@hippo-logo-bgcolor:                @main-menu-bgcolor;
 @hippo-logo-width:                  @main-menu-width;
 @hippo-logo-height:                 40px;
+@hippo-logo-bgcolor:                @main-menu-bgcolor;
 
 // Developer extensions
 @hippo-dev-extensions-width:        @main-menu-width;
@@ -98,11 +99,12 @@
 @footer-height:                     40;
 
 // Document tabs
-@document-tab-selected-bgcolor:     #FBFBFB;
+@document-tab-width:                184;
+@document-tab-height:               @footer-height;
+@document-tab-hover-bgcolor:        @tab-hover;
+@document-tab-selected-bgcolor:     @white;
 @document-tab-font-size:            @font-size-small;
 @document-tab-title-color:          @text-gray;
-@document-tab-close-color:          @widget-gray;
-@document-tab-close-color-hover:    @widget-active;
 
 // Navigator
 @navigator-bgcolor:                 @white;

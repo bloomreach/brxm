@@ -17,12 +17,11 @@
 /* TabsPlugin Document switcher */
 /* ================================================ */
 
-@tab-width: 184;
-@tab-height: @footer-height;
+@tab-width: @document-tab-width;
+@tab-height: @document-tab-height;
 @tab-padding-left: 8;
 @tab-padding-right: 28;
 @tab-padding-top: @tab-height / 2 - 8;
-//@tab-padding-top: 9;
 
 .hippo-tabs-documents {
   width: auto;
@@ -31,7 +30,6 @@
   right: 0;
 
   ul {
-    //height: @footer-menu-height;
     display: flex;
 
     li {
@@ -44,28 +42,24 @@
     }
 
     li:hover {
+      background-color: @document-tab-hover-bgcolor;
+      
       .hippo-tabs-documents-close {
-        //visibility: visible;
-        color: @document-tab-close-color-hover;
-        background-image: url('@{images_path}/icons/tabs/tab-close-black.svg');
+        background-image: url('@{images}/icons/tabs/tab-close-black.svg');
       }
       .hippo-tabs-documents-close:hover {
-        background-image: url('@{images_path}/icons/tabs/tab-close-blue.svg');
+        background-image: url('@{images}/icons/tabs/tab-close-blue.svg');
       }
-      
     }
     
     li:last-child {
       border-right: 0;
     }
 
+    .selected:hover,
     .selected {
       border-left-color: @document-tab-selected-bgcolor;
       background-color: @document-tab-selected-bgcolor;
-
-      .hippo-tabs-documents-close {  
-        //visibility: hidden;
-      }
     }
 
     .selected + li {
@@ -96,7 +90,6 @@
     img {
       margin-right: 3px;
       vertical-align: 5px;
-      //.greyscale-image();
     }
   }
 
@@ -104,17 +97,10 @@
     position: absolute;
     right: 8px;
     top: 13px;
-    //TODO: replace with inline svg and hover/selected color change through css
-    //color: @document-tab-close-color;
     text-decoration: none;
-    background-image: url('@{images_path}/icons/tabs/tab-close-grey.svg');
+    //TODO: replace with inline svg and hover/selected color change through css
+    background-image: url('@{images}/icons/tabs/tab-close-grey.svg');
     width: 15px;
     height: 15px;
-    //background: @footer-bgcolor url('@{images_path}/footer/background.png') repeat-x;
-  }
-
-  .hippo-tabs-documents-close:hover {
-    color: @document-tab-close-color-hover;
-    //background-image: url('@{images_path}/icons/tabs/tab-close-blue.svg');
   }
 }
