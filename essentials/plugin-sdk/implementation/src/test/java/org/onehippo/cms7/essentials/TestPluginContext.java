@@ -26,7 +26,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
@@ -47,8 +47,8 @@ public class TestPluginContext extends DefaultPluginContext {
 
     private HippoRepository hippoRepository;
     private boolean useHippoSession;
-    public TestPluginContext(final MemoryRepository repository, final Plugin plugin) {
-        super(plugin);
+    public TestPluginContext(final MemoryRepository repository, final PluginDescriptor pluginDescriptor) {
+        super(pluginDescriptor);
         this.repository = repository;
     }
 

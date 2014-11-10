@@ -52,7 +52,7 @@ public abstract class AbstractPluginService implements PluginConfigService {
     public abstract <T extends Document> T read(final Class<T> clazz);
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         // do nothing
     }
 

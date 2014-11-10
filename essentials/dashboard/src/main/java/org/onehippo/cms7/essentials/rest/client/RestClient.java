@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.utils.RestUtils;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class RestClient {
 
 
     @SuppressWarnings("unchecked")
-    public RestfulList<PluginRestful> getPlugins() {
+    public RestfulList<PluginDescriptorRestful> getPlugins() {
         final WebClient client = WebClient.create(baseResourceUri);
         setTimeouts(client, connectionTimeout, receiveTimeout);
         try {

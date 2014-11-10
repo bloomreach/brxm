@@ -21,7 +21,7 @@ import java.util.Calendar;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Snapshot;
@@ -37,13 +37,13 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class PluginRestfulTest {
+public class PluginDescriptorRestfulTest {
 
-    private static Logger log = LoggerFactory.getLogger(PluginRestfulTest.class);
+    private static Logger log = LoggerFactory.getLogger(PluginDescriptorRestfulTest.class);
 
     @Test
     public void testJaxb() throws Exception {
-        PluginRestful value = new PluginRestful();
+        PluginDescriptorRestful value = new PluginDescriptorRestful();
         value.setName("com.foo.name");
         final Calendar today = Calendar.getInstance();
         value.setDateInstalled(today);
@@ -72,7 +72,7 @@ public class PluginRestfulTest {
         final String json = mapper.writeValueAsString(value);
         log.info("value {}", value);
         log.info("json {}", json);
-        final PluginRestful fromJson = value = mapper.readValue(json, PluginRestful.class);
+        final PluginDescriptorRestful fromJson = value = mapper.readValue(json, PluginDescriptorRestful.class);
         log.info("fromJson {}", fromJson);
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());

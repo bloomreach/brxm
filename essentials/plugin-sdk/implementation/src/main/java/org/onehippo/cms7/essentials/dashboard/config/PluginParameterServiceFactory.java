@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -30,7 +30,7 @@ public class PluginParameterServiceFactory {
     private static Logger log = LoggerFactory.getLogger(PluginParameterServiceFactory.class);
     private static final PluginParameterService defaultService = new DefaultPluginParameterService();
 
-    public static PluginParameterService getParameterService(PluginRestful plugin) {
+    public static PluginParameterService getParameterService(PluginDescriptor plugin) {
         final String parameterServiceClassName = plugin.getParameterServiceClass();
 
         if (StringUtils.hasText(parameterServiceClassName)) {

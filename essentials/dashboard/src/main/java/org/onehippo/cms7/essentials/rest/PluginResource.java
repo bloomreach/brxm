@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,14 +53,11 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
-import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginInstallationState;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterServiceFactory;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -70,8 +66,8 @@ import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
@@ -93,6 +89,7 @@ import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
+import org.onehippo.cms7.essentials.rest.plugin.InstallStateMachine;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.onehippo.cms7.essentials.utils.RestUtils;
 import org.slf4j.Logger;
@@ -141,12 +138,12 @@ public class PluginResource extends BaseResource {
      *
      * @see ResourceUtils
      */
-    private final LoadingCache<String, RestfulList<PluginRestful>> pluginCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, RestfulList<PluginDescriptorRestful>> pluginCache = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .recordStats()
-            .build(new CacheLoader<String, RestfulList<PluginRestful>>() {
+            .build(new CacheLoader<String, RestfulList<PluginDescriptorRestful>>() {
                 @Override
-                public RestfulList<PluginRestful> load(final String url) throws Exception {
+                public RestfulList<PluginDescriptorRestful> load(final String url) throws Exception {
                     if (url.startsWith("http")) {
                         RestClient client = new RestClient(url);
                         return client.getPlugins();
@@ -167,7 +164,6 @@ public class PluginResource extends BaseResource {
 
             });
 
-    public static final int WEEK_OLD = -7;
     public static final String PLUGIN_ID = "pluginId";
     @Inject
     private EventBus eventBus;
@@ -193,8 +189,24 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/")
-    public RestfulList<PluginRestful> fetchPlugins(@Context ServletContext servletContext) {
-        return getAllPlugins(servletContext, true);
+    public RestfulList<PluginDescriptorRestful> fetchPlugins(@Context ServletContext servletContext) {
+        return getAllPlugins(servletContext);
+    }
+
+
+    @ApiOperation(
+            value = "Check for each plugin if its setup phase can be triggered.",
+            response = MessageRestful.class
+    )
+    @POST
+    @Path("/autosetup")
+    public MessageRestful autoSetupPlugins(@Context ServletContext servletContext) {
+        for (PluginDescriptor plugin : getPlugins(servletContext)) {
+            InstallStateMachine.promote(plugin);
+            autoSetupIfPossible(plugin);
+        }
+
+        return null;
     }
 
 
@@ -214,8 +226,8 @@ public class PluginResource extends BaseResource {
         }
         try {
             systemInfo.setInitialized(initialized);
-            final List<PluginRestful> plugins = getPlugins(servletContext, false);
-            for (PluginRestful plugin : plugins) {
+            final List<PluginDescriptorRestful> plugins = getPlugins(servletContext);
+            for (PluginDescriptorRestful plugin : plugins) {
                 systemInfo.incrementPlugins();
                 final String installState = plugin.getInstallState();
                 final boolean isTool = "tool".equals(plugin.getType());
@@ -240,19 +252,19 @@ public class PluginResource extends BaseResource {
             final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
             for (RebuildEvent rebuildEvent : rebuildEvents) {
                 systemInfo.setNeedsRebuild(true);
-                final List<Plugin> rebuildPlugins = systemInfo.getRebuildPlugins();
+                final List<PluginDescriptor> rebuildPlugins = systemInfo.getRebuildPlugins();
                 // skip duplicate names:
                 boolean containsPlugin = false;
                 final String pluginName = rebuildEvent.getPluginName();
-                for (Plugin rebuildPlugin : rebuildPlugins) {
+                for (PluginDescriptor rebuildPlugin : rebuildPlugins) {
                     if (rebuildPlugin.getName().equals(pluginName)) {
                         containsPlugin = true;
                     }
                 }
                 if (!containsPlugin) {
-                    final Plugin plugin = new PluginRestful(pluginName);
-                    plugin.setType(rebuildEvent.getPluginType());
-                    systemInfo.addRebuildPlugin(plugin);
+                    final PluginDescriptor pluginDescriptor = new PluginDescriptorRestful(pluginName);
+                    pluginDescriptor.setType(rebuildEvent.getPluginType());
+                    systemInfo.addRebuildPlugin(pluginDescriptor);
                 }
             }
         } finally {
@@ -285,7 +297,7 @@ public class PluginResource extends BaseResource {
 
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
-        final PluginRestful myPlugin = getPluginById(pluginId, servletContext);
+        final PluginDescriptorRestful myPlugin = getPluginById(pluginId, servletContext);
 
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
             final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
@@ -306,10 +318,9 @@ public class PluginResource extends BaseResource {
     @POST
     @Path("/setup/{pluginId}")
     public void signalSetup(@PathParam(PLUGIN_ID) String pluginId, @Context ServletContext servletContext) {
-        final PluginRestful plugin = getPluginById(pluginId, servletContext);
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginDescriptorRestful plugin = getPluginById(pluginId, servletContext);
 
-        updateInstallStateAfterSetup(plugin, context);
+        updateInstallStateAfterSetup(plugin);
     }
 
     @ApiOperation(
@@ -319,7 +330,7 @@ public class PluginResource extends BaseResource {
     @Path("/savesettings")
     public KeyValueRestful hideWelcomeScreen(final ProjectSettingsBean payload, @Context ServletContext servletContext) {
         try {
-            final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
+            final PluginDescriptor plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
                 final Set<String> pluginRepositories = payload.getPluginRepositories();
@@ -347,18 +358,18 @@ public class PluginResource extends BaseResource {
     @ApiOperation(
             value = "Returns plugin descriptor file",
             notes = "Used for plugin layout etc.",
-            response = PluginRestful.class)
+            response = PluginDescriptorRestful.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
     @GET
     @Path("/plugins/{pluginId}")
-    public Plugin getPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
-        final List<PluginRestful> pluginList = getPlugins(servletContext, false);
-        for (Plugin plugin : pluginList) {
+    public PluginDescriptor getPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
+        final List<PluginDescriptorRestful> pluginList = getPlugins(servletContext);
+        for (PluginDescriptor plugin : pluginList) {
             if (plugin.getId().equals(pluginId)) {
                 return plugin;
             }
         }
-        return new PluginRestful();
+        return new PluginDescriptorRestful();
     }
 
     @ApiOperation(
@@ -368,83 +379,36 @@ public class PluginResource extends BaseResource {
     @POST
     @Path("/install/{pluginId}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
-
         final MessageRestful message = new MessageRestful();
-        final RestfulList<PluginRestful> pluginList = getAllPlugins(servletContext, false);
-        for (PluginRestful plugin : pluginList.getItems()) {
-            final String id = plugin.getId();
-            if (Strings.isNullOrEmpty(id)) {
-                continue;
-            }
-            if (pluginId.equals(id)) {
-                // add dependencies and repositories, if necessary
-                final List<EssentialsDependency> dependencies = plugin.getDependencies();
-                final Collection<EssentialsDependency> dependenciesNotInstalled = new ArrayList<>();
-                for (EssentialsDependency dependency : dependencies) {
 
-                    final boolean installed = DependencyUtils.addDependency(dependency);
-                    if (!installed) {
-                        dependenciesNotInstalled.add(dependency);
-                    }
-                }
-                final List<Repository> repositories = plugin.getRepositories();
-                final Collection<Repository> repositoriesNotInstalled = new ArrayList<>();
-
-                for (Repository repository : repositories) {
-                    final boolean installed = DependencyUtils.addRepository(repository);
-                    if (!installed) {
-                        repositoriesNotInstalled.add(repository);
-                    }
-                }
-
-                if (dependenciesNotInstalled.size() == 0 && repositoriesNotInstalled.size() == 0) {
-                    final PluginContext context = PluginContextFactory.getContext();
-                    final boolean isPackaged = plugin.getDependencies().size() == 0 && plugin.getRepositories().size() == 0;
-                    final String installState = determineInstallStateAfterInstallation(plugin, isPackaged);
-
-                    try (PluginConfigService service = new FilePluginService(context)) {
-                        InstallerDocument document = createPluginInstallerDocument(id);
-                        document.setInstallationState(installState);
-                        service.write(document);
-                    }
-
-                    // Short-circuit the onBoard state if possible.
-                    if (PluginInstallationState.ONBOARD.equals(installState)) {
-                        ErrorMessageRestful errorMessage = setupIfPossible(plugin, context);
-                        if (errorMessage != null) {
-                            return errorMessage;
-                        }
-                    }
-
-                    message.setValue("Plugin <strong>" + plugin.getName() + "</strong> successfully installed.");
-                    return message;
-                } else {
-                    final StringBuilder builder = new StringBuilder();
-                    if (dependenciesNotInstalled.size() > 0) {
-                        builder.append("Not all dependencies were successfully installed: ");
-                        for (EssentialsDependency essentialsDependency : dependenciesNotInstalled) {
-                            builder.append(essentialsDependency.getGroupId()).append(':').append(essentialsDependency.getArtifactId());
-                            builder.append(", ");
-                        }
-                    }
-                    if (repositoriesNotInstalled.size() > 0) {
-                        builder.append("Not all repositories were installed: ");
-                        for (Repository essentialsRepository : repositoriesNotInstalled) {
-                            builder.append(essentialsRepository.getUrl());
-                            builder.append(", ");
-                        }
-                    }
-                    message.setValue(builder.toString());
-                    message.setSuccessMessage(false);
-                    return message;
-
-                }
-
-            }
+        final PluginDescriptor plugin = getPluginById(pluginId, servletContext);
+        if (plugin == null) {
+            message.setValue("Plugin was not found and could not be installed");
+            message.setSuccessMessage(false);
+            return message;
         }
 
-        message.setSuccessMessage(false);
-        message.setValue("Plugin was not found and could not be installed");
+        String error = installRepositoriesForPlugin(plugin);
+        if (error.length() > 0) {
+            message.setValue(error);
+            message.setSuccessMessage(false);
+            return message;
+        }
+
+        error = installDependenciesForPlugin(plugin);
+        if (error.length() > 0) {
+            message.setValue(error);
+            message.setSuccessMessage(false);
+            return message;
+        }
+
+        InstallStateMachine.install(plugin);
+        ErrorMessageRestful errorMessage = autoSetupIfPossible(plugin);
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+
+        message.setValue("Plugin <strong>" + plugin.getName() + "</strong> successfully installed.");
         return message;
     }
 
@@ -485,8 +449,8 @@ public class PluginResource extends BaseResource {
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) throws Exception {
 
         final RestfulList<ControllerRestful> controllers = new RestList<>();
-        final List<PluginRestful> plugins = getPlugins(servletContext, false);
-        for (Plugin plugin : plugins) {
+        final List<PluginDescriptorRestful> plugins = getPlugins(servletContext);
+        for (PluginDescriptor plugin : plugins) {
             final String pluginLink = plugin.getId();
             if (Strings.isNullOrEmpty(pluginLink)) {
                 continue;
@@ -510,7 +474,7 @@ public class PluginResource extends BaseResource {
     public StatusRestful getMenu(@Context ServletContext servletContext) {
         final StatusRestful status = new StatusRestful();
         try {
-            final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
+            final PluginDescriptor plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
                 final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
@@ -536,8 +500,8 @@ public class PluginResource extends BaseResource {
     @Path("/modules")
     public PluginModuleRestful getModule(@Context ServletContext servletContext) throws Exception {
         final PluginModuleRestful modules = new PluginModuleRestful();
-        final List<PluginRestful> plugins = getPlugins(servletContext, false);
-        for (PluginRestful plugin : plugins) {
+        final List<PluginDescriptorRestful> plugins = getPlugins(servletContext);
+        for (PluginDescriptorRestful plugin : plugins) {
             final List<PluginModuleRestful.PrefixedLibrary> libraries = plugin.getLibraries();
 
             final String prefix = plugin.getType();
@@ -567,7 +531,7 @@ public class PluginResource extends BaseResource {
         context.addPlaceholderData(new HashMap<String, Object>(values));
 
         final String pluginId = values.get(PLUGIN_ID);
-        final Plugin myPlugin = getPluginById(pluginId, servletContext);
+        final PluginDescriptor myPlugin = getPluginById(pluginId, servletContext);
 
         final RestfulList<MessageRestful> list = new RestfulList<>();
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
@@ -603,163 +567,55 @@ public class PluginResource extends BaseResource {
     // UTIL
     //############################################
 
-    private void processPlugins(final RestfulList<PluginRestful> plugins, final Iterable<PluginRestful> items,
-                                final Collection<String> restClasses, final PluginConfigService service,
-                                final PluginContext context, final boolean process) {
-        for (PluginRestful item : items) {
-            plugins.add(item);
+    private void processPlugins(final RestfulList<PluginDescriptorRestful> plugins, final Iterable<PluginDescriptorRestful> items,
+                                final Collection<String> restClasses) {
+        for (PluginDescriptorRestful plugin : items) {
+            plugins.add(plugin);
 
-            final String installState = determineInstallState(item, context);
-            item.setInstallState(installState);
-
-            // Short-circuit the onBoard state if possible.
-            //
-            // TODO: the use of the initialized flag is a hacky optimization to skip unnecessary tests.
-            // The test should be executed for each plugin upon "initialization", i.e. after a rebuild/restart.
-            // For this, this piece of code should move into a method that clearly indicates that it's doing
-            // initialization (like initializing the dynamic REST endpoints e.g.).
-            if (process && PluginInstallationState.ONBOARD.equals(installState) && !initialized) {
-                setupIfPossible(item, context); // Ignore error messages
+            final InstallStateMachine.State state = InstallStateMachine.getState(plugin);
+            if (state == InstallStateMachine.State.ONBOARD
+                    || state == InstallStateMachine.State.INSTALLING
+                    || state == InstallStateMachine.State.INSTALLED)
+            {
+                final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
+                plugin.setHasConfiguration(params.hasConfiguration());
             }
 
             //############################################
             // collect endpoints
             //############################################
-            final List<String> pluginRestClasses = item.getRestClasses();
+            final List<String> pluginRestClasses = plugin.getRestClasses();
             if (pluginRestClasses != null) {
                 for (String clazz : pluginRestClasses) {
                     restClasses.add(clazz);
                 }
             }
-
-            // check if recently installed:
-            // TODO: move to client?
-            final String pluginId = item.getId();
-            final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
-            if (document != null && document.getDateInstalled() != null) {
-                final Calendar dateInstalled = document.getDateInstalled();
-                final Calendar lastWeek = Calendar.getInstance();
-                lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
-                if (dateInstalled.after(lastWeek)) {
-                    item.setDateInstalled(dateInstalled);
-                }
-            }
         }
     }
 
-    private String determineInstallState(final PluginRestful plugin, final PluginContext context) {
+    private ErrorMessageRestful autoSetupIfPossible(final PluginDescriptor plugin) {
+        final InstallStateMachine.State state = InstallStateMachine.getState(plugin);
+        final PluginParameterService pluginParameters = PluginParameterServiceFactory.getParameterService(plugin);
+        final ProjectSettings settings = PluginContextFactory.getContext(plugin).getProjectSettings();
 
-        // Retrieve resource-based installation state of plugin (what's in the WAR).
-        String resourceBasedInstallationState = null;
-        try (PluginConfigService service = new ResourcePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
-            if (document != null) {
-                resourceBasedInstallationState = document.getInstallationState();
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from resource", plugin.getId(), e);
+        if (state != InstallStateMachine.State.ONBOARD
+            || !hasGeneralizedSetUp(plugin)
+            || (settings.isConfirmParams() && pluginParameters.hasGeneralizedSetupParameters()))
+        {
+            // auto-setup not possible
+            return null;
         }
 
-        // Retrieve filesystem-based installation state of plugin.
-        String installState = null;
-        try (PluginConfigService service = new FilePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
-            if (document == null) {
-                installState = PluginInstallationState.DISCOVERED;
-            } else {
-                installState = document.getInstallationState();
+        final Map<String, Object> properties = new HashMap<>();
 
-                // If we find that both the resource based and the FS-based installation state "need a rebuild"
-                // and are identical, this is a sign that the rebuild did happen, and that the install state can
-                // proceed to the next phase.
-                boolean updated = false;
-                if (PluginInstallationState.BOARDING.equals(installState)
-                        && PluginInstallationState.BOARDING.equals(resourceBasedInstallationState)) {
-                    installState = determineInstallStateAfterInstallation(plugin, true);
-                    updated = true;
-                } else if (PluginInstallationState.INSTALLING.equals(installState)
-                        && PluginInstallationState.INSTALLING.equals(resourceBasedInstallationState)) {
-                    installState = PluginInstallationState.INSTALLED;
-                    updated = true;
-                }
+        properties.put("sampleData", Boolean.valueOf(settings.isUseSamples()).toString());
+        properties.put("templateName", settings.getTemplateLanguage());
 
-                if (updated) {
-                    document.setInstallationState(installState);
-                    service.write(document);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from file", plugin.getId(), e);
-        }
-
-        populatePluginParameters(plugin, installState);
-        return installState;
+        return setupPlugin(plugin, properties);
     }
 
-    private String determineInstallStateAfterInstallation(final PluginRestful plugin, final boolean isPackaged) {
-        String installState;
-
-        if (isPackaged) {
-            // Plugin was packaged with Essentials WAR, no rebuild needed.
-            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-            if (params.hasSetup()) {
-                installState = PluginInstallationState.ONBOARD;
-            } else {
-                installState = PluginInstallationState.INSTALLED;
-            }
-        } else {
-            // We require a rebuild to get the JARs on board.
-            installState = PluginInstallationState.BOARDING;
-        }
-
-        return installState;
-    }
-
-    private String determineInstallStateAfterSetup(final PluginRestful plugin) {
-        String installState = plugin.getInstallState();
-
-        if (!PluginInstallationState.INSTALLED.equals(installState)) {
-            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-            if (params.doesSetupRequireRebuild()) {
-                installState = PluginInstallationState.INSTALLING;
-            } else {
-                installState = PluginInstallationState.INSTALLED;
-            }
-        }
-        return installState;
-    }
-
-    private void populatePluginParameters(final PluginRestful plugin, final String installState) {
-        if (installState != null
-                && (installState.equals(PluginInstallationState.ONBOARD)
-                || installState.equals(PluginInstallationState.INSTALLING)
-                || installState.equals(PluginInstallationState.INSTALLED))) {
-            final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-
-            plugin.setHasConfiguration(params.hasConfiguration());
-        }
-    }
-
-    private ErrorMessageRestful setupIfPossible(final PluginRestful plugin, final PluginContext context) {
-        ErrorMessageRestful errorMessage = null;
-
-        if (hasGeneralizedSetUp(plugin)
-                && (!context.getProjectSettings().isConfirmParams()
-                || !PluginParameterServiceFactory.getParameterService(plugin).hasGeneralizedSetupParameters())) {
-            final Map<String, Object> properties = new HashMap<>();
-            final ProjectSettings projectSettings = context.getProjectSettings();
-
-            properties.put("sampleData", Boolean.valueOf(projectSettings.isUseSamples()).toString());
-            properties.put("templateName", projectSettings.getTemplateLanguage());
-
-            errorMessage = setupPlugin(plugin, properties);
-        }
-
-        return errorMessage;
-    }
-
-    private ErrorMessageRestful setupPlugin(final PluginRestful plugin, final Map<String, Object> properties) {
-        final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
+    private ErrorMessageRestful setupPlugin(final PluginDescriptor plugin, final Map<String, Object> properties) {
+        final PluginContext context = new DefaultPluginContext(new PluginDescriptorRestful(ProjectSettingsBean.DEFAULT_NAME));
         context.addPlaceholderData(properties);
 
         HstUtils.erasePreview(context);
@@ -778,64 +634,42 @@ public class PluginResource extends BaseResource {
         instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
 
-        return updateInstallStateAfterSetup(plugin, context);
+        return updateInstallStateAfterSetup(plugin);
     }
 
-    private ErrorMessageRestful updateInstallStateAfterSetup(final PluginRestful plugin, final PluginContext context) {
-        try (PluginConfigService service = new FilePluginService(context)) {
-            final String pluginId = plugin.getId();
-            InstallerDocument document = service.read(pluginId, InstallerDocument.class);
-            if (document == null) {
-                // pre-installed plugins do not yet have an installer document.
-                document = createPluginInstallerDocument(pluginId);
-            }
-            document.setDateAdded(Calendar.getInstance());
-            document.setInstallationState(determineInstallStateAfterSetup(plugin));
-            service.write(document);
-        } catch (Exception e) {
-            log.error("Error in processing installer documents", e);
-            return new ErrorMessageRestful("There was an error in processing " + plugin.getName() + " Please see the error logs for more details");
+    private ErrorMessageRestful updateInstallStateAfterSetup(final PluginDescriptor plugin) {
+        ErrorMessageRestful msg = null; // no error message, signals success.
+
+        try {
+            InstallStateMachine.setup(plugin);
+        } catch (InstallStateMachine.StateException e) {
+            msg = new ErrorMessageRestful("There was an error in processing " + plugin.getName()
+                                        + " Please see the error logs for more details");
         }
 
-        return null; // no error message, signals success.
+        return msg;
     }
 
-    private PluginRestful getPluginById(final String id, final ServletContext context) {
+    private PluginDescriptorRestful getPluginById(final String id, final ServletContext context) {
         if (Strings.isNullOrEmpty(id)) {
             return null;
         }
 
-        final List<PluginRestful> plugins = getPlugins(context, false);
-        for (final PluginRestful plugin : plugins) {
-            final String pluginId = plugin.getId();
-            if (Strings.isNullOrEmpty(pluginId)) {
-                continue;
-            }
-            if (pluginId.equals(id)) {
+        for (final PluginDescriptorRestful plugin : getPlugins(context)) {
+            if (id.equals(plugin.getId())) {
                 return plugin;
             }
         }
         return null;
     }
 
-    private InstallerDocument createPluginInstallerDocument(final String pluginId) {
-        final InstallerDocument document = new InstallerDocument();
-
-        document.setName(pluginId);
-        document.setDateInstalled(Calendar.getInstance());
-
-        return document;
-    }
-
-
     /**
      * Fetch all plugins.
      * @param servletContext context
-     * @param process if true, plugins will be processed (rest classes will be registered,any pending install state will be executed)
      * @return list of plugins
      */
-    private List<PluginRestful> getPlugins(final ServletContext servletContext, final boolean process) {
-        return getAllPlugins(servletContext, process).getItems();
+    private List<PluginDescriptorRestful> getPlugins(final ServletContext servletContext) {
+        return getAllPlugins(servletContext).getItems();
     }
 
 
@@ -849,20 +683,19 @@ public class PluginResource extends BaseResource {
      * @param servletContext
      * @return
      */
-    private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext, final boolean process) {
-        final RestfulList<PluginRestful> plugins = new RestList<>();
-        final List<PluginRestful> items = getLocalPlugins();
+    private RestfulList<PluginDescriptorRestful> getAllPlugins(final ServletContext servletContext) {
+        final RestfulList<PluginDescriptorRestful> plugins = new RestList<>();
+        final List<PluginDescriptorRestful> items = getLocalPlugins();
         final Collection<String> restClasses = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
         // remote plugins
         final ProjectSettings projectSettings = getProjectSettings(servletContext);
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
-                final RestfulList<PluginRestful> myPlugins = pluginCache.get(pluginRepository);
+                final RestfulList<PluginDescriptorRestful> myPlugins = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (myPlugins != null) {
-                    final List<PluginRestful> myPluginsItems = myPlugins.getItems();
+                    final List<PluginDescriptorRestful> myPluginsItems = myPlugins.getItems();
                     CollectionUtils.addAll(items, myPluginsItems.iterator());
                 }
             } catch (Exception e) {
@@ -871,12 +704,8 @@ public class PluginResource extends BaseResource {
 
         }
 
+        processPlugins(plugins, items, restClasses);
 
-        try (PluginConfigService service = new FilePluginService(context)) {
-            processPlugins(plugins, items, restClasses, service, context, process);
-        } catch (Exception e) {
-            log.error("Error processing plugins", e);
-        }
         //############################################
         // Register endpoints:
         //############################################
@@ -885,13 +714,13 @@ public class PluginResource extends BaseResource {
     }
 
 
-    private List<PluginRestful> getLocalPlugins() {
+    private List<PluginDescriptorRestful> getLocalPlugins() {
         final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
         final String json = GlobalUtils.readStreamAsText(stream);
         final ObjectMapper mapper = new ObjectMapper();
         try {
             @SuppressWarnings("unchecked")
-            final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
+            final RestfulList<PluginDescriptorRestful> restfulList = mapper.readValue(json, RestfulList.class);
             return restfulList.getItems();
         } catch (IOException e) {
             log.error("Error parsing plugins", e);
@@ -937,5 +766,39 @@ public class PluginResource extends BaseResource {
             log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
 
         }
+    }
+
+    private String installRepositoriesForPlugin(final PluginDescriptor plugin) {
+        final StringBuilder builder = new StringBuilder();
+
+        for (Repository repository : plugin.getRepositories()) {
+            if (!DependencyUtils.addRepository(repository)) {
+                if (builder.length() == 0) {
+                    builder.append("Not all repositories were installed: ");
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(repository.getUrl());
+            }
+        }
+
+        return builder.toString();
+    }
+
+    private String installDependenciesForPlugin(final PluginDescriptor plugin) {
+        final StringBuilder builder = new StringBuilder();
+
+        for (EssentialsDependency dependency : plugin.getDependencies()) {
+            if (!DependencyUtils.addDependency(dependency)) {
+                if (builder.length() == 0) {
+                    builder.append("Not all dependencies were installed: ");
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(dependency.getGroupId()).append(':').append(dependency.getArtifactId());
+            }
+        }
+
+        return builder.toString();
     }
 }

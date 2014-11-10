@@ -356,6 +356,13 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/atlassian-ide-p
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/classes
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/hippo-plugins.iws
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/target
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/*.iml
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/.DS_Store
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/.idea
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/atlassian-ide-plugin.xml
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/classes
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/hippo-plugins.iws
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/target
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/target
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/*.iml
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/.DS_Store

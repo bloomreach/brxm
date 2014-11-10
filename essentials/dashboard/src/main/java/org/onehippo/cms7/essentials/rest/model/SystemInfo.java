@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 /**
@@ -37,7 +37,7 @@ public class SystemInfo implements Restful {
     private int configurablePlugins;
     private boolean needsRebuild;
     private boolean initialized;
-    private List<Plugin> rebuildPlugins;
+    private List<PluginDescriptor> rebuildPlugins;
 
     public void incrementPlugins() {
         totalPlugins++;
@@ -105,20 +105,20 @@ public class SystemInfo implements Restful {
         this.initialized = initialized;
     }
 
-    public void addRebuildPlugin(final Plugin plugin) {
+    public void addRebuildPlugin(final PluginDescriptor plugin) {
         getRebuildPlugins();
         rebuildPlugins.add(plugin);
 
     }
 
-    public List<Plugin> getRebuildPlugins() {
+    public List<PluginDescriptor> getRebuildPlugins() {
         if (rebuildPlugins == null) {
             rebuildPlugins = new ArrayList<>();
         }
         return rebuildPlugins;
     }
 
-    public void setRebuildPlugins(final List<Plugin> rebuildPlugins) {
+    public void setRebuildPlugins(final List<PluginDescriptor> rebuildPlugins) {
         this.rebuildPlugins = rebuildPlugins;
     }
 }

@@ -28,7 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -68,8 +68,8 @@ public class BaseResource {
     /**
      * A plugin has a "generalized setup" when its descriptor specifies either a packageFile or a packageClass.
      */
-    protected boolean hasGeneralizedSetUp(final Plugin plugin) {
-        return StringUtils.hasText(plugin.getPackageFile()) || StringUtils.hasText(plugin.getPackageClass());
+    protected boolean hasGeneralizedSetUp(final PluginDescriptor pluginDescriptor) {
+        return StringUtils.hasText(pluginDescriptor.getPackageFile()) || StringUtils.hasText(pluginDescriptor.getPackageClass());
     }
 
     /**
@@ -78,7 +78,7 @@ public class BaseResource {
      * @param plugin Plugin instance
      * @return null if packageClass & packageFile are null or empty
      */
-    protected InstructionPackage instructionPackageInstance(final Plugin plugin) {
+    protected InstructionPackage instructionPackageInstance(final PluginDescriptor plugin) {
         final String packageClass = plugin.getPackageClass();
         final String packageFile = plugin.getPackageFile();
         InstructionPackage instructionPackage;

@@ -22,7 +22,7 @@ import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
@@ -42,7 +42,7 @@ public class RestfulListTest {
     @Test
     public void testList() throws Exception {
         RestfulList<Restful> myList = new RestfulList<>();
-        final PluginRestful plugin = new PluginRestful();
+        final PluginDescriptorRestful plugin = new PluginDescriptorRestful();
         plugin.setDescription("test");
         final Vendor vendor = new VendorRestful();
         vendor.setUrl("http://www.test.com");

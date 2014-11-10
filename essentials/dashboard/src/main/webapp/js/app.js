@@ -269,6 +269,9 @@
 
                 })();
 
+                // Trigger the
+                $http.post(plugins + 'initialize');
+
                 $http.get($rootScope.REST.controllers).success(function (data) {
                     $rootScope.controllers = data;
                 });
