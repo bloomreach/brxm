@@ -24,7 +24,7 @@ import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.skin.Icons;
+import org.hippoecm.frontend.skin.Icon;
 
 public final class BrowserStyle {
 
@@ -37,6 +37,7 @@ public final class BrowserStyle {
         return new CssResourceReference(BrowserStyle.class, "res/style.css");
     }
 
+    @SuppressWarnings("deprecation")
     public static ResourceReference getIcon(String customName, String defaultName, IconSize size) {
         Session session = Session.get();
         String customResourceKey = "res/" + customName + "-" + size.getSize() + ".png" + session.getLocale() + session.getStyle();
@@ -52,11 +53,18 @@ public final class BrowserStyle {
         }
     }
 
+    /**
+     * @param name name part of the icon file
+     * @param size size of the icon
+     * @return reference to the icon
+     * @deprecated use an {@link Icon} value instead.
+     */
+    @Deprecated
     public static ResourceReference getIcon(String name, IconSize size) {
-        ResourceReference reference = Icons.byName(name, size.toString());
+        ResourceReference reference = Icon.referenceByName(name, size, null);
         if (reference == null) {
             Session session = Session.get();
-            reference = new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png", 
+            reference = new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png",
                     session.getLocale(), session.getStyle(), null);
         }
         return reference;

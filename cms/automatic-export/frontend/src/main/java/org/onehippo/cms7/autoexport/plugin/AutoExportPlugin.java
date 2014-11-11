@@ -40,7 +40,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.skin.Icons;
+import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +109,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         add(link);
 
         // set up icon component
-        final Component icon = new HippoIcon("icon", Icons.BULLET_XL);
+        final Component icon = new HippoIcon("icon", Icon.BULLET_XLARGE.getReference());
         icon.setOutputMarkupId(true);
         icon.setVisible(isExportAvailable());
         link.add(icon);
