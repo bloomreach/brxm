@@ -20,14 +20,21 @@ package org.hippoecm.frontend.service;
  */
 public enum IconSize {
 
-    TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), XLARGE(96), HUGE(128);
+    TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), XLARGE(96), HUGE(128),
 
     /**
-     * Finds the most appropriate IconType for a particular configuration value.
-     * The symbolic names (tiny, small, medium, large & huge) are preferred.
+     * @deprecated use {@link #XLARGE} instead.
+     */
+    @Deprecated
+    BIG(96);
+
+    /**
+     * Finds the most appropriate icon size for a particular configuration value.
+     * The symbolic names (tiny, little, small, medium, large, xlarge & huge) are preferred.
      * 
-     * @param name
-     * @return
+     * @param name a symbolic icon size name (case insensitive) or an integer size value.
+     * @return the most appropriate icon size: either the exact matching one, or the first
+     * icon size that is equal to or bigger than the given integer size.
      */
     public static IconSize getIconSize(String name) {
         for (IconSize type : values()) {
@@ -45,7 +52,7 @@ public enum IconSize {
             return HUGE;
         } catch (NumberFormatException nfe) {
             // not an integer
-            ITitleDecorator.log.warn("Invalid name '" + name + "' specified for IconType.  Use 'tiny', 'small', 'medium', 'large', 'huge' or an integer.");
+            ITitleDecorator.log.warn("Invalid name '" + name + "' specified for IconType.  Use 'tiny', 'little', 'small', 'medium', 'large', 'xlarge', 'huge' or an integer.");
         }
         return MEDIUM;
     }
