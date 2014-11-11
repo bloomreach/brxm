@@ -27,16 +27,11 @@ import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.behaviors.IContextMenu;
@@ -50,20 +45,9 @@ public class ContextMenuTree extends DefaultAbstractTree {
     private static final long serialVersionUID = 1L;
 
     /**
-     * use own styling
-     */
-    private static final ResourceReference TREE_STYLE = new CssResourceReference(JcrTree.class, "res/tree.css");
-
-    /**
      * Reference to the icon for context menus
      */
     private static final ResourceReference MENU = new PackageResourceReference(ContextMenuTree.class, "res/menu.gif");
-
-    /**
-     * Reference to the javascript that adds hover behavior to the tree's div
-     */
-    private static final ResourceReference IE6_HOVER_FIX = new PackageResourceReference(ContextMenuTree.class,
-            "res/ie6_hover_fix.js");
 
     public ContextMenuTree(String id, TreeModel model) {
         super(id, model);
@@ -197,37 +181,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
      */
     protected String renderNode(TreeNode node, int level) {
         return node.toString();
-    }
-
-    @Override
-    public void onTargetRespond(AjaxRequestTarget target) {
-        super.onTargetRespond(target);
-        WebClientInfo info = getWebSession().getClientInfo();
-        if (info != null) {
-            String userAgent = info.getUserAgent().toLowerCase();
-            if (userAgent.indexOf("msie 6") > -1) {
-                target
-                        .getHeaderResponse()
-                        .render(OnDomReadyHeaderItem.forScript(
-                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');"));
-            }
-        }
-    }
-
-    @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        super.renderHead(container);
-        WebClientInfo info = getWebSession().getClientInfo();
-        if (info != null) {
-            String userAgent = info.getUserAgent().toLowerCase();
-            if (userAgent.indexOf("msie 6") > -1) {
-                container.getHeaderResponse().render(JavaScriptHeaderItem.forReference(IE6_HOVER_FIX));
-                container
-                        .getHeaderResponse()
-                        .render(OnDomReadyHeaderItem.forScript(
-                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');"));
-            }
-        }
     }
 
     public static abstract class ContextLink extends AjaxLink<Void> implements IContextMenu {
