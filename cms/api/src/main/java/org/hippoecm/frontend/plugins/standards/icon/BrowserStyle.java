@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icons;
 
 public final class BrowserStyle {
 
@@ -52,9 +53,13 @@ public final class BrowserStyle {
     }
 
     public static ResourceReference getIcon(String name, IconSize size) {
-        Session session = Session.get();
-        return new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png", session
-                .getLocale(), session.getStyle(), null);
+        ResourceReference reference = Icons.byName(name, size.toString());
+        if (reference == null) {
+            Session session = Session.get();
+            reference = new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png", 
+                    session.getLocale(), session.getStyle(), null);
+        }
+        return reference;
     }
 
 }

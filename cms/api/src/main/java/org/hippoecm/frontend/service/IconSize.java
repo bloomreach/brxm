@@ -20,7 +20,7 @@ package org.hippoecm.frontend.service;
  */
 public enum IconSize {
 
-    TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), BIG(96), HUGE(128);
+    TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), XLARGE(96), HUGE(128);
 
     /**
      * Finds the most appropriate IconType for a particular configuration value.

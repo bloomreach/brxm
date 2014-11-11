@@ -15,14 +15,32 @@
  */
 package org.hippoecm.frontend.skin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * References to icons.
  */
-public interface Icons {
+public class Icons {
 
-    static final ResourceReference BULLET_XL = new PackageResourceReference(Icons.class, "images/icons/bullet-extralarge.svg");
+    public static final ResourceReference BULLET_XL = new PackageResourceReference(Icons.class, "images/icons/bullet-xlarge.svg");
+    
+    public static final ResourceReference FOLDER_TINY = new PackageResourceReference(Icons.class, "images/icons/folder-tiny.svg");
+    public static final ResourceReference FOLDER_OPEN_TINY = new PackageResourceReference(Icons.class, "images/icons/folder-open-tiny.svg");
+    
+    public static final Map<String, ResourceReference> ALL = new HashMap<>(3);
+    
+    static {
+        ALL.put("bullet-xlarge", BULLET_XL);
+        
+        ALL.put("folder-tiny", FOLDER_TINY);
+        ALL.put("folder-open-tiny", FOLDER_OPEN_TINY);
+    }
 
+    public static ResourceReference byName(final String name, final String size) {
+        return ALL.get(name + "-" + size);
+    }
 }

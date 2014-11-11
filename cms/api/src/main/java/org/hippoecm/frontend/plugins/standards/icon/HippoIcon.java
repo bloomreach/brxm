@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
-import org.hippoecm.frontend.plugins.standards.image.InlineSvgImage;
+import org.hippoecm.frontend.plugins.standards.image.EmbeddedSvg;
 import org.hippoecm.frontend.service.IconSize;
 
 public class HippoIcon extends Panel {
@@ -42,7 +42,7 @@ public class HippoIcon extends Panel {
         Fragment fragment;
         if (reference.getExtension().equalsIgnoreCase("svg")) {
             fragment = new  Fragment ("container", "svgFragment", this);
-            fragment.add(new InlineSvgImage("svg", reference));
+            fragment.add(new EmbeddedSvg("svg", reference));
         } else {
             fragment = new  Fragment ("container", "imageFragment", this);
             Image image = new CachingImage("image", reference);

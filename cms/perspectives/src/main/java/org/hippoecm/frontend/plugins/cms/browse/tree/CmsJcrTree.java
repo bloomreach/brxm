@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import java.io.IOException;
+
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
@@ -25,14 +28,19 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
+import org.hippoecm.frontend.plugins.standards.image.EmbeddedSvg;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.slf4j.Logger;
@@ -117,7 +125,6 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         }
     }
 
-    
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
                                                final TreeNode node)
     {
@@ -133,16 +140,49 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
 
-                final String caret = isLeaf(node) ? "fa-circle" : 
-                        isNodeExpanded(node) ? "fa-caret-down" : "fa-caret-right";
+                final String caret = isLeaf(node) ? "hi-bullet-medium" : 
+                        isNodeExpanded(node) ? "hi-caret-down-medium" : "hi-caret-right-medium";
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
 
                 Response response = RequestCycle.get().getResponse();
-                response.write("<span class=\"" + cssClassOuter + "\"><i class=\"fa " + caret + "\"></i></span>");
+                response.write("<span class=\"" + cssClassOuter + "\"><i class=\"hi " + caret + "\"></i></span>");
             }
         }.setRenderBodyOnly(true);
     }
-    
+
+    @Override
+    protected Component newNodeIcon(final MarkupContainer parent, final String id,
+                                    final TreeNode node)
+    {
+        return new WebMarkupContainer(id)
+        {
+            private static final long serialVersionUID = 1L;
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void onComponentTag(final ComponentTag tag)
+            {
+                super.onComponentTag(tag);
+                ResourceReference icon = getNodeIcon(node);
+                if (icon.getExtension().equalsIgnoreCase("svg") && icon instanceof PackageResourceReference) {
+                    try {
+                        EmbeddedSvg.embedSvg((PackageResourceReference) icon);
+                        setRenderBodyOnly(true);
+                    } catch (IOException | ResourceStreamNotFoundException e) {
+                        log.error(String.format("Failed to load svg image[%s]", icon), e);
+                    }
+                } else {
+                    IRequestHandler handler = new ResourceReferenceRequestHandler(icon);
+                    tag.put("style", "background-image: url('" + RequestCycle.get().urlFor(handler) + "')");
+                    setRenderBodyOnly(false);
+                }
+            }
+        };
+    }
+
+
     private boolean isNodeLast(TreeNode node) {
         TreeNode parent = node.getParent();
         return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);

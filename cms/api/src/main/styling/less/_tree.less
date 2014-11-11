@@ -21,29 +21,35 @@
 .hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
 */
 
-.hippo-tree { 
+.hippo-tree {
   div.wicket-tree {
     overflow: visible;
     white-space: nowrap;
-    line-height: 1.5em;
 
     .indent {
       clear: left;
       float: left;
     }
 
+    // CMS7R-TODO: check if this can go, seems to have no effect, need to check modal
     // First folder level in the tree has a zero left padding
+/*
     div.a_ {
       padding-left: 0;
+    }
+*/
+    // Other folder levels have 1em left padding
+/*
+    div.a_ div.a_ {
+      padding-left: 1em;
+    }
+*/
 
+    .a_ {
       a:first-of-type:focus {
         outline: 0;
         background-color: transparent;
       }
-    }
-    // Other folder levels have 1em left padding
-    div.a_ div.a_ {
-      padding-left: 1em;
     }
 
     // Make the rows expand so it will activate the scrolling of the .hippotree div
@@ -52,18 +58,50 @@
       //overflow: visible;
       white-space: nowrap;
       /* set row height to a little higher for better clickability */
-      padding-top: 2px;
-      padding-bottom: 2px;
+      padding-top: 0;
+      padding-bottom: 4px;
       height: 1.5em;
       overflow: hidden;
       width: 100%;
       clear: both;
-      //margin: 0;
+      font-size: @font-size-svg-fix;
 
-      a {
-        color: @black;
+      .hippo-tree-node-link svg {
+        position: relative;
+        top: 3px;
+        left: 2px;
+
+        g path {
+          fill: @widget-gray;
+        }
       }
+      
+      .hippo-tree-node-link {
+        height: 20px;
+        text-decoration: none;
+        
+        span {
+          color: @cool-shale;
+          padding-top: 2px;
+        }
+        svg + span {
+          padding-left: 2px;
+        }
 
+        // Fallback icon is used
+        span + span {
+          display: inline-block;
+          padding-left: 3px;
+          padding-top: 5px;        
+        }
+      }
+      
+      .hippo-tree-node-link:hover {
+        span {
+          text-decoration: underline;
+        }
+      }
+      
       // Dropdown
       .hippo-tree-dropdown {
         visibility: hidden;
@@ -74,9 +112,14 @@
         background: transparent;
       }
     }
+
     div.row-selected {
       background-color: #E0E8FF;
       font-weight: bold;
+
+      .hippo-tree-node-link svg g path {
+        fill: @aqua;
+      }
     }
 
     div.row:hover .hippo-tree-dropdown-icon-container,
@@ -111,25 +154,23 @@
       width: 14px;
 
       // Caret icons
-      // move fa into position
-      .fa {
+      .hi {
         position: relative;
-        left: 8px;
-        top: 4px;
-        color: @tree-caret-color;
+        left: 4px;
+        top: 6px;
       }
-      .fa-circle {
-        font-size: 6px;
-        left: 7px;
+
+      .hi-bullet-medium {
+        left: 4px;
+        top: 6px;
+      }
+
+      .hi-caret-down-medium {
+        left: 4px;
+      }
+
+      .hi-caret-right-medium {
         top: 5px;
-      }
-
-      .fa-caret-down {
-        left: 6px;
-      }
-
-      .fa-caret-right {
-        top: 3px;
       }
     }
 
@@ -156,7 +197,6 @@ div.wicket-tree span.icon {
   background-repeat: no-repeat;
   background-position: 50% 50%;
   margin-left: 2px;
-  margin-top: -1px;
 }
 
 div.wicket-tree span.indent-blank {
