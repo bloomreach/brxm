@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,8 +49,9 @@ public class FolderTreeNode extends JcrTreeNode {
 
     @Override
     public IJcrTreeNode getChild(String name) throws RepositoryException {
-        if (getChainedModel().getObject().hasNode(name)) {
-            JcrNodeModel childModel = new JcrNodeModel(getChainedModel().getObject().getNode(name));
+        final Node chainedModelObject = getChainedModel().getObject();
+        if (chainedModelObject.hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
             return new FolderTreeNode(childModel, this);
         }
         return null;
@@ -69,7 +70,7 @@ public class FolderTreeNode extends JcrTreeNode {
 
     @Override
     public boolean isLeaf() {
-        return false;
+        return getChildCount() == 0;
     }
 
     @Override
@@ -77,13 +78,14 @@ public class FolderTreeNode extends JcrTreeNode {
         Node jcrNode = this.nodeModel.getObject();
         if (jcrNode instanceof HippoNode) {
             try {
-                HippoNode hippoNode = (HippoNode) jcrNode;
+                final HippoNode hippoNode = (HippoNode) jcrNode;
+                final Node canonical = hippoNode.getCanonicalNode();
                 // do not count for virtual nodes w.r.t performance
-                if (hippoNode.getCanonicalNode() == null || !hippoNode.getCanonicalNode().isSame(hippoNode)) {
+                if (canonical == null || !canonical.isSame(hippoNode)) {
                     return 0;
                 }
             } catch (RepositoryException e) {
-                log.warn("Unable to get child count: " + e.getMessage());
+                log.warn("Unable to get child count", e);
             }
         }
         return super.getChildCount();

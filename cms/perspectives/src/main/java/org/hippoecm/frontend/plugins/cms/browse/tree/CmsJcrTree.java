@@ -140,7 +140,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
 
-                final String caret = isLeaf(node) ? "hi-bullet-medium" : 
+                final String caret = node.isLeaf() ? "hi-bullet-medium" :
                         isNodeExpanded(node) ? "hi-caret-down-medium" : "hi-caret-right-medium";
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
 
@@ -188,8 +188,4 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
     }
     
-    private boolean isLeaf(TreeNode node) {
-        return node.getChildCount() == 0;
-    }
-
 }
