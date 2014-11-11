@@ -59,7 +59,7 @@ describe('illegal character directive', function () {
     });
 
     it('should not fail for empty value', function () {
-        form.validatedField.$setViewValue();
+        form.validatedField.$setViewValue(null);
         expect($scope.model.validatedField).toEqual('');
         expect(form.validatedField.$valid).toBe(true);
     });
