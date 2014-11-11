@@ -51,7 +51,7 @@ Build with snapshot dependencies:
 
  Note: only effective when your Maven settings.xml file contains a profile
        with this property for the Hippo snapshot repository. For details, see
-       http://www.onehippo.org/7_8/library/development/build-hippo-cms-from-scratch.html
+       http://www.onehippo.org/library/development/build-hippo-cms-from-scratch.html
 
 -------------------------------------
 Develop AngularJS UI with live reload
