@@ -1,34 +1,49 @@
-========================================
-How to test and build Hippo CMS 7
-========================================
+-------------
+Prerequisites
+-------------
 
-1. Introduction
+ - Java 7
+ - Maven 3.x
+ - Node Package Manager (http://npmjs.org)
+ - Grunt (http://gruntjs.org)
+ - Bower (http://bower.io)
+ - Git (http://git-scm.org) - needed by Bower
 
-  Very brief introduction to how to build and test Hippo CMS!
+Grunt and Bower can be installed with Node Package Manager:
 
-2. Requirements --
+ $ sudo npm install -g grunt-cli bower
 
-  (1) Java 7
-  (2) Maven 3.0.x
+-----------------------------
+Windows-specific instructions
+-----------------------------
 
-3. Build 
-     
-    (1) Build with testing
-    
-      $ mvn clean install
-    
-    (2) Build with skipping tests
-    
-      $ mvn clean install -DskipTests
-    
-    (3) Build with Hippo Snapshot Repository Flag
-      - Note: Mostly you do not need this when you check out and build a released version!
-              Needed only when you build the TRUNK having snapshot dependencies!
-      - Note: Please beware that the `-Dhippo.snapshots' option is effective only when you define
-              a Maven profile with this property in your settings.xml for the Hippo snapshot repository.
-              For detail, see http://www.onehippo.org/7_8/library/development/build-hippo-cms-from-scratch.html
-      - Add `-Dhippo.snapshots' for snapshot dependencies.
-        For example,
-        
-          $ mvn clean install -Dhippo.snapshots -DskipTests
-        
+You can automate the installation of NPM using Chocolatey package manager:
+https://chocolatey.org/
+
+The package for Node.js can be installed using:
+
+  $ cinst nodejs.install
+
+Then install Bower and Grunt with NPM as explained before.
+
+-----
+Build
+-----
+
+Build with testing:
+
+ $ mvn clean install
+
+Build without testing:
+
+ $ mvn clean install -DskipTests
+
+Build with snapshot dependencies:
+
+ $ mvn clean install -Dhippo.snapshots=true
+
+ Note: only needed when the project refers to SNAPSHOT dependencies!
+
+ Note: only effective when your Maven settings.xml file contains a profile
+       with this property for the Hippo snapshot repository. For details, see
+       http://www.onehippo.org/library/development/build-hippo-cms-from-scratch.html
