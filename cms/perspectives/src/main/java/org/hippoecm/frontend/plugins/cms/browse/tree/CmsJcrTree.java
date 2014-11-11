@@ -171,7 +171,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
                         EmbeddedSvg.embedSvg((PackageResourceReference) icon);
                         setRenderBodyOnly(true);
                     } catch (IOException | ResourceStreamNotFoundException e) {
-                        log.error(String.format("Failed to load svg image[%s]", icon), e);
+                        log.error("Failed to load svg image[{}]", icon, e);
                     }
                 } else {
                     IRequestHandler handler = new ResourceReferenceRequestHandler(icon);
