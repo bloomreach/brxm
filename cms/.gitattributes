@@ -1137,7 +1137,6 @@ api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
 api/src/main/styling/less/_typography.less -text
 api/src/main/styling/less/_variables.less -text
-api/src/main/styling/less/lib/font-awesome.less -text
 api/src/main/styling/less/lib/open-sans.less -text
 api/src/main/styling/less/lib/style-test.less -text
 api/src/main/styling/less/lib/wicket.less -text

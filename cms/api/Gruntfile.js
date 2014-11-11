@@ -70,7 +70,6 @@ module.exports = function (grunt) {
             vendors: {
                 files: {
                     '<%= build.tmp %>/css/open-sans.css':    '<%= build.src %>/less/lib/open-sans.less',
-                    '<%= build.tmp %>/css/font-awesome.css': '<%= build.src %>/less/lib/font-awesome.less',
                     '<%= build.tmp %>/css/wicket.css':       '<%= build.src %>/less/lib/wicket.less',
                     '<%= build.tmp %>/css/style-test.css':   '<%= build.src %>/less/lib/style-test.less'
                 }
@@ -118,7 +117,6 @@ module.exports = function (grunt) {
             css: {
                 src: [
                     '<%= build.tmp %>/css/open-sans.css', 
-                    '<%= build.tmp %>/css/font-awesome.css', 
                     '<%= build.bower %>/normalize.css/normalize.css', 
                     '<%= build.tmp %>/css/style-test.css', 
                     '<%= build.tmp %>/css/<%= build.file %>.css',
@@ -136,12 +134,6 @@ module.exports = function (grunt) {
                         cwd: '<%= build.bower %>/open-sans-fontface/fonts',
                         src: ['**/*.{otf,eot,svg,ttf,woff}'],
                         dest: '<%= build.skin %>/fonts/open-sans/'
-                    },
-                    {
-                        expand: true,
-                        cwd: '<%= build.bower %>/font-awesome/fonts',
-                        src: ['**/*'],
-                        dest: '<%= build.skin %>/fonts/font-awesome/'
                     },
                     {
                         // images go into the package relative to Icons.java
