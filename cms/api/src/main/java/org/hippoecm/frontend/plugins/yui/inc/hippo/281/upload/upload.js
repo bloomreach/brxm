@@ -146,7 +146,6 @@ if (!YAHOO.hippo.Upload) {
             this.initializationAttempts = 0;
             this.scrollbarThreshold = 9;
             this.numberOfUploads = 0;
-            YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
             if (Lang.isValue(this.config.ajaxIndicatorId)) {
                 this.indicator = new YAHOO.hippo.AjaxIndicator(this.config.ajaxIndicatorId);

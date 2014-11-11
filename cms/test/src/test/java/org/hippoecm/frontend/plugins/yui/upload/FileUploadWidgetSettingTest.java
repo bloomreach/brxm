@@ -34,7 +34,6 @@ public class FileUploadWidgetSettingTest {
         assertFalse(widgetSettings.isAutoUpload());
         assertFalse(widgetSettings.isHideBrowseDuringUpload());
         assertFalse(widgetSettings.isClearAfterUpload());
-        assertTrue(widgetSettings.isFlashUploadEnabled());
         assertTrue(widgetSettings.getFileExtensions().length == 0);
     }
 
@@ -42,7 +41,6 @@ public class FileUploadWidgetSettingTest {
     public void testPluginConfigurationSettings() throws Exception {
         IPluginConfig pluginConfig = new JavaPluginConfig();
 
-        pluginConfig.put("fileupload.flashEnabled","false");
         pluginConfig.put("fileupload.autoUpload","true");
         pluginConfig.put("fileupload.allowedExtensions",new String[]{".pdf",".jpg"});
         pluginConfig.put("fileupload.buttonWidth","122px");
@@ -63,8 +61,6 @@ public class FileUploadWidgetSettingTest {
         assertTrue(widgetSettings.getClearTimeout() == 1500);
         assertTrue(widgetSettings.getButtonHeight().equals("50px"));
         assertTrue(widgetSettings.getButtonWidth().equals("122px"));
-
-        assertFalse(widgetSettings.isFlashUploadEnabled());
     }
 
     @Test

@@ -396,8 +396,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/NodeDragBehavior.ja
 api/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/YuiFeedbackPanel.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/YuiFeedbackPanel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/feedback.js svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/yui/flash/ProbeFlashBehavior.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/yui/flash/probe_flash.js -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/header/YuiContext.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/accordionmanager/accordionmanager-debug.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/accordionmanager/accordionmanager.js svneol=native#text/plain
@@ -411,7 +409,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmanage
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmodel/dragdropmodel-debug.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmodel/dragdropmodel.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/feedbackmanager/feedbackmanager.js svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/flash/flash.js -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/functionqueue/functionqueue-debug.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/functionqueue/functionqueue.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hashmap/hashmap-debug.js svneol=native#text/plain

@@ -22,9 +22,6 @@ import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 
 public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
-    //URL of the Flash file
-    private String flashUrl;
-
     //URL that is used to upload files; must include a session ID
     private String uploadUrl;
 
@@ -97,14 +94,6 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
     public void setUploadUrl(String uploadUrl) {
         this.uploadUrl = uploadUrl;
-    }
-
-    public String getFlashUrl() {
-        return flashUrl;
-    }
-
-    public void setFlashUrl(String flashUrl) {
-        this.flashUrl = flashUrl;
     }
 
     public String getAjaxIndicatorId() {

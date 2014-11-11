@@ -69,12 +69,8 @@ public abstract class MultiFileUploadDialog<T> extends AbstractDialog<T> {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                if (widget.isFlashUpload()) {
-                    target.appendJavaScript(widget.getStartAjaxUploadScript());
-                } else {
-                    handleSubmit();
-                    target.add(MultiFileUploadDialog.this);
-                }
+                handleSubmit();
+                target.add(MultiFileUploadDialog.this);
             }
 
             @Override
@@ -176,24 +172,6 @@ public abstract class MultiFileUploadDialog<T> extends AbstractDialog<T> {
 
         };
         add(widget);
-
-        //The feedbackPanel of the AbstractDialog does not render messages when using the flashUpload. To work around
-        //this use a local feedbackPanel in the case of a flash upload.
-        Panel fp = new FeedbackPanel("feedbackPanel") {
-            @Override
-            public boolean isEnabled() {
-                return widget.isFlashUpload();
-            }
-
-            @Override
-            public boolean isVisible() {
-                return widget.isFlashUpload();
-            }
-        };
-        fp.setEscapeModelStrings(false);
-        fp.add(new AttributeAppender("class", true, new Model<String>("hippo-modal-feedback"), " "));
-        fp.add(new AttributeAppender("class", true, new Model<String>("upload-feedback-panel"), " "));
-        add(fp);
     }
 
     private void transformIntoErrorDialog(final AjaxRequestTarget target) {
@@ -221,9 +199,7 @@ public abstract class MultiFileUploadDialog<T> extends AbstractDialog<T> {
 
     @Override
     protected void onOk() {
-        if (!widget.isFlashUpload()) {
-            widget.onFinishHtmlUpload();
-        }
+        widget.onFinishHtmlUpload();
     }
 
     @Override

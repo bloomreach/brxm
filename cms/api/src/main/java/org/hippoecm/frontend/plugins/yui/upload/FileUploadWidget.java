@@ -23,7 +23,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -33,13 +32,11 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
 import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
-import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
@@ -47,9 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Widget for uploading files. This widget allows both flash and non-flash uploads based on the configuration. By
- * default the flash upload is used. For more configuration options please take a look at {@link
- * FileUploadWidgetSettings}.
+ * Widget for uploading files. This widget allows both html4 uploads based on the configuration.
+ * For more configuration options please take a look at {@link FileUploadWidgetSettings}.
  */
 public class FileUploadWidget extends Panel {
 
@@ -64,9 +60,6 @@ public class FileUploadWidget extends Panel {
     private FileUploadWidgetSettings settings;
     private FileUploadValidationService validator;
     private List<Violation> violations;
-
-    private final static FlashVersion VALID_FLASH = new FlashVersion(9, 0, 45);
-    private FlashVersion detectedFlash;
 
     public FileUploadWidget(String id, FileUploadWidgetSettings settings) {
         this(id, settings, null);
@@ -105,30 +98,11 @@ public class FileUploadWidget extends Panel {
         response.render(CssHeaderItem.forReference(UPLOAD_WIDGET_STYLESHEET));
     }
 
-    /**
-     * Check if the client supports flash by looking up the WebAppBehavior in the page which test the client for flash
-     * on the first load and saves the version.
-     */
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
 
-        if (settings.isFlashUploadEnabled()) {
-            if (detectedFlash == null) {
-                Page page = getPage();
-                for (Behavior behavior : page.getBehaviors()) {
-                    if (behavior instanceof WebAppBehavior) {
-                        detectedFlash = ((WebAppBehavior) behavior).getFlash();
-                    }
-                }
-            }
-        }
-
-        if (isFlashUpload()) {
-            renderFlashUpload();
-        } else {
-            renderJavascriptUpload();
-        }
+        renderJavascriptUpload();
     }
 
     /**
@@ -148,44 +122,6 @@ public class FileUploadWidget extends Panel {
         return null;
     }
 
-
-    protected void renderFlashUpload() {
-        AjaxMultiFileUploadSettings ajaxSettings = new AjaxMultiFileUploadSettings();
-        ajaxSettings.setFileExtensions(settings.getFileExtensions());
-        ajaxSettings.setAllowMultipleFiles(settings.getMaxNumberOfFiles() > 1);
-        ajaxSettings.setUploadAfterSelect(settings.isAutoUpload());
-        ajaxSettings.setClearAfterUpload(settings.isClearAfterUpload());
-        ajaxSettings.setClearTimeout(settings.getClearTimeout());
-        ajaxSettings.setHideBrowseDuringUpload(settings.isHideBrowseDuringUpload());
-        ajaxSettings.setAjaxIndicatorId(getAjaxIndicatorId());
-        ajaxSettings.setButtonWidth(settings.getButtonWidth());
-        ajaxSettings.setSimultaneousUploadLimit(settings.getSimultaneousUploadLimit());
-        ajaxSettings.setMaxNumberOfFiles(settings.getMaxNumberOfFiles());
-        ajaxSettings.setAlwaysShowLabel(settings.isAlwaysShowLabel());
-        replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, ajaxSettings) {
-
-            @Override
-            protected void onFileUpload(FileUpload fileUpload) {
-                handleFileUpload(fileUpload);
-            }
-
-            @Override
-            protected void onFinish(AjaxRequestTarget target) {
-                FileUploadWidget.this.onFinishUpload();
-                FileUploadWidget.this.onFinishAjaxUpload(target);
-            }
-
-        });
-    }
-
-    /**
-     * Detect if flash is installed and if the correct version of the flash plugin is found.
-     *
-     * @return <code>true</code> if flash and the correct version is detected, <code>false</code> otherwise
-     */
-    public boolean isFlashUpload() {
-        return detectedFlash != null && detectedFlash.isValid(VALID_FLASH);
-    }
 
     /**
      * Components that embed a FileUploadWidget might have their own actions for triggering the upload, this method
@@ -231,14 +167,14 @@ public class FileUploadWidget extends Panel {
     }
 
     protected final void onFinishUpload() {
-        if (!isFlashUpload()) {
-            Collection<FileUpload> uploads = ((MultiFileUploadComponent) panel).getUploads();
-            if (uploads != null) {
-                for (FileUpload upload : uploads) {
-                    handleFileUpload(upload);
-                }
+
+        Collection<FileUpload> uploads = ((MultiFileUploadComponent) panel).getUploads();
+        if (uploads != null) {
+            for (FileUpload upload : uploads) {
+                handleFileUpload(upload);
             }
         }
+
         handleViolations();
     }
 
@@ -283,8 +219,6 @@ public class FileUploadWidget extends Panel {
     }
 
     public String hasFileSelectedScript() {
-        return isFlashUpload() ?
-                "YAHOO.hippo.Upload.latest.hasFilesSelected()" :
-                "YAHOO.util.Dom.getElementsByClassName('wicket-mfu-row', 'div', '" + getMarkupId() + "').length > 0";
+        return "YAHOO.util.Dom.getElementsByClassName('wicket-mfu-row', 'div', '" + getMarkupId() + "').length > 0";
     }
 }

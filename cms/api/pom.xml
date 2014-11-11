@@ -227,7 +227,6 @@
             <exclude>org/hippoecm/frontend/plugins/yui/datetime/resources/init.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/dragdrop/Drag.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/dragdrop/Drop.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/yui/flash/probe_flash.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/layout/add_wireframe.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/layout/init_page.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/tree/init_tree.js</exclude>
