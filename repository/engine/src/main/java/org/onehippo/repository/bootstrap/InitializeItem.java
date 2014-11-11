@@ -370,6 +370,7 @@ public class InitializeItem {
                 log.error("Cannot reload initialize item {} because it is a combine or overlay delta", getName());
             } else {
                 if (isReloadEnabled() || isNodetypesResource()) {
+                    log.info("Item {} set to status reload", tempItemNode.getName());
                     itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_RELOAD);
                 } else {
                     log.warn(ERROR_MESSAGE_RELOAD_DISABLED);
