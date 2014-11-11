@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,11 +82,11 @@ public class FolderTreePlugin extends RenderPlugin {
         try {
             Session session = getSession().getJcrSession();
             if (!session.itemExists(startingPath)) {
-                log.warn("The configured path '"+startingPath+"' does not exist, using '"+DEFAULT_START_PATH+"' instead.");
+                log.warn("The configured path '{}' does not exist, using '{}' instead.", startingPath, DEFAULT_START_PATH);
                 startingPath = DEFAULT_START_PATH;
             }
         } catch (RepositoryException exception) {
-            log.warn("The configured path '"+startingPath+"' does not exist, using '"+DEFAULT_START_PATH+"' instead.");
+            log.warn("The configured path '{}' does not exist, using '{}' instead.", startingPath, DEFAULT_START_PATH);
             startingPath = DEFAULT_START_PATH;
         }
         rootModel = new JcrNodeModel(startingPath);
@@ -186,6 +186,7 @@ public class FolderTreePlugin extends RenderPlugin {
                 if (workflowEnabled) {
                     target.appendJavaScript(treeHelperBehavior.getUpdateString());
                 }
+                target.appendJavaScript(treeHelperBehavior.getSelectString());
             }
 
             @Override

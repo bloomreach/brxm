@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,20 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.TreeHelper) {
     (function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom, 
+            Lang = YAHOO.lang;
+        
+        function byClass(name, tag, root) {
+            var found = Dom.getElementsByClassName(name, tag, root);
+            if (!Lang.isUndefined(found.length) && found.length > 0) {
+                return found[0];
+            }
+            return null;
+        }
+        
+        function exists(o) {
+            return !Lang.isUndefined(o) && !Lang.isNull(o);
+        }
 
         YAHOO.hippo.TreeHelperImpl = function() {
         };
@@ -38,22 +51,25 @@ if (!YAHOO.hippo.TreeHelper) {
                 
             init : function(id, cfg){
                 YAHOO.log('Register[' + id + '] cfg=' + Lang.dump(cfg), 'info', 'TreeHelper');
+
                 var el = Dom.get(id);
-                if (el === null || el === undefined) {
-                    return;
-                }
-                el.treeHelper = {
+                if (exists(el)) {
+                    el.treeHelper = {
                         cfg: cfg,
-                        layoutUnit: null
-                };
+                        layoutUnit: null,
+                        selection: null
+                    };
+                }
             },
             
             register : function(id) {
                 var el, self;
                 el = Dom.get(id);
-                if (el === null || el === undefined) {
+
+                if (!exists(el)) {
                     return;
                 }
+
                 if (el.treeHelper.cfg.bindToLayoutUnit && Lang.isUndefined(el.treeHelper.onRender)) {
                     self = this;
                     YAHOO.hippo.LayoutManager.registerResizeListener(el, self, function() {
@@ -64,12 +80,48 @@ if (!YAHOO.hippo.TreeHelper) {
                 }
             },
             
-            updateMouseListeners : function(id) {
-                var el, items, i, len;
-                el = Dom.get(id);
-                if (el === null || el === undefined) {
+            updateSelection : function(id) {
+                var tree = Dom.get(id);
+                if (!exists(tree)) {
                     return;
                 }
+                
+                if (Lang.isNull(tree.treeHelper.selection)) {
+                    var selectionEl = document.createElement("div");
+                    Dom.addClass(selectionEl, 'hippo-tree-selection-widget');
+                    
+                    var hippoTree = byClass('hippo-tree', 'div', tree);
+                    if (!Lang.isNull(hippoTree)) {
+                        hippoTree.appendChild(selectionEl);
+                        tree.treeHelper.selection = selectionEl;
+                    }
+                }
+                
+                var selected = byClass('row-selected', 'div', tree);
+                if (!Lang.isNull(selected)) {
+                    // Move selection widget to position of selected
+                    var newY = Dom.getY(selected); 
+                    Dom.setY(tree.treeHelper.selection, newY);
+                    Dom.removeClass(tree.treeHelper.selection, 'hide');
+
+                    // Trigger mouseLeave to make room for mouseEnter to redraw
+                    if (selected.registeredContextMenu) {
+                        selected.registeredContextMenu.mouseLeave();
+                    }
+                } else {
+                    // Hide selection widget
+                    Dom.addClass(tree.treeHelper.selection, 'hide');
+                }
+            },
+            
+            updateMouseListeners : function(id) {
+                var el, items, i, len;
+
+                el = Dom.get(id);
+                if (!exists(el)) {
+                    return;
+                }
+
                 if (el.treeHelper.cfg.workflowEnabled) {
                     items = Dom.getElementsByClassName('a_', 'div', id);
                     for (i = 0, len = items.length; i < len; i++) {
@@ -81,9 +133,14 @@ if (!YAHOO.hippo.TreeHelper) {
             updateMouseListener : function(el) {
                 if (Lang.isUndefined(el.registeredContextMenu)) {
                     //TODO: make methods configurable
-                    YAHOO.util.Event.on(el, 'mouseover', function(eventType, myId){ Hippo.ContextMenu.showContextLink(myId);}, el.id);
-                    YAHOO.util.Event.on(el, 'mouseout',  function(eventType, myId){ Hippo.ContextMenu.hideContextLink(myId);}, el.id);
-                    el.registeredContextMenu = {set: true};
+                    el.registeredContextMenu = {
+                        mouseEnter: function(eventType, myId){ Hippo.ContextMenu.showContextLink(myId);},
+                        mouseLeave: function(eventType, myId){ Hippo.ContextMenu.hideContextLink(myId);},
+                        set: true
+                    };
+                    
+                    YAHOO.util.Event.on(el, 'mouseenter', el.registeredContextMenu.mouseEnter, el.id);
+                    YAHOO.util.Event.on(el, 'mouseleave', el.registeredContextMenu.mouseLeave, el.id);
                 }
             },
             
@@ -94,7 +151,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 this.register(id);
                 width = 0;
                 el = Dom.get(id);
-                if (el === null || el === undefined) {
+                if (!exists(el)) {
                     return;
                 }
 
@@ -150,7 +207,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 if (!Lang.isUndefined(ar.length) && ar.length > 0) {
                     //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
                     layoutMax = this.getLayoutMax(el);
-                    if (layoutMax !== null && layoutMax !== undefined && layoutMax > width) {
+                    if (exists(layoutMax) && layoutMax > width) {
                         width = layoutMax;
                     }
 

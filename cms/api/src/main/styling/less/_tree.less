@@ -26,6 +26,10 @@
     overflow: visible;
     white-space: nowrap;
 
+    // Set to relative to allow selection-widget to go under
+    position: relative;
+    z-index: 2;
+
     .indent {
       clear: left;
       float: left;
@@ -62,7 +66,7 @@
       padding-bottom: 4px;
       height: 1.5em;
       overflow: hidden;
-      width: 100%;
+      padding-left: 4px;
       clear: both;
       font-size: @font-size-svg-fix;
 
@@ -81,7 +85,7 @@
         text-decoration: none;
         
         span {
-          color: @cool-shale;
+          color: @black;
           padding-top: 2px;
         }
         svg + span {
@@ -114,11 +118,14 @@
     }
 
     div.row-selected {
-      background-color: #E0E8FF;
-      font-weight: bold;
+      font-weight: 600;
+
+      .hippo-tree-node-link span {
+        color: @white;
+      }
 
       .hippo-tree-node-link svg g path {
-        fill: @aqua;
+        fill: @white;
       }
     }
 
@@ -173,7 +180,15 @@
         top: 5px;
       }
     }
-
+  }
+  
+  .hippo-tree-selection-widget {
+    border-radius: 4px;
+    background-color: @aqua;
+    margin: 0 8px;
+    position: relative;
+    z-index: 1;
+    height: 22px;
   }
 }
 

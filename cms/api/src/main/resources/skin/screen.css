@@ -1367,7 +1367,7 @@ body .hippo-picker-properties div.text-input input {
 
 .hippo-browser-documents-small .hippo-browser-documents-small-folders {
   background: #f4f4f4;
-  border-left: 1px solid #afafaf;
+  border-left: 0;
   border-bottom: 0;
   border-top: 0;
 }
