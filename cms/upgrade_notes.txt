@@ -7,15 +7,14 @@
 
 # Code changes
 
-org.hippoecm.frontend.service.ITitleDecorator now implements a new method: public ResourceReference getActiveIcon(IconSize type);
-This method is implemented in org.hippoecm.frontend.plugins.standards.perspective.Perspective so custom perspectives
-will not break, but anything else that implements ITitleDecorator will have to at least implement the method and return null;
-
+- org.hippoecm.frontend.service.ITitleDecorator now implements a new method: public ResourceReference getActiveIcon(IconSize type);
+  This method is implemented in org.hippoecm.frontend.plugins.standards.perspective.Perspective so custom perspectives
+  will not break, but anything else that implements ITitleDecorator will have to at least implement the method and return null;
 
 # Configuration changes
 
 ## Root plugin
 - The document tabs were served by a built-in extension named top, configured with property top. This is now handled as
-a plugin extension configured with the wicket.extensions property.
+  a plugin extension configured with the wicket.extensions property.
 - The logout button will be visible as a perspective switcher in the new UI. For this the configuration of the RootPlugin
-has changed (the logout.extension is removed) and a new LogoutPerspective is added to cms-static
+  has changed (the logout.extension is removed) and a new LogoutPerspective is added to cms-static
