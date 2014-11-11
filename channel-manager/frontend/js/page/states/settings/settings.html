@@ -56,7 +56,8 @@
                        data-ng-required="true"
                        data-tooltip="{{ 'PAGE_TITLE_REQUIRED' | translate }}"
                        data-tooltip-trigger="show"
-                       data-tooltip-show="form.title.$dirty && form.title.$invalid">
+                       data-tooltip-show="form.title.$dirty && form.title.$invalid"
+                       data-tooltip-placement="top">
                 <i class="fa form-control-feedback"
                    data-ng-class="{
                 'fa-check': form.title.$dirty && form.title.$valid,
@@ -79,7 +80,8 @@
                            data-ng-required="true"
                            data-tooltip="{{ tooltips.url() }}"
                            data-tooltip-trigger="show"
-                           data-tooltip-show="form.url.$invalid">
+                           data-tooltip-show="form.url.$invalid"
+                           data-tooltip-placement="top">
                 </div>
                 <i class="fa form-control-feedback"
                    data-ng-class="{
@@ -130,7 +132,8 @@
     <div class="panel-footer clearfix">
          <div class="tooltip-newlines"
               data-tooltip="{{ tooltips.deleteButton() }}"
-              data-tooltip-trigger="mouseenter">
+              data-tooltip-trigger="mouseenter"
+              data-tooltip-placement="top">
             <button class="btn btn-default btn-md"
                     data-ng-click="deletePage(page)"
                     data-ng-disabled="!state.isEditable || page.isHomepage">
