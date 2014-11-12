@@ -105,7 +105,9 @@
                 };
 
                 $scope.dismissFeedback = function () {
-                    $scope.feedback.message = '';
+                    if($scope.feedback.message) {
+                        $scope.feedback.message = '';
+                    }
                     $scope.fieldFeedbackMessage = {};
                 };
 
