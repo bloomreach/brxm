@@ -68,36 +68,11 @@ class InitializeItemRegistry {
      * a new one needs to be created.
      */
     private Collection<InitializeItem> getInitializeItemByContextPath(String path, int eventType) {
-        Collection<InitializeItem> result = null;
-        String resultContextPath = null;
-        // first try an exact match
-        Collection<InitializeItem> items = initializeItemsByContextPath.get(path);
-        if (items != null) {
-            result = items;
-            resultContextPath = path;
-        }
-        if (result == null) {
-            // gather the items with the longest matching context paths
-            for (Map.Entry<String, Collection<InitializeItem>> entry : initializeItemsByContextPath.entrySet()) {
-                String contextPath = entry.getKey();
-                items = entry.getValue();
-                if (path.startsWith(contextPath + "/")) {
-                    if (result == null) {
-                        result = new ArrayList<InitializeItem>();
-                    }
-                    if (resultContextPath != null && contextPath.length() > resultContextPath.length()) {
-                        // we have longer matching items than previously found
-                        result.clear();
-                    }
-                    if (resultContextPath == null || contextPath.length() >= resultContextPath.length()) {
-                        result.addAll(items);
-                        resultContextPath = contextPath;
-                    }
-                }
-            }
-        }
+        Collection<InitializeItem> result = getLongestMatchInitializeItems(path);
         // check if item conforms to location hierarchy
-        if (result != null && eventType == Event.NODE_ADDED) {
+        if (result != null && !result.isEmpty() && eventType == Event.NODE_ADDED) {
+            // all initialize items have the same context path
+            String resultContextPath = result.iterator().next().getContextPath();
             assert resultContextPath != null;
             // If the context node of the result is not the one that is required, return null:
             // a new instruction needs to be created.
@@ -192,4 +167,40 @@ class InitializeItemRegistry {
         return false;
     }
 
+    /**
+     * Get initialize items having the context path matches longest with the given node <code>path</code>.
+     * <p>Note: these initialize items have the same context path</p>
+     *
+     * @param path
+     * @return  the initialize items having longest matched context path or null if no matching item is found
+     */
+    public Collection<InitializeItem> getLongestMatchInitializeItems(final String path){
+        Collection<InitializeItem> result = null;
+        // first try an exact match
+        Collection<InitializeItem> items = initializeItemsByContextPath.get(path);
+        if (items != null) {
+            result = items;
+        }
+        if (result == null) {
+            result = new ArrayList<>();
+            String longestMatchContextPath = null;
+            // gather the items with the longest matching context paths
+            for (Map.Entry<String, Collection<InitializeItem>> entry : initializeItemsByContextPath.entrySet()) {
+                String contextPath = entry.getKey();
+                items = entry.getValue();
+                if (path.startsWith(contextPath + "/")) {
+                    if (longestMatchContextPath == null){
+                        result.addAll(items);
+                        longestMatchContextPath = contextPath;
+                    } else if (contextPath.length() >= longestMatchContextPath.length()) {
+                        // we have longer matching items than previously found
+                        result.clear();
+                        result.addAll(items);
+                        longestMatchContextPath = contextPath;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }

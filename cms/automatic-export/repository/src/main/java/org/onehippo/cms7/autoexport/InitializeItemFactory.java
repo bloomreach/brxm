@@ -77,7 +77,7 @@ class InitializeItemFactory {
             
             sequence = 30000.3;
             // find the parent content resource instruction to determine the sequence number
-            Collection<InitializeItem> parents = registry.getInitializeItemsByPath(contentRoot, eventType);
+            Collection<InitializeItem> parents = registry.getLongestMatchInitializeItems(contentRoot);
             if (parents != null && !parents.isEmpty()) {
                 double highestParentSequence = -1;
                 for (InitializeItem parent : parents) {
