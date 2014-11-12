@@ -40,7 +40,7 @@
                 }
 
                 function addCollapsedProperties(items, collapsed) {
-                    _.each(items, function (item) {
+                    angular.forEach(items, function (item) {
                         if (item.items && item.items.length > 0) {
                             item.collapsed = collapsed;
                             addCollapsedProperties(item.items, collapsed);
@@ -69,8 +69,18 @@
                 }
 
                 function findMenuItem(items, id) {
-                    var found = _.findWhere(items, { id: id });
-                    if (found === undefined && angular.isArray(items)) {
+                    var found;
+
+                    if (angular.isArray(items)) {
+                        for (var j = 0, len = items.length; j < len; j++) {
+                            if (items[j].id === id) {
+                                found = items[j];
+                                break;
+                            }
+                        }
+                    }
+
+                    if (typeof found === 'undefined' && angular.isArray(items)) {
                         for (var i = 0, length = items.length; i < length && !found; i++) {
                             found = findMenuItem(items[i].items, id);
                         }
@@ -80,7 +90,7 @@
 
                 function findPathToMenuItem(parent, id) {
                     var found;
-                    _.every(parent.items, function (item) {
+                    parent.items.every(function (item) {
                         if (item.id == id) {
                             found = [item];
                         } else if (item.items) {
@@ -159,7 +169,7 @@
 
                 function removeCollapsedProperties(item) {
                     delete item.collapsed;
-                    _.each(item.items, function (item) {
+                    angular.forEach(item.items, function (item) {
                             removeCollapsedProperties(item);
                         }
                     );
@@ -258,7 +268,8 @@
                         if (writeQueue.length === 0) {
                             deferred.resolve();
                         } else {
-                            _.last(writeQueue).deferred.promise.then(function() {
+                            var lastItem = writeQueue[writeQueue.length - 1];
+                            lastItem.deferred.promise.then(function() {
                                 deferred.resolve();
                             });
                         }
