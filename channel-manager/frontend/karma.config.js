@@ -30,7 +30,6 @@ module.exports = function(config) {
         files: [
             // dependencies
             'components/jquery/dist/jquery.js',
-            'components/underscore/underscore.js',
             'components/angular/angular.js',
             'components/angular-bootstrap/ui-bootstrap.min.js',
             'components/angular-route/angular-route.js',
