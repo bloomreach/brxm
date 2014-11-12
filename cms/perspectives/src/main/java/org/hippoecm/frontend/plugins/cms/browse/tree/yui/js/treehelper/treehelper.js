@@ -28,7 +28,7 @@ if (!YAHOO.hippo.TreeHelper) {
     (function() {
         var Dom = YAHOO.util.Dom, 
             Lang = YAHOO.lang;
-        
+
         function byClass(name, tag, root) {
             var found = Dom.getElementsByClassName(name, tag, root);
             if (!Lang.isUndefined(found.length) && found.length > 0) {
@@ -36,7 +36,7 @@ if (!YAHOO.hippo.TreeHelper) {
             }
             return null;
         }
-        
+
         function exists(o) {
             return !Lang.isUndefined(o) && !Lang.isNull(o);
         }
@@ -61,7 +61,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     };
                 }
             },
-            
+
             register : function(id) {
                 var el, self;
                 el = Dom.get(id);
@@ -79,29 +79,32 @@ if (!YAHOO.hippo.TreeHelper) {
                     el.treeHelper.onRender = {set: true};
                 }
             },
-            
+
             updateSelection : function(id) {
-                var tree = Dom.get(id);
+                var tree = Dom.get(id),
+                    selectionEl,
+                    hippoTree,
+                    selected;
+
                 if (!exists(tree)) {
                     return;
                 }
-                
+
                 if (Lang.isNull(tree.treeHelper.selection)) {
-                    var selectionEl = document.createElement("div");
+                    selectionEl = document.createElement("div");
                     Dom.addClass(selectionEl, 'hippo-tree-selection-widget');
-                    
-                    var hippoTree = byClass('hippo-tree', 'div', tree);
+
+                    hippoTree = byClass('hippo-tree', 'div', tree);
                     if (!Lang.isNull(hippoTree)) {
                         hippoTree.appendChild(selectionEl);
                         tree.treeHelper.selection = selectionEl;
                     }
                 }
-                
-                var selected = byClass('row-selected', 'div', tree);
+
+                selected = byClass('row-selected', 'div', tree);
                 if (!Lang.isNull(selected)) {
                     // Move selection widget to position of selected
-                    var newY = Dom.getY(selected); 
-                    Dom.setY(tree.treeHelper.selection, newY);
+                    Dom.setY(tree.treeHelper.selection, Dom.getY(selected));
                     Dom.removeClass(tree.treeHelper.selection, 'hide');
 
                     // Trigger mouseLeave to make room for mouseEnter to redraw
@@ -113,7 +116,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     Dom.addClass(tree.treeHelper.selection, 'hide');
                 }
             },
-            
+
             updateMouseListeners : function(id) {
                 var el, items, i, len;
 
@@ -129,7 +132,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     }
                 }
             },
-            
+
             updateMouseListener : function(el) {
                 if (Lang.isUndefined(el.registeredContextMenu)) {
                     //TODO: make methods configurable
@@ -138,12 +141,12 @@ if (!YAHOO.hippo.TreeHelper) {
                         mouseLeave: function(eventType, myId){ Hippo.ContextMenu.hideContextLink(myId);},
                         set: true
                     };
-                    
+
                     YAHOO.util.Event.on(el, 'mouseenter', el.registeredContextMenu.mouseEnter, el.id);
                     YAHOO.util.Event.on(el, 'mouseleave', el.registeredContextMenu.mouseLeave, el.id);
                 }
             },
-            
+
             render : function(id) {
                 var width, el, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes, j, jLen,
                     childNode, reg, ref;
@@ -179,7 +182,7 @@ if (!YAHOO.hippo.TreeHelper) {
                         }
                         computedWidth = 0;
                     }
-                    
+
                     ref = Dom.getRegion(el.parentNode);
                     if (computedHeight > ref.height) {
                         //tree content overflows container element, browser will render scrollbars, so change width
@@ -222,11 +225,11 @@ if (!YAHOO.hippo.TreeHelper) {
                     Dom.setStyle(ar[0], 'width', width + 'px');
                 }
             },
-            
+
             update: function(id) {
                 this.render(id);
             },
-            
+
             getLayoutMax : function(el) {
                 var result, e;
                 result = null;
