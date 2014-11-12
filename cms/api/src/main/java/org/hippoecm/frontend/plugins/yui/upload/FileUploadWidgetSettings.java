@@ -21,6 +21,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 /**
  * Settings for file uploads. Currently allowed configurable settings are:
  * <ul>
+ *     <li>fileupload.flashEnabled = <code>true</code> for flash or <code>false</code> for javascript upload</li>
  *     <li>fileupload.maxItems = maximum allowed file uploads at the same time</li>
  *     <li>fileupload.allowedExtensions = allowed upload file extensions</li>
  *     <li>fileupload.autoUpload = if <code>true</code> the plugin will automatically upload the files</li>
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  */
 public class FileUploadWidgetSettings implements IClusterable {
 
+    public static final String FILEUPLOAD_FLASH_ENABLED_SETTING = "fileupload.flashEnabled";
     public static final String FILEUPLOAD_MAX_ITEMS_SETTING = "fileupload.maxItems";
     public static final String FILEUPLOAD_AUTOUPLOAD_SETTING = "fileupload.autoUpload";
     public static final String FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING = "fileupload.allowedExtensions";
@@ -62,6 +64,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     private boolean hideBrowseDuringUpload;
     private String buttonWidth;
     private String buttonHeight;
+    private boolean flashUploadEnabled = true;
     private boolean alwaysShowLabel;
     private boolean useMultipleAttr = false;
 
@@ -136,6 +139,24 @@ public class FileUploadWidgetSettings implements IClusterable {
         this.buttonHeight = buttonHeight;
     }
 
+    /**
+     * Indicates if the upload widget should use Flash.
+     * @return <code>true</code> if flash should be used, <code>false</code> otherwise
+     */
+    public boolean isFlashUploadEnabled() {
+        return flashUploadEnabled;
+    }
+
+    /**
+     * If set to <code>true</code> (default) the upload plugin will use flash for file uploads, otherwise it will use a
+     * plain Javascript upload.
+     *
+     * @param flashUploadEnabled boolean indicating if flash should be used for file uploads.
+     */
+    public void setFlashUploadEnabled(boolean flashUploadEnabled) {
+        this.flashUploadEnabled = flashUploadEnabled;
+    }
+
     public int getSimultaneousUploadLimit() {
         return simultaneousUploadLimit;
     }
@@ -161,6 +182,10 @@ public class FileUploadWidgetSettings implements IClusterable {
     }
 
     private void parsePluginConfig(final IPluginConfig pluginConfig) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
+            this.flashUploadEnabled = pluginConfig.getAsBoolean(FILEUPLOAD_FLASH_ENABLED_SETTING);
+        }
 
         if (pluginConfig.containsKey(FILEUPLOAD_MAX_ITEMS_SETTING)) {
             this.maxNumberOfFiles = pluginConfig.getAsInteger(FILEUPLOAD_MAX_ITEMS_SETTING);
