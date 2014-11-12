@@ -59,9 +59,6 @@
         <sv:value>aa36f998-6ab4-4527-ab19-26cafc090281</sv:value>
       </sv:property>
       <!-- NOTE: TEST ONLY-->
-      <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
         <sv:value>new-banner-folder</sv:value>
         <sv:value>new-banner-document</sv:value>
@@ -72,11 +69,7 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>inherited locale</sv:value>
       </sv:property>
-      <sv:node sv:name="hippotranslation:translations">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippotranslation:translations</sv:value>
-        </sv:property>
-      </sv:node>
+      
     </sv:node>
   </sv:node>
   <sv:node sv:name="hippo:translation">

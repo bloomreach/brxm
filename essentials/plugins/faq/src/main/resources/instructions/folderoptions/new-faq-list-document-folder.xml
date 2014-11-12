@@ -56,9 +56,6 @@
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <!-- NOTE: TEST ONLY-->
-      <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
         <sv:value>new-faq-list-document</sv:value>
         <sv:value>new-faq-document</sv:value>
@@ -71,11 +68,7 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>inherited locale</sv:value>
       </sv:property>
-      <sv:node sv:name="hippotranslation:translations">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippotranslation:translations</sv:value>
-        </sv:property>
-      </sv:node>
+      
     </sv:node>
   </sv:node>
   <sv:node sv:name="hippo:translation">

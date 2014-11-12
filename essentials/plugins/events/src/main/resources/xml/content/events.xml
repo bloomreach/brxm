@@ -34,15 +34,8 @@
     <sv:value>en</sv:value>
   </sv:property>
   <!-- NOTE: TEST ONLY-->
-  <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">
-    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-  </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <sv:value>{{translationId}}</sv:value>
   </sv:property>
-  <sv:node sv:name="hippotranslation:translations">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippotranslation:translations</sv:value>
-    </sv:property>
-  </sv:node>
+  
 </sv:node>
