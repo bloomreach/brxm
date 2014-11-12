@@ -154,7 +154,7 @@
                                 state = path.length > 0 ? 'edit' : 'add';
                                 return {state: state, id: parent.id};
                             }
-                            var itemIndex = _.indexOf(items, item);
+                            var itemIndex = items.indexOf(item);
                             if (itemIndex === 0) {
                                 // Item to delete is first child, so select next child
                                 return {state: 'edit', id:items[itemIndex + 1].id};
