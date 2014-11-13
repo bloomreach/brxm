@@ -201,6 +201,6 @@ class InitializeItemRegistry {
                 }
             }
         }
-        return result;
+        return result.isEmpty() ? null : result;
     }
 }
