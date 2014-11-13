@@ -18,7 +18,6 @@ package org.hippoecm.frontend.skin;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
 
 /**
@@ -26,20 +25,34 @@ import org.hippoecm.frontend.service.IconSize;
  */
 public enum Icon {
 
+    BULLET_SMALL,
+    BULLET_MEDIUM,
+    BULLET_LARGE,
     BULLET_XLARGE,
+
+    CARET_SMALL,
+    CARET_MEDIUM,
+    CARET_LARGE,
+    CARET_XLARGE,
+
     FOLDER_TINY,
     FOLDER_OPEN_TINY;
 
-    private static PackageResourceReference getIconReference(final String name) {
-        return new PackageResourceReference(Icon.class, "images/icons/" + name + ".svg");
-    }
-
+    private PackageResourceReference instance;
+    
     /**
      * @return a resource reference for the icon.
      */
     public PackageResourceReference getReference() {
-        final String fileName = StringUtils.replace(name().toLowerCase(), "_", "-");
-        return getIconReference(fileName);
+        if (instance == null) {
+            final String fileName = StringUtils.replace(name().toLowerCase(), "_", "-");
+            instance = getIconReference(fileName);
+        }
+        return instance;
+    }
+
+    private static PackageResourceReference getIconReference(final String name) {
+        return new PackageResourceReference(Icon.class, "images/icons/" + name + ".svg");
     }
 
     /**

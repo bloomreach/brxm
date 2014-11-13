@@ -27,13 +27,13 @@ import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmbeddedSvg extends WebComponent {
+public class InlineSvg extends WebComponent {
     
-    public static final Logger log = LoggerFactory.getLogger(EmbeddedSvg.class);
+    public static final Logger log = LoggerFactory.getLogger(InlineSvg.class);
     
     PackageResourceReference reference;
     
-    public EmbeddedSvg(final String id, final ResourceReference reference) {
+    public InlineSvg(final String id, final ResourceReference reference) {
         super(id);
         if (reference instanceof PackageResourceReference) {
             this.reference = (PackageResourceReference) reference;   
@@ -46,17 +46,17 @@ public class EmbeddedSvg extends WebComponent {
     @Override
     protected void onComponentTag(final ComponentTag tag) {
         try {
-            embedSvg(reference);
+            final String svgData = svgAsString(reference);
+            RequestCycle.get().getResponse().write(svgData);
         } catch (IOException | ResourceStreamNotFoundException e) {
-            log.error("Failed to load svg image[" + reference.getName() + "]", e);
+            log.error(String.format("Failed to load svg image[%s]", reference.getName()), e);
         }
         super.onComponentTag(tag);
     }
     
-    public static void embedSvg(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
+    public static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
         String data = IOUtils.toString(reference.getResource().getResourceStream().getInputStream());
         //skip everything (comments, xml declaration and dtd definition) before <svg element
-        data = data.substring(data.indexOf("<svg "));
-        RequestCycle.get().getResponse().write(data);
+        return data.substring(data.indexOf("<svg "));
     }
 }

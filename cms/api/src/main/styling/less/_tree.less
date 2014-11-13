@@ -74,10 +74,7 @@
         position: relative;
         top: 3px;
         left: 2px;
-
-        g path {
-          fill: @widget-gray;
-        }
+        fill: @widget-gray;
       }
       
       .hippo-tree-node-link {
@@ -124,7 +121,11 @@
         color: @white;
       }
 
-      .hippo-tree-node-link svg g path {
+      .hippo-tree-node-link svg {
+        fill: @white;
+      }
+      
+      .hi svg {
         fill: @white;
       }
     }
@@ -134,14 +135,13 @@
       background: url("@{images_legacy}/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
     }
 
-
     .junction,
     .junction-last,
     .corner,
     .indent-line,
     .indent-blank {
       // hide wicket background
-      background-image: none;
+      //background-image: none;
     }
 
     .junction,
@@ -214,7 +214,7 @@ div.wicket-tree span.icon {
   margin-left: 2px;
 }
 
-div.wicket-tree span.indent-blank {
+div.wicket-tree .indent-blank {
   width: 18px;
   height: 1em;
   float: left;
