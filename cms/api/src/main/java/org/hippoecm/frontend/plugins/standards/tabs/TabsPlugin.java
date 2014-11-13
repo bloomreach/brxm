@@ -523,6 +523,13 @@ public class TabsPlugin extends RenderPlugin {
             return null;
         }
 
+        public String getTitleCssClass() {
+            if (decorator instanceof Perspective) {
+                return ((Perspective)decorator).getTitleCssClass();
+            }
+            return null;
+        }
+
         @Deprecated
         // Use public Component getIcon(String id, IconSize size) instead
         public ResourceReference getIcon(IconSize size) {

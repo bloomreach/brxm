@@ -65,8 +65,14 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
     }
 
+    public String getTitleCssClass() {
+        // return a stable CSS class name to be able to identify a perspective's link in automated tests
+        return "hippo-perspective-" + getClass().getSimpleName().toLowerCase();
+    }
+
     // ITitleDecorator
 
+    @Override
     public IModel<String> getTitle() {
         return title;
     }

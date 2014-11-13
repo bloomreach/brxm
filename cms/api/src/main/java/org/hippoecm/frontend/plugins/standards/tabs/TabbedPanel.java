@@ -338,6 +338,11 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
         }, ""));
+
+        final String titleCssClass = tabModel.getObject().getTitleCssClass();
+        if (titleCssClass != null) {
+            link.add(new AttributeAppender("class", Model.of(titleCssClass), " "));
+        }
         container.add(link);
 
         return container;
