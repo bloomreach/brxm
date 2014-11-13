@@ -38,17 +38,17 @@ public enum Icon {
     FOLDER_TINY,
     FOLDER_OPEN_TINY;
 
-    private PackageResourceReference instance;
+    private PackageResourceReference cachedReference;
     
     /**
      * @return a resource reference for the icon.
      */
     public PackageResourceReference getReference() {
-        if (instance == null) {
+        if (cachedReference == null) {
             final String fileName = StringUtils.replace(name().toLowerCase(), "_", "-");
-            instance = getIconReference(fileName);
+            cachedReference = getIconReference(fileName);
         }
-        return instance;
+        return cachedReference;
     }
 
     private static PackageResourceReference getIconReference(final String name) {
