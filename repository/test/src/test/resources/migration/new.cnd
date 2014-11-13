@@ -1,0 +1,5 @@
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<test='http://www.onehippo.org/jcr/test/1.1'>
+
+[test:foo] > nt:base
+- test:baz (string) mandatory
