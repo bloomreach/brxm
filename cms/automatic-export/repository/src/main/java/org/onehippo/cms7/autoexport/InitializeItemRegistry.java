@@ -181,7 +181,7 @@ class InitializeItemRegistry {
         if (items != null) {
             result = items;
         }
-        if (result == null) {
+        if (result == null || result.isEmpty()) {
             result = new ArrayList<>();
             String longestMatchContextPath = null;
             // gather the items with the longest matching context paths
