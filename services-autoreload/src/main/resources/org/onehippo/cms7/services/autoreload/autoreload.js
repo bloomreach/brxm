@@ -29,14 +29,16 @@
         return "ws://" + document.location.host + CONTEXT_PATH + AUTO_RELOAD_PATH;
     }
 
-    function reloadPage() {
-        window.document.location.reload();
-    }
-
     function log(msg) {
         if (typeof console.log === "function") {
             console.log("Hippo auto-reload " + msg);
         }
+    }
+
+    function reloadPage() {
+        log("is reloading page...");
+        isReloadingPage = true;
+        window.document.location.reload();
     }
 
     function onOpen() {
@@ -49,8 +51,6 @@
     function onMessage(event) {
         var message = JSON.parse(event.data);
         if (message.command === "reloadPage") {
-            log("is reloading page...");
-            isReloadingPage = true;
             reloadPage();
         } else {
             log("received unknown message:", message);
@@ -84,7 +84,7 @@
 
     function disconnect() {
         if (websocket) {
-            isReloadingPage = true;
+            isReloadingPage = true; // prevent reconnect
             websocket.close();
         }
     }
