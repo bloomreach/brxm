@@ -15,7 +15,7 @@
  */
 .hippo-editor-top {
   border-bottom: 1px solid #AFAFAF;
-  background: url("images/document-list-back.png") repeat-x top left;
+  /*background: url("images/document-list-back.png") repeat-x top left;*/
 }
 
 .hippo-editor-top .hippo-toolbar {

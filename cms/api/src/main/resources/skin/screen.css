@@ -1377,7 +1377,8 @@ body .hippo-picker-properties div.text-input input {
 }
 
 .hippo-browser-documents-small .hippo-browser-documents-small-files {
-  background: url("images/document-list-back.png") repeat-x top left #fcfcfc;
+  /*background: url("images/document-list-back.png") repeat-x top left #fcfcfc;*/
+    background-color: #fcfcfc;
 }
 
 /* toolbar requires some tweaks here */
@@ -1415,12 +1416,12 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
 */
 
 .hippo-accordion-unit h2 {
-  background-image: url("images/accordion-unit-back2.png");
+  /*background-image: url("images/accordion-unit-back2.png");*/
   background-repeat: repeat-x
 }
 
 .hippo-accordion-unit h2 a {
-  background-image: url("images/accordion-unit-back.png");
+  /*background-image: url("images/accordion-unit-back.png");*/
   background-repeat: no-repeat;
   color: #666666;
   display: block;
