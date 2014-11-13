@@ -104,8 +104,8 @@ if (!YAHOO.hippo.TreeHelper) {
                 selected = byClass('row-selected', 'div', tree);
                 if (!Lang.isNull(selected)) {
                     // Move selection widget to position of selected
-                    Dom.setY(tree.treeHelper.selection, Dom.getY(selected));
                     Dom.removeClass(tree.treeHelper.selection, 'hide');
+                    Dom.setY(tree.treeHelper.selection, y1);
 
                     // Trigger mouseLeave to make room for mouseEnter to redraw
                     if (selected.registeredContextMenu) {

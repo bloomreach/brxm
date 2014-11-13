@@ -1486,28 +1486,6 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
   display: none;
 }
 
-/* Hippo tree addition */
-
-.hippo-tree-dropdown-icon-container {
-  display: none;
-  position: absolute;
-  left: -100px;
-  top: -100px;
-}
-
-.container-selected {
-  display: block;
-  background-color: #F4F4F4;
-  width: 20px;
-  height: 20px;
-}
-
-.hippo-tree-dropdown-icon {
-  display: block;
-  width: 18px;
-  height: 18px;
-}
-
 /* Editor Plugin */
 /* ================================================ */
 /* default background when nothing is selected */

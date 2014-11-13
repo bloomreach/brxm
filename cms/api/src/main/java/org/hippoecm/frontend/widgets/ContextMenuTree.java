@@ -30,24 +30,21 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class ContextMenuTree extends DefaultAbstractTree {
-
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Reference to the icon for context menus
-     */
-    private static final ResourceReference MENU = new PackageResourceReference(ContextMenuTree.class, "res/menu.gif");
+    
+    public static final Logger log = LoggerFactory.getLogger(ContextMenuTree.class);
 
     public ContextMenuTree(String id, TreeModel model) {
         super(id, model);
@@ -66,22 +63,11 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     protected ResourceReference getMenuIcon(TreeNode node) {
-        return MENU;
+        return Icon.DROPDOWN_TINY.getReference();
     }
 
     protected Component newMenuIcon(MarkupContainer parent, String id, final TreeNode node) {
-        return new WebMarkupContainer(id) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("style", "background-image: url('" + RequestCycle.get().urlFor(
-                        new ResourceReferenceRequestHandler(
-                                getMenuIcon(node))) + "')");
-            }
-        };
-
+        return new HippoIcon(id, getMenuIcon(node));
     }
 
     protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {

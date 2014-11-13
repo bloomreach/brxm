@@ -35,6 +35,8 @@ public enum Icon {
     CARET_LARGE,
     CARET_XLARGE,
 
+    DROPDOWN_TINY,
+
     FOLDER_TINY,
     FOLDER_OPEN_TINY;
 

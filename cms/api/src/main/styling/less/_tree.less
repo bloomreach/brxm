@@ -30,25 +30,6 @@
     position: relative;
     z-index: 2;
 
-    .indent {
-      clear: left;
-      float: left;
-    }
-
-    // CMS7R-TODO: check if this can go, seems to have no effect, need to check modal
-    // First folder level in the tree has a zero left padding
-/*
-    div.a_ {
-      padding-left: 0;
-    }
-*/
-    // Other folder levels have 1em left padding
-/*
-    div.a_ div.a_ {
-      padding-left: 1em;
-    }
-*/
-
     .a_ {
       a:first-of-type:focus {
         outline: 0;
@@ -85,6 +66,7 @@
           color: @black;
           padding-top: 2px;
         }
+
         svg + span {
           padding-left: 2px;
         }
@@ -95,6 +77,12 @@
           padding-left: 1px;
           padding-top: 5px;        
         }
+
+        span.icon {
+          background-repeat: no-repeat;
+          background-position: 50% 50%;
+          margin-left: 2px;
+        }
       }
       
       .hippo-tree-node-link:hover {
@@ -104,13 +92,18 @@
       }
       
       // Dropdown
-      .hippo-tree-dropdown {
-        visibility: hidden;
-        float: right;
-      }
-
       .hippo-tree-dropdown-icon-container {
         background: transparent;
+        position: absolute;
+        display: none;
+        
+        svg {
+          fill: @aqua;
+        }
+      }
+
+      .hippo-tree-dropdown-icon-container.container-selected {
+        display: block;
       }
     }
 
@@ -128,26 +121,18 @@
       .hi svg {
         fill: @white;
       }
-    }
 
-    div.row:hover .hippo-tree-dropdown-icon-container,
-    div.row-selected:hover .hippo-tree-dropdown-icon-container {
-      background: url("@{images_legacy}/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
-    }
+      .hippo-tree-dropdown-icon-container svg {
+        fill: @white;
+      }
 
-    .junction,
-    .junction-last,
-    .corner,
-    .indent-line,
-    .indent-blank {
-      // hide wicket background
-      //background-image: none;
     }
 
     .junction,
     .junction-last,
     .corner,
     .indent-line,
+    .indent-blank,
     .icon {
       float: left;
       width: 18px;
@@ -195,33 +180,4 @@
 // TODO: move to console styling
 .hippo-console-tree .hippo-tree div.wicket-tree {
   width: auto;
-}
-
-.hippo-tree .icon-16 {
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  display: block;
-  float: left;
-  margin-right: 5px;
-  margin-left: 3px;
-}
-
-
-div.wicket-tree span.icon {
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  margin-left: 2px;
-}
-
-div.wicket-tree .indent-blank {
-  width: 18px;
-  height: 1em;
-  float: left;
-}
-
-div.wicket-tree span.indent-line {
-  // Hack not needed anymore \0/
-  //_margin-left: 3px;	/* ie 3px bug fix*/
-  overflow: hidden;
 }
