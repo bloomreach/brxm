@@ -26,6 +26,7 @@ import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestHandler;
@@ -119,11 +120,19 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     }
 
     @Override
-    protected void decorateNodeLink(MarkupContainer nodeLink, TreeNode node, int level) {
+    protected void decorateNodeLink(MarkupContainer nodeLink, final TreeNode node, int level) {
         if (treeNodeTranslator.hasTitle(node, level)) {
             IModel<String> titleModel = new Model<String>(treeNodeTranslator.getTitleName(node));
             nodeLink.add(new AttributeAppender("title", true, titleModel, " "));
         }
+
+        nodeLink.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                // Embed node state for testing
+                return getTreeState().isNodeExpanded(node) ? "hippo-tree-node-expanded" : "hippo-tree-node-collapsed";
+            }
+        }, " "));
     }
 
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
