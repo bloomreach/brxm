@@ -26,6 +26,8 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.TreeHelper) {
     (function() {
+        "use strict";
+
         var Dom = YAHOO.util.Dom, 
             Lang = YAHOO.lang;
 
@@ -105,7 +107,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 if (!Lang.isNull(selected)) {
                     // Move selection widget to position of selected
                     Dom.removeClass(tree.treeHelper.selection, 'hide');
-                    Dom.setY(tree.treeHelper.selection, y1);
+                    Dom.setY(tree.treeHelper.selection, Dom.getY(selected));
 
                     // Trigger mouseLeave to make room for mouseEnter to redraw
                     if (selected.registeredContextMenu) {
