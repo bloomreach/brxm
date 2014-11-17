@@ -408,31 +408,13 @@
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
-    <!-- CMS7R-REMOVE prop top replaced with extension.tabs.documents -->
-    <!--
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>service.browse.tabscontainer</sv:value>
-    </sv:property>
-    -->
     <sv:property sv:name="item" sv:type="String">
       <sv:value>header.bar.right</sv:value>
     </sv:property>
-    <!-- CMS7R-REMOVE logout link is now a perspective -->
-    <!--
-    <sv:property sv:name="extension.logout" sv:type="String">
-      <sv:value>service.logout</sv:value>
-    </sv:property>
-    -->
-    <!-- CMS7R-ADD add property extension.tabs.document: service.browse.tabscontainer -->
     <sv:property sv:name="extension.tabs.documents" sv:type="String">
       <sv:value>service.browse.tabscontainer</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
-      <!-- CMS7R-REMOVE logout link is now a perspective -->
-      <!--
-      <sv:value>extension.logout</sv:value>
-      -->
-      <!-- CMS7R-ADD added value extension.tabs.documents -->
       <sv:value>extension.tabs.documents</sv:value>
     </sv:property>
     <sv:node sv:name="browser.ie">
@@ -463,7 +445,6 @@
         <sv:value>tabbed-panel-layout</sv:value>
       </sv:property>
     </sv:node>
-    <!-- CMS7R-ADD: the page layout is now configurable form console -->
     <sv:node sv:name="layout.page">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -473,21 +454,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  
-  <!-- CMS7R-REMOVE: logout link became a perspective
-  <sv:node sv:name="logout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.root.LogoutPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.logout</sv:value>
-    </sv:property>
-  </sv:node>
-  -->
-
   <!-- Needs to load first to make the DashboardPerspective correspond with the first button -->
   <sv:node sv:name="dashboardPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -815,7 +781,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="headerbarLoader">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -827,17 +792,10 @@
       <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
     </sv:property>
   </sv:node>
-
-  <!-- CMS7R-ADD: The logout button is now a perspective icon -->
   <sv:node sv:name="logoutPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-<!--
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-dev</sv:value>
-    </sv:property>
--->
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>logout-perspective-title</sv:value>
     </sv:property>
@@ -851,6 +809,4 @@
       <sv:value>service.tab</sv:value>
     </sv:property>
   </sv:node>
-
-  </sv:node>
-
+</sv:node>
