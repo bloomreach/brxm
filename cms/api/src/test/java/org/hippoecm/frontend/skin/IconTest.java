@@ -18,13 +18,12 @@ package org.hippoecm.frontend.skin;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.tester.WicketTester;
-import org.easymock.classextension.EasyMock;
 import org.hippoecm.frontend.service.IconSize;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class IconTest extends WicketTester {
 
@@ -38,8 +37,8 @@ public class IconTest extends WicketTester {
 
     @Test
     public void referenceByName_finds_icon() {
-        final PackageResourceReference reference = Icon.referenceByName("bullet", IconSize.XLARGE, Icon.FOLDER_TINY);
-        assertEquals("Icon.BULLET_XLARGE should have been returned", Icon.BULLET_XLARGE.getReference().getResource(), reference.getResource());
+        final PackageResourceReference reference = Icon.referenceByName("bullet", IconSize.TINY, Icon.FOLDER_TINY);
+        assertEquals("Icon.BULLET_TINY should have been returned", Icon.BULLET_TINY.getReference().getResource(), reference.getResource());
     }
 
     @Test
