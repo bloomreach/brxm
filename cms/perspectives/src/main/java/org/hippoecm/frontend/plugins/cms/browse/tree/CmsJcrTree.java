@@ -44,6 +44,7 @@ import org.hippoecm.frontend.model.tree.LabelTreeNode;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.skin.IconResourceReference;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,21 +151,14 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
 
-                final String caret = node.isLeaf() ? "hi-bullet-medium" :
-                        isNodeExpanded(node) ? "hi-caret-down-medium" : "hi-caret-right-medium";
-                final Icon icon = node.isLeaf() ? Icon.BULLET_MEDIUM : Icon.CARET_MEDIUM;
+                final Icon icon = node.isLeaf() ? Icon.BULLET_TINY : 
+                        isNodeExpanded(node) ? Icon.CARET_DOWN_TINY : Icon.CARET_RIGHT_TINY;
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
-
-                try {
-                    final String svg = InlineSvg.svgAsString(icon.getReference());
-                    Response response = RequestCycle.get().getResponse();
-                    response.write(
-                            "<span class=\"" + cssClassOuter  + "\">" +
-                                "<span class=\"hi " + caret + "\">" + svg + "</span>" +
-                            "</span>");
-                } catch (IOException | ResourceStreamNotFoundException e) {
-                    log.error("Failed to load svg image[{}]", icon, e);
-                }
+  
+                Response response = RequestCycle.get().getResponse();
+                response.write("<span class=\"" + cssClassOuter  + "\">");
+                icon.getReference().writeToResponse();
+                response.write("</span>");
             }
         }.setRenderBodyOnly(true);
     }
@@ -185,7 +179,10 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
                 ResourceReference icon = getNodeIcon(node);
-                if (icon.getExtension().equalsIgnoreCase("svg") && icon instanceof PackageResourceReference) {
+                if (icon instanceof IconResourceReference) {
+                    ((IconResourceReference) icon).writeToResponse();
+                    setRenderBodyOnly(true);
+                } else if (icon.getExtension().equalsIgnoreCase("svg") && icon instanceof PackageResourceReference) {
                     try {
                         final String svg = InlineSvg.svgAsString((PackageResourceReference) icon);
                         RequestCycle.get().getResponse().write(svg);

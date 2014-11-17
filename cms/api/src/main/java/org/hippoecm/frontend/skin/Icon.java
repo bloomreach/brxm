@@ -15,46 +15,42 @@
  */
 package org.hippoecm.frontend.skin;
 
+import java.util.EnumSet;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.request.resource.PackageResource;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.service.IconSize;
 
 /**
  * References to icons.
  */
 public enum Icon {
+    
+    HIPPO_ICONS,
 
-    BULLET_SMALL,
-    BULLET_MEDIUM,
-    BULLET_LARGE,
-    BULLET_XLARGE,
-
-    CARET_SMALL,
-    CARET_MEDIUM,
-    CARET_LARGE,
-    CARET_XLARGE,
-
+    BULLET_TINY,
+    CARET_UP_TINY,
+    CARET_RIGHT_TINY,
+    CARET_DOWN_TINY,
+    CARET_LEFT_TINY,
     DROPDOWN_TINY,
-
     FOLDER_TINY,
     FOLDER_OPEN_TINY;
 
-    private PackageResourceReference cachedReference;
+    private IconResourceReference cachedReference;
     
     /**
      * @return a resource reference for the icon.
      */
-    public PackageResourceReference getReference() {
+    public IconResourceReference getReference() {
         if (cachedReference == null) {
             final String fileName = StringUtils.replace(name().toLowerCase(), "_", "-");
-            cachedReference = getIconReference(fileName);
+            cachedReference = getIconReference(fileName, this);
         }
         return cachedReference;
     }
 
-    private static PackageResourceReference getIconReference(final String name) {
-        return new PackageResourceReference(Icon.class, "images/icons/" + name + ".svg");
+    private static IconResourceReference getIconReference(final String name, final Icon icon) {
+        return new IconResourceReference(Icon.class, "images/icons/" + name + ".svg", icon);
     }
 
     /**
@@ -67,11 +63,10 @@ public enum Icon {
      * @return a resource reference for the icon, or the resource reference of the default icon when
      * an icon with the given name and size does not exists, or null when the default value is null.
      */
-    public static PackageResourceReference referenceByName(final String name, final IconSize size, final Icon defaultIcon) {
-        final String fullName = name + "-" + size.name().toLowerCase();
-        final PackageResourceReference reference = getIconReference(fullName);
-        if (PackageResource.exists(reference.getKey())) {
-            return reference;
+    public static IconResourceReference referenceByName(final String name, final IconSize size, final Icon defaultIcon) {
+        final Icon icon = Icon.valueOf(name, size);
+        if (icon != null) {
+            return icon.getReference();
         } else if (defaultIcon != null) {
             return defaultIcon.getReference();
         } else {
@@ -79,4 +74,13 @@ public enum Icon {
         }
     }
 
+    private static Icon valueOf(final String name, final IconSize size) {
+        final String enumName = StringUtils.replace(name, "-", "_") + "_" + size.toString();
+        for (Icon value : EnumSet.allOf(Icon.class)) {
+            if (enumName.equalsIgnoreCase(value.name())) {
+                return value;
+            }
+        }
+        return null;
+    }
 }

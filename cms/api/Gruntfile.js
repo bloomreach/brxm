@@ -23,7 +23,7 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
     // display execution time of each task
     require('time-grunt')(grunt);
-    
+
     var buildConfig = require('./build.config.js');
     function classPathExists() {
         return fs.existsSync(buildConfig.target + '/classes/skin/hippo-cms');
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         build: buildConfig,
-        
+
         // Watch for file changes and run corresponding tasks
         watch: {
             options: {
@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             },
             images: {
                 files: ['<%= build.src %>/images/**'],
-                tasks: ['newer:copy:binaries', "newer:copy:images2classpath"]
+                tasks: ['newer:copy:binaries', 'newer:copy:images2classpath']
             }
         },
 
@@ -109,6 +109,39 @@ module.exports = function (grunt) {
             }
         },
 
+        svgmin: {
+            options: {
+                plugins: [
+                    {
+                        removeViewBox: false
+                    }, {
+                        removeUselessStrokeAndFill: true
+                    }
+                ]
+            },
+            theme: {
+                expand: true,
+                cwd: '<%= build.images %>/',
+                src: ['**/*.svg'],
+                dest: '<%= build.images %>'
+            }
+        },
+
+        svgstore: {
+            options: {
+                prefix : 'hi-',
+                svg: {
+                    xmlns: 'http://www.w3.org/2000/svg',
+                    class: 'hi-defs'
+                }
+            },
+            theme: {
+                files: {
+                    '<%= build.images %>/icons/hippo-icons.svg': ['<%= build.images %>/**/*.svg']
+                }
+            }
+        },
+
         // Concat files
         concat: {
             options: {
@@ -116,9 +149,9 @@ module.exports = function (grunt) {
             },
             css: {
                 src: [
-                    '<%= build.tmp %>/css/open-sans.css', 
-                    '<%= build.bower %>/normalize.css/normalize.css', 
-                    '<%= build.tmp %>/css/style-test.css', 
+                    '<%= build.tmp %>/css/open-sans.css',
+                    '<%= build.bower %>/normalize.css/normalize.css',
+                    '<%= build.tmp %>/css/style-test.css',
                     '<%= build.tmp %>/css/<%= build.file %>.css',
                     '<%= build.tmp %>/css/wicket.css'
                 ],
@@ -157,7 +190,7 @@ module.exports = function (grunt) {
                     return classPathExists();
                 }
             },
-            
+
             images2classpath: {
                 // Copy images to the classpath so Wicket will pick them up
                 expand: true,
@@ -181,7 +214,7 @@ module.exports = function (grunt) {
             bower: {
                 src: '<%= build.bower %>'
             },
-            
+
             // clean up copied image, font and css files
             copies: {
                 src: ['<%= build.images %>', '<%= build.skin %>']
@@ -197,7 +230,7 @@ module.exports = function (grunt) {
 
             // Notify user when reloading. Currently only works on OSX with terminal-notifier installed (brew install terminal-notifier)
             notify: {
-              command: "command -v terminal-notifier >/dev/null 2>&1 && terminal-notifier -group 'Hippo CMS' -title 'Grunt build' -subtitle 'Finished' -message 'LiveReloading' || echo 'done'"
+                command: "command -v terminal-notifier >/dev/null 2>&1 && terminal-notifier -group 'Hippo CMS' -title 'Grunt build' -subtitle 'Finished' -message 'LiveReloading' || echo 'done'"
             }
         }
     });
@@ -212,6 +245,8 @@ module.exports = function (grunt) {
         'concat',
         'cssmin:theme',
         'copy:binaries',
+        'svgmin:theme',
+        'svgstore:theme',
         'clean:tmp'
     ]);
 
@@ -220,5 +255,5 @@ module.exports = function (grunt) {
         'build',
         'copy:sources2classpath'
     ]);
-    
+
 };

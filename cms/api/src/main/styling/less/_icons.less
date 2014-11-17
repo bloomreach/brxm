@@ -14,79 +14,64 @@
  * limitations under the License.
  */
 
-.hi {
-  display: inline-block;  
-  width: 11px;
-  height: 11px;
+.hi-defs {
+  display: none;
 }
 
-// Bullet
-.hi-bullet-small {
-  background-image: url('@{images}/icons/bullet-small.svg');
+.hi {
+  display: inline-block;  
 }
-.hi-bullet-medium {
-  background-image: url('@{images}/icons/bullet-medium.svg');
+
+//TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), XLARGE(96), HUGE(128),
+
+.hi-tiny {
+  width: 16px;
+  height: 16px;
 }
-.hi-bullet-large {
-  background-image: url('@{images}/icons/bullet-large.svg');
+
+.hi-little {
+  width: 24px;
+  height: 24px;
 }
-.hi-bullet-xlarge {
-  background-image: url('@{images}/icons/bullet-xlarge.svg');
+
+.hi-small {
+  width: 32px;
+  height: 32px;
+}
+
+.hi-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.hi-large {
+  width: 64px;
+  height: 64px;
+}
+
+.hi-xlarge {
+  width: 96px;
+  height: 96px;
+}
+
+.hi-huge {
+  width: 128px;
+  height: 128px;
 }
 
 // Caret
-.hi-caret-up-small,
-.hi-caret-down-small,
-.hi-caret-left-small,
-.hi-caret-right-small {
-  background-image: url('@{images}/icons/caret-small.svg');
-}
-
-.hi-caret-up-medium,
-.hi-caret-down-medium,
-.hi-caret-left-medium,
-.hi-caret-right-medium {
-  background-image: url('@{images}/icons/caret-medium.svg');
-}
-
-.hi-caret-up-large,
-.hi-caret-down-large,
-.hi-caret-left-large,
-.hi-caret-right-large {
-  background-image: url('@{images}/icons/caret-large.svg');
-}
-
-.hi-caret-up-xlarge,
-.hi-caret-down-xlarge,
-.hi-caret-left-xlarge,
-.hi-caret-right-xlarge {
-  background-image: url('@{images}/icons/caret-xlarge.svg');
-}
-
-.hi-caret-up-small,
-.hi-caret-up-medium,
-.hi-caret-up-large,
-.hi-caret-up-xlarge {
+.hi-caret-up {
   transform: rotate(270deg);
 }
 
-.hi-caret-down-small,
-.hi-caret-down-medium,
-.hi-caret-down-large,
-.hi-caret-down-xlarge {
+.hi-caret-down {
   transform: rotate(90deg);
 }
 
-.hi-caret-left-small,
-.hi-caret-left-medium,
-.hi-caret-left-large,
-.hi-caret-left-xlarge {
+.hi-caret-left {
   transform: rotate(180deg);
 }
 
-.hi-caret-right-small,
-.hi-caret-right-medium,
-.hi-caret-right-large,
-.hi-caret-right-xlarge {
+.hi-caret-right {
   transform: rotate(0deg);
 }
