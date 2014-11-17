@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -76,7 +77,7 @@ public class PropertyValueProviderTest extends PluginTest {
     }
 
     @Test
-    public void testAddNewAddsNoDefaultPropertyForDateField() throws RepositoryException {
+    public void testAddNewAddsNoDefaultPropertyForSingleDateField() throws RepositoryException {
         Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
         JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:date");
         IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:date", new JavaTypeDescriptor("date",
@@ -85,15 +86,83 @@ public class PropertyValueProviderTest extends PluginTest {
                 .getItemModel());
         provider.addNew();
 
-        assertFalse("No date property expected, but a date property was found.",session.itemExists(testNode.getPath() + "/frontendtest:date"));
+        assertEquals("Expected to store null-date value in the date property",
+                PropertyValueProvider.NULL_DATE, testNode.getProperty("frontendtest:date").getDate().getTime());
+
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
+        assertEquals("Expected to return 'null' for the field storing null-date value", null, pvm.getObject());
 
         provider.detach();
         assertEquals(1, provider.size());
         pvm = provider.iterator(0, 1).next();
         assertEquals(null, pvm.getObject());
+    }
+
+    /**
+     * Create a multi-value date property with two empty-values and an initialized value. Expect to return a multi-value
+     * date field having an array of two null and an initialized date values.
+     *
+     * @throws RepositoryException
+     */
+    @Test
+    public void canStoreEmptyValuesInMultiValuesDateField() throws RepositoryException {
+        final Date[] dates = new Date[]{null, new Date(), null};
+        final int valuesCount = dates.length;
+
+        Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
+
+        JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:dates");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:dates", new JavaTypeDescriptor("dates",
+                "Date", null));
+        field.setMultiple(true);
+
+        PropertyValueProvider provider = new PropertyValueProvider(field, field.getTypeDescriptor(), propertyModel
+                .getItemModel());
+        for(int i = 0; i < valuesCount; i++) {
+            provider.addNew();
+        }
+        assertEquals(3, provider.size());
+
+        // set dates to the multi-value date field
+        JcrPropertyValueModel[] pvms = new JcrPropertyValueModel[valuesCount];
+        Iterator<JcrPropertyValueModel> pvmsIter = provider.iterator(0, 3);
+        for(int i = 0; i< valuesCount; i++) {
+            pvms[i] = pvmsIter.next();
+            pvms[i].setObject(dates[i]);
+        }
+        provider.detach();
+
+        assertEquals(valuesCount, provider.size());
+        for(int i = 0; i < valuesCount; i++) {
+            assertEquals(dates[i], pvms[i].getObject());
+        }
+    }
+
+    /**
+     * Create a multi-value date property with a null-date value, expected to have a date field with an empty value
+     * @throws RepositoryException
+     */
+    @Test
+    public void canReadEmptyValueInMultiValuesDateField() throws RepositoryException {
+        final Calendar nullDateCalendar = Calendar.getInstance();
+        nullDateCalendar.setTime(PropertyValueProvider.NULL_DATE);
+
+        Node testNode = this.root.addNode(TEST_NODE_NAME, "frontendtest:relaxed");
+        testNode.setProperty("frontendtest:dates", nullDateCalendar);
+        session.save();
+
+        JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:dates");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:dates", new JavaTypeDescriptor("date",
+                "Date", null));
+        field.setMultiple(true);
+        PropertyValueProvider provider = new PropertyValueProvider(field, field.getTypeDescriptor(), propertyModel
+                .getItemModel());
+
+        assertEquals(1, provider.size());
+        JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
+        assertEquals(null, pvm.getObject());
+        assertFalse(session.hasPendingChanges());
     }
 
     @Test

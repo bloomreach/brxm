@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -27,6 +29,8 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.apache.jackrabbit.util.ISO8601;
+import org.apache.jackrabbit.value.DateValue;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -45,6 +49,9 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PropertyValueProvider.class);
+
+    public static final String NULL_DATE_VALUE = "0001-01-01T12:00:00.000+00:00";
+    public static final Date NULL_DATE = ISO8601.parse(NULL_DATE_VALUE).getTime();
 
     private boolean autocreate = false;
     private IFieldDescriptor descriptor;
@@ -243,7 +250,7 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
         }
     }
 
-    private Value createValue() throws UnsupportedRepositoryOperationException, RepositoryException {
+    private Value createValue() throws RepositoryException {
         javax.jcr.Session session = UserSession.get().getJcrSession();
         ValueFactory factory = session.getValueFactory();
         int propertyType = PropertyType.valueFromName(type.getType());
@@ -252,6 +259,11 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
             return factory.createValue(false);
         case PropertyType.DOUBLE:
             return factory.createValue(0.0);
+        case PropertyType.DATE: {
+            Calendar nullCal = Calendar.getInstance();
+            nullCal.setTime(NULL_DATE);
+            return factory.createValue(nullCal);
+        }
         case PropertyType.LONG:
             return factory.createValue(0L);
         case PropertyType.NAME:
