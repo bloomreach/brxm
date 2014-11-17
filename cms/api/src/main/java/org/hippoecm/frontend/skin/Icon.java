@@ -28,6 +28,7 @@ public enum Icon {
     HIPPO_ICONS,
 
     BULLET_TINY,
+    BULLET_LARGE,
     CARET_UP_TINY,
     CARET_RIGHT_TINY,
     CARET_DOWN_TINY,

@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.standards.icon;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -23,6 +25,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.IconResourceReference;
 
 public class HippoIcon extends Panel {
     
@@ -41,8 +44,18 @@ public class HippoIcon extends Panel {
 
         Fragment fragment;
         if (reference.getExtension().equalsIgnoreCase("svg")) {
-            fragment = new  Fragment ("container", "svgFragment", this);
-            fragment.add(new InlineSvg("svg", reference));
+            fragment = new Fragment("container", "svgFragment", this);
+            if (reference instanceof IconResourceReference) {
+                fragment.add(new WebMarkupContainer("svg") {
+                    @Override
+                    protected void onComponentTag(final ComponentTag tag) {
+                        super.onComponentTag(tag);
+                        ((IconResourceReference) reference).writeToResponse();   
+                    }
+                });
+            } else {
+                fragment.add(new InlineSvg("svg", reference));
+            }
         } else {
             fragment = new  Fragment ("container", "imageFragment", this);
             Image image = new CachingImage("image", reference);
