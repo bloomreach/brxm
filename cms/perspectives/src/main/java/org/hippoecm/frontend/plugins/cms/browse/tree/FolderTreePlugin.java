@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -276,7 +276,13 @@ public class FolderTreePlugin extends RenderPlugin {
                 }
             }
 
-            treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
+            final Object selected = treePath.getLastPathComponent();
+            if (treeState.isNodeSelected(selected)) {
+                // deselect first for redrawing a rename
+                treeState.selectNode(selected, false);
+            }
+
+            treeState.selectNode(selected, true);
         }
     }
 

@@ -150,6 +150,10 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         if (!getLocalizedNameForSession(node).equals(localName)) {
                             defaultWorkflow.replaceAllLocalizedNames(localName);
                         }
+
+                        // select will browse to the tree's renamed node and therefore update the label
+                        final JcrNodeModel renamedModel = new JcrNodeModel(node.getPath(), true/*forceChange*/);
+                        select(renamedModel);
                     }
                 });
             }
