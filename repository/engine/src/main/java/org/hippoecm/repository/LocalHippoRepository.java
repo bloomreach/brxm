@@ -22,8 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,22 +29,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.fs.FileSystemException;
@@ -56,7 +46,6 @@ import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
 import org.hippoecm.repository.impl.ReferenceWorkspaceImpl;
-import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
@@ -80,9 +69,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** System property for overriding the repository config file */
     public static final String SYSTEM_CONFIG_PROPERTY = "repo.config";
 
-    /** System property for specifying the upgrade flag */
-    public static final String SYSTEM_UPGRADE_PROPERTY = "repo.upgrade";
-
     /** System property for enabling bootstrap */
     public static final String SYSTEM_BOOTSTRAP_PROPERTY = "repo.bootstrap";
 
@@ -99,24 +85,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private LocalRepositoryImpl jackrabbitRepository = null;
 
-    /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
-    private final boolean dump = false;
-
-    /** Whether to reindex after upgrading */
-    private boolean upgradeReindexFlag = false;
-
-    /** Whether to run a derived properties validation after upgrading */
-    private boolean upgradeValidateFlag = true;
-
     private String repoPath;
     private String repoConfig;
-
-    /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
-    boolean needsRestart = false;
-
-    private static enum UpgradeFlag {
-        TRUE, FALSE, ABORT
-    }
 
     private ModuleManager moduleManager;
 
@@ -281,47 +251,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             return super.getFileSystem();
         }
 
-        private boolean isClustered() {
-            return getRepositoryConfig().getClusterConfig() != null;
-        }
     }
 
     protected void initialize() throws RepositoryException {
-        initializeStartup();
-        if(needsRestart) {
-            log.warn("restarting repository after upgrade cycle");
-            close();
-            if (upgradeReindexFlag) {
-                log.warn("post migration cycle forced reindexing");
-                initializeReindex();
-            }
-            initializeStartup();
-            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
-            if (upgradeValidateFlag) {
-                log.warn("post migration cycle validating content");
-                final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-                SessionDecorator session = DecoratorFactoryImpl.getSessionDecorator(
-                        jackrabbitRepository.getRootSession(null).impersonate(
-                                credentials), credentials);
-                session.postValidation();
-                session.logout();
-            }
-        } else {
-            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
-        }
-    }
-
-    private void initializeReindex() {
-        final File basedir = new File(getRepositoryPath());
-        try {
-            FileUtils.deleteDirectory(new File(basedir, "repository/index"));
-            FileUtils.deleteDirectory(new File(basedir, "workspaces/default/index"));
-        } catch (IOException e) {
-            log.warn("Unable to delete index", e);
-        }
-    }
-
-    private void initializeStartup() throws RepositoryException {
+        log.info("Initializing Hippo Repository");
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
@@ -338,22 +271,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             ensureRootIsReferenceable(rootSession);
 
             final boolean initializedBefore = initializedBefore(rootSession);
-            if (initializedBefore) {
-                switch(readUpgradeFlag()) {
-                case TRUE:
-                    jackrabbitRepository.enableVirtualLayer(false);
-                    migrate(rootSession);
-                    if (needsRestart) {
-                        return;
-                    }
-                    break;
-                case FALSE:
-                    break;
-                case ABORT:
-                    throw new RepositoryException("ABORT");
-                }
-            }
-
             List<PostStartupTask> postStartupTasks = Collections.emptyList();
 
             if (!initializedBefore || isContentBootstrapEnabled()) {
@@ -383,6 +300,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             for (PostStartupTask task : postStartupTasks) {
                 task.execute();
             }
+
+            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
         } finally {
             if (locked) {
                 initializationProcessor.unlock(bootstrapSession);
@@ -404,53 +323,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         return systemSession.getWorkspace().getNodeTypeManager().hasNodeType(NT_INITIALIZEFOLDER);
     }
 
-    private UpgradeFlag readUpgradeFlag() {
-        UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
-        String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
-
-        if (result != null) {
-            for(String option : result.split(",")) {
-                String key = "", value = "";
-                if (option.contains("=")) {
-                    String[] keyValue = option.split("=");
-                    key = keyValue[0];
-                    value = keyValue[1];
-                }
-                if (option.equalsIgnoreCase("abort")) {
-                    upgradeFlag = UpgradeFlag.ABORT;
-                } else if(key.equalsIgnoreCase("batchsize")) {
-                   LocalHippoRepository.batchThreshold  = Integer.parseInt(value);
-                } else if(option.equalsIgnoreCase("reindex")) {
-                    upgradeReindexFlag = true;
-                } else if(option.equalsIgnoreCase("validate")) {
-                    upgradeValidateFlag = true;
-                } else if(option.equalsIgnoreCase("skipreindex")) {
-                    upgradeReindexFlag = false;
-                } else if(option.equalsIgnoreCase("skipvalidate")) {
-                    upgradeValidateFlag = false;
-                } else if(option.equalsIgnoreCase("true")) {
-                    upgradeFlag = UpgradeFlag.TRUE;
-                } else if(option.equalsIgnoreCase("false")) {
-                    upgradeFlag = UpgradeFlag.FALSE;
-                } else {
-                    log.warn("Unrecognized upgrade option \""+option+"\"");
-                }
-            }
-        }
-        switch(upgradeFlag) {
-        case FALSE:
-            log.info("Automatic upgrade enabled: false");
-            break;
-        case TRUE:
-            log.info("Automatic upgrade enabled: true (reindexing "+(upgradeReindexFlag?"on":"off")+" revalidation "+(upgradeValidateFlag?"on":"off")+")");
-            break;
-        case ABORT:
-            log.info("Automatic upgrade enabled: abort on upgrade required");
-        }
-
-        return upgradeFlag;
-    }
-
     private boolean isContentBootstrapEnabled() {
         return Boolean.getBoolean(SYSTEM_BOOTSTRAP_PROPERTY);
     }
@@ -463,27 +335,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
         }
         return initializationProcessor.processInitializeItems(systemSession, pendingItems);
-    }
-
-    /**
-     * Migration via the UpdaterEngine is enabled when the UpdaterEngine is on the classpath.
-     * Users must explicitly add the dependency to their project in order to use the old
-     * style updaters.
-     */
-    private void migrate(final Session jcrRootSession) throws RepositoryException {
-        try {
-            final Class<?> updaterEngineClass = Class.forName("org.hippoecm.repository.updater.UpdaterEngine");
-            final Method migrate = updaterEngineClass.getMethod("migrate", Session.class, boolean.class);
-            final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-            final Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(
-                    jcrRootSession.impersonate(credentials), credentials);
-            needsRestart = (Boolean) migrate.invoke(null, migrateSession, jackrabbitRepository.isClustered());
-            migrateSession.logout();
-        } catch (ClassNotFoundException ignore) {
-            log.debug("UpdaterEngine not found");
-        } catch (NoSuchMethodException|InvocationTargetException|IllegalAccessException e) {
-            log.error("Unexpected error while trying to invoke UpdaterEngine", e);
-        }
     }
 
     private void initializeSystemNodeTypes(final InitializationProcessorImpl initializationProcessor, final Session systemSession, final FileSystem fileSystem) throws RepositoryException {
@@ -563,37 +414,19 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     @Override
     public synchronized void close() {
-
         if (moduleManager != null) {
             moduleManager.stop();
             moduleManager = null;
         }
-
-        Session session = null;
-        if (dump && repository != null) {
-            try {
-                session = login();
-                java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
-                session.exportSystemView("/hippo:configuration", out, false, false);
-            } catch (IOException|RepositoryException ex) {
-                log.error("Error while dumping configuration: " + ex.getMessage(), ex);
-            } finally {
-                if (session != null) {
-                    session.logout();
-                }
-            }
-        }
-
         if (jackrabbitRepository != null) {
             try {
                 jackrabbitRepository.shutdown();
                 jackrabbitRepository = null;
             } catch (Exception ex) {
-                log.error("Error while shuting down jackrabbitRepository: " + ex.getMessage(), ex);
+                log.error("Error while shutting down Jackrabbit", ex);
             }
         }
         repository = null;
-
         super.close();
     }
 

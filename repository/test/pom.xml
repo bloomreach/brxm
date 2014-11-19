@@ -77,11 +77,6 @@
       <artifactId>hippo-repository-deprecated-facetsearch</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-deprecated-updater-module</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <!-- test -->
     <dependency>
@@ -172,9 +167,7 @@
             <exclude>**/SampleRemoteWorkflowTest.java</exclude>
             <exclude>**/RemoteTest.java</exclude>
             <exclude>**/TotalSizeTest.java</exclude>
-            <exclude>**/CndUpdateTest.java</exclude>
             <exclude>**/DropboxTest.java</exclude>
-            <exclude>**/UpdaterTest.java</exclude>
             <exclude>**/StampedeTest.java</exclude>
             <exclude>**/integration/*.java</exclude>
             <exclude>**/UpdaterExecutorTest.java</exclude>
@@ -207,11 +200,6 @@
                 </goals>
                 <configuration>
                   <includes>
-                    <!-- These tests will run on their own but not
-                         in sequence
-                    <include>**/UpgradeIntegrationTest.java</include>
-                    <include>**/CndUpdateTest.java</include>
-                    -->
                     <include>**/MirrorTest.java</include>
                     <include>**/FacetedNavigationConcurrencyTest.java</include>
                     <include>**/SampleRemoteWorkflowTest.java</include>
@@ -219,7 +207,6 @@
                     <include>**/WorkflowChainingTest.java</include>
                     <include>**/TotalSizeTest.java</include>
                     <include>**/DropboxTest.java</include>
-                    <include>**/UpdaterTest.java</include>
                     <include>**/integration/VersioningWorkflowTest.java</include>
                     <include>**/StampedeTest.java</include>
                     <include>**/UpdaterExecutorTest.java</include>

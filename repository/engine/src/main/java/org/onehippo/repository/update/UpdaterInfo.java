@@ -15,9 +15,6 @@
  */
 package org.onehippo.repository.update;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyCodeSource;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,6 +31,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
 
 /**
  * Encapsulates meta data for running an {@link NodeUpdateVisitor}

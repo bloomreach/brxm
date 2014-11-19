@@ -64,11 +64,6 @@ deprecated/facetselectmirror/.settings
 deprecated/facetselectmirror/hippo-repository-deprecated-facetselectmirror.iml
 deprecated/facetselectmirror/target
 deprecated/target
-deprecated/updater/.classpath
-deprecated/updater/.project
-deprecated/updater/.settings
-deprecated/updater/hippo-repository-deprecated-updater-module.iml
-deprecated/updater/target
 engine/*.tmp
 engine/.classpath
 engine/.pom.xml.swp

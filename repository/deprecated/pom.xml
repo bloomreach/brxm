@@ -29,6 +29,5 @@
   <modules>
     <module>facetselectmirror</module>
     <module>facetsearch</module>
-    <module>updater</module>
   </modules>
 </project>
