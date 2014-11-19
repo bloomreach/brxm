@@ -2950,7 +2950,6 @@ types/pom.xml -text
 types/src/main/resources/frontend.cnd -text
 types/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 types/src/main/resources/reporting.cnd -text
-upgrade/src/main/java/org/hippoecm/frontend/upgrade/RelaxingDoctypeUpdaterModule.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/editor/HippostdPublishableEditor.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/AbstractDocumentWorkflowPlugin_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/AbstractDocumentWorkflowPlugin_it.properties -text
