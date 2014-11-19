@@ -36,7 +36,7 @@ public class LogoutPerspective extends Perspective {
     }
 
     @Override
-    public String getTitleCssClass() {
+    public final String getTitleCssClass() {
         // return a stable CSS class name to be able to identify the logout perspective's link in automated tests,
         // also when this class is extended for custom logout behavior.
         return "hippo-perspective-" + LogoutPerspective.class.getSimpleName().toLowerCase();
