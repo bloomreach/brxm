@@ -56,7 +56,6 @@ public class Extension {
         if (log.isInfoEnabled()) {
             log.info("Loading extension {}", this);
         }
-        final Node initializationFolder = session.getNode(INIT_FOLDER_PATH);
         final Node temporaryFolder = session.getNode(TEMP_FOLDER_PATH);
         final List<InitializeItem> initializeItems = new ArrayList<>();
         try {
@@ -74,31 +73,12 @@ public class Extension {
                     itemNames.put(itemName, this.toString());
                 }
             }
-            if(tempInitFolderNode.hasProperty(HIPPO_VERSION)) {
-                updateVersionTags(initializationFolder, tempInitFolderNode);
-            }
             tempInitFolderNode.remove();
             session.save();
         } catch (RepositoryException e) {
             throw new RepositoryException(String.format("Initializing extension %s failed", this), e);
         }
         return initializeItems;
-    }
-
-    static void updateVersionTags(final Node initializationFolder, final Node tempInitFolderNode) throws RepositoryException {
-        List<String> tags = new ArrayList<>();
-        if (initializationFolder.hasProperty(HIPPO_VERSION)) {
-            for (Value value : initializationFolder.getProperty(HIPPO_VERSION).getValues()) {
-                tags.add(value.getString());
-            }
-        }
-        Value[] added = tempInitFolderNode.getProperty(HIPPO_VERSION).getValues();
-        for (Value value : added) {
-            if (!tags.contains(value.getString())) {
-                tags.add(value.getString());
-            }
-        }
-        initializationFolder.setProperty(HIPPO_VERSION, tags.toArray(new String[tags.size()]));
     }
 
     String getModuleVersion() {

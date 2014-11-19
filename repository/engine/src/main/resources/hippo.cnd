@@ -141,13 +141,13 @@
 - hippo:changerecord (string)
 
 [hippo:initializefolder] > nt:base orderable
-- hippo:version (string) multiple // never specify this item at this time
-- hippo:sequence (double) // not yet supported
+- hippo:version (string) multiple // deprecated, no replacement
+- hippo:sequence (double) // deprecated, no replacement
 + * (hippo:initializeitem) = hippo:initializeitem
 
 [hippo:deleted] > hippo:document, mix:versionable
 - hippo:deletedDate (date)
 - hippo:deletedBy (string)
 
-// marker mixin that excludes the node from being indexed
+// marker mixin to exclude the node from being indexed
 [hippo:skipindex] mixin
