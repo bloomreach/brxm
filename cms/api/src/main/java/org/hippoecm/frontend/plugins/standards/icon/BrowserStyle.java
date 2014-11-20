@@ -37,20 +37,37 @@ public final class BrowserStyle {
         return new CssResourceReference(BrowserStyle.class, "res/style.css");
     }
 
-    @SuppressWarnings("deprecation")
-    public static ResourceReference getIcon(String customName, String defaultName, IconSize size) {
-        Session session = Session.get();
-        String customResourceKey = "res/" + customName + "-" + size.getSize() + ".png" + session.getLocale() + session.getStyle();
+    public static ResourceReference getIconOrNull(String name, IconSize size) {
+        final Session session = Session.get();
+        final String customPngPath = getPackageResourcePath(name, size, ".png");
+        if (customResourceExists(customPngPath, session)) {
+            return createResourceReference(customPngPath, session);
+        }
+        final String customSvgPath = getPackageResourcePath(name, size, ".svg");
+        if (customResourceExists(customSvgPath, session)) {
+            return createResourceReference(customSvgPath, session);
+        }
+        return null;
+    }
+
+    private static boolean customResourceExists(final String packageResourcePath, final Session session) {
+        final String customResourceKey = packageResourcePath + session.getLocale() + session.getStyle();
         if (!customPackageResourceExists.containsKey(customResourceKey)) {
-            Boolean resourceExists = PackageResource.exists(BrowserStyle.class, "res/" + customName + "-" + size.getSize() + ".png", session
-                    .getLocale(), session.getStyle(), null);
+            Boolean resourceExists = PackageResource.exists(BrowserStyle.class, packageResourcePath,
+                    session.getLocale(), session.getStyle(), null);
             customPackageResourceExists.put(customResourceKey, resourceExists);
-        }
-        if (customPackageResourceExists.get(customResourceKey)) {
-            return getIcon(customName, size);
+            return resourceExists;
         } else {
-            return getIcon(defaultName, size);
+            return customPackageResourceExists.get(customResourceKey).booleanValue();
         }
+    }
+
+    private static ResourceReference createResourceReference(final String path, final Session session) {
+        return new PackageResourceReference(BrowserStyle.class, path, session.getLocale(), session.getStyle(), null);
+    }
+
+    private static String getPackageResourcePath(final String name, final IconSize size, final String extension) {
+        return "res/" + name + "-" + size.getSize() + extension;
     }
 
     /**
@@ -61,13 +78,9 @@ public final class BrowserStyle {
      */
     @Deprecated
     public static ResourceReference getIcon(String name, IconSize size) {
-        ResourceReference reference = Icon.referenceByName(name, size, null);
-        if (reference == null) {
-            Session session = Session.get();
-            reference = new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png",
-                    session.getLocale(), session.getStyle(), null);
-        }
-        return reference;
+        final Session session = Session.get();
+        final String resourcePath = getPackageResourcePath(name, size, ".png");
+        return createResourceReference(resourcePath, session);
     }
 
 }

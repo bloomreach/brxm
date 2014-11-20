@@ -109,7 +109,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         add(link);
 
         // set up icon component
-        final Component icon = new HippoIcon("icon", Icon.BULLET_LARGE.getReference());
+        final Component icon = new HippoIcon("icon", Icon.BULLET_LARGE);
         icon.setOutputMarkupId(true);
         icon.setVisible(isExportAvailable());
         link.add(icon);

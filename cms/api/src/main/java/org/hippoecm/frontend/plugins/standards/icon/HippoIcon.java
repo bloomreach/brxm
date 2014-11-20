@@ -21,14 +21,31 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.skin.IconResourceReference;
+import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
-    
+
+    public HippoIcon(final String id, final Icon icon) {
+        super(id);
+
+        setRenderBodyOnly(true);
+
+        add(new WebMarkupContainer("container") {
+            @Override
+            protected void onComponentTag(final ComponentTag tag) {
+                final Response response = RequestCycle.get().getResponse();
+                response.write(icon.getInlineSvg());
+                super.onComponentTag(tag);
+            }
+        });
+    }
+
     public HippoIcon(final String id, final ResourceReference reference) {
         this(id, reference, null, null);
     }
@@ -45,19 +62,9 @@ public class HippoIcon extends Panel {
         Fragment fragment;
         if (reference.getExtension().equalsIgnoreCase("svg")) {
             fragment = new Fragment("container", "svgFragment", this);
-            if (reference instanceof IconResourceReference) {
-                fragment.add(new WebMarkupContainer("svg") {
-                    @Override
-                    protected void onComponentTag(final ComponentTag tag) {
-                        super.onComponentTag(tag);
-                        ((IconResourceReference) reference).writeToResponse();   
-                    }
-                });
-            } else {
-                fragment.add(new InlineSvg("svg", reference));
-            }
+            fragment.add(new InlineSvg("svg", reference));
         } else {
-            fragment = new  Fragment ("container", "imageFragment", this);
+            fragment = new Fragment ("container", "imageFragment", this);
             Image image = new CachingImage("image", reference);
             fragment.add(image);
             

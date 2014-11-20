@@ -20,8 +20,7 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
-import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
-import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 
 public class DefaultTreeNodeIconProvider extends AbstractJcrTreeNodeIconProvider {
 
@@ -31,15 +30,17 @@ public class DefaultTreeNodeIconProvider extends AbstractJcrTreeNodeIconProvider
         if (treeNode instanceof IJcrTreeNode) {
             if (isVirtual((IJcrTreeNode) treeNode)) {
                 if (state.isNodeExpanded(treeNode)) {
-                    return BrowserStyle.getIcon("folder-virtual-open", IconSize.TINY);
+                    // TODO: use specific icon for virtual folder
+                    return new IconResourceReference(Icon.FOLDER_OPEN_TINY);
                 } else {
-                    return BrowserStyle.getIcon("folder-virtual", IconSize.TINY);
+                    // TODO: use specific icon for virtual folder
+                    return new IconResourceReference(Icon.FOLDER_TINY);
                 }
             } else {
                 if (state.isNodeExpanded(treeNode)) {
-                    return BrowserStyle.getIcon("folder-open", IconSize.TINY);
+                    return new IconResourceReference(Icon.FOLDER_OPEN_TINY);
                 } else {
-                    return BrowserStyle.getIcon("folder", IconSize.TINY);
+                    return new IconResourceReference(Icon.FOLDER_TINY);
                 }
             }
         } else {

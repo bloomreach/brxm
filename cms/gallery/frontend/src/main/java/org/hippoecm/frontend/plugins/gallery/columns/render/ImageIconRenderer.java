@@ -15,22 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns.render;
 
-import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
-import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.repository.api.HippoNodeType;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
+import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class ImageIconRenderer extends IconRenderer {
 
     @Override
-    protected ResourceReference getResourceReference(Node node) throws RepositoryException {
+    protected HippoIcon getIcon(String id, Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return BrowserStyle.getIcon("image", IconSize.TINY);
+            // TODO: replace BULLET_LARGE with image.svg icon
+            return new HippoIcon(id, Icon.BULLET_LARGE);
         }
-        return super.getResourceReference(node);
+        return super.getIcon(id, node);
     }
 }

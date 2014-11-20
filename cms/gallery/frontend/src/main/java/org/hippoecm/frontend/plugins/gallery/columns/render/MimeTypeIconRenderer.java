@@ -26,8 +26,8 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -127,7 +127,7 @@ public class MimeTypeIconRenderer extends IconRenderer {
     }
 
     @Override
-    protected ResourceReference getResourceReference(Node node) throws RepositoryException {
+    protected HippoIcon getIcon(String id, Node node) throws RepositoryException {
         try {
             if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                 Node imageSet = node.getNode(node.getName());
@@ -141,12 +141,13 @@ public class MimeTypeIconRenderer extends IconRenderer {
                         String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
                         String iconPath = mimetypeToPath(mimeType);
                         if (iconPath != null) {
-                            Session session = Session.get();
-                            return new PackageResourceReference(MimeTypeIconRenderer.class,
+                            final Session session = Session.get();
+                            final PackageResourceReference reference = new PackageResourceReference(MimeTypeIconRenderer.class,
                                     iconPath,
                                     session.getLocale(),
                                     session.getStyle(),
                                     null);
+                            return new HippoIcon(id, reference);
                         }
                     } else {
                         log.warn("primary item of image set must be of type "
@@ -160,7 +161,7 @@ public class MimeTypeIconRenderer extends IconRenderer {
         } catch (RepositoryException ex) {
             log.error("Unable to determine mime type of document", ex);
         }
-        return super.getResourceReference(node);
+        return super.getIcon(id, node);
     }
 
     //Mimetypes other than application/* are matched by category only (the part before the slash)

@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
@@ -26,6 +27,8 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -33,7 +36,6 @@ import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -182,8 +184,6 @@ public class RootPlugin extends TabsPlugin {
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
-        
-        add(new InlineSvg("icons", Icon.HIPPO_ICONS.getReference()));
     }
 
     private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
@@ -213,6 +213,12 @@ public class RootPlugin extends TabsPlugin {
             child.render(target);
         }
         super.render(target);
+    }
+
+    @Override
+    public void onComponentTag(final ComponentTag tag) {
+        final Response response = RequestCycle.get().getResponse();
+        response.write(Icon.getIconSprite());
     }
 
     @Override

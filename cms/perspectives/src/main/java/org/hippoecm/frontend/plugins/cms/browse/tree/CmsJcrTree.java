@@ -43,8 +43,8 @@ import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
+import org.hippoecm.frontend.plugins.standards.tree.icon.IconResourceReference;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.frontend.skin.IconResourceReference;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,9 +155,9 @@ public abstract class CmsJcrTree extends ContextMenuTree {
                         isNodeExpanded(node) ? Icon.CARET_DOWN_TINY : Icon.CARET_RIGHT_TINY;
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
   
-                Response response = RequestCycle.get().getResponse();
-                response.write("<span class=\"" + cssClassOuter  + "\">");
-                icon.getReference().writeToResponse();
+                final Response response = RequestCycle.get().getResponse();
+                response.write("<span class=\"" + cssClassOuter + "\">");
+                response.write(icon.getInlineSvg());
                 response.write("</span>");
             }
         }.setRenderBodyOnly(true);
@@ -180,7 +180,8 @@ public abstract class CmsJcrTree extends ContextMenuTree {
                 super.onComponentTag(tag);
                 ResourceReference icon = getNodeIcon(node);
                 if (icon instanceof IconResourceReference) {
-                    ((IconResourceReference) icon).writeToResponse();
+                    final String svg = ((IconResourceReference) icon).getIcon().getInlineSvg();
+                    RequestCycle.get().getResponse().write(svg);
                     setRenderBodyOnly(true);
                 } else if (icon.getExtension().equalsIgnoreCase("svg") && icon instanceof PackageResourceReference) {
                     try {

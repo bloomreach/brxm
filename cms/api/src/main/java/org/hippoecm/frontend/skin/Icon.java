@@ -15,17 +15,19 @@
  */
 package org.hippoecm.frontend.skin;
 
-import java.util.EnumSet;
+import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.service.IconSize;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * References to icons.
  */
 public enum Icon {
-    
-    HIPPO_ICONS,
 
     BULLET_TINY,
     BULLET_LARGE,
@@ -37,51 +39,73 @@ public enum Icon {
     FOLDER_TINY,
     FOLDER_OPEN_TINY;
 
-    private IconResourceReference cachedReference;
-    
+    private static final Logger log = LoggerFactory.getLogger(Icon.class);
+
+    private static final String SPRITE_FILE_NAME = "images/icons/hippo-icons.svg";
+
+    public static String getIconSprite() {
+        PackageResourceReference hippoIcons = getIconSpriteReference();
+        try {
+            return svgAsString(hippoIcons);
+        } catch (ResourceStreamNotFoundException|IOException e) {
+            log.warn("Cannot find Hippo icon sprite", e);
+            return "";
+        }
+    }
+
+    private static PackageResourceReference getIconSpriteReference() {
+        return new PackageResourceReference(Icon.class, SPRITE_FILE_NAME);
+    }
+
+    private static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
+        String data = IOUtils.toString(reference.getResource().getResourceStream().getInputStream());
+        //skip everything (comments, xml declaration and dtd definition) before <svg element
+        return data.substring(data.indexOf("<svg "));
+    }
+
+    private String getFileName() {
+        return StringUtils.replace(name().toLowerCase(), "_", "-");
+    }
+
     /**
-     * @return a resource reference for the icon.
+     * Returns an inline svg representation of this icon of the form
+     * <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
+     *
+     * @see Icon#getSpriteId()
+     * @see Icon#getCssClasses()
      */
-    public IconResourceReference getReference() {
-        if (cachedReference == null) {
-            final String fileName = StringUtils.replace(name().toLowerCase(), "_", "-");
-            cachedReference = getIconReference(fileName, this);
-        }
-        return cachedReference;
-    }
-
-    private static IconResourceReference getIconReference(final String name, final Icon icon) {
-        return new IconResourceReference(Icon.class, "images/icons/" + name + ".svg", icon);
+    public String getInlineSvg() {
+        return "<svg class=\"" + getCssClasses() + "\"><use xlink:href=\"#" + getSpriteId() + "\" /></svg>";
     }
 
     /**
-     * Tries to look up an icon by name and size. Returns the resource reference of the default icon
-     * if no such icon exists, or <code>null</code> if the default icon is <code>null</code>.
-     * @param name the name of the icon
-     * @param size the size of the icon
-     * @param defaultIcon the icon to use when the icon with the given name and size cannot be found,
-     *                    or null to return null as default value.
-     * @return a resource reference for the icon, or the resource reference of the default icon when
-     * an icon with the given name and size does not exists, or null when the default value is null.
+     * @return the id of this icon in the generated icon sprint.
+     * For example, the icon {@link CARET_DOWN_MEDIUM} will have the
+     * icon sprite id "hi-caret-down-medium".
      */
-    public static IconResourceReference referenceByName(final String name, final IconSize size, final Icon defaultIcon) {
-        final Icon icon = Icon.valueOf(name, size);
-        if (icon != null) {
-            return icon.getReference();
-        } else if (defaultIcon != null) {
-            return defaultIcon.getReference();
-        } else {
-            return null;
-        }
+    String getSpriteId() {
+        return "hi-" + getFileName();
     }
 
-    private static Icon valueOf(final String name, final IconSize size) {
-        final String enumName = StringUtils.replace(name, "-", "_") + "_" + size.toString();
-        for (Icon value : EnumSet.allOf(Icon.class)) {
-            if (enumName.equalsIgnoreCase(value.name())) {
-                return value;
-            }
+    /**
+     * @return all CSS helper classes to identify an icon. For example, the icon {@link CARET_DOWN_TINY}
+     * will get the CSS classes "hi hi-medium hi-caret hi-caret-down".
+     */
+    private String getCssClasses() {
+        final StringBuilder cssClasses = new StringBuilder("hi");
+
+        final String[] nameParts = StringUtils.split(name().toLowerCase(), '_');
+        final String name = nameParts[0];                       // e.g. 'caret' in CARET_DOWN_TINY
+        final String size = nameParts[nameParts.length - 1];    // e.g. 'tiny' in CARET_DOWN_TINY
+
+        cssClasses.append(" hi-").append(size);
+        cssClasses.append(" hi-").append(name);
+
+        if (nameParts.length == 3) {
+            final String variant = nameParts[1];                // e.g. 'down' in 'CARET_DOWN_MEDIUM'
+            cssClasses.append(" hi-").append(name).append("-").append(variant);
         }
-        return null;
+        return cssClasses.toString();
     }
+
 }

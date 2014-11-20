@@ -27,9 +27,9 @@ import org.apache.wicket.util.io.IClusterable;
 public interface ITreeNodeIconProvider extends IClusterable {
 
     /**
-     * Retrieve a 16px icon to represent the tree node.
+     * Retrieve an .svg icon to represent the tree node.
      * Implementations should return null when no representation can be
-     * found.  Clients should have a fall-back mechanism, e.g. by
+     * found. Clients should have a fall-back mechanism, e.g. by
      * traversing a list of services until an icon is found.
      */
     ResourceReference getNodeIcon(TreeNode treeNode, ITreeState state);

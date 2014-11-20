@@ -26,10 +26,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,76 +43,87 @@ public class IconRenderer implements IListCellRenderer<Node> {
     static final Logger log = LoggerFactory.getLogger(IconRenderer.class);
 
     public Component getRenderer(String id, IModel<Node> model) {
-        return new IconContainer(id, getResourceReference(model));
+        final Node node = model.getObject();
+        if (node == null) {
+            log.warn("Using default icon for unknown node");
+            return defaultIcon(id);
+        }
+        try {
+            return getIcon(id, node);
+        } catch (RepositoryException e) {
+            log.warn("Unable to determine icon for node '{}', using default icon instead",
+                    JcrUtils.getNodePathQuietly(node), e);
+            return defaultIcon(id);
+        }
     }
 
+    private HippoIcon defaultIcon(final String id) {
+        return new HippoIcon(id, Icon.BULLET_LARGE);
+    }
+
+    @Override
     public IObservable getObservable(IModel<Node> model) {
         return null;
     }
 
-    private ResourceReference getResourceReference(IModel<Node> nodeModel) {
-        Node node = nodeModel.getObject();
-        if (node != null) {
-            try {
-                return getResourceReference(node);
-            } catch (RepositoryException ex) {
-                log.error("Unable to determine icon for document", ex);
-            }
-        }
-        return null;
-    }
-
-    protected ResourceReference getResourceReference(Node node) throws RepositoryException {
+    protected HippoIcon getIcon(final String id, final Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             if (node.hasNode(node.getName())) {
                 Node child = node.getNode(node.getName());
                 String nodeTypeIconName = StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
-                return BrowserStyle.getIcon(nodeTypeIconName, "document", IconSize.TINY);
+                // TODO: replace BULLET_LARGE with document.svg icon
+                return getIcon(id, nodeTypeIconName, Icon.BULLET_LARGE, IconSize.TINY);
             }
-            return BrowserStyle.getIcon("document", IconSize.TINY);
+            // TODO: replace BULLET_LARGE with document.svg icon
+            return new HippoIcon(id, Icon.BULLET_LARGE);
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             if (node instanceof HippoNode) {
                 Node canonical;
                 try {
                     canonical = ((HippoNode) node).getCanonicalNode();
                     if (canonical == null) {
-                        return BrowserStyle.getIcon("folder-virtual", IconSize.TINY);
+                        // TODO: replace BULLET_LARGE with folder-virtual.svg icon
+                        return new HippoIcon(id, Icon.FOLDER_TINY);
                     }
                 } catch (ItemNotFoundException ex) {
-                    return BrowserStyle.getIcon("alert", IconSize.TINY);
+                    // TODO: replace BULLET_LARGE with real alert.svg icon
+                    return new HippoIcon(id, Icon.BULLET_LARGE);
                 }
                 Node parent = canonical.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                     if (!canonical.isSame(node)) {
-                        return BrowserStyle.getIcon("document-virtual", IconSize.TINY);
+                        // TODO: replace BULLET_LARGE with document-virtual.svg icon
+                        return new HippoIcon(id, Icon.BULLET_LARGE);
                     } else {
                         String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
-                        return BrowserStyle.getIcon(nodeTypeIconName, "document", IconSize.TINY);
+                        // TODO: replace BULLET_LARGE with document.svg icon
+                        return getIcon(id, nodeTypeIconName, Icon.BULLET_LARGE, IconSize.TINY);
                     }
                 }
             } else {
                 Node parent = node.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                     String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
-                    return BrowserStyle.getIcon(nodeTypeIconName, "document", IconSize.TINY);
+                    // TODO: replace BULLET_LARGE with document.svg icon
+                    return getIcon(id, nodeTypeIconName, Icon.BULLET_LARGE, IconSize.TINY);
                 }
             }
         }
 
         String type = node.getPrimaryNodeType().getName();
         if (type.equals("hipposysedit:templatetype")) {
-            return BrowserStyle.getIcon("document", IconSize.TINY);
+            // TODO: replace BULLET_LARGE with document.svg icon
+            return new HippoIcon(id, Icon.BULLET_LARGE);
         }
-        return BrowserStyle.getIcon("folder", IconSize.TINY);
+        return new HippoIcon(id, Icon.FOLDER_TINY);
     }
 
-    private static class IconContainer extends Panel {
-        private static final long serialVersionUID = 1L;
-
-        IconContainer(String id, ResourceReference resourceRef) {
-            super(id);
-            add(new CachingImage("icon", resourceRef));
+    private HippoIcon getIcon(String id, String name, Icon defaultIcon, IconSize size) {
+        ResourceReference reference = BrowserStyle.getIconOrNull(name, size);
+        if (reference != null) {
+            return new HippoIcon(id, reference);
         }
+        return new HippoIcon(id, defaultIcon);
     }
 
 }

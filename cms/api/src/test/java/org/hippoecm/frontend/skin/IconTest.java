@@ -15,42 +15,25 @@
  */
 package org.hippoecm.frontend.skin;
 
-import org.apache.wicket.request.resource.PackageResource;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import java.util.regex.Pattern;
+
 import org.apache.wicket.util.tester.WicketTester;
-import org.hippoecm.frontend.service.IconSize;
+import org.apache.wicket.util.tester.WicketTesterHelper;
+import org.apache.wicket.util.tester.WicketTesterScope;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class IconTest extends WicketTester {
 
     @Test
-    public void all_icons_exist() {
+    public void sprite_contains_all_icons() {
+        final String sprite = Icon.getIconSprite();
         for (Icon icon : Icon.values()) {
-            final PackageResourceReference reference = icon.getReference();
-            assertTrue("Icon does not exist: " + icon.name(), PackageResource.exists(reference.getKey()));
+            final Pattern iconId = Pattern.compile("<symbol[^>]+id=\"" + icon.getSpriteId() + "\">");
+            assertTrue("Sprite should contain icon '" + icon + "'", iconId.matcher(sprite).find());
         }
-    }
-
-    @Test
-    public void referenceByName_finds_icon() {
-        final PackageResourceReference reference = Icon.referenceByName("bullet", IconSize.TINY, Icon.FOLDER_TINY);
-        assertEquals("Icon.BULLET_TINY should have been returned", Icon.BULLET_TINY.getReference().getResource(), reference.getResource());
-    }
-
-    @Test
-    public void referenceByName_returns_default_value_when_icon_does_not_exist() {
-        final PackageResourceReference reference = Icon.referenceByName("no-such-icon", IconSize.MEDIUM, Icon.FOLDER_TINY);
-        assertEquals("Default value should have been returned", Icon.FOLDER_TINY.getReference().getResource(), reference.getResource());
-    }
-
-    @Test
-    public void referenceByName_can_return_default_value_null_when_icon_does_not_exist() {
-        final PackageResourceReference reference = Icon.referenceByName("no-such-icon", IconSize.MEDIUM, null);
-        assertNull("Default value null should not have been returned", reference);
     }
 
 }
