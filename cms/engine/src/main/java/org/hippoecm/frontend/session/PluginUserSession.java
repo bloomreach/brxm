@@ -54,8 +54,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.session.LoginException.CAUSE.ACCESS_DENIED;
-
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
  * available to plugins as a threadlocal variable during request processing.
@@ -291,39 +289,32 @@ public class PluginUserSession extends UserSession {
         classLoader.detach();
         workflowManager.detach();
         facetRootsObserver = null;
+        IModel<Session> oldModel = null;
+        if (jcrSessionModel != null) {
+            oldModel = jcrSessionModel;
+        }
 
-        Session jcrSession = null;
+        jcrSessionModel = sessionModel;
+
+        this.credentials = credentials;
+        if (oldModel != null) {
+            oldModel.detach();
+        }
+
         if (sessionModel instanceof JcrSessionModel) {
             try {
-                jcrSession = ((JcrSessionModel) sessionModel).getSessionObject();
+                ((JcrSessionModel) sessionModel).getSessionObject();
             } catch (javax.jcr.LoginException ex) {
                 handleLoginException(ex);
             }
         } else {
-            jcrSession = sessionModel.getObject();
-        }
-
-        checkApplicationPermission(jcrSession);
-
-        IModel<Session> oldModel = jcrSessionModel;
-        jcrSessionModel = sessionModel;
-        this.credentials = credentials;
-        if (oldModel != null) {
-            oldModel.detach();
+            sessionModel.getObject();
         }
 
         if (credentials == null) {
             pageId = 0;
         } else {
             pageId = 1;
-        }
-    }
-
-    private void checkApplicationPermission(final Session jcrSession) throws LoginException {
-        final String applicationName = getApplicationName();
-        final IPluginConfigService application = getApplicationFactory().getApplication(applicationName);
-        if (!application.checkPermission(jcrSession)) {
-            throw new LoginException(ACCESS_DENIED);
         }
     }
 

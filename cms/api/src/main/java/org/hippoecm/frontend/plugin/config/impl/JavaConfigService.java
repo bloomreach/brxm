@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Session;
-
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -41,11 +39,6 @@ public class JavaConfigService implements IPluginConfigService {
 
     public IClusterConfig getCluster(String key) {
         return configs.get(key);
-    }
-
-    @Override
-    public boolean checkPermission(final Session session) {
-        return true;
     }
 
     public IClusterConfig getDefaultCluster() {

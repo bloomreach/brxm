@@ -17,8 +17,6 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.List;
 
-import javax.jcr.Session;
-
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.session.UserSession;
@@ -51,11 +49,6 @@ public class PluginConfigFactory implements IPluginConfigService {
 
     public IClusterConfig getCluster(String key) {
         return pluginConfigService.getCluster(key);
-    }
-
-    @Override
-    public boolean checkPermission(final Session session) {
-        return true;
     }
 
     public IClusterConfig getDefaultCluster() {

@@ -50,8 +50,6 @@
 
 [frontend:application] > nt:base orderable
 - frontend:saveonexit (boolean)
-- frontend:privileges (string)
-- frontend:privileges.path (string)
 + * (frontend:plugincluster) multiple
 + * (frontend:clusterfolder) multiple
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
