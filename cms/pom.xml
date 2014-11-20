@@ -64,7 +64,6 @@
     <module>google-analytics</module>
     <module>automatic-export</module>
 
-    <module>upgrade</module>
     <module>tools</module>
 
     <module>brokenlinks</module>

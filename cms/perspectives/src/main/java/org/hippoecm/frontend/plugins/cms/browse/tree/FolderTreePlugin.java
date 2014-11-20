@@ -277,7 +277,13 @@ public class FolderTreePlugin extends RenderPlugin {
                 }
             }
 
-            treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
+            final Object selected = treePath.getLastPathComponent();
+            if (treeState.isNodeSelected(selected)) {
+                // deselect first for redrawing a rename
+                treeState.selectNode(selected, false);
+            }
+
+            treeState.selectNode(selected, true);
         }
     }
 

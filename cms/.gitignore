@@ -455,11 +455,6 @@ types/.classpath
 types/.project
 types/.settings
 types/target
-upgrade/.classpath
-upgrade/.project
-upgrade/.settings
-upgrade/hippo-cms-upgrade.iml
-upgrade/target
 workflow/.project
 workflow/.settings
 workflow/frontend/*.tmp
