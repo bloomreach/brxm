@@ -733,6 +733,23 @@ public class JcrUtils {
     }
 
     /**
+     * Get the name of a {@link Node}, or <code>null</code> if the node cannot be retrieved.
+     * <p/>
+     * <p> This method is mainly provided for convenience of usage, so a developer does not have to worry about
+     * exception handling in case it is not of interest. </p>
+     *
+     * @param node - The {@link Node} to get the name of
+     * @return The name of the {@link Node}, or <code>null</code> if <code>node</code> is null or an exception happens.
+     */
+    public static String getNodeNameQuietly(final Node node) {
+        try {
+            return node == null ? null : node.getName();
+        } catch (RepositoryException ignored) {
+            return null;
+        }
+    }
+
+    /**
      * Calls {@link Node#getProperties()}  on the given node and returns
      * the it as an {@link Iterable} instance for use in a Java 5 for-each loop.
      *
