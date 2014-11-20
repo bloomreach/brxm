@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.RepositoryException;
@@ -103,11 +105,16 @@ public class ContentResourceInstruction extends InitializeInstruction {
             InputStream in = null;
             try {
                 if (item.isDownstreamItem()) {
+                    Collection<String> processedPaths = new ArrayList<>();
                     for (InitializeItem upstreamItem : item.getUpstreamItems()) {
                         final String upstreamItemContextPath = upstreamItem.getContextPath();
                         if (upstreamItemContextPath == null) {
                             throw new RepositoryException("Unable to reload downstream item: can't determine upstream item context path");
                         }
+                        if (partAlreadyApplied(processedPaths, upstreamItemContextPath)) {
+                            continue;
+                        }
+                        processedPaths.add(upstreamItemContextPath);
                         in = contentURL.openStream();
                         final String upstreamItemContentRoot = upstreamItem.getContentRoot();
                         if (upstreamItemContentRoot.length() > contentRoot.length()) {
@@ -128,6 +135,16 @@ public class ContentResourceInstruction extends InitializeInstruction {
             }
         }
         return null;
+    }
+
+    private boolean partAlreadyApplied(final Collection<String> processedPaths, final String upstreamItemContextPath) {
+        for (String processedPath : processedPaths) {
+            if (upstreamItemContextPath.equals(processedPath)
+                    || upstreamItemContextPath.startsWith(processedPath + "/")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     InputStream getPartialContentInputStream(InputStream in, final String contextRelPath) throws IOException, RepositoryException {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -249,12 +250,42 @@ public class InitializeItem {
         return isReloadOnStartup(itemNode) && !isDeltaMerge();
     }
 
+    /**
+     * get this item's upstream items sorted by length of the context paths
+     */
     public Collection<InitializeItem> getUpstreamItems() throws RepositoryException {
         List<InitializeItem> upstreamItems = new ArrayList<>();
         for (String upstreamItemId : getUpstreamItemIds()) {
             Node upstreamItemNode = itemNode.getSession().getNodeByIdentifier(upstreamItemId);
             upstreamItems.add(new InitializeItem(upstreamItemNode));
         }
+        Collections.sort(upstreamItems, new Comparator<InitializeItem>() {
+            @Override
+            public int compare(final InitializeItem item1, final InitializeItem item2) {
+                try {
+                    final String item1ContextPath = item1.getContextPath();
+                    final int item1ContextPathLength = item1ContextPath == null ? 0 : item1ContextPath.length();
+                    final String item2ContextPath = item2.getContextPath();
+                    final int item2ContextPathLength = item2ContextPath == null ? 0 : item2ContextPath.length();
+                    if (item1ContextPathLength > item2ContextPathLength) {
+                        return 1;
+                    }
+                    if (item1ContextPathLength < item2ContextPathLength) {
+                        return -1;
+                    }
+                    if (item1ContextPath != null && item2ContextPath != null) {
+                        return item1ContextPath.compareTo(item2ContextPath);
+                    }
+                    if (item1ContextPath == null) {
+                        return -1;
+                    }
+                    return 1;
+                } catch (RepositoryException e) {
+                    log.error("Error while comparing upstream items for sort", e);
+                    return 0;
+                }
+            }
+        });
         return upstreamItems;
     }
 
