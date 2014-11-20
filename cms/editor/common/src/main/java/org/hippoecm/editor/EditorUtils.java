@@ -58,6 +58,7 @@ public class EditorUtils {
      */
     public static void createMandatoryProperties(Node node, NodeType nodeType) throws RepositoryException,
             ValueFormatException, VersionException, LockException, ConstraintViolationException {
+        final Logger log = LoggerFactory.getLogger(EditorUtils.class);
 
         NodeType[] supers = nodeType.getSupertypes();
         NodeType[] all = new NodeType[supers.length + 1];
@@ -67,10 +68,15 @@ public class EditorUtils {
             final Node prototypeNode = getPrototypeNode(type.getName(), node.getSession());
 
             for (PropertyDefinition propertyDefinition : type.getDeclaredPropertyDefinitions()) {
-                if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())
-                        && !node.hasProperty(propertyDefinition.getName())) {
-
-                    setProperty(node, propertyDefinition, prototypeNode);
+                if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())){
+                    log.debug("Add the mandatory property  '{}' of '{}' to the node '{}'",
+                            propertyDefinition.getName(), nodeType.getName(), node.getPath());
+                    if (node.hasProperty(propertyDefinition.getName())) {
+                        // even though the property existed, we need to add it again after addMixin()
+                        setProperty(node, propertyDefinition, node);
+                    }else {
+                        setProperty(node, propertyDefinition, prototypeNode);
+                    }
                 }
             }
         }
@@ -118,40 +124,29 @@ public class EditorUtils {
 
     private static void setProperty(final Node node, final PropertyDefinition propertyDefinition, final Node prototypeNode)
             throws RepositoryException, ValueFormatException, VersionException, LockException, ConstraintViolationException {
-
         final String propertyName = propertyDefinition.getName();
+        final Logger log = LoggerFactory.getLogger(EditorUtils.class);
 
         if (prototypeNode == null) {
             setPropertyFromDefaultValues(node, propertyDefinition);
         } else {
             try {
                 if (propertyDefinition.isMultiple()) {
-                        node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getValues());
-                } else {
-                    switch (propertyDefinition.getRequiredType()) {
-                        case PropertyType.LONG:
-                            node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getLong());
-                            break;
-                        case PropertyType.DOUBLE:
-                            node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getDouble());
-                            break;
-                        case PropertyType.DATE:
-                            node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getDate());
-                            break;
-                        case PropertyType.REFERENCE:
-                            node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getNode());
-                            break;
-                        case PropertyType.STRING:
-                            node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getString());
-                            break;
-                        default:
-                            node.setProperty(propertyName, prototypeNode.getProperty(propertyName).getValue());
+                    Value[] propValues = prototypeNode.getProperty(propertyName).getValues();
+                    if (node.hasProperty(propertyName)){
+                        node.getProperty(propertyName).remove();
                     }
+                    node.setProperty(propertyName, propValues);
+                } else {
+                    Value propValue = prototypeNode.getProperty(propertyName).getValue();
+                    if (node.hasProperty(propertyName)){
+                        node.getProperty(propertyName).remove();
+                    }
+                    node.setProperty(propertyName, propValue);
+                    log.debug("Set '{}' to the property '{}' at the node '{}'", propValue.getString(), propertyName, node.getPath());
                 }
             } catch (PathNotFoundException ex) {
                 // Use the defaults values as a fallback
-                final Logger log = LoggerFactory.getLogger(EditorUtils.class);
-
                 if (log.isDebugEnabled()) {
                     log.warn("Could not get property '" + propertyName + "' from '" + prototypeNode.getPath() + "'", ex);
                 } else {
@@ -167,30 +162,31 @@ public class EditorUtils {
     private static void setPropertyFromDefaultValues(final Node node, final PropertyDefinition propertyDefinition)
             throws RepositoryException, ValueFormatException, VersionException, LockException, ConstraintViolationException {
 
+        String propertyName = propertyDefinition.getName();
         if (propertyDefinition.isMultiple()) {
-            node.setProperty(propertyDefinition.getName(), new Value[0]);
+            node.setProperty(propertyName, new Value[0]);
         } else {
             switch (propertyDefinition.getRequiredType()) {
                 case PropertyType.LONG:
-                    node.setProperty(propertyDefinition.getName(), 0);
+                    node.setProperty(propertyName, 0);
                     break;
                 case PropertyType.DOUBLE:
-                    node.setProperty(propertyDefinition.getName(), 0.0f);
+                    node.setProperty(propertyName, 0.0f);
                     break;
                 case PropertyType.DATE:
-                    node.setProperty(propertyDefinition.getName(), Calendar.getInstance());
+                    node.setProperty(propertyName, Calendar.getInstance());
                     break;
                 case PropertyType.REFERENCE:
-                    node.setProperty(propertyDefinition.getName(), node.getSession().getRootNode());
+                    node.setProperty(propertyName, node.getSession().getRootNode());
                     break;
                 case PropertyType.STRING:
                     String[] constraints = propertyDefinition.getValueConstraints();
                     if (constraints != null && constraints.length > 0) {
-                        node.setProperty(propertyDefinition.getName(), constraints[0]);
+                        node.setProperty(propertyName, constraints[0]);
                         break;
                     }
                 default:
-                    node.setProperty(propertyDefinition.getName(), "");
+                    node.setProperty(propertyName, "");
             }
         }
     }
