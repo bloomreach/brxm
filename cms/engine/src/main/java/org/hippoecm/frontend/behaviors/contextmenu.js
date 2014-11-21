@@ -15,8 +15,17 @@
  */
 
 (function() {
+    "use strict";
 
-	if (typeof Hippo == 'undefined') {
+    function byClass(name, tag, root) {
+        var found = YAHOO.util.Dom.getElementsByClassName(name, tag, root);
+        if (!YAHOO.lang.isUndefined(found.length) && found.length > 0) {
+            return found[0];
+        }
+        return null;
+    }
+
+    if (typeof Hippo === 'undefined') {
 		Hippo = {};
 	}
 	
@@ -30,7 +39,7 @@
 		},
 	
 		remove : function (entry) {
-		    if(this.entries.length == 0) {
+		    if(this.entries.length === 0) {
 		        return null;
 		    }
 		    
@@ -51,7 +60,7 @@
 		
 		_getIndex : function (entry) {
 	        for (var i = 0; i < this.entries.length; i++) {
-	            if (this.entries[ i ] == entry) {
+	            if (this.entries[ i ] === entry) {
 	                return i;
 	            }
 	        }
@@ -63,11 +72,12 @@
 
 	Hippo.ContextMenu = {
         currentContentLink: null,
+        currentContentXY: [0, 0],
         isShowing: false
     };
 
     Hippo.ContextMenu.init = function() {
-	    if (document.getElementById('context-menu-container') == null) {
+	    if (document.getElementById('context-menu-container') === null) {
 	        var x = document.createElement('div');
 	        x.id = "context-menu-container";
 	        document.body.appendChild(x);
@@ -124,37 +134,31 @@
     };
     
     Hippo.ContextMenu.showContextLink = function(id) {
-        var YUID = YAHOO.util.Dom, YUIL = YAHOO.lang;
-        if(this.isShowing) {
+        var YUID = YAHOO.util.Dom; 
+
+        if (this.isShowing) {
             return;
         }
         
-        var _ar = YUID.getElementsByClassName('hippo-tree-dropdown-icon-container', 'span', id);
-        if(YUIL.isArray(_ar) && _ar.length > 0) {
-            var el = _ar[0];
+        var el = byClass('hippo-tree-dropdown-icon-container', 'span', id);
+        if (el !== null) {
             YUID.addClass(el, 'container-selected');
 
-            if(!YUID._canPosition(el)) {
+            if (!YUID._canPosition(el)) {
                 return;
             }
             var pos = this.getContextPosition(id);
             YUID.setXY(el, pos);
             this.currentContentLink = el;
+            this.currentContentXY = pos;
         }
         this.isShowing = true;
     };
-    
+
     Hippo.ContextMenu.hideContextLink = function(id) {
-        var YUID = YAHOO.util.Dom;
-        var el = this.currentContentLink;
-        if(el == null) {
-            var _ar = YUID.getElementsByClassName('hippo-tree-dropdown-icon-container', 'span', id);
-            if(typeof(_ar.length) == 'undefined' && _ar.length > 0) {
-              el = _ar[0];
-            }
-        }
-        if(el != null) {
-            YUID.removeClass(el, 'container-selected');
+        var el = this.currentContentLink || byClass('hippo-tree-dropdown-icon-container', 'span', id);
+        if (el !== null) {
+            YAHOO.util.Dom.removeClass(el, 'container-selected');
         }
         this.isShowing = false;
     };
@@ -163,18 +167,17 @@
         var YUID = YAHOO.util.Dom;
         var el = YUID.get(id);
 
-        var unit  = this.getLayoutUnit(el);
-        if(unit != null) {
+        var unit = this.getLayoutUnit(el);
+        if (unit !== null) {
             var layoutRegion = YUID.getRegion(unit.get('element'));
             var myY = YUID.getRegion(el).top + 4;
-            var myX = layoutRegion.right - 28;
-
+            var myX = layoutRegion.right - 20;
             var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
-            var layoutDim = YUID.getRegion(layout);
-            var treeDim = YUID.getRegion(YUID.getAncestorByClassName(el, 'hippo-tree'));
-            if (treeDim.height > layoutDim.height) {
-                myX -= 15;
+
+            if (layout.scrollHeight > layout.clientHeight) {
+                myX -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
             }
+
             return [myX, myY];
         }
     };
@@ -182,5 +185,12 @@
     Hippo.ContextMenu.getLayoutUnit = function(el) {
         return YAHOO.hippo.LayoutManager.findLayoutUnit(el);
     };
+
+    // Render the context menu at the stored position
+    Hippo.ContextMenu.redraw = function() {
+        if (Hippo.ContextMenu.currentContentLink !== null) {
+            YAHOO.util.Dom.setX(Hippo.ContextMenu.currentContentLink, Hippo.ContextMenu.currentContentXY[0]);   
+        }
+    }
 
 })();

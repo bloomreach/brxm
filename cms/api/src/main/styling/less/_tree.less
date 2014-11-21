@@ -22,7 +22,14 @@
 */
 
 .hippo-tree {
+  min-width: 100%;
+  
+  width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+  width: -moz-max-content;    /* Firefox/Gecko */
+  width: -webkit-max-content;
+
   div.wicket-tree {
+    padding: 4px 0;
     white-space: nowrap;
 
     // Set to relative to allow selection-widget to go under
@@ -42,12 +49,9 @@
     div.row,
     div.row-selected {
       white-space: nowrap;
-      /* set row height to a little higher for better clickability */
-      padding-top: 0;
-      padding-bottom: 4px;
+      // set row height to a little higher for better clickability
       height: 1.5em;
-      overflow: hidden;
-      padding-left: 4px;
+      padding: 0 4px 4px;
       clear: both;
       font-size: @font-size-svg-fix;
 
@@ -69,6 +73,7 @@
         // Text label
         svg + span {
           padding-left: 4px;
+          padding-right: 4px;
         }
 
         // Legacy icon
@@ -133,13 +138,6 @@
       }
     }
 
-    // Give padding to first visible child node. If we add this padding (or margin) to a parent div, the modal styling 
-    // breaks and the scrollbar is shown to soon both in the modal and the regular tree.
-    div.row-selected:nth-child(2),
-    div.row:nth-child(2) {
-      padding-top: 4px;
-    }
-
     .indent-line,   // tree whitespace
     .indent-blank,  // tree whitespace
     .icon {         // legacy icon
@@ -185,10 +183,12 @@
   .hippo-tree-selection-widget {
     border-radius: 4px;
     background-color: @aqua;
-    margin: 0 4px;
     position: relative;
     z-index: 1;
     height: 22px;
+    // The following top-margin is a workaround so the parent element does not claim 22 extra pixels on the bottom which 
+    // in turn results in a scrollbar even though it is not (yet) needed.
+    margin: -22px 4px 0;
   }
 }
 

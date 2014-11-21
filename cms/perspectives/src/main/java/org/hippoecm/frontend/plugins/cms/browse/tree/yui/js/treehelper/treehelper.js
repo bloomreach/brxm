@@ -61,6 +61,13 @@ if (!YAHOO.hippo.TreeHelper) {
                         layoutUnit: null,
                         selection: null
                     };
+                    
+                    // Notify the context menu the tree is scrolling so it can reposition the context menu
+                    if (Dom.hasClass(el.parentNode, 'hippo-accordion-unit-center')) {
+                        YAHOO.util.Event.on(el.parentNode, 'scroll', function(e) {
+                            Hippo.ContextMenu.redraw();
+                        });
+                    }
                 }
             },
 
@@ -101,21 +108,23 @@ if (!YAHOO.hippo.TreeHelper) {
                         hippoTree.appendChild(selectionEl);
                         tree.treeHelper.selection = selectionEl;
                     }
+                } else {
+                    selectionEl = tree.treeHelper.selection;
                 }
 
                 selected = byClass('row-selected', 'div', tree);
                 if (!Lang.isNull(selected)) {
                     // Move selection widget to position of selected
-                    Dom.removeClass(tree.treeHelper.selection, 'hide');
-                    Dom.setY(tree.treeHelper.selection, Dom.getY(selected));
+                    Dom.removeClass(selectionEl, 'hide');
+                    Dom.setY(selectionEl, Dom.getY(selected));
+                    Dom.setStyle(selectionEl, 'width', Dom.getRegion(tree).width);
 
-                    // Trigger mouseLeave to make room for mouseEnter to redraw
                     if (selected.registeredContextMenu) {
-                        selected.registeredContextMenu.mouseLeave();
+                        selected.registeredContextMenu.mouseOut();
                     }
                 } else {
                     // Hide selection widget
-                    Dom.addClass(tree.treeHelper.selection, 'hide');
+                    Dom.addClass(selectionEl, 'hide');
                 }
             },
 
@@ -139,19 +148,19 @@ if (!YAHOO.hippo.TreeHelper) {
                 if (Lang.isUndefined(el.registeredContextMenu)) {
                     //TODO: make methods configurable
                     el.registeredContextMenu = {
-                        mouseEnter: function(eventType, myId){ Hippo.ContextMenu.showContextLink(myId);},
-                        mouseLeave: function(eventType, myId){ Hippo.ContextMenu.hideContextLink(myId);},
+                        mouseOver: function(eventType, myId) { Hippo.ContextMenu.showContextLink(myId); },
+                        mouseOut: function(eventType, myId) { Hippo.ContextMenu.hideContextLink(myId); },
                         set: true
                     };
 
-                    YAHOO.util.Event.on(el, 'mouseenter', el.registeredContextMenu.mouseEnter, el.id);
-                    YAHOO.util.Event.on(el, 'mouseleave', el.registeredContextMenu.mouseLeave, el.id);
+                    YAHOO.util.Event.on(el, 'mouseover', el.registeredContextMenu.mouseOver, el.id);
+                    YAHOO.util.Event.on(el, 'mouseout', el.registeredContextMenu.mouseOut, el.id);
                 }
             },
 
             render : function(id) {
-                var width, el, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes, j, jLen,
-                    childNode, reg, ref;
+                var width, el, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes, 
+                        j, jLen, childNode, reg, ref;
 
                 this.register(id);
                 width = 0;
@@ -160,46 +169,52 @@ if (!YAHOO.hippo.TreeHelper) {
                     return;
                 }
 
-                this._setWidth(el, id, 2000);
-
-                if (el.treeHelper.cfg.treeAutowidth) {
-                    computedWidth = 0;
-                    computedHeight = 0;
-                    items = Dom.getElementsByClassName('a_', 'div', id);
-
-                    //Calculate width&height of items and save largest computedWidth value in var 'width'
-                    for (i = 0, iLen = items.length; i < iLen; i++) {
-                        item = items[i];
-                        itemChildNodes = Dom.getChildren(item);
-                        for (j = 0, jLen = itemChildNodes.length; j < jLen; j++) {
-                            childNode = itemChildNodes[j];
-                            reg = Dom.getRegion(childNode);
-                            computedWidth += reg.width;
-                            if (j === 0) {
-                                computedHeight += reg.height;
-                            }
-                        }
-                        if (computedWidth > width) {
-                            width = computedWidth;
-                        }
+                // Browser other than IE can use:
+                //    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+                //    width: -moz-max-content;    /* Firefox/Gecko */
+                //    width: -webkit-max-content; /* Chrome */
+                // which causes the child elements to define the width of the element, IE still needs help from javascript 
+                if (YAHOO.env.ua.ie > 0) {
+                    if (el.treeHelper.cfg.treeAutowidth) {
                         computedWidth = 0;
+                        computedHeight = 0;
+                        items = Dom.getElementsByClassName('a_', 'div', id);
+    
+                        //Calculate width&height of items and save largest computedWidth value in var 'width'
+                        for (i = 0, iLen = items.length; i < iLen; i++) {
+                            item = items[i];
+                            itemChildNodes = Dom.getChildren(item);
+                            for (j = 0, jLen = itemChildNodes.length; j < jLen; j++) {
+                                childNode = itemChildNodes[j];
+                                reg = Dom.getRegion(childNode);
+                                computedWidth += reg.width;
+                                if (j === 0) {
+                                    computedHeight += reg.height;
+                                }
+                            }
+                            if (computedWidth > width) {
+                                width = computedWidth;
+                            }
+                            computedWidth = 0;
+                        }
+    
+                        ref = Dom.getRegion(el.parentNode);
+                        if (computedHeight > ref.height) {
+                            //tree content overflows container element, browser will render scrollbars, so change width
+                            width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                        }
+    
+                        //Add magic width
+                        if (el.treeHelper.cfg.workflowEnabled) {
+                            width += 25;
+                        } else {
+                            width += 10;
+                        }
                     }
-
-                    ref = Dom.getRegion(el.parentNode);
-                    if (computedHeight > ref.height) {
-                        //tree content overflows container element, browser will render scrollbars, so change width
-                        width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                    
+                    if (width > 0) {
+                        this._setWidth(el, id, width);
                     }
-
-                    //Add magic width
-                    if (el.treeHelper.cfg.workflowEnabled) {
-                        width += 25;
-                    } else {
-                        width += 10;
-                    }
-                }
-                if (width > 0) {
-                    this._setWidth(el, id, width);
                 }
             },
 
