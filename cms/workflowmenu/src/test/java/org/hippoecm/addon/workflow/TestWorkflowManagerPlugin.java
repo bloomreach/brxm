@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class TestWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
     public void render(final PluginRequestTarget target) {
         Set<Node> nodeSet = new HashSet<>();
         nodeSet.add(getModelObject());
-        MenuHierarchy menu = buildMenu(nodeSet);
+        MenuHierarchy menu = buildMenu(nodeSet, this.getPluginConfig());
         menu.restructure();
         replace(new MenuBar("menu", menu));
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -166,10 +166,10 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         super.onDetach();
     }
 
-    MenuHierarchy buildMenu(Set<Node> nodeSet) {
+    MenuHierarchy buildMenu(Set<Node> nodeSet, IPluginConfig config) {
         Form form = getForm();
 
-        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), Arrays.asList(menuOrder), form);
+        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), Arrays.asList(menuOrder), form, config);
         plugins.stopRenderers();
 
         stopObservation();

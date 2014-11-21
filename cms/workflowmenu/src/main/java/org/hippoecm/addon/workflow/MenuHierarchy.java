@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 class MenuHierarchy implements Serializable {
 
@@ -33,26 +34,28 @@ class MenuHierarchy implements Serializable {
     private Map<String, List<MenuDescription>> menus = new LinkedHashMap<>();
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<>();
     private List<ActionDescription> items = new LinkedList<>();
+    private IPluginConfig config;
 
     private final Form form;
 
-    MenuHierarchy(Form form) {
-        this(Collections.<String>emptyList(), form);
+    MenuHierarchy(Form form, IPluginConfig config) {
+        this(Collections.<String>emptyList(), form, config);
     }
 
-    MenuHierarchy(final List<String> categories, Form form) {
-        this(categories, categories, form);
+    MenuHierarchy(final List<String> categories, Form form, IPluginConfig config) {
+        this(categories, categories, form, config);
     }
 
-    MenuHierarchy(final List<String> categories, final List<String> submenuOrder, Form form) {
+    MenuHierarchy(final List<String> categories, final List<String> submenuOrder, Form form, IPluginConfig config) {
         this.categories = categories;
         this.submenuOrder = submenuOrder;
         this.form = form;
+        this.config = config;
     }
 
     public void put(String category, ActionDescription action) {
         if (!submenus.containsKey(category)) {
-            submenus.put(category, new MenuHierarchy(form));
+            submenus.put(category, new MenuHierarchy(form, this.config));
         }
         submenus.get(category).put(action);
     }
@@ -79,7 +82,7 @@ class MenuHierarchy implements Serializable {
             }
         }
         for (Map.Entry<String, MenuHierarchy> entry : submenus.entrySet()) {
-            MenuHierarchy submenu = new MenuHierarchy(form);
+            MenuHierarchy submenu = new MenuHierarchy(form, this.config);
             for (ActionDescription action : entry.getValue().items) {
                 if (action.isVisible()) {
                     submenu.put(action);
@@ -136,11 +139,11 @@ class MenuHierarchy implements Serializable {
             for (String category : categories) {
                 if (menus.containsKey(category) && submenus.containsKey(category)) {
                     MenuHierarchy hierarchy = submenus.get(category);
-                    list.add(new MenuButton("item", category, hierarchy, menus.get(category)));
+                    list.add(new MenuButton("item", category, hierarchy, menus.get(category), this.config));
                 } else if (menus.containsKey(category)) {
-                    list.add(new MenuButton("item", category, menus.get(category), form));
+                    list.add(new MenuButton("item", category, menus.get(category), form, this.config));
                 } else if (submenus.containsKey(category)) {
-                    list.add(new MenuButton("item", category, submenus.get(category)));
+                    list.add(new MenuButton("item", category, submenus.get(category), this.config));
                 }
             }
 

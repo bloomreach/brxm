@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 class MenuList extends Panel implements MenuComponent {
 
@@ -34,11 +35,25 @@ class MenuList extends Panel implements MenuComponent {
 
     private final List<Component> list;
     private final MenuHierarchy menu;
+    private final int twoColThreshold;
+    private final int threeColThreshold;
 
-    MenuList(String id, MenuHierarchy menu) {
+    private final AttributeAppender threeColAttribute;
+    private final AttributeAppender twoColAttribute;
+
+    MenuList(String id, MenuHierarchy menu, IPluginConfig config) {
         super(id);
         this.menu = menu;
         this.list = menu.list(this);
+        if(config != null) {
+            this.twoColThreshold = config.getInt("menu.twoColThreshold", TWO_COL_THRESHOLD);
+            this.threeColThreshold = config.getInt("menu.threeColThreshold", THREE_COL_THRESHOLD);
+        } else {
+            this.twoColThreshold = TWO_COL_THRESHOLD;
+            this.threeColThreshold = THREE_COL_THRESHOLD;
+        }
+        threeColAttribute = new AttributeAppender("class", Model.of("hippo-toolbar-three-col"));
+        twoColAttribute = new AttributeAppender("class", Model.of("hippo-toolbar-two-col"));
 
         add(new DataView<Component>("list", new ListDataProvider<Component>(list)) {
 
@@ -57,10 +72,15 @@ class MenuList extends Panel implements MenuComponent {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
-        if (list.size() > THREE_COL_THRESHOLD) {
-            add(new AttributeAppender("class", true, Model.of("hippo-toolbar-three-col"), " "));
-        } else if (list.size() > TWO_COL_THRESHOLD) {
-            add(new AttributeAppender("class", true, Model.of("hippo-toolbar-two-col"), " "));
+
+        if (list.size() > threeColThreshold) {
+            if(!this.getBehaviors().contains(threeColAttribute)) {
+                add(threeColAttribute);
+            }
+        } else if (list.size() > twoColThreshold) {
+            if(!this.getBehaviors().contains(twoColAttribute)) {
+                add(twoColAttribute);
+            }
         }
     }
 }
