@@ -69,7 +69,7 @@ public class GotolinkDocumentsShortcutPluginTest {
 
         replay(mockBrowseService, mockModelReference, mockModel, mockPluginContext);
 
-        HippoTester tester = new HippoTester(new Main());
+        HippoTester tester = new HippoTester();
 
         IPluginConfig iPluginConfig = new JavaPluginConfig("plugin");
         iPluginConfig.put("browser.id", "dummy.browserid");

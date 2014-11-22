@@ -112,6 +112,10 @@ public class HippoTester extends WicketTester {
     private static class HippoTesterApplication extends Main {
 
         @Override
+        protected void registerSessionListeners() {
+        }
+
+        @Override
         public RuntimeConfigurationType getConfigurationType() {
             return RuntimeConfigurationType.DEVELOPMENT;
         }

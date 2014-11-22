@@ -35,6 +35,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
+import org.apache.wicket.ISessionListener;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -104,6 +105,8 @@ public class Main extends PluginApplication {
 
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
+    private static final String FRONTEND_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+
     /**
      * Parameter name of the repository storage directory
      */
@@ -116,7 +119,6 @@ public class Main extends PluginApplication {
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
-
     /**
      * Custom Wicket {@link IRequestCycleListener} class names parameter
      * which can be comma or whitespace-separated string to set multiple {@link IRequestCycleListener}s.
@@ -156,6 +158,8 @@ public class Main extends PluginApplication {
         super.init();
 
         addRequestCycleListeners();
+
+        registerSessionListeners();
 
         getPageSettings().setVersionPagesByDefault(false);
 //        getPageSettings().setAutomaticMultiWindowSupport(false);
@@ -462,6 +466,15 @@ public class Main extends PluginApplication {
         }
     }
 
+    protected void registerSessionListeners() {
+        getSessionListeners().add(new ISessionListener() {
+            @Override
+            public void onCreated(final Session session) {
+                ((PluginUserSession) session).login();
+            }
+        });
+    }
+
     @Override
     public void internalDestroy() {
         super.internalDestroy();
@@ -526,14 +539,11 @@ public class Main extends PluginApplication {
 
     @Override
     public UserSession newSession(Request request, Response response) {
-        PluginUserSession userSession = new PluginUserSession(request);
-        userSession.login();
-        return userSession;
+        return new PluginUserSession(request);
     }
 
     public IApplicationFactory getApplicationFactory(final javax.jcr.Session jcrSession) {
-        return new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/"
-                + HippoNodeType.FRONTEND_PATH));
+        return new JcrApplicationFactory(new JcrNodeModel(FRONTEND_PATH));
     }
 
     public HippoRepository getRepository() throws RepositoryException {

@@ -15,18 +15,27 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import java.security.AccessControlException;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.drew.lang.StringUtil;
+
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_SAVEONEXIT;
 
 /**
  * Configuration service for plugin clusters.  Cluster folders are located beneath
@@ -36,6 +45,9 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(JcrConfigServiceFactory.class);
+
+    private static final String PRIVILEGES_CONFIGURATION_PARAM = "privileges";
+    private static final String PRIVILEGES_PATH_CONFIGURATION_PARAM = "privileges.path";
 
     private JcrNodeModel model;
     private String defaultKey;
@@ -115,15 +127,29 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
     public boolean isSaveOnExitEnabled() {
         try {
             final Node applicationNode = model.getNode();
-            if (applicationNode.hasProperty(FrontendNodeType.FRONTEND_SAVEONEXIT) && Boolean.FALSE.equals(applicationNode.getProperty(
-                    FrontendNodeType.FRONTEND_SAVEONEXIT).getBoolean())) {
-
-                return false;
-            }
+            return JcrUtils.getBooleanProperty(applicationNode, FRONTEND_SAVEONEXIT, true);
         } catch (RepositoryException re) {
             log.error("Could not determine whether save on exit is enabled.  Defaulting to true, save pending changes when session expires.", re);
         }
         return true;
+    }
+
+    @Override
+    public boolean checkPermission(Session session) {
+        try {
+            final String aclPrivilege = JcrUtils.getStringProperty(model.getNode(), PRIVILEGES_CONFIGURATION_PARAM, null);
+            final String aclPrivilegePath = JcrUtils.getStringProperty(model.getNode(), PRIVILEGES_PATH_CONFIGURATION_PARAM, null);
+            if (!StringUtils.isBlank(aclPrivilege) && !StringUtils.isBlank(aclPrivilegePath)) {
+                session.checkPermission(aclPrivilegePath, aclPrivilege);
+            }
+            return true;
+        } catch (AccessControlException e) {
+            log.info("Permission denied to user {} on application {}", session.getUserID(), JcrUtils.getNodeNameQuietly(model.getNode()));
+            return false;
+        } catch (RepositoryException e) {
+            log.error("Failed to check application permission", e);
+            return false;
+        }
     }
 
     public IClusterConfig getDefaultCluster() {

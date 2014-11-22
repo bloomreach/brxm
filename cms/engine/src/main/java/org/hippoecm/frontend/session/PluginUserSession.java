@@ -54,6 +54,8 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.session.LoginException.CAUSE.ACCESS_DENIED;
+
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
  * available to plugins as a threadlocal variable during request processing.
@@ -289,32 +291,39 @@ public class PluginUserSession extends UserSession {
         classLoader.detach();
         workflowManager.detach();
         facetRootsObserver = null;
-        IModel<Session> oldModel = null;
-        if (jcrSessionModel != null) {
-            oldModel = jcrSessionModel;
-        }
 
-        jcrSessionModel = sessionModel;
-
-        this.credentials = credentials;
-        if (oldModel != null) {
-            oldModel.detach();
-        }
-
+        Session jcrSession = null;
         if (sessionModel instanceof JcrSessionModel) {
             try {
-                ((JcrSessionModel) sessionModel).getSessionObject();
+                jcrSession = ((JcrSessionModel) sessionModel).getSessionObject();
             } catch (javax.jcr.LoginException ex) {
                 handleLoginException(ex);
             }
         } else {
-            sessionModel.getObject();
+            jcrSession = sessionModel.getObject();
+        }
+
+        checkApplicationPermission(jcrSession);
+
+        IModel<Session> oldModel = jcrSessionModel;
+        jcrSessionModel = sessionModel;
+        this.credentials = credentials;
+        if (oldModel != null) {
+            oldModel.detach();
         }
 
         if (credentials == null) {
             pageId = 0;
         } else {
             pageId = 1;
+        }
+    }
+
+    protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
+        final String applicationName = getApplicationName(jcrSession);
+        final IPluginConfigService application = getApplicationFactory(jcrSession).getApplication(applicationName);
+        if (!application.checkPermission(jcrSession)) {
+            throw new LoginException(ACCESS_DENIED);
         }
     }
 
@@ -371,7 +380,11 @@ public class PluginUserSession extends UserSession {
     }
 
     public IApplicationFactory getApplicationFactory() {
-        return ((Main) Main.get()).getApplicationFactory(getJcrSession());
+        return getApplicationFactory(getJcrSession());
+    }
+
+    private IApplicationFactory getApplicationFactory(Session session) {
+        return ((Main) Main.get()).getApplicationFactory(session);
     }
 
     /**
@@ -453,8 +466,11 @@ public class PluginUserSession extends UserSession {
     }
 
     public String getApplicationName() {
+        return getApplicationName(getJcrSession());
+    }
+
+    private String getApplicationName(Session session) {
         String applicationName;
-        Session session = getJcrSession();
         String userID = session.getUserID();
 
         if (StringUtils.isEmpty(userID) || userID.equalsIgnoreCase("anonymous")) {

@@ -55,6 +55,10 @@ public abstract class PluginTest extends RepositoryTestCase {
         }
 
         @Override
+        protected void registerSessionListeners() {
+        }
+
+        @Override
         public RuntimeConfigurationType getConfigurationType() {
             // suppress development mode warning from test output
             return RuntimeConfigurationType.DEPLOYMENT;

@@ -36,4 +36,8 @@ public class AccessiblePluginUserSession extends PluginUserSession {
     public void login(final UserCredentials credentials, final LoadableDetachableModel<Session> sessionModel) throws LoginException {
         super.login(credentials, sessionModel);
     }
+
+    @Override
+    protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
+    }
 }
