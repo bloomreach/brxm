@@ -186,7 +186,7 @@ public class FolderTreePlugin extends RenderPlugin {
                 if (workflowEnabled) {
                     target.appendJavaScript(treeHelperBehavior.getUpdateString());
                 }
-                target.appendJavaScript(treeHelperBehavior.getSelectString());
+                target.appendJavaScript(treeHelperBehavior.getHighlightString());
             }
 
             @Override

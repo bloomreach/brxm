@@ -16,7 +16,7 @@
 
 /**
  * @class a simple helper class to calculate tree width
- * @requires yahoo, dom, event, layoutmanager
+ * @requires yahoo, dom, event, layoutmanager, hippodom
  * @constructor
  * @param {String} id the id of the linked element
  * @param {String} config
@@ -42,6 +42,12 @@ if (!YAHOO.hippo.TreeHelper) {
         function exists(o) {
             return !Lang.isUndefined(o) && !Lang.isNull(o);
         }
+        
+        function getWidth(el) {
+            var l = Dom.getX(el), 
+                r = l + el.offsetWidth;
+            return r - l;
+        }
 
         YAHOO.hippo.TreeHelperImpl = function() {
         };
@@ -59,7 +65,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     el.treeHelper = {
                         cfg: cfg,
                         layoutUnit: null,
-                        selection: null
+                        highlight: null
                     };
                     
                     // Notify the context menu the tree is scrolling so it can reposition the context menu
@@ -89,43 +95,56 @@ if (!YAHOO.hippo.TreeHelper) {
                 }
             },
 
-            updateSelection : function(id) {
+            updateHighlight : function(id) {
                 var tree = Dom.get(id),
-                    selectionEl,
-                    hippoTree,
-                    selected;
+                    helper, selected, selectedY, highlight;
 
-                if (!exists(tree)) {
+                if (!(exists(tree) && exists(tree.treeHelper))) {
                     return;
                 }
 
-                if (Lang.isNull(tree.treeHelper.selection)) {
-                    selectionEl = document.createElement("div");
-                    Dom.addClass(selectionEl, 'hippo-tree-selection-widget');
+                helper = tree.treeHelper;
+                highlight = helper.highlight;
 
-                    hippoTree = byClass('hippo-tree', 'div', tree);
-                    if (!Lang.isNull(hippoTree)) {
-                        hippoTree.appendChild(selectionEl);
-                        tree.treeHelper.selection = selectionEl;
+                if (highlight === null) {
+                    helper.highlight = highlight = this.createHighlight(tree);
+                    if (highlight === null) {
+                        return;
                     }
-                } else {
-                    selectionEl = tree.treeHelper.selection;
                 }
 
                 selected = byClass('row-selected', 'div', tree);
-                if (!Lang.isNull(selected)) {
-                    // Move selection widget to position of selected
-                    Dom.removeClass(selectionEl, 'hide');
-                    Dom.setY(selectionEl, Dom.getY(selected));
-                    Dom.setStyle(selectionEl, 'width', Dom.getRegion(tree).width);
+                if (selected === null) {
+                    if (!Dom.hasClass(highlight, 'hide')) {
+                        Dom.addClass(highlight, 'hide');
+                    }
+                } else {
+                    if (Dom.hasClass(highlight, 'hide')) {
+                        Dom.removeClass(highlight, 'hide');
+                    }
 
+                    selectedY = Dom.getY(selected);
+                    if (selectedY !== Dom.getY(highlight)) {
+                        // Move highlight widget to position of selected
+                        Dom.setY(highlight, selectedY);
+                    }
+                    // trigger mouseout to redraw the context-icon
                     if (selected.registeredContextMenu) {
                         selected.registeredContextMenu.mouseOut();
                     }
-                } else {
-                    // Hide selection widget
-                    Dom.addClass(selectionEl, 'hide');
                 }
+            },
+            
+            createHighlight: function(tree) {
+                var hippoTree = byClass('hippo-tree', 'div', tree), 
+                    el = null;
+
+                if (hippoTree !== null) {
+                    el = document.createElement("div");
+                    hippoTree.appendChild(el);
+                    Dom.addClass(el, 'hippo-tree-highlight-widget');
+                }
+                return el;
             },
 
             updateMouseListeners : function(id) {

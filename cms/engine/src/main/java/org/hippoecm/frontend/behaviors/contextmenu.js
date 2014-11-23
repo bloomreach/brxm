@@ -171,11 +171,11 @@
         if (unit !== null) {
             var layoutRegion = YUID.getRegion(unit.get('element'));
             var myY = YUID.getRegion(el).top + 4;
-            var myX = layoutRegion.right - 20;
+            var myX = layoutRegion.right - 24;
             var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
 
             if (layout.scrollHeight > layout.clientHeight) {
-                myX -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                myX -= (YAHOO.hippo.HippoAjax.getScrollbarWidth() - 4);
             }
 
             return [myX, myY];

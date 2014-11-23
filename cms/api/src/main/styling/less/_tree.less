@@ -32,7 +32,7 @@
     padding: 4px 0;
     white-space: nowrap;
 
-    // Set to relative to allow selection-widget to go under
+    // Set to relative to allow highlight-widget to go under
     position: relative;
     z-index: 2;
 
@@ -180,12 +180,13 @@
     }
   }
 
-  .hippo-tree-selection-widget {
+  .hippo-tree-highlight-widget {
     border-radius: 4px;
     background-color: @aqua;
     position: relative;
     z-index: 1;
     height: 22px;
+    width: auto;
     // The following top-margin is a workaround so the parent element does not claim 22 extra pixels on the bottom which 
     // in turn results in a scrollbar even though it is not (yet) needed.
     margin: -22px 4px 0;

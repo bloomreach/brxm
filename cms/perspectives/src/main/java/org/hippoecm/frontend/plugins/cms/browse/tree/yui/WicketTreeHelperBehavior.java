@@ -54,8 +54,8 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
         return "YAHOO.hippo.TreeHelper.updateMouseListeners('" + getWicketId() + "');";
     }
     
-    public String getSelectString() { 
-        return "YAHOO.hippo.TreeHelper.updateSelection('" + getWicketId() + "');";
+    public String getHighlightString() { 
+        return "YAHOO.hippo.TreeHelper.updateHighlight('" + getWicketId() + "');";
     }
 
     protected abstract String getWicketId();
