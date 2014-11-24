@@ -18,17 +18,14 @@ package org.onehippo.repository.bootstrap;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -36,7 +33,8 @@ import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
 import static org.hippoecm.repository.api.HippoNodeType.INITIALIZE_PATH;
-import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_FOLDER_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEFOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEITEM;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.TEMP_FOLDER_PATH;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
@@ -72,6 +70,10 @@ public class Extension {
                     initializeItems.add(item);
                     itemNames.put(itemName, this.toString());
                 }
+            }
+            if(tempInitFolderNode.hasProperty(HIPPO_VERSION)) {
+                log.warn("Deprecated {} property on {} detected in {}: this property only applies to {}",
+                        HIPPO_VERSION, NT_INITIALIZEFOLDER, this, NT_INITIALIZEITEM);
             }
             tempInitFolderNode.remove();
             session.save();

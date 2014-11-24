@@ -18,9 +18,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:version" sv:type="String">
-    <sv:value>v18a-publication-workflow</sv:value>
-  </sv:property>
   <!-- standard "reviewed-actions" workflow types -->
   <sv:node sv:name="hippostdpubwf">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
