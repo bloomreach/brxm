@@ -18,9 +18,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:version" sv:type="String">
-    <sv:value>v19-cms</sv:value>
-  </sv:property>
   <sv:node sv:name="domain-defaultread-reporting">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
