@@ -31,7 +31,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 class MenuButton extends Panel implements IContextMenu {
 
@@ -39,18 +39,18 @@ class MenuButton extends Panel implements IContextMenu {
 
     private MenuList content;
 
-    MenuButton(String id, String name, final MenuHierarchy menu) {
-        this(id, name, menu, null);
+    MenuButton(String id, String name, final MenuHierarchy menu, IPluginConfig config) {
+        this(id, name, menu, null, config);
     }
 
-    public MenuButton(final String item, final String key, final List<MenuDescription> menuDescriptions, Form form) {
-        this(item, key, new MenuHierarchy(form), menuDescriptions);
+    public MenuButton(final String item, final String key, final List<MenuDescription> menuDescriptions, Form form, IPluginConfig config) {
+        this(item, key, new MenuHierarchy(form, config), menuDescriptions, config);
     }
 
-    MenuButton(String id, String name, final MenuHierarchy menu, final List<MenuDescription> descriptions) {
+    MenuButton(String id, String name, final MenuHierarchy menu, final List<MenuDescription> descriptions, IPluginConfig config) {
         super(id);
         setOutputMarkupId(true);
-        add(content = new MenuList("item", menu));
+        add(content = new MenuList("item", menu, config));
         content.setOutputMarkupId(true);
         content.setVisible(false);
 

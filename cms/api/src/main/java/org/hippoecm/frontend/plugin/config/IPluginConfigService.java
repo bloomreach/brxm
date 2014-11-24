@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugin.config;
 
 import java.util.List;
 
+import javax.jcr.Session;
+
 import org.apache.wicket.model.IDetachable;
 
 /**
@@ -25,6 +27,8 @@ import org.apache.wicket.model.IDetachable;
  */
 public interface IPluginConfigService extends IDetachable {
 
+    boolean checkPermission(Session session);
+
     IClusterConfig getDefaultCluster();
 
     IClusterConfig getCluster(String key);
@@ -32,4 +36,6 @@ public interface IPluginConfigService extends IDetachable {
     List<String> listClusters(String folder);
 
     boolean isSaveOnExitEnabled();
+
+
 }
