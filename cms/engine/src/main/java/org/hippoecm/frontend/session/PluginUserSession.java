@@ -303,6 +303,10 @@ public class PluginUserSession extends UserSession {
             jcrSession = sessionModel.getObject();
         }
 
+        if (jcrSession == null) {
+            throw new LoginException(ACCESS_DENIED);
+        }
+
         checkApplicationPermission(jcrSession);
 
         IModel<Session> oldModel = jcrSessionModel;
