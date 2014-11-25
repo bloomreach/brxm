@@ -15,31 +15,19 @@
 -->
 <html  xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="list-data-table-header">
-      <caption wicket:id="caption"></caption>
-      <table>
-        <thead wicket:id="topToolbars" class="list-data-table-header">
-          <wicket:container wicket:id="toolbars"></wicket:container>
-        </thead>
-      </table>
-    </div>
-    <div class="list-data-table-body">
-      <table>
-        <tbody wicket:id="body">
-          <tr wicket:id="rows">
-            <td wicket:id="cells">
-              <span wicket:id="cell">[cell]</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="list-data-table-footer">
-      <table>
-        <tfoot wicket:id="bottomToolbars" class="list-data-table-footer">
-          <wicket:container wicket:id="toolbars"></wicket:container>
-        </tfoot>
-      </table>
-    </div>
+    <caption wicket:id="caption"></caption>
+    <thead wicket:id="topToolbars">
+      <wicket:container wicket:id="toolbars"></wicket:container>
+    </thead>
+    <tbody wicket:id="body">
+      <tr wicket:id="rows">
+        <td wicket:id="cells">
+          <span wicket:id="cell">[cell]</span>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot wicket:id="bottomToolbars">
+      <wicket:container wicket:id="toolbars"></wicket:container>
+    </tfoot>
   </wicket:panel>
 </html>

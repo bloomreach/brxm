@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.translation.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -39,38 +40,19 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(TranslationsColumnProviderPlugin.class);
-    private static final CssResourceReference TRANSLATION_COLUMNS_CSS = new CssResourceReference(TranslationsColumnProviderPlugin.class,
-            "TranslationColumns.css");
-
     public TranslationsColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
-    public IHeaderContributor getHeaderContributor() {
-        return new IHeaderContributor() {
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-
-                response.render(CssHeaderItem.forReference(TRANSLATION_COLUMNS_CSS));
-            }
-        };
-    }
-
-    @Override
     public List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>(1);
-        ListColumn<Node> column;
-
-        //publication date
-        column = new ListColumn<Node>(new ClassResourceModel("doclisting-translations", getClass()), "translations");
+        final ClassResourceModel displayModel = new ClassResourceModel("doclisting-translations", getClass());
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "translations");
         column.setRenderer(new TranslationRenderer(getLocaleProvider()));
         column.setAttributeModifier(new IconAttributeModifier());
         column.setCssClass("doclisting-translations");
-        columns.add(column);
 
-        return columns;
+        return Collections.singletonList(column);
     }
 
     protected ILocaleProvider getLocaleProvider() {

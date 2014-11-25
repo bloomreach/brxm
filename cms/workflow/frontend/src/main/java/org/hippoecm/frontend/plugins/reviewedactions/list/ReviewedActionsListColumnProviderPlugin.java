@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions.list;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,10 +25,6 @@ import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.DocumentAttributeComparator;
@@ -43,53 +40,42 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
 
     private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(ReviewedActionsListColumnProviderPlugin.class);
-    private static final CssResourceReference COLUMN_SKIN = new CssResourceReference(ReviewedActionsListColumnProviderPlugin.class, "style.css");
 
     public ReviewedActionsListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
-    public IHeaderContributor getHeaderContributor() {
-        return new IHeaderContributor() {
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                response.render(CssHeaderItem.forReference(COLUMN_SKIN));
-            }
-        };
-    }
-
-    @Override
     public List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-        ListColumn<Node> column;
-
-        //State
-        column = new ListColumn<Node>(new ClassResourceModel("doclisting-state", getClass()), "state");
-        column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer<Node>());
-        column.setAttributeModifier(new StateIconAttributeModifier());
-        column.setCssClass("doclisting-state");
-        columns.add(column);
-
-        return columns;
+        return Collections.emptyList();
     }
 
     @Override
     public List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = getColumns();
-        ListColumn<Node> column;
+        List<ListColumn<Node>> columns = new ArrayList<>();
+        columns.add(createStateColumn());
+        columns.add(createLastModifiedDateColumn());
+        columns.add(createLastModifiedByColumn());
+        columns.add(createPublicationDateColumn());
+        return columns;
+    }
 
-        //Date last modified
-        column = new ListColumn<Node>(new ClassResourceModel("doclisting-lastmodified-date", getClass()),
-                "lastmodified-date");
+    private ListColumn<Node> createStateColumn() {
+        ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("doclisting-state", getClass()), "state");
+        column.setComparator(new StateComparator());
+        column.setRenderer(new EmptyRenderer<Node>());
+        column.setAttributeModifier(new StateIconAttributeModifier());
+        column.setCssClass("doclisting-state");
+        return column;
+    }
+
+    private ListColumn<Node> createLastModifiedDateColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("doclisting-lastmodified-date", getClass());
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "lastmodified-date");
         column.setComparator(new DocumentAttributeComparator() {
             private static final long serialVersionUID = -4617312936280189361L;
 
@@ -115,18 +101,18 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
                 return advancedFormattedCalendar(atts.getLastModifiedDate());
             }
         });
+        return column;
+    }
 
-        columns.add(column);
-
-        //Last modified by
-        column = new ListColumn<Node>(new ClassResourceModel("doclisting-lastmodified-by", getClass()),
-                "lastmodified-by");
+    private ListColumn<Node> createLastModifiedByColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("doclisting-lastmodified-by", getClass());
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "lastmodified-by");
         column.setComparator(new DocumentAttributeComparator() {
             private static final long serialVersionUID = 3527258215486526567L;
 
             @Override
             protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                if(s1.getLastModifiedBy() == null || s2.getLastModifiedBy() == null)
+                if (s1.getLastModifiedBy() == null || s2.getLastModifiedBy() == null)
                     return 0;
                 return s1.getLastModifiedBy().compareTo(s2.getLastModifiedBy());
             }
@@ -140,11 +126,12 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
             }
         });
         column.setCssClass("doclisting-lastmodified-by");
-        columns.add(column);
+        return column;
+    }
 
-        //publication date
-        column = new ListColumn<Node>(new ClassResourceModel("doclisting-publication-date", getClass()),
-                "publication-date");
+    private ListColumn<Node> createPublicationDateColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("doclisting-publication-date", getClass());
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "publication-date");
         column.setComparator(new DocumentAttributeComparator() {
             private static final long serialVersionUID = -3201733296324543659L;
 
@@ -170,9 +157,8 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
             }
         });
         column.setCssClass("doclisting-date");
-        columns.add(column);
+        return column;
 
-        return columns;
     }
 
     private String formattedCalendarByStyle(Calendar calendar, String patternStyle) {
@@ -193,13 +179,6 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
             return -1;
         }
         return o1.compareTo(o2);
-    }
-
-    private String simpleFormattedCalendar(Calendar cal) {
-        if (cal != null) {
-            return DateTimeFormat.forPattern("d-MMM-yyyy").withLocale(getLocale()).print(new DateTime(cal));
-        }
-        return "";
     }
 
     private String advancedFormattedCalendar(Calendar cal) {

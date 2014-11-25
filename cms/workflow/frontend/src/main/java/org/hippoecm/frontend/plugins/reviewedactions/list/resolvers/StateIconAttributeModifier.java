@@ -31,10 +31,7 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(StateIconAttributeModifier.class);
-
     static final String PREFIX = "state-";
-    static final String SUFFIX = "-16";
 
     @Override
     public AttributeModifier getColumnAttributeModifier() {

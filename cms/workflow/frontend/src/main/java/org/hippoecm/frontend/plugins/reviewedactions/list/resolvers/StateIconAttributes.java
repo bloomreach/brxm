@@ -173,8 +173,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                     || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
                 cssClass = StateIconAttributeModifier.PREFIX
                         + (isHistoric ? "prev-" : "")
-                        + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString()
-                        + StateIconAttributeModifier.SUFFIX;
+                        + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
                 IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
                         .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
                 summary = new TypeTranslator(new JcrNodeTypeModel(

@@ -21,13 +21,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
@@ -72,10 +70,10 @@ public class IconRenderer implements IListCellRenderer<Node> {
                 Node child = node.getNode(node.getName());
                 String nodeTypeIconName = StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
                 // TODO: replace BULLET_LARGE with document.svg icon
-                return getIcon(id, nodeTypeIconName, Icon.BULLET_LARGE, IconSize.TINY);
+                return getIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.SMALL);
             }
             // TODO: replace BULLET_LARGE with document.svg icon
-            return new HippoIcon(id, Icon.BULLET_LARGE);
+            return new HippoIcon(id, Icon.DOCUMENT_SMALL);
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             if (node instanceof HippoNode) {
                 Node canonical;
@@ -83,7 +81,7 @@ public class IconRenderer implements IListCellRenderer<Node> {
                     canonical = ((HippoNode) node).getCanonicalNode();
                     if (canonical == null) {
                         // TODO: replace BULLET_LARGE with folder-virtual.svg icon
-                        return new HippoIcon(id, Icon.FOLDER_TINY);
+                        return new HippoIcon(id, Icon.FOLDER_SMALL);
                     }
                 } catch (ItemNotFoundException ex) {
                     // TODO: replace BULLET_LARGE with real alert.svg icon
@@ -97,7 +95,7 @@ public class IconRenderer implements IListCellRenderer<Node> {
                     } else {
                         String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
                         // TODO: replace BULLET_LARGE with document.svg icon
-                        return getIcon(id, nodeTypeIconName, Icon.BULLET_LARGE, IconSize.TINY);
+                        return getIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.TINY);
                     }
                 }
             } else {
@@ -105,7 +103,7 @@ public class IconRenderer implements IListCellRenderer<Node> {
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                     String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
                     // TODO: replace BULLET_LARGE with document.svg icon
-                    return getIcon(id, nodeTypeIconName, Icon.BULLET_LARGE, IconSize.TINY);
+                    return getIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.TINY);
                 }
             }
         }
@@ -113,9 +111,9 @@ public class IconRenderer implements IListCellRenderer<Node> {
         String type = node.getPrimaryNodeType().getName();
         if (type.equals("hipposysedit:templatetype")) {
             // TODO: replace BULLET_LARGE with document.svg icon
-            return new HippoIcon(id, Icon.BULLET_LARGE);
+            return new HippoIcon(id, Icon.DOCUMENT_SMALL);
         }
-        return new HippoIcon(id, Icon.FOLDER_TINY);
+        return new HippoIcon(id, Icon.FOLDER_SMALL);
     }
 
     private HippoIcon getIcon(String id, String name, Icon defaultIcon, IconSize size) {

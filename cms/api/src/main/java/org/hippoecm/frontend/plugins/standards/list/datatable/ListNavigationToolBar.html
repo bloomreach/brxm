@@ -15,11 +15,13 @@
 */
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <wicket:panel>
-    <tr class="hippo-list-paging">
-        <td wicket:id="span" colspan="2">
-            <div wicket:id="navigatorLabel" class="paging-label">[navigator-label]</div>
-            <div wicket:id="navigator">[navigator]</div>
-        </td>
-    </tr>
+  <tr class="hippo-list-paging">
+    <td wicket:id="span" colspan="2">
+      <div class="paging-container">
+        <div wicket:id="navigator" class="paging-navigator">[navigator]</div>
+        <div wicket:id="navigatorLabel" class="paging-label">[navigator-label]</div>
+      </div>
+    </td>
+  </tr>
 </wicket:panel>
 </html>

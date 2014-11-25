@@ -34,7 +34,7 @@
 // Color picker overrides
 @cool-shale:                        #565b65;
 @aqua:                              #0b9ed6;
-@grey-at-the-bottom:                #e9ebee;
+@grey-at-the-bottom:                @mercury;
 @red-alert:                         #da1c5c;
 @perspective-icon:                  #cccdd0;
 @tab-hover:                         #d9dadb;
@@ -57,7 +57,7 @@
 // even number of px.
 @font-size-svg-fix:                 12px;
 @font-size-base:                    13px;
-@font-size-large:                   ceil((@font-size-base * 1.25)); // ~18px
+@font-size-large:                   ceil((@font-size-base * 1.10)); // ~16px
 @font-size-small:                   ceil((@font-size-base * 0.85)); // ~12px
 @font-size-tiny:                    ceil((@font-size-base * 0.75)); // ~10px
 
@@ -69,14 +69,14 @@
 @font-size-h6:                      ceil((@font-size-base * 0.85)); // ~12px
 
 // Line height
-@line-height-base:                  1;
+@line-height-base:                  1.2;
 @line-height-computed:              floor((@font-size-base * @line-height-base)); // ~20px
 
 
 // Colors and sizes
 
 // Global
-@body-bgcolor:                           @white_legacy2;
+@body-bgcolor:                      @white_legacy2;
 @text-color:                        @text-gray;
 @link-color:                        @aqua;
 @link-hover-color:                  @cool-shale;
@@ -112,6 +112,22 @@
 
 // Navigator
 @navigator-bgcolor:                 @white;
+
+// Document listing
+@doclist-head-bgcolor:              @mercury;
+@doclist-head-color:                @cool-shale;
+@doclist-head-sorted-color:         @aqua;
+@doclist-head-height:               40px;
+@doclist-padding:                   8px;
+@doclist-left-right-padding:        8px;
+@doclist-row-separator-color:       @mercury;
+@doclist-row-selected-bgcolor:      @marble;
+@doclist-row-selected-color:        @aqua;
+@doclist-foot-height:               @doclist-head-height;
+@doclist-paging-button-stroke:      @mercury;
+@doclist-paging-button-fill:        @marble;
+@doclist-paging-button-hover-color: @white;
+@doclist-paging-button-hover-fill:  @aqua;
 
 // Tree
 @tree-bgcolor:                      @white;

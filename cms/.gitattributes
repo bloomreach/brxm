@@ -233,7 +233,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/folder-virtua
 api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/folder-virtual-closed-16.png -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/folder-virtual-open-16.png -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/image-16.png -text
-api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/style.css svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/image/JcrImage.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/AbstractListColumnProviderPlugin.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/AbstractListingPlugin.java -text svneol=unset#text/plain
@@ -425,7 +424,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hi
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hippologger.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager-debug.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager.js svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/tables/tables.js -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/upload/upload.js -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/AjaxSettings.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/BooleanSetting.java svneol=native#text/plain
@@ -1122,6 +1120,7 @@ api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_ajax_loader.less -text
 api/src/main/styling/less/_buttons.less -text
+api/src/main/styling/less/_doclist.less -text
 api/src/main/styling/less/_editor.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_footer.less -text
@@ -3117,7 +3116,6 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/li
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/resolvers/StateIconAttributeModifier.java -text svneol=unset#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/resolvers/StateIconAttributes.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/resolvers/StateRenderer.java -text svneol=unset#text/plain
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/style.css -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/Revision.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/RevisionHistory.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin$PermissionsConfirmDialog_de.properties -text
