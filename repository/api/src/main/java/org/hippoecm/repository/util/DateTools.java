@@ -247,7 +247,7 @@ public class DateTools {
 
     /**
      * @return An array copy of the supported resolutions
-     * @deprecated Use {@link getSupportedResolutions()} instead
+     * @deprecated Use {@link #getSupportedResolutions()} instead
      */
     @Deprecated
     public static Resolution[] getSupportedDateResolutions() {
