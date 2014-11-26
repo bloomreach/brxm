@@ -32,6 +32,7 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public class ReviewedActionsSearchListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
 
@@ -49,7 +50,7 @@ public class ReviewedActionsSearchListColumnProviderPlugin extends AbstractListC
         column.setComparator(new StateComparator());
         column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new StateIconAttributeModifier());
-        column.setCssClass("doclisting-state");
+        column.setCssClass(DocumentListColumn.STATE.getCssClass());
         columns.add(column);
 
         return columns;

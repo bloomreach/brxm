@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 
 import javax.jcr.Node;
 import java.util.ArrayList;
@@ -59,14 +60,14 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
             column.setRenderer(new IconRenderer());
             column.setAttributeModifier(new IconAttributeModifier());
         }
-        column.setCssClass("doclisting-icon");
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
         columns.add(column);
 
         //Name
         column = new ListColumn<Node>(new ClassResourceModel("doclisting-name", DocumentListingPlugin.class), "name");
         column.setComparator(new NameComparator());
         column.setAttributeModifier(new DocumentAttributeModifier());
-        column.setCssClass("doclisting-name");
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
         columns.add(column);
 
         return columns;
@@ -81,7 +82,7 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
                 new ClassResourceModel("doclisting-type", DocumentListingPlugin.class), "type");
         column.setComparator(new TypeComparator());
         column.setRenderer(new TypeRenderer());
-        column.setCssClass("doclisting-type");
+        column.setCssClass(DocumentListColumn.TYPE.getCssClass());
         columns.add(column);
 
         return columns;

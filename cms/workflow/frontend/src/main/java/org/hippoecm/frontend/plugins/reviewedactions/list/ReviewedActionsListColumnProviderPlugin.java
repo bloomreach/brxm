@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -69,7 +70,7 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
         column.setComparator(new StateComparator());
         column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new StateIconAttributeModifier());
-        column.setCssClass("doclisting-state");
+        column.setCssClass(DocumentListColumn.STATE.getCssClass());
         return column;
     }
 
@@ -84,7 +85,7 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
                 return compareDates(s1.getLastModifiedDate(), s2.getLastModifiedDate());
             }
         });
-        column.setCssClass("doclisting-date");
+        column.setCssClass(DocumentListColumn.DATE.getCssClass());
         column.setRenderer(new DocumentAttributeRenderer() {
             private static final long serialVersionUID = -1485899011687542362L;
 
@@ -125,7 +126,7 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
                 return atts.getLastModifiedBy();
             }
         });
-        column.setCssClass("doclisting-lastmodified-by");
+        column.setCssClass(DocumentListColumn.LAST_MODIFIED_BY.getCssClass());
         return column;
     }
 
@@ -156,7 +157,7 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
                 return advancedFormattedCalendar(atts.getPublicationDate());
             }
         });
-        column.setCssClass("doclisting-date");
+        column.setCssClass(DocumentListColumn.DATE.getCssClass());
         return column;
 
     }
