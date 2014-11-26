@@ -26,10 +26,12 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
+import org.hippoecm.repository.util.DateTools;
 import org.junit.Test;
 public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTest {
       
@@ -544,23 +546,12 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
     @Test
     public void testXPathAndOrderBySearches() throws RepositoryException, IOException {
         commonStart();
-
         Node testNode = session.getRootNode().getNode("test");
         createDateStructure(testNode);
 
-        Node facetNavigation = testNode.addNode("facetnavigation");
-        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getIdentifier());
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
-      
-        // we set the default ordering on the faceted navigation to 'hippo:color' (default is ascending)
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:color" });
-        
-        session.save();
-   
-        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        createFacetedNavigationNodeWithSort(testNode);
+
+        Node facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
   
         assertNotNull(facetNavigation.getNode("year"));
         assertNotNull(facetNavigation.getNode("year").getNode("hippo:resultset"));
@@ -632,5 +623,46 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         }
         return true;
     }
-    
+
+    @Test
+    public void result_set_counts_correct_between_different_sessions_using_free_range_query() throws Exception {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+        createFacetedNavigationNodeWithSort(testNode);
+
+        // there are 5 documents older than 'threedayearlier' and only 1 is older than 'yearearlier'
+        String xpath1 = "xpath(//*[@hippo:date < " + DateTools.createXPathConstraint(session, threedayearlier) + "])";
+        String xpath2 = "xpath(//*[@hippo:date < " + DateTools.createXPathConstraint(session, yearearlier) + "])";
+
+        Node facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath1+"}]");
+        assertEquals(5L, facetNavigation.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+        // now use xpath2 but do not refresh session. The new xpath is not accounted for....virtual states
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath2+"}]");
+        assertEquals(5L, facetNavigation.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+        // now discard the virtual states
+        session.refresh(false);
+        // now use xpath2
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath2+"}]");
+        assertEquals(1L, facetNavigation.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+    }
+
+    /**
+     * @return created faceted navigation node backed by Session s
+     */
+    private void createFacetedNavigationNodeWithSort(final Node testNode) throws RepositoryException {
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getIdentifier());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+
+        // we set the default ordering on the faceted navigation to 'hippo:color' (default is ascending)
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:color" });
+        session.save();
+    }
 }

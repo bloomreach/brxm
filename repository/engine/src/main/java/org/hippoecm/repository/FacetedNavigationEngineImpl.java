@@ -575,7 +575,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                             }
                             if (openQuery != null) {
                                 QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                                matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(queryAndSort.query, indexReader));
+                                matchingDocsSetBuilder.add(filterDocIdSetJackRabbitQuery(queryAndSort.query, indexReader));
                             }
 
                             Filter filterToApply = new DocIdSetFilter(matchingDocsSetBuilder.toBitSet());
