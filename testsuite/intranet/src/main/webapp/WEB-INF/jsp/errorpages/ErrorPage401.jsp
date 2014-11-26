@@ -18,7 +18,7 @@
 <fmt:setBundle basename="org.hippoecm.hst.security.servlet.LoginServlet" />
 
 <%
-String destination = (String) request.getAttribute("org.hippoecm.hst.security.servlet.destination");
+String destination = (String) session.getAttribute("org.hippoecm.hst.security.servlet.destination");
 if (destination == null) destination = "";
 
 int autoRedirectSeconds = 2;
