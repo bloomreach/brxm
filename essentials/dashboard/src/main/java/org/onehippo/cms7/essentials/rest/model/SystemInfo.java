@@ -107,8 +107,13 @@ public class SystemInfo implements Restful {
 
     public void addRebuildPlugin(final PluginDescriptor plugin) {
         getRebuildPlugins();
-        rebuildPlugins.add(plugin);
 
+        for (PluginDescriptor desc : rebuildPlugins) {
+            if (desc.getId().equals(plugin.getId())) {
+                return; // duplicate, don't add
+            }
+        }
+        rebuildPlugins.add(plugin);
     }
 
     public List<PluginDescriptor> getRebuildPlugins() {

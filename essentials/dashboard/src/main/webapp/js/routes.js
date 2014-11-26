@@ -26,7 +26,7 @@
             $stateProvider
                 .state('index', {
                     url: '',
-                    resolve: { factory: dispatchToDesiredPage }
+                    resolve: { factory: initAndDispatch }
                 })
                 .state('introduction', {
                     url: '/introduction',
@@ -67,39 +67,83 @@
                 });
         });
 
-    var dispatchToDesiredPage = function ($q, $rootScope, $location, $http, $log) {
+    var initAndDispatch = function ($q, $rootScope, $location, $http, $log, $timeout, modalService, pluginTypeFilter) {
         // Determine the correct location path to start.
         // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
         var deferred = $q.defer();
+        var startPinger = function() {
+            var PING_RUNNING_TIMER = 7000;
+            var PING_DOWN_TIMER = 10000;
+            //############################################
+            // PINGER
+            //############################################
+            // keep reference to old modal:
+            var pingModal = null;
+            (function ping() {
 
-        $http.get($rootScope.REST.packageStatus)
-            .success(function (response) {
-                if (response.status) {
-                    // project setup has happened.
-                    // Do a ping to decide whether to go to library or installed features
-                    $http.get($rootScope.REST.ping)
-                        .success(function (data) {
-                            if (data.installedFeatures > 0) {
-                                $location.path("/installed-features");
-                            } else {
-                                $location.path("/library");
-                            }
-                            deferred.resolve(true);
-                        })
-                        .error(function () {
-                            $location.path("/library");
-                            deferred.reject();
+                var modalOptions = {
+                    headerText: 'Service Down',
+                    bodyText: 'The setup application server appears to be down. If you are' +
+                        ' rebuilding the project, please wait until it is up and running again.'
+
+                };
+
+                function openModal() {
+                    if (pingModal == null) {
+                        pingModal = modalService.showModal({}, modalOptions);
+                        pingModal.then(function () {
+                            // discard modal
+                            pingModal = null;
                         });
-                } else {
-                    // project needs setup.
-                    $location.path("/introduction");
-                    deferred.resolve(true);
+                    }
                 }
-            })
-            .error(function () {
-                $location.path("/library");
-                deferred.reject();
-            });
+
+                $http.get($rootScope.REST.ping).success(function (data) {
+                    if (data) {
+                        if (data.initialized) {
+                            $timeout(ping, PING_RUNNING_TIMER);
+                            $rootScope.TOTAL_PLUGINS = data.totalPlugins;
+                            $rootScope.TOTAL_TOOLS = data.totalTools;
+                            $rootScope.INSTALLED_FEATURES = data.installedFeatures;
+                            $rootScope.NEEDS_REBUILD = data.needsRebuild;
+                            $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(data.rebuildPlugins, "feature").length + data.configurablePlugins;
+                            $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
+
+                        } else {
+                            // app is back up, but needs to restart
+                            window.location.href = $rootScope.applicationUrl;
+                        }
+                    }
+                }).error(function () {
+                    openModal();
+                    $timeout(ping, PING_DOWN_TIMER);
+                });
+
+            })();
+        };
+        var dispatch = function() {
+            startPinger();
+            
+            $http.get($rootScope.REST.packageStatus)
+                .success(function (response) {
+                    if (response.status) {
+                        if (response.pluginsInstalled > 0) {
+                            $location.path("/installed-features");
+                        } else {
+                            $location.path("/library");
+                        }
+                    } else {
+                        $location.path("/introduction");
+                    }
+                    deferred.resolve(true);
+                })
+                .error(function () {
+                    $location.path("/library");
+                    deferred.resolve(true);
+                });
+        };
+
+        $http.post($rootScope.REST.plugins + 'autosetup').success(dispatch).error(dispatch);
 
         return deferred.promise;
     }

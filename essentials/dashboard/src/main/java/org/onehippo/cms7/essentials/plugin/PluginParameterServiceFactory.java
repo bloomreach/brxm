@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.config;
+package org.onehippo.cms7.essentials.plugin;
 
+import org.onehippo.cms7.essentials.dashboard.config.DefaultPluginParameterService;
+import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +32,23 @@ public class PluginParameterServiceFactory {
     private static Logger log = LoggerFactory.getLogger(PluginParameterServiceFactory.class);
     private static final PluginParameterService defaultService = new DefaultPluginParameterService();
 
-    public static PluginParameterService getParameterService(PluginDescriptor plugin) {
-        final String parameterServiceClassName = plugin.getParameterServiceClass();
+    public static PluginParameterService getParameterService(Plugin plugin) {
+        final PluginDescriptor descriptor = plugin.getDescriptor();
+        if (descriptor != null) {
+            final String parameterServiceClassName = descriptor.getParameterServiceClass();
 
-        if (StringUtils.hasText(parameterServiceClassName)) {
-            try {
-                Object object = Class.forName(parameterServiceClassName).newInstance();
-                if (object instanceof PluginParameterService) {
-                    return (PluginParameterService)object;
-                } else {
-                    log.warn("Parameter service class " + parameterServiceClassName + " implements unsupported class.");
+            if (StringUtils.hasText(parameterServiceClassName)) {
+                try {
+                    Object object = Class.forName(parameterServiceClassName).newInstance();
+                    if (object instanceof PluginParameterService) {
+                        return (PluginParameterService) object;
+                    } else {
+                        log.warn("Parameter service class " + parameterServiceClassName + " implements unsupported class.");
+                    }
+                } catch (Exception ex) {
+                    log.warn("Problem retrieving parameter service class " + parameterServiceClassName
+                            + " for plugin " + descriptor.getName() + ".", ex);
                 }
-            } catch (Exception ex) {
-                log.warn("Problem retrieving parameter service class " + parameterServiceClassName
-                        + " for plugin " + plugin.getName() + ".", ex);
             }
         }
 

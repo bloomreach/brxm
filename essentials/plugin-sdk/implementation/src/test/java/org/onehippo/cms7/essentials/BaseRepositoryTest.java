@@ -40,7 +40,7 @@ public abstract class BaseRepositoryTest extends BaseTest {
 
     @Override
     public PluginContext getContext() {
-        final TestPluginContext testPluginContext = new TestPluginContext(repository, null);
+        final TestPluginContext testPluginContext = new TestPluginContext(repository);
         testPluginContext.setComponentsPackageName("org.onehippo.essentials.test.components");
         testPluginContext.setBeansPackageName("org.onehippo.essentials.test.beans");
         testPluginContext.setRestPackageName("org.onehippo.essentials.test.rest");

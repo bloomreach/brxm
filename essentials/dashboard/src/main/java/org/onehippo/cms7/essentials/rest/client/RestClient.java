@@ -20,9 +20,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +56,19 @@ public class RestClient {
         return client.accept(MediaType.WILDCARD).get(String.class);
     }
 
+
+    public String getJson() {
+        final WebClient client = WebClient.create(baseResourceUri);
+        setTimeouts(client, connectionTimeout, receiveTimeout);
+        try {
+            return client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+        } catch (Exception e) {
+            log.error("Error requesting remote plugin descriptors for repository: " + baseResourceUri, e);
+        }
+        return null;
+    }
+
+
     private void setTimeouts(final WebClient client, final long connectionTimeout, final long receiveTimeout) {
         HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
         if (receiveTimeout != 0) {
@@ -68,19 +78,4 @@ public class RestClient {
             conduit.getClient().setConnectionTimeout(connectionTimeout);
         }
     }
-
-
-    @SuppressWarnings("unchecked")
-    public RestfulList<PluginDescriptorRestful> getPlugins() {
-        final WebClient client = WebClient.create(baseResourceUri);
-        setTimeouts(client, connectionTimeout, receiveTimeout);
-        try {
-            final String json = client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
-            return RestUtils.parsePlugins(json);
-        } catch (Exception e) {
-            log.error("Error parsing remote plugins for repository: " + baseResourceUri, e);
-        }
-        return new RestfulList<>();
-    }
-
 }

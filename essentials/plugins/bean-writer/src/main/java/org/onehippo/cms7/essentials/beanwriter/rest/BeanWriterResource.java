@@ -29,17 +29,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
@@ -62,8 +60,7 @@ public class BeanWriterResource extends BaseResource {
 
     @POST
     public RestfulList<MessageRestful> runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(new PluginDescriptorRestful(className));
+        final PluginContext context = PluginContextFactory.getContext();
         //############################################
         // USE SERVICES
         //############################################
@@ -104,7 +101,7 @@ public class BeanWriterResource extends BaseResource {
             messages.add(new MessageRestful("All beans were up to date"));
         } else {
             final String message = "HST Beans changed, project rebuild needed";
-            eventBus.post(new RebuildEvent("Beanwriter", "tool", message));
+            eventBus.post(new RebuildEvent("beanwriter", message));
             messages.add(new MessageRestful(message));
         }
         return messages;
@@ -114,8 +111,7 @@ public class BeanWriterResource extends BaseResource {
     @GET
     @Path("/imagesets")
     public Set<String> getImageSets(@Context ServletContext servletContext) throws Exception {
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(new PluginDescriptorRestful(className));
+        final PluginContext context = PluginContextFactory.getContext();
         final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
         final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
         return existingImageTypes.keySet();

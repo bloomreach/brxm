@@ -77,6 +77,12 @@ dashboard/pom.xml -text
 dashboard/src/main/appended-resources/META-INF/LICENSE -text
 dashboard/src/main/appended-resources/META-INF/NOTICE -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/filters/NoCacheFilter.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/InstallState.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/InstallStateMachine.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/Plugin.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginException.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginParameterServiceFactory.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginStore.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
@@ -94,14 +100,10 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrBrowserResou
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrNode.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrProperty.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrQuery.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/InstallStateMachine.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/Plugin.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin/PluginUtils.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/DynamicRestPointsApplication.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndpointsRestApplication.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/RestServlet.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/utils/RestUtils.java -text
 dashboard/src/main/resources/applicationContext.xml -text
 dashboard/src/main/resources/jackson.xml -text
 dashboard/src/main/resources/plugin_descriptor.json -text
@@ -805,8 +807,6 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultPluginParameterService.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginService.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginInstallationState.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginParameterServiceFactory.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ResourcePluginService.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DefaultPluginContext.java -text

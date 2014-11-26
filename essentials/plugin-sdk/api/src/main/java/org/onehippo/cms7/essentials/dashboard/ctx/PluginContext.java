@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
 import com.google.common.collect.Multimap;
@@ -185,13 +184,6 @@ public interface PluginContext extends Serializable {
      * @return true if user did project setup, false otherwise.
      */
     boolean hasProjectSettings();
-
-    /**
-     * Returns plugin descriptor of currently selected plugin
-     *
-     * @return Plugin descriptor instance
-     */
-    PluginDescriptor getDescriptor();
 
     /**
      * Returns service instance for given Plugin descriptor

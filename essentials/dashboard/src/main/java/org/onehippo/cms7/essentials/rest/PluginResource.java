@@ -16,21 +16,12 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -44,32 +35,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.PluginInstallationState;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
-import org.onehippo.cms7.essentials.dashboard.config.PluginParameterServiceFactory;
+import org.onehippo.cms7.essentials.plugin.PluginParameterServiceFactory;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.plugin.InstallState;
+import org.onehippo.cms7.essentials.plugin.Plugin;
+import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -80,30 +62,18 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
-import org.onehippo.cms7.essentials.rest.client.RestClient;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
-import org.onehippo.cms7.essentials.rest.plugin.InstallStateMachine;
-import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
-import org.onehippo.cms7.essentials.utils.RestUtils;
+import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Multimap;
-import com.google.common.eventbus.EventBus;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -120,66 +90,16 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/plugins")
 public class PluginResource extends BaseResource {
 
-
-    /**
-     * Plugin cache to avoid remote calls, loads from following protocols:
-     * <p/>
-     * <p>Remote url "http(s):"</p>
-     * Below are ones supported by  {@code ResourceUtils}
-     * <p>CLASSPATH_URL_PREFIX  Pseudo URL prefix for loading from the class path: "classpath:"</p>
-     * <p>FILE_URL_PREFIX  URL prefix for loading from the file system: "file:"</p>
-     * <p>JAR_URL_SEPARATOR  Separator between JAR URL and file path within the JAR</p>
-     * <p>URL_PROTOCOL_CODE_SOURCE  URL protocol for an entry from an OC4J jar file: "code-source"</p>
-     * <p>URL_PROTOCOL_FILE  URL protocol for a file in the file system: "file"</p>
-     * <p>URL_PROTOCOL_JAR  URL protocol for an entry from a jar file: "jar"</p>
-     * <p>URL_PROTOCOL_VFSZIP  URL protocol for an entry from a JBoss jar file: "vfszip"</p>
-     * <p>URL_PROTOCOL_WSJAR   URL protocol for an entry from a WebSphere jar file: "wsjar"</p>
-     * <p>URL_PROTOCOL_ZIP  URL protocol for an entry from a zip file: "zip"</p>
-     *
-     * @see ResourceUtils
-     */
-    private final LoadingCache<String, RestfulList<PluginDescriptorRestful>> pluginCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(60, TimeUnit.MINUTES)
-            .recordStats()
-            .build(new CacheLoader<String, RestfulList<PluginDescriptorRestful>>() {
-                @Override
-                public RestfulList<PluginDescriptorRestful> load(final String url) throws Exception {
-                    if (url.startsWith("http")) {
-                        RestClient client = new RestClient(url);
-                        return client.getPlugins();
-                    } else {
-                        final URI resourceUri = URI.create(url);
-                        try {
-                            final File file = ResourceUtils.getFile(resourceUri);
-                            final String pluginDescriptor = GlobalUtils.readStreamAsText(new FileInputStream(file));
-                            return RestUtils.parsePlugins(pluginDescriptor);
-                        } catch (Exception e) {
-                            log.error(MessageFormat.format("Error loading plugins from repository: {0}", url), e);
-                        }
-                        return new RestfulList<>();
-                    }
-
-                }
-
-
-            });
-
     public static final String PLUGIN_ID = "pluginId";
-    @Inject
-    private EventBus eventBus;
-
-    private DynamicRestPointsApplication application;
-
-    @Inject
-    private MemoryPluginEventListener listener;
+    private static Logger log = LoggerFactory.getLogger(PluginResource.class);
+    private static final Lock setupLock = new ReentrantLock();
+    private boolean frontendInitialized;
 
     @Inject
     private RebuildProjectEventListener rebuildListener;
 
-
-    private boolean initialized;
-    private static Logger log = LoggerFactory.getLogger(PluginResource.class);
-    private static final Lock pingLock = new ReentrantLock();
+    @Inject
+    private PluginStore pluginStore;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
@@ -190,7 +110,16 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<PluginDescriptorRestful> fetchPlugins(@Context ServletContext servletContext) {
-        return getAllPlugins(servletContext);
+        final RestfulList<PluginDescriptorRestful> restfulList = new RestfulList<>();
+        final List<Plugin> plugins = pluginStore.getAllPlugins();
+
+        for (Plugin plugin : plugins) {
+            final PluginDescriptorRestful descriptor = (PluginDescriptorRestful)plugin.getDescriptor();
+            descriptor.setInstallState(plugin.getInstallState().toString());
+            restfulList.add(descriptor);
+        }
+
+        return restfulList;
     }
 
 
@@ -201,12 +130,27 @@ public class PluginResource extends BaseResource {
     @POST
     @Path("/autosetup")
     public MessageRestful autoSetupPlugins(@Context ServletContext servletContext) {
-        for (PluginDescriptor plugin : getPlugins(servletContext)) {
-            InstallStateMachine.promote(plugin);
-            autoSetupIfPossible(plugin);
-        }
+        frontendInitialized = true;
+        final StringBuilder builder = new StringBuilder();
 
-        return null;
+        // We lock the ping to avoid concurrent auto-setup. Concurrent auto-setup may happen
+        // if the user(s) has/have two browsers pointed at the restarting Essentials WAR. Not
+        // locking would lead to duplicate setup/bootstrapping.
+        if (!setupLock.tryLock()) {
+            log.warn("WARNING: You appear to be using two dashboards at the same time. Essentials doesn't support that." +
+                    " Check if you have multiple tabs open, pointing at Essentials, and if so, close all except for one.");
+            setupLock.lock();
+        }
+        for (Plugin plugin : pluginStore.getAllPlugins()) {
+            plugin.promote();
+            final String msg = autoSetupIfPossible(plugin);
+            if (msg != null) {
+                builder.append(msg).append(" - ");
+            }
+        }
+        setupLock.unlock();
+
+        return (builder.length() > 0) ? new ErrorMessageRestful(builder.toString()) : null;
     }
 
 
@@ -218,57 +162,48 @@ public class PluginResource extends BaseResource {
     public SystemInfo ping(@Context ServletContext servletContext) {
         final SystemInfo systemInfo = new SystemInfo();
 
-        // We lock the ping to avoid concurrent setup short-circuiting.
-        if (!pingLock.tryLock()) {
-            log.warn("WARNING: You appear to be using two dashboards at the same time. Essentials doesn't support that." +
-                    " Check if you have multiple tabs open, pointing at Essentials, and if so, close all except for one.");
-            pingLock.lock();
-        }
         try {
-            systemInfo.setInitialized(initialized);
-            final List<PluginDescriptorRestful> plugins = getPlugins(servletContext);
-            for (PluginDescriptorRestful plugin : plugins) {
+            // tell the pinger when to (re-)initialize the front-end.
+            systemInfo.setInitialized(frontendInitialized);
+
+            final List<Plugin> plugins = pluginStore.getAllPlugins();
+            for (Plugin plugin : plugins) {
                 systemInfo.incrementPlugins();
-                final String installState = plugin.getInstallState();
-                final boolean isTool = "tool".equals(plugin.getType());
+                final InstallState installState = plugin.getInstallState();
+                final String pluginType = plugin.getDescriptor().getType();
+                final boolean isTool = "tool".equals(pluginType);
                 if (isTool) {
                     systemInfo.incrementTools();
                 }
-                final boolean isFeature = "feature".equals(plugin.getType());
-                if (isFeature && !PluginInstallationState.DISCOVERED.equals(installState)) {
+                final boolean isFeature = "feature".equals(pluginType);
+                if (isFeature && installState != InstallState.DISCOVERED) {
                     systemInfo.incrementInstalledFeatures();
                 }
-                if (!isTool && !Strings.isNullOrEmpty(installState)) {
-                    if (installState.equals(PluginInstallationState.BOARDING)
-                            || installState.equals(PluginInstallationState.INSTALLING)) {
-                        systemInfo.addRebuildPlugin(plugin);
+                if (!isTool) {
+                    if (installState == InstallState.BOARDING
+                            || installState == InstallState.INSTALLING) {
+                        systemInfo.addRebuildPlugin(plugin.getDescriptor());
                         systemInfo.setNeedsRebuild(true);
-                    } else if (installState.equals(PluginInstallationState.ONBOARD)) {
+                    } else if (installState == InstallState.ONBOARD) {
                         systemInfo.incrementConfigurablePlugins();
                     }
                 }
             }
+
             // check if we have external rebuild events:
             final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
             for (RebuildEvent rebuildEvent : rebuildEvents) {
-                systemInfo.setNeedsRebuild(true);
-                final List<PluginDescriptor> rebuildPlugins = systemInfo.getRebuildPlugins();
-                // skip duplicate names:
-                boolean containsPlugin = false;
-                final String pluginName = rebuildEvent.getPluginName();
-                for (PluginDescriptor rebuildPlugin : rebuildPlugins) {
-                    if (rebuildPlugin.getName().equals(pluginName)) {
-                        containsPlugin = true;
+                final String pluginId = rebuildEvent.getPluginId();
+                for (Plugin plugin : plugins) {
+                    if (plugin.getId().equals(pluginId)) {
+                        systemInfo.setNeedsRebuild(true);
+                        systemInfo.addRebuildPlugin(plugin.getDescriptor());
+                        break;
                     }
                 }
-                if (!containsPlugin) {
-                    final PluginDescriptor pluginDescriptor = new PluginDescriptorRestful(pluginName);
-                    pluginDescriptor.setType(rebuildEvent.getPluginType());
-                    systemInfo.addRebuildPlugin(pluginDescriptor);
-                }
             }
-        } finally {
-            pingLock.unlock();
+        } catch (Exception e) {
+            log.error("pinger had exception!", e);
         }
 
         return systemInfo;
@@ -282,7 +217,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/clearcache")
     public MessageRestful clearCache(@Context ServletContext servletContext) throws Exception {
-        pluginCache.invalidateAll();
+        pluginStore.clearCache();
         return new MessageRestful("Plugin Cache invalidated");
     }
 
@@ -297,30 +232,26 @@ public class PluginResource extends BaseResource {
 
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
-        final PluginDescriptorRestful myPlugin = getPluginById(pluginId, servletContext);
-
-        if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
-            final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
-            resource.setSuccessMessage(false);
-            return resource;
+        final Plugin plugin = pluginStore.getPluginById(pluginId);
+        if (plugin == null) {
+            return new ErrorMessageRestful("No valid InstructionPackage was selected");
         }
+
         final Map<String, Object> properties = new HashMap<String, Object>(values);
+        final String msg = setupPlugin(plugin, properties);
+        if (msg != null) {
+            return new ErrorMessageRestful(msg);
+        }
 
-        final ErrorMessageRestful errorMessage = setupPlugin(myPlugin, properties);
-
-        return errorMessage == null
-                ? new MessageRestful("Successfully installed " + myPlugin.getName(), DisplayEvent.DisplayType.STRONG)
-                : errorMessage;
+        return new MessageRestful("Successfully installed " + plugin, DisplayEvent.DisplayType.STRONG);
     }
 
     @ApiOperation(value = "Signal to the dashboard that the plugin's setup phase has completed.")
     @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
     @POST
     @Path("/setup/{pluginId}")
-    public void signalSetup(@PathParam(PLUGIN_ID) String pluginId, @Context ServletContext servletContext) {
-        final PluginDescriptorRestful plugin = getPluginById(pluginId, servletContext);
-
-        updateInstallStateAfterSetup(plugin);
+    public void signalSetup(@PathParam(PLUGIN_ID) String pluginId) {
+        updateInstallStateAfterSetup(pluginStore.getPluginById(pluginId));
     }
 
     @ApiOperation(
@@ -330,8 +261,7 @@ public class PluginResource extends BaseResource {
     @Path("/savesettings")
     public KeyValueRestful hideWelcomeScreen(final ProjectSettingsBean payload, @Context ServletContext servletContext) {
         try {
-            final PluginDescriptor plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
-            final PluginContext context = new DefaultPluginContext(plugin);
+            final PluginContext context = PluginContextFactory.getContext();
             try (PluginConfigService configService = context.getConfigService()) {
                 final Set<String> pluginRepositories = payload.getPluginRepositories();
                 if (pluginRepositories != null) {
@@ -348,7 +278,6 @@ public class PluginResource extends BaseResource {
                 return new KeyValueRestful("message", "Saved property for welcome screen");
             }
         } catch (Exception e) {
-
             log.error("Error checking InstructionPackage status", e);
         }
 
@@ -363,13 +292,13 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/plugins/{pluginId}")
     public PluginDescriptor getPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
-        final List<PluginDescriptorRestful> pluginList = getPlugins(servletContext);
-        for (PluginDescriptor plugin : pluginList) {
-            if (plugin.getId().equals(pluginId)) {
-                return plugin;
-            }
+        final Plugin plugin = pluginStore.getPluginById(pluginId);
+        if (plugin == null) {
+            return new PluginDescriptorRestful();
         }
-        return new PluginDescriptorRestful();
+        final PluginDescriptor descriptor = plugin.getDescriptor();
+        descriptor.setInstallState(plugin.getInstallState().toString());
+        return descriptor;
     }
 
     @ApiOperation(
@@ -379,37 +308,24 @@ public class PluginResource extends BaseResource {
     @POST
     @Path("/install/{pluginId}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
-        final MessageRestful message = new MessageRestful();
-
-        final PluginDescriptor plugin = getPluginById(pluginId, servletContext);
+        final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            message.setValue("Plugin was not found and could not be installed");
-            message.setSuccessMessage(false);
-            return message;
+            return new ErrorMessageRestful("Plugin was not found and could not be installed");
         }
 
-        String error = installRepositoriesForPlugin(plugin);
-        if (error.length() > 0) {
-            message.setValue(error);
-            message.setSuccessMessage(false);
-            return message;
+        try {
+            plugin.install();
+        } catch (PluginException e) {
+            log.error(e.getMessage(), e);
+            return new ErrorMessageRestful(e.getMessage());
         }
 
-        error = installDependenciesForPlugin(plugin);
-        if (error.length() > 0) {
-            message.setValue(error);
-            message.setSuccessMessage(false);
-            return message;
+        String msg = autoSetupIfPossible(plugin);
+        if (msg != null) {
+            return new ErrorMessageRestful(msg);
         }
 
-        InstallStateMachine.install(plugin);
-        ErrorMessageRestful errorMessage = autoSetupIfPossible(plugin);
-        if (errorMessage != null) {
-            return errorMessage;
-        }
-
-        message.setValue("Plugin <strong>" + plugin.getName() + "</strong> successfully installed.");
-        return message;
+        return new MessageRestful("Plugin <strong>" + plugin + "</strong> successfully installed.");
     }
 
     @ApiOperation(
@@ -439,9 +355,8 @@ public class PluginResource extends BaseResource {
             response = ProjectSettings.class)
     @GET
     @Path("/projectsettings")
-    public ProjectSettings getProjectSettings(@Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
-        return context.getProjectSettings();
+    public ProjectSettings getProjectSettings() {
+        return pluginStore.getProjectSettings();
     }
 
     @GET
@@ -449,19 +364,16 @@ public class PluginResource extends BaseResource {
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) throws Exception {
 
         final RestfulList<ControllerRestful> controllers = new RestList<>();
-        final List<PluginDescriptorRestful> plugins = getPlugins(servletContext);
-        for (PluginDescriptor plugin : plugins) {
-            final String pluginLink = plugin.getId();
-            if (Strings.isNullOrEmpty(pluginLink)) {
+        for (Plugin plugin : pluginStore.getAllPlugins()) {
+            final String pluginId = plugin.getId();
+            if (Strings.isNullOrEmpty(pluginId)) {
                 continue;
             }
-            controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
-
+            controllers.add(new ControllerRestful(pluginId, String.format("%sCtrl", pluginId), String.format("plugins/%s/index.html", pluginId)));
         }
         // TODO load from remote
 
         return controllers;
-
     }
 
 
@@ -474,21 +386,17 @@ public class PluginResource extends BaseResource {
     public StatusRestful getMenu(@Context ServletContext servletContext) {
         final StatusRestful status = new StatusRestful();
         try {
-            final PluginDescriptor plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
-            final PluginContext context = new DefaultPluginContext(plugin);
+            final PluginContext context = PluginContextFactory.getContext();
             try (PluginConfigService configService = context.getConfigService()) {
                 final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
                 if (document != null && document.getSetupDone()) {
                     status.setStatus(true);
-                    return status;
                 }
             }
-
-
         } catch (Exception e) {
-
             log.error("Error checking InstructionPackage status", e);
         }
+        status.setPluginsInstalled(pluginStore.countInstalledPlugins());
         return status;
     }
 
@@ -500,11 +408,13 @@ public class PluginResource extends BaseResource {
     @Path("/modules")
     public PluginModuleRestful getModule(@Context ServletContext servletContext) throws Exception {
         final PluginModuleRestful modules = new PluginModuleRestful();
-        final List<PluginDescriptorRestful> plugins = getPlugins(servletContext);
-        for (PluginDescriptorRestful plugin : plugins) {
-            final List<PluginModuleRestful.PrefixedLibrary> libraries = plugin.getLibraries();
+        final List<Plugin> plugins = pluginStore.getAllPlugins();
+        for (Plugin plugin : plugins) {
+            // TODO: why is getLibraries not part of the descriptor interface?
+            final PluginDescriptorRestful descriptor = (PluginDescriptorRestful)plugin.getDescriptor();
+            final List<PluginModuleRestful.PrefixedLibrary> libraries = descriptor.getLibraries();
 
-            final String prefix = plugin.getType();
+            final String prefix = descriptor.getType();
             final String pluginId = plugin.getId();
             if (libraries != null) {
                 for (PluginModuleRestful.PrefixedLibrary library : libraries) {
@@ -531,16 +441,16 @@ public class PluginResource extends BaseResource {
         context.addPlaceholderData(new HashMap<String, Object>(values));
 
         final String pluginId = values.get(PLUGIN_ID);
-        final PluginDescriptor myPlugin = getPluginById(pluginId, servletContext);
+        final Plugin plugin = pluginStore.getPluginById(pluginId);
 
         final RestfulList<MessageRestful> list = new RestfulList<>();
-        if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
+        if (Strings.isNullOrEmpty(pluginId) || plugin == null) {
             final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
             resource.setSuccessMessage(false);
             list.add(resource);
             return list;
         }
-        final InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
+        final InstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage == null) {
             final MessageRestful resource = new MessageRestful("Could not create Instruction Package");
             resource.setSuccessMessage(false);
@@ -567,39 +477,12 @@ public class PluginResource extends BaseResource {
     // UTIL
     //############################################
 
-    private void processPlugins(final RestfulList<PluginDescriptorRestful> plugins, final Iterable<PluginDescriptorRestful> items,
-                                final Collection<String> restClasses) {
-        for (PluginDescriptorRestful plugin : items) {
-            plugins.add(plugin);
-
-            final InstallStateMachine.State state = InstallStateMachine.getState(plugin);
-            if (state == InstallStateMachine.State.ONBOARD
-                    || state == InstallStateMachine.State.INSTALLING
-                    || state == InstallStateMachine.State.INSTALLED)
-            {
-                final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-                plugin.setHasConfiguration(params.hasConfiguration());
-            }
-
-            //############################################
-            // collect endpoints
-            //############################################
-            final List<String> pluginRestClasses = plugin.getRestClasses();
-            if (pluginRestClasses != null) {
-                for (String clazz : pluginRestClasses) {
-                    restClasses.add(clazz);
-                }
-            }
-        }
-    }
-
-    private ErrorMessageRestful autoSetupIfPossible(final PluginDescriptor plugin) {
-        final InstallStateMachine.State state = InstallStateMachine.getState(plugin);
+    private String autoSetupIfPossible(final Plugin plugin) {
         final PluginParameterService pluginParameters = PluginParameterServiceFactory.getParameterService(plugin);
-        final ProjectSettings settings = PluginContextFactory.getContext(plugin).getProjectSettings();
+        final ProjectSettings settings = pluginStore.getProjectSettings();
 
-        if (state != InstallStateMachine.State.ONBOARD
-            || !hasGeneralizedSetUp(plugin)
+        if (plugin.getInstallState() != InstallState.ONBOARD
+            || !plugin.hasGeneralizedSetUp()
             || (settings.isConfirmParams() && pluginParameters.hasGeneralizedSetupParameters()))
         {
             // auto-setup not possible
@@ -614,8 +497,8 @@ public class PluginResource extends BaseResource {
         return setupPlugin(plugin, properties);
     }
 
-    private ErrorMessageRestful setupPlugin(final PluginDescriptor plugin, final Map<String, Object> properties) {
-        final PluginContext context = new DefaultPluginContext(new PluginDescriptorRestful(ProjectSettingsBean.DEFAULT_NAME));
+    private String setupPlugin(final Plugin plugin, final Map<String, Object> properties) {
+        final PluginContext context = PluginContextFactory.getContext();
         context.addPlaceholderData(properties);
 
         HstUtils.erasePreview(context);
@@ -627,178 +510,26 @@ public class PluginResource extends BaseResource {
         commonPackage.execute(context);
 
         // execute InstructionPackage itself
-        final InstructionPackage instructionPackage = instructionPackageInstance(plugin);
-        if (instructionPackage == null) {
-            return new ErrorMessageRestful("Could not execute Installation package: " + plugin.getPackageFile(), DisplayEvent.DisplayType.STRONG);
+        final InstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
+        if (instructionPackage != null) {
+            ApplicationModule.getInjector().autowireBean(instructionPackage);
+            instructionPackage.setProperties(properties);
+            instructionPackage.execute(context);
         }
-        instructionPackage.setProperties(properties);
-        instructionPackage.execute(context);
 
         return updateInstallStateAfterSetup(plugin);
     }
 
-    private ErrorMessageRestful updateInstallStateAfterSetup(final PluginDescriptor plugin) {
-        ErrorMessageRestful msg = null; // no error message, signals success.
+    private String updateInstallStateAfterSetup(final Plugin plugin) {
+        String msg = null; // no error message, signals success.
 
         try {
-            InstallStateMachine.setup(plugin);
-        } catch (InstallStateMachine.StateException e) {
-            msg = new ErrorMessageRestful("There was an error in processing " + plugin.getName()
-                                        + " Please see the error logs for more details");
+            plugin.setup();
+        } catch (PluginException e) {
+            log.error("Error setting up plugin '" + plugin + "'.", e);
+            msg = "There was an error in processing " + plugin + " Please see the error logs for more details";
         }
 
         return msg;
-    }
-
-    private PluginDescriptorRestful getPluginById(final String id, final ServletContext context) {
-        if (Strings.isNullOrEmpty(id)) {
-            return null;
-        }
-
-        for (final PluginDescriptorRestful plugin : getPlugins(context)) {
-            if (id.equals(plugin.getId())) {
-                return plugin;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Fetch all plugins.
-     * @param servletContext context
-     * @return list of plugins
-     */
-    private List<PluginDescriptorRestful> getPlugins(final ServletContext servletContext) {
-        return getAllPlugins(servletContext).getItems();
-    }
-
-
-    /**
-     * Loads plugin descriptors from different resources. Current support is:
-     * <p>HTTP (remote plugin descriptor)</p>
-     * <p>Class path (built in/bundled plugins)</p>
-     * <p>File system: starting with file://</p>
-     * <p>Classpath: starting with classpath://</p>
-     *
-     * @param servletContext
-     * @return
-     */
-    private RestfulList<PluginDescriptorRestful> getAllPlugins(final ServletContext servletContext) {
-        final RestfulList<PluginDescriptorRestful> plugins = new RestList<>();
-        final List<PluginDescriptorRestful> items = getLocalPlugins();
-        final Collection<String> restClasses = new ArrayList<>();
-        // remote plugins
-        final ProjectSettings projectSettings = getProjectSettings(servletContext);
-        final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
-        for (String pluginRepository : pluginRepositories) {
-            try {
-                final RestfulList<PluginDescriptorRestful> myPlugins = pluginCache.get(pluginRepository);
-                log.debug("{}", pluginCache.stats());
-                if (myPlugins != null) {
-                    final List<PluginDescriptorRestful> myPluginsItems = myPlugins.getItems();
-                    CollectionUtils.addAll(items, myPluginsItems.iterator());
-                }
-            } catch (Exception e) {
-                log.error(MessageFormat.format("Error loading plugins from repository: {0}", pluginRepository), e);
-            }
-
-        }
-
-        processPlugins(plugins, items, restClasses);
-
-        //############################################
-        // Register endpoints:
-        //############################################
-        registerEndpoints(restClasses);
-        return plugins;
-    }
-
-
-    private List<PluginDescriptorRestful> getLocalPlugins() {
-        final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
-        final String json = GlobalUtils.readStreamAsText(stream);
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-            @SuppressWarnings("unchecked")
-            final RestfulList<PluginDescriptorRestful> restfulList = mapper.readValue(json, RestfulList.class);
-            return restfulList.getItems();
-        } catch (IOException e) {
-            log.error("Error parsing plugins", e);
-        }
-        return Collections.emptyList();
-    }
-
-    private void registerEndpoints(final Collection<String> restClasses) {
-        if (!initialized && !restClasses.isEmpty()) {
-            //eventBus.register(rebuildListener);
-            initialized = true;
-            final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
-            final Bus bus = BusFactory.getDefaultBus();
-            application = new DynamicRestPointsApplication();
-            getInjector().autowireBean(application);
-            addClasses(restClasses);
-            // register:
-            final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            final Object jsonProvider = applicationContext.getBean("jsonProvider");
-            final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
-            factoryBean.setProvider(jsonProvider);
-            factoryBean.setBus(bus);
-            final Server server = factoryBean.create();
-            server.start();
-        } else {
-            addClasses(restClasses);
-        }
-    }
-
-    private void addClasses(final Iterable<String> restClasses) {
-        for (String restClass : restClasses) {
-            final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
-            if (endpointClass == null) {
-                log.error("Invalid application class: {}", restClass);
-                continue;
-            }
-            final Set<Class<?>> classes = application.getClasses();
-            if (classes.contains(endpointClass)) {
-                log.debug("Class already loaded {}", restClass);
-                continue;
-            }
-            application.addClass(endpointClass);
-            log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
-
-        }
-    }
-
-    private String installRepositoriesForPlugin(final PluginDescriptor plugin) {
-        final StringBuilder builder = new StringBuilder();
-
-        for (Repository repository : plugin.getRepositories()) {
-            if (!DependencyUtils.addRepository(repository)) {
-                if (builder.length() == 0) {
-                    builder.append("Not all repositories were installed: ");
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(repository.getUrl());
-            }
-        }
-
-        return builder.toString();
-    }
-
-    private String installDependenciesForPlugin(final PluginDescriptor plugin) {
-        final StringBuilder builder = new StringBuilder();
-
-        for (EssentialsDependency dependency : plugin.getDependencies()) {
-            if (!DependencyUtils.addDependency(dependency)) {
-                if (builder.length() == 0) {
-                    builder.append("Not all dependencies were installed: ");
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(dependency.getGroupId()).append(':').append(dependency.getArtifactId());
-            }
-        }
-
-        return builder.toString();
     }
 }

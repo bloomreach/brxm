@@ -24,10 +24,12 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEvent
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.ContextLoader;
 
 import com.google.common.eventbus.EventBus;
 
@@ -86,5 +88,15 @@ public class ApplicationModule {
     }
     public static ApplicationContext getApplicationContextRef() {
         return applicationContextRef;
+    }
+
+    private static AutowireCapableBeanFactory injector;
+
+    public static AutowireCapableBeanFactory getInjector() {
+        if (injector == null) {
+            // TODO when called during spring initialization, the application context is still null!
+            injector = ContextLoader.getCurrentWebApplicationContext().getAutowireCapableBeanFactory();
+        }
+        return injector;
     }
 }

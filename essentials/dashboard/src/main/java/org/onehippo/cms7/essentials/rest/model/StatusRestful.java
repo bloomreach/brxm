@@ -28,17 +28,15 @@ public class StatusRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-
-    private String name;
-    private String message;
     private boolean status;
+    private int pluginsInstalled;
 
-    public String getMessage() {
-        return message;
+    public int getPluginsInstalled() {
+        return pluginsInstalled;
     }
 
-    public void setMessage(final String message) {
-        this.message = message;
+    public void setPluginsInstalled(final int pluginsInstalled) {
+        this.pluginsInstalled = pluginsInstalled;
     }
 
     public boolean isStatus() {
@@ -47,13 +45,5 @@ public class StatusRestful implements Restful {
 
     public void setStatus(final boolean status) {
         this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 }

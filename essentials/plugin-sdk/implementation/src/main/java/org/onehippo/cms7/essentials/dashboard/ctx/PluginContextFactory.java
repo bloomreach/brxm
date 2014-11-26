@@ -16,21 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.ctx;
 
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
-
-/**
- * Created by tjeger on 7/9/14.
- */
 public class PluginContextFactory {
 
     public static PluginContext getContext() {
-        final String className = ProjectSetupPlugin.class.getName();
-        return new DefaultPluginContext(new PluginDescriptorRestful(className));
-    }
-
-    public static PluginContext getContext(PluginDescriptor plugin) {
-        return new DefaultPluginContext(plugin);
+        return new DefaultPluginContext();
     }
 }

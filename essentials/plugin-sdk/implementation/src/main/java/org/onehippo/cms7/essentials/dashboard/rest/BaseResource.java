@@ -25,13 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
@@ -39,9 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.util.StringUtils;
 
-import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -65,39 +59,8 @@ public class BaseResource {
         return new ErrorMessageRestful(message);
     }
 
-    /**
-     * A plugin has a "generalized setup" when its descriptor specifies either a packageFile or a packageClass.
-     */
-    protected boolean hasGeneralizedSetUp(final PluginDescriptor pluginDescriptor) {
-        return StringUtils.hasText(pluginDescriptor.getPackageFile()) || StringUtils.hasText(pluginDescriptor.getPackageClass());
-    }
-
-    /**
-     * Instantiate InstructionPackage for plugin.
-     *
-     * @param plugin Plugin instance
-     * @return null if packageClass & packageFile are null or empty
-     */
-    protected InstructionPackage instructionPackageInstance(final PluginDescriptor plugin) {
-        final String packageClass = plugin.getPackageClass();
-        final String packageFile = plugin.getPackageFile();
-        InstructionPackage instructionPackage;
-        if (Strings.isNullOrEmpty(packageClass)) {
-            if (Strings.isNullOrEmpty(packageFile)) {
-                log.warn("Package class and Package file were not defined for plugin: {}/{}", plugin.getName(), plugin.getId());
-                return null;
-            }
-            instructionPackage = GlobalUtils.newInstance(TemplateSupportInstructionPackage.class);
-            instructionPackage.setInstructionPath(packageFile);
-        } else {
-            instructionPackage = GlobalUtils.newInstance(packageClass);
-        }
-        getInjector().autowireBean(instructionPackage);
-        return instructionPackage;
-    }
-
     protected ProjectRestful getProjectRestful() {
-        final PluginContext context = new DefaultPluginContext(null);
+        final PluginContext context = PluginContextFactory.getContext();
         final ProjectRestful projectRestful = new ProjectRestful();
         // inject project settings:
         try (final PluginConfigService configService = context.getConfigService()) {
@@ -157,7 +120,6 @@ public class BaseResource {
             injector = applicationContext.getAutowireCapableBeanFactory();
         }
         return injector;
-
     }
 
 

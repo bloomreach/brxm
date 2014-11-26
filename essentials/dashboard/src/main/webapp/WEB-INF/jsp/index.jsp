@@ -125,6 +125,7 @@
 <div class="container-fluid container-has-hippo-navbar">
   <div class="row">
     <div class="col-lg-12" ui-view autoscroll="false">
+      <h2>initializing...</h2>
     </div>
   </div>
   <div class="row">

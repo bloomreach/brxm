@@ -127,7 +127,7 @@ public abstract class BaseTest {
                     essentialsFolder.mkdir();
                 }
             }
-            context = new TestPluginContext(null, null);
+            context = new TestPluginContext(null);
             context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
