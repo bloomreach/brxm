@@ -1,18 +1,26 @@
 /*
  * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* Channel manager specific font */
+.channel-manager .x-panel-body *,
+.channel-manager .x-panel-tbar * {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
 /* toolbar */
 .channel-manager-toolbar.x-toolbar {
     background-image: none;
@@ -49,52 +57,198 @@
 }
 
 /* breadcrumb */
-.channel-manager .x-toolbar .breadcrumb-item { opacity: 1 }
-.channel-manager .x-toolbar .breadcrumb-item .x-btn-text { font-weight: bold; padding-left: 8px; color: #666666; }
-.channel-manager .x-toolbar .breadcrumb-item.x-btn-over td { background-image: none; }
-.channel-manager .x-toolbar .breadcrumb-item.x-btn-over button { color: #666666; text-decoration: underline; }
+.channel-manager .x-toolbar .breadcrumb-item {
+    opacity: 1;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item .x-btn-text {
+    font-weight: bold;
+    padding-left: 8px;
+    color: #666666;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over td {
+    background-image: none;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over button {
+    color: #666666;
+    text-decoration: underline;
+}
 
 /* notification window */
-.channel-manager .x-notification .x-window-tl, .x-notification .x-window-tc, .x-notification .x-window-tr,
-.channel-manager .x-notification .x-window-ml, .x-notification .x-window-mc, .x-notification .x-window-mr,
-.channel-manager .x-notification .x-window-bl, .x-notification .x-window-bc, .x-notification .x-window-br
-{ background-image: none; }
-.channel-manager .x-notification .x-window-header { padding: 0 0 1px 0 }
-.channel-manager .x-notification .x-window-body { padding: 7px; background-color: #fffda9; }
+.channel-manager .x-notification .x-window-tl,
+.x-notification .x-window-tc,
+.x-notification .x-window-tr,
+.channel-manager .x-notification .x-window-ml,
+.x-notification .x-window-mc,
+.x-notification .x-window-mr,
+.channel-manager .x-notification .x-window-bl,
+.x-notification .x-window-bc,
+.x-notification .x-window-br {
+    background-image: none;
+}
+
+.channel-manager .x-notification .x-window-header {
+    padding: 0 0 1px 0
+}
+
+.channel-manager .x-notification .x-window-body {
+    padding: 7px;
+    background-color: #fffda9;
+}
 
 /* channel properties window */
-.channel-manager .hide-channel-properties { display: none }
-.channel-manager .channel-properties { display: block; position: relative; width: 300px; }
-.channel-manager .channel-properties .fieldgroup { border-bottom: 16px solid #fff; }
-.channel-manager .channel-properties .fieldgrouptitle { font-weight: bold; border-bottom: 13px solid #fff; }
-.channel-manager .channel-properties tr > td.key { width: 80px; min-width: 80px; max-width: 80px; padding: 0 10px 11px 0; }
-.channel-manager .channel-properties tr > td.value { padding: 0 0 11px 0; vertical-align: middle; }
-.channel-manager .channel-properties tr > td.help { padding: 0 0 10px 11px; vertical-align: middle; }
-.channel-manager .channel-properties .help-icon { display: inline-block; width: 10px; height: 10px; margin-right: 4px; }
-.channel-manager .channel-properties .help-icon > a { display: inline-block; width: 16px; height: 16px; background: url(icon-i.png) no-repeat center; position:relative; }
-.channel-manager .channel-properties .help-icon > a span { display: none; }
-.channel-manager .channel-properties .help-icon > a:hover { background: url(icon-i-hover.png) no-repeat center; cursor: default; }
-.channel-manager .channel-properties .help-icon > a:hover span { display: block; position: absolute; top: 2em; right: 0; white-space: pre; border: 1px solid #ffa41c; background-color: #fff8d4; color: #000; padding: 4px; z-index: 10000; }
-.channel-manager .channel-properties input { width: 180px; }
-.channel-manager .channel-properties select { width: 186px; max-width: 186px; }
-.channel-manager .channel-properties .channel-preview-name { display: inline-block; margin-right: 6px; max-width: 124px; }
-.channel-manager .channel-properties .channel-preview-image { display: inline-block; margin-right: 6px; max-width: 124px; margin-bottom: 5px; overflow: hidden; }
-.channel-manager .channel-properties .channel-widget-buttons { position: absolute; right: 24px; }
-.channel-manager .channel-properties .channel-remove-button { display: inline-block; width: 10px; height: 10px; margin-right: 4px; }
-.channel-manager .channel-properties .channel-remove-button > a { display: inline-block; width: 10px; height: 10px; background: url(icon-close-gray-small.png) no-repeat center; }
-.channel-manager .channel-properties .channel-remove-button > a:hover { background: url(icon-close-red-small.png) no-repeat center; }
-.channel-manager .channel-properties a.channel-select-button, .channel-manager .channel-properties .channel-select-button > a { display: inline-block; background-color: #f2f2f2; border: 1px solid #999; padding: 2px; }
-.channel-manager .channel-properties a.channel-select-button:hover, .channel-manager .channel-properties .channel-select-button > a:hover { background-color: #fff6e0 }
-.channel-manager .channel-properties-window .x-window-body { overflow: auto }
-.channel-manager .x-window-footer { padding-right: 0px; }
-.channel-manager .x-window-footer .x-toolbar-cell { padding-right: 0px; }
+.channel-manager .hide-channel-properties {
+    display: none
+}
+
+.channel-manager .channel-properties {
+    display: block;
+    position: relative;
+    width: 300px;
+}
+
+.channel-manager .channel-properties .fieldgroup {
+    border-bottom: 16px solid #fff;
+}
+
+.channel-manager .channel-properties .fieldgrouptitle {
+    font-weight: bold;
+    border-bottom: 13px solid #fff;
+}
+
+.channel-manager .channel-properties tr > td.key {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    padding: 0 10px 11px 0;
+}
+
+.channel-manager .channel-properties tr > td.value {
+    padding: 0 0 11px 0;
+    vertical-align: middle;
+}
+
+.channel-manager .channel-properties tr > td.help {
+    padding: 0 0 10px 11px;
+    vertical-align: middle;
+}
+
+.channel-manager .channel-properties .help-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+}
+
+.channel-manager .channel-properties .help-icon > a {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url(icon-i.png) no-repeat center;
+    position: relative;
+}
+
+.channel-manager .channel-properties .help-icon > a span {
+    display: none;
+}
+
+.channel-manager .channel-properties .help-icon > a:hover {
+    background: url(icon-i-hover.png) no-repeat center;
+    cursor: default;
+}
+
+.channel-manager .channel-properties .help-icon > a:hover span {
+    display: block;
+    position: absolute;
+    top: 2em;
+    right: 0;
+    white-space: pre;
+    border: 1px solid #ffa41c;
+    background-color: #fff8d4;
+    color: #000;
+    padding: 4px;
+    z-index: 10000;
+}
+
+.channel-manager .channel-properties input {
+    width: 180px;
+}
+
+.channel-manager .channel-properties select {
+    width: 186px;
+    max-width: 186px;
+}
+
+.channel-manager .channel-properties .channel-preview-name {
+    display: inline-block;
+    margin-right: 6px;
+    max-width: 124px;
+}
+
+.channel-manager .channel-properties .channel-preview-image {
+    display: inline-block;
+    margin-right: 6px;
+    max-width: 124px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.channel-manager .channel-properties .channel-widget-buttons {
+    position: absolute;
+    right: 24px;
+}
+
+.channel-manager .channel-properties .channel-remove-button {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+}
+
+.channel-manager .channel-properties .channel-remove-button > a {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: url(icon-close-gray-small.png) no-repeat center;
+}
+
+.channel-manager .channel-properties .channel-remove-button > a:hover {
+    background: url(icon-close-red-small.png) no-repeat center;
+}
+
+.channel-manager .channel-properties a.channel-select-button,
+.channel-manager .channel-properties .channel-select-button > a {
+    display: inline-block;
+    background-color: #f2f2f2;
+    border: 1px solid #999;
+    padding: 2px;
+}
+
+.channel-manager .channel-properties a.channel-select-button:hover,
+.channel-manager .channel-properties .channel-select-button > a:hover {
+    background-color: #fff6e0
+}
+
+.channel-manager .channel-properties-window .x-window-body {
+    overflow: auto
+}
+
+.channel-manager .x-window-footer {
+    padding-right: 0;
+}
+
+.channel-manager .x-window-footer .x-toolbar-cell {
+    padding-right: 0;
+}
 
 .channel-manager .x-btn-small .add-channel {
-  background-image: url("add-channel.png");
+    background-image: url("add-channel.png");
 }
 
 .channel-manager .x-btn-small .edit-channel {
-  background-image: url("templatecomposer/button-edit.png");
+    background-image: url("templatecomposer/button-edit.png");
 }
 
 .channel-manager .x-btn-small .btn-pages {
@@ -102,19 +256,19 @@
 }
 
 .channel-manager .x-btn-small .publish-channel {
-  background-image: url("templatecomposer/button-publish.png");
+    background-image: url("templatecomposer/button-publish.png");
 }
 
 .channel-manager .x-btn-small .save-close-channel {
-  background-image: url("templatecomposer/button-save-close.png");
+    background-image: url("templatecomposer/button-save-close.png");
 }
 
 .channel-manager .x-btn-small .save-channel {
-  background-image: url("templatecomposer/button-save.png");
+    background-image: url("templatecomposer/button-save.png");
 }
 
 .channel-manager .x-btn-small .discard-channel {
-  background-image: url("templatecomposer/button-discard.png");
+    background-image: url("templatecomposer/button-discard.png");
 }
 
 .channel-manager .x-btn-small .remove-lock {
@@ -122,7 +276,7 @@
 }
 
 .channel-manager .x-btn-small .channel-gear {
-  background-image: url("templatecomposer/gear.png");
+    background-image: url("templatecomposer/gear.png");
 }
 
 .channel-manager .x-btn-small .expand {
@@ -134,13 +288,29 @@
 }
 
 /* toolkit window */
-.channel-manager .icon-toolbar-window .x-window-tl, .icon-toolbar-window .x-window-tc, .icon-toolbar-window .x-window-tr,
-.channel-manager .icon-toolbar-window .x-window-ml, .icon-toolbar-window .x-window-mc, .icon-toolbar-window .x-window-mr,
-.channel-manager .icon-toolbar-window .x-window-bl, .icon-toolbar-window .x-window-bc, .icon-toolbar-window .x-window-br
-{ background-image: none; }
-.channel-manager .icon-toolbar-window .x-window-header { padding: 0 0 1px 0; }
-.channel-manager .icon-toolbar-window .x-window-ml { padding: 0; }
-.channel-manager .icon-toolbar-window .x-window-body { border: 1px solid #d3d3d3; }
+.channel-manager .icon-toolbar-window .x-window-tl,
+.icon-toolbar-window .x-window-tc,
+.icon-toolbar-window .x-window-tr,
+.channel-manager .icon-toolbar-window .x-window-ml,
+.icon-toolbar-window .x-window-mc,
+.icon-toolbar-window .x-window-mr,
+.channel-manager .icon-toolbar-window .x-window-bl,
+.icon-toolbar-window .x-window-bc,
+.icon-toolbar-window .x-window-br {
+    background-image: none;
+}
+
+.channel-manager .icon-toolbar-window .x-window-header {
+    padding: 0 0 1px 0;
+}
+
+.channel-manager .icon-toolbar-window .x-window-ml {
+    padding: 0;
+}
+
+.channel-manager .icon-toolbar-window .x-window-body {
+    border: 1px solid #d3d3d3;
+}
 
 /* template composer icon toolbar-grid */
 .channel-manager .toolbar-window {
@@ -248,7 +418,7 @@
 }
 
 .channel-manager .component-properties .default-value {
-	  opacity: 0.6;
+    opacity: 0.6;
 }
 
 .channel-manager .component-properties .field-group-title {
@@ -291,7 +461,6 @@
     position: relative;
     display: block;
     height: auto;
-    font-size: 85%;
     float: left;
     width: 100%;
 }
@@ -308,7 +477,7 @@
     text-align: center;
     line-height: 1.25em;
     color: #333;
-    font-family: "Helvetica Neue",sans-serif;
+    font-family: "Helvetica Neue", sans-serif;
     height: 113px;
     width: 112px;
     overflow: hidden;
@@ -344,7 +513,7 @@
     background: url(channels/triangle-expanded.png) no-repeat;
     padding-top: 3px;
     height: 17px;
-    display:block;
+    display: block;
 }
 
 .channel-manager .channel-group-handle.collapsed {
@@ -356,7 +525,7 @@
 
 .channel-manager .regionIcon {
     display: inline;
-    vertical-align:middle;
+    vertical-align: middle;
 }
 
 #typeOverviewPanel {
@@ -367,10 +536,6 @@
 #regionOverviewPanel {
     padding-top: 5px;
     padding-left: 5px;
-}
-
-.channel-manager .channel-name {
-    font-size: 11px;
 }
 
 /* channel icon panel overview switch buttons */
