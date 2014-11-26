@@ -70,7 +70,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
     public BreadcrumbPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        maxNumberOfCrumbs = config.getInt("max.breadcrumbs", 8);
+        maxNumberOfCrumbs = config.getInt("max.breadcrumbs", 5);
 
         if (config.getString("model.folder") == null) {
             throw new IllegalArgumentException("Expected model.folder configuration key");

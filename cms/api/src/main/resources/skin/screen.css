@@ -1272,12 +1272,16 @@ table.hippo-window-form {
   background-image: url("images/hippo-picker-navigation-breadcrumb.png");
   background-position: left 20px;
   background-repeat: repeat-y;
+  height: 100%;
+  max-width: 610px;
   padding-left: 7px;
 }
 
 .hippo-picker-navigation-breadcrumbs li {
   display: block;
   float: left;
+  width: auto;
+  max-width:120px;
 }
 
 .hippo-picker-navigation-breadcrumbs li em,
