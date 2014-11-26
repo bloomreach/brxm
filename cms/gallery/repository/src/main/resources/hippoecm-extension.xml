@@ -18,10 +18,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:version" sv:type="String">
-    <sv:value>v24a-cms-gallery</sv:value>
-  </sv:property>
-
   <sv:node sv:name="hippogallery-namespace-frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>

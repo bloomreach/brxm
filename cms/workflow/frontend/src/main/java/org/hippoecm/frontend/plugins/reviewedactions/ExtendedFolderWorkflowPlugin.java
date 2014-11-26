@@ -80,7 +80,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     private static Logger log = LoggerFactory.getLogger(ExtendedFolderWorkflowPlugin.class);
 
     private static final String QUERY_LANGUAGE_PUBLISH = Query.SQL;
-    private static final String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND (hippostd:state='unpublished' AND hippostd:stateSummary='changed') OR (hippostd:state='published' and NOT(hippo:availability='live'))";
+    private static final String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND (hippostd:state='unpublished' AND (hippostd:stateSummary='changed' OR hippostd:stateSummary='new')) OR (hippostd:state='published' and NOT(hippo:availability='live'))";
     private static final String QUERY_LANGUAGE_DEPUBLISH = Query.SQL;
     private static final String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='published' AND hippo:availability = 'live'";
     private static final String WORKFLOW_CATEGORY = "default";
