@@ -43,12 +43,6 @@
                     this._resize(table, sizes, preserveScroll);
                 },
 
-                update: function() {
-                    var table = $('#' + this.id),
-                        layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(table[0]);
-                    this._resize(table, layoutUnit.getSizes(), true);
-                },
-
                 _resize: function(table, sizes, preserveScroll) {
                     var theadRow = table.find('thead > tr'),
                         tbody = table.children('tbody'),

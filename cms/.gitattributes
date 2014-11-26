@@ -864,7 +864,6 @@ api/src/main/resources/skin/images/hippo-icon.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/hippo-list-details-th-back.png -text
 api/src/main/resources/skin/images/hippo-paging-back.png -text
 api/src/main/resources/skin/images/hippo-panels-headerback.png -text
-api/src/main/resources/skin/images/hippo-picker-navigation-back.png -text
 api/src/main/resources/skin/images/hippo-picker-navigation-breadcrumb.png -text
 api/src/main/resources/skin/images/hippo-picker-navigation-buttons-back-off.png -text
 api/src/main/resources/skin/images/hippo-picker-navigation-buttons-back-on.png -text
@@ -1105,7 +1104,6 @@ api/src/main/resources/skin/images/searchBack.png -text
 api/src/main/resources/skin/images/silver4.png -text
 api/src/main/resources/skin/images/silverBack.png -text
 api/src/main/resources/skin/images/silverBack2.png -text
-api/src/main/resources/skin/images/silverBack3.png -text
 api/src/main/resources/skin/images/state-changed-16.gif -text
 api/src/main/resources/skin/images/tab-active.png -text
 api/src/main/resources/skin/images/tabs-vertical-back.png -text
