@@ -18,9 +18,7 @@ package org.onehippo.repository.mock;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +46,10 @@ public abstract class MockItem implements Item {
     @Override
     public String getName() {
         return isRootNode() ? "" : name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     protected boolean isRootNode() {

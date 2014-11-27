@@ -32,6 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -137,6 +138,26 @@ public class MockSessionTest {
 
         final Calendar now = Calendar.getInstance();
         assertEquals(now.getTime(), factory.createValue(now).getDate().getTime());
+    }
+
+    @Test
+    public void testRenameNode() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        final MockNode foo = new MockNode("foo");
+        root.addNode(foo);
+        root.getSession().move("/foo", "/bar");
+        assertFalse(root.hasNode("foo"));
+        assertTrue(root.hasNode("bar"));
+    }
+
+    @Test
+    public void testMoveNode() throws RepositoryException {
+        final MockNode root = createRootFooBarMockNode();
+        final MockNode bar = new MockNode("bar");
+        root.addNode(bar);
+        root.getSession().move("/foo/bar", "/bar/foo");
+        assertFalse(root.getSession().nodeExists("/foo/bar"));
+        assertTrue(root.getSession().nodeExists("/bar/foo"));
     }
 
     private MockNode createRootFooBarMockNode() throws RepositoryException {

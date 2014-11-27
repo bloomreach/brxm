@@ -42,6 +42,7 @@ import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
@@ -260,8 +261,15 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public void move(final String srcAbsPath, final String destAbsPath) {
-        throw new UnsupportedOperationException();
+    public void move(final String srcAbsPath, final String destAbsPath) throws RepositoryException {
+        String destParentAbsPath = StringUtils.substringBeforeLast(destAbsPath, "/");
+        destParentAbsPath = destParentAbsPath.isEmpty() ? "/" : destParentAbsPath;
+        final String destName = StringUtils.substringAfterLast(destAbsPath, "/");
+        final MockNode destParentNode = getNode(destParentAbsPath);
+        final MockNode srcNode = getNode(srcAbsPath);
+        srcNode.remove();
+        srcNode.setName(destName);
+        destParentNode.addNode(srcNode);
     }
 
     @Override
