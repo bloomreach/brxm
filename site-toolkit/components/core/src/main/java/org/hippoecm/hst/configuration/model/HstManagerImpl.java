@@ -93,6 +93,12 @@ public class HstManagerImpl implements MutableHstManager, ServletContextAware {
      */
     List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
 
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
     }
@@ -361,11 +367,6 @@ public class HstManagerImpl implements MutableHstManager, ServletContextAware {
                 state = BuilderState.STALE;
             }
         }
-    }
-
-    @Override
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 
 }
