@@ -16,6 +16,7 @@
 package org.hippoecm.hst.provider.jcr;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -41,6 +42,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private static final Logger log = LoggerFactory.getLogger(JCRValueProviderImpl.class);
     private static final Calendar[] EMPTY_CALENDAR_ARRAY = new Calendar[0];
+
+    // "0001-01-01T12:00:00.000+00:00": this is the default value for the date property
+    private static final Date NULL_DATE = new Date(-62135726400000L);
 
     // transient node because ValueProvider implements Serializable
     private transient Node jcrNode;
@@ -553,15 +557,20 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     Calendar[] dates = new Calendar[values.length];
                     int i = 0;
                     for(Value val : values) {
-                        dates[i] = val.getDate();
+                        Calendar cal = val.getDate();
+                        dates[i] = cal.getTime().compareTo(NULL_DATE) == 0 ? null : cal;
                         i++;
                     }
                     this.propertyMap.put(propertyName, dates);
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 } else {
-                    this.propertyMap.put(propertyName, p.getDate());
-                    this.propertyMap.addAvailableProperty(propertyName);
+                    Calendar cal = p.getDate();
+                    // only store value if the date is not the null-date value
+                    if (cal.getTime().compareTo(NULL_DATE) != 0){
+                        this.propertyMap.put(propertyName, cal);
+                        this.propertyMap.addAvailableProperty(propertyName);
+                    }
                     return;
                 }    
                 

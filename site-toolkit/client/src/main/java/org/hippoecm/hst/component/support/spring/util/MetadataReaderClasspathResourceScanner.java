@@ -53,13 +53,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version $Id$
  */
 public class MetadataReaderClasspathResourceScanner implements ClasspathResourceScanner, ResourceLoaderAware {
-    
+
     private static Logger log = LoggerFactory.getLogger(MetadataReaderClasspathResourceScanner.class);
-    
+
     private static ResourceLoader singletonResourceLoader;
-    
+
     private ResourcePatternResolver resourcePatternResolver;
-    
+
     /**
      * Create an instance with setting the proper <CODE>ResourceLoader</CODE> object.
      * If there's any web application context already, then the existing web application context is used
@@ -70,46 +70,46 @@ public class MetadataReaderClasspathResourceScanner implements ClasspathResource
     public static MetadataReaderClasspathResourceScanner newInstance(final ServletContext servletContext) {
         MetadataReaderClasspathResourceScanner scanner = new MetadataReaderClasspathResourceScanner();
         WebApplicationContext webAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-        
+
         if (webAppContext != null) {
             scanner.setResourceLoader(webAppContext);
         } else {
             if (singletonResourceLoader == null) {
                 singletonResourceLoader = new ClassPathXmlApplicationContext();
             }
-            
+
             scanner.setResourceLoader(singletonResourceLoader);
         }
-        
+
         return scanner;
     }
-    
+
     public MetadataReaderClasspathResourceScanner() {
-        
+
     }
-    
+
     public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, boolean matchSuperClass, String ... locationPatterns) {
         if (resourcePatternResolver == null) {
             throw new IllegalStateException("ResourceLoader has not been set.");
         }
-        
+
         if (locationPatterns == null || locationPatterns.length == 0) {
             throw new IllegalArgumentException("Provide one or more location pattern(s).");
         }
-        
+
         Set<String> annotatedClassNames = new LinkedHashSet<String>();
-        
+
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
-        
+
         try {
             TypeFilter typeFilter = new CustomAnnotationTypeFilter(annotationType, matchSuperClass);
-            
+
             for (String locationPattern : locationPatterns) {
                 Resource [] resources = resourcePatternResolver.getResources(locationPattern);
-                
+
                 for (Resource resource : resources) {
                     MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
-                    
+
                     if (typeFilter.match(metadataReader, metadataReaderFactory)) {
                         annotatedClassNames.add(metadataReader.getAnnotationMetadata().getClassName());
                     }
@@ -119,28 +119,28 @@ public class MetadataReaderClasspathResourceScanner implements ClasspathResource
             log.error("Cannot load resource(s) from the classpath.", e);
             throw new RuntimeException("Cannot load resource(s) from the classpath.", e);
         }
-        
+
         return annotatedClassNames;
     }
-    
+
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
     }
-    
+
     private static class CustomAnnotationTypeFilter extends AnnotationTypeFilter {
-        
+
         private boolean matchSuperClass;
-        
+
         public CustomAnnotationTypeFilter(Class<? extends Annotation> annotationType, boolean matchSuperClass) {
             super(annotationType);
             this.matchSuperClass = matchSuperClass;
         }
-        
+
         public CustomAnnotationTypeFilter(Class<? extends Annotation> annotationType, boolean considerMetaAnnotations, boolean matchSuperClass) {
             super(annotationType, considerMetaAnnotations);
             this.matchSuperClass = matchSuperClass;
         }
-        
+
         @Override
         protected Boolean matchSuperClass(String superClassName) {
             if (matchSuperClass) {

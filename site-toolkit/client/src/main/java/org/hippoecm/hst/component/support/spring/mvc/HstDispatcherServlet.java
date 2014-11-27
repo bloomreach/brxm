@@ -29,46 +29,46 @@ import org.springframework.web.servlet.view.RedirectView;
 public class HstDispatcherServlet extends DispatcherServlet {
 
     private static final long serialVersionUID = 1L;
-    
+
     protected String modelAndViewOfActionSessionAttributeNamePrefix = HstDispatcherServlet.class.getName() + ".modelAndViewOfAction-";
-    
+
     public void setModelAndViewOfActionSessionAttributeNamePrefix(String modelAndViewOfActionSessionAttributeNamePrefix) {
         this.modelAndViewOfActionSessionAttributeNamePrefix = modelAndViewOfActionSessionAttributeNamePrefix;
     }
-    
+
     public String getModelAndViewOfActionSessionAttributeNamePrefix() {
         return modelAndViewOfActionSessionAttributeNamePrefix;
     }
-    
+
     protected String getModelAndViewOfActionSessionAttributeName(HstRequest hstRequest) {
         return new StringBuilder(getModelAndViewOfActionSessionAttributeNamePrefix()).append(hstRequest != null ? hstRequest.getReferenceNamespace() : "").toString();
     }
-    
+
     @Override
     protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
         HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
-        
+
         boolean isActionPhase = (hstRequest != null && HstRequest.ACTION_PHASE.equals(hstRequest.getLifecyclePhase()));
         boolean renderable = true;
         String modelAndViewOfActionSessionAttributeName = getModelAndViewOfActionSessionAttributeName(hstRequest);
-        
+
         if (isActionPhase) {
             View view = mv.getView();
-            
+
             if (view == null || !(view instanceof RedirectView)) {
                 renderable = false;
                 hstRequest.getSession(true).setAttribute(modelAndViewOfActionSessionAttributeName, mv);
             }
         }
-        
+
         if (renderable) {
             HttpSession session = request.getSession(false);
             ModelAndView modelAndViewOfAction = null;
-            
+
             if (!isActionPhase) {
                 modelAndViewOfAction = (session != null ? (ModelAndView) session.getAttribute(modelAndViewOfActionSessionAttributeName) : (ModelAndView) null);
             }
-            
+
             if (modelAndViewOfAction != null) {
                 session.removeAttribute(modelAndViewOfActionSessionAttributeName);
                 super.render(modelAndViewOfAction, request, response);
@@ -77,5 +77,4 @@ public class HstDispatcherServlet extends DispatcherServlet {
             }
         }
     }
-    
 }

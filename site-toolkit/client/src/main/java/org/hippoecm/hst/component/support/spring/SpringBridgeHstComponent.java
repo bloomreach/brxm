@@ -17,13 +17,13 @@ package org.hippoecm.hst.component.support.spring;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.FrameworkServlet;
 
 /**
  * A bridge component which delegates all invocation to a bean managed by the spring IoC.
@@ -69,47 +70,62 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * </p>
  * <p>
  * If the root web application context has hierarchical child bean factories and one of the
- * child bean factories has defined a bean you need, then you can set the bean name component
- * configuration parameter with context path prefix like the following example:
+ * child bean factories has defined a bean you need, then you can set the fully qualified bean name
+ * parameter with context path prefix like the following example:
  * <br/>
  * <CODE>com.mycompany.myapp::contactBean</CODE>
  * <br/>
- * In the above example, 'com.mycompany.myapp' is the name of the child bean factory name,
- * and 'contactBean' is the bean name of the child bean factory.
+ * In the above example, 'com.mycompany.myapp' is the name of the child bean factory name or
+ * the child HST component module name, and 'contactBean' is the bean name of the child bean factory
+ * or the child HST component module.
  * The bean factory paths can be multiple to represent the hierarchy
  * like 'com.mycompany.myapp::crm::contactBean'.
  * <br/>
  * The separator for hierarchical bean factory path can be changed by setting the webapp
  * init parameter, 'hst-spring-context-name-separator-param-name'.
  * </p>
- * 
- * @version $Id$
+ * <p>
+ * Also, if the delegatee bean should be found in a web application context initialized by a
+ * Spring MVC Servlet derived from <code>org.springframework.web.servlet.FrameworkServlet</code>
+ * such as <code>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</code> or
+ * <code>org.springframework.web.servlet.DispatcherServlet</code>, instead of the root web
+ * application context, then the fully qualified bean name must be prefixed by the servlet 
+ * context attribute name prefix (see {@link FrameworkServlet#SERVLET_CONTEXT_PREFIX}).
+ * </p>
+ * <p>
+ * For example, if you want to retrieve a bean named 'contactBean' from the application context
+ * initialized by a <code>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</code>
+ * separately from the root web application context and the servlet's name is 'springapp',
+ * then you can specify the paramaeter like the following:
+ * <br/>
+ * <CODE>org.springframework.web.servlet.FrameworkServlet.CONTEXT.springapp::contactBean</CODE>
+ * </p>
  */
-public class SpringBridgeHstComponent extends GenericHstComponent implements ApplicationListener {
+public class SpringBridgeHstComponent extends GenericHstComponent implements ApplicationListener<ApplicationEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(SpringBridgeHstComponent.class);
 
     protected String delegatedBeanNameParamName = "spring-delegated-bean";
     protected String contextNameSeparator = "::";
-    
+
     protected AbstractApplicationContext delegatedBeanApplicationContext;
     protected HstComponent delegatedBean;
 
     private ServletContext servletContext; 
-    
+
     @Override
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
 
         this.servletContext = servletContext;
         String param = servletContext.getInitParameter("hst-spring-delegated-bean-param-name");
-        
+
         if (param != null) {
             delegatedBeanNameParamName = param;
         }
-        
+
         param = servletContext.getInitParameter("hst-spring-context-name-separator-param-name");
-        
+
         if (param != null) {
             contextNameSeparator = param;
         }
@@ -118,7 +134,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     @Override
     public void destroy() throws HstComponentException {
         this.delegatedBeanApplicationContext = null;
-        
+
         if (delegatedBean != null) {
             delegatedBean.destroy();
             delegatedBean = null;
@@ -126,7 +142,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
 
         super.destroy();
     }
-    
+
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         getDelegatedBean(request).doAction(request, response);
@@ -141,65 +157,33 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
         getDelegatedBean(request).doBeforeServeResource(request, response);
     }
-    
+
     protected String getParameter(String name, HstRequest request) {
         return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
-    
+
     protected HstComponent getDelegatedBean(HstRequest request) throws HstComponentException {
         if (delegatedBean == null) {
-            String beanName = StringUtils.trim(getParameter(delegatedBeanNameParamName, request));
-            
-            if (beanName == null) {
+            String fqbnParam = StringUtils.trim(getParameter(delegatedBeanNameParamName, request));
+
+            if (fqbnParam == null) {
                 throw new HstComponentException("The name of delegated spring bean is null.");
             }
-            
-            String [] contextNames = null;
-            
-            if (beanName.contains(this.contextNameSeparator)) {
-                String [] tempArray = beanName.split(this.contextNameSeparator);
-                
-                if (tempArray.length > 1) {
-                    contextNames = new String[tempArray.length - 1];
-                    
-                    for (int i = 0; i < tempArray.length - 1; i++) {
-                        contextNames[i] = tempArray[i];
-                    }
-                    
-                    beanName = tempArray[tempArray.length - 1];
-                }
-            }
-            
+
+            FullyQualifiedBeanName fqbn = new FullyQualifiedBeanName(fqbnParam, contextNameSeparator);
+            String [] contextNames = fqbn.getContextNames();
+            String beanName = fqbn.getBeanName();
             boolean beanFoundFromBeanFactory = false;
-            BeanFactory beanFactory = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-            
+            BeanFactory beanFactory = getContextBeanFactory(servletContext, contextNames);
+
             if (beanFactory != null) {
-                String contextName = null;
-                
-                try {
-                    if (contextNames != null) {
-                        for (int i = 0; i < contextNames.length; i++) {
-                            contextName = contextNames[i];
-                            beanFactory = (BeanFactory) beanFactory.getBean(contextName);
-                        }
-                    }
-                } catch (NoSuchBeanDefinitionException e) {
-                    throw new HstComponentException("There's no beanFactory definition with the specified name: " + contextName, e);
-                } catch (BeansException e) {
-                    throw new HstComponentException("The beanFactory cannot be obtained: " + contextName, e);
-                } catch (ClassCastException e) {
-                    throw new HstComponentException("The bean is not an instance of beanFactory: " + contextName, e);
-                }
-                
                 try {
                     delegatedBean = (HstComponent) beanFactory.getBean(beanName);
                     beanFoundFromBeanFactory = (delegatedBean != null);
                 } catch (Exception ignore) {
                 }
             }
-            
-            ComponentManager componentManager = null;
-            
+
             if (delegatedBean == null) {
                 if (contextNames != null) {
                     delegatedBean = HstServices.getComponentManager().getComponent(beanName, contextNames);
@@ -207,41 +191,102 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
                     delegatedBean = HstServices.getComponentManager().getComponent(beanName);
                 }
             }
-            
+
             if (delegatedBean == null) {
-                if (beanFactory == null && componentManager == null) {
-                    throw new HstComponentException("Cannot find the root web application context or client component manager.");
-                } else if (beanFactory != null && componentManager == null) {
-                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from the web application context: " + beanName);
-                } else if (beanFactory == null && componentManager != null) {
-                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from the client component manager: " + beanName);
+                if (beanFactory == null) {
+                    throw new HstComponentException("Cannot find the root web application context or component manager.");
                 } else {
-                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from either the web application context or the client component manager: " + beanName);
+                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from the web application context: " + fqbnParam);
                 }
             }
 
             delegatedBean.init(servletContext, getComponentConfiguration());
-            
+
             if (beanFoundFromBeanFactory && beanFactory instanceof AbstractApplicationContext) {
                 delegatedBeanApplicationContext = (AbstractApplicationContext) beanFactory;
-                
+
                 if (!delegatedBeanApplicationContext.getApplicationListeners().contains(this)) {
                     delegatedBeanApplicationContext.addApplicationListener(this);
                 }
             }
         }
+
         return delegatedBean;
     }
 
+    @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ContextClosedEvent) {
             this.delegatedBeanApplicationContext = null;
-            
+
             if (delegatedBean != null) {
                 delegatedBean.destroy();
                 delegatedBean = null;
             }
         }
     }
-    
+
+    protected BeanFactory getContextBeanFactory(final ServletContext servletContext, final String [] contextNames) {
+        BeanFactory beanFactory = null;
+        String contextName = null;
+
+        try {
+            int beginIndex;
+
+            if (contextNames.length > 0 && StringUtils.startsWith(contextNames[0], FrameworkServlet.SERVLET_CONTEXT_PREFIX)) {
+                beanFactory = WebApplicationContextUtils.getWebApplicationContext(servletContext, contextNames[0]);
+                beginIndex = 1;
+            } else {
+                beanFactory = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+                beginIndex = 0;
+            }
+
+            if (contextNames != null) {
+                for (int i = beginIndex; i < contextNames.length; i++) {
+                    contextName = contextNames[i];
+                    beanFactory = (BeanFactory) beanFactory.getBean(contextName);
+                }
+            }
+        } catch (NoSuchBeanDefinitionException e) {
+            throw new HstComponentException("There's no beanFactory definition with the specified name: " + contextName, e);
+        } catch (BeansException e) {
+            throw new HstComponentException("The beanFactory cannot be obtained: " + contextName, e);
+        } catch (ClassCastException e) {
+            throw new HstComponentException("The bean is not an instance of beanFactory: " + contextName, e);
+        } catch (Exception e) {
+            throw new HstComponentException("The beanFactory cannot be obtained: " + contextName, e);
+        }
+
+        return beanFactory;
+    }
+
+    private static class FullyQualifiedBeanName {
+
+        private final String [] contextNames;
+        private final String beanName;
+
+        public FullyQualifiedBeanName(final String fqbn, final String scopeSeparator) {
+            if (StringUtils.contains(fqbn, scopeSeparator)) {
+                String [] tempArray = StringUtils.split(fqbn, scopeSeparator);
+                contextNames = new String[tempArray.length - 1];
+
+                for (int i = 0; i < tempArray.length - 1; i++) {
+                    contextNames[i] = StringUtils.trim(tempArray[i]);
+                }
+
+                beanName = StringUtils.trim(tempArray[tempArray.length - 1]);
+            } else {
+                contextNames = ArrayUtils.EMPTY_STRING_ARRAY;
+                beanName = StringUtils.trim(fqbn);
+            }
+        }
+
+        public String [] getContextNames() {
+            return contextNames;
+        }
+
+        public String getBeanName() {
+            return beanName;
+        }
+    }
 }
