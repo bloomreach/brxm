@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
@@ -171,13 +170,11 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         richTextModel.setCleaner(getHtmlCleanerOrNull());
 
         final IRichTextLinkFactory linkFactory = createLinkFactory();
-        final ChildFacetUuidsModel facetNodeNamesToUuidsModel = new ChildFacetUuidsModel(richTextModel, getNodeModel(), linkFactory);
-
         final IRichTextImageFactory imageFactory = createImageFactory();
         final IImageURLProvider urlProvider = createImageUrlProvider(imageFactory, linkFactory);
-        final RichTextImageMetaDataModel metaModel = new RichTextImageMetaDataModel(facetNodeNamesToUuidsModel, urlProvider);
 
-        return new LineEndingsModel(metaModel);
+        final ChildFacetUuidsModel facetNodeNamesToUuidsModel = new ChildFacetUuidsModel(richTextModel, getNodeModel(), linkFactory, urlProvider);
+        return new LineEndingsModel(facetNodeNamesToUuidsModel);
     }
 
     protected IRichTextLinkFactory createLinkFactory() {

@@ -28,15 +28,12 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextException;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextFacetHelper;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
+import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -45,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Renders a compare version of a rich text field, including images and clickable links that open the referring document.
- * Elements that have been added to or removed from the base version of the model are marked with green and red,
- * respectively.
+ * Renders a compare version of a rich text field, including images and clickable links that open the referring
+ * document. Elements that have been added to or removed from the base version of the model are marked with green and
+ * red, respectively.
  */
 public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPanel {
 
@@ -86,56 +83,16 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         final IRichTextLinkFactory currentLinkFactory = new JcrRichTextLinkFactory(currentNodeModel);
         final IRichTextImageFactory currentImageFactory = new JcrRichTextImageFactory(currentNodeModel);
 
-        // links that are in both: set to current
-        // otherwise: set to respective prefix
-
         final IImageURLProvider baseDecorator = new RichTextImageURLProvider(baseImageFactory, baseLinkFactory, baseNodeModel);
         final IImageURLProvider currentDecorator = new RichTextImageURLProvider(currentImageFactory, currentLinkFactory, currentNodeModel);
 
-        final IModel<String> decoratedBase = new RichTextImageMetaDataModel(baseModel, new IImageURLProvider() {
-            private static final long serialVersionUID = 1L;
+        final BrowsableModel baseBrowsableModel = new BrowsableModel(baseModel, previewLinksBehavior);
+        final BrowsableModel currentBrowsableModel = new BrowsableModel(currentModel, previewLinksBehavior);
 
-            public String getURL(String link) throws RichTextException {
-                String facetName = link;
-                if (link.indexOf('/') > 0) {
-                    facetName = link.substring(0, link.indexOf('/'));
-                }
+        final IModel<String> decoratedBase = new ChildFacetUuidsModel(baseBrowsableModel, baseNodeModel, baseLinkFactory, baseDecorator);
+        final IModel<String> decoratedCurrent = new ChildFacetUuidsModel(currentBrowsableModel, currentNodeModel, currentLinkFactory, currentDecorator);
 
-                final String baseUuid = RichTextFacetHelper.getChildDocBaseOrNull(baseNodeModel.getObject(), facetName);
-                final String currentUuid = RichTextFacetHelper.getChildDocBaseOrNull(currentNodeModel.getObject(), facetName);
-
-                final boolean baseContainsUuid = baseUuid != null && baseLinkFactory.getLinkUuids().contains(baseUuid);
-                final boolean currentContainsUuid = currentUuid != null && currentLinkFactory.getLinkUuids().contains(currentUuid);
-
-                if (baseContainsUuid && currentContainsUuid) {
-                    RichTextLink baseRtl = baseLinkFactory.loadLink(facetName);
-                    RichTextLink currentRtl = currentLinkFactory.loadLink(facetName);
-                    if (currentRtl.getTargetModel().equals(baseRtl.getTargetModel())) {
-                        return currentDecorator.getURL(link);
-                    }
-                } else if (baseContainsUuid) {
-                    return baseDecorator.getURL(link);
-                } else if (currentContainsUuid) {
-                    return currentDecorator.getURL(link);
-                }
-                return facetName;
-            }
-
-        }) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void detach() {
-                baseLinkFactory.detach();
-                currentLinkFactory.detach();
-                super.detach();
-            }
-        };
-
-        final IModel<String> decoratedCurrent = new RichTextImageMetaDataModel(currentModel, currentDecorator);
-        final HtmlDiffModel diffModel = new HtmlDiffModel(new StripScriptModel(decoratedBase), new StripScriptModel(decoratedCurrent));
-
-        return new BrowsableModel(diffModel, previewLinksBehavior);
+        return new HtmlDiffModel(new StripScriptModel(decoratedBase), new StripScriptModel(decoratedCurrent));
     }
 
     private static JcrPropertyValueModel getContentModelOrNull(IModel<Node> nodeModel) {

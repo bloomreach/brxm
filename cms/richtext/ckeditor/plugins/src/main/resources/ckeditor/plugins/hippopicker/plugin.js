@@ -265,8 +265,8 @@
             label: LANG.imageTooltip,
             command: 'pickImage',
             toolbar: 'insert,5',
-            allowedContent: 'img[!data-facetselect,!data-type,!data-uuid,!src,alt,align,width,height]',
-            requiredContent: 'img[!data-facetselect,!data-type,!data-uuid,!src]'
+            allowedContent: 'img[!data-type,!data-uuid,!src,data-facetselect,alt,align,width,height]',
+            requiredContent: 'img[!data-type,!data-uuid,!src]'
         });
 
         editor.addCommand('pickImage', {
