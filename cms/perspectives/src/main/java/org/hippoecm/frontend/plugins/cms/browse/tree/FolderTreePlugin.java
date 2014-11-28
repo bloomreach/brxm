@@ -180,13 +180,10 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             @Override
-            public void onTargetRespond(final AjaxRequestTarget target) {
-                super.onTargetRespond(target);
-                target.appendJavaScript(treeHelperBehavior.getRenderString());
-                if (workflowEnabled) {
-                    target.appendJavaScript(treeHelperBehavior.getUpdateString());
+            public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
+                if (dirty) {
+                    target.appendJavaScript(treeHelperBehavior.getRenderString());
                 }
-                target.appendJavaScript(treeHelperBehavior.getHighlightString());
             }
 
             @Override

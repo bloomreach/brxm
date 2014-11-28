@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -46,6 +47,8 @@ public class ContextMenuTree extends DefaultAbstractTree {
     
     public static final Logger log = LoggerFactory.getLogger(ContextMenuTree.class);
 
+    private boolean dirty;
+
     public ContextMenuTree(String id, TreeModel model) {
         super(id, model);
 
@@ -55,6 +58,40 @@ public class ContextMenuTree extends DefaultAbstractTree {
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
         treeState.expandNode(model.getRoot());
+
+        treeState.addTreeStateListener(new ITreeStateListener() {
+            @Override
+            public void allNodesCollapsed() {
+                dirty = true;
+            }
+
+            @Override
+            public void allNodesExpanded() {
+                dirty = true;
+            }
+
+            @Override
+            public void nodeCollapsed(final Object node) {
+                dirty = true;
+            }
+
+            @Override
+            public void nodeExpanded(final Object node) {
+                dirty = true;
+            }
+
+            @Override
+            public void nodeSelected(final Object node) {
+                dirty = true;
+            }
+
+            @Override
+            public void nodeUnselected(final Object node) {
+                dirty = true;
+            }
+        });
+        
+        dirty = true;
     }
 
     @Override
@@ -87,6 +124,14 @@ public class ContextMenuTree extends DefaultAbstractTree {
                     menuManager.showContextMenu(this);
                     onContextLinkClicked(content, target);
                 }
+            }
+
+            @Override
+            public void collapse(final AjaxRequestTarget target) {
+                // mouseLeave is never triggered when opening the context menu. Because of this the tree has to be 
+                // marked dirty so that the mouse listeners on the current item are reset 
+                dirty = true;
+                super.collapse(target);
             }
         };
         setOutputMarkupId(true);
@@ -163,6 +208,16 @@ public class ContextMenuTree extends DefaultAbstractTree {
      */
     protected String renderNode(TreeNode node, int level) {
         return node.toString();
+    }
+
+    @Override
+    public final void onTargetRespond(final AjaxRequestTarget target) {
+        super.onTargetRespond(target);
+        onTargetRespond(target, dirty);
+        dirty = false;
+    }
+
+    protected void onTargetRespond(final AjaxRequestTarget target, final boolean dirty) {
     }
 
     public static abstract class ContextLink extends AjaxLink<Void> implements IContextMenu {

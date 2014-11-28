@@ -33,12 +33,12 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(YuiTreeNamespace.NS, "treehelper");
-        context.addOnDomLoad(new AbstractReadOnlyModel() {
+        context.addOnDomLoad(new AbstractReadOnlyModel<String>() {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public Object getObject() {
-                return getInitString();
+            public String getObject() {
+                return getInitString() + getRenderString();
             }
         });
     }
@@ -48,14 +48,6 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
 
     public String getRenderString() {
         return "YAHOO.hippo.TreeHelper.render('" + getWicketId() + "');";
-    }
-
-    public String getUpdateString() {
-        return "YAHOO.hippo.TreeHelper.updateMouseListeners('" + getWicketId() + "');";
-    }
-    
-    public String getHighlightString() { 
-        return "YAHOO.hippo.TreeHelper.updateHighlight('" + getWicketId() + "');";
     }
 
     protected abstract String getWicketId();

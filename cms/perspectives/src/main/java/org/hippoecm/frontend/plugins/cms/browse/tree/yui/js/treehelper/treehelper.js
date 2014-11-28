@@ -42,12 +42,6 @@ if (!YAHOO.hippo.TreeHelper) {
         function exists(o) {
             return !Lang.isUndefined(o) && !Lang.isNull(o);
         }
-        
-        function getWidth(el) {
-            var l = Dom.getX(el), 
-                r = l + el.offsetWidth;
-            return r - l;
-        }
 
         YAHOO.hippo.TreeHelperImpl = function() {
         };
@@ -64,8 +58,11 @@ if (!YAHOO.hippo.TreeHelper) {
                 if (exists(el)) {
                     el.treeHelper = {
                         cfg: cfg,
+                        registered: false,
                         layoutUnit: null,
-                        highlight: null
+                        wicketTree: null,
+                        highlight: null,
+                        overId: null
                     };
                     
                     // Notify the context menu the tree is scrolling so it can reposition the context menu
@@ -77,43 +74,63 @@ if (!YAHOO.hippo.TreeHelper) {
                 }
             },
 
-            register : function(id) {
-                var el, self;
-                el = Dom.get(id);
+            register : function(id, tree, helper) {
+                var self;
 
-                if (!exists(el)) {
-                    return;
-                }
-
-                if (el.treeHelper.cfg.bindToLayoutUnit && Lang.isUndefined(el.treeHelper.onRender)) {
+                if (helper.cfg.bindToLayoutUnit && Lang.isUndefined(helper.onRender)) {
                     self = this;
-                    YAHOO.hippo.LayoutManager.registerResizeListener(el, self, function() {
+                    YAHOO.hippo.LayoutManager.registerResizeListener(tree, self, function() {
                         self.render(id);
                     });
-                    el.treeHelper.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
-                    el.treeHelper.onRender = {set: true};
+                    helper.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(tree);
+                    helper.onRender = {set: true};
                 }
+                helper.wicketTree = byClass('wicket-tree', 'div', tree);
             },
 
-            updateHighlight : function(id) {
-                var tree = Dom.get(id),
-                    helper, selected, selectedY, highlight;
+            render : function(id) {
+                var tree, helper;
 
+                tree = Dom.get(id);
                 if (!(exists(tree) && exists(tree.treeHelper))) {
                     return;
                 }
-
                 helper = tree.treeHelper;
-                highlight = helper.highlight;
 
-                if (highlight === null) {
-                    helper.highlight = highlight = this.createHighlight(tree);
-                    if (highlight === null) {
-                        return;
-                    }
+                if (!helper.registered) {
+                    this.register(id, tree, helper);
+                    helper.registered = true;
                 }
 
-                selected = byClass('row-selected', 'div', tree);
+                // Browser other than IE can use:
+                //    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+                //    width: -moz-max-content;    /* Firefox/Gecko */
+                //    width: -webkit-max-content; /* Chrome */
+                // which causes the child elements to define the width of the element, IE still needs help from javascript 
+                if (YAHOO.env.ua.ie > 0) {
+                    this.setTreeWidth(id, tree, helper);
+                }
+
+                if (helper.cfg.workflowEnabled) {
+                    this.updateMouseListeners(id, tree, helper);
+                }
+                this.updateHighlight(id, tree, helper);
+                this.updateContextIcon(id, tree, helper);
+            },
+
+            updateHighlight : function(id, tree, helper) {
+                var selected, selectedY, highlight;
+
+                highlight = helper.highlight = helper.highlight === null ? this.createHighlight(tree) : helper.highlight; 
+
+                if (highlight === null) {
+                    return;
+                }
+                
+                selected = Dom.getFirstChildBy(helper.wicketTree, function(node) {
+                    return Dom.hasClass(node, 'row-selected');
+                });
+
                 if (selected === null) {
                     if (!Dom.hasClass(highlight, 'hide')) {
                         Dom.addClass(highlight, 'hide');
@@ -127,10 +144,6 @@ if (!YAHOO.hippo.TreeHelper) {
                     if (selectedY !== Dom.getY(highlight)) {
                         // Move highlight widget to position of selected
                         Dom.setY(highlight, selectedY);
-                    }
-                    // trigger mouseout to redraw the context-icon
-                    if (selected.registeredContextMenu) {
-                        selected.registeredContextMenu.mouseOut();
                     }
                 }
             },
@@ -146,106 +159,103 @@ if (!YAHOO.hippo.TreeHelper) {
                 }
                 return el;
             },
-
-            updateMouseListeners : function(id) {
-                var el, items, i, len;
-
-                el = Dom.get(id);
-                if (!exists(el)) {
+            
+            updateContextIcon: function(id, tree, helper) {
+                if (helper.overId === null) {
                     return;
                 }
 
-                if (el.treeHelper.cfg.workflowEnabled) {
-                    items = Dom.getElementsByClassName('a_', 'div', id);
-                    for (i = 0, len = items.length; i < len; i++) {
-                        this.updateMouseListener(items[i].parentNode);
-                    }
+                var el = jQuery('#' + helper.overId);
+                if (el.length > 0 && !el.hasClass('register-mouse')) {
+                    // dropdown icon was visible when it was clicked, re-draw it
+                    el.mouseleave().mouseenter();
                 }
             },
 
-            updateMouseListener : function(el) {
-                if (Lang.isUndefined(el.registeredContextMenu)) {
-                    //TODO: make methods configurable
-                    el.registeredContextMenu = {
-                        mouseOver: function(eventType, myId) { Hippo.ContextMenu.showContextLink(myId); },
-                        mouseOut: function(eventType, myId) { Hippo.ContextMenu.hideContextLink(myId); },
-                        set: true
-                    };
-
-                    YAHOO.util.Event.on(el, 'mouseover', el.registeredContextMenu.mouseOver, el.id);
-                    YAHOO.util.Event.on(el, 'mouseout', el.registeredContextMenu.mouseOut, el.id);
+            updateMouseListeners : function(id, tree, helper) {
+                function mouseOver() {
+                    Hippo.ContextMenu.showContextLink(this.id);
+                    helper.overId = this.id;
                 }
+
+                function mouseOut() {
+                    Hippo.ContextMenu.hideContextLink(this.id);
+                    helper.overId = null;
+                }
+
+                function mouseEnter() {
+                    Hippo.ContextMenu.showContextLink(this.id);
+                    helper.overId = this.id;
+                }
+
+                function mouseLeave() {
+                    Hippo.ContextMenu.hideContextLink(this.id);
+                    helper.overId = null;
+                }
+                
+                jQuery('.register-mouse', tree).each(function(index, el) {
+                    var parent = el.parentNode;
+                    jQuery(el).removeClass('register-mouse');
+                    jQuery(parent).mouseenter(mouseEnter).mouseleave(mouseLeave);
+                });
             },
 
-            render : function(id) {
-                var width, el, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes, 
+            setTreeWidth : function(id, el, helper) {
+                var width, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes,
                         j, jLen, childNode, reg, ref;
 
-                this.register(id);
                 width = 0;
-                el = Dom.get(id);
-                if (!exists(el)) {
-                    return;
+                if (helper.cfg.treeAutowidth) {
+                    computedWidth = 0;
+                    computedHeight = 0;
+                    items = Dom.getElementsByClassName('a_', 'div', id);
+
+                    //Calculate width&height of items and save largest computedWidth value in var 'width'
+                    for (i = 0, iLen = items.length; i < iLen; i++) {
+                        item = items[i];
+                        itemChildNodes = Dom.getChildren(item);
+                        for (j = 0, jLen = itemChildNodes.length; j < jLen; j++) {
+                            childNode = itemChildNodes[j];
+                            reg = Dom.getRegion(childNode);
+                            computedWidth += reg.width;
+                            if (j === 0) {
+                                computedHeight += reg.height;
+                            }
+                        }
+                        if (computedWidth > width) {
+                            width = computedWidth;
+                        }
+                        computedWidth = 0;
+                    }
+
+                    ref = Dom.getRegion(el.parentNode);
+                    if (computedHeight > ref.height) {
+                        //tree content overflows container element, browser will render scrollbars, so change width
+                        width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                    }
+
+                    //Add magic width
+                    if (helper.cfg.workflowEnabled) {
+                        width += 25;
+                    } else {
+                        width += 10;
+                    }
                 }
 
-                // Browser other than IE can use:
-                //    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
-                //    width: -moz-max-content;    /* Firefox/Gecko */
-                //    width: -webkit-max-content; /* Chrome */
-                // which causes the child elements to define the width of the element, IE still needs help from javascript 
-                if (YAHOO.env.ua.ie > 0) {
-                    if (el.treeHelper.cfg.treeAutowidth) {
-                        computedWidth = 0;
-                        computedHeight = 0;
-                        items = Dom.getElementsByClassName('a_', 'div', id);
-    
-                        //Calculate width&height of items and save largest computedWidth value in var 'width'
-                        for (i = 0, iLen = items.length; i < iLen; i++) {
-                            item = items[i];
-                            itemChildNodes = Dom.getChildren(item);
-                            for (j = 0, jLen = itemChildNodes.length; j < jLen; j++) {
-                                childNode = itemChildNodes[j];
-                                reg = Dom.getRegion(childNode);
-                                computedWidth += reg.width;
-                                if (j === 0) {
-                                    computedHeight += reg.height;
-                                }
-                            }
-                            if (computedWidth > width) {
-                                width = computedWidth;
-                            }
-                            computedWidth = 0;
-                        }
-    
-                        ref = Dom.getRegion(el.parentNode);
-                        if (computedHeight > ref.height) {
-                            //tree content overflows container element, browser will render scrollbars, so change width
-                            width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
-                        }
-    
-                        //Add magic width
-                        if (el.treeHelper.cfg.workflowEnabled) {
-                            width += 25;
-                        } else {
-                            width += 10;
-                        }
-                    }
-                    
-                    if (width > 0) {
-                        this._setWidth(el, id, width);
-                    }
+                if (width > 0) {
+                    this._setWidth(id, el, helper, width);
                 }
             },
 
-            _setWidth : function(el, id, width) {
+            _setWidth : function(id, el, helper, width) {
                 var ar, layoutMax, regionTree, regionUnitCenter, isWin;
 
                 //try to set width to child element with classname 'hippo-tree'. We can't directly take
                 //the childnode of 'id' because of the wicket:panel elements in dev-mode
-                ar = Dom.getElementsByClassName(el.treeHelper.cfg.setWidthToClassname, 'div', id);
+                ar = Dom.getElementsByClassName(helper.cfg.setWidthToClassname, 'div', id);
                 if (!Lang.isUndefined(ar.length) && ar.length > 0) {
                     //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
-                    layoutMax = this.getLayoutMax(el);
+                    layoutMax = this.getLayoutMax(id, el, helper);
                     if (exists(layoutMax) && layoutMax > width) {
                         width = layoutMax;
                     }
@@ -266,13 +276,13 @@ if (!YAHOO.hippo.TreeHelper) {
                 this.render(id);
             },
 
-            getLayoutMax : function(el) {
+            getLayoutMax : function(id, el, helper) {
                 var result, e;
                 result = null;
-                if (el.treeHelper.cfg.bindToLayoutUnit && el.treeHelper.layoutUnit !== null && el.treeHelper.layoutUnit !== undefined) {
-                    result = el.treeHelper.layoutUnit.getSizes().body.w;
-                } else if (el.treeHelper.cfg.useWidthFromClassname !== null && el.treeHelper.cfg.useWidthFromClassname !== undefined) {
-                    e = Dom.getAncestorByClassName(el, el.treeHelper.cfg.useWidthFromClassname);
+                if (helper.cfg.bindToLayoutUnit && exists(helper.layoutUnit)) {
+                    result = helper.layoutUnit.getSizes().body.w;
+                } else if (exists(helper.cfg.useWidthFromClassname)) {
+                    e = Dom.getAncestorByClassName(el, helper.cfg.useWidthFromClassname);
                     result = parseInt(Dom.getStyle(e, 'width'), 10);
                 }
                 return result;
@@ -283,6 +293,6 @@ if (!YAHOO.hippo.TreeHelper) {
 
     YAHOO.hippo.TreeHelper = new YAHOO.hippo.TreeHelperImpl();
     YAHOO.register("TreeHelper", YAHOO.hippo.TreeHelper, {
-        version: "2.8.1", build: "19"
+        version: "2.9.0", build: "1"
     });
 }
