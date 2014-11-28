@@ -98,8 +98,6 @@
                 }
                 Hippo.ChannelManager.TemplateComposer.Instance.browseTo({ channelId: channelId });
                 Ext.getCmp('rootPanel').showTemplateComposer();
-                // TODO fix, I have no clue why the template composer card is not getting activated properly
-                document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
             };
 
             this.gridPanel.on('channel-selected', channelSelectedHandler, this);
@@ -138,10 +136,6 @@
                 });
 
                 this.layout.setActiveItem(itemId);
-                if (itemId === 1) {
-                    // TODO fix, I have no clue why the template composer card is not getting activated properly
-                    document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
-                }
             } else {
                 this.layout.setActiveItem(0);
             }

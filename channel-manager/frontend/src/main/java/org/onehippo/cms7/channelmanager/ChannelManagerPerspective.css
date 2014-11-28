@@ -21,15 +21,25 @@
     font-size: 13px;
 }
 
-/* toolbar */
-.channel-manager-toolbar.x-toolbar {
-    background-image: none;
-    background-color: #dddddd;
-    border-top: 0;
+.page-editor-panel > .x-panel-bwrap > .x-panel-body {
+    border-bottom: 1px solid #565B65;
 }
 
-.channel-manager .channel-manager-toolbar .x-btn-text {
+/* toolbar */
+.x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
+    background-image: none;
+    background-color: #E9EBEE;
+    border-top: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-bottom-color: #565B65;
+}
+
+
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
     margin: 1px 5px;
+    height: 21px;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,

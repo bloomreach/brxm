@@ -153,7 +153,7 @@
     Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         // height of the toolbar (in pixels)
-        TOOLBAR_HEIGHT: 28,
+        TOOLBAR_HEIGHT: 40,
         variantsUuid: null,
         locale: null,
         fullscreen: false,
@@ -169,6 +169,8 @@
             this.antiCache = config.ANTI_CACHE;
 
             config.header = false;
+            config.cls = 'page-editor-panel';
+            config.border = false;
 
             this.variantsUuid = config.variantsUuid;
             this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
