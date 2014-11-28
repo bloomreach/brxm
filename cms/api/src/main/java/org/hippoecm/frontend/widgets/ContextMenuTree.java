@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
@@ -32,6 +34,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -58,6 +61,8 @@ public class ContextMenuTree extends DefaultAbstractTree {
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
         treeState.expandNode(model.getRoot());
+        
+        model.addTreeModelListener(new ContextMenuTreeListener());
 
         treeState.addTreeStateListener(new ITreeStateListener() {
             @Override
@@ -90,10 +95,8 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 dirty = true;
             }
         });
-        
-        dirty = true;
     }
-
+    
     @Override
     protected ResourceReference getCSS() {
         return null;
@@ -123,6 +126,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 if (menuManager != null) {
                     menuManager.showContextMenu(this);
                     onContextLinkClicked(content, target);
+                    dirty = true;
                 }
             }
 
@@ -238,6 +242,28 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 target.add(parent);
             }
         }
+    }
+    
+    public class ContextMenuTreeListener implements TreeModelListener, IClusterable {
 
+        @Override
+        public void treeNodesChanged(final TreeModelEvent e) {
+            dirty = true;
+        }
+
+        @Override
+        public void treeNodesInserted(final TreeModelEvent e) {
+            dirty = true;
+        }
+
+        @Override
+        public void treeNodesRemoved(final TreeModelEvent e) {
+            dirty = true;
+        }
+
+        @Override
+        public void treeStructureChanged(final TreeModelEvent e) {
+            dirty = true;
+        }
     }
 }

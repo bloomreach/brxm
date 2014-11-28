@@ -173,16 +173,6 @@ if (!YAHOO.hippo.TreeHelper) {
             },
 
             updateMouseListeners : function(id, tree, helper) {
-                function mouseOver() {
-                    Hippo.ContextMenu.showContextLink(this.id);
-                    helper.overId = this.id;
-                }
-
-                function mouseOut() {
-                    Hippo.ContextMenu.hideContextLink(this.id);
-                    helper.overId = null;
-                }
-
                 function mouseEnter() {
                     Hippo.ContextMenu.showContextLink(this.id);
                     helper.overId = this.id;
