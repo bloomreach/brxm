@@ -62,7 +62,7 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <hippo.repository.version>2.26.08</hippo.repository.version>
+    <hippo.repository.version>2.26.09</hippo.repository.version>
     <!-- ***END temporary override of versions*** -->
 
     <essentials.version>1.02.05</essentials.version>
