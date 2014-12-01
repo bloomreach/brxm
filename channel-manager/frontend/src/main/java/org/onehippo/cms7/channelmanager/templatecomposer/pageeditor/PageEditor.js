@@ -788,9 +788,8 @@
                     var w = element.getWidth(), h = element.getHeight();
                     this.setSize(w, h);
 
-                    // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
                     // The height of the yui layout div also includes the space for the toolbar, so subtract that.
-                    iframe.setSize(w - 2, h);
+                    iframe.setSize(w, h);
                 }.createDelegate(this);
                 YAHOO.hippo.LayoutManager.registerRootResizeListener(this, this.resizeListener);
 
@@ -819,9 +818,8 @@
                 element.removeClass("channel-manager-fullscreen");
                 yuiLayout = element.findParent("div.yui-layout-unit");
                 this.resizeListener = function(sizes) {
-                    // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
                     // The height of the yui layout div also includes the space for the toolbar, so subtract that.
-                    iframe.setSize(sizes.body.w - 2, sizes.body.h - this.TOOLBAR_HEIGHT);
+                    iframe.setSize(sizes.body.w, sizes.body.h - this.TOOLBAR_HEIGHT);
                 };
                 YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, this.resizeListener, true);
 
