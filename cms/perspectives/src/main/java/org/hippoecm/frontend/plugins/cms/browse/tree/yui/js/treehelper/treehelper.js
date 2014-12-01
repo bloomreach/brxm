@@ -25,7 +25,7 @@
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.TreeHelper) {
-    (function() {
+    (function($) {
         "use strict";
 
         var Dom = YAHOO.util.Dom, 
@@ -165,8 +165,8 @@ if (!YAHOO.hippo.TreeHelper) {
                     return;
                 }
 
-                var el = jQuery('#' + helper.overId);
-                if (el.length > 0 && !el.hasClass('register-mouse')) {
+                var el = $('#' + helper.overId);
+                if (!el.hasClass('register-mouse')) {
                     // dropdown icon was visible when it was clicked, re-draw it
                     el.mouseleave().mouseenter();
                 }
@@ -183,10 +183,10 @@ if (!YAHOO.hippo.TreeHelper) {
                     helper.overId = null;
                 }
                 
-                jQuery('.register-mouse', tree).each(function(index, el) {
+                $('.register-mouse', tree).each(function(index, el) {
                     var parent = el.parentNode;
-                    jQuery(el).removeClass('register-mouse');
-                    jQuery(parent).mouseenter(mouseEnter).mouseleave(mouseLeave);
+                    $(el).removeClass('register-mouse');
+                    $(parent).mouseenter(mouseEnter).mouseleave(mouseLeave);
                 });
             },
 
@@ -279,7 +279,7 @@ if (!YAHOO.hippo.TreeHelper) {
             }
         };
 
-    }());
+    }(jQuery));
 
     YAHOO.hippo.TreeHelper = new YAHOO.hippo.TreeHelperImpl();
     YAHOO.register("TreeHelper", YAHOO.hippo.TreeHelper, {
