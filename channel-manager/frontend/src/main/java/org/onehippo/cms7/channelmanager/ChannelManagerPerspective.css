@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -487,7 +487,6 @@
     text-align: center;
     line-height: 1.25em;
     color: #333;
-    font-family: "Helvetica Neue", sans-serif;
     height: 113px;
     width: 112px;
     overflow: hidden;
