@@ -31,7 +31,7 @@
             this.blueprintsAvailable = config.blueprintsAvailable;
 
             var toolbar = new Ext.Toolbar({
-                height: 28,
+                height: 40,
                 cls: 'channel-manager-toolbar',
                 items: []
             });
