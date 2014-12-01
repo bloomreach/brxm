@@ -15,17 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -46,8 +44,6 @@ public class RootPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    public static final CssResourceReference CSS = new CssResourceReference(RootPlugin.class, "screen-console.css");
-
     private boolean rendered = false;
     private ParameterHistoryBehavior parameterHistoryBehavior;
 
@@ -62,7 +58,7 @@ public class RootPlugin extends RenderPlugin {
 
         if (config.getString(RenderService.MODEL_ID) != null) {
             String modelId = config.getString(RenderService.MODEL_ID);
-            ModelReference modelService = new ModelReference(modelId, new JcrNodeModel("/"));
+            ModelReference<Node> modelService = new ModelReference<>(modelId, new JcrNodeModel("/"));
             modelService.init(context);
 
             parameterHistoryBehavior = new ParameterHistoryBehavior(modelService);
@@ -98,8 +94,7 @@ public class RootPlugin extends RenderPlugin {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(CmsHeaderItem.get());
-        response.render(CssHeaderItem.forReference(CSS));
+        response.render(ConsoleHeaderItem.get());
     }
 
     private String getPageTitle(IPluginConfig config) {

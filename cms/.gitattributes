@@ -112,9 +112,6 @@ api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/SortedTypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeTranslator.java -text
-api/src/main/java/org/hippoecm/frontend/js/future.js -text
-api/src/main/java/org/hippoecm/frontend/js/global.js -text
-api/src/main/java/org/hippoecm/frontend/js/ie.js -text
 api/src/main/java/org/hippoecm/frontend/model/AbstractProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/ChildNodeProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/DetachMonitor.java svneol=native#text/plain
@@ -810,6 +807,8 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
+api/src/main/resources/org/hippoecm/frontend/js/future.js -text
+api/src/main/resources/org/hippoecm/frontend/js/global.js -text
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-16.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-24.png -text svneol=unset#image/png
@@ -1122,6 +1121,7 @@ api/src/main/styling/less/_doclist.less -text
 api/src/main/styling/less/_editor.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_footer.less -text
+api/src/main/styling/less/_globals.less -text
 api/src/main/styling/less/_hippo_dev_extensions.less -text
 api/src/main/styling/less/_hippo_logo.less -text
 api/src/main/styling/less/_icons.less -text
@@ -1385,13 +1385,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/ren
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/t9ids.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-export.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-import.png -text svneol=unset#image/png
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-blue.ico -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-green.ico -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-orange.ico -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-purple.ico -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-red.ico -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-teal.ico -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/console-yellow.ico -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupTargetTreeView.java svneol=native#text/plain
@@ -1520,8 +1513,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog_nl.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/res/tree-console-icons.png -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/screen-console.css svneol=native#text/css
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.properties -text
@@ -1532,6 +1523,17 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutLink.h
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutLink.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutPlugin.java svneol=native#text/plain
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-blue.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-green.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-orange.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-purple.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-red.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-teal.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-yellow.ico -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console.css svneol=native#text/css
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree-console-icons.png -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree-images.png -text
+console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree.css svneol=native#text/plain
 console/frontend/src/site/apt/index.apt -text
 console/frontend/src/site/site.xml svneol=native#text/plain
 console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain

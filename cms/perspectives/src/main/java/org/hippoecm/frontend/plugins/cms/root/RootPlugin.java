@@ -225,8 +225,8 @@ public class RootPlugin extends TabsPlugin {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(ExtResourcesHeaderItem.get());
         response.render(CmsHeaderItem.get());
+        response.render(ExtResourcesHeaderItem.get());
     }
 
     protected String getItemId() {

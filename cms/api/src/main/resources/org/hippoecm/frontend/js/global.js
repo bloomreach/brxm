@@ -17,23 +17,26 @@
 (function() {
     "use strict";
 
-    if (window.console === undefined) {
-        window.console = {
-            log : function() {
-            },
-            dir : function() {
-            },
-            info : function() {
-            },
-            warn : function() {
-            },
-            error : function() {
-            },
-            group : function() {
-            },
-            groupEnd : function() {
-            }
-        };
+    window.Hippo = window.Hippo || {};
+
+    var method,
+        noop = function () {},
+        methods = [
+            'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+            'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+            'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+            'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
+        ],
+        length = methods.length,
+        console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
     }
 
     String.prototype.format = function() {

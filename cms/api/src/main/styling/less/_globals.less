@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,27 +14,41 @@
  * limitations under the License.
  */
 
-// Variable overrides
-@import "_variables";
-@import "_mixins";
+// Global CSS tools
+.hippo-global-fullwidth {
+  width: 100%;
+}
 
-@import "../components/retina.js/src/retina";
+.hippo-global-halfwidth {
+  width: 50%;
+}
 
-@import "_legacy";
-@import "_typography";
-@import "_scaffolding";
-@import "_buttons";
-@import "_icons";
-@import "_globals";
+.hippo-global-alignright {
+  text-align: right
+}
 
-@import "_ajax_loader";
-@import "_hippo_logo";
-@import "_hippo_dev_extensions";
-@import "_perspectives_switcher";
-@import "_doclist";
-@import "_tabs";
-@import "_navigator";
-@import "_tree";
-@import "_footer";
+.hippo-global-alignmiddle {
+  text-align: center;
+  vertical-align: middle
+}
 
-@import "_editor";
+.hippo-global-clearer {
+  clear: both;
+  height: 0;
+}
+
+.hippo-global-hideme {
+  display: none;
+}
+
+.hippo-global-floatleft {
+  float: left
+}
+
+.hippo-global-align-bottom {
+  vertical-align: bottom
+}
+
+.hide {
+  display: none;
+}
