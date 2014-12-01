@@ -463,7 +463,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- forked from Apache Wicket sources -->
-                <exclude>api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css</exclude>
+                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree.css</exclude>
                 <!-- forked from Apache Tomcat sources -->
                 <exclude>engine/src/main/java/org/hippoecm/frontend/custom/ServerCookie.java</exclude>
                 <!-- external contributions -->
