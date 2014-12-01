@@ -27,15 +27,12 @@
 
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-    background-image: none;
-    background-color: #E9EBEE;
+    background: #e9ebee none;
     border-top: 0;
     padding-top: 4px;
     padding-bottom: 4px;
     border-bottom-color: #565B65;
 }
-
-
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
     margin: 1px 5px;
@@ -55,9 +52,8 @@
 }
 
 .channel-manager .channel-manager-toolbar .x-btn-mc {
-    background: url("bg.gif") repeat-x 0 0 transparent;
     border: 1px solid #bebebe;
-    background-position: 0 0;
+    background: transparent url("bg.gif") repeat-x 0 0;
     text-align: left;
 }
 
@@ -356,10 +352,7 @@
 
 .channel-manager .toolbar .item {
     cursor: default;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin: 10px auto 5px;
     padding: 0;
 }
 
@@ -582,15 +575,15 @@
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
-    margin-left: 0px;
-    margin-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
     width: 26px;
     height: 22px;
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
-    margin-left: 0px;
-    margin-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
     width: 24px;
     height: 22px;
 }
@@ -632,7 +625,7 @@
 }
 
 .ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item .x-form-element {
-    padding-left: 0px;
+    padding-left: 0;
 }
 
 #x-form-el-contentRoot .x-form-field-wrap {
