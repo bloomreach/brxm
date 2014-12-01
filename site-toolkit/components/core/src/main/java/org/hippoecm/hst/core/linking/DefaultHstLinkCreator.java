@@ -71,7 +71,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         }
     }
     
-    public void setlinkProcessor(HstLinkProcessor linkProcessor) {
+    public void setLinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
     
