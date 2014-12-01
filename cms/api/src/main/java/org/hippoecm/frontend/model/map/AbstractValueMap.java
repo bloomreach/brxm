@@ -463,7 +463,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
      * @see org.apache.wicket.util.value.IValueMap#getAsEnum(java.lang.String, java.lang.Class)
      */
     public <T extends Enum<T>> T getAsEnum(String key, Class<T> eClass) {
-        return getEnumImpl(key, eClass, null);
+        return getEnumImpl(key, eClass, (T) null);
     }
 
     /**
