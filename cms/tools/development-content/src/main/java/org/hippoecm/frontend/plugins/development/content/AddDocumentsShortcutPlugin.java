@@ -134,7 +134,7 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
                     }
 
                     @Override
-                    protected List<String> getTypes() {
+                    protected List<ContentBuilder.CategoryType> getTypes() {
                         return builder.getDocumentTypes(settings.folderUUID);
                     }
 

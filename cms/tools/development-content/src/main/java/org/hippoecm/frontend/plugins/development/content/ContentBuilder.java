@@ -39,7 +39,6 @@ import org.hippoecm.frontend.plugins.development.content.names.Names;
 import org.hippoecm.frontend.plugins.development.content.names.NamesFactory;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -60,13 +59,12 @@ public class ContentBuilder implements IClusterable {
     private static final int DEFAULT_MIN_NR_OF_FOLDERS = 2;
     private static final int DEFAULT_MAX_NR_OF_FOLDERS = 2;
 
-    private static final int DEFAULT_MIN_NAME_LENGTH = 20;
+    private static final int DEFAULT_MIN_NAME_LENGTH = 10;
     private static final int DEFAULT_MAX_NAME_LENGTH = 35;
 
     private static final int DEFAULT_NUMBER_OF_DOCUMENTS = 5;
 
     private static final String DEFAULT_WORKFLOW_CATEGORY = "threepane";
-    private static final String DEFAULT_NEW_FOLDER_CATEGORY = "new-folder";
     private static final String DEFAULT_NEW_DOCUMENT_CATEGORY = "new-document";
 
     private List<String> frequentlyUsedTags;
@@ -85,14 +83,15 @@ public class ContentBuilder implements IClusterable {
     public static class NodeTypeSettings implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        Collection<String> types = new LinkedList<String>();
+        //Collection<String> types = new LinkedList<>();
+        Collection<CategoryType> types = new LinkedList<>();
         boolean random = true;
 
-        public void setTypes(Collection<String> selectedTypes) {
+        public void setTypes(Collection<CategoryType> selectedTypes) {
             this.types = selectedTypes;
         }
 
-        public Collection<String> getTypes() {
+        public Collection<CategoryType> getTypes() {
             return types;
         }
 
@@ -134,6 +133,7 @@ public class ContentBuilder implements IClusterable {
         DocumentSettings document = new DocumentSettings();
 
         public FolderSettings() {
+            document.amount = 0;
         }
 
         public FolderSettings(String folderUUID) {
@@ -179,39 +179,6 @@ public class ContentBuilder implements IClusterable {
         names = NamesFactory.newNames();
     }
 
-    public void createDocuments(final DocumentSettings settings) {
-        updateFolder(settings.folderUUID);
-
-        if (settings.nodeTypes.random) {
-            settings.nodeTypes.types = getDocumentTypes(settings.folderUUID);
-        }
-        
-        List<NodeDecorator> decorators = new LinkedList<NodeDecorator>();
-        if(settings.addTags) {
-            decorators.add(new NodeDecorator() {
-
-                public void decorate(Node node) {
-                    try {
-                        if(node.isNodeType("hippostd:taggable")) {
-                            node.setProperty("hippostd:tags", getTags(settings));
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Error setting tag property", e);
-                    }
-                }
-            });
-        }
-
-        FolderWorkflow folderWorkflow = getFolderWorkflow(settings.folderUUID);
-        if (folderWorkflow != null) {
-            String[] typeAr = settings.nodeTypes.types.toArray(new String[settings.nodeTypes.types.size()]);
-
-            for (int i = 0; i < settings.amount; i++) {
-                createNode(DEFAULT_NEW_DOCUMENT_CATEGORY, typeAr, settings.naming, folderWorkflow, decorators);
-            }
-        }
-    }
-
     private String[] getTags(DocumentSettings settings) {
         createTags(settings.maxNrOfTags);
 
@@ -235,8 +202,8 @@ public class ContentBuilder implements IClusterable {
     private void createTags(int maxNrOfTags) {
         if(frequentlyUsedTags == null) {
             List<String> tags = Arrays.asList(names.generate(maxNrOfTags * 5));
-            frequentlyUsedTags = new ArrayList<String>(maxNrOfTags);
-            lessUsedTags = new ArrayList<String>(maxNrOfTags * 4);
+            frequentlyUsedTags = new ArrayList<>(maxNrOfTags);
+            lessUsedTags = new ArrayList<>(maxNrOfTags * 4);
             for(int i=0; i<maxNrOfTags * 5; ++i) {
                 if(i<maxNrOfTags) {
                     frequentlyUsedTags.add(tags.get(i));
@@ -267,7 +234,7 @@ public class ContentBuilder implements IClusterable {
         if(data.size() < amount) {
             throw new IllegalArgumentException("Requested number of tags exceeds cached values");
         }
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         while(result.size() < amount) {
             int index = generator.nextInt(amount);
             String tag = data.get(index);
@@ -286,6 +253,7 @@ public class ContentBuilder implements IClusterable {
         void decorate(Node node);    
     }
 
+    @Deprecated
     private String createNode(String category, String[] typeAr, NameSettings settings, FolderWorkflow folderWorkflow, List<NodeDecorator> decorators) {
         int index = generator.nextInt(typeAr.length);
         String prototype = typeAr[index];
@@ -294,16 +262,12 @@ public class ContentBuilder implements IClusterable {
         String path = null;
         try {
             path = folderWorkflow.add(category, prototype, name);
-        } catch (MappingException e1) {
-            e1.printStackTrace();
-        } catch (RepositoryException e1) {
-            e1.printStackTrace();
-        } catch (RemoteException e1) {
-            e1.printStackTrace();
-        } catch (WorkflowException e1) {
-            e1.printStackTrace();
+        } catch (RemoteException | RepositoryException | WorkflowException e) {
+            log.error(String.format("Failed to create node of category='%s', prototype='%s' and name = '%s'", 
+                    category, prototype, name), e);
         }
-        if(path != null) {
+
+        if (path != null) {
             Session jcrSession = UserSession.get().getJcrSession();
             Node newNode = null;
             try {
@@ -311,19 +275,16 @@ public class ContentBuilder implements IClusterable {
                 WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
                 ((EditableWorkflow) manager.getWorkflow("default", newNode)).commitEditableInstance();
 
-            } catch (RepositoryException e) {
-                log.error("Error creating new node of category " + category, e);
-            } catch (RemoteException e) {
-                log.error("Error creating new node of category " + category, e);
-            } catch (WorkflowException e) {
-                log.error("Error creating new node of category " + category, e);
+            } catch (RepositoryException | RemoteException | WorkflowException e) {
+                log.error(String.format("Error creating new node of category='%s'", category), e);
             }
-            if(newNode != null && decorators != null) {
+
+            if (newNode != null && decorators != null) {
                 for (NodeDecorator decorator : decorators) {
                     decorator.decorate(newNode);
                 }
                 try {
-                    newNode.save();
+                    jcrSession.save();
                 } catch (RepositoryException e) {
                     e.printStackTrace();
                 }
@@ -331,6 +292,80 @@ public class ContentBuilder implements IClusterable {
             return name;
         }
         return null;
+    }    
+    
+    private String createNode(CategoryType[] cts, NameSettings settings, FolderWorkflow folderWorkflow, List<NodeDecorator> decorators) {
+        int index = generator.nextInt(cts.length);
+        final CategoryType ct = cts[index];
+
+        String targetName = generateName(settings.minLength, settings.maxLength);
+        String name = NodeNameCodec.encode(targetName, true);
+        String path = null;
+        try {
+            path = folderWorkflow.add(ct.category, ct.type, name);
+        } catch (RemoteException | RepositoryException | WorkflowException e) {
+            log.error(String.format("Failed to create node of category='%s', type='%s' and name = '%s'", 
+                    ct.category, ct.type, name), e);
+        }
+
+        if (path != null) {
+            Session jcrSession = UserSession.get().getJcrSession();
+            Node newNode = null;
+            try {
+                newNode = jcrSession.getRootNode().getNode(path.substring(1));
+                WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
+                ((EditableWorkflow) manager.getWorkflow("default", newNode)).commitEditableInstance();
+
+            } catch (RepositoryException | RemoteException | WorkflowException e) {
+                log.error(String.format("Error creating new node of category='%s'", ct.category), e);
+            }
+
+            if (newNode != null && decorators != null) {
+                for (NodeDecorator decorator : decorators) {
+                    decorator.decorate(newNode);
+                }
+                try {
+                    jcrSession.save();
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+            }
+            return name;
+        }
+        return null;
+    }
+
+    public void createDocuments(final DocumentSettings settings) {
+        updateFolder(settings.folderUUID);
+
+        if (settings.nodeTypes.random) {
+            settings.nodeTypes.types = getDocumentTypes(settings.folderUUID);
+        }
+
+        List<NodeDecorator> decorators = new LinkedList<>();
+        if(settings.addTags) {
+            decorators.add(new NodeDecorator() {
+
+                public void decorate(Node node) {
+                    try {
+                        if(node.isNodeType("hippostd:taggable")) {
+                            node.setProperty("hippostd:tags", getTags(settings));
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("Error setting tag property", e);
+                    }
+                }
+            });
+        }
+
+        FolderWorkflow folderWorkflow = getFolderWorkflow(settings.folderUUID);
+        if (folderWorkflow != null) {
+            CategoryType[] types = settings.nodeTypes.types.toArray(new CategoryType[settings.nodeTypes.types.size()]);
+
+            for (int i = 0; i < settings.amount; i++) {
+                createNode(types, settings.naming, folderWorkflow, decorators);
+            }
+        }
     }
 
     public void createFolders(FolderSettings settings, int depth) {
@@ -349,7 +384,7 @@ public class ContentBuilder implements IClusterable {
         }
 
         if (workflow != null) {
-            String[] nodeTypes = settings.nodeTypes.types.toArray(new String[settings.nodeTypes.types.size()]);
+            CategoryType[] types = settings.nodeTypes.types.toArray(new CategoryType[settings.nodeTypes.types.size()]);
 
             int amount = settings.minimumChildNodes;
             int diff = settings.maximumChildNodes - settings.minimumChildNodes;
@@ -357,9 +392,9 @@ public class ContentBuilder implements IClusterable {
                 amount += generator.nextInt(diff);
             }
 
-            List<String> newNodes = new LinkedList<String>();
+            List<String> newNodes = new LinkedList<>();
             for (int i = 0; i < amount; i++) {
-                newNodes.add(createNode(DEFAULT_NEW_FOLDER_CATEGORY, nodeTypes, settings.naming, workflow, null));
+                newNodes.add(createNode(types, settings.naming, workflow, null));
             }
 
             String rootPath = folderPath;
@@ -379,18 +414,24 @@ public class ContentBuilder implements IClusterable {
         }
     }
 
-    public List<String> getFolderTypes(String folderUUID) {
-        updateFolder(folderUUID);
-
-        List<String> categories = getCategories("folder");
-        return getTypes(categories, new LinkedList<String>(), getFolderWorkflow(folderUUID));
+    public List<CategoryType> getFolderTypes(String folderUUID) {
+        return getCategoryTypes(folderUUID, "folder");
     }
 
-    public List<String> getDocumentTypes(String folderUUID) {
+    public List<CategoryType> getDocumentTypes(String folderUUID) {
+        return getCategoryTypes(folderUUID, "document");
+    }
+
+    private List<CategoryType> getCategoryTypes(final String folderUUID, final String categoryName) {
         updateFolder(folderUUID);
 
-        List<String> categories = getCategories("document");
-        return getTypes(categories, new LinkedList<String>(), getFolderWorkflow(folderUUID));
+        List<CategoryType> types = new LinkedList<>();
+        for (final String category : getCategories(categoryName)) {
+            for (final String type : getTypes(category, getFolderWorkflow(folderUUID))) {
+                types.add(new CategoryType(category, type));
+            }
+        }
+        return types;
     }
 
     private List<String> getCategories(final String hint) {
@@ -410,7 +451,8 @@ public class ContentBuilder implements IClusterable {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> getTypes(List<String> categories, List<String> types, FolderWorkflow folderWorkflow) {
+    private List<String> getTypes(List<String> categories, FolderWorkflow folderWorkflow) {
+        List<String> types = new LinkedList<>();
         if (folderWorkflow != null) {
             Map<String, Serializable> hints;
             try {
@@ -423,38 +465,51 @@ public class ContentBuilder implements IClusterable {
                         }
                     }
                 }
-            } catch (RemoteException e) {
-                log.error("Error ", e);
-            } catch (WorkflowException e) {
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                e.printStackTrace();
+            } catch (WorkflowException | RepositoryException | RemoteException e) {
+                log.error("Failed to retrieve hints from folderWorkflow", e);
+            }
+        }
+        return types;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> getTypes(String category, FolderWorkflow folderWorkflow) {
+        List<String> types = new LinkedList<>();
+        if (folderWorkflow != null) {
+            Map<String, Serializable> hints;
+            try {
+                hints = folderWorkflow.hints();
+                final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
+                if (prototypes.containsKey(category)) {
+                    for (String s : prototypes.get(category)) {
+                        types.add(s);
+                    }
+                }
+            } catch (WorkflowException | RepositoryException | RemoteException e) {
+                log.error("Failed to retrieve hints from folderWorkflow", e);
             }
         }
         return types;
     }
 
     public String generateName(int minLength, int maxLength) {
-        names.setMaximumLength(maxLength);
-        String newName = "";
-        while (newName.length() < minLength) {
-            if (!newName.equals("")) {
-                newName += " ";
+
+        StringBuilder name = new StringBuilder();
+        int targetLength = generator.nextInt((maxLength + 1) - minLength) + minLength; 
+        
+        do {
+            if (name.length() > 0) {
+                name.append(" ");
             }
-            String gen = names.generate();
-            if (newName.length() + gen.length() > maxLength) {
-                names.setMaximumLength(maxLength - newName.length());
-                gen = names.generate();
+            names.setMaximumLength(targetLength - name.length());
+            String newName = names.generate();
+            if (newName == null) {
+                break;
             }
-            newName += gen;
-        }
-        if (newName.length() > maxLength) {
-            newName = newName.substring(0, maxLength);
-            if (newName.length() > maxLength) {
-                throw new IllegalStateException("warning, imcapable programmer at work");
-            }
-        }
-        return newName;
+            name.append(newName);
+        } while (name.length() < targetLength);
+
+        return name.toString();
     }
 
     private void updateFolder(String folderUUID) {
@@ -467,20 +522,16 @@ public class ContentBuilder implements IClusterable {
     private FolderWorkflow getFolderWorkflow(String folderUUID) {
         updateFolder(folderUUID);
         Session jcrSession = UserSession.get().getJcrSession();
-        WorkflowDescriptor folderWorkflowDescriptor = null;
-        Node node = null;
 
         try {
-            node = jcrSession.getRootNode().getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
-            WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-            folderWorkflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
-            Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
+            final Node node = jcrSession.getRootNode().getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
+            final WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
+            final WorkflowDescriptor folderWorkflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
+            final Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
                     : null);
             if (workflow instanceof FolderWorkflow) {
                 return (FolderWorkflow) workflow;
             }
-        } catch (MappingException ex) {
-            log.warn("Error while fetching FolderWorkflow: {}", ex.getMessage());
         } catch (RepositoryException ex) {
             log.warn("Error while fetching FolderWorkflow: {}", ex.getMessage());
         }
@@ -510,7 +561,7 @@ public class ContentBuilder implements IClusterable {
         try {
             if (jcrSession.getRootNode().hasNode(path)) {
                 Node node = jcrSession.getRootNode().getNode(path);
-                return node.getUUID();
+                return node.getIdentifier();
             }
             log.error("Could not find node with path " + path);
         } catch (ItemNotFoundException e) {
@@ -519,5 +570,20 @@ public class ContentBuilder implements IClusterable {
             log.error("Error while retrieving uuid for node path" + path, e);
         }
         return null;
+    }
+    
+    public static class CategoryType implements IClusterable {
+        String category;
+        String type;
+
+        public CategoryType(final String category, final String type) {
+            this.category = category;
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return category + " - " + type;
+        }
     }
 }
