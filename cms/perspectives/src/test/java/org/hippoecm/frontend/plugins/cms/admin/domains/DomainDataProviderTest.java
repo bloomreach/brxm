@@ -64,7 +64,6 @@ public class DomainDataProviderTest extends PluginTest {
 
         final int pageSize = 6;
         Iterator firstPage = provider.iterator(0, pageSize);
-        Iterator secondPage = provider.iterator(pageSize, pageSize);
 
         int firstPageSize = 0;
         while (firstPage.hasNext()) {
@@ -72,6 +71,7 @@ public class DomainDataProviderTest extends PluginTest {
             firstPageSize++;
         }
 
+        Iterator secondPage = provider.iterator(pageSize, pageSize);
         int secondPageSize = 0;
         while (secondPage.hasNext()) {
             secondPage.next();
