@@ -83,13 +83,14 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/Plugin.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginException.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginParameterServiceFactory.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginStore.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/project/ProjectUtils.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ProjectResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestList.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text

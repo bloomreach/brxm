@@ -45,6 +45,13 @@ class InstallStateMachine {
     }
 
     InstallState setup() throws PluginException {
+        // TODO: the blog plugin abuses a set-up call to effectuate configuration changes.
+        // It should be using different means!
+        // when it does, the 3 lines of code below should be removed.
+        if (state == InstallState.INSTALLED) {
+            return state;
+        }
+
         if (state != InstallState.ONBOARD) {
             throw new PluginException("Incorrect state to run setup.");
         }

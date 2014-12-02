@@ -121,9 +121,9 @@
         //############################################
 
 
-        $http.get($rootScope.REST.projectSettings).success(function (data) {
-            $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
-            $scope.imageSetPrefix = $rootScope.projectSettings ? $rootScope.projectSettings.namespace : '';
+        $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
+            var coordinates = Essentials.keyValueAsDict(data.items);
+            $scope.imageSetPrefix = coordinates ? coordinates.namespace : '';
         });
         $scope.init();
 

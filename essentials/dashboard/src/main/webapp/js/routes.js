@@ -98,7 +98,7 @@
                     }
                 }
 
-                $http.get($rootScope.REST.ping).success(function (data) {
+                $http.get($rootScope.REST.project + '/ping').success(function (data) {
                     if (data) {
                         if (data.initialized) {
                             $timeout(ping, PING_RUNNING_TIMER);
@@ -124,9 +124,9 @@
         var dispatch = function() {
             startPinger();
             
-            $http.get($rootScope.REST.packageStatus)
+            $http.get($rootScope.REST.project + '/status')
                 .success(function (response) {
-                    if (response.status) {
+                    if (response.projectInitialized) {
                         if (response.pluginsInstalled > 0) {
                             $location.path("/installed-features");
                         } else {
@@ -143,7 +143,7 @@
                 });
         };
 
-        $http.post($rootScope.REST.plugins + 'autosetup').success(dispatch).error(dispatch);
+        $http.post($rootScope.REST.plugins + '/autosetup').success(dispatch).error(dispatch);
 
         return deferred.promise;
     }

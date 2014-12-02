@@ -64,7 +64,7 @@
             //############################################
             // INIT
             //############################################
-            $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+            $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
                 $scope.plugin = plugin;
             });
             $http.get($rootScope.REST.documents).success(function (data) {

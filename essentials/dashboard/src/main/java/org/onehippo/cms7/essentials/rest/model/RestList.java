@@ -43,9 +43,7 @@ public class RestList<T extends Restful> extends RestfulList<T> {
     @JsonSubTypes({
             @JsonSubTypes.Type(PluginDescriptorRestful.class),
             @JsonSubTypes.Type(VendorRestful.class),
-            @JsonSubTypes.Type(StatusRestful.class),
             @JsonSubTypes.Type(MessageRestful.class),
-            @JsonSubTypes.Type(ControllerRestful.class),
             @JsonSubTypes.Type(KeyValueRestful.class),
             @JsonSubTypes.Type(PostPayloadRestful.class),
             @JsonSubTypes.Type(TranslationRestful.class),

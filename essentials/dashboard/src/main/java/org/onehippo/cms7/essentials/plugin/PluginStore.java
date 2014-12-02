@@ -10,6 +10,8 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
@@ -17,6 +19,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
+import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.File;
@@ -45,6 +49,8 @@ public class PluginStore {
 
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
+
+    @Inject private RebuildProjectEventListener rebuildListener;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -148,6 +154,44 @@ public class PluginStore {
         pluginCache.invalidateAll();
     }
 
+    public void populateSystemInfo(final SystemInfo systemInfo) {
+        final List<Plugin> plugins = getAllPlugins();
+        for (Plugin plugin : plugins) {
+            systemInfo.incrementPlugins();
+            final InstallState installState = plugin.getInstallState();
+            final String pluginType = plugin.getDescriptor().getType();
+            final boolean isTool = "tool".equals(pluginType);
+            if (isTool) {
+                systemInfo.incrementTools();
+            }
+            final boolean isFeature = "feature".equals(pluginType);
+            if (isFeature && installState != InstallState.DISCOVERED) {
+                systemInfo.incrementInstalledFeatures();
+            }
+            if (!isTool) {
+                if (installState == InstallState.BOARDING || installState == InstallState.INSTALLING) {
+                    systemInfo.addRebuildPlugin(plugin.getDescriptor());
+                    systemInfo.setNeedsRebuild(true);
+                } else if (installState == InstallState.ONBOARD) {
+                    systemInfo.incrementConfigurablePlugins();
+                }
+            }
+        }
+
+        // check if we have external rebuild events:
+        final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
+        for (RebuildEvent rebuildEvent : rebuildEvents) {
+            final String pluginId = rebuildEvent.getPluginId();
+            for (Plugin plugin : plugins) {
+                if (plugin.getId().equals(pluginId)) {
+                    systemInfo.setNeedsRebuild(true);
+                    systemInfo.addRebuildPlugin(plugin.getDescriptor());
+                    break;
+                }
+            }
+        }
+    }
+
     // TODO: this is not a *plugin* utility! Move to better place.
     public ProjectSettings getProjectSettings() {
         return PluginContextFactory.getContext().getProjectSettings();
@@ -173,6 +217,8 @@ public class PluginStore {
         return new RestfulList<>();
     }
 
+    private static final Semaphore serverSemaphore = new Semaphore(1);
+
     private void processPlugins(final List<Plugin> plugins) {
         for (Plugin plugin : plugins) {
             final PluginDescriptor descriptor = plugin.getDescriptor();
@@ -188,9 +234,12 @@ public class PluginStore {
 
             registerEndPoints(descriptor);
         }
-    }
 
-    private static final Semaphore serverSemaphore = new Semaphore(1);
+        // Make sure we only attempt starting the server once!
+        if (application.getClasses().size() > 0 && serverSemaphore.drainPermits() > 0) {
+            startServer();
+        }
+    }
 
     private void registerEndPoints(final PluginDescriptor descriptor) {
         final List<String> pluginRestClasses = descriptor.getRestClasses();
@@ -209,11 +258,6 @@ public class PluginStore {
                 application.addClass(endpointClass);
                 log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
             }
-        }
-
-        // Make sure we only attempt starting the server once!
-        if (application.getClasses().size() > 0 && serverSemaphore.drainPermits() > 0) {
-            startServer();
         }
     }
 

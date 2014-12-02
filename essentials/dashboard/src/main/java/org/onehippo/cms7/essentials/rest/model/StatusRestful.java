@@ -28,7 +28,7 @@ public class StatusRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean status;
+    private boolean projectInitialized;
     private int pluginsInstalled;
 
     public int getPluginsInstalled() {
@@ -39,11 +39,11 @@ public class StatusRestful implements Restful {
         this.pluginsInstalled = pluginsInstalled;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isProjectInitialized() {
+        return projectInitialized;
     }
 
-    public void setStatus(final boolean status) {
-        this.status = status;
+    public void setProjectInitialized(final boolean projectInitialized) {
+        this.projectInitialized = projectInitialized;
     }
 }

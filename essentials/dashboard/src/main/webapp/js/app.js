@@ -154,7 +154,8 @@
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             $rootScope.applicationUrl = 'http://' + window.SERVER_URL + '/essentials';
             var root = 'http://' + window.SERVER_URL + '/essentials/rest';
-            var plugins = root + "/plugins";
+            var pluginsStem = root + "/plugins";
+            var projectStem = root + "/project";
 
             /* TODO generate this server side ?*/
             $rootScope.REST = {
@@ -165,28 +166,24 @@
                 dynamic: root + '/dynamic/',
 
                 /**
-                 * Returns list of all plugins
-                 * //TODO: change this once we have marketplace up and running
+                 * PluginResource
                  */
-                plugins: root + "/plugins/",
-                ping: plugins + '/ping/',
-                projectSettings: plugins + '/settings',
-                packageStatus: plugins + '/status/package/',
-                packageMessages: plugins + '/changes/',
-                controllers: plugins + '/controllers/',
-                /**
-                 *  * /install/{className}
-                 */
-                pluginInstall: plugins + '/install/',
-                /**
-                 * Returns a list of plugin modules (javascript includes)
-                 */
-                pluginModules: plugins + '/modules/',
+                plugins: pluginsStem,
+                PLUGINS: { // Front-end API
+                    byId:               function(id) { return pluginsStem + '/' + id; },
+                    changesById:        function(id) { return pluginsStem + '/' + id + '/changes'; },
+                    setupById:          function(id) { return pluginsStem + '/' + id + '/setup'; },
+                    setupCompleteForId: function(id) { return pluginsStem + '/' + id + '/setupcomplete'; }
+                },
 
-                package_install: plugins + '/install/package',
-                pluginSetup: plugins + '/setup/',
-                save_settings: plugins + '/savesettings',
-                project_settings: plugins + '/projectsettings', // TODO: Why do we also have projectSettings?
+                /**
+                 * ProjectResource
+                 */
+                project: projectStem,
+                PROJECT: { // Front-end API
+                    settings:    projectStem + '/settings',
+                    coordinates: projectStem + '/coordinates'
+                },
 
                 //############################################
                 // NODE
@@ -210,11 +207,7 @@
              * Set global variables (often used stuff)
              */
             $rootScope.initData = function () {
-                $http.get($rootScope.REST.controllers).success(function (data) {
-                    $rootScope.controllers = data;
-                });
-
-                $http.get($rootScope.REST.projectSettings).success(function (data) {
+                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                     $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
                 });
             };
