@@ -19,7 +19,6 @@ package org.hippoecm.hst.configuration.cache;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;

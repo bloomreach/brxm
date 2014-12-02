@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,6 +28,8 @@ import org.hippoecm.hst.util.PageErrorUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * TestPageErrors

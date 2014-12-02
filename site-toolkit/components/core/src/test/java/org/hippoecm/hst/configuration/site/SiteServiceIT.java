@@ -22,8 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import junit.framework.Assert;
-
 import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;

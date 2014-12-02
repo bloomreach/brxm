@@ -20,7 +20,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.hippoecm.hst.content.annotations.Persistable;
-import org.hippoecm.hst.content.beans.Node;
 import org.junit.Before;
 import org.junit.Test;
 

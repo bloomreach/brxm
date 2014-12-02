@@ -15,16 +15,16 @@
  */
 package org.hippoecm.hst.site.container;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class TestModuleDescriptorUtils {
     

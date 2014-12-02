@@ -15,11 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class TestHstNavigationalStateCodec {

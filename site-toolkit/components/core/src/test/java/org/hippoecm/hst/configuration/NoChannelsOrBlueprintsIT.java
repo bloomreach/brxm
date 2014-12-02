@@ -21,33 +21,16 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.internal.MountDecorator;
-import org.hippoecm.hst.core.internal.MutableResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.request.MountDecoratorImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
 

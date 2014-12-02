@@ -49,10 +49,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
-import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_XTYPE;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENT;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 

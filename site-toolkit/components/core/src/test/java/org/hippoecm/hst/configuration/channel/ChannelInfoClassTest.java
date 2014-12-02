@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +24,9 @@ import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class ChannelInfoClassTest {
 

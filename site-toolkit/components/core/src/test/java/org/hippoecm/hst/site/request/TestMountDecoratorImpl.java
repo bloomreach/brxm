@@ -15,15 +15,7 @@
  */
 package org.hippoecm.hst.site.request;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -40,6 +32,13 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestMountDecoratorImpl {
 
