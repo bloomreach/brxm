@@ -1117,6 +1117,7 @@ api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_ajax_loader.less -text
 api/src/main/styling/less/_buttons.less -text
+api/src/main/styling/less/_dashboard.less -text
 api/src/main/styling/less/_doclist.less -text
 api/src/main/styling/less/_editor.less -text
 api/src/main/styling/less/_editor_preview.less -text
