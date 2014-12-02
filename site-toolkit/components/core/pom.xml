@@ -262,31 +262,27 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>com.sun.tools.jxc.maven2</groupId>
-        <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
         <version>${maven.plugins.jaxb-schemagen.version}</version>
         <executions>
           <execution>
-            <phase>generate-resources</phase>
+            <id>schemagen</id>
             <goals>
-              <goal>generate</goal>
+              <goal>schemagen</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <project>${project}</project>
-          <destdir>${project.build.directory}/schemas/META-INF/schema</destdir>
-          <srcdir>${project.build.sourceDirectory}/org/hippoecm/hst/site/addon/module/model/</srcdir>
           <includes>
-            <include>**/*.java</include>
+            <include>org/hippoecm/hst/site/addon/module/model/ModuleDefinition.java</include>
           </includes>
-          <verbose>false</verbose>
-          <schemas>
-            <schema>
-              <namespace>http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd</namespace>
-              <file>hst-addon-module_1_0.xsd</file>
-            </schema>
-          </schemas>
+          <transformSchemas>
+            <transformSchema>
+              <uri>http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd</uri>
+              <toFile>hst-addon-module_1_0.xsd</toFile>
+            </transformSchema>
+          </transformSchemas>
         </configuration>
       </plugin>
       <plugin>
@@ -327,65 +323,12 @@
         <filtering>false</filtering>
       </resource>
       <resource>
-        <directory>${project.build.directory}/schemas</directory>
+        <directory>${project.build.directory}/generated-resources/schemagen</directory>
         <includes>
           <include>**/*.xsd</include>
         </includes>
       </resource>
     </resources>
   </build>
-
-  <profiles>
-    <profile>
-      <id>tools-jdk17-default</id>
-      <activation>
-        <file><exists>${java.home}/../lib/tools.jar</exists></file>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>com.sun.tools.jxc.maven2</groupId>
-              <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-              <dependencies>
-                <dependency>
-                  <groupId>com.sun</groupId>
-                  <artifactId>tools</artifactId>
-                  <version>1.7</version>
-                  <scope>system</scope>
-                  <systemPath>${java.home}/../lib/tools.jar</systemPath>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-    <profile>
-      <id>tools-jdk17-mac</id>
-      <activation>
-        <file><exists>${java.home}/../Classes/classes.jar</exists></file>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>com.sun.tools.jxc.maven2</groupId>
-              <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-              <dependencies>
-                <dependency>
-                  <groupId>com.sun</groupId>
-                  <artifactId>tools</artifactId>
-                  <version>1.7</version>
-                  <scope>system</scope>
-                  <systemPath>${java.home}/../Classes/classes.jar</systemPath>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
