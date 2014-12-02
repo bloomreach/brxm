@@ -1,6 +1,5 @@
-
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,7 +78,7 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
             response.render(CssHeaderItem.forReference(STYLE_CSS));
         }
 
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return new StringResourceModel("create-folders-label", CreateFoldersShortcutPlugin.this, null);
         }
 
@@ -107,8 +106,7 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
             protected IDynamicWizardStep createFirstStep() {
                 settings = new FolderSettings();
 
-                IModel folderModel = new PropertyModel(settings, "folderUUID");
-                return new ChooseFolderStep(null, folderModel) {
+                return new ChooseFolderStep(null, new PropertyModel<String>(settings, "folderUUID")) {
                     private static final long serialVersionUID = 1L;
                     
                     @Override
@@ -136,9 +134,10 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
                     }
 
                     @Override
-                    protected List<String> getTypes() {
+                    protected List<ContentBuilder.CategoryType> getTypes() {
                         return builder.getFolderTypes(settings.folderUUID);
                     }
+
                 };
             }
 
@@ -181,6 +180,16 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
                     @Override
                     protected String getStepTitle() {
                         return new StringResourceModel("wizard.step.5.title", CreateFoldersShortcutPlugin.this, null).getString();
+                    }
+
+                    @Override
+                    protected void onChangeAmount(final AjaxRequestTarget target) {
+                        target.add(CreateFoldersWizard.this);
+                    }
+
+                    @Override
+                    public boolean isLastStep() {
+                        return settings.document.amount == 0;
                     }
 
                     public IDynamicWizardStep next() {

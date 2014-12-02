@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
@@ -39,6 +40,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.RangeValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.DocumentSettings;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.FolderSettings;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NameSettings;
@@ -73,13 +75,13 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             String title = getStepTitle();
             if (title != null) {
-                setTitleModel(new Model<String>(title));
+                setTitleModel(new Model<>(title));
 
             }
 
             String sum = getStepSummary();
             if (sum != null) {
-                setSummaryModel(new Model<String>(sum));
+                setSummaryModel(new Model<>(sum));
 
             }
         }
@@ -153,23 +155,23 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             }));
             add(container);
             
-            CheckGroup group = new CheckGroup<String>("typesGroup", new PropertyModel<Collection<String>>(settings, "types"));
+            CheckGroup group = new CheckGroup<>("typesGroup", new PropertyModel<Collection<ContentBuilder.CategoryType>>(settings, "types"));
             container.add(group);
 
             //group.add(new CheckGroupSelector("groupselector"));
-            final ListView<String> typesListView = new ListView<String>("types", getTypesModel()) {
+            final ListView<ContentBuilder.CategoryType> typesListView = new ListView<ContentBuilder.CategoryType>("types", getTypesModel()) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(ListItem item) {
-                    IModel m = item.getModel();
-                    item.add(new Check("check", m));
+                protected void populateItem(ListItem<ContentBuilder.CategoryType> item) {
+                    IModel<ContentBuilder.CategoryType> m = item.getModel();
+                    item.add(new Check<>("check", m));
                     item.add(new Label("name", m));
                 }
             };
             group.add(typesListView);
 
-            AjaxCheckBox randomDocs = new AjaxCheckBox("randomDocs", new PropertyModel(settings, "random")) {
+            AjaxCheckBox randomDocs = new AjaxCheckBox("randomDocs", new PropertyModel<Boolean>(settings, "random")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -186,18 +188,18 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             return false;
         }
 
-        private IModel<List<String>> getTypesModel() {
-            return new AbstractReadOnlyModel<List<String>>() {
+        private IModel<List<ContentBuilder.CategoryType>> getTypesModel() {
+            return new AbstractReadOnlyModel<List<ContentBuilder.CategoryType>>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public List<String> getObject() {
+                public List<ContentBuilder.CategoryType> getObject() {
                     return getTypes();
                 }
             };
         }
 
-        protected abstract List<String> getTypes();
+        protected abstract List<ContentBuilder.CategoryType> getTypes();
     }
 
     protected abstract class NameSettingsStep extends Step {
@@ -207,11 +209,11 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             super(previousStep);
 
             RequiredTextField<Integer> tf;
-            add(tf = new RequiredTextField<Integer>("minLength", new PropertyModel<Integer>(nameSettings, "minLength"), Integer.class));
-            tf.add(new RangeValidator<Integer>(1, 256));
+            add(tf = new RequiredTextField<>("minLength", new PropertyModel<Integer>(nameSettings, "minLength"), Integer.class));
+            tf.add(new RangeValidator<>(1, 256));
 
-            add(tf = new RequiredTextField<Integer>("maxLength", new PropertyModel<Integer>(nameSettings, "maxLength"), Integer.class));
-            tf.add(new RangeValidator<Integer>(1, 256));
+            add(tf = new RequiredTextField<>("maxLength", new PropertyModel<Integer>(nameSettings, "maxLength"), Integer.class));
+            tf.add(new RangeValidator<>(1, 256));
         }
     }
 
@@ -222,16 +224,16 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             super(previousStep);
 
             RequiredTextField<Integer> tf;
-            add(tf = new RequiredTextField<Integer>("depth", new PropertyModel<Integer>(folderSettings, "depth"), Integer.class));
-            tf.add(new RangeValidator<Integer>(0, 35));
+            add(tf = new RequiredTextField<>("depth", new PropertyModel<Integer>(folderSettings, "depth"), Integer.class));
+            tf.add(new RangeValidator<>(0, 35));
 
-            add(tf = new RequiredTextField<Integer>("minimumChildNodes", new PropertyModel<Integer>(folderSettings, "minimumChildNodes"),
+            add(tf = new RequiredTextField<>("minimumChildNodes", new PropertyModel<Integer>(folderSettings, "minimumChildNodes"),
                     Integer.class));
-            tf.add(new RangeValidator<Integer>(1, 256));
+            tf.add(new RangeValidator<>(1, 256));
 
-            add(tf = new RequiredTextField<Integer>("maximumChildNodes", new PropertyModel<Integer>(folderSettings, "maximumChildNodes"),
+            add(tf = new RequiredTextField<>("maximumChildNodes", new PropertyModel<Integer>(folderSettings, "maximumChildNodes"),
                     Integer.class));
-            tf.add(new RangeValidator<Integer>(1, 256));
+            tf.add(new RangeValidator<>(1, 256));
         }
 
     }
@@ -243,8 +245,14 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             super(previousStep);
 
             RequiredTextField<Integer> tf;
-            add(tf = new RequiredTextField<Integer>("amount", new PropertyModel<Integer>(documentSettings, "amount"), Integer.class));
-            tf.add(new RangeValidator<Integer>(0, 500));
+            add(tf = new RequiredTextField<>("amount", new PropertyModel<Integer>(documentSettings, "amount"), Integer.class));
+            tf.add(new RangeValidator<>(0, 500));
+            tf.add(new OnChangeAjaxBehavior() {
+                @Override
+                protected void onUpdate(final AjaxRequestTarget target) {
+                    onChangeAmount(target);     
+                }
+            });
 
             AjaxCheckBox checkbox = new AjaxCheckBox("addTags", new PropertyModel<Boolean>(documentSettings, "addTags")) {
 
@@ -253,6 +261,9 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
                 }
             };
             add(checkbox);
+        }
+
+        protected void onChangeAmount(final AjaxRequestTarget target) {
         }
     }
 }
