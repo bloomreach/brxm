@@ -36,24 +36,31 @@
     position: relative;
     z-index: 2;
 
-    .a_ {
-      padding-top: 1px;
-
-      a:first-of-type:focus {
-        outline: 0;
-        background-color: transparent;
-      }
-    }
-
     // Make the rows expand so it will activate the scrolling of the .hippotree div
     div.row,
     div.row-selected {
       white-space: nowrap;
       // set row height to a little higher for better clickability
-      height: 1.5em;
-      padding: 0 4px 4px;
+      height: 1.8em;
+      padding: 0 4px 0 8px;
       clear: both;
       font-size: @font-size-svg-fix;
+
+      //.help-align-horizontal-center();
+
+      .a_ {
+        //padding-top: 1px;
+        height: 1.8em;
+
+        a:first-of-type:focus {
+          outline: 0;
+          background-color: transparent;
+        }
+      }
+      
+      .hippo-tree-junction-link {
+        display: inline-block;
+      }
 
       .hippo-tree-node-link {
         display: inline-block;
@@ -64,7 +71,7 @@
         .hi-folder {
           position: relative;
           top: 3px;
-          left: 1px;
+          left: 0;
           fill: @widget-gray;
           width: 15px;
           height: 15px;
@@ -72,20 +79,22 @@
 
         // Text label
         svg + span {
-          padding-left: 4px;
+          padding-left: 1px;
           padding-right: 4px;
+          position: relative;
+          top: 1px;
         }
 
         // Legacy icon
         span.icon {
           background-repeat: no-repeat;
-          background-position: 50% 50%;
+          background-position: 0 2px;
         }
 
         // Legacy text label 
         span + span {
           display: inline-block;
-          padding-left: 2px;
+          padding-left: 1px;
           padding-top: 4px;
         }
       }
@@ -150,19 +159,17 @@
     .junction,
     .junction-last,
     .corner {
-      display: inline-block;
-      width: 14px;
 
       // Caret icons
       .hi {
         position: relative;
+        fill: @tree-junction-color;
       }
 
       .hi-bullet {
-        left: 3px;
-        top: 3px;
-        width: 14px;
-        height: 14px;
+        //top: 1px;
+        width: 9px;
+        height: 9px;
       }
 
       .hi-caret {
@@ -171,11 +178,11 @@
       }
 
       .hi-caret-down {
-        left: 5px;
+        top: 1px;
       }
 
       .hi-caret-right {
-        left: 5px;
+        
       }
     }
   }

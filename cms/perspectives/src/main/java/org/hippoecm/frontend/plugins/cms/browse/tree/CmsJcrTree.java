@@ -151,7 +151,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
 
-                final Icon icon = node.isLeaf() ? Icon.BULLET_TINY : 
+                final Icon icon = node.isLeaf() ? Icon.BULLET_LARGE : 
                         isNodeExpanded(node) ? Icon.CARET_DOWN_TINY : Icon.CARET_RIGHT_TINY;
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
   
