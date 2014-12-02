@@ -39,7 +39,6 @@
             $scope.execute = function () {
                 var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
                 Essentials.addPayloadData("sampleData", $scope.sampleData, payload);
-                Essentials.addPayloadData("pluginId", "blogPlugin", payload);
                 if ($scope.setupImport) {
                     // prefix importer values, so we have no key clashes:
                     var prefix = "importer_";
@@ -67,7 +66,7 @@
                     }
                 }
 
-                $http.post($rootScope.REST.package_install, payload).success(function (data) {
+                $http.post($rootScope.REST.PLUGINS.setupById('blogPlugin'), payload).success(function (data) {
                     // globally handled
                 });
             };
@@ -88,19 +87,19 @@
             };
             $scope.init = function () {
                 // retrieve plugin data
-                $http.get($rootScope.REST.plugins + "plugins/" + $scope.pluginId).success(function (p) {
+                $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (p) {
                     $scope.plugin = p;
                 });
 
-                $http.get($rootScope.REST.projectSettings).success(function (data) {
-                    var settings = Essentials.keyValueAsDict(data.items);
-                    $scope.importConfig.blogsBasePath = '/content/documents/' + settings.namespace + '/blog';
-                    $scope.importConfig.authorsBasePath = '/content/documents/' + settings.namespace + '/blog' + '/authors';
-                    $scope.importConfig.projectNamespace = settings.namespace;
+                $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
+                    var coordinates = Essentials.keyValueAsDict(data.items);
+                    $scope.importConfig.blogsBasePath = '/content/documents/' + coordinates.namespace + '/blog';
+                    $scope.importConfig.authorsBasePath = '/content/documents/' + coordinates.namespace + '/blog' + '/authors';
+                    $scope.importConfig.projectNamespace = coordinates.namespace;
 
                 });
 
-                $http.get($rootScope.REST.project_settings).success(function (data) {
+                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                     $scope.projectSettings = data;
                     // set some defaults
                     $scope.templateLanguage = data.templateLanguage;

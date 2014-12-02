@@ -36,7 +36,6 @@ import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -63,7 +62,6 @@ public class DefaultPluginContext implements PluginContext {
     private static final Logger log = LoggerFactory.getLogger(DefaultPluginContext.class);
     private static final long serialVersionUID = 1L;
 
-    private final Plugin plugin;
     private final Multimap<String, Object> contextData = ArrayListMultimap.create();
     private transient File siteFile;
     private String componentsPackage;
@@ -72,8 +70,7 @@ public class DefaultPluginContext implements PluginContext {
     private String projectNamespace;
     private Map<String, Object> placeholderData;
 
-    public DefaultPluginContext(final Plugin plugin) {
-        this.plugin = plugin;
+    public DefaultPluginContext() {
         final ProjectSettings document = getProjectSettings();
         if (document != null) {
             setBeansPackageName(document.getSelectedBeansPackage());
@@ -221,11 +218,6 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public boolean hasProjectSettings() {
         return projectNamespace != null && componentsPackage != null && beansPackage != null;
-    }
-
-    @Override
-    public Plugin getDescriptor() {
-        return plugin;
     }
 
     @Override

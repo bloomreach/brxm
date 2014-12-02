@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version "$Id$"
  */
 @XmlTransient
-public interface Plugin extends Serializable {
+public interface PluginDescriptor extends Serializable {
 
 
     List<String> getRestClasses();

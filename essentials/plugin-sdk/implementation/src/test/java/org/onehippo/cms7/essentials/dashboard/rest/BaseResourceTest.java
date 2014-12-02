@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.slf4j.Logger;
@@ -34,8 +34,8 @@ public class BaseResourceTest {
     @Test
     public void testPluginParsing() throws Exception {
 
-        RestfulList<PluginRestful> plugins = new RestfulList<>();
-        final PluginRestful plugin = new PluginRestful();
+        RestfulList<PluginDescriptorRestful> plugins = new RestfulList<>();
+        final PluginDescriptorRestful plugin = new PluginDescriptorRestful();
         plugin.setDescription("test");
         final Vendor vendor = new VendorRestful();
         vendor.setUrl("http://www.test.com");

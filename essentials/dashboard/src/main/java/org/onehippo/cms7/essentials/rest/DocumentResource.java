@@ -40,14 +40,13 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
 import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsCompound;
 import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsDocument;
 import org.slf4j.Logger;
@@ -101,7 +100,7 @@ public class DocumentResource extends BaseResource {
     @ApiOperation(
             value = "Returns all documents of the specified type",
             notes = "Specify the document type as {namespace}:{typename}.",
-            response = PluginRestful.class)
+            response = PluginDescriptorRestful.class)
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/{docType}")

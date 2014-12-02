@@ -33,7 +33,7 @@ import com.google.common.base.Strings;
  * @version "$Id$"
  */
 @XmlRootElement(name = "plugin")
-public class PluginRestful implements Plugin, Restful {
+public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
     private static final long serialVersionUID = 1L;
 
@@ -86,11 +86,11 @@ public class PluginRestful implements Plugin, Restful {
         this.libraries = libraries;
     }
 
-    public PluginRestful(final String name) {
+    public PluginDescriptorRestful(final String name) {
         this.name = name;
     }
 
-    public PluginRestful() {
+    public PluginDescriptorRestful() {
 
     }
 

@@ -33,13 +33,13 @@
             $scope.getStarted = function () {
                 // mark setup as done...
                 $scope.projectSettings.setupDone = true;
-                $http.post($rootScope.REST.save_settings, $scope.projectSettings).success(function () {
+                $http.post($rootScope.REST.PROJECT.settings, $scope.projectSettings).success(function () {
                     $location.path('/library'); // Start in the Library
                 });
 
             };
             $scope.setup = function () {
-                $http.get($rootScope.REST.project_settings).success(function (data) {
+                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                     $scope.projectSettings = data;
                 });
             };
@@ -56,17 +56,6 @@
                 {name: "Installed Plugins", link: "/plugins"},
                 {name: "Find", link: "/find-plugins"}
             ];
-            $scope.isPageSelected = function (path) {
-                return $location.path() == path;
-            };
-            $scope.isTabSelected = function (path) {
-                var myPath = $location.path();
-                return  myPath.indexOf(path) != -1;
-            };
-            $scope.isMenuSelected = function (path) {
-                var myPath = $location.path();
-                return  myPath.indexOf(path) != -1;
-            };
             $scope.isInstalledFeature = function (plugin) {
                 return plugin.type === 'feature'
                         && plugin.installState === 'installed';
@@ -78,21 +67,6 @@
             };
             $scope.isInstalledTool = function (plugin) {
                 return plugin.type === 'tool'; // TODO: handle install state.
-            };
-
-            $scope.showPluginDetail = function (pluginId) {
-                $scope.selectedPlugin = extracted(pluginId);
-                $rootScope.selectedPlugin = extracted(pluginId);
-            };
-            $scope.installPlugin = function (pluginId) {
-                $rootScope.pluginsCache = null;
-                $scope.selectedPlugin = extracted(pluginId);
-                if ($scope.selectedPlugin) {
-                    $http.post($rootScope.REST.pluginInstall + pluginId).success(function () {
-                        // we'll get error message or
-                        $scope.init();
-                    });
-                }
             };
             // Receive state updates from individual plugins
             $rootScope.$on('update-plugin-install-state', function(event, data) {
@@ -107,7 +81,9 @@
             $scope.init = function () {
 
                 // Retrieve project settings
-                $http.get($rootScope.REST.project_settings).success(function (data) {
+                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
+                    // TODO: ugly. If this needs to be on the rootScope, it should be put there during initialization
+                    // of the angular app.
                     $rootScope.projectSettings = data;
                 });
 
@@ -126,15 +102,6 @@
                 }
             };
             $scope.init();
-            function extracted(pluginId) {
-                var sel = null;
-                angular.forEach($scope.plugins, function (selected) {
-                    if (selected.id == pluginId) {
-                        sel = selected;
-                    }
-                });
-                return sel;
-            }
         })
 
         /*

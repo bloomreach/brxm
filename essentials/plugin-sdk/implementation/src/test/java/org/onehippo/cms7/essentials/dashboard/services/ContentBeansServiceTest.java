@@ -48,7 +48,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
 
     private TestPluginContext getTestContext() {
 
-        final TestPluginContext testPluginContext = new TestPluginContext(repository, null);
+        final TestPluginContext testPluginContext = new TestPluginContext(repository);
         testPluginContext.setComponentsPackageName("org.example.components");
         testPluginContext.setBeansPackageName("org.example.beans");
         testPluginContext.setRestPackageName("org.example.rest");

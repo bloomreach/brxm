@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.List;
 
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
@@ -27,11 +27,9 @@ import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 /**
  * @version "$Id: DummyTestPlugin.java 174785 2013-08-23 08:28:52Z mmilicevic $"
  */
-public class DummyTestPlugin implements Plugin {
+public class DummyTestPluginDescriptor implements PluginDescriptor {
 
     private static final long serialVersionUID = 1L;
-
-    private String parentPath;
 
 
     @Override

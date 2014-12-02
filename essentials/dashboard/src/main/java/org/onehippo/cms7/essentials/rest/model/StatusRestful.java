@@ -28,32 +28,22 @@ public class StatusRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private boolean projectInitialized;
+    private int pluginsInstalled;
 
-    private String name;
-    private String message;
-    private boolean status;
-
-    public String getMessage() {
-        return message;
+    public int getPluginsInstalled() {
+        return pluginsInstalled;
     }
 
-    public void setMessage(final String message) {
-        this.message = message;
+    public void setPluginsInstalled(final int pluginsInstalled) {
+        this.pluginsInstalled = pluginsInstalled;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isProjectInitialized() {
+        return projectInitialized;
     }
 
-    public void setStatus(final boolean status) {
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
+    public void setProjectInitialized(final boolean projectInitialized) {
+        this.projectInitialized = projectInitialized;
     }
 }

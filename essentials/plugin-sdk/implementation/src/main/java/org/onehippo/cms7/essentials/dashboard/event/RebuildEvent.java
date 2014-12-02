@@ -23,21 +23,15 @@ public class RebuildEvent extends MessageEvent {
 
     private static final long serialVersionUID = 1L;
 
-    private final String pluginName;
-    private final String pluginType;
+    private final String pluginId;
 
-    public RebuildEvent(final String pluginName, final String pluginType, final String message) {
+    public RebuildEvent(final String pluginId, final String message) {
         super(message);
-        this.pluginName = pluginName;
-        this.pluginType = pluginType;
+        this.pluginId = pluginId;
     }
 
-    public String getPluginName() {
-        return pluginName;
-    }
-
-    public String getPluginType() {
-        return pluginType;
+    public String getPluginId() {
+        return pluginId;
     }
 
     @Override

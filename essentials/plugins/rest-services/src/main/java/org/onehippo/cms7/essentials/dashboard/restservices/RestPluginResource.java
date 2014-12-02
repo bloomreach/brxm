@@ -151,7 +151,7 @@ public class RestPluginResource extends BaseResource {
             }
         }
         final String message = "HST Configuration changed, project rebuild needed";
-        eventBus.post(new RebuildEvent("Rest services", "tool", message));
+        eventBus.post(new RebuildEvent("restServices", message));
         messages.add(new MessageRestful(message));
         return messages;
     }

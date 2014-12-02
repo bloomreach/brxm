@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
 import com.google.common.collect.Multimap;
@@ -187,17 +186,10 @@ public interface PluginContext extends Serializable {
     boolean hasProjectSettings();
 
     /**
-     * Returns plugin descriptor of currently selected plugin
-     *
-     * @return Plugin descriptor instance
-     */
-    Plugin getDescriptor();
-
-    /**
      * Returns service instance for given Plugin descriptor
      *
      * @return instance of PluginConfigService tide to Plugin descriptor
-     * @see Plugin
+     * @see org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor
      */
     PluginConfigService getConfigService();
 

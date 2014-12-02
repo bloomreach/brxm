@@ -77,13 +77,20 @@ dashboard/pom.xml -text
 dashboard/src/main/appended-resources/META-INF/LICENSE -text
 dashboard/src/main/appended-resources/META-INF/NOTICE -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/filters/NoCacheFilter.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/InstallState.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/InstallStateMachine.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/Plugin.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginException.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginParameterServiceFactory.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/plugin/PluginStore.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/project/ProjectUtils.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
+dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ProjectResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestList.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
@@ -98,7 +105,6 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/DynamicRestPointsAp
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndpointsRestApplication.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/RestServlet.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/utils/RestUtils.java -text
 dashboard/src/main/resources/applicationContext.xml -text
 dashboard/src/main/resources/jackson.xml -text
 dashboard/src/main/resources/plugin_descriptor.json -text
@@ -762,7 +768,7 @@ dashboard/src/main/webapp/pages/introduction.html -text
 dashboard/src/main/webapp/pages/library.html -text
 dashboard/src/main/webapp/pages/tools.html -text
 dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRestfulTest.java -text
+dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginDescriptorRestfulTest.java -text
 dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/RestListTest.java -text
 dashboard/src/test/resources/log4j.xml -text
 plugin-sdk/api/pom.xml -text
@@ -785,7 +791,7 @@ plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsDependency.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
-plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Plugin.java -text
+plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginDescriptor.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ProjectSettings.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Repository.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Restful.java -text
@@ -802,8 +808,6 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultPluginParameterService.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginService.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginInstallationState.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginParameterServiceFactory.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ResourcePluginService.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DefaultPluginContext.java -text
@@ -840,8 +844,8 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/BeanWriterLogEntry.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DependencyRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DocumentRestful.java -text
+plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginDescriptorRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/RepositoryRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/SnapshotRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/VendorRestful.java -text
@@ -913,7 +917,7 @@ plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/BaseResourc
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/BaseTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/MemoryRepository.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginContext.java -text
-plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
+plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPluginDescriptor.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginServiceTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocumentTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text

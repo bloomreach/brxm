@@ -113,7 +113,7 @@
                 templateUrl: 'directives/essentials-template-settings.html',
                 controller: function ($scope, $rootScope, $http) {
                     // initialize fields to system defaults.
-                    $http.get($rootScope.REST.project_settings).success(function (data) {
+                    $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                         $scope.templateName = data.templateLanguage;
                         $scope.sampleData   = data.useSamples;
                     });
@@ -175,20 +175,21 @@
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
 
-                    $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
+                    $scope.payload = {values: {sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     $scope.$watchCollection("[sampleData, templateName]", function () {
-                        $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
+                        $scope.payload = {values: {sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     });
                     $scope.apply = function () {
-                        $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                            $rootScope.$broadcast('update-plugin-install-state', {
-                                'pluginId': $scope.pluginId,
-                                'state': 'installing'
+                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), $scope.payload)
+                            .success(function (data) {
+                                $rootScope.$broadcast('update-plugin-install-state', {
+                                    'pluginId': $scope.pluginId,
+                                    'state': 'installing'
+                                });
+                                $location.path('/installed-features');
                             });
-                            $location.path('/installed-features');
-                        });
                     };
-                    $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                    $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
                         $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
                         $scope.plugin = plugin;
                     });
@@ -304,8 +305,6 @@
                         $scope.archiveOpen = false;
                         $scope.$apply();
                     });
-
-
                 }
             }
         }).directive("essentialsPlugin", function () {
@@ -337,9 +336,9 @@
                         $scope.installButtonDisabled = true; // avoid double-clicking
                         $rootScope.pluginsCache = null;
                         var pluginId = $scope.plugin.id;
-                        $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
+                        $http.post($rootScope.REST.plugins + '/' + pluginId + '/install').success(function (data) {
                             // reload because of install state change:
-                            $http.get($rootScope.REST.plugins +'plugins/' + pluginId).success(function (data) {
+                            $http.get($rootScope.REST.PLUGINS.byId(pluginId)).success(function (data) {
                                 $scope.plugin = data;
                             });
                         });
@@ -398,12 +397,11 @@
                         if (!$scope.messagesLoaded) {
                             var payload = {
                                 values: {
-                                    pluginId: $scope.plugin.id,
                                     sampleData: $rootScope.projectSettings.useSamples,
                                     templateName: $rootScope.projectSettings.templateLanguage
                                 }
                             };
-                            $http.post($rootScope.REST.packageMessages, payload).success(function (data){
+                            $http.post($rootScope.REST.PLUGINS.changesById($scope.plugin.id), payload).success(function (data){
                                 // If there are no messages, the backend sends a single "no messages" message
                                 // with the group not set. Filter those out.
                                 if (data.items.length > 1 || data.items[0].group) {

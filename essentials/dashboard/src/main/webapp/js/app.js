@@ -51,20 +51,11 @@
                     } else {
                         $rootScope.feedbackMessages.push({type: 'error', message: error.data});
                     }
-                }
-                else if (error.status) {
+                } else if (error.status) {
                     $rootScope.feedbackMessages.push({type: 'error', message: error.status});
-                } else if (data.data && data.data.items) {
-                    angular.forEach(data.data.items, function (v) {
-                        if (value.successMessage) {
-                            $rootScope.feedbackMessages.push({type: 'error', message: v.value});
-                        }
-                    });
-                }
-                else {
+                } else {
                     $rootScope.feedbackMessages.push({type: 'error', message: error});
                 }
-
             }
 
             function addMessage($rootScope, data) {
@@ -124,13 +115,13 @@
 //############################################
 // RUN
 //############################################
-        .run(function ($rootScope, $location, $log, $http, $timeout, $templateCache, modalService, pluginTypeFilter) {
+        .run(function ($rootScope, $location, $log, $http, $templateCache) {
             $rootScope.$on('$stateChangeStart',
                 function (event, toState, toParams, fromState, fromParams) {
                     // when showing introduction, we want to hide some items:
                     $rootScope.INTRODUCTION_DISPLAYED = false;
                     if (toState && toState.url) {
-                        // disbale caching of pages:
+                        // disable caching of pages:
                         $templateCache.remove(toState.url);
                         if(toState.templateUrl){
                             $templateCache.remove(toState.templateUrl)
@@ -163,7 +154,8 @@
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             $rootScope.applicationUrl = 'http://' + window.SERVER_URL + '/essentials';
             var root = 'http://' + window.SERVER_URL + '/essentials/rest';
-            var plugins = root + "/plugins";
+            var pluginsStem = root + "/plugins";
+            var projectStem = root + "/project";
 
             /* TODO generate this server side ?*/
             $rootScope.REST = {
@@ -174,28 +166,24 @@
                 dynamic: root + '/dynamic/',
 
                 /**
-                 * Returns list of all plugins
-                 * //TODO: change this once we have marketplace up and running
+                 * PluginResource
                  */
-                plugins: root + "/plugins/",
-                ping: plugins + '/ping/',
-                projectSettings: plugins + '/settings',
-                packageStatus: plugins + '/status/package/',
-                packageMessages: plugins + '/changes/',
-                controllers: plugins + '/controllers/',
-                /**
-                 *  * /install/{className}
-                 */
-                pluginInstall: plugins + '/install/',
-                /**
-                 * Returns a list of plugin modules (javascript includes)
-                 */
-                pluginModules: plugins + '/modules/',
+                plugins: pluginsStem,
+                PLUGINS: { // Front-end API
+                    byId:               function(id) { return pluginsStem + '/' + id; },
+                    changesById:        function(id) { return pluginsStem + '/' + id + '/changes'; },
+                    setupById:          function(id) { return pluginsStem + '/' + id + '/setup'; },
+                    setupCompleteForId: function(id) { return pluginsStem + '/' + id + '/setupcomplete'; }
+                },
 
-                package_install: plugins + '/install/package',
-                pluginSetup: plugins + '/setup/',
-                save_settings: plugins + '/savesettings',
-                project_settings: plugins + '/projectsettings', // TODO: Why do we also have projectSettings?
+                /**
+                 * ProjectResource
+                 */
+                project: projectStem,
+                PROJECT: { // Front-end API
+                    settings:    projectStem + '/settings',
+                    coordinates: projectStem + '/coordinates'
+                },
 
                 //############################################
                 // NODE
@@ -219,66 +207,9 @@
              * Set global variables (often used stuff)
              */
             $rootScope.initData = function () {
-
-                var PING_RUNNING_TIMER = 7000;
-                var PING_DOWN_TIMER = 10000;
-                //############################################
-                // PINGER
-                //############################################
-                // keep reference to old modal:
-                var pingModal = null;
-                (function ping() {
-
-                    var modalOptions = {
-                        headerText: 'Service Down',
-                        bodyText: 'The setup application server appears to be down. If you are' +
-                            ' rebuilding the project, please wait until it is up and running again.'
-
-                    };
-
-                    function openModal() {
-                        if (pingModal == null) {
-                            pingModal = modalService.showModal({}, modalOptions);
-                            pingModal.then(function () {
-                                // discard modal
-                                pingModal = null;
-                            });
-                        }
-                    }
-
-                    $http.get($rootScope.REST.ping).success(function (data) {
-                        if (data) {
-                            if (data.initialized) {
-                                $timeout(ping, PING_RUNNING_TIMER);
-                                $rootScope.TOTAL_PLUGINS = data.totalPlugins;
-                                $rootScope.TOTAL_TOOLS = data.totalTools;
-                                $rootScope.INSTALLED_FEATURES = data.installedFeatures;
-                                $rootScope.NEEDS_REBUILD = data.needsRebuild;
-                                $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(data.rebuildPlugins, "feature").length + data.configurablePlugins;
-                                $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
-
-                            } else {
-                                // app is back up, but needs to restart
-                                window.location.href = $rootScope.applicationUrl;
-                            }
-                        }
-                    }).error(function () {
-                        openModal();
-                        $timeout(ping, PING_DOWN_TIMER);
-                    });
-
-                })();
-
-                $http.get($rootScope.REST.controllers).success(function (data) {
-                    $rootScope.controllers = data;
-                });
-
-
-                $http.get($rootScope.REST.projectSettings).success(function (data) {
+                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                     $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
-
                 });
-
             };
 
             $rootScope.initData();
