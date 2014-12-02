@@ -52,7 +52,7 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
 
     @Override
     public List<ListColumn<Node>> getColumns() {
-        return Collections.emptyList();
+        return Collections.singletonList(createStateColumn());
     }
 
     @Override
