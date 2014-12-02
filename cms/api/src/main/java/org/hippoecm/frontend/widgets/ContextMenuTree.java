@@ -68,35 +68,48 @@ public class ContextMenuTree extends DefaultAbstractTree {
             @Override
             public void allNodesCollapsed() {
                 dirty = true;
+                collapseAllContextMenus();
             }
 
             @Override
             public void allNodesExpanded() {
                 dirty = true;
+                collapseAllContextMenus();
             }
 
             @Override
             public void nodeCollapsed(final Object node) {
                 dirty = true;
+                collapseAllContextMenus();
             }
 
             @Override
             public void nodeExpanded(final Object node) {
                 dirty = true;
+                collapseAllContextMenus();
             }
 
             @Override
             public void nodeSelected(final Object node) {
                 dirty = true;
+                collapseAllContextMenus();
             }
 
             @Override
             public void nodeUnselected(final Object node) {
                 dirty = true;
+                collapseAllContextMenus();
             }
         });
     }
-    
+
+    private void collapseAllContextMenus() {
+        IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+        if (menuManager != null) {
+            menuManager.collapseAllContextMenus();
+        }
+    }
+
     @Override
     protected ResourceReference getCSS() {
         return null;
