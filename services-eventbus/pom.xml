@@ -37,7 +37,7 @@
     <hippo.services.version>1.05.00-SNAPSHOT</hippo.services.version>
     <hippo.commons.version>1.05.00-SNAPSHOT</hippo.commons.version>
 
-    <asm.version>4.2</asm.version>
+    <asm.version>5.0.3</asm.version>
   </properties>
 
   <scm>
