@@ -32,8 +32,6 @@
 + * (hippo:document) = hippo:document multiple version
 + hippo:request (hippo:request) multiple ignore
 
-[hippo:hardhandle] > mix:versionable mixin
-
 // DATA TYPES: VIRTUAL LAYER
 
 [hippo:facetresult] orderable

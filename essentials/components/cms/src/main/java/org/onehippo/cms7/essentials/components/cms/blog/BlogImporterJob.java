@@ -173,7 +173,7 @@ public class BlogImporterJob implements RepositoryJob {
                             } else {
                                 // create author node;
                                 log.info("Creating new Author document for name: {}", author);
-                                final Node documentNode = createHandle(prefixedNamespace, "author", authorsNode, author);
+                                final Node documentNode = createDocument(prefixedNamespace, "author", authorsNode, author);
                                 setDefaultDocumentPorperties(prefixedNamespace, documentNode, Calendar.getInstance());
                                 documentNode.setProperty(fullNameProperty, author);
                                 authorNode = authorsNode.getNode(author);
@@ -266,7 +266,7 @@ public class BlogImporterJob implements RepositoryJob {
         final String prefixedNamespace = namespace + ':';
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
-        Node documentNode = createHandle(prefixedNamespace, "blogpost", blogFolder, documentName);
+        Node documentNode = createDocument(prefixedNamespace, "blogpost", blogFolder, documentName);
         documentNode.setProperty(prefixedNamespace + "title", syndEntry.getTitle());
         documentNode.setProperty(prefixedNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
@@ -314,9 +314,9 @@ public class BlogImporterJob implements RepositoryJob {
         documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
     }
 
-    private Node createHandle(final String prefixedNamespace, final String docType, final Node rootNode, final String documentName) throws RepositoryException {
+    private Node createDocument(final String prefixedNamespace, final String docType, final Node rootNode, final String documentName) throws RepositoryException {
         Node handleNode = rootNode.addNode(documentName, "hippo:handle");
-        handleNode.addMixin("hippo:hardhandle");
+        handleNode.addMixin("mix:referenceable");
         Node documentNode = handleNode.addNode(documentName, prefixedNamespace + docType);
         documentNode.addMixin("mix:referenceable");
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
