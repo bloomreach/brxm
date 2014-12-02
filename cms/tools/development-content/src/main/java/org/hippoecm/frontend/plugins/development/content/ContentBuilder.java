@@ -498,17 +498,20 @@ public class ContentBuilder implements IClusterable {
         int targetLength = generator.nextInt((maxLength + 1) - minLength) + minLength; 
         
         do {
-            if (name.length() > 0) {
-                name.append(" ");
-            }
             names.setMaximumLength(targetLength - name.length());
             String newName = names.generate();
             if (newName == null) {
                 break;
             }
+            if (name.length() > 0) {
+                name.append(" ");
+            }
             name.append(newName);
         } while (name.length() < targetLength);
 
+        if (name.length() > targetLength) {
+            return name.substring(0, targetLength);
+        }
         return name.toString();
     }
 
