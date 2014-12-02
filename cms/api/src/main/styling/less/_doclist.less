@@ -35,15 +35,6 @@
     > tbody > tr > td {
         padding: @doclist-padding;
 
-        &:first-child {
-            padding-left: 0;
-        }
-        &:last-child {
-            .fixed-width(@doclist-left-right-padding);
-            padding: 0;
-            border-bottom: red;
-        }
-
         /* column types */
         &.doclisting-icon {
             .fixed-width(32px);
@@ -115,10 +106,6 @@
                 height: @doclist-head-height - (2 * @doclist-padding);
                 font-size: @font-size-large;
                 cursor: pointer;
-
-                &:first-child {
-                    padding-left: @doclist-left-right-padding;
-                }
             }
 
             .hippo-list-order-ascending {
@@ -138,7 +125,6 @@
         overflow-x: hidden;
         overflow-y: auto;
         width: 100%;
-        padding-left: @doclist-left-right-padding;
 
         > tr {
             /* prevent IE10 from setting tbody height on all rows */
@@ -159,40 +145,40 @@
 
             &:first-child {
                 border-top: none;
-
-                > td > span {
-                    display: block;
-                    margin-top: @doclist-padding;
-                }
             }
         }
 
         .hippo-list-selected {
 
             border-top-color: transparent;
+            background-color: @doclist-row-selected-bgcolor;
+            color: @doclist-row-selected-color;
 
-            > td:first-child,
-            > td:nth-child(2) {
-                padding: 0;
+            svg {
+                fill: @doclist-row-selected-color;
+            }
 
-                > span {
-                    display: flex;
-                    align-items: center;
-                    background-color: @doclist-row-selected-bgcolor;
-                    color: @doclist-row-selected-color;
-                    border-radius: 4px;
-                    padding: @doclist-padding @doclist-padding @doclist-padding 0;
-                    height: 2.1 * @line-height-computed;
-                }
-            }
-            > td:first-child > span {
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-            > td:nth-child(2) > span {
-                border-top-left-radius: 0;
-                border-bottom-left-radius: 0;
-            }
+//            > td:first-child,
+//            > td:nth-child(2) {
+//                padding: 0;
+//
+//                > span {
+//                    display: flex;
+//                    align-items: center;
+//                    color: @doclist-row-selected-color;
+//                    border-radius: 4px;
+//                    padding: @doclist-padding @doclist-padding @doclist-padding 0;
+//                    height: 2.1 * @line-height-computed;
+//                }
+//            }
+//            > td:first-child > span {
+//                border-top-right-radius: 0;
+//                border-bottom-right-radius: 0;
+//            }
+//            > td:nth-child(2) > span {
+//                border-top-left-radius: 0;
+//                border-bottom-left-radius: 0;
+//            }
             + tr {
                 border-top-color: transparent;
             }
@@ -202,14 +188,12 @@
 
     > tfoot > tr {
         height: @doclist-foot-height;
-        padding-left: @doclist-left-right-padding;
 
         &.hippo-list-paging {
 
             > td {
                 .paging-container {
                     border-top: 1px solid @doclist-row-separator-color;
-                    margin-left: @doclist-left-right-padding;
                     width: 100%;
                     height: @doclist-foot-height - 1;
                     display: flex;
