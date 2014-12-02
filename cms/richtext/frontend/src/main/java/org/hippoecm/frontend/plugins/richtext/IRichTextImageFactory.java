@@ -19,12 +19,9 @@ import org.apache.wicket.model.IDetachable;
 
 public interface IRichTextImageFactory extends IDetachable {
 
-    boolean isValid(IDetachable targetId, String facetSelectPath);
+    boolean isValid(IDetachable linkTarget);
 
-    String getDefaultFacetSelectPath(IDetachable targetId);
-    
-    RichTextImage loadImageItem(String path) throws RichTextException;
+    RichTextImage loadImageItem(String uuid, String type) throws RichTextException;
 
     RichTextImage createImageItem(IDetachable model) throws RichTextException;
-
 }

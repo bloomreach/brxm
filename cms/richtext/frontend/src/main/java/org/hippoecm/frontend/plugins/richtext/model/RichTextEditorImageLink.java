@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
     private static final Logger log = LoggerFactory.getLogger(RichTextEditorImageLink.class);
 
     public static final String URL = "f_url";
-    public static final String FACET_SELECT = "f_facetselect";
     public static final String ALT = "f_alt";
     public static final String ALIGN = "f_align";
     public static final String WIDTH = "f_width";
@@ -51,20 +49,12 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
         return get(URL);
     }
 
-    public void setFacetSelectPath(String facetSelectPath) {
-        put(FACET_SELECT, facetSelectPath);
-    }
-
-    public String getFacetSelectPath() {
-        return get(FACET_SELECT);
-    }
-
     public void setType(String type){
         put(TYPE, type);
     }
 
     public String getType(){
-        return (String) get(TYPE);
+        return get(TYPE);
     }
 
     @Override

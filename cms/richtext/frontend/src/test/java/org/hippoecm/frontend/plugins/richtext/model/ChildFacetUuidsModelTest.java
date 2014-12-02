@@ -476,24 +476,10 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
-    public void setTextRestoresSrcAndRemovesFacetSelectAndType() throws RepositoryException {
-        addChildFacetNode("image.jpg", "0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21");
-        model.setObject("<img src=\"/binaries/image.jpg/{_document}/hippogallery:original\" data-facetselect=\"image.jpg/{_document}/hippogallery:original\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\" data-type=\"hippogallery:original\" />");
-        assertEquals("<img src=\"image.jpg/{_document}/hippogallery:original\" />", textModel.getObject());
-    }
-
-    @Test
     public void getSrcWithoutVariantOmitsType() throws RepositoryException {
         addChildFacetNode("image.jpg", "0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21");
         textModel.setObject("<img src=\"image.jpg\" />");
         assertEquals("<img src=\"/binaries/image.jpg\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\" />", model.getObject());
-    }
-
-    @Test
-    public void setSrcWithoutVariantRemovesFacetSelect() throws RepositoryException {
-        addChildFacetNode("image.jpg", "0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21");
-        model.setObject("<img src=\"/binaries/image.jpg\" data-facetselect=\"image.jpg\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\" />");
-        assertEquals("<img src=\"image.jpg\" />", textModel.getObject());
     }
 
     @Test
@@ -517,7 +503,7 @@ public class ChildFacetUuidsModelTest {
         image.setSelectedResourceDefinition("hippogallery:original");
 
         final IRichTextImageFactory mockImageFactory = EasyMock.createMock(IRichTextImageFactory.class);
-        expect(mockImageFactory.loadImageItem(eq("image.jpg/{_document}/hippogallery:original"))).andReturn(image);
+        expect(mockImageFactory.loadImageItem(eq("0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21"),eq("hippogallery:original"))).andReturn(image);
 
         final IRichTextLinkFactory mockLinkFactory = EasyMock.createMock(IRichTextLinkFactory.class);
         expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton("0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21"));

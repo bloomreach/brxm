@@ -88,7 +88,7 @@ public class RichTextFacetHelper {
         return null;
     }
 
-    static String getChildFacetNameOrNull(final Node node, final String uuid) {
+    public static String getChildFacetNameOrNull(final Node node, final String uuid) {
         try {
             final NodeIterator children = node.getNodes();
             while (children.hasNext()) {

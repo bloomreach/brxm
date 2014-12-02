@@ -34,7 +34,6 @@ import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImage;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,41 +53,26 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
     }
 
     /**
-     * Load an existing RichTextImage, using the provided path.  The path is the relative
-     * path to the facetselect that points to the handle of the image.
-     * @throws RichTextException 
+     * Load an existing RichTextImage using the uuid and type.
+     * @throws RichTextException
      */
-    public RichTextImage loadImageItem(String path) throws RichTextException {
-        // find the nodename of the facetselect
-        if (Strings.isEmpty(path)) {
-            throw new IllegalArgumentException("path is empty");
+    @Override
+    public RichTextImage loadImageItem(String uuid, String type) throws RichTextException {
+        if (Strings.isEmpty(uuid)) {
+            throw new IllegalArgumentException("uuid is empty");
         }
         try {
-            String name = path;
-            String relPath = null;
-            if (path.indexOf('/') > 0) {
-                name = path.substring(0, path.indexOf('/'));
-                relPath = path.substring(path.indexOf('/') + 1);
-            }
             javax.jcr.Session session = UserSession.get().getJcrSession();
-            Node root = nodeModel.getObject();
-            if (root.hasNode(name)) {
-                Node link = root.getNode(name);
-                if (link.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String uuid = link.getProperty("hippo:docbase").getString();
-                    try {
-                        Node node = session.getNodeByIdentifier(uuid);
-                        return createImageItem(node, name, relPath);
-                    } catch (ItemNotFoundException infe) {
-                        throw new RichTextException("Could not resolve " + uuid);
-                    }
-                }
+            try {
+                Node node = session.getNodeByIdentifier(uuid);
+                String name = RichTextFacetHelper.getChildFacetNameOrNull(nodeModel.getObject(), uuid);
+                return createImageItem(node, name, type);
+            } catch (ItemNotFoundException infe) {
+                throw new RichTextException("Could not resolve " + uuid);
             }
-            log.error("Link {} does not correspond to a valid facetselect", path);
-            throw new RichTextException("Canonical node is null at relative path " + path);
         } catch (RepositoryException e) {
-            log.error("Error resolving image " + path);
-            throw new RichTextException("Error retrieving canonical node for imageNode[" + path + "]", e);
+            log.error("Error resolving image " + uuid);
+            throw new RichTextException("Error retrieving canonical node for imageNode[" + uuid + "]", e);
         }
     }
 
@@ -115,37 +99,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         }
     }
 
-    public boolean isValid(IDetachable targetId, String facetSelectPath) {
-        if (!isValid(targetId)) {
-            return false;
-        }
-        if (facetSelectPath == null) {
-            return false;
-        }
-        if (facetSelectPath.indexOf('/') <= 0) {
-            return false;
-        }
-        String docsub = facetSelectPath.substring(facetSelectPath.indexOf('/') + 1);
-        if (!docsub.startsWith("{_document}/")) {
-            return false;
-        }
-        String resource = docsub.substring(docsub.indexOf('/') + 1);
-        if (resource.indexOf('/') > 0) {
-            return false;
-        }
-
-        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
-        Node node = selectedModel.getObject();
-        try {
-            node = node.getNode(node.getName());
-            return node.hasNode(resource);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return false;
-    }
-
-    private boolean isValid(IDetachable targetId) {
+    public boolean isValid(IDetachable targetId) {
         if (!(targetId instanceof JcrNodeModel)) {
             return false;
         }
@@ -168,38 +122,12 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         return false;
     }
 
-    public String getDefaultFacetSelectPath(IDetachable targetId) {
-        if (!isValid(targetId)) {
-            return null;
-        }
-        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
-        Node node = selectedModel.getObject();
-        try {
-            if (node.isNodeType("hippo:handle")) {
-                node = node.getNode(node.getName());
-                Item primary = JcrHelper.getPrimaryItem(node);
-                for (NodeIterator children = node.getNodes(); children.hasNext();) {
-                    Node child = children.nextNode();
-                    if (primary.isSame(child)) {
-                        continue;
-                    }
-                    if (child.isNodeType("hippo:resource")) {
-                        return node.getName() + "/{_document}/" + child.getName();
-                    }
-                }
-                return node.getName() + "/{_document}/" + primary.getName();
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return null;
-    }
-
     /**
      * Create a RichTextImage that corresponds to the (physical) handle.
-     * @throws RichTextException 
+     *
+     * @throws RichTextException
      */
-    private RichTextImage createImageItem(Node node, String name, String selectedResource) throws RichTextException {
+    private RichTextImage createImageItem(Node node, String name, String type) throws RichTextException {
         try {
             boolean isNew = name == null;
             if (isNew) {
@@ -209,9 +137,6 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
             NodeType nodetype = node.getPrimaryNodeType();
             if (nodetype.getName().equals("hippo:handle")) {
                 node = node.getNode(node.getName());
-                if (selectedResource != null) {
-                    selectedResource = selectedResource.substring(selectedResource.indexOf('/') + 1);
-                }
             }
 
             List<String> resourceDefinitions = new LinkedList<String>();
@@ -220,7 +145,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 throw new RichTextException("Invalid image document");
             }
 
-            for (NodeIterator children = node.getNodes(); children.hasNext();) {
+            for (NodeIterator children = node.getNodes(); children.hasNext(); ) {
                 Node child = children.nextNode();
                 if (primary.isSame(child)) {
                     continue;
@@ -236,8 +161,8 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
 
             RichTextImage rti = new RichTextImage(node.getPath(), name);
             rti.setResourceDefinitions(resourceDefinitions);
-            if (selectedResource != null) {
-                rti.setSelectedResourceDefinition(selectedResource);
+            if (type != null) {
+                rti.setSelectedResourceDefinition(type);
             } else {
                 rti.setSelectedResourceDefinition(resourceDefinitions.get(0));
             }

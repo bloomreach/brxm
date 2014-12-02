@@ -216,7 +216,6 @@
 
     function initImagePicker(editor, callbackUrl) {
         var IMAGE_ATTRIBUTE_PARAMETER_MAP = {
-                'data-facetselect': 'f_facetselect',
                 'data-type': 'f_type',
                 'data-uuid': 'f_uuid',
                 src: 'f_url',
@@ -265,7 +264,7 @@
             label: LANG.imageTooltip,
             command: 'pickImage',
             toolbar: 'insert,5',
-            allowedContent: 'img[!data-type,!data-uuid,!src,data-facetselect,alt,align,width,height]',
+            allowedContent: 'img[!data-type,!data-uuid,!src,alt,align,width,height]',
             requiredContent: 'img[!data-type,!data-uuid,!src]'
         });
 

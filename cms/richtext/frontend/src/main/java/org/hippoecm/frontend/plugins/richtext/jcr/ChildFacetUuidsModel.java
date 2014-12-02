@@ -69,7 +69,6 @@ public class ChildFacetUuidsModel implements IModel<String> {
     private static final String ATTRIBUTE_SRC = "src";
     private static final String ATTRIBUTE_DATA_UUID = "data-uuid";
     private static final String ATTRIBUTE_DATA_TYPE = "data-type";
-    private static final String ATTRIBUTE_DATA_FACETSELECT = "data-facetselect";
 
     private static final String IMAGE_DOCUMENT = "{_document}";
     private static final String IMAGE_SEPARATOR = "/";
@@ -116,7 +115,7 @@ public class ChildFacetUuidsModel implements IModel<String> {
                         }
                     }
                 } catch (RepositoryException | RichTextException e) {
-                    log.info(e.getMessage());
+                    log.info(e.getMessage(), e);
                 }
                 return true;
             }
@@ -227,7 +226,7 @@ public class ChildFacetUuidsModel implements IModel<String> {
                         }
                     }
                 } catch (RepositoryException | RichTextException e) {
-                    log.info(e.getMessage());
+                    log.info(e.getMessage(), e);
                 }
                 return true;
             }
@@ -253,12 +252,7 @@ public class ChildFacetUuidsModel implements IModel<String> {
             return;
         }
 
-        final Node node = nodeModel.getObject();
-        String name = RichTextFacetHelper.getChildFacetNameOrNull(node, uuid);
-        if (name == null) {
-            name = RichTextFacetHelper.createFacet(node, uuid);
-        }
-
+        final String name = findOrCreateFacetNode(uuid);
         if (name != null) {
             attributes.put(ATTRIBUTE_HREF, name);
         } else {
@@ -276,17 +270,12 @@ public class ChildFacetUuidsModel implements IModel<String> {
 
         final String uuid = attributes.remove(ATTRIBUTE_DATA_UUID);
         final String type = attributes.remove(ATTRIBUTE_DATA_TYPE);
-        attributes.remove(ATTRIBUTE_DATA_FACETSELECT); // link picker passes wrong value so we drop it
 
         if (uuid == null) {
             return;
         }
 
-        Node node = nodeModel.getObject();
-        String name = RichTextFacetHelper.getChildFacetNameOrNull(node, uuid);
-        if (name == null) {
-            name = RichTextFacetHelper.createFacet(node, uuid);
-        }
+        final String name = findOrCreateFacetNode(uuid);
         if (name == null) {
             return;
         }
@@ -295,6 +284,15 @@ public class ChildFacetUuidsModel implements IModel<String> {
             src += IMAGE_SEPARATOR + IMAGE_DOCUMENT + IMAGE_SEPARATOR + type;
         }
         attributes.put(ATTRIBUTE_SRC, src);
+    }
+
+    private String findOrCreateFacetNode(String uuid) throws RepositoryException {
+        final Node node = nodeModel.getObject();
+        String name = RichTextFacetHelper.getChildFacetNameOrNull(node, uuid);
+        if (name == null) {
+            name = RichTextFacetHelper.createFacet(node, uuid);
+        }
+        return name;
     }
 
     public void detach() {
