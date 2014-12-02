@@ -1130,6 +1130,7 @@ api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_navigator.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text
+api/src/main/styling/less/_revision_history.less -text
 api/src/main/styling/less/_scaffolding.less -text
 api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
