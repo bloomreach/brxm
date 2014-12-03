@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>1.02.06-SNAPSHOT</version>
+    <version>1.02.06</version>
   </parent>
 
   <name>Hippo Essentials Plugin SDK</name>
