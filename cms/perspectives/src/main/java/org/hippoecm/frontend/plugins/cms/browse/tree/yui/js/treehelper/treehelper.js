@@ -132,12 +132,12 @@ if (!YAHOO.hippo.TreeHelper) {
                 });
 
                 if (selected === null) {
-                    if (!Dom.hasClass(highlight, 'hide')) {
-                        Dom.addClass(highlight, 'hide');
+                    if (!Dom.hasClass(highlight, 'hippo-global-hideme')) {
+                        Dom.addClass(highlight, 'hippo-global-hideme');
                     }
                 } else {
-                    if (Dom.hasClass(highlight, 'hide')) {
-                        Dom.removeClass(highlight, 'hide');
+                    if (Dom.hasClass(highlight, 'hippo-global-hideme')) {
+                        Dom.removeClass(highlight, 'hippo-global-hideme');
                     }
 
                     selectedY = Dom.getY(selected);
