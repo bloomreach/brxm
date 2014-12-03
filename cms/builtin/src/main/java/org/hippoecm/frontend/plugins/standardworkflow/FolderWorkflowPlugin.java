@@ -31,6 +31,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -47,6 +48,7 @@ import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.event.payload.NodeRenamed;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -151,9 +153,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             defaultWorkflow.replaceAllLocalizedNames(localName);
                         }
 
-                        // select will browse to the tree's renamed node and therefore update the label
-                        final JcrNodeModel renamedModel = new JcrNodeModel(node.getPath(), true/*forceChange*/);
-                        select(renamedModel);
+                        // send a NodeRenamed event
+                        send(getPage(), Broadcast.DEPTH, new NodeRenamed(node.getPath()));
                     }
                 });
             }

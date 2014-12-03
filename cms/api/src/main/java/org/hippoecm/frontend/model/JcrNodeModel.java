@@ -42,7 +42,6 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
 
     private IObservationContext<JcrNodeModel> context;
     private JcrEventListener listener;
-    private transient boolean forceChange = false;
     private transient boolean parentCached = false;
     private transient JcrNodeModel parent;
 
@@ -72,17 +71,6 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
      */
     public JcrNodeModel(String path) {
         super(path, false);
-    }
-
-    /**
-     * Create a JcrNodeModel based on an absolute JCR path, and flag it as being changed.
-     *
-     * @param path the JCR path to the Node.
-     * @param forceChange flag for making this model never equal to another model.
-     */
-    public JcrNodeModel(final String path, final boolean forceChange) {
-        this(path);
-        this.forceChange = forceChange;
     }
 
     /**
@@ -182,9 +170,6 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
             return true;
         }
         final JcrNodeModel nodeModel = (JcrNodeModel) object;
-        if (this.forceChange != nodeModel.forceChange) {
-            return false;
-        }
         return getItemModel().equals(nodeModel.getItemModel());
     }
 
