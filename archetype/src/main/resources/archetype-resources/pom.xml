@@ -65,7 +65,7 @@
     <hippo.repository.version>2.26.09</hippo.repository.version>
     <!-- ***END temporary override of versions*** -->
 
-    <essentials.version>1.02.05</essentials.version>
+    <essentials.version>1.02.06</essentials.version>
     <jsp-api.version>2.1</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
