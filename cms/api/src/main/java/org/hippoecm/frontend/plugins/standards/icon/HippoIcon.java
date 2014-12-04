@@ -36,14 +36,16 @@ public class HippoIcon extends Panel {
 
         setRenderBodyOnly(true);
 
-        add(new WebMarkupContainer("container") {
+        final WebMarkupContainer container = new WebMarkupContainer("container") {
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 final Response response = RequestCycle.get().getResponse();
                 response.write(icon.getInlineSvg());
                 super.onComponentTag(tag);
             }
-        });
+        };
+        container.setRenderBodyOnly(true);
+        add(container);
     }
 
     public HippoIcon(final String id, final ResourceReference reference) {
