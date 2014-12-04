@@ -341,6 +341,7 @@ test/src/test/java/org/hippoecm/repository/FacetedNavigationPerfTestCase.java -t
 test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/ReferenceUUIDAuthorizationTest.java -text
 test/src/test/java/org/hippoecm/repository/SecurityDelegationTest.java -text
 test/src/test/java/org/hippoecm/repository/concurrent/StampedeTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/FacetedReferenceTest.java -text

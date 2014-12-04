@@ -34,6 +34,7 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -189,7 +190,18 @@ public class AuthorizationQuery {
             case PropertyType.STRING:
                 Name facetName = facetRule.getFacetName();
                 try {
-                    if (indexingConfig.isFacet(facetName)) {
+                    if (NameConstants.JCR_UUID.equals(facetName)) {
+                        Query tq;
+                        // note no check required for isFacetOptional since every node has a uuid
+                        if (facetRule.isEqual()) {
+                            tq = new TermQuery(new Term(FieldNames.UUID, value));
+                        } else {
+                            tq = QueryHelper.negateQuery(
+                                    new TermQuery(new Term(FieldNames.UUID, value)));
+                        }
+                        return tq;
+                    }
+                    else if (indexingConfig.isFacet(facetName)) {
                         String fieldName = ServicingNameFormat.getInternalFacetName(facetName, nsMappings);
                         String internalNameTerm = nsMappings.translateName(facetName);
                         Query tq;

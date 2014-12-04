@@ -747,6 +747,18 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
+        if (NameConstants.JCR_UUID.equals(facetRule.getFacetName())) {
+            boolean uuidMatch = false;
+            if (nodeState.getNodeId().toString().equals(facetRule.getValue())) {
+                uuidMatch = true;
+            }
+            if (facetRule.isEqual()) {
+                return uuidMatch;
+            } else {
+                return !uuidMatch;
+            }
+        }
+
         // check if node has the required property value
         if (matchPropertyWithFacetRule(nodeState, facetRule)) {
             log.trace("Found match : {} for facetVal: {}", nodeState.getId(), facetRule);

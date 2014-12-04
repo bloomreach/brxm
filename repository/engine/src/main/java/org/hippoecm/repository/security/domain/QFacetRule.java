@@ -153,28 +153,13 @@ public class QFacetRule implements Serializable {
         String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
         String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
         if ("".equals(path)) {
-            uuid = facetNode.getSession().getRootNode().getUUID().toString();
+            uuid = facetNode.getSession().getRootNode().getIdentifier().toString();
         } else {
             try {
-                uuid = facetNode.getSession().getRootNode().getNode(path).getUUID().toString();
+                uuid = facetNode.getSession().getRootNode().getNode(path).getIdentifier().toString();
             } catch (PathNotFoundException e) {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Path not found for facetRule ");
-                msg.append("'").append(facetNode.getPath()).append("' : ");
-                msg.append("QFacetRule");
-                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
-                msg.append("[");
-                msg.append(facet);
-                if (equals) {
-                    msg.append(" == ");
-                } else {
-                    msg.append(" != ");
-                }
-                msg.append(pathValue).append("]");
-                throw new RepositoryException(msg.toString(), e);
-            } catch (UnsupportedRepositoryOperationException e) {
-                StringBuilder msg = new StringBuilder();
-                msg.append("Node is not referenceable for facetRule ");
                 msg.append("'").append(facetNode.getPath()).append("' : ");
                 msg.append("QFacetRule");
                 msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
