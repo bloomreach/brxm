@@ -194,13 +194,7 @@ public class AuthorizationQuery {
                         String internalNameTerm = nsMappings.translateName(facetName);
                         Query tq;
                         if (FacetAuthConstants.WILDCARD.equals(value)) {
-                            if (facetRule.isEqual()) {
-                                tq = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
-                            } else {
-                                // When the rule is : facet != * , the authorization is allowed on all nodes not having the property
-                                tq = QueryHelper.negateQuery(
-                                        new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
-                            }
+                            tq = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                         } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
                             tq = expandUser(fieldName, userIds);
                         } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {

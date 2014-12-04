@@ -333,6 +333,7 @@ test/config/mysql-repository.xml -text
 test/pom.xml svneol=native#text/plain
 test/src/test/fixtures/dump.zip -text
 test/src/test/java/org/hippoecm/repository/CheckoutNodeTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/FacetValueWildcardAuthorizationTest.java -text
 test/src/test/java/org/hippoecm/repository/FacetedAuthorizationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationChildNameTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationNamespaceTest.java svneol=native#text/plain
