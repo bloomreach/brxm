@@ -33,6 +33,7 @@
             this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
                 autoWidth: true,
                 id: 'hippo-channelmanager-breadcrumb',
+                height: 27,
                 breadcrumbIconUrl: config.breadcrumbIconUrl,
                 layoutConfig: {
                     pack: 'left'

@@ -817,8 +817,9 @@
                 element.removeClass("channel-manager-fullscreen");
                 yuiLayout = element.findParent("div.yui-layout-unit");
                 this.resizeListener = function(sizes) {
-                    // The height of the yui layout div also includes the space for the toolbar, so subtract that.
-                    iframe.setSize(sizes.body.w, sizes.body.h - this.TOOLBAR_HEIGHT);
+                    // The height of the yui layout div also includes the space for the breadcrumb toolbar, so subtract that.
+                    var breadcrumbToolbar = Ext.getCmp('hippo-channelmanager-breadcrumb');
+                    iframe.setSize(sizes.body.w, sizes.body.h - breadcrumbToolbar.height);
                 };
                 YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, this.resizeListener, true);
 
