@@ -38,12 +38,12 @@
 
             YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
 
-                resize: function(sizes, preserveScroll) {
+                resize: function(sizes) {
                     var table = $('#' + this.id);
-                    this._resize(table, sizes, preserveScroll);
+                    this._resize(table, sizes);
                 },
 
-                _resize: function(table, sizes, preserveScroll) {
+                _resize: function(table, sizes) {
                     var theadRow = table.find('thead > tr'),
                         tbody = table.children('tbody'),
                         tfootRow = table.find('tfoot > tr');
