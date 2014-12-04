@@ -312,7 +312,6 @@
                 autoSelect: true,
                 hidden: !this.areVariantsEnabled(), // hide when only default is available
                 tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}" ext:qtip="{comboName}{[ Ext.isEmpty(values.description) ? "" : ":<br>&quot;" + fm.htmlEncode(values.description) + "&quot;" ]}">{comboName}</div></tpl>',
-                width: 190,
                 listeners: {
                     scope: this,
                     beforequery: function(queryEvent) {
@@ -456,7 +455,6 @@
                         text: this.initialConfig.resources['close-button'],
                         iconCls: 'save-close-channel',
                         allowDepress: false,
-                        width: 120,
                         listeners: {
                             click: {
                                 fn: this.pageContainer.toggleMode,
@@ -469,7 +467,6 @@
                         text: this.initialConfig.resources['discard-my-button'],
                         iconCls: 'discard-channel',
                         allowDepress: false,
-                        width: 120,
                         hidden: true,
                         listeners: {
                             click: {
@@ -501,7 +498,6 @@
                         mode: 'show',
                         iconCls: 'channel-settings',
                         allowDepress: false,
-                        width: 120,
                         listeners: {
                             click: {
                                 fn: function(button) {
@@ -535,7 +531,6 @@
                         mode: (toolboxVisible ? 'hide' : 'show'),
                         allowDepress: false,
                         iconCls: 'add-components',
-                        width: 120,
                         listeners: {
                             click: {
                                 fn: function(button) {
@@ -1100,7 +1095,6 @@
                 id: 'template-composer-toolbar-pages-button',
                 text: this.initialConfig.resources['pages-button'],
                 iconCls: 'btn-pages',
-                width: 80,
                 listeners: {
                     click: {
                         fn: this.showPages,
@@ -1116,7 +1110,6 @@
                 id: 'template-composer-toolbar-edit-button',
                 text: this.initialConfig.resources['edit-button'],
                 iconCls: 'edit-channel',
-                width: 120,
                 listeners: {
                     click: {
                         fn: this.pageContainer.toggleMode,
@@ -1128,7 +1121,6 @@
                 id: 'template-composer-toolbar-publish-button',
                 text: this.initialConfig.resources['publish-my-button'],
                 iconCls: 'publish-channel',
-                width: 120,
                 hidden: true,
                 listeners: {
                     click: {
@@ -1145,7 +1137,6 @@
                 id: 'template-composer-toolbar-discard-button',
                 text: this.initialConfig.resources['discard-my-button'],
                 iconCls: 'discard-channel',
-                width: 120,
                 hidden: true,
                 listeners: {
                     click: {
@@ -1162,7 +1153,6 @@
                 id: 'template-composer-toolbar-manage-changes-button',
                 text: this.initialConfig.resources['manage-changes-button'],
                 iconCls: 'publish-channel',
-                width: 120,
                 hidden: !this.canManageChanges || this.channel.changedBySet.length === 0,
                 listeners: {
                     click: {
