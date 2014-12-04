@@ -279,9 +279,7 @@
             return {
                 xtype: 'button',
                 id: 'template-composer-toolbar-fullscreen-button',
-                text: this.resources[fullscreen ? 'expand-button' : 'collapse-button'],
                 iconCls: fullscreen ? 'expand' : 'collapse',
-                width: 120,
                 listeners: {
                     click: {
                         fn: function(button) {
@@ -406,7 +404,7 @@
                 }
                 toolbar.add(
                     this.createPagesButton(),
-                    ' ',
+                    '->',
                     variantsComboBoxLabel,
                     variantsComboBox,
                     this.getFullScreenButtonConfig(true)
@@ -484,16 +482,12 @@
                             }
                         }
                     },
-                    ' ',
                     this.createPagesButton(),
-                    ' ',
-                    variantsComboBoxLabel,
-                    variantsComboBox,
-                    '->',
                     {
                         id: 'template-composer-toolbar-page-settings-button',
                         text: this.initialConfig.resources['page-settings-button'],
                         mode: 'show',
+                        iconCls: 'page-settings',
                         listeners: {
                             click: {
                                 fn: this.showPageSettings,
@@ -505,6 +499,7 @@
                         id: 'template-composer-toolbar-channel-properties-button',
                         text: this.initialConfig.resources['show-channel-properties-button'],
                         mode: 'show',
+                        iconCls: 'channel-settings',
                         allowDepress: false,
                         width: 120,
                         listeners: {
@@ -539,6 +534,7 @@
                         text: (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
                         mode: (toolboxVisible ? 'hide' : 'show'),
                         allowDepress: false,
+                        iconCls: 'add-components',
                         width: 120,
                         listeners: {
                             click: {
@@ -558,6 +554,9 @@
                             }
                         }
                     },
+                    '->',
+                    variantsComboBoxLabel,
+                    variantsComboBox,
                     {
                         id: 'template-composer-toolbar-gear-menu',
                         cls: 'toolbarMenuIcon',

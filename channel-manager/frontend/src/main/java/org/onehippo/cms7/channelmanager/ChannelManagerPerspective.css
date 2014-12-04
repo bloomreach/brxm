@@ -22,16 +22,17 @@
 }
 
 .page-editor-panel > .x-panel-bwrap > .x-panel-body {
-    border-bottom: 1px solid #565B65;
+    border-bottom: 2px solid #565B65;
 }
 
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
     background: #e9ebee none;
-    border-top: 0;
     padding-top: 4px;
     padding-bottom: 4px;
+    border-top: 0;
     border-bottom-color: #565B65;
+    border-bottom-width: 2px;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
@@ -52,8 +53,8 @@
 }
 
 .channel-manager .channel-manager-toolbar .x-btn-mc {
-    border: 1px solid #bebebe;
-    background: transparent url("bg.gif") repeat-x 0 0;
+    border: none;
+    background: none;
     text-align: left;
 }
 
