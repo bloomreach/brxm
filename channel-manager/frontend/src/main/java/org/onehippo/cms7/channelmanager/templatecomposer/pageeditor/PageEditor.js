@@ -385,6 +385,7 @@
 
             if (this.fullscreen) {
                 toolbar.add(
+                        '->',
                         variantsComboBoxLabel,
                         variantsComboBox,
                         this.getFullScreenButtonConfig(false)
