@@ -529,7 +529,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
             // index each level of the path for searching
             for (InternalValue value : values) {
-                doc.add(new Field(ServicingFieldNames.HIPPO_UUIDS, value.getString(), Field.Store.NO,
+                doc.add(new Field(ServicingFieldNames.HIPPO_PATH, value.getString(), Field.Store.NO,
                         Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
             }
 
