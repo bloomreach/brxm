@@ -78,7 +78,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_fr.properties 
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/add-channel.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/bg.gif -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/breadcrumb-arrow.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/button-edit-content.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
