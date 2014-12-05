@@ -558,19 +558,13 @@
                         id: 'template-composer-toolbar-gear-menu',
                         cls: 'toolbarMenuIcon',
                         iconCls: 'channel-gear',
-                        allowDepress: false,
                         hidden: this.hideHstConfigEditor,
-                        menu: {
-                            items: {
-                                text: this.initialConfig.resources['edit-hst-configuration'],
-                                listeners: {
-                                    click: {
-                                        fn: function() {
-                                            this.fireEvent('edit-hst-config', this.channelId, this.hstMountPoint);
-                                        },
-                                        scope: this
-                                    }
-                                }
+                        listeners: {
+                            click: {
+                                fn: function() {
+                                    this.fireEvent('edit-hst-config', this.channelId, this.hstMountPoint);
+                                },
+                                scope: this
                             }
                         }
                     }
