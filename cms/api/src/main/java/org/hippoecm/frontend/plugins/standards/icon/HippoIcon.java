@@ -31,7 +31,28 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
 
-    public HippoIcon(final String id, final Icon icon) {
+    /**
+     * Renders a hippo icon via a reference to the icon sprint.
+     * @param id the Wicket id of the icon
+     * @param icon the icon to render
+     * @return the icon component
+     */
+    public static HippoIcon fromSprite(final String id, final Icon icon) {
+        return new HippoIcon(id, icon, false);
+    }
+
+    /**
+     * Renders a hippo icon as an inline SVG. This makes it possible to, for example,
+     * style the individual shapes in the SVG via CSS.
+     * @param id the Wicket id of the icon
+     * @param icon the icon to render
+     * @return the icon component
+     */
+    public static HippoIcon inline(final String id, final Icon icon) {
+        return new HippoIcon(id, icon, true);
+    }
+
+    private HippoIcon(final String id, final Icon icon, final boolean inline) {
         super(id);
 
         setRenderBodyOnly(true);
@@ -40,7 +61,11 @@ public class HippoIcon extends Panel {
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 final Response response = RequestCycle.get().getResponse();
-                response.write(icon.getInlineSvg());
+                if (inline) {
+                    response.write(icon.getInlineSvg());
+                } else {
+                    response.write(icon.getSpriteReference());
+                }
                 super.onComponentTag(tag);
             }
         };
@@ -48,15 +73,43 @@ public class HippoIcon extends Panel {
         add(container);
     }
 
-    public HippoIcon(final String id, final ResourceReference reference) {
-        this(id, reference, null, null);
+    /**
+     * Renders an icon stored in a resource. When the icon's file extension is '.svg',
+     * the icon is rendered as an inline SVG image.
+     * @param id the Wicket id of the icon
+     * @param icon the icon to render
+     * @return the icon component
+     */
+    public static HippoIcon fromResource(final String id, final ResourceReference reference) {
+        return fromResource(id, reference, -1, -1);
     }
 
-    public HippoIcon(final String id, final ResourceReference reference, IconSize size) {
-        this(id, reference, size.getSize(), size.getSize());
+    /**
+     * Renders an icon stored in a resource, including 'width' and 'height' atrtibutes.
+     * When the icon's file extension is '.svg', the icon is rendered as an inline SVG image.
+     * @param id the Wicket id of the icon
+     * @param icon the icon to render
+     * @param size the size to use as width and height value, in pixels
+     * @return the icon component
+     */
+    public static HippoIcon fromResource(final String id, final ResourceReference reference, final IconSize size) {
+        return fromResource(id, reference, size.getSize(), size.getSize());
     }
 
-    public HippoIcon(final String id, final ResourceReference reference, final Integer width, final Integer height) {
+    /**
+     * Renders an icon stored in a resource, including 'width' and 'height' atrtibutes.
+     * When the icon's file extension is '.svg', the icon is rendered as an inline SVG image.
+     * @param id the Wicket id of the icon
+     * @param icon the icon to render
+     * @param width the width of the icon in pixels
+     * @param height the height of the icon in pixels
+     * @return the icon component
+     */
+    public static HippoIcon fromResource(final String id, final ResourceReference reference, final int width, final int height) {
+        return new HippoIcon(id, reference, width, height);
+    }
+
+    private HippoIcon(final String id, final ResourceReference reference, final int width, final int height) {
         super(id);
         
         setRenderBodyOnly(true);
@@ -70,10 +123,10 @@ public class HippoIcon extends Panel {
             Image image = new CachingImage("image", reference);
             fragment.add(image);
             
-            if (width != null) {
+            if (width >= 0) {
                 image.add(AttributeModifier.replace("width", width));
             }
-            if (height != null) {
+            if (height >= 0) {
                 image.add(AttributeModifier.replace("height", height));
             }
         }

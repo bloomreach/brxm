@@ -56,7 +56,7 @@ public class IconRenderer implements IListCellRenderer<Node> {
     }
 
     private HippoIcon defaultIcon(final String id) {
-        return new HippoIcon(id, Icon.BULLET_LARGE);
+        return HippoIcon.fromSprite(id, Icon.EMPTY_SMALL);
     }
 
     @Override
@@ -65,55 +65,7 @@ public class IconRenderer implements IListCellRenderer<Node> {
     }
 
     protected HippoIcon getIcon(final String id, final Node node) throws RepositoryException {
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            if (node.hasNode(node.getName())) {
-                Node child = node.getNode(node.getName());
-                String nodeTypeIconName = StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
-                return getIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.SMALL);
-            }
-            return new HippoIcon(id, Icon.DOCUMENT_SMALL);
-        } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            if (node instanceof HippoNode) {
-                Node canonical;
-                try {
-                    canonical = ((HippoNode) node).getCanonicalNode();
-                    if (canonical == null) {
-                        return new HippoIcon(id, Icon.FOLDER_SMALL);
-                    }
-                } catch (ItemNotFoundException ex) {
-                    return new HippoIcon(id, Icon.EMPTY_SMALL);
-                }
-                Node parent = canonical.getParent();
-                if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (!canonical.isSame(node)) {
-                        return new HippoIcon(id, Icon.DOCUMENT_SMALL);
-                    } else {
-                        String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
-                        return getIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.TINY);
-                    }
-                }
-            } else {
-                Node parent = node.getParent();
-                if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
-                    return getIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.TINY);
-                }
-            }
-        }
-
-        String type = node.getPrimaryNodeType().getName();
-        if (type.equals("hipposysedit:templatetype")) {
-            return new HippoIcon(id, Icon.DOCUMENT_SMALL);
-        }
-        return new HippoIcon(id, Icon.FOLDER_SMALL);
-    }
-
-    private HippoIcon getIcon(String id, String name, Icon defaultIcon, IconSize size) {
-        ResourceReference reference = BrowserStyle.getIconOrNull(name, size);
-        if (reference != null) {
-            return new HippoIcon(id, reference);
-        }
-        return new HippoIcon(id, defaultIcon);
+        return IconRenderUtil.getIcon(id, node);
     }
 
 }

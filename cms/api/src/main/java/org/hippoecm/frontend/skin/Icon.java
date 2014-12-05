@@ -35,19 +35,22 @@ public enum Icon {
     CARET_RIGHT_TINY,
     CARET_DOWN_TINY,
     CARET_LEFT_TINY,
+    DOCUMENT_TINY,
     DOCUMENT_SMALL,
     DROPDOWN_TINY,
+    EMPTY_TINY,
     EMPTY_SMALL,
     FOLDER_TINY,
     FOLDER_SMALL,
     FOLDER_OPEN_TINY,
     STATE_CHANGED_TINY,
     STATE_LIVE_TINY,
-    STATE_OFFLINE_TINY;
+    STATE_NEW_TINY;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 
-    private static final String SPRITE_FILE_NAME = "images/icons/hippo-icons.svg";
+    private static final String ICONS_DIR = "images/icons/";
+    private static final String SPRITE_FILE_NAME = ICONS_DIR + "hippo-icons.svg";
 
     public static String getIconSprite() {
         PackageResourceReference hippoIcons = getIconSpriteReference();
@@ -74,14 +77,30 @@ public enum Icon {
     }
 
     /**
-     * Returns an inline svg representation of this icon of the form
-     * <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
+     * Returns an inline svg representation of this icon that refers to the icon in the sprite.
+     * It has of the form <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
      *
      * @see Icon#getSpriteId()
      * @see Icon#getCssClasses()
      */
-    public String getInlineSvg() {
+    public String getSpriteReference() {
         return "<svg class=\"" + getCssClasses() + "\"><use xlink:href=\"#" + getSpriteId() + "\" /></svg>";
+    }
+
+    /**
+     * Returns an inline svg representation of this icon. All CSS classes of this icon will be set.
+     *
+     * @see Icon#getCssClasses()
+     */
+    public String getInlineSvg() {
+        final String iconPath = ICONS_DIR + getFileName() + ".svg";
+        final PackageResourceReference reference = new PackageResourceReference(Icon.class, iconPath);
+        try {
+            return "<svg class=\"" + getCssClasses() + "\" " + StringUtils.substringAfter(svgAsString(reference), "<svg ");
+        } catch (ResourceStreamNotFoundException|IOException e) {
+            log.warn("Cannot find inline svg of {}", name(), e);
+            return "";
+        }
     }
 
     /**

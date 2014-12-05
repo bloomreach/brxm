@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,26 +52,16 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
 
     @Override
     public List<ListColumn<Node>> getColumns() {
-        return Collections.singletonList(createStateColumn());
+        return Collections.emptyList();
     }
 
     @Override
     public List<ListColumn<Node>> getExpandedColumns() {
         List<ListColumn<Node>> columns = new ArrayList<>();
-        columns.add(createStateColumn());
         columns.add(createLastModifiedDateColumn());
         columns.add(createLastModifiedByColumn());
         columns.add(createPublicationDateColumn());
         return columns;
-    }
-
-    private ListColumn<Node> createStateColumn() {
-        ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("doclisting-state", getClass()), "state");
-        column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer<Node>());
-        column.setAttributeModifier(new StateIconAttributeModifier());
-        column.setCssClass(DocumentListColumn.STATE.getCssClass());
-        return column;
     }
 
     private ListColumn<Node> createLastModifiedDateColumn() {

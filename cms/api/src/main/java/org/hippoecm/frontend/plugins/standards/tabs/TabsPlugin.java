@@ -226,10 +226,6 @@ public class TabsPlugin extends RenderPlugin {
         return !this.tabs.isEmpty();
     }
 
-    Panel getEmptyPanel() {
-        return emptyPanel;
-    }
-
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         tabbie.renderer.focus(null);
         onSelectTab(tabs.indexOf(tabbie));
@@ -539,12 +535,12 @@ public class TabsPlugin extends RenderPlugin {
 
         public Component getIcon(String id, IconSize size) {
             ResourceReference reference = decorator != null ? decorator.getIcon(size) : null;
-            return reference != null ? new HippoIcon(id, reference, size) : null;
+            return reference != null ? HippoIcon.fromResource(id, reference, size) : null;
         }
 
         public Component getActiveIcon(String id, IconSize size) {
             ResourceReference reference = decorator != null ? decorator.getActiveIcon(size) : null;
-            return reference != null ? new HippoIcon(id, reference, size) : null;
+            return reference != null ? HippoIcon.fromResource(id, reference, size) : null;
         }
 
         public Panel getPanel(String panelId) {

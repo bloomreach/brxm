@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ public class ImageIconRenderer extends IconRenderer {
     @Override
     protected HippoIcon getIcon(String id, Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            // TODO: replace BULLET_LARGE with image.svg icon
-            return new HippoIcon(id, Icon.BULLET_LARGE);
+            // TODO: replace EMPTY_SMALL with image.svg icon
+            return HippoIcon.fromSprite(id, Icon.EMPTY_SMALL);
         }
         return super.getIcon(id, node);
     }

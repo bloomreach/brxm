@@ -158,6 +158,35 @@
         fill: @doclist-row-selected-color;
       }
 
+      .hi-state-new {
+        .hi-shape-circle {
+          fill: @doclist-row-selected-color;
+        }
+        .hi-shape-stripe {
+          fill: @doclist-row-selected-bgcolor;
+        }
+      }
+
+      .hi-state-live {
+        .hi-shape-circle {
+          fill: @doclist-row-selected-color;
+        }
+        .hi-shape-checkmark {
+          fill: @doclist-row-selected-bgcolor;
+        }
+      }
+
+      .hi-state-changed {
+        .hi-shape-circle,
+        .hi-shape-triangle {
+          fill: @doclist-row-selected-color;
+        }
+        .hi-shape-checkmark,
+        .hi-shape-exclamation-mark {
+          fill: @doclist-row-selected-bgcolor;
+        }
+      }
+
       + tr {
         border-top-color: transparent;
       }

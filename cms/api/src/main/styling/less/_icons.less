@@ -75,3 +75,55 @@
 .hi-caret-right {
   transform: rotate(0deg);
 }
+
+// Stacked icons
+.hi-stack {
+  position: relative;
+  display: inline-block;
+
+  > .hi {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+// Default colors of shapes in icons
+.hi-document,
+.hi-folder {
+  fill: @aqua;
+}
+
+.hi-state-new {
+  .hi-shape-circle {
+    fill: #f45151;
+  }
+  .hi-shape-stripe {
+    fill: #fff;
+  }
+}
+
+.hi-state-live {
+  .hi-shape-circle {
+    fill: #5bbc5b;
+  }
+  .hi-shape-checkmark {
+    fill: #fff;
+  }
+}
+
+.hi-state-changed {
+  .hi-shape-circle {
+    fill: #5bbc5b;
+  }
+  .hi-shape-checkmark {
+    fill: #fff;
+  }
+  .hi-shape-triangle {
+    fill: #f6de49;
+  }
+  .hi-shape-exclamation-mark {
+    fill: #231f20;
+  }
+}
+

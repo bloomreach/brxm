@@ -157,7 +157,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
   
                 final Response response = RequestCycle.get().getResponse();
                 response.write("<span class=\"" + cssClassOuter + "\">");
-                response.write(icon.getInlineSvg());
+                response.write(icon.getSpriteReference());
                 response.write("</span>");
             }
         }.setRenderBodyOnly(true);
@@ -180,7 +180,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
                 super.onComponentTag(tag);
                 ResourceReference icon = getNodeIcon(node);
                 if (icon instanceof IconResourceReference) {
-                    final String svg = ((IconResourceReference) icon).getIcon().getInlineSvg();
+                    final String svg = ((IconResourceReference) icon).getIcon().getSpriteReference();
                     RequestCycle.get().getResponse().write(svg);
                     setRenderBodyOnly(true);
                 } else if (icon.getExtension().equalsIgnoreCase("svg") && icon instanceof PackageResourceReference) {
