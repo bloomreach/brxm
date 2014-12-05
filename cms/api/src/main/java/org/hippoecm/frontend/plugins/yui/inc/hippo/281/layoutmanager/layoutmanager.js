@@ -549,6 +549,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 if (unit !== null) {
                     this.unitExpanded = position;
                     unit.set('width', this.layout.getSizes().doc.w);
+                    Dom.replaceClass(unit.body, 'yui-layout-collapsed', 'yui-layout-expanded');
                 }
             },
 
@@ -561,6 +562,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     if(config !== null) {
                         this.unitExpanded = null;
                         unit.set('width', Number(config.width));
+                        Dom.replaceClass(unit.body, 'yui-layout-expanded', 'yui-layout-collapsed');
                         this.children.forEach(this, function(k, v) {
                             v.checkSizes();
                         });

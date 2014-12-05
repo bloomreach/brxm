@@ -208,17 +208,16 @@
           align-items: center;
 
           .paging-navigator {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
+            font-size: @font-size-small;
 
-            .first, .prev, .next, .last, a {
-              padding: 2px 6px;
-              margin: 0 1px;
+            em, a {
+              border: 1px solid transparent;
+              padding: 2px 5px;
             }
+
             a {
               background-color: @doclist-paging-button-fill;
-              border: 1px solid @doclist-paging-button-stroke;
+              border-color: @doclist-paging-button-stroke;
               border-radius: 2px;
               color: @text-color;
               &:hover {
@@ -230,8 +229,8 @@
 
           }
           .paging-label {
-            display: inline-block;
             position: absolute;
+            font-size: @font-size-tiny;
             height: @font-size-base;
             padding-top: (@doclist-foot-height - @font-size-base) / 2;
             right: @doclist-padding;
@@ -254,4 +253,8 @@
 
 .toggle-button > a > img {
   vertical-align: bottom;
+}
+
+.yui-layout-collapsed .hippo-list-documents .paging-label {
+  visibility: hidden;
 }
