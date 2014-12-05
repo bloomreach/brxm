@@ -30,9 +30,11 @@
     background: #e9ebee none;
     padding-top: 4px;
     padding-bottom: 4px;
-    border-top: 0;
-    border-bottom-color: #565B65;
-    border-bottom-width: 2px;
+    border-bottom: 0;
+}
+
+#pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
+    border-bottom: 2px solid #565B65;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {

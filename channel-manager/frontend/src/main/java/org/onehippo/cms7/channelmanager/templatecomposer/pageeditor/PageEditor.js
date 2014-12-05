@@ -253,6 +253,7 @@
                         hidden: true,
                         tbar: {
                             id: 'pageEditorToolbar',
+                            border: false,
                             cls: 'channel-manager-toolbar',
                             height: this.TOOLBAR_HEIGHT,
                             items: []
