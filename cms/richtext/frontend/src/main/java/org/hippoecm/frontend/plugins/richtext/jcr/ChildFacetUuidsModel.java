@@ -73,23 +73,25 @@ public class ChildFacetUuidsModel implements IModel<String> {
     private static final String IMAGE_DOCUMENT = "{_document}";
     private static final String IMAGE_SEPARATOR = "/";
 
+    private static final HtmlCleaner cleaner = new HtmlCleaner();
+
+    static {
+        final CleanerProperties properties = cleaner.getProperties();
+        properties.setOmitXmlDeclaration(true);
+        properties.setOmitHtmlEnvelope(true);
+        properties.setUseEmptyElementTags(true);
+    }
+
     private final IModel<String> delegate;
     private final IModel<Node> nodeModel;
     private final IRichTextLinkFactory linkFactory;
     private final IImageURLProvider imageLinkProvider;
-    private final HtmlCleaner cleaner;
 
     public ChildFacetUuidsModel(IModel<String> delegate, IModel<Node> nodeModel, IRichTextLinkFactory linkFactory, IImageURLProvider imageLinkProvider) {
         this.delegate = delegate;
         this.nodeModel = nodeModel;
         this.linkFactory = linkFactory;
         this.imageLinkProvider = imageLinkProvider;
-
-        cleaner = new HtmlCleaner();
-        final CleanerProperties properties = cleaner.getProperties();
-        properties.setOmitXmlDeclaration(true);
-        properties.setOmitHtmlEnvelope(true);
-        properties.setUseEmptyElementTags(true);
     }
 
     public String getObject() {
