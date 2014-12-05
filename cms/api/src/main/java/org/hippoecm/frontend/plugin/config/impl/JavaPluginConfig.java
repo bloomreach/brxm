@@ -82,6 +82,13 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         return (IPluginConfig) value;
     }
 
+    @Override
+    public void putAll(final Map<? extends String, ?> map) {
+        for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Object put(String key, Object value) {

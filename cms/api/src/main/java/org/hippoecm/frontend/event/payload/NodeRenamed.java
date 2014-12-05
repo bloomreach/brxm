@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,15 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.richtext;
+package org.hippoecm.frontend.event.payload;
 
-import org.apache.wicket.model.IDetachable;
+public class NodeRenamed {
 
-public interface IRichTextImageFactory extends IDetachable {
+    private String path;
 
-    boolean isValid(IDetachable linkTarget);
+    public NodeRenamed(final String path) {
+        this.path = path;
+    }
 
-    RichTextImage loadImageItem(String uuid, String type) throws RichTextException;
-
-    RichTextImage createImageItem(IDetachable model) throws RichTextException;
+    public String getPath() {
+        return path;
+    }
 }

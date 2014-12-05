@@ -21,12 +21,12 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
+import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**
@@ -53,10 +53,9 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
         final IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory, nodeModel);
 
         final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
-        final RichTextImageMetaDataModel prefixingModel = new RichTextImageMetaDataModel(stripScriptModel, urlProvider);
-        final BrowsableModel browsableModel = new BrowsableModel(prefixingModel, previewLinksBehavior);
+        final BrowsableModel browsableModel = new BrowsableModel(stripScriptModel, previewLinksBehavior);
 
-        return browsableModel;
+        return new ChildFacetUuidsModel(browsableModel, nodeModel, linkFactory, urlProvider);
     }
 
 }

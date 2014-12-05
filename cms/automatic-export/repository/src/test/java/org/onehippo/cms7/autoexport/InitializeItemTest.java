@@ -16,12 +16,14 @@
 package org.onehippo.cms7.autoexport;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.jcr.observation.Event;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -53,37 +55,50 @@ public class InitializeItemTest {
         assertTrue(instruction.isCombineDirective());
         assertEquals("/test", instruction.getContextPath());
         
-        Collection<DeltaXMLInstruction> nodeInstructions = instruction.getNodeInstructions();
+        List<DeltaXMLInstruction> nodeInstructions = new ArrayList<>(instruction.getNodeInstructions());
         assertNotNull(nodeInstructions);
         assertEquals(2, nodeInstructions.size());
-        
-        DeltaXMLInstruction child1 = nodeInstructions.toArray(new DeltaXMLInstruction[2])[0];
-        assertEquals("/test/foo", child1.getContextPath());
-        assertTrue(child1.isNoneDirective());
+
+        Collections.sort(nodeInstructions, new Comparator<DeltaXMLInstruction>() {
+            @Override
+            public int compare(final DeltaXMLInstruction o1, final DeltaXMLInstruction o2) {
+                return o1.getContextPath().compareTo(o2.getContextPath());
+            }
+        });
+        DeltaXMLInstruction child1 = nodeInstructions.get(0);
+        assertEquals("/test/bar", child1.getContextPath());
+        assertTrue(child1.isCombineDirective());
         assertNull(child1.getNodeInstructions());
-        assertNull(child1.getPropertyInstructions());
-        DeltaXMLInstruction child2 = nodeInstructions.toArray(new DeltaXMLInstruction[2])[1];
-        assertEquals("/test/bar", child2.getContextPath());
-        assertTrue(child2.isCombineDirective());
+        assertNotNull(child1.getPropertyInstructions());
+        assertEquals(1, child1.getPropertyInstructions().size());
+        DeltaXMLInstruction child2 = nodeInstructions.get(1);
+        assertEquals("/test/foo", child2.getContextPath());
+        assertTrue(child2.isNoneDirective());
         assertNull(child2.getNodeInstructions());
-        assertNotNull(child2.getPropertyInstructions());
-        assertEquals(1, child2.getPropertyInstructions().size());
+        assertNull(child2.getPropertyInstructions());
         
-        Collection<DeltaXMLInstruction> propertyInstructions = instruction.getPropertyInstructions();
+        List<DeltaXMLInstruction> propertyInstructions = new ArrayList<>(instruction.getPropertyInstructions());
         assertNotNull(propertyInstructions);
         assertEquals(2, propertyInstructions.size());
+
+        Collections.sort(propertyInstructions, new Comparator<DeltaXMLInstruction>() {
+            @Override
+            public int compare(final DeltaXMLInstruction o1, final DeltaXMLInstruction o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         
-        DeltaXMLInstruction child3 = propertyInstructions.toArray(new DeltaXMLInstruction[2])[0];
-        assertTrue(child3.isNoneDirective());
+        DeltaXMLInstruction child3 = propertyInstructions.get(0);
+        assertTrue(child3.isOverrideDirective());
         assertTrue(!child3.isNodeInstruction());
-        assertEquals("foo", child3.getName());
-        
-        DeltaXMLInstruction child4 = propertyInstructions.toArray(new DeltaXMLInstruction[2])[1];
-        assertTrue(child4.isOverrideDirective());
+        assertNull(child3.getNodeInstructions());
+        assertNull(child3.getPropertyInstructions());
+        assertEquals("bar", child3.getName());
+
+        DeltaXMLInstruction child4 = propertyInstructions.get(1);
+        assertTrue(child4.isNoneDirective());
         assertTrue(!child4.isNodeInstruction());
-        assertNull(child4.getNodeInstructions());
-        assertNull(child4.getPropertyInstructions());
-        assertEquals("bar", child4.getName());
+        assertEquals("foo", child4.getName());
     }
     
     @Test

@@ -22,12 +22,10 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImage;
-import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,13 +48,12 @@ public class RichTextEditorImageService implements IDetachable {
 
             @Override
             public boolean isValid() {
-                return super.isValid() && factory.isValid(getLinkTarget(), getFacetSelectPath());
+                return super.isValid() && factory.isValid(getLinkTarget());
             }
 
             @Override
             public void setLinkTarget(IModel<Node> model) {
                 super.setLinkTarget(model);
-                setFacetSelectPath(factory.getDefaultFacetSelectPath(model));
                 setInitType(getType());
             }
 
@@ -80,7 +77,6 @@ public class RichTextEditorImageService implements IDetachable {
             public void delete() {
                 RichTextImage item = loadImageItem(this);
                 if (item != null) {
-                    setFacetSelectPath("");
                     setType("");
                     setUrl("");
                     setUuid("");
@@ -95,13 +91,13 @@ public class RichTextEditorImageService implements IDetachable {
     }
 
     private RichTextImage loadImageItem(Map<String, String> values) {
-        String path = values.get(RichTextEditorImageLink.FACET_SELECT);
-        if (!Strings.isEmpty(path)) {
-            path = RichTextUtil.decode(path);
+        String uuid = values.get(RichTextEditorImageLink.UUID);
+        String type = values.get(RichTextEditorImageLink.TYPE);
+        if (!Strings.isEmpty(uuid)) {
             try {
-                return factory.loadImageItem(path);
+                return factory.loadImageItem(uuid, type);
             } catch (RichTextException e) {
-                log.warn("Could not load rich text image " + path);
+                log.warn("Could not load rich text image " + uuid);
             }
         }
         return null;

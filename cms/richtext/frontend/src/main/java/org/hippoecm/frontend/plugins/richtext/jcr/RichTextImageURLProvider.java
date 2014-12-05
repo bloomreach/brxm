@@ -45,10 +45,11 @@ public class RichTextImageURLProvider implements IImageURLProvider {
 
     public String getURL(String link) throws RichTextException {
         final String facetName = StringUtils.substringBefore(link, "/");
+        final String type = StringUtils.substringAfterLast(link, "/");
         final Node node = this.nodeModel.getObject();
-        final String uuidOrNull = RichTextFacetHelper.getChildDocBaseOrNull(node, facetName);
-        if (uuidOrNull != null && linkFactory.getLinkUuids().contains(uuidOrNull)) {
-            RichTextImage rti = imageFactory.loadImageItem(link);
+        final String uuid = RichTextFacetHelper.getChildDocBaseOrNull(node, facetName);
+        if (uuid != null && linkFactory.getLinkUuids().contains(uuid)) {
+            RichTextImage rti = imageFactory.loadImageItem(uuid, type);
             return rti.getUrl();
         }
         return link;

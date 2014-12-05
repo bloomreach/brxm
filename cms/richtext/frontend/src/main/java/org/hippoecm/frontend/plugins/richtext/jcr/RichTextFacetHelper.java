@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.richtext.jcr;
 
-import java.util.Set;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -37,15 +35,14 @@ public class RichTextFacetHelper {
     private RichTextFacetHelper() {
     }
 
-    static void createFacets(final Node node, final Set<String> uuids) throws RepositoryException {
+    static String createFacet(Node node, String uuid) throws RepositoryException {
         final Session session = node.getSession();
-        for (String uuid : uuids) {
-            try {
-                final Node target = session.getNodeByIdentifier(uuid);
-                createFacet(node, target.getName(), uuid);
-            } catch (ItemNotFoundException e) {
-                log.warn("Cannot create facet node below '{}', target UUID does not exist: '{}'", JcrUtils.getNodePathQuietly(node), uuid);
-            }
+        try {
+            final Node target = session.getNodeByIdentifier(uuid);
+            return createFacet(node, target.getName(), uuid);
+        } catch (ItemNotFoundException e) {
+            log.warn("Cannot create facet node below '{}', target UUID does not exist: '{}'", JcrUtils.getNodePathQuietly(node), uuid);
+            return null;
         }
     }
 
@@ -91,7 +88,7 @@ public class RichTextFacetHelper {
         return null;
     }
 
-    static String getChildFacetNameOrNull(final Node node, final String uuid) {
+    public static String getChildFacetNameOrNull(final Node node, final String uuid) {
         try {
             final NodeIterator children = node.getNodes();
             while (children.hasNext()) {

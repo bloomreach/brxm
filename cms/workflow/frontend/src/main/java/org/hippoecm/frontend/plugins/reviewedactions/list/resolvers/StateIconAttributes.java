@@ -38,6 +38,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLESUMMARY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
@@ -169,15 +170,15 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 retrieveProperties(document, primaryType);
             }
             if (document != null
-                    && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
-                    || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
+                    && (primaryType.isNodeType(NT_PUBLISHABLESUMMARY)
+                    || document.isNodeType(NT_PUBLISHABLESUMMARY))) {
                 cssClass = StateIconAttributeModifier.PREFIX
                         + (isHistoric ? "prev-" : "")
                         + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
-                IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
+                IModel<String> stateModel = new JcrPropertyValueModel<>(new JcrPropertyModel(document
                         .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
                 summary = new TypeTranslator(new JcrNodeTypeModel(
-                        HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
+                        NT_PUBLISHABLESUMMARY)).getValueName(
                         HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
 
                 observable.setTarget(new JcrNodeModel(document));

@@ -75,7 +75,6 @@ import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.WorkflowException;
@@ -437,20 +436,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     protected void onOk() {
         RichTextEditorImageLink image = getModelObject();
 
-        boolean imageIsValid = false;
-        String facetSelect = image.getFacetSelectPath();
-        if (facetSelect != null && facetSelect.indexOf('/') > 0) {
-            String basePath = facetSelect.substring(0, facetSelect.lastIndexOf('/') + 1);
-            String imageType = image.getType();
-            image.setFacetSelectPath(basePath + imageType);
-            imageIsValid = image.isValid();
-            if (!imageIsValid) {
-                image.setFacetSelectPath(facetSelect);
-                imageIsValid = image.isValid();
-            }
-        }
-
-        if (imageIsValid) {
+        if (image.isValid()) {
             image.save();
             okSucceeded = true;
         } else {
