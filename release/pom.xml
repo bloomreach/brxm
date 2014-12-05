@@ -57,11 +57,11 @@
     <hippo.services.webresources.version>1.05.00-SNAPSHOT</hippo.services.webresources.version>
     <hippo.utilities.version>1.04.00-SNAPSHOT</hippo.utilities.version>
 
-    <forge.content-blocks.version>1.11.01</forge.content-blocks.version>
+    <forge.content-blocks.version>1.11.02-SNAPSHOT</forge.content-blocks.version>
     <forge.dashboard-document-wizard.version>1.05.01</forge.dashboard-document-wizard.version>
     <forge.ecm-tagging.version>4.09.00-SNAPSHOT</forge.ecm-tagging.version>
     <forge.gallerypicker.version>1.13.00</forge.gallerypicker.version>
-    <forge.poll.version>1.08.02-SNAPSHOT</forge.poll.version>
+    <forge.poll.version>1.08.02</forge.poll.version>
     <forge.relateddocs.version>2.10.02-SNAPSHOT</forge.relateddocs.version>
     <forge.resource-bundle-editor.version>1.02.05</forge.resource-bundle-editor.version>
     <forge.robotstxt.version>1.08.00</forge.robotstxt.version>
