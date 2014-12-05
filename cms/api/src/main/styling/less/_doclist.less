@@ -109,13 +109,19 @@
       }
 
       .hippo-list-order-ascending {
-        color: @doclist-head-sorted-color;
-        background: url("@{images_legacy}/icons/arrow-sort-down-16.png") no-repeat right;
+        > span {
+          padding-right: 16px;
+          color: @doclist-head-sorted-color;
+          background: url("@{images_legacy}/icons/arrow-sort-down-16.png") no-repeat right;
+        }
       }
 
       .hippo-list-order-descending {
-        color: @doclist-head-sorted-color;
-        background: url("@{images_legacy}/icons/arrow-sort-up-16.png") center right no-repeat;
+        > span {
+          padding-right: 16px;
+          color: @doclist-head-sorted-color;
+          background: url("@{images_legacy}/icons/arrow-sort-up-16.png") center right no-repeat;
+        }
       }
     }
   }
