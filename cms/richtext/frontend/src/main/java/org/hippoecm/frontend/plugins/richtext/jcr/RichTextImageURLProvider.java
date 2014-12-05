@@ -24,14 +24,10 @@ import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RichTextImageURLProvider implements IImageURLProvider {
 
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(RichTextImageURLProvider.class);
 
     private final IRichTextImageFactory imageFactory;
     private final IRichTextLinkFactory linkFactory;
