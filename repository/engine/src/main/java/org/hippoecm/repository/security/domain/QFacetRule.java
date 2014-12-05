@@ -149,7 +149,7 @@ public class QFacetRule implements Serializable {
      * @throws RepositoryException
      */
     private String parseReferenceTypeValue(Node facetNode) throws RepositoryException {
-        String uuid = null;
+        final String uuid;
         String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
         String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
         if ("".equals(path)) {

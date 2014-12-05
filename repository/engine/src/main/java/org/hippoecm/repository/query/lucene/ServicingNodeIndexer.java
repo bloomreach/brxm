@@ -87,6 +87,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
     public Document createDoc() throws RepositoryException {
         Document doc = super.createDoc();
 
+        // index ancestor uuids + self
+        indexUuidsHierarchy(doc);
+
         addBinaries(doc);
 
         indexNodeName(doc);
@@ -101,6 +104,24 @@ public class ServicingNodeIndexer extends NodeIndexer {
             }
         }
         return doc;
+    }
+
+    private void indexUuidsHierarchy(final Document doc) throws RepositoryException {
+        try {
+            NodeState current = node;
+            for (;;) {
+                doc.add(new Field(ServicingFieldNames.HIPPO_UUIDS, current.getId().toString(), Field.Store.NO,
+                        Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
+                if (current.getParentId() == null) {
+                    // root node or free floating
+                    break;
+                }
+                current = (NodeState) stateProvider.getItemState(current.getParentId());
+            }
+
+        } catch (ItemStateException e) {
+            throwRepositoryException(e);
+        }
     }
 
     private void addFacetValues(final Document doc, final PropertyId id, final Name propName) throws RepositoryException {
@@ -508,7 +529,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
             // index each level of the path for searching
             for (InternalValue value : values) {
-                doc.add(new Field(ServicingFieldNames.HIPPO_PATH, value.getString(), Field.Store.NO,
+                doc.add(new Field(ServicingFieldNames.HIPPO_UUIDS, value.getString(), Field.Store.NO,
                         Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
             }
 

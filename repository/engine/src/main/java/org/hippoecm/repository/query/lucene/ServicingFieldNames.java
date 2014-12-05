@@ -46,6 +46,12 @@ public interface ServicingFieldNames {
     public static final String HIPPO_PATH = "_:HIPPOPATH:".intern();
 
     /**
+     * Name of the field that contains the UUID of the node + all UUIDS of its ancestors. Terms are stored
+     * but not tokenized.
+     */
+    public static final String HIPPO_UUIDS = "_:HIPPOUUID".intern();
+
+    /**
      * Prefix for all field names that are depth properties.
      */
     public static final String HIPPO_DEPTH = "_:HIPPODEPTH:".intern();

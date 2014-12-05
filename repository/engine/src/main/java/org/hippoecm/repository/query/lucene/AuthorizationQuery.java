@@ -191,15 +191,22 @@ public class AuthorizationQuery {
                 Name facetName = facetRule.getFacetName();
                 try {
                     if (NameConstants.JCR_UUID.equals(facetName)) {
-                        Query tq;
+                        final Query tq = new TermQuery(new Term(FieldNames.UUID, value));
                         // note no check required for isFacetOptional since every node has a uuid
                         if (facetRule.isEqual()) {
-                            tq = new TermQuery(new Term(FieldNames.UUID, value));
+                            return tq;
                         } else {
-                            tq = QueryHelper.negateQuery(
-                                    new TermQuery(new Term(FieldNames.UUID, value)));
+                            return QueryHelper.negateQuery(tq);
                         }
-                        return tq;
+                    }
+                    if (NameConstants.JCR_PATH.equals(facetName)) {
+                        final Query tq = new TermQuery(new Term(ServicingFieldNames.HIPPO_UUIDS, value));
+                        // note no check required for isFacetOptional since every node has a uuid
+                        if (facetRule.isEqual()) {
+                            return tq;
+                        } else {
+                            return QueryHelper.negateQuery(tq);
+                        }
                     }
                     else if (indexingConfig.isFacet(facetName)) {
                         String fieldName = ServicingNameFormat.getInternalFacetName(facetName, nsMappings);

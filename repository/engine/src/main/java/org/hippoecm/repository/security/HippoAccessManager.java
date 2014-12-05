@@ -653,10 +653,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             if (allRulesMatched) {
                 // a match is found, don't check other domain rules;
                 isInDomain = true;
-                if (log.isDebugEnabled()) {
-                    log.debug("Node : " + nodeState.getId() + " found in domain " + fap.getName() + " match "
-                            + domainRule);
-                }
+                log.debug("Node :  {} found in domain {} match {}", nodeState.getId(),fap.getName(), domainRule);
                 break;
             } else {
                 // check if node is part of a hippo:document
@@ -749,9 +746,50 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         if (NameConstants.JCR_UUID.equals(facetRule.getFacetName())) {
             boolean uuidMatch = false;
+            log.trace("Checking node : {} for matching jcr:uuid with : {}", nodeState.getId(), facetRule);
             if (nodeState.getNodeId().toString().equals(facetRule.getValue())) {
                 uuidMatch = true;
             }
+            if (facetRule.isEqual()) {
+                return uuidMatch;
+            } else {
+                return !uuidMatch;
+            }
+        }
+
+        if (NameConstants.JCR_PATH.equals(facetRule.getFacetName())) {
+            boolean uuidMatch = false;
+            log.trace("Checking node : {} for matching jcr:path with : {}", nodeState.getId(), facetRule);
+            try {
+                NodeState current = nodeState;
+                for (;;) {
+                    if (current.getNodeId().toString().equals(facetRule.getValue())) {
+                        uuidMatch = true;
+                        break;
+                    }
+                    if (current.getParentId() == null) {
+                        // no match
+                        break;
+                    }
+                    if (current.getParentId().toString().equals(facetRule.getValue())) {
+                        uuidMatch = true;
+                        break;
+                    }
+                    // since we check current nodeId and parent NodeId, we can go two states up in next loop
+                    NodeState parent = getParentState(nodeState);
+                    if (parent.getParentId() == null) {
+                        // no match
+                        break;
+                    }
+                    current = getParentState(parent);
+                }
+
+            } catch (NoSuchItemStateException e) {
+                // return false, regardless facetRule.isEqual() or not. Namely some repository exception must have happened
+                // in getParentState because we check before calling getParentState(parent); whether parent.getParentId() == null
+                return false;
+            }
+
             if (facetRule.isEqual()) {
                 return uuidMatch;
             } else {
