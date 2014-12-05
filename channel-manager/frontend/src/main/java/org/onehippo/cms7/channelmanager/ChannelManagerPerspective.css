@@ -253,19 +253,23 @@
 }
 
 .channel-manager .x-btn-small .add-channel {
-    background-image: url("add-channel.png");
+    background-image: url("add.svg");
+}
+
+.channel-manager .x-btn-small .add-components {
+    background-image: url("templatecomposer/add.svg");
 }
 
 .channel-manager .x-btn-small .edit-channel {
-    background-image: url("templatecomposer/button-edit.png");
+    background-image: url("templatecomposer/button-edit.svg");
 }
 
 .channel-manager .x-btn-small .btn-pages {
-    background-image: url("templatecomposer/button-pages.png");
+    background-image: url("templatecomposer/button-pages.svg");
 }
 
 .channel-manager .x-btn-small .publish-channel {
-    background-image: url("templatecomposer/button-publish.png");
+    background-image: url("templatecomposer/button-publish.svg");
 }
 
 .channel-manager .x-btn-small .save-close-channel {
@@ -277,23 +281,25 @@
 }
 
 .channel-manager .x-btn-small .discard-channel {
-    background-image: url("templatecomposer/button-discard.png");
+    background-image: url("templatecomposer/button-discard.svg");
 }
 
 .channel-manager .x-btn-small .remove-lock {
     background-image: url("templatecomposer/button-remove-lock.png");
 }
 
-.channel-manager .x-btn-small .channel-gear {
-    background-image: url("templatecomposer/gear.png");
+.channel-manager .x-btn-small .channel-gear,
+.channel-manager .x-btn-small .page-settings,
+.channel-manager .x-btn-small .channel-settings {
+    background-image: url("templatecomposer/gear.svg");
 }
 
 .channel-manager .x-btn-small .expand {
-    background-image: url("templatecomposer/expand.png");
+    background-image: url("templatecomposer/expand.svg");
 }
 
 .channel-manager .x-btn-small .collapse {
-    background-image: url("templatecomposer/collapse.png");
+    background-image: url("templatecomposer/collapse.svg");
 }
 
 /* toolkit window */

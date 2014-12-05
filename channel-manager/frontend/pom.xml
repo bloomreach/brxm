@@ -164,6 +164,7 @@
           <include>**/*.jpg</include>
           <include>**/*.js</include>
           <include>**/*.png</include>
+          <include>**/*.svg</include>
           <include>**/*.properties</include>
           <include>**/*.txt</include>
         </includes>
