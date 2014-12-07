@@ -776,7 +776,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                         break;
                     }
                     // since we check current nodeId and parent NodeId, we can go two states up in next loop
-                    NodeState parent = getParentState(nodeState);
+                    NodeState parent = getParentState(current);
                     if (parent.getParentId() == null) {
                         // no match
                         break;
