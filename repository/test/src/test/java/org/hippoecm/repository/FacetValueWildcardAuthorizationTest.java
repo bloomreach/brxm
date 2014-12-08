@@ -72,12 +72,12 @@ public class FacetValueWildcardAuthorizationTest extends RepositoryTestCase {
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
         if (!domains.hasNode("allDomain")) {
             final Node allDomain = domains.addNode("allDomain", "hipposys:domain");
-            final Node institutions = allDomain.addNode("all-nodes", "hipposys:domainrule");
-            final Node includeAssembly = institutions.addNode("match-all-types", "hipposys:facetrule");
-            includeAssembly.setProperty("hipposys:equals", true);
-            includeAssembly.setProperty("hipposys:facet", "jcr:primaryType");
-            includeAssembly.setProperty("hipposys:type", "Name");
-            includeAssembly.setProperty("hipposys:value", "*");
+            final Node domainRule = allDomain.addNode("all-nodes", "hipposys:domainrule");
+            final Node facetRule = domainRule.addNode("match-all-types", "hipposys:facetrule");
+            facetRule.setProperty("hipposys:equals", true);
+            facetRule.setProperty("hipposys:facet", "jcr:primaryType");
+            facetRule.setProperty("hipposys:type", "Name");
+            facetRule.setProperty("hipposys:value", "*");
             final Node testSessionIsAdmin = allDomain.addNode("readEveryWhereSession", "hipposys:authrole");
             testSessionIsAdmin.setProperty("hipposys:users", new String[]{"readEveryWhereSession"});
             testSessionIsAdmin.setProperty("hipposys:role", "admin");
@@ -85,12 +85,12 @@ public class FacetValueWildcardAuthorizationTest extends RepositoryTestCase {
 
         if (!domains.hasNode("nonDomain")) {
             final Node nonDomain = domains.addNode("nonDomain", "hipposys:domain");
-            final Node institutions = nonDomain.addNode("no-nodes", "hipposys:domainrule");
-            final Node includeAssembly = institutions.addNode("match-no-types", "hipposys:facetrule");
-            includeAssembly.setProperty("hipposys:equals", false);
-            includeAssembly.setProperty("hipposys:facet", "jcr:primaryType");
-            includeAssembly.setProperty("hipposys:type", "Name");
-            includeAssembly.setProperty("hipposys:value", "*");
+            final Node domainRule = nonDomain.addNode("no-nodes", "hipposys:domainrule");
+            final Node facetRule = domainRule.addNode("match-no-types", "hipposys:facetrule");
+            facetRule.setProperty("hipposys:equals", false);
+            facetRule.setProperty("hipposys:facet", "jcr:primaryType");
+            facetRule.setProperty("hipposys:type", "Name");
+            facetRule.setProperty("hipposys:value", "*");
             final Node testSessionIsAdmin = nonDomain.addNode("readNoWhereSession", "hipposys:authrole");
             testSessionIsAdmin.setProperty("hipposys:users", new String[]{"readNoWhereSession"});
             testSessionIsAdmin.setProperty("hipposys:role", "admin");
@@ -98,12 +98,12 @@ public class FacetValueWildcardAuthorizationTest extends RepositoryTestCase {
 
         if (!domains.hasNode("folderTypeAnyDomain")) {
             final Node folderTypeAnyDomain = domains.addNode("folderTypeAnyDomain", "hipposys:domain");
-            final Node institutions = folderTypeAnyDomain.addNode("anyType", "hipposys:domainrule");
-            final Node includeAssembly = institutions.addNode("match-any-types", "hipposys:facetrule");
-            includeAssembly.setProperty("hipposys:equals", true);
-            includeAssembly.setProperty("hipposys:facet", "hippostd:foldertype");
-            includeAssembly.setProperty("hipposys:type", "String");
-            includeAssembly.setProperty("hipposys:value", "*");
+            final Node domainRule = folderTypeAnyDomain.addNode("anyType", "hipposys:domainrule");
+            final Node facetRule = domainRule.addNode("match-any-types", "hipposys:facetrule");
+            facetRule.setProperty("hipposys:equals", true);
+            facetRule.setProperty("hipposys:facet", "hippostd:foldertype");
+            facetRule.setProperty("hipposys:type", "String");
+            facetRule.setProperty("hipposys:value", "*");
             final Node testSessionIsAdmin = folderTypeAnyDomain.addNode("folderTypeAnySession", "hipposys:authrole");
             testSessionIsAdmin.setProperty("hipposys:users", new String[]{"folderTypeAnySession"});
             testSessionIsAdmin.setProperty("hipposys:role", "admin");
@@ -111,12 +111,12 @@ public class FacetValueWildcardAuthorizationTest extends RepositoryTestCase {
 
         if (!domains.hasNode("folderTypeNotAnyDomain")) {
             final Node folderTypeNotAnyDomain = domains.addNode("folderTypeNotAnyDomain", "hipposys:domain");
-            final Node institutions = folderTypeNotAnyDomain.addNode("anyType", "hipposys:domainrule");
-            final Node includeAssembly = institutions.addNode("match-non-types", "hipposys:facetrule");
-            includeAssembly.setProperty("hipposys:equals", false);
-            includeAssembly.setProperty("hipposys:facet", "hippostd:foldertype");
-            includeAssembly.setProperty("hipposys:type", "String");
-            includeAssembly.setProperty("hipposys:value", "*");
+            final Node domainRule = folderTypeNotAnyDomain.addNode("anyType", "hipposys:domainrule");
+            final Node facetRule = domainRule.addNode("match-non-types", "hipposys:facetrule");
+            facetRule.setProperty("hipposys:equals", false);
+            facetRule.setProperty("hipposys:facet", "hippostd:foldertype");
+            facetRule.setProperty("hipposys:type", "String");
+            facetRule.setProperty("hipposys:value", "*");
             final Node testSessionIsAdmin = folderTypeNotAnyDomain.addNode("folderTypeNotAnyDomain", "hipposys:authrole");
             testSessionIsAdmin.setProperty("hipposys:users", new String[]{"folderTypeNotAnySession"});
             testSessionIsAdmin.setProperty("hipposys:role", "admin");
@@ -128,35 +128,14 @@ public class FacetValueWildcardAuthorizationTest extends RepositoryTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (users.hasNode("readNoWhereSession")) {
-            users.getNode("readNoWhereSession").remove();
-        }
-        if (users.hasNode("readEveryWhereSession")) {
-            users.getNode("readEveryWhereSession").remove();
-        }
-        if (users.hasNode("folderTypeAnySession")) {
-            users.getNode("folderTypeAnySession").remove();
-        }
-        if (users.hasNode("folderTypeNotAnySession")) {
-            users.getNode("folderTypeNotAnySession").remove();
-        }
-
-        final Node domains = session.getNode("/hippo:configuration/hippo:domains");
-        if (domains.hasNode("nonDomain")) {
-            domains.getNode("nonDomain").remove();
-        }
-        if (domains.hasNode("allDomain")) {
-            domains.getNode("allDomain").remove();
-        }
-        if (domains.hasNode("folderTypeAnyDomain")) {
-            domains.getNode("folderTypeAnyDomain").remove();
-        }
-        if (domains.hasNode("folderTypeNotAnyDomain")) {
-            domains.getNode("folderTypeNotAnyDomain").remove();
-        }
-
-        session.save();
+        removeNode("/hippo:configuration/hippo:users/readNoWhereSession");
+        removeNode("/hippo:configuration/hippo:users/readEveryWhereSession");
+        removeNode("/hippo:configuration/hippo:users/folderTypeAnySession");
+        removeNode("/hippo:configuration/hippo:users/folderTypeNotAnySession");
+        removeNode("/hippo:configuration/hippo:domains/nonDomain");
+        removeNode("/hippo:configuration/hippo:domains/allDomain");
+        removeNode("/hippo:configuration/hippo:domains/folderTypeAnyDomain");
+        removeNode("/hippo:configuration/hippo:domains/folderTypeNotAnyDomain");
         super.tearDown();
     }
 
