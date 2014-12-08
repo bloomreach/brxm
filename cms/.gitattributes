@@ -1120,7 +1120,9 @@ api/src/main/styling/less/_buttons.less -text
 api/src/main/styling/less/_dashboard.less -text
 api/src/main/styling/less/_doclist.less -text
 api/src/main/styling/less/_editor.less -text
+api/src/main/styling/less/_editor_feedback.less -text
 api/src/main/styling/less/_editor_preview.less -text
+api/src/main/styling/less/_editor_toolbar.less -text
 api/src/main/styling/less/_footer.less -text
 api/src/main/styling/less/_globals.less -text
 api/src/main/styling/less/_hippo_dev_extensions.less -text
@@ -2432,7 +2434,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-128.p
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-16.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspective.css svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutLink.java -text svneol=unset#text/plain

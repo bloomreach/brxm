@@ -1,0 +1,285 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+.hippo-editor-top > .hippo-toolbar > div {
+
+  > .hippo-toolbar-section {
+    display: block;
+    float: left;
+
+    > li {
+      float: left;
+      min-width: 90px;
+      height: 40px;
+
+      &:hover {
+        background-color: #dfe1e3;
+        a {
+          text-decoration: none;
+          .menu-action-text,
+          &.hippo-toolbar-section-button {
+            color: @aqua;
+          }
+        }
+        .content-is-visible a {
+          color: @white;
+        }
+      }
+
+      &.menu-label-item {
+        white-space: nowrap;
+        color: @cool-shale;
+
+        .menu-label {
+          padding-top: 11px;
+        }
+      }
+   
+      .menu-action {
+        height: 40px;
+        border: 0;
+        text-align: right;
+        // Override from screen.css
+        padding: 0;
+        min-width: 78px;
+
+        &:hover {
+          background-color: transparent;
+        }
+        
+        &:active {
+          background-color: @cool-shale;
+          color: @white;
+        }
+
+        .menu-action-icon,
+        .menu-action-text {
+          position: relative;
+          top: 10px;
+          display: inline;
+          padding: 0;
+          float: none;
+          color: @cool-shale;
+        }
+        .menu-action-text {
+          padding-right: 12px;
+        }
+      }
+
+      .hippo-toolbar-section-button {
+        display: block;
+        height: 40px;
+        cursor: pointer;
+        clear: left;
+        text-align: right;
+        
+        color: @cool-shale;
+        
+        .menu-action-icon,
+        .menu-action-text {
+          display: inline;
+          padding: 0;
+          float: none;
+          vertical-align: top;
+          color: @cool-shale;
+        }
+        
+        > span {
+          position: relative;
+          top: 13px;
+          right: 12px;
+        }
+      }
+
+      .content-is-visible {
+        background-color: @cool-shale;
+        display: block;
+        
+        a {
+          color: @white;
+          &:hover {
+            color: @white;
+          }
+        }
+      }
+
+      .content-is-visible + div {
+        position: relative;
+
+        // Dropdown menu
+        .hippo-toolbar-menu-item {
+          position: absolute;
+          left: 0;
+
+          .hippo-toolbar-menu-item-button-icon {
+            margin-left: 4px;
+            margin-right: 8px;
+          }
+
+          .hippo-toolbar-menu-item-button-label {
+            position: relative;
+            top: -2px;
+          }
+
+        }
+      }
+    }
+  }
+}
+
+.hippo-toolbar-menu-item-button-icon {
+  position: relative;
+  top: 1px;
+  margin-left: 4px;
+  margin-right: 8px;
+}
+
+.hippo-toolbar-menu-item-button-label {
+  position: relative;
+  top: -2px;
+}
+
+.hippo-toolbar-menu-item {
+  background-color: @editor-top-dropdown-bgcolor;
+  min-width: 156px;
+  font-size: 11px;
+
+  li {
+    //display: block;
+    clear: left;
+    margin-right: 0;
+    padding: 4px 8px 4px 4px;
+
+    a {
+      color: @cool-shale;
+      white-space: nowrap;
+    }
+
+    &:hover {
+      background-color: @cool-shale;
+
+      // disabled item
+      span.hippo-toolbar-menu-item-button {
+        color: @white;
+      }
+
+      a {
+        color: @white;
+        text-decoration: none;
+      }
+    }
+
+    /* disabled menu item */
+    span.hippo-toolbar-menu-item-button {
+      color: #999;
+    }
+  }
+}
+
+.hippo-toolbar .hippo-toolbar-section select {
+  float: right;
+  background: #32629b;
+  color: white;
+  margin: 0;
+  border: 1px solid white;
+}
+
+.hippo-toolbar .hippo-toolbar-section select option {
+  background: white;
+  color: #666666;
+}
+
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-locked {
+  height: 16px;
+  width: 16px;
+  margin-right: 0;
+}
+
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption {
+  margin-right: 2px;
+}
+
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption span,
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-status span {
+  padding-left: 5px;
+  color: black
+}
+
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single {
+  background: transparent;
+}
+
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single:hover {
+  border: 1px solid #000000;
+}
+
+/* Split the dropdown in columns if there are many languages */
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+  overflow:hidden;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
+  width:320px;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+  width:480px;
+
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li,
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
+  float:left;
+  clear: none;
+  //CMS7R-TODO: jslint falls over this, might not be needed but needs check with many flags
+  //display:inline;
+  margin-right: 0;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li {
+  width:50%;
+}
+
+.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
+  width:33.333%;
+}
+
+/* This is the context-menu header */
+.hippo-toolbar-menu-item li span.header-item {
+  display: block;
+  padding: 2px;
+}
+
+.hippo-toolbar-menu-item li span.header-item {
+  padding-left: 30px;
+}
+
+.hippo-toolbar-section li.icon-16 {
+  padding-left: 0;
+  background-position: 3px 4px;
+}
+
+.hippo-toolbar-section span.icon-16 {
+  display: block;
+  height: 16px;
+  width: 16px
+}
+
+.hippo-toolbar-section li.icon-16 div {
+  position: relative
+}

@@ -17,6 +17,7 @@ package org.hippoecm.addon.workflow;
 
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -27,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
@@ -89,8 +91,14 @@ class MenuButton extends Panel implements IContextMenu {
                     manager.showContextMenu(MenuButton.this);
                 }
             }
-
         });
+        
+        link.add(new AttributeModifier("class", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return content.isVisible() ? "content-is-visible" : "content-not-visible";
+            }
+        }));
 
         Component label = null;
         if (descriptions != null) {

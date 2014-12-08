@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ class MenuBar extends Panel implements MenuComponent {
             @Override
             public void populateItem(final Item<Component> item) {
                 Component component = item.getModelObject();
-                item.add(new AttributeAppender("class", new Model<String>(
-                        component instanceof MenuLabel ? "menu-label-item" : "icon-16"), " "));
+                item.add(new AttributeAppender("class", new Model<>(
+                        component instanceof MenuLabel ? "menu-label-item" : "menu-item"), " "));
 
                 if (component instanceof MenuButton) {
                     buttons.add((MenuButton) component);

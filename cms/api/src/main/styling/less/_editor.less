@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
+@import "_editor_preview";
+@import "_editor_toolbar";
+@import "_editor_feedback";
+
 .hippo-editor {
   background: @editor-bgcolor;
+
+  .hippo-editor-top {
+    background-color: @editor-top-bgcolor;
+  }
 }
 
-@import "_editor_preview";

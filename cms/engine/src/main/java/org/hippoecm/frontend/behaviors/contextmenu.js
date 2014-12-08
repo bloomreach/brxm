@@ -191,6 +191,6 @@
         if (Hippo.ContextMenu.currentContentLink !== null) {
             YAHOO.util.Dom.setX(Hippo.ContextMenu.currentContentLink, Hippo.ContextMenu.currentContentXY[0]);   
         }
-    }
+    };
 
 })();
