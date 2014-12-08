@@ -564,6 +564,10 @@
     background-image: url("channels/list-view-active.png");
 }
 
+.channel-manager-toolbar .x-toolbar-ct {
+    min-height: 29px;
+}
+
 .channel-manager-toolbar .x-toolbar-right .x-btn-tl,
 .channel-manager-toolbar .x-toolbar-right .x-btn-tc,
 .channel-manager-toolbar .x-toolbar-right .x-btn-tr,
