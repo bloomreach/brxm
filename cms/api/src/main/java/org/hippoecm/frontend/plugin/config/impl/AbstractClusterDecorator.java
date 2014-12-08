@@ -26,6 +26,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
 
 public abstract class AbstractClusterDecorator extends AbstractPluginDecorator implements IClusterConfig {
 
@@ -60,6 +61,11 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
 
     public final List<String> getServices() {
         return Collections.unmodifiableList(getUpstream().getServices());
+    }
+
+    @Override
+    public List<PropertyDescriptor> getPropertyDescriptors() {
+        return Collections.unmodifiableList(getUpstream().getPropertyDescriptors());
     }
 
     @SuppressWarnings("unchecked")

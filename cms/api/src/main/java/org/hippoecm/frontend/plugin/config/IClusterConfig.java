@@ -70,7 +70,15 @@ public interface IClusterConfig extends IPluginConfig {
      * Properties that specify additional plugin behavior.
      * <p>
      * The returned list is only mutable when the configuration is used as a template.
+     * </p>
      */
     List<String> getProperties();
+
+    /**
+     * Descriptors of additional plugin properties.
+     *
+     * <p>Changes to the returned list have no effect on actual configuration.</p>
+     */
+    List<PropertyDescriptor> getPropertyDescriptors();
 
 }

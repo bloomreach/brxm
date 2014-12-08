@@ -230,6 +230,7 @@ public class PluginConfigTest extends PluginTest {
         assertEquals(0, config.getServices().size());
         assertEquals(0, config.getReferences().size());
         assertEquals(0, config.getProperties().size());
+        assertEquals(0, config.getPropertyDescriptors().size());
 
         IPluginConfig pluginConfig = plugins.get(0);
         assertEquals("d", pluginConfig.getString("c"));

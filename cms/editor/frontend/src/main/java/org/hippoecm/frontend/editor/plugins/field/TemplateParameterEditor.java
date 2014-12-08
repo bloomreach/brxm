@@ -18,6 +18,9 @@ package org.hippoecm.frontend.editor.plugins.field;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -27,6 +30,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
+import org.hippoecm.frontend.widgets.MultipleTextFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class TemplateParameterEditor extends Panel {
@@ -35,47 +40,56 @@ public class TemplateParameterEditor extends Panel {
 
     public TemplateParameterEditor(String id, final IModel<IPluginConfig> model, final IClusterConfig cluster, final boolean editable) {
         super(id, model);
+        List<PropertyDescriptor> properties = new ArrayList<>(Collections2.filter(cluster.getPropertyDescriptors(), new Predicate<PropertyDescriptor>() {
+            @Override
+            public boolean apply(PropertyDescriptor descriptor) {
+                return !"mode".equals(descriptor.getName());
+            }
+        }));
 
-        List<String> properties = new ArrayList<String>(cluster.getProperties());
-        properties.remove("mode");
-        add(new ListView<String>("properties", properties) {
+        add(new ListView<PropertyDescriptor>("properties", properties) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<String> item) {
-                final String property = item.getModelObject();
-                item.add(new Label("label", property));
+            protected void populateItem(ListItem<PropertyDescriptor> item) {
+                final PropertyDescriptor property = item.getModelObject();
+                item.add(new Label("label", property.getName()));
 
-                final IModel<String> valueModel = new PropertyModel<String>(TemplateParameterEditor.this.getDefaultModel(), "[" + property + "]");
-                if (editable) {
-                    item.add(new TextFieldWidget("value", new IModel<String>() {
-
-                        @Override
-                        public String getObject() {
-                            String value = valueModel.getObject();
-                            if (value != null) {
-                                return value;
-                            }
-                            return cluster.getString(property);
-                        }
-
-                        @Override
-                        public void setObject(final String value) {
-                            if (!Strings.isEmpty(value) || valueModel.getObject() != null) {
-                                valueModel.setObject(value);
-                            }
-                        }
-
-                        @Override
-                        public void detach() {
-                            valueModel.detach();
-                        }
-                    }));
+                if (property.isMultiple()) {
+                    item.add(new MultipleTextFieldWidget("value", model, cluster, property.getName(), editable));
                 } else {
-                    item.add(new Label("value", valueModel));
-                }
-            }
+                    final IModel<String> valueModel = new PropertyModel<String>(TemplateParameterEditor.this.getDefaultModel(), "[" + property + "]");
+                    if (editable) {
+                        item.add(new TextFieldWidget("value", new IModel<String>() {
 
+                            @Override
+                            public String getObject() {
+                                String value = valueModel.getObject();
+
+                                if (value != null) {
+                                    return value;
+                                }
+                                return cluster.getString(property.getName());
+                            }
+
+                            @Override
+                            public void setObject(final String value) {
+                                if (!Strings.isEmpty(value) || valueModel.getObject() != null) {
+                                    valueModel.setObject(value);
+                                }
+                            }
+
+                            @Override
+                            public void detach() {
+                                valueModel.detach();
+                            }
+                        }));
+                    } else {
+                        item.add(new Label("value", valueModel));
+                    }
+                }
+
+            }
         });
     }
 

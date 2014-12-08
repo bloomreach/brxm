@@ -155,6 +155,9 @@
     <sv:property sv:name="root.path" sv:type="String">
       <sv:value>/content/documents</sv:value>
     </sv:property>
+    <sv:property sv:name="nodetypes" sv:type="String" sv:multiple="true">
+      <sv:value/>
+    </sv:property>
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
