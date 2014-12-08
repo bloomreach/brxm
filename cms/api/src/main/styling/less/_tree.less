@@ -110,14 +110,6 @@
         background: transparent;
         position: absolute;
         display: none;
-
-        svg {
-          fill: @aqua;
-
-          // Workaround for styling issue when text goes below context-icon 
-          border-radius: 10px;
-          background-color: @white;
-        }
       }
 
       .hippo-tree-dropdown-icon-container.container-selected {
@@ -139,11 +131,14 @@
         fill: @white;
       }
 
-      .hippo-tree-dropdown-icon-container svg {
-        fill: @white;
-        // Workaround for styling issue when text goes below context-icon 
-        border-radius: 10px;
-        background-color: @aqua;
+      .hippo-tree-dropdown-icon-container .hi-dropdown {
+        .hi-shape-bg {
+          fill: @aqua;
+        }
+        .hi-shape-circle,
+        .hi-shape-arrow {
+          fill: #fff;
+        }
       }
     }
 
