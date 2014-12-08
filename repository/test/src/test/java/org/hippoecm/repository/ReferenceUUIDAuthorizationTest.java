@@ -68,12 +68,12 @@ public class ReferenceUUIDAuthorizationTest extends RepositoryTestCase {
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
         if (!domains.hasNode("uuidDomain")) {
             final Node uuidDomain = domains.addNode("uuidDomain", "hipposys:domain");
-            final Node institutions = uuidDomain.addNode("read-folder", "hipposys:domainrule");
-            final Node includeAssembly = institutions.addNode("node-by-uuid", "hipposys:facetrule");
-            includeAssembly.setProperty("hipposys:equals", true);
-            includeAssembly.setProperty("hipposys:facet", "jcr:uuid");
-            includeAssembly.setProperty("hipposys:type", "Reference");
-            includeAssembly.setProperty("hipposys:value", "/test/folder");
+            final Node domainRule = uuidDomain.addNode("read-folder", "hipposys:domainrule");
+            final Node facetRule = domainRule.addNode("node-by-uuid", "hipposys:facetrule");
+            facetRule.setProperty("hipposys:equals", true);
+            facetRule.setProperty("hipposys:facet", "jcr:uuid");
+            facetRule.setProperty("hipposys:type", "Reference");
+            facetRule.setProperty("hipposys:value", "/test/folder");
             final Node testSessionIsAdmin = uuidDomain.addNode("testSession", "hipposys:authrole");
             testSessionIsAdmin.setProperty("hipposys:users", new String[]{"testSession"});
             testSessionIsAdmin.setProperty("hipposys:role", "admin");
@@ -85,17 +85,8 @@ public class ReferenceUUIDAuthorizationTest extends RepositoryTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (users.hasNode("testSession")) {
-            users.getNode("testSession").remove();
-        }
-
-        final Node domains = session.getNode("/hippo:configuration/hippo:domains");
-        if (domains.hasNode("uuidDomain")) {
-            domains.getNode("uuidDomain").remove();
-        }
-
-        session.save();
+        removeNode("/hippo:configuration/hippo:users/testSession");
+        removeNode("/hippo:configuration/hippo:domains/uuidDomain");
         super.tearDown();
     }
 
