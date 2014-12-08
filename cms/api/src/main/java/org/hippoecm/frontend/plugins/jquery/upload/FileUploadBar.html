@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:panel>
+      <div class="row fileupload-buttonbar">
+          <div class="col-lg-7">
+              <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add files...</span>
+                    <input type="file" name="files[]" multiple>
+                </span>
+              <input wicket:id="button-upload-id" type="button" class="btn btn-primary start"/>
+              <input wicket:id="button-cancel-id" type="button" class="btn btn-warning cancel"/>
+              <!-- The global file processing state -->
+              <span class="fileupload-process"></span>
+          </div>
+          <!-- The global progress state -->
+          <div class="col-lg-5 fileupload-progress fade">
+              <!-- The global progress bar -->
+              <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+              </div>
+              <!-- The extended global progress state -->
+              <div class="progress-extended">&nbsp;</div>
+          </div>
+      </div>
+      <!-- The table listing the files available for upload/download -->
+      <div class="fileupload-listing-files">
+          <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+      </div>
+</wicket:panel>
+</html>

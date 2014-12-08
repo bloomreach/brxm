@@ -514,6 +514,9 @@
                 <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
+                <!-- JQuery File Upload -->
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/*.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/css/*.css</exclude>
               </excludes>
             </configuration>
           </plugin>

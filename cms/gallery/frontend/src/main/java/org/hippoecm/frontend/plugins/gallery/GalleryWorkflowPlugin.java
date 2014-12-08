@@ -35,6 +35,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -46,8 +47,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.yui.upload.FileUploadException;
-import org.hippoecm.frontend.plugins.yui.upload.MultiFileUploadDialog;
+import org.hippoecm.frontend.plugins.jquery.upload.JQueryFileUploadDialog;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
@@ -71,11 +71,11 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
-    public class UploadDialog extends MultiFileUploadDialog {
+    public class JUploadDialog extends JQueryFileUploadDialog{
         private static final long serialVersionUID = 1L;
 
-        public UploadDialog(IPluginContext context, IPluginConfig config) {
-            super(context, config);
+        protected JUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
+            super(pluginContext, pluginConfig);
         }
 
         @Override
@@ -85,21 +85,23 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
         }
 
         @Override
-        protected void handleUploadItem(FileUpload upload) throws FileUploadException {
-            try {
-                createGalleryItem(upload);
-            } catch (GalleryException e) {
-                throw new FileUploadException("Error while creating gallery item", e);
+        protected void onFileUpload(final FileUpload file) throws FileUploadException {
+            // synchronize to prevent concurrent writing to gallery from multiple posts
+            synchronized (this){
+                try {
+                    createGalleryItem(file);
+                } catch (GalleryException e) {
+                    throw new FileUploadException("Error while creating gallery item", e);
+                }
             }
         }
 
         @Override
-        protected void onOk() {
-            super.onOk();
+        protected void onFinished(){
+            super.onFinished();
             afterUploadItems();
         }
-    }
-
+    };
     public String type;
     private List<String> newItems;
 
@@ -247,7 +249,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new Label("type", "default").setVisible(false);
         }
 
-        UploadDialog dialog = new UploadDialog(getPluginContext(), getPluginConfig());
+        JUploadDialog dialog = new JUploadDialog(getPluginContext(), getPluginConfig());
         dialog.add(typeComponent);
         return dialog;
     }
