@@ -252,12 +252,9 @@
     padding-right: 0;
 }
 
-.channel-manager .x-btn-small .add-channel {
-    background-image: url("add.svg");
-}
-
+.channel-manager .x-btn-small .add-channel,
 .channel-manager .x-btn-small .add-components {
-    background-image: url("templatecomposer/add.svg");
+    background-image: url("add.svg");
 }
 
 .channel-manager .x-btn-small .edit-channel {

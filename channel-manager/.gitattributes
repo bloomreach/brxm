@@ -191,7 +191,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEdi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerGlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerHeaderItem.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/add.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-discard.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-pages.svg -text
