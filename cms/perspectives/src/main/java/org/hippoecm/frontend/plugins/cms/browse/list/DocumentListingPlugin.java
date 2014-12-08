@@ -20,13 +20,9 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
@@ -52,7 +48,6 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
         super(context, config);
 
         setClassName("hippo-list-documents");
-        getSettings().setAutoWidthClassName(DocumentListColumn.NAME.getCssClass());
     }
 
     @Override

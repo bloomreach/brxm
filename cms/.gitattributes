@@ -369,7 +369,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteBeh
 api/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteSettings.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/init_autocomplete.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datatable/DataTableBehavior.java -text svneol=unset#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/yui/datatable/DataTableSettings.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/DateFieldWidget.html -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/DateFieldWidget.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDatePicker.java -text svneol=unset#text/plain
