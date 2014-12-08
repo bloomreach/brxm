@@ -195,9 +195,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-pages.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.svg -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-remove-lock.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-remove-lock.svg -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.svg -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.svg -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-url-navigation.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/collapse.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-left.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-right.png -text
