@@ -49,6 +49,11 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
             bob.setProperty("hipposys:password", "password");
         }
 
+        if (!users.hasNode("downScopedBob")) {
+            final Node bob = users.addNode("downScopedBob", "hipposys:user");
+            bob.setProperty("hipposys:password", "password");
+        }
+
         if (!users.hasNode("alice")) {
             final Node bob = users.addNode("alice", "hipposys:user");
             bob.setProperty("hipposys:password", "password");
@@ -82,7 +87,28 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
             bobIsAdmin.setProperty("hipposys:role", "admin");
         }
 
-        // alive can read and write to /test/folder and everything *below* it that is of type 'hippostd:folder' or 'hippo:testdocument'
+        // downScopedBob can read and write to /test/folder and everything below *except* node /test/folder/authDocument
+        if (!domains.hasNode("doublePathFacetRuleDomain")) {
+            final Node doublePathFacetRuleDomain = domains.addNode("doublePathFacetRuleDomain", "hipposys:domain");
+            final Node domainRule = doublePathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below-but-not-authDocument", "hipposys:domainrule");
+            final Node facetRule = domainRule.addNode("read-test-folder", "hipposys:facetrule");
+            facetRule.setProperty("hipposys:equals", true);
+            facetRule.setProperty("hipposys:facet", "jcr:path");
+            facetRule.setProperty("hipposys:type", "Reference");
+            facetRule.setProperty("hipposys:value", "/test/folder");
+
+            final Node facetRule2 = domainRule.addNode("cant-read-authDocument-below-test-folder", "hipposys:facetrule");
+            facetRule2.setProperty("hipposys:equals", false);
+            facetRule2.setProperty("hipposys:facet", "jcr:path");
+            facetRule2.setProperty("hipposys:type", "Reference");
+            facetRule2.setProperty("hipposys:value", "/test/folder/authDocument");
+
+            final Node downScopedBobIsAdmin = doublePathFacetRuleDomain.addNode("downScopedBob", "hipposys:authrole");
+            downScopedBobIsAdmin.setProperty("hipposys:users", new String[]{"downScopedBob"});
+            downScopedBobIsAdmin.setProperty("hipposys:role", "admin");
+        }
+
+        // alice can read and write to /test/folder and everything *below* it that is of type 'hippostd:folder' or 'hippo:testdocument'
         // thus not "hippo:authtestdocument"
         if (!domains.hasNode("pathFacetAndTypeRuleDomain")) {
             final Node pathFacetAndTypeRuleDomain = domains.addNode("pathFacetAndTypeRuleDomain", "hipposys:domain");
@@ -130,6 +156,9 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         if (users.hasNode("bob")) {
             users.getNode("bob").remove();
         }
+        if (users.hasNode("downScopedBob")) {
+            users.getNode("downScopedBob").remove();
+        }
         if (users.hasNode("alice")) {
             users.getNode("alice").remove();
         }
@@ -137,6 +166,9 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
         if (domains.hasNode("pathFacetRuleDomain")) {
             domains.getNode("pathFacetRuleDomain").remove();
+        }
+        if (domains.hasNode("doublePathFacetRuleDomain")) {
+            domains.getNode("doublePathFacetRuleDomain").remove();
         }
         if (domains.hasNode("pathFacetAndTypeRuleDomain")) {
             domains.getNode("pathFacetAndTypeRuleDomain").remove();
@@ -212,6 +244,69 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         }
     }
 
+    @Test(expected = AccessControlException.class)
+    public void downScopedBob_can_read_and_write_to_test_folder_and_below_except_below_authDocument() throws Exception {
+
+        assertTrue(session.nodeExists("/test/folder"));
+        assertTrue(session.nodeExists("/test/folder/authDocument"));
+        assertTrue(session.nodeExists("/test/folder/authDocument/compound"));
+        assertTrue(session.nodeExists("/test/folder/testDocument"));
+
+        Session downScopedBob = null;
+        try {
+            final Credentials downScopedBobCreds = new SimpleCredentials("downScopedBob", "password".toCharArray());
+            downScopedBob = server.login(downScopedBobCreds);
+
+            assertTrue(downScopedBob.nodeExists("/test"));
+            assertTrue(downScopedBob.nodeExists("/test/folder"));
+            assertTrue(downScopedBob.nodeExists("/test/folder/testDocument"));
+
+            // authDocument and nodes below are downscoped
+            assertFalse(downScopedBob.nodeExists("/test/folder/authDocument"));
+            assertFalse(downScopedBob.nodeExists("/test/folder/authDocument/compound"));
+
+            downScopedBob.checkPermission("/test/folder", "jcr:read");
+            downScopedBob.checkPermission("/test/folder", "jcr:write");
+
+            downScopedBob.checkPermission("/test/folder/testDocument", "jcr:read");
+            downScopedBob.checkPermission("/test/folder/testDocument", "jcr:write");
+
+            downScopedBob.checkPermission("/test/folder/authDocument", "jcr:read");
+
+        } finally {
+            if (downScopedBob != null) {
+                downScopedBob.logout();
+            }
+        }
+    }
+
+    @Test
+    public void downScopedBob_finds_test_folder_and_below_except_below_authDocument() throws Exception {
+
+        String xpath = "/jcr:root/test//*[@jcr:primaryType='hippostd:folder' or @jcr:primaryType='hippo:authtestdocument' " +
+                "or @jcr:primaryType='hippo:testdocument'] order by @jcr:score";
+
+        final Query queryAdmin = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+        final QueryResult resultAdmin = queryAdmin.execute();
+
+        // expected results are: "/test/folder",  "/test/folder/authDocument", "/test/folder/authDocument/compound", and "/test/folder/testDocument";
+        final NodeIterator nodesAdmin = resultAdmin.getNodes();
+        assertEquals(4L, ((HippoNodeIterator)nodesAdmin).getTotalSize());
+
+        Session downScopedBob = null;
+        try {
+            final Credentials downScopedBobCreds = new SimpleCredentials("downScopedBob", "password".toCharArray());
+            downScopedBob = server.login(downScopedBobCreds);
+            final Query queryTestSession = downScopedBob.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+            final QueryResult resultTestSession = queryTestSession.execute();
+            final NodeIterator nodesBob = resultTestSession.getNodes();
+            assertEquals(2L, ((HippoNodeIterator)nodesBob).getTotalSize());
+        } finally {
+            if (downScopedBob != null) {
+                downScopedBob.logout();
+            }
+        }
+    }
 
     @Test(expected = AccessControlException.class)
     public void alice_can_read_and_write_to_test_folder_and_all_folders_and_hippo_document_nodes_below() throws Exception {
@@ -277,16 +372,5 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
             }
         }
     }
-
-
-    @Test
-    public void testSession_document_authorized_via_facet_navigation_as_well() throws Exception {
-        // TODO test virtual nodes as well whether they can be read for jcr:path constraints
-    }
-    @Test
-    public void testSession_document_searchable_via_facet_navigation_as_well() throws Exception {
-        // TODO test virtual nodes as well whether they can be read for jcr:path constraints
-    }
-
 
 }
