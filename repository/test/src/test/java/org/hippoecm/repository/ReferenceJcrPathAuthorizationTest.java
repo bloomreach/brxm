@@ -45,18 +45,18 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
         if (!users.hasNode("bob")) {
-            final Node bob = users.addNode("bob", "hipposys:user");
-            bob.setProperty("hipposys:password", "password");
+            final Node user = users.addNode("bob", "hipposys:user");
+            user.setProperty("hipposys:password", "password");
         }
 
         if (!users.hasNode("downScopedBob")) {
-            final Node bob = users.addNode("downScopedBob", "hipposys:user");
-            bob.setProperty("hipposys:password", "password");
+            final Node user = users.addNode("downScopedBob", "hipposys:user");
+            user.setProperty("hipposys:password", "password");
         }
 
         if (!users.hasNode("alice")) {
-            final Node bob = users.addNode("alice", "hipposys:user");
-            bob.setProperty("hipposys:password", "password");
+            final Node user = users.addNode("alice", "hipposys:user");
+            user.setProperty("hipposys:password", "password");
         }
 
         final Node root = session.getRootNode();
