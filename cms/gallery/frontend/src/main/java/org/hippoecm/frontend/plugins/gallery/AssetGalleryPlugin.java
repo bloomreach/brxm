@@ -43,7 +43,7 @@ public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     public AssetGalleryPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("asset-gallery-plugin " + DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
     }
 
     @Override

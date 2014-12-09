@@ -488,10 +488,6 @@ body.hippo-root #doc3 {
 .hippo-list-details .hippo-list-order-none {
 }
 
-.hippo-picker-list-details .hippo-typeslist, .hippo-picker-list-details .asset-gallery-plugin, .hippo-picker-list-details .hippo-list-search {
-    margin-top: 0;
-}
-
 /* images */
 .hippo-list-details td.icon-48 {
     background: url("images/hippo-gallery-folder.png") no-repeat 4px center;
@@ -2004,19 +2000,6 @@ table.hippo-defaultcontent td {
     left: -2000px;
     top: -2000px;
     position: absolute;
-}
-
-.navigator-center-body table.hippo-list-documents,
-.navigator-center-body table.hippo-gallery-images,
-.navigator-center-body table.hippo-gallery-assets,
-.navigator-center-body table.asset-gallery-plugin,
-.navigator-center-body table.hippo-typeslist,
-.hippo-dialog-picker table.hippo-list-documents,
-.hippo-dialog-picker table.hippo-gallery-images,
-.hippo-dialog-picker table.hippo-gallery-assets,
-.hippo-dialog-picker table.asset-gallery-plugin {
-    border-collapse: inherit;
-    background-color: #fff;
 }
 
 table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
