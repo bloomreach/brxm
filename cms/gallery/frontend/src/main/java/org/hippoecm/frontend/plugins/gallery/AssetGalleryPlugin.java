@@ -18,12 +18,8 @@ package org.hippoecm.frontend.plugins.gallery;
 import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -38,24 +34,16 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefiniti
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final CssReferenceHeaderItem ASSET_GALLERY_CSS = CssHeaderItem.forReference(new CssResourceReference(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
-
     public AssetGalleryPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("asset-gallery-plugin");
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        response.render(ASSET_GALLERY_CSS);
+        setClassName("asset-gallery-plugin " + DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
     }
 
     @Override

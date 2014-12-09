@@ -20,11 +20,8 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
@@ -39,11 +36,10 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPl
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
-
-    private static final CssResourceReference CSS_RESOURCE_REFERENCE = new CssResourceReference(AssetGalleryColumnProviderPlugin.class, "AssetGalleryStyle.css");
 
     private String primaryItemName;
 
@@ -54,61 +50,64 @@ public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProvider
     }
 
     @Override
-    public IHeaderContributor getHeaderContributor() {
-        return new IHeaderContributor() {
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                response.render(CssHeaderItem.forReference(CSS_RESOURCE_REFERENCE));
-            }
-        };
+    public List<ListColumn<Node>> getColumns() {
+        final List<ListColumn<Node>> columns = new ArrayList<>();
+        columns.add(createIconColumn());
+        columns.add(createNameColumn());
+        return columns;
     }
 
-    @Override
-    public List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-
-        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), null);
+    private ListColumn<Node> createIconColumn() {
+        final ListColumn<Node> column = new ListColumn<>(Model.of(""), null);
         column.setRenderer(new MimeTypeIconRenderer());
         column.setAttributeModifier(new IconAttributeModifier());
-        column.setComparator(new MimeTypeComparator("jcr:mimeType", primaryItemName));
-        column.setCssClass("assetgallery-type");
-        columns.add(column);
+        column.setComparator(new MimeTypeComparator(JcrConstants.JCR_MIMETYPE, primaryItemName));
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
+        return column;
+    }
 
-        column = new ListColumn<Node>(new ClassResourceModel("assetgallery-name", Translations.class), "name");
+    private ListColumn<Node> createNameColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-name", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
         column.setComparator(new NameComparator());
-        column.setCssClass("assetgallery-name");
-        columns.add(column);
-
-        return columns;
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        return column;
     }
 
     @Override
     public List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = getColumns();
-
-        //Filesize
-        ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("assetgallery-size", Translations.class),
-                "size");
-        column.setRenderer(new SizeRenderer("jcr:data", primaryItemName));
-        column.setComparator(new SizeComparator("jcr:data", primaryItemName));
-        column.setCssClass("assetgallery-size");
-        columns.add(column);
-
-        //Mimetype
-        column = new ListColumn<Node>(new ClassResourceModel("assetgallery-mimetype", Translations.class), "mimetype");
-        column.setRenderer(new StringPropertyRenderer("jcr:mimeType", primaryItemName));
-        column.setComparator(new MimeTypeComparator("jcr:mimeType", primaryItemName));
-        column.setCssClass("assetgallery-mimetype");
-        columns.add(column);
-
-        //Last modified date
-        column = new ListColumn<Node>(new ClassResourceModel("assetgallery-lastmodified", Translations.class),
-                "lastmodified");
-        column.setRenderer(new DatePropertyRenderer("jcr:lastModified", primaryItemName));
-        column.setComparator(new CalendarComparator("jcr:lastModified", primaryItemName));
-        column.setCssClass("assetgallery-lastmodified");
-        columns.add(column);
-
+        final List<ListColumn<Node>> columns = getColumns();
+        columns.add(createSizeColumn());
+        columns.add(createMimeTypeColumn());
+        columns.add(createLastModifiedColumn());
         return columns;
+    }
+
+    private ListColumn<Node> createSizeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-size", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "size");
+        column.setRenderer(new SizeRenderer(JcrConstants.JCR_DATA, primaryItemName));
+        column.setComparator(new SizeComparator(JcrConstants.JCR_DATA, primaryItemName));
+        column.setCssClass(DocumentListColumn.SIZE.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createMimeTypeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-mimetype", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "mimetype");
+        column.setRenderer(new StringPropertyRenderer(JcrConstants.JCR_MIMETYPE, primaryItemName));
+        column.setComparator(new MimeTypeComparator(JcrConstants.JCR_MIMETYPE, primaryItemName));
+        column.setCssClass(DocumentListColumn.MIME_TYPE.getCssClass());
+        column.setAttributeModifier(new MimeTypeAttributeModifier(primaryItemName));
+        return column;
+    }
+
+    private ListColumn<Node> createLastModifiedColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-lastmodified", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "lastmodified");
+        column.setRenderer(new DatePropertyRenderer(JcrConstants.JCR_LASTMODIFIED, primaryItemName));
+        column.setComparator(new CalendarComparator(JcrConstants.JCR_LASTMODIFIED, primaryItemName));
+        column.setCssClass(DocumentListColumn.DATE.getCssClass());
+        return column;
     }
 }

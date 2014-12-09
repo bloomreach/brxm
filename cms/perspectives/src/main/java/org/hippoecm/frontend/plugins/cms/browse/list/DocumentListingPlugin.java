@@ -47,7 +47,7 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("hippo-list-documents");
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
     }
 
     @Override

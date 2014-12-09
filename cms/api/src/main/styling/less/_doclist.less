@@ -40,6 +40,9 @@
       .fixed-width(32px);
       span {
         .fixed-height(32px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
     &.doclisting-name {
@@ -88,6 +91,16 @@
         display: inline;
         padding-right: 4px;
         white-space: nowrap;
+      }
+    }
+    &.doclisting-size {
+      .fixed-width(80px);
+    }
+    &.doclisting-mimetype {
+      .fixed-width(130px);
+      span {
+        word-wrap: none;
+        text-overflow: ellipsis;
       }
     }
   }

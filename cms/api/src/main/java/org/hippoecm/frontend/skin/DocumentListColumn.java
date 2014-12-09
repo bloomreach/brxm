@@ -28,7 +28,11 @@ public enum DocumentListColumn {
     STATE("doclisting-state"),
     DATE("doclisting-date"),
     LAST_MODIFIED_BY("doclisting-lastmodified-by"),
-    TRANSLATIONS("doclisting-translations");
+    TRANSLATIONS("doclisting-translations"),
+    SIZE("doclisting-size"),
+    MIME_TYPE("doclisting-mimetype");
+
+    public static final String DOCUMENT_LIST_CSS_CLASS = "hippo-list-documents";
 
     private final String cssClass;
 

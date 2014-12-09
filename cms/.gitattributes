@@ -1999,7 +1999,6 @@ engine/src/test/resources/jackson-json-serialized-annotations/websiteinfo.json -
 gallery/frontend/pom.xml svneol=native#text/plain
 gallery/frontend/src/main/appended-resources/META-INF/LICENSE -text
 gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/AssetGalleryPlugin.css -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/AssetGalleryPlugin.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryProcessorPlugin.java svneol=native#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryShortcutPlugin.html -text
