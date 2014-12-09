@@ -24,7 +24,10 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A DomainRule holds a set of {@link QFacetRule}s that define a subset of the domain.
@@ -39,6 +42,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class DomainRule implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(DomainRule.class);
 
     private Set<QFacetRule> facetRules = new HashSet<QFacetRule>();
     private String name;
@@ -59,16 +64,23 @@ public class DomainRule implements Serializable {
      * @throws RepositoryException
      */
     public DomainRule(Node node) throws RepositoryException {
-        if (node == null) {
-            throw new IllegalArgumentException("DomainRule node cannot be null");
-        }
-
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
-                facetRules.add(new QFacetRule(child));
+                try {
+                    facetRules.add(new QFacetRule(child));
+                } catch (FacetRuleReferenceNotFoundException e) {
+                    if (!e.isEquals()) {
+                        // the facet rule has hipposys:equals = false, and thus can be skipped from the
+                        // domain rule.
+                        log.info("Skipping facet rule '{}' : {}", child.getPath(), e.getMessage());
+                    } else {
+                        // bubble up because hipposys:equals = true implying the domain rule can never result in a match
+                        throw e;
+                    }
+                }
             }
         }
         this.name = node.getName();

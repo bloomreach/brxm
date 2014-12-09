@@ -96,15 +96,22 @@ public class Domain {
             Node child = iter.nextNode();
             try {
                 if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOMAINRULE)) {
-                    domainRules.add(new DomainRule(child));
+                    try {
+                        domainRules.add(new DomainRule(child));
+                    } catch (FacetRuleReferenceNotFoundException e){
+                        log.info("Skipping domain rule '{}' because {}", child.getPath(), e.getMessage());
+                    }
                 } else if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_AUTHROLE)) {
                     authRoles.add(new AuthRole(child));
                 } else {
-                    log.warn("Unknown domain config node " + child.getName() + " found in " + node.getPath());
+                    log.warn("Unknown domain config node '{}' found in '{}' ", child.getName(), node.getPath());
                 }
             } catch (RepositoryException e) {
-                log.warn("Unable to add DomainRule: " + child.getPath() + " : " + e.getMessage());
-                log.debug("{}", e.getClass().getName(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Unable to add DomainRule '{}'", child.getPath(), e);
+                } else {
+                    log.warn("Unable to add DomainRule '{}' : {}", child.getPath(), e.getMessage());
+                }
             }
         }
     }

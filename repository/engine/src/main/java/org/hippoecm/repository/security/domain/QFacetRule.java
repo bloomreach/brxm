@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
@@ -107,13 +106,10 @@ public class QFacetRule implements Serializable {
      * @throws RepositoryException
      */
     public QFacetRule(final Node node) throws RepositoryException {
-        if (node == null) {
-            throw new IllegalArgumentException("QFacetRule node cannot be null");
-        }
-
-
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
+        // Set the JCR Name for the facet (string)
+        facetName = NameParser.parse(facet, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
         equals = node.getProperty(HippoNodeType.HIPPO_EQUALS).getBoolean();
         optional = node.getProperty(HippoNodeType.HIPPOSYS_FILTER).getBoolean();
 
@@ -130,10 +126,6 @@ public class QFacetRule implements Serializable {
             tmpType = PropertyType.STRING;
             tmpValue = parseReferenceTypeValue(node);
         }
-
-
-        // Set the JCR Name for the facet (string)
-        facetName = NameParser.parse(facet, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
 
         // set final values
         type = tmpType;
@@ -171,7 +163,7 @@ public class QFacetRule implements Serializable {
                     msg.append(" != ");
                 }
                 msg.append(pathValue).append("]");
-                throw new RepositoryException(msg.toString(), e);
+                throw new FacetRuleReferenceNotFoundException(facetName, equals,  msg.toString(), e);
             }
         }
         return uuid;

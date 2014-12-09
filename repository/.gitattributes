@@ -159,6 +159,7 @@ engine/src/main/java/org/hippoecm/repository/security/domain/AuthRole.java svneo
 engine/src/main/java/org/hippoecm/repository/security/domain/Domain.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/domain/DomainRule.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/domain/Domains.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/security/domain/FacetRuleReferenceNotFoundException.java -text
 engine/src/main/java/org/hippoecm/repository/security/domain/QFacetRule.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/group/GroupManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/group/RepositoryGroupManager.java svneol=native#text/plain
@@ -340,6 +341,7 @@ test/src/test/java/org/hippoecm/repository/FacetedNavigationNamespaceTest.java s
 test/src/test/java/org/hippoecm/repository/FacetedNavigationPerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/MissingReferenceAuthorizationTest.java -text
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/ReferenceJcrPathAuthorizationTest.java -text
 test/src/test/java/org/hippoecm/repository/ReferenceUUIDAuthorizationTest.java -text
