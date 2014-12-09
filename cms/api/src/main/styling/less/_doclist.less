@@ -38,12 +38,6 @@
     /* column types */
     &.doclisting-icon {
       .fixed-width(32px);
-      span {
-        .fixed-height(32px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
     }
     &.doclisting-name {
       width: 100%;
@@ -152,6 +146,16 @@
       border-top: 1px solid @doclist-row-separator-color;
 
       > td {
+
+        // ensure icons smaller than 32px are centered in a 32x32px box
+        &.doclisting-icon span {
+          .fixed-height(32px);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        // show only 2 lines of text
         > span span {
           display: block;
           overflow: hidden;
