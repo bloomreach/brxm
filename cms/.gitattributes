@@ -1642,7 +1642,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn_fr.p
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn_nl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/no-layout.png -text svneol=unset#unset
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/list/resolvers/TemplateTypeIconAttributeModifier.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/list/resolvers/TemplateTypeRenderer.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/BooleanValueTemplatePlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/BooleanValueTemplatePlugin.java -text

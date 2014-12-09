@@ -22,6 +22,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.repeater.Item;
@@ -30,7 +31,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.editor.type.JcrDraftLocator;
 import org.hippoecm.editor.type.JcrTypeLocator;
-import org.hippoecm.frontend.editor.list.resolvers.TemplateTypeIconAttributeModifier;
 import org.hippoecm.frontend.editor.list.resolvers.TemplateTypeRenderer;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -45,13 +45,11 @@ import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -68,7 +66,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
     public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("hippo-typeslist");
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
 
         IModel<Node> nodeModel = getModel();
         if (nodeModel != null && nodeModel.getObject() != null) {
@@ -104,50 +102,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
     @Override
     protected IListColumnProvider getDefaultColumnProvider() {
-        return new IListColumnProvider() {
-
-            public IHeaderContributor getHeaderContributor() {
-                return null;
-            }
-
-            public List<ListColumn<Node>> getColumns() {
-                List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-
-                ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
-                column.setComparator(new TypeComparator());
-                column.setRenderer(new EmptyRenderer<Node>());
-                column.setAttributeModifier(new DocumentTypeIconAttributeModifier());
-                column.setCssClass("typeslisting-icon");
-                columns.add(column);
-
-                column = new ListColumn<Node>(new ClassResourceModel("typeslisting-name", TypesListingPlugin.class),
-                        "name");
-                column.setComparator(new NameComparator());
-                column.setCssClass("typeslisting-name");
-                columns.add(column);
-
-                column = new ListColumn<Node>(new ClassResourceModel("typeslisting-state", TypesListingPlugin.class),
-                        "state");
-                column.setRenderer(new EmptyRenderer<Node>());
-                column.setAttributeModifier(new TemplateTypeIconAttributeModifier());
-                column.setCssClass("typeslisting-state");
-                columns.add(column);
-
-                return columns;
-            }
-
-            public List<ListColumn<Node>> getExpandedColumns() {
-                List<ListColumn<Node>> columns = getColumns();
-
-                ListColumn<Node> column = new ListColumn<Node>(
-                        new ClassResourceModel("typeslisting-type", TypesListingPlugin.class), null);
-                column.setRenderer(new TemplateTypeRenderer(typeLocator));
-                column.setCssClass("typeslisting-type");
-                columns.add(2, column);
-
-                return columns;
-            }
-        };
+        return new TypesListColumnProvider();
     }
 
     @Override
@@ -217,4 +172,50 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
     }
 
+    private class TypesListColumnProvider implements IListColumnProvider {
+
+        @Override
+        public IHeaderContributor getHeaderContributor() {
+            return null;
+        }
+
+        @Override
+        public List<ListColumn<Node>> getColumns() {
+            List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+            columns.add(createIconColumn());
+            columns.add(createNameColumn());
+            return columns;
+        }
+
+        private ListColumn<Node> createIconColumn() {
+            final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
+            final ListColumn<Node> column = new ListColumn<>(iconHeader, null);
+            column.setRenderer(new TypeIconAndStateRenderer());
+            column.setCssClass(DocumentListColumn.ICON.getCssClass());
+            return column;
+        }
+
+        private ListColumn<Node> createNameColumn() {
+            final ClassResourceModel nameHeader = new ClassResourceModel("typeslisting-name", TypesListingPlugin.class);
+            final ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
+            column.setCssClass(DocumentListColumn.NAME.getCssClass());
+            column.setComparator(new NameComparator());
+            return column;
+        }
+
+        @Override
+        public List<ListColumn<Node>> getExpandedColumns() {
+            final List<ListColumn<Node>> columns = getColumns();
+            columns.add(createTypeColumn());
+            return columns;
+        }
+
+        private ListColumn<Node> createTypeColumn() {
+            final ClassResourceModel typeHeader = new ClassResourceModel("typeslisting-type", TypesListingPlugin.class);
+            final ListColumn<Node> column = new ListColumn<Node>(typeHeader, null);
+            column.setRenderer(new TemplateTypeRenderer(typeLocator));
+            column.setCssClass(DocumentListColumn.TYPE.getCssClass());
+            return column;
+        }
+    }
 }

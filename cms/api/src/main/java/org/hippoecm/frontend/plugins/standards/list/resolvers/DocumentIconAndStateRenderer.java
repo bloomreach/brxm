@@ -29,11 +29,11 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IconAndStateRenderer extends AbstractNodeRenderer {
+public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(IconAndStateRenderer.class);
+    static final Logger log = LoggerFactory.getLogger(DocumentIconAndStateRenderer.class);
 
     public Component getViewer(final String id, final Node node) {
         if (node == null) {
@@ -50,17 +50,20 @@ public class IconAndStateRenderer extends AbstractNodeRenderer {
 
     private static class Container extends Panel implements IDetachable {
 
+        public static final String WICKET_ID_DOCUMENT_TYPE_ICON = "documentTypeIcon";
+        public static final String WICKET_ID_DOCUMENT_STATE_ICON = "documentStateIcon";
+
         public Container(final String id, final Node node) {
             super(id, new JcrNodeModel(node));
 
-            add(getTypeIcon("typeIcon"));
-            add(getStateIcon("stateIcon"));
+            add(getTypeIcon(WICKET_ID_DOCUMENT_TYPE_ICON));
+            add(getStateIcon(WICKET_ID_DOCUMENT_STATE_ICON));
         }
 
         @Override
         protected void onBeforeRender() {
             if (hasBeenRendered()) {
-                replace(getStateIcon("stateIcon"));
+                replace(getStateIcon(WICKET_ID_DOCUMENT_STATE_ICON));
             }
             super.onBeforeRender();
         }

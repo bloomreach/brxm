@@ -20,10 +20,12 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,6 +37,9 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.SpriteIconRenderer;
+import org.hippoecm.frontend.skin.DocumentListColumn;
+import org.hippoecm.frontend.skin.Icon;
 
 public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<Node> {
     private static final long serialVersionUID = 1L;
@@ -42,35 +47,39 @@ public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<No
     public NamespaceListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("hippo-typeslist");
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
     }
 
     @Override
     protected TableDefinition<Node> newTableDefinition() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-
-        ListColumn<Node> column = new ListColumn<Node>(new StringResourceModel("nslisting-name", this, null), "name");
-        column.setComparator(new NameComparator());
-        columns.add(column);
-
-        column = new ListColumn<Node>(new StringResourceModel("nslisting-type", this, null), null);
-        column.setRenderer(new IListCellRenderer<Node>() {
-            private static final long serialVersionUID = 1L;
-
-            public Component getRenderer(String id, IModel<Node> model) {
-                return new Label(id, new StringResourceModel("nslisting-ns", NamespaceListingPlugin.this, null));
-            }
-
-            public IObservable getObservable(IModel<Node> model) {
-                if (model instanceof IObservable) {
-                    return (IObservable) model;
-                }
-                return null;
-            }
-        });
-        columns.add(column);
-
+        List<ListColumn<Node>> columns = new ArrayList<>();
+        columns.add(createIconColumn());
+        columns.add(createNameColumn());
+        columns.add(createTypeColumn());
         return new TableDefinition<Node>(columns);
+    }
+
+    private ListColumn<Node> createIconColumn() {
+        final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), "icon");
+        column.setRenderer(new SpriteIconRenderer(Icon.FOLDER_SMALL));
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createNameColumn() {
+        final StringResourceModel nameHeader = new StringResourceModel("nslisting-name", this, null);
+        ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
+        column.setComparator(new NameComparator());
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createTypeColumn() {
+        final StringResourceModel typeHeader = new StringResourceModel("nslisting-type", this, null);
+        final ListColumn<Node> column = new ListColumn<>(typeHeader, null);
+        column.setRenderer(new NameSpaceRenderer());
+        column.setCssClass(DocumentListColumn.TYPE.getCssClass());
+        return column;
     }
 
     @Override
@@ -79,4 +88,19 @@ public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<No
                 getTableDefinition().getComparators());
     }
 
+    private class NameSpaceRenderer implements IListCellRenderer<Node> {
+        private static final long serialVersionUID = 1L;
+
+        public Component getRenderer(String id, IModel<Node> model) {
+            final StringResourceModel namespace = new StringResourceModel("nslisting-ns", NamespaceListingPlugin.this, null);
+            return new Label(id, namespace);
+        }
+
+        public IObservable getObservable(IModel<Node> model) {
+            if (model instanceof IObservable) {
+                return (IObservable) model;
+            }
+            return null;
+        }
+    }
 }

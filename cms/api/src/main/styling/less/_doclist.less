@@ -38,14 +38,16 @@
     /* column types */
     &.doclisting-icon {
       .fixed-width(32px);
+      + .doclisting-name {
+        padding-left: 0;
+      }
     }
     &.doclisting-name {
       width: 100%;
       min-width: 10px;
-      padding-left: 0;
     }
     &.doclisting-type {
-      .fixed-width(100px);
+      .fixed-width(110px);
     }
     &.doclisting-state {
       .fixed-width(51px);
@@ -112,6 +114,11 @@
       > th {
         height: @doclist-head-height - (2 * @doclist-padding);
         font-size: @font-size-large;
+      }
+
+      .hippo-list-order-ascending,
+      .hippo-list-order-descending,
+      .hippo-list-order-none {
         cursor: pointer;
       }
 

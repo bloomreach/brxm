@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -29,7 +30,7 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAndStateRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentIconAndStateRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.skin.DocumentListColumn;
@@ -43,23 +44,25 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
 
     @Override
     public List<ListColumn<Node>> getColumns() {
-        final List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+        final List<ListColumn<Node>> columns = new ArrayList<>();
         columns.add(createIconAndStateColumn());
         columns.add(createNameColumn());
         return columns;
     }
 
     private ListColumn<Node> createIconAndStateColumn() {
-        final ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
+        final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
+        final ListColumn<Node> column = new ListColumn<>(iconHeader, "icon");
         column.setComparator(new TypeComparator());
-        column.setRenderer(new IconAndStateRenderer());
+        column.setRenderer(new DocumentIconAndStateRenderer());
         column.setAttributeModifier(new StateIconAttributeModifier());
         column.setCssClass(DocumentListColumn.ICON.getCssClass());
         return column;
     }
 
     private ListColumn<Node> createNameColumn() {
-        final ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("doclisting-name", DocumentListingPlugin.class), "name");
+        final ClassResourceModel nameHeader = new ClassResourceModel("doclisting-name", DocumentListingPlugin.class);
+        final ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
         column.setComparator(new NameComparator());
         column.setAttributeModifier(new DocumentAttributeModifier());
         column.setCssClass(DocumentListColumn.NAME.getCssClass());
@@ -74,8 +77,8 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
     }
 
     private ListColumn<Node> createTypeColumn() {
-        ListColumn<Node> column = new ListColumn<Node>(
-                new ClassResourceModel("doclisting-type", DocumentListingPlugin.class), "type");
+        final ClassResourceModel typeHeader = new ClassResourceModel("doclisting-type", DocumentListingPlugin.class);
+        ListColumn<Node> column = new ListColumn<>(typeHeader, "type");
         column.setComparator(new TypeComparator());
         column.setRenderer(new TypeRenderer());
         column.setCssClass(DocumentListColumn.TYPE.getCssClass());
