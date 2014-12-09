@@ -71,10 +71,10 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
-    public class JUploadDialog extends JQueryFileUploadDialog{
+    public class UploadDialog extends JQueryFileUploadDialog{
         private static final long serialVersionUID = 1L;
 
-        protected JUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
+        protected UploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
             super(pluginContext, pluginConfig);
         }
 
@@ -249,7 +249,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new Label("type", "default").setVisible(false);
         }
 
-        JUploadDialog dialog = new JUploadDialog(getPluginContext(), getPluginConfig());
+        UploadDialog dialog = new UploadDialog(getPluginContext(), getPluginConfig());
         dialog.add(typeComponent);
         return dialog;
     }
