@@ -66,7 +66,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
     public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
+        setClassName("hippo-typeslist " + DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
 
         IModel<Node> nodeModel = getModel();
         if (nodeModel != null && nodeModel.getObject() != null) {
