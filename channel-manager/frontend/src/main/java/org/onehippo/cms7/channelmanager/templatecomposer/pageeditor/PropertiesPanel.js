@@ -174,7 +174,7 @@
         componentId: null,
         forcedVariantId: null,
         initialForcedVariantId: null,
-        pageRequestVariants: [],
+        pageRequestVariants: {},
         componentVariants: null,
         lastModifiedTimestamp: null,
 
@@ -311,8 +311,7 @@
         },
 
         _initTabs: function(variants) {
-            var propertiesEditorCount, i, tabComponent, propertiesForm;
-            propertiesEditorCount = variants.length - 1;
+            var tabComponent, propertiesForm;
             Ext.each(variants, function(variant) {
                 if ('plus' === variant.id) {
                     tabComponent = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
@@ -337,7 +336,7 @@
                             scope: this
                         }
                     });
-                    tabComponent = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
+                    tabComponent = this._createPropertiesEditor(variant, propertiesForm, variants);
                 }
                 this.add(tabComponent);
             }, this);
@@ -382,13 +381,13 @@
             });
         },
 
-        _createPropertiesEditor: function(variant, variantCount, propertiesForm) {
+        _createPropertiesEditor: function(variant, propertiesForm, variants) {
             var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
                 cls: 'component-properties-editor',
                 autoScroll: true,
                 componentId: this.componentId,
                 variant: variant,
-                variantCount: variantCount,
+                allVariants: variants.slice(0, variants.length - 1),
                 title: variant.name,
                 propertiesForm: propertiesForm
             });
@@ -429,7 +428,7 @@
         },
 
         _getBestMatchingTabIndex: function(forcedVariantId, variants) {
-            var tabIndex, i, len;
+            var tabIndex, variant;
 
             // first check if any tab matches the forced variant
             tabIndex = this._getTabIndexByVariant(forcedVariantId, variants);
@@ -437,12 +436,10 @@
                 return tabIndex;
             }
 
-            // second, find tab with the best-matching page request variant
-            for (i = 0, len = this.pageRequestVariants.length; i < len; i++) {
-                tabIndex = this._getTabIndexByVariant(this.pageRequestVariants[i], variants);
-                if (tabIndex >= 0) {
-                    return tabIndex;
-                }
+            variant = this.pageRequestVariants[this.componentId];
+            tabIndex = this._getTabIndexByVariant(variant, variants);
+            if (tabIndex >= 0) {
+                return tabIndex;
             }
 
             // third, return the first tab
@@ -467,7 +464,7 @@
             existingTab = this._getTab(existingVariant);
             if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
                 newPropertiesForm = existingTab.propertiesForm.copy(newVariant);
-                newTab = this._createPropertiesEditor(newVariant, this.items.length, newPropertiesForm);
+                newTab = this._createPropertiesEditor(newVariant, newPropertiesForm, Ext.pluck(this.items.getRange(), "variant"));
                 newTabIndex = this.items.length - 1;
                 this.insert(newTabIndex, newTab);
                 this.setActiveTab(newTabIndex);

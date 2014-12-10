@@ -202,9 +202,9 @@
 
                     pageRequestVariantsHeader = response.getResponseHeader('HST-Page-Request-Variants');
                     if (Ext.isString(pageRequestVariantsHeader)) {
-                        self.pageRequestVariants = pageRequestVariantsHeader.split('/');
+                        self.pageRequestVariants = Ext.util.JSON.decode(pageRequestVariantsHeader);
                     } else {
-                        self.pageRequestVariants = [];
+                        self.pageRequestVariants = {};
                     }
 
                     if (canEdit) {
