@@ -124,7 +124,8 @@ module.exports = function (grunt) {
         watch: {
             options: {
                 spawn: false,
-                interrupt: true
+                interrupt: true,
+                livereload: true
             },
 
             apps: {
@@ -136,21 +137,8 @@ module.exports = function (grunt) {
             },
 
             channelmanager: {
-                options: {
-                    livereload: true
-                },
                 files: ['src/main/java/**/*.{html,js,css,png,svg}'],
                 tasks: ['newer:copy:channelmanager']
-            },
-
-            livereload: {
-                options: {
-                    livereload: true
-                },
-                files: [
-                    '<%= build.ngsource %>/**/*',
-                    '!<%= build.ngsource %>/components/**/*'
-                ]
             }
         },
 
