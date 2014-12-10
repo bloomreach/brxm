@@ -20,14 +20,14 @@
 
     Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observable, {
 
-        TOOLBAR_ITEM_WIDTH: 150,
+        TOOLBAR_ITEM_WIDTH: 128,
 
         masterTpl: new Ext.Template('<ul class="toolbar-window">',
-                '<li class="scroll-left"></li>',
+                '<li class="scroll-arrow scroll-left"></li>',
                 '<li>',
                 '<ul class="toolbar">{items}</ul>' +
                         '</li>',
-                '<li class="scroll-right"></li>',
+                '<li class="scroll-arrow scroll-right"></li>',
                 '</ul>'),
 
         itemTpl: new Ext.Template('<li class="toolbar-item">',

@@ -35,7 +35,6 @@ Hippo.ChannelManager.TemplateComposer.IconToolbarWindow = Ext.extend(Ext.Window,
         }
         config.items.push({
             xtype: 'h_toolkit_grid',
-            height: 65,
             id: 'ToolkitGrid',
             columns: [
                 {
@@ -62,8 +61,8 @@ Hippo.ChannelManager.TemplateComposer.IconToolbarWindow = Ext.extend(Ext.Window,
         this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                // add 5 pixels to make the toolbar as wide as the visible iframe body
-                self.setWidth(arguments[0].body.w - Ext.getScrollBarWidth() + 5);
+                // add 2 pixels to make the toolbar as wide as the visible iframe body
+                self.setWidth(arguments[0].body.w - Ext.getScrollBarWidth() + 2);
             }, true);
         }, this, {single: true});
 
