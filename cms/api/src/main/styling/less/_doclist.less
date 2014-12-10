@@ -116,6 +116,9 @@
         font-size: @font-size-large;
         padding-top: @doclist-padding - 1;
         padding-bottom: @doclist-padding + 1;
+        :hover {
+          color: @aqua;
+        }
       }
 
       .hippo-list-order-ascending,
@@ -286,32 +289,25 @@
   z-index: 100;
 
   > a {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: @doclist-head-height;
     height: @doclist-head-height;
     cursor: pointer;
-    background-position: center;
-    background-repeat: no-repeat;
+
+    &:hover .hi {
+      fill: @aqua;
+    }
   }
 }
 
-.yui-layout-expanded .toggle-button a {
-  background-image: url("@{images}/icons/collapse-tiny.svg");
-}
-
-.yui-layout-collapsed {
-
-  .toggle-button a {
-    background-image: url("@{images}/icons/expand-tiny.svg");
+.yui-layout-collapsed .hippo-list-documents {
+  // hide all buttons except the current page indicator
+  .paging-navigator .goto a {
+    display: none;
   }
-
-  .hippo-list-documents {
-    // hide all buttons except the current page indicator
-    .paging-navigator .goto a {
-      display: none;
-    }
-    .paging-label {
-      visibility: hidden;
-    }
+  .paging-label {
+    visibility: hidden;
   }
 }

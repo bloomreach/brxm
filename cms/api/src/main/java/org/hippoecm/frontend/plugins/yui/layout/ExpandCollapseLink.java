@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,14 +18,26 @@ package org.hippoecm.frontend.plugins.yui.layout;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 
-public class ExpandCollapseLink extends WebMarkupContainer {
+public class ExpandCollapseLink extends Panel {
 
     private Boolean hasExpandableParent;
+    private final HippoIcon expandButton;
+    private final HippoIcon collapseButton;
 
-    public ExpandCollapseLink(String id) {
+    public ExpandCollapseLink(String id, boolean isExpanded) {
         super(id);
+
+        expandButton = HippoIcon.fromSprite("expandButton", Icon.EXPAND_TINY);
+        add(expandButton);
+
+        collapseButton = HippoIcon.fromSprite("collapseButton", Icon.COLLAPSE_TINY);
+        add(collapseButton);
+
+        setExpanded(isExpanded);
     }
 
     @Override
@@ -36,6 +48,11 @@ public class ExpandCollapseLink extends WebMarkupContainer {
     @Override
     public boolean isEnabled() {
         return hasExpandableParent();
+    }
+
+    public void setExpanded(boolean isExpanded) {
+        collapseButton.setVisible(isExpanded);
+        expandButton.setVisible(!isExpanded);
     }
 
     private boolean hasExpandableParent() {

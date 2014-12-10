@@ -30,12 +30,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
@@ -46,6 +43,7 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
     private static final long serialVersionUID = 1L;
 
+    private final ExpandCollapseLink toggleLink;
     private WebMarkupContainer buttons;
     private DataTableBehavior behavior;
 
@@ -70,7 +68,8 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
             }
         });
 
-        addButton(new ExpandCollapseLink("toggleFullscreen"));
+        toggleLink = new ExpandCollapseLink("toggleLink", isExpanded);
+        addButton(toggleLink);
 
         updateDatatable = true;
     }
@@ -91,6 +90,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     public void collapse() {
         if (isExpanded) {
             isExpanded = false;
+            toggleLink.setExpanded(false);
             onModelChanged();
         }
     }
@@ -102,6 +102,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     public void expand() {
         if (!isExpanded) {
             isExpanded = true;
+            toggleLink.setExpanded(true);
             onModelChanged();
         }
     }
