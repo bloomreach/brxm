@@ -43,9 +43,9 @@ public enum Icon {
     FOLDER_TINY,
     FOLDER_SMALL,
     FOLDER_OPEN_TINY,
-    STATE_CHANGED_TINY,
-    STATE_LIVE_TINY,
-    STATE_NEW_TINY;
+    STATE_CHANGED_SMALL,
+    STATE_LIVE_SMALL,
+    STATE_NEW_SMALL;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 

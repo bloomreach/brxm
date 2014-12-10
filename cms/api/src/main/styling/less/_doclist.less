@@ -147,7 +147,7 @@
     width: 100%;
 
     > tr {
-      /* prevent IE10 from setting tbody height on all rows */
+      // prevent IE10 from setting tbody height on all rows
       height: auto;
 
       border-top: 1px solid @doclist-row-separator-color;
@@ -161,14 +161,16 @@
           justify-content: center;
           align-items: center;
         }
-
-        // show only 2 lines of text
-        > span span {
-          display: block;
-          overflow: hidden;
-          max-height: 2.1 * @line-height-computed;
-        }
       }
+
+      > td:not(.doclisting-icon) > span span {
+        // show only 2 lines of text, but allow icons to shift
+        // out of their box (e.g. for stacked document state icons)
+        display: block;
+        overflow: hidden;
+        max-height: 2.1 * @line-height-computed;
+      }
+
       .link {
         cursor: pointer;
       }
@@ -208,7 +210,8 @@
 
       .hi-state-changed {
         .hi-shape-circle,
-        .hi-shape-triangle {
+        .hi-shape-triangle,
+        .hi-shape-triangle-border {
           fill: @doclist-row-selected-color;
         }
         .hi-shape-checkmark,
@@ -271,7 +274,7 @@
   }
 }
 
-/* toggle button */
+// toggle button
 .toggle-button {
   display: block;
   position: absolute;

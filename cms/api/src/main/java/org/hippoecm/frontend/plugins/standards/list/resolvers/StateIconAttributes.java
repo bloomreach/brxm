@@ -145,15 +145,24 @@ public class StateIconAttributes implements IObservable, IDetachable {
                         HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
                         HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
 
-                try {
-                    icon = Icon.valueOf("STATE_" + StringUtils.upperCase(state) + "_TINY");
-                } catch (IllegalArgumentException e) {
-                    // unknown state
-                    log.info("No icon available for document state '{}'", state);
-                }
+                icon = getStateIcon(state);
 
                 observable.setTarget(new JcrNodeModel(document));
             }
+        }
+    }
+
+    private Icon getStateIcon(final String state) {
+        switch(state) {
+            case "new":
+                return Icon.STATE_NEW_SMALL;
+            case "live":
+                return Icon.STATE_LIVE_SMALL;
+            case "changed":
+                return Icon.STATE_CHANGED_SMALL;
+            default:
+                log.info("No icon available for document state '{}'", state);
+                return null;
         }
     }
 

@@ -27,7 +27,6 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -110,11 +109,11 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                 }
 
                 if (current == null && draft != null) {
-                    return Icon.STATE_NEW_TINY;
+                    return Icon.STATE_NEW_SMALL;
                 } else if (current != null && draft == null) {
-                    return Icon.STATE_LIVE_TINY;
+                    return Icon.STATE_LIVE_SMALL;
                 } else if (current != null && draft != null) {
-                    return Icon.STATE_CHANGED_TINY;
+                    return Icon.STATE_CHANGED_SMALL;
                 }
             }
             return null;
