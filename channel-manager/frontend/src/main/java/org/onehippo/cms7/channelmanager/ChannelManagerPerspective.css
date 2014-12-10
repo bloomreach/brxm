@@ -391,12 +391,12 @@
 
 .channel-manager .toolbar-window .scroll-left {
     left: 0;
-    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-left.png) no-repeat 16px center;
+    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat 16px center;
 }
 
 .channel-manager .toolbar-window .scroll-right {
     right: 0;
-    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-right.png) no-repeat 4px center;
+    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat 4px center;
 }
 
 .channel-manager .toolbar-window .scroll-right:hover {

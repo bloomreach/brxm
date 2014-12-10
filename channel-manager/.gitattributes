@@ -200,8 +200,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-url-navigation.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/collapse.svg -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-left.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-right.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-left.svg -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-right.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/components.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/ipad_landscape.png -text svneol=unset#image/png
