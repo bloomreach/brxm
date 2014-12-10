@@ -303,7 +303,13 @@
     background-image: url("@{images}/icons/expand-tiny.svg");
   }
 
-  .hippo-list-documents .paging-label {
-    visibility: hidden;
+  .hippo-list-documents {
+    // hide all buttons except the current page indicator
+    .paging-navigator .goto a {
+      display: none;
+    }
+    .paging-label {
+      visibility: hidden;
+    }
   }
 }
