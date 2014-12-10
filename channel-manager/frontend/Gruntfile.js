@@ -49,11 +49,11 @@ module.exports = function (grunt) {
         // clean target (distribution) folder
         clean: {
             target: {
-                src: '<%= build.target %>'
+                src: '<%= build.ngtarget %>'
             },
 
             bower: {
-                src: '<%= build.source %>/components/**'
+                src: '<%= build.ngsource %>/components/**'
             }
         },
 
@@ -63,8 +63,8 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= build.source %>',
-                        dest: '<%= build.target %>',
+                        cwd: '<%= build.ngsource %>',
+                        dest: '<%= build.ngtarget %>',
                         src: [
                             '**/*.html',
                             '**/*.js',
@@ -82,9 +82,20 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= build.source %>/components',
-                        dest: '<%= build.target %>/components',
+                        cwd: '<%= build.ngsource %>/components',
+                        dest: '<%= build.ngtarget %>/components',
                         src: readDeclutteredComponentFiles()
+                    }
+                ]
+            },
+
+            channelmanager: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '<%= build.cmsource %>',
+                        src: ['**/*.{html,js,css,png,svg}'],
+                        dest: '<%= build.cmtarget %>'
                     }
                 ]
             }
@@ -93,20 +104,20 @@ module.exports = function (grunt) {
         // add hashes to file names to avoid caching issues
         filerev: {
             css: {
-                src: '<%= build.target %>/**/*.css'
+                src: '<%= build.ngtarget %>/**/*.css'
             },
             js: {
-                src: '<%= build.target %>/**/*.js'
+                src: '<%= build.ngtarget %>/**/*.js'
             },
             images: {
-                src: '<%= build.target %>/**/*.{gif,png}'
+                src: '<%= build.ngtarget %>/**/*.{gif,png}'
             }
         },
 
         // replace file references in HTML files with their hashed versions
         usemin: {
-            css: '<%= build.target %>/**/*.css',
-            html: '<%= build.target %>/**/*.html'
+            css: '<%= build.ngtarget %>/**/*.css',
+            html: '<%= build.ngtarget %>/**/*.html'
         },
 
         // watch source files and rebuild when they change
@@ -118,10 +129,18 @@ module.exports = function (grunt) {
 
             apps: {
                 files: [
-                    '<%= build.source %>/**/*',
-                    '!<%= build.source %>/components/**/*'
+                    '<%= build.ngsource %>/**/*',
+                    '!<%= build.ngsource %>/components/**/*'
                 ],
                 tasks: ['build']
+            },
+
+            channelmanager: {
+                options: {
+                    livereload: true
+                },
+                files: ['src/main/java/**/*.{html,js,css,png,svg}'],
+                tasks: ['newer:copy:channelmanager']
             },
 
             livereload: {
@@ -129,8 +148,8 @@ module.exports = function (grunt) {
                     livereload: true
                 },
                 files: [
-                    '<%= build.source %>/**/*',
-                    '!<%= build.source %>/components/**/*'
+                    '<%= build.ngsource %>/**/*',
+                    '!<%= build.ngsource %>/components/**/*'
                 ]
             }
         },
@@ -141,7 +160,7 @@ module.exports = function (grunt) {
                 rules: readDeclutterConfig()
             },
             files: [
-                '<%= build.source %>/components/*'
+                '<%= build.ngsource %>/components/*'
             ]
         },
 
@@ -152,13 +171,13 @@ module.exports = function (grunt) {
                 jshintrc: true
             },
             apps: [
-                '<%= build.source %>/**/*.js',
-                '!<%= build.source %>/**/*.spec.js',
-                '!<%= build.source %>/components/**/*'
+                '<%= build.ngsource %>/**/*.js',
+                '!<%= build.ngsource %>/**/*.spec.js',
+                '!<%= build.ngsource %>/components/**/*'
             ],
             tests: [
-                '<%= build.source %>/**/*.spec.js',
-                '!<%= build.source %>/components/**/*'
+                '<%= build.ngsource %>/**/*.spec.js',
+                '!<%= build.ngsource %>/components/**/*'
             ]
         },
 

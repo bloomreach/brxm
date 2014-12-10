@@ -21,7 +21,7 @@ module.exports = function(config) {
     config.set({
 
         // base path, that will be used to resolve files and exclude
-        basePath: build.source,
+        basePath: build.ngsource,
 
         // frameworks to use
         frameworks: ['jasmine'],

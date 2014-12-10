@@ -15,6 +15,8 @@
  */
 
 module.exports = {
-    source: 'js',
-    target: 'target/classes/angular'
+    ngsource: 'js',
+    ngtarget: 'target/classes/angular',
+    cmsource: 'src/main/java/org/onehippo/cms7/channelmanager',
+    cmtarget: 'target/classes/org/onehippo/cms7/channelmanager'
 };
