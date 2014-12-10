@@ -245,7 +245,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/ListColumn.java -
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/SearchDocumentsProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/SingleVariantProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/TableDefinition.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/standards/list/but-small.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NameComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeNameComparator.java -text

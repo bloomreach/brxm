@@ -274,20 +274,36 @@
   }
 }
 
-// toggle button
+// expand/collapse
 .toggle-button {
   display: block;
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 0;
+  right: 0;
   float: right;
   z-index: 100;
+
+  > a {
+    display: block;
+    width: @doclist-head-height;
+    height: @doclist-head-height;
+    cursor: pointer;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 }
 
-.toggle-button > a > img {
-  vertical-align: bottom;
+.yui-layout-expanded .toggle-button a {
+  background-image: url("@{images}/icons/collapse-tiny.svg");
 }
 
-.yui-layout-collapsed .hippo-list-documents .paging-label {
-  visibility: hidden;
+.yui-layout-collapsed {
+
+  .toggle-button a {
+    background-image: url("@{images}/icons/expand-tiny.svg");
+  }
+
+  .hippo-list-documents .paging-label {
+    visibility: hidden;
+  }
 }

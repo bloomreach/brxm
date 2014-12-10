@@ -46,8 +46,6 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
     private static final long serialVersionUID = 1L;
 
-    private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
-
     private WebMarkupContainer buttons;
     private DataTableBehavior behavior;
 
@@ -72,12 +70,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
             }
         });
 
-        ExpandCollapseLink link = new ExpandCollapseLink("toggleFullscreen");
-        ResourceReference toggleFullscreenImage = new PackageResourceReference(ExpandCollapseListingPlugin.class,
-                TOGGLE_FULLSCREEN_IMG);
-        link.add(new CachingImage("toggleFullscreenImage", toggleFullscreenImage));
-
-        addButton(link);
+        addButton(new ExpandCollapseLink("toggleFullscreen"));
 
         updateDatatable = true;
     }
