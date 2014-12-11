@@ -9,81 +9,126 @@
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
  */
+.hippo-dialog-container .uploadpanel {
+    position: relative;
+    width: 100%;
+    float: left;
+}
 
 .fileinput-button {
-  position: relative;
-  overflow: hidden;
-  float: left;
-  margin-right: 4px;
+    position: relative;
+    overflow: hidden;
+    float: left;
+    margin-right: 4px;
 }
-.fileinput-button input {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  transform: translate(-300px, 0) scale(4);
-  font-size: 23px;
-  direction: ltr;
-  cursor: pointer;
-}
+
 .fileupload-buttonbar .btn,
 .fileupload-buttonbar .toggle {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
+
 .files .progress {
-  width: 200px;
+    width: 200px;
 }
-.progress-animated .bar {
-  background: url(../img/progressbar.gif) !important;
-  filter: none;
-}
+
 .fileupload-loading {
-  position: absolute;
-  left: 50%;
-  width: 128px;
-  height: 128px;
-  background: url(../img/loading.gif) center no-repeat;
-  display: none;
+    position: absolute;
+    left: 50%;
+    width: 128px;
+    height: 128px;
+    background: url(../img/loading.gif) center no-repeat;
+    display: none;
 }
+
 .fileupload-processing .fileupload-loading {
-  display: block;
+    display: block;
+}
+
+.progress {
+    background-color: #a8a8a8;
+    height: 15px;
+    padding: 3px;
+    width: 430px;
+    margin: 3px 0;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+}
+
+.progress span {
+    display: inline-block;
+    height: 100%;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+    transition: width .4s ease-in-out;
+}
+
+.orange span {
+    background-color: #fecf23;
+    background-image: linear-gradient(top, #fecf23, #fd9215);
+}
+
+.stripes span {
+    background-size: 30px 30px;
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+    transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+    transparent 75%, transparent);
+
+    animation: animate-stripes 3s linear infinite;
 }
 
 /* Fix for IE 6: */
 * html .fileinput-button {
-  line-height: 24px;
-  margin: 1px -3px 0 0;
+    line-height: 24px;
+    margin: 1px -3px 0 0;
 }
 
 /* Fix for IE 7: */
 * + html .fileinput-button {
-  padding: 2px 15px;
-  margin: 1px 0 0 0;
+    padding: 2px 15px;
+    margin: 1px 0 0 0;
 }
 
-@media (max-width: 767px) {
-  .files .btn span {
-    display: none;
-  }
-  .files .preview * {
-    width: 40px;
-  }
-  .files .name * {
-    width: 80px;
-    display: inline-block;
-    word-wrap: break-word;
-  }
-  .files .progress {
-    width: 20px;
-  }
-  .files .delete {
-    width: 60px;
-  }
+@media screen {
+    .files .btn span {
+        display: none;
+    }
+
+    .files .preview * {
+        width: 40px;
+        padding: 4px;
+    }
+
+    .files .name {
+        max-width: 250px;
+        display: inline-block;
+        word-wrap: break-word;
+    }
+
+    .files .size {
+        max-width: 80px;
+        display: inline-block;
+    }
+
+    .files .error {
+        max-width: 100px;
+        display: inline-block;
+        word-wrap: break-word;
+        padding: 4px;
+    }
+
+    .files .progress {
+        width: 20px;
+    }
+
+    .table.table-striped {
+        width: 100%;
+    }
+    .table.table-striped tbody tr:nth-child(2n) {
+        background-color: #f4f4f4;
+    }
 }
 
-.btn-warning.cancel.remove{
+.btn-warning.cancel.remove {
     float: left;
     background-image: url("../img/delete-small-16.png");
     width: 16px;
@@ -94,5 +139,6 @@
 
 .fileupload-listing-files {
     overflow: auto;
-    max-height: 320px
+    max-height: 200px;
+    width: 450px;
 }

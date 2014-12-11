@@ -16,8 +16,10 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 
 public class FileUploadBar extends Panel {
@@ -29,8 +31,8 @@ public class FileUploadBar extends Panel {
 
         add(new FileUploadBehavior(settings));
 
-        Button uploadButton = new Button("button-upload-id", new StringResourceModel("button-upload-label", this, null));
-        add(uploadButton);
+        add(new Label("select-files-message", new StringResourceModel("select.files.caption",
+                this, Model.of(settings))));
 
         Button cancelButton = new Button("button-cancel-id", new StringResourceModel("button-cancel-label", this, null));
         add(cancelButton);

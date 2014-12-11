@@ -53,7 +53,8 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
             "js/jquery.blueimp-gallery.min.js"
     };
     public static final String CONFIG_JS = "js/main.js";
-    public static final String STARTUP_SCRIPT = "loadJQueryFileUpload();";
+
+    public static final String STARTUP_SCRIPT = "jqueryFileUploadImpl.init();";
 
     private final FileUploadWidgetSettings settings;
 
@@ -90,8 +91,13 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
         // the url to receive file upload
         variables.put("url", settings.getUploadUrl());
 
+        // the name of file input field
+        variables.put("paramName", settings.getParamName());
+
+        variables.put("maxNumberOfFiles", settings.getMaxNumberOfFiles());
+
         //the url to be notified when uploading has done
-        variables.put("fileuploaddoneUrl", settings.getUploadDoneNotificationUrl());
+        variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());
 
         // Get settings to configure the file upload widget
         variables.put(FileUploadWidgetSettings.MAX_WIDTH_PROP, settings.getMaxWidth());
@@ -99,7 +105,7 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
         variables.put(FileUploadWidgetSettings.MAX_FILESIZE_PROP, settings.getMaxFileSize());
 
         String s = jsTmpl.asString(variables);
-        response.render(JavaScriptHeaderItem.forScript(s, "fileuload"));
+        response.render(JavaScriptHeaderItem.forScript(s, "fileupload"));
 
         // call the configuration after all DOM elements are loaded
         response.render(OnDomReadyHeaderItem.forScript(STARTUP_SCRIPT));

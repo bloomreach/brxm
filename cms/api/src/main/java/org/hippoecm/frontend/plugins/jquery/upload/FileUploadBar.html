@@ -21,21 +21,20 @@
           <div class="col-lg-7">
               <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button">
-                    <i class="glyphicon glyphicon-plus"></i>
-                    <span>Add files...</span>
                     <input type="file" name="files[]" multiple>
                 </span>
-              <input wicket:id="button-upload-id" type="button" class="btn btn-primary start"/>
+              <!--<input wicket:id="button-upload-id" type="button" class="btn btn-primary start"/>-->
               <input wicket:id="button-cancel-id" type="button" class="btn btn-warning cancel"/>
               <!-- The global file processing state -->
               <span class="fileupload-process"></span>
           </div>
+          <span wicket:id="select-files-message"/>
           <!-- The global progress state -->
           <div class="col-lg-5 fileupload-progress fade">
-              <!-- The global progress bar -->
-              <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                  <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-              </div>
+              <!-- The global progress bar - disabled-->
+              <!--<div class="progress orange stripes" role="progressbar" aria-valuemin="0" aria-valuemax="100">-->
+                  <!--<span class="progress-bar" style="width:0%;"></span>-->
+              <!--</div>-->
               <!-- The extended global progress state -->
               <div class="progress-extended">&nbsp;</div>
           </div>

@@ -16,18 +16,20 @@
 
 /* global $, window */
 
-function loadJQueryFileUpload(){
-    $(function () {
-        'use strict';
-
-        // Initialize the jQuery File Upload widget:
-        $('#${componentMarkupId}').fileupload({
+jqueryFileUploadImpl = {
+    filelist: {},
+    fileuploadWidget: {},
+    init: function () {
+        console.log('init jquery fileupload');
+        // clean the file list
+        this.filelist = {};
+        this.fileuploadWidget = $('#${componentMarkupId}').fileupload({
             url: '${url}',
             maxFileSize: ${max.file.size},
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
             dataType: 'json',
-            imageMaxWidth: 512,
-            imageMaxHeight: 512,
+            previewMaxWidth: 32,
+            previewMaxHeight: 32,
             imageCrop: true, // Force cropped images
             process: [
                 {
@@ -44,9 +46,46 @@ function loadJQueryFileUpload(){
                     action: 'save'
                 }
             ]
-        }).bind('fileuploaddone', function(e, data){
-            var wcall = Wicket.Ajax.get({ 'u': '${fileuploaddoneUrl}'});
+        }).bind('fileuploadcompleted', function (e, data) {
+            var filesContainer = $(this).find('.files');
+            // remove all 'template-download' rows after uploading
+            filesContainer.find('.template-upload').remove();
+            console.log("fileuploadcompleted");
+        }).bind('fileuploaddone', function (e, data) {
+            var wcall = Wicket.Ajax.get({ 'u': '${fileUploadDoneUrl}'});
             console.log('fileuploaddone : ' + wcall);
+        }).bind('fileuploadchange', function (e, data) {
+            var fileNames = [];
+            $.each(data.files, function (idx, file) {
+                fileNames.push(file.name);
+                jqueryFileUploadImpl.filelist[file.name] = file;
+            });
+            console.log("fileuploadchange:%s", fileNames.join());
+        }).bind('fileuploadfail', function (e, data) {
+            var fileNames = [];
+            $.each(data.files, function (idx, file) {
+                fileNames.push(file.name);
+                delete jqueryFileUploadImpl.filelist[file.name];
+            });
+            console.log("fileuploadfail:%s", fileNames.join());
+        }).bind('fileuploadprocessfail', function (e, data) {
+            var fileNames = [];
+            $.each(data.files, function (idx, file) {
+                fileNames.push(file.name);
+                delete jqueryFileUploadImpl.filelist[file.name];
+            });
+            console.log('fileuploadprocessfail:%s', fileNames.join());
         });
-    });
-}
+    },
+    // upload all files in the container in a single POST request
+    uploadFiles: function () {
+        var uploadfiles = [];
+        for (var filename in this.filelist) {
+            uploadfiles.push(this.filelist[filename]);
+        }
+        // disable inputs
+        $('#${componentMarkupId}').find('input').prop('disabled', true);
+        console.log("Total uploading files: " + JSON.stringify(jqueryFileUploadImpl.filelist));
+        this.fileuploadWidget.fileupload('send', {files: uploadfiles});
+    }
+};

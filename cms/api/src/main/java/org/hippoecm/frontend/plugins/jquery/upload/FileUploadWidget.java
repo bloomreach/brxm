@@ -17,8 +17,12 @@
 package org.hippoecm.frontend.plugins.jquery.upload;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
@@ -38,7 +42,6 @@ import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.upload.DiskFileItemFactory;
 import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.slf4j.Logger;
@@ -59,6 +62,7 @@ public abstract class FileUploadWidget extends Panel {
 
     private AbstractAjaxBehavior ajaxCallbackDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
+
 
     private class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         private static final long serialVersionUID = 1L;
@@ -82,36 +86,45 @@ public abstract class FileUploadWidget extends Panel {
                 MultipartServletWebRequest multipartServletWebRequest = servletWebRequest.
                         newMultipartWebRequest(getMaxSize(), getPage().getId(), diskFileItemFactory);
 
-                List<FileItem> allFiles = new ArrayList<>();
+                Map<String, FileUploadInfo> allUploadedFiles = new HashMap<>();
+                // try to upload all files
                 for (List<FileItem> files : multipartServletWebRequest.getFiles().values()) {
-                    allFiles.addAll(files);
+                    log.warn("Uploading files: #{}", files.size());
                     for (FileItem file : files) {
-                        onFileUpload(file);
+                        // save file info prior uploading because temporary files may be deleted,
+                        // thus their file sizes won't be correct.
+                        FileUploadInfo fileUploadInfo = new FileUploadInfo(file.getName(), file.getSize());
+                        try {
+                            onFileUpload(file);
+                        } catch (FileUploadViolationException e) {
+                            log.debug("file {} uploading has some violation", file.getName(), e);
+                            for (String errorMsg : e.getViolationMessages()) {
+                                fileUploadInfo.addErrorMessage(errorMsg);
+                            }
+                        }
+                        allUploadedFiles.put(file.getName(), fileUploadInfo);
                     }
                 }
-                setResponseSuccess(servletWebRequest, allFiles);
+                setResponse(servletWebRequest, allUploadedFiles);
             } catch (FileUploadException e) {
                 log.error("Error handling file upload request", e);
-                setResponseFailed(servletWebRequest);
             }
         }
 
-        protected void setResponseFailed(final ServletWebRequest request) {
-            JSONObject jsonResponse = new JSONObject();
-            try {
-                jsonResponse.put("error", "Error handling file upload request");
-                setResponse(request, jsonResponse.toString());
-            } catch (JSONException e) {
-                log.error("Error creating JSON response", e);
+        protected void setResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
+            for (String filename : uploadedFiles.keySet()) {
+                List<String> errorMessages = uploadedFiles.get(filename).getErrorMessages();
+                if (!errorMessages.isEmpty()) {
+                    log.error("file {} contains errors: {}", filename,
+                            StringUtils.join(errorMessages, ";"));
+                }
             }
-        }
 
-        protected void setResponseSuccess(final ServletWebRequest request, final List<FileItem> files) {
             final String responseContent;
             if (wantsHtml(request)) {
-                responseContent = generateHtmlResponse(files);
+                responseContent = generateHtmlResponse(uploadedFiles);
             } else {
-                responseContent = generateJsonResponse(files);
+                responseContent = generateJsonResponse(uploadedFiles);
             }
 
             setResponse(request, responseContent);
@@ -132,15 +145,20 @@ public abstract class FileUploadWidget extends Panel {
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(textRequestHandler);
         }
 
-        private String generateJsonResponse(final List<FileItem> files) {
+        private String generateJsonResponse(final Map<String, FileUploadInfo> uploadedFiles) {
             JSONObject jsonResponse = new JSONObject();
             JSONArray jsonFiles = new JSONArray();
 
-            for (FileItem fileItem : files) {
+            for (String fileName: uploadedFiles.keySet()) {
                 JSONObject fileJson = new JSONObject();
                 try {
-                    fileJson.put(JQUERY_FILEUPLOAD_NAME, fileItem.getName());
-                    fileJson.put(JQUERY_FILEUPLOAD_SIZE, fileItem.getSize());
+                    fileJson.put(JQUERY_FILEUPLOAD_NAME, fileName);
+                    long size = uploadedFiles.get(fileName).getSize();
+                    fileJson.put(JQUERY_FILEUPLOAD_SIZE, size);
+                    List<String> errors = uploadedFiles.get(fileName).getErrorMessages();
+                    if (errors != null && !errors.isEmpty()) {
+                        fileJson.put("error", StringUtils.join(errors, ";"));
+                    }
                 } catch (JSONException e) {
                     try {
                         fileJson.put("error", e.getMessage());
@@ -163,8 +181,8 @@ public abstract class FileUploadWidget extends Panel {
             return jsonResponse.toString();
         }
 
-        private String generateHtmlResponse(final List<FileItem> files) {
-            String jsonResponse = generateJsonResponse(files);
+        private String generateHtmlResponse(final Map<String, FileUploadInfo> uploadedFiles) {
+            String jsonResponse = generateJsonResponse(uploadedFiles);
             String escapedJson = escapeHtml(jsonResponse);
             return escapedJson;
         }
@@ -181,11 +199,40 @@ public abstract class FileUploadWidget extends Panel {
             String acceptHeader = request.getHeader("Accept");
             return !Strings.isEmpty(acceptHeader) && acceptHeader.contains("text/html");
         }
+
+        /**
+         * Class to store file information prior uploading
+         */
+        private class FileUploadInfo {
+            private final String fileName;
+            private final long size;
+            private final List<String> errorMessages = new ArrayList<>();
+
+            public FileUploadInfo(final String fileName, final long size) {
+                this.fileName = fileName;
+                this.size = size;
+            }
+
+            public void addErrorMessage(final String message) {
+                this.errorMessages.add(message);
+            }
+
+            /**
+             * Return either an empty list or a list of error messages occurred in uploading
+             * @return
+             */
+            public List<String> getErrorMessages() {
+                return Collections.unmodifiableList(errorMessages);
+            }
+
+            public long getSize() {
+                return size;
+            }
+        }
     };
 
-    public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final IPluginContext pluginContext) {
+    public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig) {
         super(uploadPanel);
-
         this.settings = new FileUploadWidgetSettings(pluginConfig);
         createComponents();
     }
@@ -248,7 +295,7 @@ public abstract class FileUploadWidget extends Panel {
         return Bytes.bytes(settings.getMaxFileSize());
     }
 
-    protected abstract void onFileUpload(FileItem fileItem) throws FileUploadException;
+    protected abstract void onFileUpload(FileItem fileItem) throws FileUploadViolationException;
 
     protected abstract void onFileUploadFinished();
 }
