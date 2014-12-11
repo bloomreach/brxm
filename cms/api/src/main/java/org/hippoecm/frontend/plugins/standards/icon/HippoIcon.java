@@ -21,6 +21,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -134,4 +135,19 @@ public class HippoIcon extends Panel {
         fragment.setRenderBodyOnly(true);
         add(fragment);
     }
+
+    /*
+     * Prevent instantiation via parent constructor.
+     */
+    private HippoIcon(final String id) {
+        super(id);
+    }
+
+    /*
+     * Prevent instantiation via parent constructor.
+     */
+    private HippoIcon(final String id, final IModel<?> model) {
+        super(id, model);
+    }
+
 }
