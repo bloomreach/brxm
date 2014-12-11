@@ -80,7 +80,7 @@ public enum Icon {
 
     /**
      * Returns an inline svg representation of this icon that refers to the icon in the sprite.
-     * It has of the form <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
+     * It is of the form <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
      *
      * @see Icon#getSpriteId()
      * @see Icon#getCssClasses()
@@ -107,8 +107,8 @@ public enum Icon {
 
     /**
      * @return the id of this icon in the generated icon sprint.
-     * For example, the icon {@link CARET_DOWN_MEDIUM} will have the
-     * icon sprite id "hi-caret-down-medium".
+     * For example, the icon {@link CARET_DOWN_TINY} will have the
+     * icon sprite id "hi-caret-down-tiny".
      */
     String getSpriteId() {
         return "hi-" + getFileName();
@@ -116,7 +116,7 @@ public enum Icon {
 
     /**
      * @return all CSS helper classes to identify an icon. For example, the icon {@link CARET_DOWN_TINY}
-     * will get the CSS classes "hi hi-medium hi-caret hi-caret-down".
+     * will get the CSS classes "hi hi-tiny hi-caret hi-caret-down".
      */
     private String getCssClasses() {
         final StringBuilder cssClasses = new StringBuilder("hi");
@@ -129,7 +129,7 @@ public enum Icon {
         cssClasses.append(" hi-").append(name);
 
         if (nameParts.length == 3) {
-            final String variant = nameParts[1];                // e.g. 'down' in 'CARET_DOWN_MEDIUM'
+            final String variant = nameParts[1];                // e.g. 'down' in 'CARET_DOWN_TINY'
             cssClasses.append(" hi-").append(name).append("-").append(variant);
         }
         return cssClasses.toString();

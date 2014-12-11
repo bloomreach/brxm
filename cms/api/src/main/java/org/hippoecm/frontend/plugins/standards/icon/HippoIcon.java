@@ -32,7 +32,7 @@ import org.hippoecm.frontend.skin.Icon;
 public class HippoIcon extends Panel {
 
     /**
-     * Renders a hippo icon via a reference to the icon sprint.
+     * Renders a hippo icon via a reference to the icon sprite.
      * @param id the Wicket id of the icon
      * @param icon the icon to render
      * @return the icon component
@@ -77,7 +77,7 @@ public class HippoIcon extends Panel {
      * Renders an icon stored in a resource. When the icon's file extension is '.svg',
      * the icon is rendered as an inline SVG image.
      * @param id the Wicket id of the icon
-     * @param icon the icon to render
+     * @param reference the resource to render
      * @return the icon component
      */
     public static HippoIcon fromResource(final String id, final ResourceReference reference) {
@@ -88,7 +88,7 @@ public class HippoIcon extends Panel {
      * Renders an icon stored in a resource, including 'width' and 'height' atrtibutes.
      * When the icon's file extension is '.svg', the icon is rendered as an inline SVG image.
      * @param id the Wicket id of the icon
-     * @param icon the icon to render
+     * @param reference the resource to render
      * @param size the size to use as width and height value, in pixels
      * @return the icon component
      */
@@ -97,10 +97,10 @@ public class HippoIcon extends Panel {
     }
 
     /**
-     * Renders an icon stored in a resource, including 'width' and 'height' atrtibutes.
+     * Renders an icon stored in a resource, including 'width' and 'height' attributes.
      * When the icon's file extension is '.svg', the icon is rendered as an inline SVG image.
      * @param id the Wicket id of the icon
-     * @param icon the icon to render
+     * @param reference the resource to render
      * @param width the width of the icon in pixels
      * @param height the height of the icon in pixels
      * @return the icon component
