@@ -222,6 +222,7 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
         createFacetRule(domainRule, false, "jcr:path", "Reference", "/test/folder/non/existing/one");
         createFacetRule(domainRule, false, "jcr:path", "Reference", "/test/folder/non/existing/two");
+        session.save();
 
         Session testSession = null;
         try {
