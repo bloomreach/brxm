@@ -135,19 +135,34 @@
         cursor: pointer;
       }
 
-      .hippo-list-order-ascending {
-        > span {
-          padding-right: 16px;
-          color: @doclist-head-sorted-color;
-          background: url("@{images}/icons/chevron-down-tiny.svg") 100% 100% no-repeat;
-        }
+      .hippo-list-order-ascending > span {
+        padding-right: 16px;
+        color: @doclist-head-sorted-color;
+        background: url("@{images}/icons/chevron-down-tiny.svg") 100% 100% no-repeat;
       }
 
-      .hippo-list-order-descending {
+      .hippo-list-order-descending > span {
+        padding-right: 16px;
+        color: @doclist-head-sorted-color;
+        background: url("@{images}/icons/chevron-up-tiny.svg") 100% 100% no-repeat;
+      }
+
+      .doclisting-icon {
+        background: no-repeat 50% 50%;
         > span {
-          padding-right: 16px;
-          color: @doclist-head-sorted-color;
-          background: url("@{images}/icons/chevron-up-tiny.svg") 100% 100% no-repeat;
+          background: none;
+        }
+        &.hippo-list-order-none {
+          background-image: url("@{images}/icons/stateorder-none-tiny.svg");
+          &:hover {
+            background-image: url("@{images}/icons/stateorder-hover-tiny.svg");
+          }
+        }
+        &.hippo-list-order-ascending {
+          background-image: url("@{images}/icons/stateorder-down-tiny.svg");
+        }
+        &.hippo-list-order-descending {
+          background-image: url("@{images}/icons/stateorder-up-tiny.svg");
         }
       }
     }
