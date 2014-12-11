@@ -395,7 +395,6 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
         @Override
         public void detach() {
-            model.detach();
         }
     }
 
