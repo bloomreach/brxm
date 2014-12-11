@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.ObservableTreeModel.ObservableTreeModelEvent;
+import org.hippoecm.frontend.model.tree.ObservableTreeModel.TranslationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
 
     public JcrTreeModel(IJcrTreeNode rootModel) {
         jcrTreeModel = new ObservableTreeModel(rootModel);
-        listeners = new LinkedList<TreeModelListener>();
+        listeners = new LinkedList<>();
     }
 
     public ObservableTreeModel getObservable() {
@@ -56,10 +57,12 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
     public void onEvent(Iterator<? extends IEvent<ObservableTreeModel>> iter) {
         while (iter.hasNext()) {
             IEvent<ObservableTreeModel> event = iter.next();
+            
             if (event instanceof ObservableTreeModelEvent) {
                 Event jcrEvent = ((ObservableTreeModelEvent) event).getJcrEvent().getEvent();
                 try {
-                    TreeModelEvent tme = newTreeModelEvent(jcrEvent);
+                    TreeModelEvent tme = event instanceof TranslationEvent ? 
+                            newTranslationEvent(jcrEvent) : newTreeModelEvent(jcrEvent);
                     if (tme != null) {
                         for (TreeModelListener l : listeners) {
                             l.treeStructureChanged(tme);
@@ -70,6 +73,15 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
                 }
             }
         }
+    }
+
+    protected TreeModelEvent newTranslationEvent(final Event event) throws RepositoryException {
+        final JcrNodeModel nodeModel = new JcrNodeModel(event.getPath()).getParentModel().getParentModel();
+        final TreePath path = lookup(nodeModel);
+        if (path != null) {
+            return new TreeModelEvent(this, path);
+        }
+        return null;
     }
 
     // translate the jcr event into a tree model event
