@@ -20,6 +20,7 @@ import java.security.AccessControlException;
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
@@ -34,6 +35,8 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
 
@@ -42,108 +45,81 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         super.setUp();
 
         // create users
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (!users.hasNode("bob")) {
-            final Node user = users.addNode("bob", "hipposys:user");
-            user.setProperty("hipposys:password", "password");
-        }
+        createUser("bob");
+        createUser("downScopedBob");
+        createUser("alice");
 
-        if (!users.hasNode("downScopedBob")) {
-            final Node user = users.addNode("downScopedBob", "hipposys:user");
-            user.setProperty("hipposys:password", "password");
-        }
-
-        if (!users.hasNode("alice")) {
-            final Node user = users.addNode("alice", "hipposys:user");
-            user.setProperty("hipposys:password", "password");
-        }
-
+        // create content
         final Node root = session.getRootNode();
-        if (!root.hasNode("test")) {
-            final Node test = root.addNode("test");
-            final Node folder = test.addNode("folder", "hippostd:folder");
-            folder.setProperty("hippostd:foldertype", new String[]{"foo", "bar"});
-            final Node authDocument = folder.addNode("authDocument", "hippo:authtestdocument");
-            authDocument.setProperty("authDocumentProp", "foo");
-            final Node compound = authDocument.addNode("compound", "hippo:authtestdocument");
-            compound.setProperty("compoundProp", "bar");
-            final Node testDocument = folder.addNode("testDocument", "hippo:testdocument");
-            testDocument.setProperty("testDocumentProp", "lux");
-        }
+        final Node test = root.addNode("test");
+        final Node folder = test.addNode("folder", "hippostd:folder");
+        folder.setProperty("hippostd:foldertype", new String[]{"foo", "bar"});
+        final Node authDocument = folder.addNode("authDocument", "hippo:authtestdocument");
+        authDocument.setProperty("authDocumentProp", "foo");
+        final Node compound = authDocument.addNode("compound", "hippo:authtestdocument");
+        compound.setProperty("compoundProp", "bar");
+        final Node testDocument = folder.addNode("testDocument", "hippo:testdocument");
+        testDocument.setProperty("testDocumentProp", "lux");
 
+        // set up authorization rules
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
         // bob can read and write to /test/folder and everything *below*
-        if (!domains.hasNode("pathFacetRuleDomain")) {
-            final Node pathFacetRuleDomain = domains.addNode("pathFacetRuleDomain", "hipposys:domain");
-            final Node domainRule = pathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below", "hipposys:domainrule");
-            final Node facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
-            facetRule.setProperty("hipposys:equals", true);
-            facetRule.setProperty("hipposys:facet", "jcr:path");
-            facetRule.setProperty("hipposys:type", "Reference");
-            facetRule.setProperty("hipposys:value", "/test/folder");
-            final Node bobIsAdmin = pathFacetRuleDomain.addNode("bob", "hipposys:authrole");
-            bobIsAdmin.setProperty("hipposys:users", new String[]{"bob"});
-            bobIsAdmin.setProperty("hipposys:role", "admin");
-        }
+        final Node pathFacetRuleDomain = domains.addNode("pathFacetRuleDomain", "hipposys:domain");
+        Node domainRule = pathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below", "hipposys:domainrule");
+        Node facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:path");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/test/folder");
+        createAdminAuthRole(pathFacetRuleDomain, "bob");
 
         // downScopedBob can read and write to /test/folder and everything below *except* node /test/folder/authDocument
-        if (!domains.hasNode("doublePathFacetRuleDomain")) {
-            final Node doublePathFacetRuleDomain = domains.addNode("doublePathFacetRuleDomain", "hipposys:domain");
-            final Node domainRule = doublePathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below-but-not-authDocument", "hipposys:domainrule");
-            final Node facetRule = domainRule.addNode("read-test-folder", "hipposys:facetrule");
-            facetRule.setProperty("hipposys:equals", true);
-            facetRule.setProperty("hipposys:facet", "jcr:path");
-            facetRule.setProperty("hipposys:type", "Reference");
-            facetRule.setProperty("hipposys:value", "/test/folder");
+        final Node doublePathFacetRuleDomain = domains.addNode("doublePathFacetRuleDomain", "hipposys:domain");
+        domainRule = doublePathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below-but-not-authDocument", "hipposys:domainrule");
+        facetRule = domainRule.addNode("read-test-folder", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:path");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/test/folder");
 
-            final Node facetRule2 = domainRule.addNode("cant-read-authDocument-below-test-folder", "hipposys:facetrule");
-            facetRule2.setProperty("hipposys:equals", false);
-            facetRule2.setProperty("hipposys:facet", "jcr:path");
-            facetRule2.setProperty("hipposys:type", "Reference");
-            facetRule2.setProperty("hipposys:value", "/test/folder/authDocument");
+        facetRule = domainRule.addNode("cant-read-authDocument-below-test-folder", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", false);
+        facetRule.setProperty("hipposys:facet", "jcr:path");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/test/folder/authDocument");
 
-            final Node downScopedBobIsAdmin = doublePathFacetRuleDomain.addNode("downScopedBob", "hipposys:authrole");
-            downScopedBobIsAdmin.setProperty("hipposys:users", new String[]{"downScopedBob"});
-            downScopedBobIsAdmin.setProperty("hipposys:role", "admin");
-        }
+        createAdminAuthRole(doublePathFacetRuleDomain, "downScopedBob");
 
         // alice can read and write to /test/folder and everything *below* it that is of type 'hippostd:folder' or 'hippo:testdocument'
         // thus not "hippo:authtestdocument"
-        if (!domains.hasNode("pathFacetAndTypeRuleDomain")) {
-            final Node pathFacetAndTypeRuleDomain = domains.addNode("pathFacetAndTypeRuleDomain", "hipposys:domain");
-            {
-                final Node domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below", "hipposys:domainrule");
-                final Node facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
-                facetRule.setProperty("hipposys:equals", true);
-                facetRule.setProperty("hipposys:facet", "jcr:path");
-                facetRule.setProperty("hipposys:type", "Reference");
-                facetRule.setProperty("hipposys:value", "/test/folder");
+        final Node pathFacetAndTypeRuleDomain = domains.addNode("pathFacetAndTypeRuleDomain", "hipposys:domain");
+        domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below", "hipposys:domainrule");
+        facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:path");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/test/folder");
 
-                final Node facetRule2 = domainRule.addNode("node-type-hippostd-folder", "hipposys:facetrule");
-                facetRule2.setProperty("hipposys:equals", true);
-                facetRule2.setProperty("hipposys:facet", "jcr:primaryType");
-                facetRule2.setProperty("hipposys:type", "Name");
-                facetRule2.setProperty("hipposys:value", "hippostd:folder");
-            }
-            {
-                final Node domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below", "hipposys:domainrule");
-                final Node facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
-                facetRule.setProperty("hipposys:equals", true);
-                facetRule.setProperty("hipposys:facet", "jcr:path");
-                facetRule.setProperty("hipposys:type", "Reference");
-                facetRule.setProperty("hipposys:value", "/test/folder");
+        facetRule = domainRule.addNode("node-type-hippostd-folder", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:primaryType");
+        facetRule.setProperty("hipposys:type", "Name");
+        facetRule.setProperty("hipposys:value", "hippostd:folder");
 
-                final Node facetRule2 = domainRule.addNode("node-type-test-document", "hipposys:facetrule");
-                facetRule2.setProperty("hipposys:equals", true);
-                facetRule2.setProperty("hipposys:facet", "jcr:primaryType");
-                facetRule2.setProperty("hipposys:type", "Name");
-                facetRule2.setProperty("hipposys:value", "hippo:testdocument");
-            }
+        domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below", "hipposys:domainrule");
+        facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:path");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/test/folder");
 
-            final Node aliceIsAdmin = pathFacetAndTypeRuleDomain.addNode("alice", "hipposys:authrole");
-            aliceIsAdmin.setProperty("hipposys:users", new String[]{"alice"});
-            aliceIsAdmin.setProperty("hipposys:role", "admin");
-        }
+        facetRule = domainRule.addNode("node-type-test-document", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:primaryType");
+        facetRule.setProperty("hipposys:type", "Name");
+        facetRule.setProperty("hipposys:value", "hippo:testdocument");
+
+        createAdminAuthRole(pathFacetAndTypeRuleDomain, "alice");
 
         session.save();
     }
@@ -151,44 +127,23 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (users.hasNode("bob")) {
-            users.getNode("bob").remove();
-        }
-        if (users.hasNode("downScopedBob")) {
-            users.getNode("downScopedBob").remove();
-        }
-        if (users.hasNode("alice")) {
-            users.getNode("alice").remove();
-        }
-
-        final Node domains = session.getNode("/hippo:configuration/hippo:domains");
-        if (domains.hasNode("pathFacetRuleDomain")) {
-            domains.getNode("pathFacetRuleDomain").remove();
-        }
-        if (domains.hasNode("doublePathFacetRuleDomain")) {
-            domains.getNode("doublePathFacetRuleDomain").remove();
-        }
-        if (domains.hasNode("pathFacetAndTypeRuleDomain")) {
-            domains.getNode("pathFacetAndTypeRuleDomain").remove();
-        }
-
-        session.save();
+        removeNode("/hippo:configuration/hippo:users/bob");
+        removeNode("/hippo:configuration/hippo:users/downScopedBob");
+        removeNode("/hippo:configuration/hippo:users/alice");
+        removeNode("/hippo:configuration/hippo:domains/pathFacetRuleDomain");
+        removeNode("/hippo:configuration/hippo:domains/doublePathFacetRuleDomain");
+        removeNode("/hippo:configuration/hippo:domains/pathFacetAndTypeRuleDomain");
         super.tearDown();
     }
 
     @Test
     public void bob_can_read_and_write_to_test_folder_and_any_node_below() throws Exception {
 
-        assertTrue(session.nodeExists("/test/folder"));
-        assertTrue(session.nodeExists("/test/folder/authDocument"));
-        assertTrue(session.nodeExists("/test/folder/authDocument/compound"));
-        assertTrue(session.nodeExists("/test/folder/testDocument"));
+        assumePreconditions();
 
         Session bob = null;
         try {
-            final Credentials bobCreds = new SimpleCredentials("bob", "password".toCharArray());
-            bob = server.login(bobCreds);
+            bob = loginUser("bob");
 
             assertTrue(bob.nodeExists("/test"));
             assertTrue(bob.nodeExists("/test/folder"));
@@ -230,8 +185,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
 
         Session bob = null;
         try {
-            final Credentials bobCreds = new SimpleCredentials("bob", "password".toCharArray());
-            bob = server.login(bobCreds);
+            bob = loginUser("bob");
             final Query queryTestSession = bob.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
             final QueryResult resultTestSession = queryTestSession.execute();
             final NodeIterator nodesBob = resultTestSession.getNodes();
@@ -246,15 +200,11 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
     @Test(expected = AccessControlException.class)
     public void downScopedBob_can_read_and_write_to_test_folder_and_below_except_below_authDocument() throws Exception {
 
-        assertTrue(session.nodeExists("/test/folder"));
-        assertTrue(session.nodeExists("/test/folder/authDocument"));
-        assertTrue(session.nodeExists("/test/folder/authDocument/compound"));
-        assertTrue(session.nodeExists("/test/folder/testDocument"));
+        assumePreconditions();
 
         Session downScopedBob = null;
         try {
-            final Credentials downScopedBobCreds = new SimpleCredentials("downScopedBob", "password".toCharArray());
-            downScopedBob = server.login(downScopedBobCreds);
+            downScopedBob = loginUser("downScopedBob");
 
             assertTrue(downScopedBob.nodeExists("/test"));
             assertTrue(downScopedBob.nodeExists("/test/folder"));
@@ -264,11 +214,15 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
             assertFalse(downScopedBob.nodeExists("/test/folder/authDocument"));
             assertFalse(downScopedBob.nodeExists("/test/folder/authDocument/compound"));
 
-            downScopedBob.checkPermission("/test/folder", "jcr:read");
-            downScopedBob.checkPermission("/test/folder", "jcr:write");
+            try {
+                downScopedBob.checkPermission("/test/folder", "jcr:read");
+                downScopedBob.checkPermission("/test/folder", "jcr:write");
 
-            downScopedBob.checkPermission("/test/folder/testDocument", "jcr:read");
-            downScopedBob.checkPermission("/test/folder/testDocument", "jcr:write");
+                downScopedBob.checkPermission("/test/folder/testDocument", "jcr:read");
+                downScopedBob.checkPermission("/test/folder/testDocument", "jcr:write");
+            } catch (AccessControlException e) {
+                fail("Permissions check failed: " + e);
+            }
 
             downScopedBob.checkPermission("/test/folder/authDocument", "jcr:read");
 
@@ -294,8 +248,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
 
         Session downScopedBob = null;
         try {
-            final Credentials downScopedBobCreds = new SimpleCredentials("downScopedBob", "password".toCharArray());
-            downScopedBob = server.login(downScopedBobCreds);
+            downScopedBob = loginUser("downScopedBob");
             final Query queryTestSession = downScopedBob.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
             final QueryResult resultTestSession = queryTestSession.execute();
             final NodeIterator nodesBob = resultTestSession.getNodes();
@@ -310,15 +263,11 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
     @Test(expected = AccessControlException.class)
     public void alice_can_read_and_write_to_test_folder_and_all_folders_and_hippo_document_nodes_below() throws Exception {
 
-        assertTrue(session.nodeExists("/test/folder"));
-        assertTrue(session.nodeExists("/test/folder/authDocument"));
-        assertTrue(session.nodeExists("/test/folder/authDocument/compound"));
-        assertTrue(session.nodeExists("/test/folder/testDocument"));
+        assumePreconditions();
 
         Session alice = null;
         try {
-            final Credentials aliceCreds = new SimpleCredentials("alice", "password".toCharArray());
-            alice = server.login(aliceCreds);
+            alice = loginUser("alice");
 
             assertTrue(alice.nodeExists("/test"));
             assertTrue(alice.nodeExists("/test/folder"));
@@ -327,11 +276,15 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
             assertFalse("Alice should *not* have read access on 'hippo:authtestdocument'", alice.nodeExists("/test/folder/authDocument/compound"));
             assertTrue("Alice *should* have read access on 'hippo:testdocument'",alice.nodeExists("/test/folder/testDocument"));
 
-            alice.checkPermission("/test/folder", "jcr:read");
-            alice.checkPermission("/test/folder", "jcr:write");
+            try {
+                alice.checkPermission("/test/folder", "jcr:read");
+                alice.checkPermission("/test/folder", "jcr:write");
 
-            alice.checkPermission("/test/folder/testDocument", "jcr:read");
-            alice.checkPermission("/test/folder/testDocument", "jcr:write");
+                alice.checkPermission("/test/folder/testDocument", "jcr:read");
+                alice.checkPermission("/test/folder/testDocument", "jcr:write");
+            } catch (AccessControlException e) {
+                fail("Permissions check failed: " + e);
+            }
 
             alice.checkPermission("/test/folder/authDocument", "jcr:read");
 
@@ -359,8 +312,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // to read hippo:authtestdocument nodes
         Session alice = null;
         try {
-            final Credentials aliceCreds = new SimpleCredentials("alice", "password".toCharArray());
-            alice = server.login(aliceCreds);
+            alice = loginUser("alice");
             final Query queryTestSession = alice.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
             final QueryResult resultTestSession = queryTestSession.execute();
             final NodeIterator nodesAlice = resultTestSession.getNodes();
@@ -370,6 +322,33 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
                 alice.logout();
             }
         }
+    }
+
+
+    private void createAdminAuthRole(final Node pathFacetRuleDomain, final String user) throws RepositoryException {
+        final Node bobIsAdmin = pathFacetRuleDomain.addNode(user, "hipposys:authrole");
+        bobIsAdmin.setProperty("hipposys:users", new String[]{ user });
+        bobIsAdmin.setProperty("hipposys:role", "admin");
+    }
+
+    private Node createUser(String name) throws RepositoryException {
+        final Node users = session.getNode("/hippo:configuration/hippo:users");
+        if (!users.hasNode(name)) {
+            final Node user = users.addNode(name, "hipposys:user");
+            user.setProperty("hipposys:password", "password");
+        }
+        return users;
+    }
+
+    private Session loginUser(String user) throws RepositoryException {
+        return server.login(new SimpleCredentials(user, "password".toCharArray()));
+    }
+
+    private void assumePreconditions() throws RepositoryException {
+        assumeTrue(session.nodeExists("/test/folder"));
+        assumeTrue(session.nodeExists("/test/folder/authDocument"));
+        assumeTrue(session.nodeExists("/test/folder/authDocument/compound"));
+        assumeTrue(session.nodeExists("/test/folder/testDocument"));
     }
 
 }
