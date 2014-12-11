@@ -156,7 +156,6 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:name="linkpicker.nodetypes" sv:type="String" sv:multiple="true">
-        <sv:value/>
       </sv:property>
       <sv:property sv:name="linkpicker.open.in.new.window.enabled" sv:type="Boolean">
         <sv:value>true</sv:value>
@@ -171,16 +170,13 @@
         <sv:value>hippostd:gallery</sv:value>
       </sv:property>
       <sv:property sv:name="imagepicker.nodetypes" sv:type="String" sv:multiple="true">
-        <sv:value/>
       </sv:property>
       <sv:property sv:name="imagepicker.preferred.image.variant" sv:type="String">
         <sv:value>hippogallery:original</sv:value>
       </sv:property>
       <sv:property sv:name="included.image.variants" sv:type="String" sv:multiple="true">
-        <sv:value/>
       </sv:property>
       <sv:property sv:name="excluded.image.variants" sv:type="String" sv:multiple="true">
-        <sv:value/>
       </sv:property>
       <sv:property sv:name="htmlcleaner.id" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService</sv:value>

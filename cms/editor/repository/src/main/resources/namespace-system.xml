@@ -668,7 +668,6 @@
           <sv:value>wicket.id</sv:value>
         </sv:property>
         <sv:property sv:name="nodetypes" sv:type="String" sv:multiple="true">
-          <sv:value/>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
