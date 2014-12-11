@@ -24,8 +24,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -48,12 +48,27 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
         final Node node = model.getObject();
 
         if (node != null) {
-            final NodeType primaryType = getPrimaryTypeOfDocument(node);
-            if (primaryType != null) {
-                return new AttributeModifier[] {
-                        createTitleModifierOrNull(primaryType),
-                        createClassModifierOrNull(primaryType)
-                };
+            return new AttributeModifier[] {
+                    createTitleModifierOrNull(node),
+                    createClassModifierOrNull(node)
+            };
+        }
+        return null;
+    }
+
+    private AttributeModifier createTitleModifierOrNull(final Node node) {
+        final NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(node));
+        final IModel<String> nodeName = Model.of(nodeTranslator.getNodeName());
+        return new AttributeAppender("title", nodeName, " ");
+    }
+
+    private AttributeModifier createClassModifierOrNull(final Node node) {
+        final NodeType primaryType = getPrimaryTypeOfDocument(node);
+        if (primaryType != null) {
+            if (isFolder(primaryType)) {
+                return FOLDER_CLASS_APPENDER;
+            } else if (isDocument(primaryType)) {
+                return DOCUMENT_CLASS_APPENDER;
             }
         }
         return null;
@@ -74,21 +89,6 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
             }
         } catch (RepositoryException e) {
             log.warn("Unable to determine type of node '{}'", JcrUtils.getNodePathQuietly(handleOrDocument), e);
-        }
-        return null;
-    }
-
-    private AttributeModifier createTitleModifierOrNull(NodeType primaryType) {
-        final JcrNodeTypeModel nodeType = new JcrNodeTypeModel(primaryType);
-        IModel<String> typeName = new TypeTranslator(nodeType).getTypeName();
-        return new AttributeAppender("title", typeName, " ");
-    }
-
-    private AttributeModifier createClassModifierOrNull(final NodeType primaryType) {
-        if (isFolder(primaryType)) {
-            return FOLDER_CLASS_APPENDER;
-        } else if (isDocument(primaryType)) {
-            return DOCUMENT_CLASS_APPENDER;
         }
         return null;
     }
