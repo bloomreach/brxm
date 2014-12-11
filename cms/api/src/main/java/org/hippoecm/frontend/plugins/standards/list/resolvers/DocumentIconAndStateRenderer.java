@@ -71,7 +71,7 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
         private HippoIcon getTypeIcon(final String id) {
             final Node node = getNodeModel().getNode();
             try {
-                return IconRenderUtil.getIcon(id, node);
+                return IconRenderUtil.getDocumentOrFolderIcon(id, node);
             } catch (RepositoryException e) {
                 log.warn("Unable to determine icon for node '{}', using default icon instead",
                         JcrUtils.getNodePathQuietly(node), e);

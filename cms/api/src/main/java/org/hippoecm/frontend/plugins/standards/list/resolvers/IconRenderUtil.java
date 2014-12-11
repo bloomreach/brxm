@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -31,12 +32,12 @@ import org.hippoecm.repository.api.HippoNodeType;
 /**
  * Utility class for rendering icons.
  */
-class IconRenderUtil {
+public class IconRenderUtil {
 
     private IconRenderUtil() {
     }
 
-    static HippoIcon getIcon(final String id, final Node node) throws RepositoryException {
+    public static HippoIcon getDocumentOrFolderIcon(final String id, final Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             return getIconForHandle(id, node);
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -55,21 +56,19 @@ class IconRenderUtil {
                     if (!canonical.isSame(node)) {
                         return HippoIcon.fromSprite(id, Icon.DOCUMENT_SMALL);
                     } else {
-                        String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
-                        return getNamedIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.TINY);
+                        return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.DOCUMENT_SMALL, IconSize.TINY);
                     }
                 }
             } else {
                 Node parent = node.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
-                    return getNamedIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.TINY);
+                    return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.DOCUMENT_SMALL, IconSize.TINY);
                 }
             }
         }
 
         String type = node.getPrimaryNodeType().getName();
-        if (type.equals("hipposysedit:templatetype")) {
+        if (type.equals(HippoNodeType.NT_TEMPLATETYPE)) {
             return HippoIcon.fromSprite(id, Icon.DOCUMENT_SMALL);
         }
         return HippoIcon.fromSprite(id, Icon.FOLDER_SMALL);
@@ -78,14 +77,14 @@ class IconRenderUtil {
     private static HippoIcon getIconForHandle(final String id, final Node node) throws RepositoryException {
         if (node.hasNode(node.getName())) {
             Node child = node.getNode(node.getName());
-            String nodeTypeIconName = StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
-            return getNamedIcon(id, nodeTypeIconName, Icon.DOCUMENT_SMALL, IconSize.SMALL);
+            return getIconForNodeType(id, child.getPrimaryNodeType(), Icon.DOCUMENT_SMALL, IconSize.SMALL);
         }
         return HippoIcon.fromSprite(id, Icon.DOCUMENT_SMALL);
     }
 
-    private static HippoIcon getNamedIcon(String id, String name, Icon defaultIcon, IconSize size) {
-        ResourceReference reference = BrowserStyle.getIconOrNull(name, size);
+    public static HippoIcon getIconForNodeType(final String id, final NodeType type, final Icon defaultIcon, final IconSize size) {
+        final String nodeTypeIconName = StringUtils.replace(type.getName(), ":", "-");
+        final ResourceReference reference = BrowserStyle.getIconOrNull(nodeTypeIconName, size);
         if (reference != null) {
             return HippoIcon.fromResource(id, reference);
         }
