@@ -260,6 +260,8 @@
     &.hippo-list-paging {
 
       > td {
+        position: relative;
+
         .paging-container {
           border-top: 1px solid @doclist-row-separator-color;
           width: 100%;
@@ -287,15 +289,17 @@
                 background-color: @doclist-paging-button-hover-fill;
               }
             }
+          }
+        }
 
-          }
-          .paging-label {
-            position: absolute;
-            font-size: @font-size-tiny;
-            height: @font-size-base;
-            padding-top: (@doclist-foot-height - @font-size-base) / 2;
-            right: @doclist-padding;
-          }
+        .paging-label {
+          position: absolute;
+          top: 0;
+          right: 0;
+          font-size: @font-size-tiny;
+          height: @font-size-base;
+          padding-top: (@doclist-foot-height - @font-size-base) / 2;
+          padding-right: @doclist-padding;
         }
       }
     }
