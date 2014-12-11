@@ -56,11 +56,6 @@ if (!YAHOO.hippo.ImageCropper) {
             this.fixedDimension = config.fixedDimension;
             this.thumbnailSizeLabelId = config.thumbnailSizeLabelId;
 
-            if (!this.upscalingEnabled) {
-                this.minimumWidth = this.thumbnailWidth;
-                this.minimumHeight = this.thumbnailHeight;
-            }
-
             // Set the max preview width and height (used to determine the scaling of the preview container/image)
             this.maxPreviewWidth = 200;
             this.maxPreviewHeight = 300;
