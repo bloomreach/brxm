@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,9 +77,9 @@ public class FolderTreeNode extends JcrTreeNode {
         Node jcrNode = this.nodeModel.getObject();
         if (jcrNode instanceof HippoNode) {
             try {
-                HippoNode hippoNode = (HippoNode) jcrNode;
+                final HippoNode hippoNode = (HippoNode) jcrNode;
                 // do not count for virtual nodes w.r.t performance
-                if (hippoNode.getCanonicalNode() == null || !hippoNode.getCanonicalNode().isSame(hippoNode)) {
+                if (hippoNode.isVirtual()) {
                     return 0;
                 }
             } catch (RepositoryException e) {
