@@ -35,10 +35,17 @@
   > tbody > tr > td {
     padding: @doclist-padding;
 
-    /* column types */
+    // border between columns
+    border-left: 1px solid transparent;
+    &:first-child {
+      border-left: 0;
+    }
+
+    // column types
     &.doclisting-icon {
       .fixed-width(32px);
       + .doclisting-name {
+        border-left: 0;
         padding-left: 0;
       }
     }
@@ -116,6 +123,7 @@
         font-size: @font-size-large;
         padding-top: @doclist-padding - 1;
         padding-bottom: @doclist-padding + 1;
+        border-color: @doclist-head-border-color;
         :hover {
           color: @aqua;
         }
