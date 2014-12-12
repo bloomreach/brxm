@@ -31,6 +31,12 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
 
+    public static final String WICKET_ID_CONTAINER = "container";
+    public static final String WICKET_ID_IMAGE = "image";
+    public static final String WICKET_ID_SVG = "svg";
+    public static final String WICKET_FRAGMENT_IMAGE = "imageFragment";
+    public static final String WICKET_FRAGMENT_SVG = "svgFragment";
+
     /**
      * Renders a hippo icon via a reference to the icon sprite.
      * @param id the Wicket id of the icon
@@ -57,7 +63,7 @@ public class HippoIcon extends Panel {
 
         setRenderBodyOnly(true);
 
-        final WebMarkupContainer container = new WebMarkupContainer("container") {
+        final WebMarkupContainer container = new WebMarkupContainer(WICKET_ID_CONTAINER) {
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 final Response response = RequestCycle.get().getResponse();
@@ -116,11 +122,11 @@ public class HippoIcon extends Panel {
 
         Fragment fragment;
         if (reference.getExtension().equalsIgnoreCase("svg")) {
-            fragment = new Fragment("container", "svgFragment", this);
-            fragment.add(new InlineSvg("svg", reference));
+            fragment = new Fragment(WICKET_ID_CONTAINER, WICKET_FRAGMENT_SVG, this);
+            fragment.add(new InlineSvg(WICKET_ID_SVG, reference));
         } else {
-            fragment = new Fragment ("container", "imageFragment", this);
-            Image image = new CachingImage("image", reference);
+            fragment = new Fragment (WICKET_ID_CONTAINER, WICKET_FRAGMENT_IMAGE, this);
+            Image image = new CachingImage(WICKET_ID_IMAGE, reference);
             fragment.add(image);
             
             if (width >= 0) {
