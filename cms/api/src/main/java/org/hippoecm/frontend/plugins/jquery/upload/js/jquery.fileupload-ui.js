@@ -202,6 +202,8 @@
                         }
                     );
                 }
+                // render preview after uploading rather than using thumbnail url (optional)
+                that._renderPreviews(data);
             },
             // Callback for failed (abort or error) uploads:
             fail: function (e, data) {

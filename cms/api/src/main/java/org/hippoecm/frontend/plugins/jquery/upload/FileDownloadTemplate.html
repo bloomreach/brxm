@@ -23,13 +23,7 @@
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-download fade">
         <td class="thumbnail">
-            <span class="preview">
-                {% if (file.thumbnailUrl) { %}
-                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery>
-                        <img src="{%=file.thumbnailUrl%}">
-                    </a>
-                {% } %}
-            </span>
+            <span class="preview"></span>
         </td>
         <td class="filename">
             <p class="name">
