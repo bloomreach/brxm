@@ -103,8 +103,9 @@
 }
 
 .channel-manager .x-notification .x-window-body {
-    padding: 7px;
-    background-color: #fffda9;
+    padding: 10px 12px;
+    border: 1px solid #CCC7B0;
+    background-color: #FFFADA;
 }
 
 /* channel properties window */
@@ -323,8 +324,8 @@
     background: #F6F6F6;
 }
 
-.channel-manager .icon-toolbar-window .x-window-ml,
-.channel-manager .icon-toolbar-window .x-window-mr {
+.channel-manager .x-window .x-window-ml,
+.channel-manager .x-window .x-window-mr {
     padding: 0;
 }
 

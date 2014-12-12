@@ -39,10 +39,7 @@
         initComponent: function() {
             var self = this;
             this.on('afterrender', function() {
-                var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
-                YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                    self.setWidth(arguments[0].body.w - 30);
-                }, true);
+                setBarWidth(self);
             }, this, {single: true});
 
             Hippo.ChannelManager.TemplateComposer.Notification.superclass.initComponent.apply(this, arguments);
@@ -56,11 +53,18 @@
         show: function() {
             Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(this, arguments);
             this.body.update(this.message);
-            this.el.alignTo(Ext.getCmp(this.alignToElementId).getEl(), "tl-bl", [10, 0]);
+            this.el.alignTo(Ext.getCmp(this.alignToElementId).getEl(), "tl-bl", [30, 0]);
+            setBarWidth(this);
         }
 
     });
 
     Ext.reg('Hippo.ChannelManager.TemplateComposer.Notification', Hippo.ChannelManager.TemplateComposer.Notification);
 
+    function setBarWidth (self) {
+        var yuiLayout = self.getEl().findParent("div.yui-layout-unit");
+        YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, self, function() {
+            self.setWidth(arguments[0].body.w - 60 - Ext.getScrollBarWidth());
+        }, true);
+    }
 }());
