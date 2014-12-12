@@ -25,6 +25,7 @@ jqueryFileUploadImpl = {
         this.filelist = {};
         this.fileuploadWidget = $('#${componentMarkupId}').fileupload({
             url: '${url}',
+            maxNumberOfFiles: ${maxNumberOfFiles},
             maxFileSize: ${max.file.size},
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
             dataType: 'json',
@@ -85,7 +86,7 @@ jqueryFileUploadImpl = {
         }
         // disable inputs
         $('#${componentMarkupId}').find('input').prop('disabled', true);
-        console.log("Total uploading files: " + JSON.stringify(jqueryFileUploadImpl.filelist));
+        console.log("Total uploading files: %s", uploadfiles.join());
         this.fileuploadWidget.fileupload('send', {files: uploadfiles});
     }
 };
