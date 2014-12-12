@@ -17,8 +17,8 @@
 /* Channel manager specific font */
 .channel-manager .x-panel-body *,
 .channel-manager .x-panel-tbar * {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 13px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 13px !important;
 }
 
 .page-editor-panel > .x-panel-bwrap > .x-panel-body {
@@ -28,8 +28,7 @@
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
     background: #E0E0E0 none;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: 0;
     border-bottom: 0;
 }
 
@@ -38,8 +37,8 @@
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
-    margin: 1px 5px;
-    height: 21px;
+    margin: 0 5px;
+    height: 40px;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
@@ -570,22 +569,18 @@
     background-image: url("channels/list-view-active.png");
 }
 
-.channel-manager-toolbar .x-toolbar-ct {
-    min-height: 29px;
-}
-
-.channel-manager-toolbar .x-toolbar-right .x-btn-tl,
-.channel-manager-toolbar .x-toolbar-right .x-btn-tc,
-.channel-manager-toolbar .x-toolbar-right .x-btn-tr,
-.channel-manager-toolbar .x-toolbar-right .x-btn-ml,
-.channel-manager-toolbar .x-toolbar-right .x-btn-mr,
-.channel-manager-toolbar .x-toolbar-right .x-btn-bl,
-.channel-manager-toolbar .x-toolbar-right .x-btn-bc,
-.channel-manager-toolbar .x-toolbar-right .x-btn-br {
+.channel-manager-toolbar .x-btn-tl,
+.channel-manager-toolbar .x-btn-tc,
+.channel-manager-toolbar .x-btn-tr,
+.channel-manager-toolbar .x-btn-ml,
+.channel-manager-toolbar .x-btn-mr,
+.channel-manager-toolbar .x-btn-bl,
+.channel-manager-toolbar .x-btn-bc,
+.channel-manager-toolbar .x-btn-br {
     display: none;
 }
 
-.channel-manager-toolbar .x-toolbar-right .x-btn-mc {
+.channel-manager-toolbar .x-btn-mc {
     background: none;
     border: none;
 }
@@ -671,4 +666,33 @@
 
 .channel-manager-window-manage-changes .x-btn-small .discard-changes {
     background-image: url("templatecomposer/button-discard.png");
+}
+
+/* Dropdowns */
+.channel-manager .x-toolbar .xtb-text {
+    padding: 0;
+}
+
+.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap {
+    margin: 8px;
+}
+
+.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-text {
+    box-sizing: border-box;
+    height: 24px !important;
+    padding: 0 12px;
+    line-height: 24px;
+    border: 1px solid #c2c2c2;
+    background: #ffffff;
+    border-radius: 5px 0 0 5px;
+}
+
+.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-trigger {
+    box-sizing: border-box;
+    height: 24px;
+    width: 24px;
+    border: 1px solid #c2c2c2;
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+    background: url('templatecomposer/trigger.svg') no-repeat center center #ffffff;
 }
