@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
-import java.io.IOException;
-
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
@@ -29,28 +27,19 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
-import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
-import org.hippoecm.frontend.plugins.standards.tree.icon.IconResourceReference;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class CmsJcrTree extends ContextMenuTree {
-    static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
+
     private static final long serialVersionUID = 1L;
 
     public static interface ITreeNodeTranslator extends IClusterable {
@@ -105,14 +94,14 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     }
 
     @Override
-    protected ResourceReference getNodeIcon(TreeNode node) {
+    protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
         if (treeNodeIconService != null) {
-            ResourceReference icon = treeNodeIconService.getNodeIcon(node, getTreeState());
+            Component icon = treeNodeIconService.getNodeIcon(id, node, getTreeState());
             if (icon != null) {
                 return icon;
             }
         }
-        return super.getNodeIcon(node);
+        return super.newNodeIcon(parent, id, node);
     }
 
     @Override
@@ -162,44 +151,6 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             }
         }.setRenderBodyOnly(true);
     }
-
-    @Override
-    protected Component newNodeIcon(final MarkupContainer parent, final String id,
-                                    final TreeNode node)
-    {
-        return new WebMarkupContainer(id)
-        {
-            private static final long serialVersionUID = 1L;
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            protected void onComponentTag(final ComponentTag tag)
-            {
-                super.onComponentTag(tag);
-                ResourceReference icon = getNodeIcon(node);
-                if (icon instanceof IconResourceReference) {
-                    final String svg = ((IconResourceReference) icon).getIcon().getSpriteReference();
-                    RequestCycle.get().getResponse().write(svg);
-                    setRenderBodyOnly(true);
-                } else if (icon.getExtension().equalsIgnoreCase("svg") && icon instanceof PackageResourceReference) {
-                    try {
-                        final String svg = InlineSvg.svgAsString((PackageResourceReference) icon);
-                        RequestCycle.get().getResponse().write(svg);
-                        setRenderBodyOnly(true);
-                    } catch (IOException | ResourceStreamNotFoundException e) {
-                        log.error("Failed to load svg image[{}]", icon, e);
-                    }
-                } else {
-                    IRequestHandler handler = new ResourceReferenceRequestHandler(icon);
-                    tag.put("style", "background-image: url('" + RequestCycle.get().urlFor(handler) + "')");
-                    setRenderBodyOnly(false);
-                }
-            }
-        };
-    }
-
 
     private boolean isNodeLast(TreeNode node) {
         TreeNode parent = node.getParent();

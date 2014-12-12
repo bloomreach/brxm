@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,34 +43,20 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
+    public static final String CONFIG_LANGUAGE = "language";
+    public static final String CONFIG_COUNTRY = "country";
+    public static final String CONFIG_VARIANT = "variant";
+    public static final String DEFAULT_COUNTRY = "us";
+    public static final String UNKNOWN_COUNTRY = "error";
 
-    private static final JavaScriptResourceReference TRANSLATE_DOCUMENT_JS = new JavaScriptResourceReference(DocumentTranslationView.class, "translate-document.js");
+    static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
 
     static final HippoLocale UNKNOWN_LOCALE = new HippoLocale(Locale.ROOT, "unknown") {
 
         @Override
         public ResourceReference getIcon(final IconSize size, final LocaleState state) {
-            final String country = "_error";
-            String resourceName;
-            switch (state) {
-                case AVAILABLE:
-                    resourceName = "plus/flag-plus-" + size.getSize() + country + ".png";
-                    break;
-                case DOCUMENT:
-                    resourceName = "document/flag-document-" + size.getSize() + country + ".png";
-                    break;
-                case FOLDER:
-                    resourceName = "folder_closed/folder-closed-" + size.getSize() + country + ".png";
-                    break;
-                case FOLDER_OPEN:
-                    resourceName = "folder_open/folder-open-" + size.getSize() + country + ".png";
-                    break;
-                default:
-                    resourceName = "flags/flag-" + size.getSize() + country + ".png";
-                    break;
-            }
-            return new PackageResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, getLocale(), getName(), null);
+            String iconResourceName = getLocaleIconResourceName(size, state, UNKNOWN_COUNTRY);
+            return new PackageResourceReference(LocaleProviderPlugin.class, iconResourceName, getLocale(), getName(), null);
         }
 
         @Override
@@ -79,6 +64,19 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
             return getLocale().getDisplayLanguage(locale);
         }
     };
+
+    private static String getLocaleIconResourceName(final IconSize size, final LocaleState state, final String country) {
+        switch (state) {
+            case AVAILABLE:
+                return "icons/plus/flag-plus-" + size.getSize() + "_" + country + ".png";
+            case DOCUMENT:
+            case FOLDER:
+            case FOLDER_OPEN:
+                return "icons/flags/flag-11x9_" + country + ".png";
+            default:
+                return "icons/flags/flag-" + size.getSize() + "_" + country + ".png";
+        }
+    }
 
     private transient Map<String, HippoLocale> locales;
 
@@ -115,74 +113,80 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         IPluginConfig pluginConfig = getPluginConfig();
         Map<String, HippoLocale> locales = new LinkedHashMap<String, HippoLocale>();
         for (IPluginConfig config : pluginConfig.getPluginConfigSet()) {
-            if (!config.containsKey("language")) {
+            if (!config.containsKey(CONFIG_LANGUAGE)) {
                 log.warn("Locale " + config.getName() + " does not declare a language");
                 continue;
             }
-            Locale locale;
-            if (config.containsKey("country")) {
-                if (config.containsKey("variant")) {
-                    locale = new Locale(config.getString("language"), config.getString("country"), config
-                            .getString("variant"));
-                } else {
-                    locale = new Locale(config.getString("language"), config.getString("country"));
-                }
-            } else {
-                locale = new Locale(config.getString("language"));
-            }
-            String name = config.getName();
-            name = name.substring(name.lastIndexOf('.') + 1);
-            Set<IPluginConfig> translationConfigs = config.getPluginConfigSet();
-            final Map<String, String> translations = new HashMap<String, String>();
-            for (IPluginConfig translationConfig : translationConfigs) {
-                translations.put(translationConfig.getString("hippo:language"), translationConfig
-                        .getString("hippo:message"));
-            }
-            locales.put(name, new HippoLocale(locale, name) {
-                private static final long serialVersionUID = 1L;
 
-                @Override
-                public String getDisplayName(Locale locale) {
-                    String name = translations.get(locale.getLanguage());
-                    if (name == null) {
-                        return getLocale().getDisplayLanguage(locale);
-                    }
-                    return name;
-                }
-
-                @Override
-                public ResourceReference getIcon(IconSize size, LocaleState state) {
-                    Locale locale = getLocale();
-                    String country = locale.getCountry();
-                    if (country != null) {
-                        country = "_" + country.toLowerCase();
-                    } else {
-                        country = "_us";
-                    }
-
-                    String resourceName;
-                    switch (state) {
-                    case AVAILABLE:
-                        resourceName = "plus/flag-plus-" + size.getSize() + country + ".png";
-                        break;
-                    case DOCUMENT:
-                        resourceName = "document/flag-document-" + size.getSize() + country + ".png";
-                        break;
-                    case FOLDER:
-                        resourceName = "folder_closed/folder-closed-" + size.getSize() + country + ".png";
-                        break;
-                    case FOLDER_OPEN:
-                        resourceName = "folder_open/folder-open-" + size.getSize() + country + ".png";
-                        break;
-                    default:
-                        resourceName = "flags/flag-" + size.getSize() + country + ".png";
-                        break;
-                    }
-                    return new PackageResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, locale, getName(), null);
-                }
-            });
+            final Locale locale = getLocale(config);
+            final String name = getLocaleName(config);
+            final Map<String, String> translations = getTranslations(config);
+            locales.put(name, new TranslationLocale(locale, name, translations));
         }
         return locales;
     }
 
+    private static Locale getLocale(final IPluginConfig config) {
+        final String language = config.getString(CONFIG_LANGUAGE);
+        if (config.containsKey(CONFIG_COUNTRY)) {
+            final String country = config.getString(CONFIG_COUNTRY);
+            if (config.containsKey(CONFIG_VARIANT)) {
+                final String variant = config.getString(CONFIG_VARIANT);
+                return new Locale(language, country, variant);
+            } else {
+                return new Locale(language, country);
+            }
+        }
+        return new Locale(language);
+    }
+
+    private static String getLocaleName(final IPluginConfig config) {
+        final String name = config.getName();
+        return name.substring(name.lastIndexOf('.') + 1);
+    }
+
+    private static Map<String, String> getTranslations(final IPluginConfig config) {
+        final Set<IPluginConfig> translationConfigs = config.getPluginConfigSet();
+        final Map<String, String> translations = new HashMap<String, String>();
+        for (IPluginConfig translationConfig : translationConfigs) {
+            final String language = translationConfig.getString(HippoNodeType.HIPPO_LANGUAGE);
+            final String message = translationConfig.getString(HippoNodeType.HIPPO_MESSAGE);
+            translations.put(language, message);
+        }
+        return translations;
+    }
+
+    private static class TranslationLocale extends HippoLocale {
+
+        private static final long serialVersionUID = 1L;
+        private final Map<String, String> translations;
+
+        public TranslationLocale(final Locale locale, final String name, final Map<String, String> translations) {
+            super(locale, name);
+            this.translations = translations;
+        }
+
+        @Override
+        public String getDisplayName(Locale locale) {
+            String name = translations.get(locale.getLanguage());
+            if (name == null) {
+                return getLocale().getDisplayLanguage(locale);
+            }
+            return name;
+        }
+
+        @Override
+        public ResourceReference getIcon(IconSize size, LocaleState state) {
+            Locale locale = getLocale();
+            String country = locale.getCountry();
+            if (country != null) {
+                country = country.toLowerCase();
+            } else {
+                country = DEFAULT_COUNTRY;
+            }
+            String resourceName = getLocaleIconResourceName(size, state, country);
+            return new PackageResourceReference(LocaleProviderPlugin.class, resourceName, locale, getName(), null);
+        }
+
+    }
 }

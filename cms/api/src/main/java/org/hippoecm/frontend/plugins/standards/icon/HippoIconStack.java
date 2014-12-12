@@ -1,0 +1,71 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.hippoecm.frontend.plugins.standards.icon;
+
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
+
+/**
+ * A stack of Hippo icons rendered on top of each other.
+ */
+public class HippoIconStack extends Panel {
+
+    private RepeatingView icons;
+
+    public HippoIconStack(final String id, final IconSize size) {
+        super(id);
+
+        setRenderBodyOnly(true);
+
+        final WebMarkupContainer stack = new WebMarkupContainer("stack");
+        addCssClasses(stack, size);
+        add(stack);
+
+        icons = new RepeatingView("icons");
+        stack.add(icons);
+    }
+
+    private static void addCssClasses(final WebMarkupContainer stack, final IconSize size) {
+        final String cssClasses = "hi hi-stack hi-" + size.name().toLowerCase();
+        final AttributeModifier classAttribute = new AttributeModifier("class", cssClasses);
+        stack.add(classAttribute);
+    }
+
+    public HippoIcon addFromSprite(final Icon icon) {
+        final HippoIcon spriteIcon = HippoIcon.fromSprite(icons.newChildId(), icon);
+        icons.add(spriteIcon);
+        return spriteIcon;
+    }
+
+    public HippoIcon addInline(final Icon icon) {
+        final HippoIcon inlineIcon = HippoIcon.inline(icons.newChildId(), icon);
+        icons.add(inlineIcon);
+        return inlineIcon;
+    }
+
+    public HippoIcon addFromResource(final ResourceReference reference) {
+        final HippoIcon resourceIcon = HippoIcon.fromResource(icons.newChildId(), reference);
+        icons.add(resourceIcon);
+        return resourceIcon;
+    }
+
+}

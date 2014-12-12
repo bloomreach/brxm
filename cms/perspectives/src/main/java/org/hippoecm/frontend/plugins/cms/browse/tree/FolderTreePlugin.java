@@ -248,16 +248,15 @@ public class FolderTreePlugin extends RenderPlugin {
         return new ITreeNodeIconProvider() {
             private static final long serialVersionUID = 1L;
 
-            public ResourceReference getNodeIcon(TreeNode treeNode, ITreeState state) {
+            public Component getNodeIcon(final String id, final TreeNode treeNode, final ITreeState state) {
                 for (ITreeNodeIconProvider provider : providers) {
-                    ResourceReference icon = provider.getNodeIcon(treeNode, state);
+                    final Component icon = provider.getNodeIcon(id, treeNode, state);
                     if (icon != null) {
                         return icon;
                     }
                 }
-                throw new RuntimeException("No icon could be found for tree node");
+                return null;
             }
-
         };
     }
 
@@ -292,27 +291,6 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             treeState.selectNode(treePath.getLastPathComponent(), true);
-        }
-    }
-
-    public class FormattedTreeNodeTranslator extends MaxLengthNodeNameFormatter implements ITreeNodeTranslator {
-        private static final long serialVersionUID = 1L;
-
-        public FormattedTreeNodeTranslator(IPluginConfig config) {
-            super(config.getInt("nodename.max.length", -1), config.getString("nodename.splitter", ".."), config.getInt(
-                    "nodename.indent.length", 3));
-        }
-
-        public String getTitleName(TreeNode treeNode) {
-            return getName(((IJcrTreeNode) treeNode).getNodeModel());
-        }
-
-        public String getName(TreeNode treeNode, int indent) {
-            return parse(getTitleName(treeNode), indent);
-        }
-
-        public boolean hasTitle(TreeNode treeNode, int level) {
-            return isTooLong(getTitleName(treeNode), level);
         }
     }
 
