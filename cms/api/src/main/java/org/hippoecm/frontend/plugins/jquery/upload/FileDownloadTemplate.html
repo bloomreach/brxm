@@ -22,7 +22,7 @@
 <script id="template-download" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-download fade">
-        <td>
+        <td class="thumbnail">
             <span class="preview">
                 {% if (file.thumbnailUrl) { %}
                     <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery>
@@ -31,7 +31,7 @@
                 {% } %}
             </span>
         </td>
-        <td>
+        <td class="filename">
             <p class="name">
                 {% if (file.url) { %}
                     <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
@@ -39,14 +39,13 @@
                     <span>{%=file.name%}</span>
                 {% } %}
             </p>
-        </td>
-        <td>
-            <span class="size">{%=o.formatFileSize(file.size)%}</span>
-        </td>
-        <td>
             {% if (file.error) { %}
+            <br/>
             <span class="error">{%=file.error%}</span>
             {% } %}
+        </td>
+        <td class="filesize">
+            <span class="size">{%=o.formatFileSize(file.size)%}</span>
         </td>
     </tr>
 

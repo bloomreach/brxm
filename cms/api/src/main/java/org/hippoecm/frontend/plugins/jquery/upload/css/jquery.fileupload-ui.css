@@ -122,9 +122,22 @@
 
     .table.table-striped {
         width: 100%;
+        table-layout: fixed;
     }
     .table.table-striped tbody tr:nth-child(2n) {
         background-color: #f4f4f4;
+    }
+    .table.table-striped td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 4px;
+    }
+    .table.table-striped .thumbnail {
+        max-width: 40px;
+    }
+    .table.table-striped .filename {
+        width: 280px;
     }
 }
 

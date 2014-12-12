@@ -22,12 +22,15 @@
 <script id="template-upload" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-upload fade">
-        <td>
+        <td class="thumbnail">
             <span class="preview"></span>
         </td>
-        <td>
-            <p class="name">{%=file.name%}</p>
-            <strong class="error text-danger"></strong>
+        <td class="filename">
+            <p class="name">{%=file.name%}</p><br/>
+            <span class="error"></span>
+        </td>
+        <td class="filesize">
+            <span class="size">{%=o.formatFileSize(file.size)%}</span>
         </td>
         <td>
             {% if (!i) { %}
