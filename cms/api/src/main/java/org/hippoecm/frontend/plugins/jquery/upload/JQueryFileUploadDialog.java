@@ -56,10 +56,12 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
     private FileUploadWidget fileUploadWidget;
 
-    private final List<Violation> violations;
     private final FileUploadValidationService validator;
     private final List<String> errors = new ArrayList<>();
     private final Button ajaxOkButton;
+
+    // flag to close the dialog automatically if no error has been found
+    private boolean errorUploading;
 
     protected JQueryFileUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig){
         setOutputMarkupId(true);
@@ -67,6 +69,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
         setOkVisible(false);
         setOkEnabled(false);
+        errorUploading = false;
 
         // create custom OK button to call javascript uploading
         ajaxOkButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("ok", this, null)){
@@ -94,14 +97,13 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
         this.pluginContext = pluginContext;
         this.pluginConfig = pluginConfig;
+        this.validator = getValidator();
 
         createComponents();
-        validator = getValidator();
-        violations = new ArrayList<>();
     }
 
      private void createComponents() {
-        fileUploadWidget = new FileUploadWidget(FILEUPLOAD_WIDGET_ID, pluginConfig){
+        fileUploadWidget = new FileUploadWidget(FILEUPLOAD_WIDGET_ID, pluginConfig, validator){
             @Override
             protected void onFileUpload(FileItem fileItem) throws FileUploadViolationException {
                 // handle for validation
@@ -134,11 +136,11 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
             if (result.isValid()){
                 handleFileUpload(fileUpload);
             } else {
-                violations.addAll(result.getViolations());                // will be removed
                 List<String> errors = new ArrayList<>();
                 for(Violation violation : result.getViolations()){
                     errors.add(violation.getMessage().getObject());
                 }
+                this.errorUploading = true;
                 throw new FileUploadViolationException(errors);
             }
         }finally {
@@ -166,41 +168,23 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
                 }
                 t = t.getCause();
             }
-
+            this.errorUploading = true;
             throw new FileUploadViolationException(errorMsgs);
         }
     }
 
     /**
-     * Called after uploading a file
-     * @deprecated do not use feedback panel to display error messages anymore.
+     * Called when uploading files has done.
+     * Close dialog if no error is found, otherwise leave it to display errors
      */
-    @Deprecated
     protected void onFinished(){
-        boolean hasError = false;
-        if (violations.size() > 0) {
-            for (Violation violation : violations) {
-                error(violation.getMessage().getObject());
-            }
-            violations.clear();
-            hasError = true;
+        if (!errorUploading) {
+            closeDialog();
         }
-
-        if (!errors.isEmpty()){
-            for (String errMsg : errors) {
-                error(errMsg);
-            }
-            errors.clear();
-            hasError = true;
-        }
-//        if (hasError) {
-//            // force to display feedback panel
-//            onSubmit();
-//        }
     }
 
     protected FileUploadValidationService getValidator() {
-        String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID);
+        String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
         FileUploadValidationService validator = pluginContext.getService(serviceId, FileUploadValidationService.class);
 
         if (validator == null) {

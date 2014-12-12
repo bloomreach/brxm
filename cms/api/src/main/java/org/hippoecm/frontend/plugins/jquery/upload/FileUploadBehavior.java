@@ -19,6 +19,7 @@ package org.hippoecm.frontend.plugins.jquery.upload;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -95,6 +96,10 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
         variables.put("paramName", settings.getParamName());
 
         variables.put("maxNumberOfFiles", settings.getMaxNumberOfFiles());
+
+        // accepted image file extensions
+        final String acceptFileTypes = StringUtils.join(settings.getAllowedExtensions(), "|");
+        variables.put("acceptFileTypes", acceptFileTypes);
 
         //the url to be notified when uploading has done
         variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());

@@ -44,6 +44,7 @@ import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
+import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,7 @@ public abstract class FileUploadWidget extends Panel {
         public static final String JQUERY_FILEUPLOAD_FILES = "files";
         public static final String JQUERY_FILEUPLOAD_NAME = "name";
         public static final String JQUERY_FILEUPLOAD_SIZE = "size";
+        public static final String JQUERY_FILEUPLOAD_ERROR = "error";
 
         @Override
         public void onRequest() {
@@ -89,7 +91,7 @@ public abstract class FileUploadWidget extends Panel {
                 Map<String, FileUploadInfo> allUploadedFiles = new HashMap<>();
                 // try to upload all files
                 for (List<FileItem> files : multipartServletWebRequest.getFiles().values()) {
-                    log.warn("Uploading files: #{}", files.size());
+                    log.debug("Uploading files: #{}", files.size());
                     for (FileItem file : files) {
                         // save file info prior uploading because temporary files may be deleted,
                         // thus their file sizes won't be correct.
@@ -97,9 +99,12 @@ public abstract class FileUploadWidget extends Panel {
                         try {
                             onFileUpload(file);
                         } catch (FileUploadViolationException e) {
-                            log.debug("file {} uploading has some violation", file.getName(), e);
                             for (String errorMsg : e.getViolationMessages()) {
                                 fileUploadInfo.addErrorMessage(errorMsg);
+                            }
+                            if (log.isDebugEnabled()) {
+                                log.debug("file {} uploading has some violation: {}", file.getName(),
+                                        StringUtils.join(fileUploadInfo.getErrorMessages().toArray()), e);
                             }
                         }
                         allUploadedFiles.put(file.getName(), fileUploadInfo);
@@ -126,7 +131,6 @@ public abstract class FileUploadWidget extends Panel {
             } else {
                 responseContent = generateJsonResponse(uploadedFiles);
             }
-
             setResponse(request, responseContent);
         }
 
@@ -140,7 +144,6 @@ public abstract class FileUploadWidget extends Panel {
             } else {
                 contentType = "application/json";
             }
-
             TextRequestHandler textRequestHandler = new TextRequestHandler(contentType, encoding, responseContent);
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(textRequestHandler);
         }
@@ -157,11 +160,11 @@ public abstract class FileUploadWidget extends Panel {
                     fileJson.put(JQUERY_FILEUPLOAD_SIZE, size);
                     List<String> errors = uploadedFiles.get(fileName).getErrorMessages();
                     if (errors != null && !errors.isEmpty()) {
-                        fileJson.put("error", StringUtils.join(errors, ";"));
+                        fileJson.put(JQUERY_FILEUPLOAD_ERROR, StringUtils.join(errors, ";"));
                     }
                 } catch (JSONException e) {
                     try {
-                        fileJson.put("error", e.getMessage());
+                        fileJson.put(JQUERY_FILEUPLOAD_ERROR, e.getMessage());
                     } catch (JSONException e1) {
                         log.error("Error creating JSON response for file uploading", e1);
                     }
@@ -173,7 +176,7 @@ public abstract class FileUploadWidget extends Panel {
                 jsonResponse.put(JQUERY_FILEUPLOAD_FILES, jsonFiles);
             } catch (JSONException e) {
                 try {
-                    jsonResponse.put("error", e.getMessage());
+                    jsonResponse.put(JQUERY_FILEUPLOAD_ERROR, e.getMessage());
                 } catch (JSONException e1) {
                     log.error("Error creating JSON response for file uploading", e1);
                 }
@@ -231,9 +234,9 @@ public abstract class FileUploadWidget extends Panel {
         }
     };
 
-    public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig) {
+    public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
         super(uploadPanel);
-        this.settings = new FileUploadWidgetSettings(pluginConfig);
+        this.settings = new FileUploadWidgetSettings(pluginConfig, validator);
         createComponents();
     }
 

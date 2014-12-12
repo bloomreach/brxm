@@ -27,26 +27,10 @@ jqueryFileUploadImpl = {
             url: '${url}',
             maxNumberOfFiles: ${maxNumberOfFiles},
             maxFileSize: ${max.file.size},
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            acceptFileTypes: /(\.|\/)(${acceptFileTypes})$/i,
             dataType: 'json',
             previewMaxWidth: 32,
-            previewMaxHeight: 32,
-            imageCrop: true, // Force cropped images
-            process: [
-                {
-                    action: 'load',
-                    fileTypes: /^image\/(gif|jpeg|png)$/,
-                    maxFileSize: ${max.file.size}
-                },
-                {
-                    action: 'resize',
-                    maxWidth: ${max.width},
-                    maxHeight: ${max.height}
-                },
-                {
-                    action: 'save'
-                }
-            ]
+            previewMaxHeight: 32
         }).bind('fileuploadcompleted', function (e, data) {
             var filesContainer = $(this).find('.files');
             // remove all 'template-download' rows after uploading

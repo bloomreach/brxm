@@ -17,8 +17,8 @@
 package org.hippoecm.frontend.plugins.jquery.upload;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 
 public class FileUploadWidgetSettings implements IClusterable {
@@ -34,15 +34,18 @@ public class FileUploadWidgetSettings implements IClusterable {
     private String uploadDoneNotificationUrl;
     private long maxNumberOfFiles;
     private String paramName;
+    private String[] allowedExtensions;
 
-    public FileUploadWidgetSettings(final IPluginConfig pluginConfig) {
-        loadConfig(pluginConfig);
+    public FileUploadWidgetSettings(final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
+        loadConfig(pluginConfig, validator);
     }
 
-    public void loadConfig(final IPluginConfig pluginConfig) {
+    public void loadConfig(final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
+        this.allowedExtensions = validator.getAllowedExtensions();
+        this.maxFileSize = validator.getMaxFileSize().bytes();
+
         this.maxWidth = pluginConfig.getAsLong(MAX_WIDTH_PROP, ImageUploadValidationService.DEFAULT_MAX_WIDTH);
         this.maxHeight = pluginConfig.getAsLong(MAX_HEIGHT_PROP, ImageUploadValidationService.DEFAULT_MAX_HEIGHT);
-        this.maxFileSize = Bytes.valueOf(pluginConfig.getString(MAX_FILESIZE_PROP, ImageUploadValidationService.DEFAULT_MAX_FILE_SIZE)).bytes();
         this.maxNumberOfFiles = pluginConfig.getAsLong("fileupload.maxItems", DEFAULT_MAX_NUMBER_OF_FILES);
     }
 
@@ -84,5 +87,9 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     public String getParamName() {
         return paramName;
+    }
+
+    public String[] getAllowedExtensions(){
+        return this.allowedExtensions;
     }
 }
