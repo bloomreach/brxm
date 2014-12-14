@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 .hippo-editor-top > .hippo-toolbar > div {
 
   > .hippo-toolbar-section {
@@ -23,104 +22,86 @@
 
     > li {
       float: left;
-      min-width: 90px;
-      height: 40px;
+      min-width: unit(@editor-toolbar-item-minwidth, px);
+      height: unit(@editor-toolbar-height, px);
 
-      &:hover {
-        background-color: #dfe1e3;
+      &.menu-item:hover {
         a {
           text-decoration: none;
           .menu-action-text,
           &.hippo-toolbar-section-button {
-            color: @aqua;
+            color: @editor-toolbar-hover-color;
           }
         }
-        .content-is-visible a {
-          color: @white;
+
+        .menu-item-active a {
+          color: @editor-toolbar-active-color;
         }
       }
 
       &.menu-label-item {
         white-space: nowrap;
-        color: @cool-shale;
+        color: @editor-toolbar-color;
 
         .menu-label {
-          padding-top: 11px;
+          padding-top: 13px;
+          text-align: right;
+          white-space: nowrap;
         }
       }
    
+      // Buttons like 'Edit' & 'Save'
       .menu-action {
-        height: 40px;
-        border: 0;
+        display: block;
+        cursor: pointer;
+        height: unit(@editor-toolbar-height, px);
         text-align: right;
-        // Override from screen.css
-        padding: 0;
-        min-width: 78px;
-
-        &:hover {
-          background-color: transparent;
-        }
-        
-        &:active {
-          background-color: @cool-shale;
-          color: @white;
-        }
 
         .menu-action-icon,
         .menu-action-text {
           position: relative;
           top: 10px;
-          display: inline;
-          padding: 0;
-          float: none;
-          color: @cool-shale;
         }
+
         .menu-action-text {
-          padding-right: 12px;
+          color: @cool-shale;
+          padding-right: unit(@editor-toolbar-item-margin-right, px);
         }
       }
 
+      // Dropdown buttons like 'Publication'
       .hippo-toolbar-section-button {
-        display: block;
-        height: 40px;
-        cursor: pointer;
-        clear: left;
-        text-align: right;
-        
         color: @cool-shale;
-        
-        .menu-action-icon,
-        .menu-action-text {
-          display: inline;
-          padding: 0;
-          float: none;
-          vertical-align: top;
-          color: @cool-shale;
-        }
+        display: block;
+        height: unit(@editor-toolbar-height, px);
+        cursor: pointer;
+        text-align: right;
         
         > span {
           position: relative;
           top: 13px;
-          right: 12px;
+          right: unit(@editor-toolbar-item-margin-right, px);
+        }
+        
+        .menu-action-text {
+          vertical-align: top;
         }
       }
 
-      .content-is-visible {
-        background-color: @cool-shale;
-        display: block;
+      // Dropdown is shown
+      .menu-item-active {
+        display: block; // Needed for background color to fill button complete button
+        background-color: @editor-toolbar-active-bgcolor;
         
         a {
-          color: @white;
-          &:hover {
-            color: @white;
-          }
+          color: @editor-toolbar-active-color;
         }
       }
 
-      .content-is-visible + div {
+      // Dropdown wrapper element
+      .menu-item-active + div {
         position: relative;
 
-        // Dropdown menu
         .hippo-toolbar-menu-item {
           position: absolute;
           left: 0;
@@ -134,62 +115,47 @@
             position: relative;
             top: -2px;
           }
-
         }
       }
     }
   }
 }
 
-.hippo-toolbar-menu-item-button-icon {
-  position: relative;
-  top: 1px;
-  margin-left: 4px;
-  margin-right: 8px;
-}
-
-.hippo-toolbar-menu-item-button-label {
-  position: relative;
-  top: -2px;
-}
-
-.hippo-toolbar-menu-item {
-  background-color: @editor-top-dropdown-bgcolor;
-  min-width: 156px;
-  font-size: 11px;
-
-  li {
-    //display: block;
-    clear: left;
-    margin-right: 0;
-    padding: 4px 8px 4px 4px;
-
-    a {
-      color: @cool-shale;
-      white-space: nowrap;
+/* Split the dropdown in columns if there are many languages */
+.hippo-toolbar .hippo-toolbar-section {
+  div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
+  div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    overflow:hidden;
+    
+    > li {
+      float:left;
+      clear: none;
+      //CMS7R-TODO: jslint falls over this, might not be needed but needs check with many flags
+      //display:inline;
+      margin-right: 0;
     }
+  }
 
-    &:hover {
-      background-color: @cool-shale;
-
-      // disabled item
-      span.hippo-toolbar-menu-item-button {
-        color: @white;
-      }
-
-      a {
-        color: @white;
-        text-decoration: none;
-      }
+  div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
+    width: 320px;
+    
+    li {
+      width: 50%;
     }
+  }
 
-    /* disabled menu item */
-    span.hippo-toolbar-menu-item-button {
-      color: #999;
+  div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    width: 480px;
+    
+    li {
+      width: 33.333%;
     }
   }
 }
 
+// Legacy - not sure where/if still used
+
+/*
 .hippo-toolbar .hippo-toolbar-section select {
   float: right;
   background: #32629b;
@@ -227,39 +193,6 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   border: 1px solid #000000;
 }
 
-/* Split the dropdown in columns if there are many languages */
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
-  overflow:hidden;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
-  width:320px;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
-  width:480px;
-
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li,
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
-  float:left;
-  clear: none;
-  //CMS7R-TODO: jslint falls over this, might not be needed but needs check with many flags
-  //display:inline;
-  margin-right: 0;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li {
-  width:50%;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
-  width:33.333%;
-}
-
-/* This is the context-menu header */
 .hippo-toolbar-menu-item li span.header-item {
   display: block;
   padding: 2px;
@@ -283,3 +216,4 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 .hippo-toolbar-section li.icon-16 div {
   position: relative
 }
+*/

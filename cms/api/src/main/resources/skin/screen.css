@@ -682,60 +682,6 @@ body.hippo-root #doc3 {
   padding-left: 0;
 }
 
-.menu-action {
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 4px;
-  background-image: none;
-  border: 1px solid #BDBDBD;
-  display: block;
-  cursor: pointer;
-  min-width: 100px;
-  height: 14px;
-}
-
-.menu-action:hover {
-  border: 1px solid #000000;
-  background-color: #fff6e0;
-}
-
-.menu-action.disabled:hover {
-  border: 1px solid #e3e3e3;
-  background-color: transparent;
-}
-
-.menu-action-text {
-  display: block;
-  float: left;
-  height: 18px;
-  margin-left: 4px;
-  padding-top: 2px;
-}
-
-.menu-action-icon {
-  display: block;
-  float: left;
-  height: 18px;
-  padding-top: 1px;
-  width: 16px;
-}
-
-.menu-label {
-  padding-left: 4px;
-  padding-right: 8px;
-  padding-top: 3px;
-  background-image: none;
-  border: 0 solid #e3e3e3;
-  display: block;
-  min-width: 100px;
-  height: 17px;
-  white-space: nowrap;
-}
-
-.menu-spacer {
-  width: 80px;
-}
-
 /* Default feedback */
 /* ================================================ */
 .hippo-feedback ul {

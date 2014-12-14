@@ -1125,6 +1125,7 @@ api/src/main/styling/less/_footer.less -text
 api/src/main/styling/less/_globals.less -text
 api/src/main/styling/less/_hippo_dev_extensions.less -text
 api/src/main/styling/less/_hippo_logo.less -text
+api/src/main/styling/less/_hippo_menu.less -text
 api/src/main/styling/less/_icons.less -text
 api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text

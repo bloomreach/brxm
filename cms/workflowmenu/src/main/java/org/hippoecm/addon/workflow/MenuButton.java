@@ -96,7 +96,7 @@ class MenuButton extends Panel implements IContextMenu {
         link.add(new AttributeModifier("class", new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
-                return content.isVisible() ? "content-is-visible" : "content-not-visible";
+                return content.isVisible() ? "menu-item-active" : "menu-item-inactive";
             }
         }));
 
