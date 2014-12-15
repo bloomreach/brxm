@@ -86,7 +86,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
         HippoWorkflowEvent in = new HippoWorkflowEvent();
         in.className("hoho");
-        in.methodName("hihi");
+        in.action("hihi");
         in.subjectPath("/content/documents/test");
         in.workflowCategory("haha");
         in.interaction("hehe");
@@ -106,7 +106,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
             HippoWorkflowEvent out = new HippoWorkflowEvent(listener.seenEvents.get(0));
             assertEquals(in.className(), out.className());
-            assertEquals(in.methodName(), out.methodName());
+            assertEquals(in.action(), out.action());
             assertEquals(in.subjectPath(), out.subjectPath());
             assertEquals(in.workflowCategory(), out.workflowCategory());
             assertEquals(in.interaction(), out.interaction());
@@ -134,7 +134,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     }
 
     private void waitForEvent(final Listener listener) throws Exception {
-        int n = 50;
+        int n = 51;
         while (n-- > 0) {
             Thread.sleep(100);
             if (listener.seenEvents.size() == 1) {

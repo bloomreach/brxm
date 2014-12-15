@@ -20,11 +20,12 @@ import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistration;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -34,16 +35,17 @@ import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BroadcastModule implements ConfigurableDaemonModule, BroadcastService, PersistedHippoEventsService {
+public class BroadcastModule implements ConfigurableDaemonModule, BroadcastService {
 
     private static final Logger log = LoggerFactory.getLogger(BroadcastModule.class);
-
-    private static final String JACKRABBIT_CLUSTER_ID_SYSTEM_PROPERTY = "org.apache.jackrabbit.core.cluster.node_id";
-    private static final String JACKRABBIT_CLUSTER_ID_DESCRIPTOR_KEY = "jackrabbit.cluster.id";
 
     public static final String QUERY_LIMIT = "queryLimit";
     public static final String POLLING_TIME = "pollingTime";
     public static final String MAX_EVENT_AGE = "maxEventAge";
+
+    private static final long DEFAULT_POLLING_TIME = 5000L;
+    private static final long DEFAULT_QUERY_LIMIT = 500L;
+    private static final long DEFAULT_MAX_EVENT_AGE = 24L;
 
     private Session session;
     private String clusterId;
@@ -61,15 +63,8 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
     public void initialize(Session session) throws RepositoryException {
         this.session = session;
 
-        clusterId = System.getProperty(JACKRABBIT_CLUSTER_ID_SYSTEM_PROPERTY);
-        if (clusterId == null) {
-            clusterId = session.getRepository().getDescriptor(JACKRABBIT_CLUSTER_ID_DESCRIPTOR_KEY);
-        }
-        if (clusterId == null) {
-            clusterId = "default";
-        } else {
-            log.debug("Cluster Node Id: {}", clusterId);
-        }
+        clusterId = RepoUtils.getClusterNodeId(session);
+        log.debug("Cluster Node Id: {}", clusterId);
 
         broadcastThread = new BroadcastThread(session, this);
         configure(broadcastThread);
@@ -83,24 +78,10 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
     }
 
     protected void configure(final BroadcastThread broadcastThread) throws RepositoryException {
-        try {
-            final Node moduleConfigNode = session.getNodeByIdentifier(moduleConfigIdentifier);
-            if (moduleConfigNode.hasProperty(QUERY_LIMIT)) {
-                broadcastThread.setQueryLimit(moduleConfigNode.getProperty(QUERY_LIMIT).getLong());
-            }
-            if (moduleConfigNode.hasProperty(POLLING_TIME)) {
-                broadcastThread.setPollingTime(moduleConfigNode.getProperty(POLLING_TIME).getLong());
-            }
-            if (moduleConfigNode.hasProperty(MAX_EVENT_AGE)) {
-                broadcastThread.setMaxEventAge(moduleConfigNode.getProperty(MAX_EVENT_AGE).getLong());
-            }
-        } catch (PathNotFoundException | ItemNotFoundException e) {
-            session.refresh(false);
-            log.warn("Exception while reading configuration", e);
-        } catch (Exception e) {
-            session.refresh(false);
-            throw e;
-        }
+        final Node moduleConfigNode = session.getNodeByIdentifier(moduleConfigIdentifier);
+        broadcastThread.setQueryLimit(JcrUtils.getLongProperty(moduleConfigNode, QUERY_LIMIT, DEFAULT_QUERY_LIMIT));
+        broadcastThread.setPollingTime(JcrUtils.getLongProperty(moduleConfigNode, POLLING_TIME, DEFAULT_POLLING_TIME));
+        broadcastThread.setMaxEventAge(JcrUtils.getLongProperty(moduleConfigNode, MAX_EVENT_AGE, DEFAULT_MAX_EVENT_AGE));
     }
 
     private synchronized long getLastProcessed(String channelName, boolean onlyNewEvents) throws RepositoryException {

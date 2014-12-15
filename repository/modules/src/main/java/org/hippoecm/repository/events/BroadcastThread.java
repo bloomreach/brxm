@@ -46,22 +46,18 @@ class BroadcastThread extends Thread {
 
     private static final String HIPPOLOG_TIMESTAMP = "hippolog:timestamp";
 
-    private static final long DEFAULT_POLLING_TIME = 5000L; // 5 seconds (5000 milliseconds)
-    private static final long DEFAULT_QUERY_LIMIT = 500L;
-    private static final long DEFAULT_MAX_EVENT_AGE = 24L; // 1 day (24 hours)
-
     private volatile boolean keepRunning = true;
 
-    class JobRunner {
+    private class JobRunner {
 
         private final BroadcastJob job;
         private boolean processedEvents = false;
 
-        JobRunner(BroadcastJob job) {
+        private JobRunner(BroadcastJob job) {
             this.job = job;
         }
 
-        void run() {
+        private void run() {
             try {
                 long lastProcessItem = job.getLastProcessed();
                 String eventCategory = job.getEventCategory();
@@ -79,14 +75,6 @@ class BroadcastThread extends Thread {
             }
         }
 
-        /**
-         * Process the logNodes for events
-         *
-         *
-         * @param job ordered list of Node instances corresponding to logged events
-         * @param logItems ordered list of Node instances corresponding to logged events
-         * @return timestamp
-         */
         private Long processEvents(final BroadcastJob job, final List<Node> logItems) {
             Long timeStamp = DEFAULT_TIMESTAMP;
             if (logItems.isEmpty()) {
@@ -109,7 +97,7 @@ class BroadcastThread extends Thread {
             return timeStamp;
         }
 
-        public boolean wereEventsProcessed() {
+        private boolean wereEventsProcessed() {
             return processedEvents;
         }
     }
@@ -126,10 +114,6 @@ class BroadcastThread extends Thread {
         this.session = session;
         this.broadcastService = broadcastService;
         this.propertyValueGetter = new PropertyValueGetterImpl();
-
-        this.queryLimit = DEFAULT_QUERY_LIMIT;
-        this.pollingTime = DEFAULT_POLLING_TIME;
-        this.maxEventAge = DEFAULT_MAX_EVENT_AGE;
     }
 
     public void setQueryLimit(long limit) {
@@ -189,7 +173,7 @@ class BroadcastThread extends Thread {
         }
     }
 
-    public List<Node> getNextLogNodes(long lastItem, final String eventCategory) throws RepositoryException {
+    private List<Node> getNextLogNodes(long lastItem, final String eventCategory) throws RepositoryException {
         log.debug("lastItem processed item: {}", lastItem);
 
         try {
