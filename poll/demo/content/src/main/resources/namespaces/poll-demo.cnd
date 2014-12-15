@@ -1,0 +1,20 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'polldemo'='http://www.onehippo.org/polldemo/nt/1.0'>
+
+[polldemo:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[polldemo:custompolldocument] > hippostd:relaxed, polldemo:basedocument
+  orderable
+
+[polldemo:newsdocument] > hippostd:relaxed, polldemo:basedocument
+  orderable
+
+[polldemo:polldocument] > hippostd:relaxed, polldemo:basedocument
+  orderable
+
+[polldemo:textdocument] > hippostd:relaxed, polldemo:basedocument
+  orderable
+
