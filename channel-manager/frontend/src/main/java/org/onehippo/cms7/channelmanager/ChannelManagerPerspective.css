@@ -28,7 +28,7 @@
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
     background: #E0E0E0 none;
-    padding: 0;
+    padding: 0 10px;
     border-bottom: 0;
 }
 
@@ -678,8 +678,7 @@
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-text {
-    box-sizing: border-box;
-    height: 24px !important;
+    height: 22px !important;
     padding: 0 12px;
     line-height: 24px;
     border: 1px solid #c2c2c2;
@@ -688,11 +687,25 @@
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-trigger {
-    box-sizing: border-box;
-    height: 24px;
-    width: 24px;
+    height: 22px;
+    width: 23px;
     border: 1px solid #c2c2c2;
     border-left: none;
     border-radius: 0 5px 5px 0;
     background: url('templatecomposer/trigger.svg') no-repeat center center #ffffff;
+}
+
+.x-combo-list {
+    border-radius: 5px;
+}
+
+.x-combo-list .x-combo-list-item {
+    padding: 4px;
+    border: none;
+}
+
+.x-combo-list .x-combo-list-item.x-combo-selected {
+    color: #ffffff;
+    border: none !important;
+    background-color: #444954;
 }
