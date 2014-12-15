@@ -73,4 +73,29 @@ public class HippoIconStack extends Panel {
         icons.add(copy);
         return copy;
     }
+
+    public HippoIcon replaceFromSprite(final HippoIcon oldIcon, final Icon newIcon) {
+        HippoIcon newCopy = HippoIcon.fromSprite(oldIcon.getId(), newIcon);
+        icons.replace(newCopy);
+        return newCopy;
+    }
+
+    public HippoIcon replaceInline(final HippoIcon oldIcon, final Icon newIcon) {
+        HippoIcon newCopy = HippoIcon.inline(oldIcon.getId(), newIcon);
+        icons.replace(newCopy);
+        return newCopy;
+    }
+
+    public HippoIcon replaceFromResource(final HippoIcon oldIcon, final ResourceReference newReference) {
+        HippoIcon newCopy = HippoIcon.fromResource(oldIcon.getId(), newReference);
+        icons.replace(newCopy);
+        return newCopy;
+    }
+
+    public HippoIcon replaceCopyOf(final HippoIcon oldIcon, final HippoIcon newIcon) {
+        HippoIcon newCopy = HippoIcon.copy(newIcon, oldIcon.getId());
+        icons.replace(newCopy);
+        return newCopy;
+    }
+
 }

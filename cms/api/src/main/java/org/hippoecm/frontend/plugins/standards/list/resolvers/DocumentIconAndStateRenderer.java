@@ -19,11 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -50,26 +51,31 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
 
     private static class Container extends Panel implements IDetachable {
 
-        public static final String WICKET_ID_DOCUMENT_TYPE_ICON = "documentTypeIcon";
-        public static final String WICKET_ID_DOCUMENT_STATE_ICON = "documentStateIcon";
+        private final HippoIconStack icon;
+        private final StateIconAttributes stateIconAttributes;
+        private HippoIcon stateIcon;
 
         public Container(final String id, final Node node) {
-            super(id, new JcrNodeModel(node));
+            super(id);
 
-            add(getTypeIcon(WICKET_ID_DOCUMENT_TYPE_ICON));
-            add(getStateIcon(WICKET_ID_DOCUMENT_STATE_ICON));
-        }
+            final JcrNodeModel nodeModel = new JcrNodeModel(node);
+            stateIconAttributes = new StateIconAttributes(nodeModel);
 
-        @Override
-        protected void onBeforeRender() {
-            if (hasBeenRendered()) {
-                replace(getStateIcon(WICKET_ID_DOCUMENT_STATE_ICON));
+            icon = new HippoIconStack("icon", IconSize.SMALL);
+
+            // icon#addCopyOf generates a new ID, so use a dummy ID for the pluggable type icon
+            final HippoIcon typeIcon = getTypeIcon("dummyId", node);
+            icon.addCopyOf(typeIcon);
+
+            final Icon stateIconOrNull = stateIconAttributes.getIcon();
+            if (stateIconOrNull != null) {
+                this.stateIcon = icon.addInline(stateIconOrNull);
             }
-            super.onBeforeRender();
+
+            add(icon);
         }
 
-        private HippoIcon getTypeIcon(final String id) {
-            final Node node = getNodeModel().getNode();
+        private HippoIcon getTypeIcon(final String id, final Node node) {
             try {
                 return IconRenderUtil.getDocumentOrFolderIcon(id, node);
             } catch (RepositoryException e) {
@@ -79,23 +85,28 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
             }
         }
 
-        private JcrNodeModel getNodeModel() {
-            return (JcrNodeModel)getDefaultModel();
+        @Override
+        protected void onBeforeRender() {
+            if (hasBeenRendered()) {
+                updateStateIcon();
+            }
+            super.onBeforeRender();
         }
 
-        private Component getStateIcon(final String id) {
-            final StateIconAttributes stateIconAttributes = new StateIconAttributes(getNodeModel());
-            final Icon stateIcon = stateIconAttributes.getIcon();
-
-            if (stateIcon != null) {
-                return HippoIcon.inline(id, stateIcon);
-            } else {
-                EmptyPanel noIcon = new EmptyPanel(id);
-                noIcon.setRenderBodyOnly(true);
-                return noIcon;
+        private void updateStateIcon() {
+            final Icon newStateIcon = this.stateIconAttributes.getIcon();
+            if (newStateIcon != null) {
+                stateIcon = icon.replaceInline(stateIcon, newStateIcon);
             }
         }
 
+        @Override
+        protected void onDetach() {
+            if (stateIconAttributes != null) {
+                stateIconAttributes.detach();
+            }
+            super.onDetach();
+        }
     }
 
 }
