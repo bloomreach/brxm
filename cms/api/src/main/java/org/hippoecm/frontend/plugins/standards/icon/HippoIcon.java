@@ -31,12 +31,6 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
 
-    public static final String WICKET_ID_CONTAINER = "container";
-    public static final String WICKET_ID_IMAGE = "image";
-    public static final String WICKET_ID_SVG = "svg";
-    public static final String WICKET_FRAGMENT_IMAGE = "imageFragment";
-    public static final String WICKET_FRAGMENT_SVG = "svgFragment";
-
     private HippoIcon(final String id) {
         super(id);
     }
@@ -48,7 +42,7 @@ public class HippoIcon extends Panel {
      * @return the icon component
      */
     public static HippoIcon fromSprite(final String id, final Icon icon) {
-        return new HippoSvgIcon(id, icon, false);
+        return new SvgIcon(id, icon, false);
     }
 
     /**
@@ -59,7 +53,7 @@ public class HippoIcon extends Panel {
      * @return the icon component
      */
     public static HippoIcon inline(final String id, final Icon icon) {
-        return new HippoSvgIcon(id, icon, true);
+        return new SvgIcon(id, icon, true);
     }
 
     /**
@@ -80,8 +74,8 @@ public class HippoIcon extends Panel {
      * @param newId the new Wicket ID
      * @return a copy of the given icon
      */
-    public static HippoIcon copy(final HippoSvgIcon icon, final String newId) {
-        return new HippoSvgIcon(newId, icon);
+    public static HippoIcon copy(final SvgIcon icon, final String newId) {
+        return new SvgIcon(newId, icon);
     }
 
     /**
@@ -117,7 +111,7 @@ public class HippoIcon extends Panel {
      * @return the icon component
      */
     public static HippoIcon fromResource(final String id, final ResourceReference reference, final int width, final int height) {
-        return new HippoResourceIcon(id, reference, width, height);
+        return new ResourceIcon(id, reference, width, height);
     }
 
     /**
@@ -126,16 +120,16 @@ public class HippoIcon extends Panel {
      * @param newId the new Wicket ID
      * @return a copy of the given icon
      */
-    public static HippoIcon copy(final HippoResourceIcon icon, final String newId) {
-        return new HippoResourceIcon(newId, icon);
+    public static HippoIcon copy(final ResourceIcon icon, final String newId) {
+        return new ResourceIcon(newId, icon);
     }
 
-    private static class HippoSvgIcon extends HippoIcon {
+    private static class SvgIcon extends HippoIcon {
 
         private final Icon icon;
         private final boolean inline;
 
-        private HippoSvgIcon(final String id, final Icon icon, final boolean inline) {
+        private SvgIcon(final String id, final Icon icon, final boolean inline) {
             super(id);
 
             this.icon = icon;
@@ -143,7 +137,7 @@ public class HippoIcon extends Panel {
 
             setRenderBodyOnly(true);
 
-            final WebMarkupContainer container = new WebMarkupContainer(WICKET_ID_CONTAINER) {
+            final WebMarkupContainer container = new WebMarkupContainer("svgIcon") {
                 @Override
                 protected void onComponentTag(final ComponentTag tag) {
                     final Response response = RequestCycle.get().getResponse();
@@ -159,19 +153,25 @@ public class HippoIcon extends Panel {
             add(container);
         }
 
-        private HippoSvgIcon(final String newId, final HippoSvgIcon original) {
+        private SvgIcon(final String newId, final SvgIcon original) {
             this(newId, original.icon, original.inline);
         }
 
     }
 
-    private static class HippoResourceIcon extends HippoIcon {
+    private static class ResourceIcon extends HippoIcon {
+
+        private static final String WICKET_ID_CONTAINER = "container";
+        private static final String WICKET_ID_IMAGE = "image";
+        private static final String WICKET_ID_SVG = "svg";
+        private static final String WICKET_FRAGMENT_IMAGE = "imageFragment";
+        private static final String WICKET_FRAGMENT_SVG = "svgFragment";
 
         private ResourceReference reference;
         private int width;
         private int height;
 
-        private HippoResourceIcon(final String id, final ResourceReference reference, final int width, final int height) {
+        private ResourceIcon(final String id, final ResourceReference reference, final int width, final int height) {
             super(id);
 
             this.reference = reference;
@@ -201,7 +201,7 @@ public class HippoIcon extends Panel {
             add(fragment);
         }
 
-        private HippoResourceIcon(final String newId, final HippoResourceIcon original) {
+        private ResourceIcon(final String newId, final ResourceIcon original) {
             this(newId, original.reference, original.width, original.height);
         }
 
