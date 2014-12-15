@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+    <name>project-settings</name>
+    <confirmParams>false</confirmParams>
+    <projectNamespace>dashboarddocumentwizarddemo</projectNamespace>
+    <selectedBeansPackage>org.onehippo.forge.beans</selectedBeansPackage>
+    <selectedComponentsPackage>org.onehippo.forge.components</selectedComponentsPackage>
+    <selectedRestPackage>org.onehippo.forge.rest</selectedRestPackage>
+    <setupDone>true</setupDone>
+    <templateLanguage>freemarker</templateLanguage>
+    <useSamples>true</useSamples>
+</project>
