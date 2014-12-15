@@ -29,7 +29,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
@@ -40,7 +39,6 @@ import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.event.payload.NodeRenamed;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -192,21 +190,6 @@ public class FolderTreePlugin extends RenderPlugin {
             protected void addComponent(final AjaxRequestTarget target, final Component component) {
                 if (component.findParent(Page.class) != null) {
                     super.addComponent(target, component);
-                }
-            }
-
-            @Override
-            public void onEvent(final IEvent<?> event) {
-                super.onEvent(event);
-                
-                if (event.getPayload() instanceof NodeRenamed) {
-                    String path = ((NodeRenamed)event.getPayload()).getPath();
-                    if (path.startsWith(rootModel.getItemModel().getPath())) {
-                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                        if (target != null) {
-                            target.add(this);
-                        }
-                    }
                 }
             }
         };

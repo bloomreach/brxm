@@ -67,6 +67,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
 import org.hippoecm.frontend.plugin.config.impl.AbstractPluginDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
@@ -79,7 +80,6 @@ import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.onehippo.repository.util.JcrConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -703,6 +703,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
         @Override
         public List<String> getServices() {
             return ((IClusterConfig) upstream).getServices();
+        }
+
+        @Override
+        public List<PropertyDescriptor> getPropertyDescriptors() {
+            return ((IClusterConfig) upstream).getPropertyDescriptors();
         }
 
         @SuppressWarnings("unchecked")

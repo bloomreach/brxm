@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
 
 public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfig {
 
@@ -34,12 +35,14 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
     private List<String> services;
     private List<String> references;
     private List<String> properties;
+    private List<PropertyDescriptor> propertyDescriptors;
 
     public JavaClusterConfig() {
         plugins = new LinkedList<IPluginConfig>();
         services = new LinkedList<String>();
         references = new LinkedList<String>();
         properties = new LinkedList<String>();
+        propertyDescriptors = new LinkedList<>();
     }
 
     public JavaClusterConfig(IClusterConfig upstream) {
@@ -97,4 +100,8 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
         return properties;
     }
 
+    @Override
+    public List<PropertyDescriptor> getPropertyDescriptors() {
+        return propertyDescriptors;
+    }
 }

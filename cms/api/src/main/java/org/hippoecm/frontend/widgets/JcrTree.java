@@ -33,6 +33,7 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.ILabelTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,16 +134,9 @@ public abstract class JcrTree extends Tree {
         }
         try {
             HippoNode hippoNode = (HippoNode) jcrNode;
-            Node canonical = hippoNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
-            }
-            return !canonical.isSame(hippoNode);
-        } catch (ItemNotFoundException e) {
-            // canonical node no longer exists
-            return true;
+            return hippoNode.isVirtual();
         } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
+            log.info("Cannot determine whether node '{}' is virtual, assuming it's not", JcrUtils.getNodePathQuietly(jcrNode), e);
             return false;
         }
     }

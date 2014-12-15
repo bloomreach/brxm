@@ -571,6 +571,10 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
+        <sv:property sv:name="nodetypes" sv:type="String" sv:multiple="true">
+        </sv:property>
+        <sv:property sv:name="last.visited.nodetypes" sv:type="String" sv:multiple="true">
+        </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
           <sv:value>cluster.name</sv:value>

@@ -79,9 +79,8 @@ public class FolderTreeNode extends JcrTreeNode {
         if (jcrNode instanceof HippoNode) {
             try {
                 final HippoNode hippoNode = (HippoNode) jcrNode;
-                final Node canonical = hippoNode.getCanonicalNode();
                 // do not count for virtual nodes w.r.t performance
-                if (canonical == null || !canonical.isSame(hippoNode)) {
+                if (hippoNode.isVirtual()) {
                     return 0;
                 }
             } catch (RepositoryException e) {

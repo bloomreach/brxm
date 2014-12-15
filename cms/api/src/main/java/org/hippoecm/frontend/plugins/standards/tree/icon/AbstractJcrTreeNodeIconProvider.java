@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.standards.tree.icon;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,18 +44,11 @@ public abstract class AbstractJcrTreeNodeIconProvider implements ITreeNodeIconPr
         if (jcrNode == null || !(jcrNode instanceof HippoNode)) {
             return false;
         }
+        HippoNode hippoNode = (HippoNode) jcrNode;
         try {
-            HippoNode hippoNode = (HippoNode) jcrNode;
-            Node canonical = hippoNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
-            }
-            return !canonical.isSame(hippoNode);
-        } catch (ItemNotFoundException e) {
-            // canonical node no longer exists
-            return true;
+            return hippoNode.isVirtual();
         } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
+            log.debug("Cannot determine whether node '{}' is virtual, assuming it's not", JcrUtils.getNodePathQuietly(hippoNode), e);
             return false;
         }
     }

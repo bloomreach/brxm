@@ -532,6 +532,24 @@
   background-color: transparent;
 }
 
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield-with-button {
+  position: relative;
+}
+
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield-input {
+  display: inline-block;
+  width: auto;
+  margin-right: 22px;
+}
+
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield-button {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 22px;
+}
+
 /* threepanes in editor */
 .hippo-editor .hippo-editor-threepane {
   width: 100%

@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugin.config.impl;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,6 +29,7 @@ import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
@@ -46,12 +48,16 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(JcrClusterConfig.class);
+
+    private static final int DEFAULT_TYPE = PropertyType.STRING;
+    private static final boolean DEFAULT_MULTIPLICITY = false;
 
     static class EntryFilter implements Iterator<Entry<String, Object>> {
 
@@ -93,7 +99,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             throw new UnsupportedOperationException();
         }
 
-    };
+    }
 
     class PluginList extends AbstractList<IPluginConfig> implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -298,7 +304,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             IPluginConfig config = iter.next();
             if (!newNames.contains(config.getName())) {
                 iter.remove();
-            } else {        
+            } else {
                 oldNames.add(config.getName());
             }
         }
@@ -364,6 +370,28 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                 + key), PropertyType.STRING);
     }
 
+    @Override
+    public List<PropertyDescriptor> getPropertyDescriptors() {
+        Node node = getNodeModel().getObject();
+        List<String> properties = getList(FrontendNodeType.FRONTEND_PROPERTIES);
+        List<PropertyDescriptor> descriptors = new ArrayList<>(properties.size());
+        for (String name : properties) {
+            int type = DEFAULT_TYPE;
+            boolean multiple = DEFAULT_MULTIPLICITY;
+            try {
+                if (node.hasProperty(name)) {
+                    Property prototype = node.getProperty(name);
+                    type = prototype.getType();
+                    multiple = prototype.isMultiple();
+                }
+                descriptors.add(new PropertyDescriptor(name, type, multiple));
+            } catch (RepositoryException e) {
+                log.error("cannot get create property descriptor for property " + name, e);
+            }
+        }
+        return descriptors;
+    }
+
     String getPluginName(Node node) throws RepositoryException {
         return wrapConfig(node).getName();
     }
@@ -380,7 +408,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     public int hashCode() {
         return 3499 ^ super.hashCode();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public void startObservation() {
