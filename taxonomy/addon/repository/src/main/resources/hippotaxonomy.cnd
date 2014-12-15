@@ -1,0 +1,40 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippotaxonomy='http://www.hippoecm.org/hippotaxonomy/nt/1.2'>
+
+// translation
+[hippotaxonomy:translation] > hippo:translation
+- hippotaxonomy:synonyms (string) multiple
+- hippotaxonomy:description (string)
+// for extensibility, it's allowed to add ad hoc string/string[] properties in the category translation node.
+- * (string)
+- * (string) multiple
+
+// FIXME: extend hippo:translated?
+[hippotaxonomy:translated] mixin
++ hippotaxonomy:translation (hippotaxonomy:translation) multiple
+
+[hippotaxonomy:category] > nt:base orderable
+- hippotaxonomy:key (string) mandatory
++ * (hippotaxonomy:category) = hippotaxonomy:category
+
+// the root of a taxonomy tree
+[hippotaxonomy:taxonomy] > hippo:document, hippostdpubwf:document orderable
+- hippotaxonomy:locales (string) multiple
++ * (hippotaxonomy:category) = hippotaxonomy:category
+
+// FIXME: hippotaxonomy:taxonomyfolder?
+[hippotaxonomy:container] > hippostd:folder orderable
+
+// set this mixin on a document to be able to classify it
+[hippotaxonomy:classifiable] mixin
+- hippotaxonomy:keys (string) multiple
+
+// set this mixin on a document to be able to canonise it
+[hippotaxonomy:canonised] > hippotaxonomy:classifiable mixin
+- hippotaxonomy:canonkey (string) mandatory

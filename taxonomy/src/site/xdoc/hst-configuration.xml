@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE document PUBLIC
+    "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+    "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+
+<document>
+
+<properties>
+    <title>HST Configuration</title>
+  </properties>
+
+  <body>
+    <p class="alert alert-success">This page is for versions 1.11.xx for Hippo 7.9.
+            For 1.09.xx versions on Hippo 7.8 see <a href="hst-configuration_7_8.html">HST Configuration for 7.8</a></p>
+    <section name="HST configuration">
+    <p>After having the <a href="install.html">correct dependencies installed</a> in the site module, you will need to tell
+      Spring to create a TaxonomyManager component. An example for a configuration can be found in the taxonomy-demo <a
+    href="https://forge.onehippo.org/svn/taxonomy/taxonomy-demo/trunk/site/src/main/resources/META-INF/hst-assembly/overrides/taxonomy.xml">taxonomy.xml</a></p>
+
+      <p>Copy this file into META-INF/hst-assembly/overrides</p>
+
+      <p>If you do not have the following context parameters in your WEB-INF/web.xml you should add these.</p>
+      <source><![CDATA[
+  <context-param>
+    <param-name>hst-beans-annotated-classes</param-name>
+    <param-value>classpath*:org/example/beans/**/*.class
+      ,classpath*:org/onehippo/forge/**/*.class</param-value>
+  </context-param>]]>
+      </source>
+    </section>
+
+    <section name="Using taxonomies in HST">
+    <p>Now you are ready to use the taxonomy from HST components. After retrieving the TaxonomyManager bean
+      you can simply ask it for a taxonomy:</p>
+
+    <source><![CDATA[
+  import org.onehippo.taxonomy.api.Taxonomy;
+  import org.onehippo.taxonomy.api.TaxonomyManager;
+
+  ...
+  TaxonomyManager taxonomyManager = HstServices.getComponentManager().getComponent(TaxonomyManager.class.getName());
+  Taxonomy taxonomy = taxonomyManager.getTaxonomies().getTaxonomy("exampletaxonomy");]]></source>
+
+    <p>where <em>exampletaxonomy</em> is the name of the taxonomy, which is in fact the name of the root node of the
+      taxonomy.</p>
+    <p>The <a href="build-demo.html">taxonomy demo</a> shows several ways to use a Taxonomy from within the frontend:
+      to search for a taxonomy value, to generate the full taxonomy tree and to locate an entry.
+      Enough to get you going.</p>
+    </section>
+  </body>
+</document>
+

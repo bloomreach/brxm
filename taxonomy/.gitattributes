@@ -1,0 +1,55 @@
+* text=auto !eol
+/LICENSE -text
+/NOTICE -text
+addon/frontend/pom.xml svneol=native#text/plain
+addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/new-category-16.png -text svneol=unset#image/png
+addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/picker-back.gif -text
+addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/remove-category-16.png -text svneol=unset#image/png
+addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/folder-closed.gif -text
+addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/folder-open.gif -text
+addon/pom.xml svneol=native#text/plain
+addon/repository/pom.xml svneol=native#text/plain
+addon/repository/src/main/resources/classifiable-dao-service.xml svneol=native#text/plain
+addon/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+addon/repository/src/main/resources/hippotaxonomy.cnd -text
+addon/repository/src/main/resources/namespace-hippotaxonomy.xml svneol=native#text/plain
+addon/repository/src/main/resources/navigator.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-deny-namespace-filter.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-deny-prototype.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-deny-section.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-domain.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-folder-view.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-hide-namespace.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-section-loader.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-section-translation.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-service.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-tree-view.xml svneol=native#text/plain
+api/pom.xml svneol=native#text/plain
+hst-api/pom.xml svneol=native#text/plain
+hst/pom.xml svneol=native#text/plain
+/pom.xml svneol=native#text/plain
+src/site/resources/avail-locales-conf.png -text svneol=unset#image/png
+src/site/resources/choose-taxonomy-term.png -text svneol=unset#image/png
+src/site/resources/custom-taxonomy-editor.png -text svneol=unset#image/png
+src/site/resources/custom-taxonomy-picker.png -text svneol=unset#image/png
+src/site/resources/double-taxonomy-document.png -text svneol=unset#image/png
+src/site/resources/double-taxonomy.png -text svneol=unset#image/png
+src/site/resources/extra-taxonomy-added.png -text svneol=unset#image/png
+src/site/resources/locale-selection.png -text svneol=unset#image/png
+src/site/resources/mixin-added.png -text svneol=unset#image/png
+src/site/resources/mixin-doctype-editor.png -text svneol=unset#image/png
+src/site/resources/taxonomy-editor.png -text svneol=unset#image/png
+src/site/resources/taxonomy-terms-in-editor.png -text svneol=unset#image/png
+src/site/resources/translator.xml svneol=native#text/plain
+src/site/site.xml svneol=native#text/plain
+src/site/xdoc/add-extra-taxonomy.xml svneol=native#text/plain
+src/site/xdoc/build-demo.xml svneol=native#text/plain
+src/site/xdoc/category-detail-customization.xml svneol=native#text/plain
+src/site/xdoc/category-localization.xml svneol=native#text/plain
+src/site/xdoc/cms-configuration.xml svneol=native#text/plain
+src/site/xdoc/hst-configuration.xml svneol=native#text/plain
+src/site/xdoc/hst-configuration_7_8.xml svneol=native#text/plain
+src/site/xdoc/index.xml svneol=native#text/plain
+src/site/xdoc/install.xml svneol=native#text/plain
+src/site/xdoc/release-notes.xml svneol=native#text/plain
+src/site/xdoc/screenshots.xml svneol=native#text/plain

@@ -1,0 +1,123 @@
+<!--
+  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+  <div class="taxonomy-editor">
+    <div wicket:id="toolbar-container-holder">
+      <div class="hippo-toolbar">
+        <ul class="hippo-toolbar-section">
+          <li class="icon-16"><a wicket:id="add-category"
+            class="menu-action" href="#"> <span
+              class="menu-action-icon"><img
+                wicket:id="add-category-icon" /></span> <span
+              class="menu-action-text"><wicket:message
+                  key="add-category-text" /></span>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="taxonomy-tree" wicket:id="tree">[
+      TAXONOMY TREE HERE ]</div>
+    <div class="taxonomy-category">
+      <div wicket:id="container-holder">
+        <div style="clear: both;" />
+        <form wicket:id="container">
+          <table>
+            <tr>
+              <td>
+                <wicket:message key="key"/>:
+              </td>
+              <td class="hippo-editor-field">
+                <span wicket:id="widgetKey"></span>
+              </td>
+            </tr>
+            <tr>
+              <td><wicket:message key="language" />:</td>
+              <td class="hippo-editor-field">
+                <div class="hippo-editor-field-subfield even">
+                  <div class="hippo-editor-field-subfield-item">
+                    <div class="hippo-editor-field-value">
+                      <div class="hippo-editor-field-value-container">
+                        <select wicket:id="language">
+                          <option value="en">English</option>
+                          <option value="es">Spanish</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><wicket:message key="name" />:</td>
+              <td class="hippo-editor-field">
+                <div class="hippo-editor-field-subfield even">
+                  <div class="hippo-editor-field-subfield-item">
+                    <div class="hippo-editor-field-value">
+                      <div class="hippo-editor-field-value-container">
+                        <span wicket:id="name" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><wicket:message key="description" />:</td>
+              <td class="hippo-editor-field">
+                <div class="hippo-editor-field-subfield even">
+                  <div class="hippo-editor-field-subfield-item">
+                    <div class="hippo-editor-field-value">
+                      <div class="hippo-editor-field-value-container" wicket:id="description">[ description ]</div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <wicket:child />
+            <tr>
+              <td><wicket:message key="synonyms" />:</td>
+              <td class="hippo-editor-field">
+                <div class="hippo-editor-field-subfield event"
+                  wicket:id="view">
+                  <div class="hippo-editor-field-subfield-controls">
+                    <a class="up-16 icon-16" wicket:id="up"></a>
+                    <a class="down-16 icon-16" wicket:id="down"></a>
+                    <a class="delete-16 icon-16" wicket:id="remove"></a>
+                  </div>
+                  <div class="hippo-editor-field-subfield-item">
+                    <div class="hippo-editor-field-value">
+                      <div class="hippo-editor-field-value-container">
+                        <div wicket:id="synonym"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a class="add-16 icon-16" wicket:id="add"></a>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div style="clear: both;" />
+  </div>
+</wicket:panel>
+<wicket:fragment wicket:id="fragmentname">
+  <input type="text" wicket:id="widget" />
+</wicket:fragment>
+
+</html>

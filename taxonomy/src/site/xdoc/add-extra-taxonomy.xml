@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/XDOC/2.0"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+<properties>
+    <title>Extra Taxonomy Picker in Document Type</title>
+  </properties>
+  <body>
+
+    <section name="Add an extra taxonomy picker to a document type">
+      <p class="alert alert-success">This feature is supported since versions 1.11.01 for 7.9 and 1.09.05 for 7.8.</p>
+      <p>
+        When one wants to add an extra taxonomy picker to a document type, the following steps have to be taken:
+        <ul>
+          <li>Configure a second taxonomy DAO service with a differently configured <code>MixinClassificationDaoPlugin</code></li>
+          <li>Add an additional plugin context to your template that uses that service</li>
+        </ul>
+      </p>
+
+      <subsection name="Add a second taxonomy DAO service using the MixinClassificationDaoPlugin">
+        <p>
+          The class <code>org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin</code> has a configuration
+          property "fieldPath". The value of that property is the name of the property where the additional taxonomy
+          keys are stored.<br/>
+          For document types using the following service, service.taxonomy.dao.alternate in their template, the
+          alternate taxonomy keys will be stored in a property called "taxonomydemo:alternatekeys".
+        </p>
+          <source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="alternateClassificationDaoService">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="fieldPath" sv:type="String">
+    <sv:value>taxonomydemo:alternatekeys</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="taxonomy.classification.dao" sv:type="String">
+    <sv:value>service.taxonomy.dao.alternate</sv:value>
+  </sv:property>
+</sv:node>
+]]></source>
+        <p>
+          To add the service to your configuration:
+          <ul>
+            <li>In the console, go to '/hippo:configuration/hippo:frontend/cms/cms-services' </li>
+            <li>Create a structure like above, perhaps by copying the existing classificationDaoService and add property
+              'fieldPath' with the wanted property name.</li>
+            <li>Write changes to repository</li>
+          </ul>
+        </p>
+        <p>Be sure to add this extra service in your local configuration and take it through your environments on deployment!</p>
+      </subsection>
+
+      <subsection name="Add an additional plugin context to your template that uses that service">
+        <p>
+          The following description is based on a document type "doubletaxonomy" with
+          one taxonomy. The namespaceprefix of the project is 'taxonomydemo'. The structure of the namespace in the
+          console, for one a document type with a single taxonomy field, looks like:
+        </p>
+        <p>
+          <img src="mixin-added.png" alt="structure of document type"/>
+        </p>
+        <p>Add this kind of configuration below the 'editor:templates/_default_' node</p>
+        <source><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="extrataxonomy">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="captionKey" sv:type="String">
+    <sv:value>title-secondary</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="model.compareTo" sv:type="String">
+    <sv:value>${model.compareTo}</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="taxonomy.classification.dao" sv:type="String">
+    <sv:value>service.taxonomy.dao.alternate</sv:value>
+  </sv:property>
+  <sv:property sv:name="taxonomy.id" sv:type="String">
+    <sv:value>service.taxonomy</sv:value>
+  </sv:property>
+  <sv:property sv:name="taxonomy.name" sv:type="String">
+    <sv:value>exampletaxonomy</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.left.item</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+</sv:node>]]></source>
+        <p>The following properties should be set to match your requirements:</p>
+        <table>
+          <thead>
+            <th>Property name</th>
+            <th>Description</th>
+          </thead>
+          <tr>
+            <td>captionKey</td>
+            <td>The key that is used to lookup the caption (*).</td>
+          </tr>
+          <tr>
+            <td>taxonomy.classification.dao</td>
+            <td>The name of the DAO service that is used.</td>
+          </tr>
+          <tr>
+            <td>taxonomy.name</td>
+            <td>The name of the taxonomy to use.</td>
+          </tr>
+          <tr>
+            <td>wicket.id</td>
+            <td>The layout part where the additional taxonomy will be placed
+              (e.g. '${cluster.id}.left.item' for left column)</td>
+          </tr>
+        </table>
+        <p>(*) The captionKey is looked up in org/onehippo/taxonomy/plugin/TaxonomyPickerPlugin.properties. Value
+          "title-secondary = Secondary taxonomy" has been provided in the addon. If you want to use another title,
+          fork the properties file(s).
+        </p>
+        <p>
+          To add the template plugin to your document type:
+          <ul>
+            <li>In the console, import the above xml (the edited frontend:plugin) at
+              /hippo:namespaces/[yournamespace]/[yourdocument]/editor:templates/_default_</li>
+            <li>Write changes to repository</li>
+            <li>To view the changes in the cms log in again, the services will be reloaded</li>
+          </ul>
+        </p>
+        <p>Be sure to add this extra service in your local configuration and take it through your environments on deployment!</p>
+        <p>
+          Your doc type should now look like this:
+          <img src="double-taxonomy-document.png" alt="document type in Document type editor"/>
+        </p>
+        <p>
+          <img src="extra-taxonomy-added.png" alt="document type in console"/>
+        </p>
+        <p>Another, more maintainable option is to provide a translation is to use to approach used in
+          <a href="http://www.onehippo.org/library/concepts/editor-interface/add-internationalization-i18n-to-document-types.html">Internationalization of field captions</a>
+          <ul>
+            <li>In the console, XML import the <a href="translator.xml">translator</a> node to /hippo:namespaces/[yournamespace]/[yourdocument]/editor:templates/_default_</li>
+            <li>Add a property translator.id with the value ${cluster.id}.translator to /hippo:namespaces/[yournamespace]/[yourdocument]/editor:templates/_default_</li>
+          </ul>
+        </p>
+      </subsection>
+
+      <subsection name="Wrapping up">
+        <p>Test your configuration:</p>
+        <ul>
+          <li>Create a new document of the newly created document type</li>
+          <li>Select taxonomy items for each taxonomy picker</li>
+          <li>Save the document</li>
+          <li>In the console, make sure all the taxonomy keys are stored on the right location.
+          The following query should return all documents that have both properties:
+            //element(*,taxonomydemo:doubletaxonomy)/[@hippotaxonomy:keys and @taxonomydemo:alternatekeys]</li>
+        </ul>
+        <p>
+          Existing documents do not yet have the new property, nor has it been added to the prototype. hippotaxonomy:classifiable
+          can be added to your document type in the cnd. The new property has not been defined by a mixin.
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>

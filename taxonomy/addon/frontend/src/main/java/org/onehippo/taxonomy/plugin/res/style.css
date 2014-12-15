@@ -1,0 +1,234 @@
+/*
+ * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.taxonomy-tree {
+    height: auto;
+    width: 50em;
+    overflow: auto;
+    float: left;
+    clear: both;
+}
+
+.taxonomy-tree .hippo-tree {
+  border: 1px solid #e3e3e3;
+  margin-right: 5px;
+  margin-left: 3px;
+}
+
+.taxonomy-tree .hippo-tree .wicket-tree {
+    border: 0;
+    line-height: 1.5em;
+    overflow: visible;
+    white-space: nowrap;
+    width: 100%;
+    height: auto;
+}
+
+.taxonomy-tree .hippo-tree div.row, .taxonomy-tree .hippo-tree div.row-selected {
+    padding: 0;
+}
+
+.taxonomy-tree .hippo-tree .wicket-tree .row {
+    overflow: visible;
+    width: 100%;
+}
+
+.taxonomy-tree .hippo-tree .wicket-tree .row-selected {
+    overflow: visible;
+    width: 100%;
+}
+
+.taxonomy-tree-popup {
+    height: 385px;
+    width: 340px;
+    overflow: scroll;
+    float: left;
+    border-bottom: 1px solid #e3e3e3;
+    border-right: 1px solid #e3e3e3;
+}
+
+.taxonomy-tree-popup .wicket-tree {
+    border: 1px solid #CCCCCC;
+    line-height: 1.5em;
+    overflow: visible;
+    white-space: nowrap;
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+}
+
+.taxonomy-tree-popup .wicket-tree .row {
+    overflow: visible;
+}
+
+.taxonomy-tree-popup .wicket-tree .row-selected {
+    overflow: visible;
+}
+
+.taxonomy-tree .node-link {
+    width: 50px;
+}
+
+.taxonomy-tree .row-selected .node-link span.icon {
+    padding: 0;
+}
+
+.taxonomy-tree .row-selected .node-link span {
+    background-color: #ffe29a;
+    padding: 3px 3px 3px 0px;
+}
+
+.taxonomy-container {
+    width: 500px;
+    height: 385px;
+    float: left;
+    border-bottom: 1px solid #e3e3e3;
+    background-color: #E3E3E3;
+}
+
+.taxonomy-container h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.taxonomy-details {
+    margin-left: 10px;
+    margin-top: 10px;
+    background-color: #e3e3e3;
+    padding: 5px;
+}
+
+div.taxonomy-details a, div.taxonomy-details a:visited {
+    color: #0467B4;
+}
+
+div.taxonomy-details a:hover {
+    text-decoration: underline;
+}
+
+.taxonomy-selected-list-in-documenttype {
+    padding: 6px;
+}
+
+.taxonomy-selected-list-in-documenttype li {
+    margin-bottom: 5px;
+    border-bottom: dashed #C9C9C9 1px;
+    padding: 4px;
+}
+
+.taxonomy-selected {
+    margin-left: 10px;
+    margin-top: 15px;
+    background-color: #e3e3e3;
+    padding: 5px;
+}
+
+.taxonomy-selected .remove {
+    font-size: 12px;
+    font-weight: bold;
+    color: red;
+}
+
+.taxonomy-container table {
+    margin-bottom: 10px;
+}
+
+.taxonomy-item-add {
+    color: red;
+    font-weight: bold;
+}
+
+.taxonomy-picker-link {
+    padding: 3px;
+}
+
+.taxonomy-picker-link a:visited span {
+    color: #0467B4;
+}
+
+.taxonomy-picker-link a span {
+    color: #0467B4;
+}
+
+.taxonomy-picker-link a:hover span {
+    text-decoration: underline;
+}
+
+.taxonomy-editor .hippo-toolbar {
+  display: table;
+  margin-bottom: 3px;
+  margin-left: 4px;
+  margin-top: 2px;
+}
+
+.taxonomy-editor .taxonomy-category {
+    width: 400px;
+    float: left;
+}
+
+.taxonomy-editor table {
+    border: 1px solid #e3e3e3;
+    width: 100%;
+}
+
+.taxonomy-editor td {
+    text-align: right;
+    vertical-align: top;
+    margin: 5px;
+    padding: 10px;
+}
+
+.taxonomy-editor td.hippo-editor-field {
+    text-align: left;
+}
+
+.taxonomy-palette-picker table.palette {
+    margin-left: 11px;
+    margin-right: 11px;
+}
+
+.taxonomy-palette-picker table.palette td.header {
+    background-color: white;
+    border-top: 1px solid white;
+}
+
+.taxonomy-palette-picker td.buttons button {
+    padding: 10px;
+}
+
+.taxonomy-palette-picker .palette .choicesSelect,
+.taxonomy-palette-picker .palette .selectionSelect {
+    height: 260px;
+}
+
+.taxonomy-canon {
+    background: url('application_key.png') no-repeat;
+    background-position: left center;
+    display: block;
+    vertical-align: middle;
+    padding-left: 20px;
+    height: 25px;
+    font-weight: bold;
+}
+
+.taxonomy-current-canon {
+    padding: 3px;
+    display: block;
+}
+
+.taxonomy-category {
+    float: left;
+    width: 400px;
+}

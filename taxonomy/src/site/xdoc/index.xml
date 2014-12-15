@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE document PUBLIC
+    "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+    "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+
+<document >
+
+<properties>
+    <title>Welcome</title>
+  </properties>
+  <body>
+    <section name="Taxonomy plugin">
+      <p>
+        Editors can enrich their metadata using the Taxonomy plugin to categorize the content.
+        The CMS administrator can edit the taxonomy itself.
+      </p>
+      <subsection name="Where is the demo?">
+        <p>See the <a href="demo.html">demo project</a>.</p>
+      </subsection>
+      <subsection name="How can I use robotstxt in my project?">
+        <p>
+          Follow the <a href="install.html">installation instructions!</a>
+        </p>
+      </subsection>
+      <subsection name="Project status">
+        <p>The latest version of the Taxonomy Plugin is compatible with Hippo 7.9.
+          Use earlier version range for previous Hippo versions.
+          See the <a href="release-notes.html">release notes</a> for details.</p>
+        <table border="1" cellpadding="0" cellspacing="5">
+          <tbody>
+            <tr>
+              <th>Version</th>
+              <th>Hippo CMS Suite</th>
+            </tr>
+            <tr>
+              <td>1.11.xx</td>
+              <td>7.9</td>
+            </tr>
+            <tr>
+              <td>1.09.02 and up</td>
+              <td>7.8, 7.7</td>
+            </tr>
+            <tr>
+              <td>1.09.00 - 1.09.01</td>
+              <td>7.8, not compatible with 7.7</td>
+            </tr>
+            <tr>
+              <td>1.08.08</td>
+              <td>7.8, 7.7</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          See the <a href="https://issues.onehippo.com/browse/HIPPLUG/component/12847">Hippo JIRA</a>
+          for a list of bugs and feature requests.
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>

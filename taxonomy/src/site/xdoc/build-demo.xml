@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE document PUBLIC
+    "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+    "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+
+<document>
+  <properties>
+  <title>Build Demo</title>
+  </properties>
+  <body>
+  <section name="Building the demo">
+    <p>If you want to see a running project with the taxonomy already installed, you can build the demo project.</p>
+      <subsection name="Requirements">
+        <ul>
+          <li>Java 7 JDK</li>
+          <li>Maven 3</li>
+          <li>Subversion client</li>
+        </ul>
+      </subsection>
+    <subsection name="Check out the source code and build the plugin (optional)">
+      <p>
+        The demo project depends on the latest snapshot (trunk) of the plugin. So you can either set the version to the
+        latest release or build the plugin locally. For the latter, check out the trunk source code from the SVN repository:
+      </p>
+      <source>svn co https://forge.onehippo.org/svn/taxonomy/taxonomy/trunk taxonomy-trunk</source>
+      <p>
+        Build the project:
+      </p>
+      <source>cd taxonomy-trunk
+mvn clean install</source>
+    </subsection>
+    <subsection name="Check out, build and run the demo">
+      <p>
+        Check out the trunk source code from the SVN repository:
+      </p>
+      <source>svn co https://forge.onehippo.org/svn/taxonomy/taxonomy-demo/trunk taxonomy-demo-trunk</source>
+      <p>
+        Build the demo project:
+      </p>
+      <source>mvn clean install</source>
+      <p>
+        Run the demo project:
+      </p>
+      <source>mvn -P cargo.run</source>
+      </subsection>
+    </section>
+  </body>
+</document>
