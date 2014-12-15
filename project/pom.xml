@@ -126,7 +126,7 @@
     <!-- Cargo Tomcat full distribution url -->
     <cargo.tomcat.distribution.url>${cargo.tomcat.distribution.url.prefix}${cargo.tomcat.distribution.url.archive}${cargo.tomcat.distribution.url.postfix}</cargo.tomcat.distribution.url>
     <!-- Extra JVM arguments to pass to Cargo -->
-    <cargo.jvm.args>-XX:PermSize=128m -XX:MaxPermSize=256m</cargo.jvm.args>
+    <cargo.jvm.args></cargo.jvm.args>
     <!-- Default message displayed in the console after the cargo container has started -->
     <cargo.started.message>Press Ctrl-C to stop the Cargo container...</cargo.started.message>
 
