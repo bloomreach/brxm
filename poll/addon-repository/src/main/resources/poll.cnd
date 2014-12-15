@@ -1,0 +1,22 @@
+<'poll'='http://forge.onehippo.org/poll/nt/1.2'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+
+[poll:polldata] > hippostd:folder
+
+[poll:votes]
+  - poll:count (long) 
+  
+[poll:option]
+  - poll:value (string)
+  - poll:label (string)
+
+[poll:poll] > hippo:compound
+  - poll:active (boolean)
+  - poll:text (string)
+  - poll:introduction (string)
+  + poll:option (poll:option) multiple
+
+[poll:polldocument] > hippo:document, hippostdpubwf:document, hippostd:publishableSummary
+  + poll:poll (poll:poll)

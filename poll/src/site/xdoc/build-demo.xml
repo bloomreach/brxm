@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+<properties>
+  <title>Build Demo</title>
+</properties>
+<body>
+  <section name="Building the demo">
+    <subsection name="Requirements">
+      <ul>
+        <li>Java 7 JDK</li>
+        <li>Maven 3</li>
+        <li>Subversion client</li>
+      </ul>
+    </subsection>
+    <subsection name="Optionally, checkout the source code and build the plugin">
+      <p>
+        The demo project depends on the latest snapshot (trunk) of the plugin. So you can either set the version in
+        your demo to the latest release or build the plugin locally. For the latter, check out the trunk source code
+        from the SVN repository:
+      </p>
+      <source>$ svn co https://forge.onehippo.org/svn/poll/poll/trunk poll-trunk</source>
+      <p>Build the project using Maven:</p>
+      <source>$ cd poll-trunk
+$ mvn clean install</source>
+    </subsection>
+    <subsection name="Check out, build and run the demo project">
+      <p>Check out the trunk source code from the SVN repository:</p>
+      <source>$ svn co https://forge.onehippo.org/svn/poll/poll-demo/trunk poll-demo-trunk</source>
+      <p>If you didn't build the plugin locally, set the correct release version in the root pom.</p>
+      <p>Build and run the demo project:</p>
+      <source>$ mvn clean package
+$ mvn -P cargo.run</source>
+      <p>Access CMS at <a href="http://localhost:8080/cms">http://localhost:8080/cms</a><br/>
+        Access site at <a href="http://localhost:8080/site">http://localhost:8080/site</a></p>
+    </subsection>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,45 @@
+* text=auto !eol
+/LICENSE -text
+/NOTICE -text
+addon-repository/pom.xml svneol=native#text/plain
+addon-repository/src/main/resources/domains/polldata-domain.xml svneol=native#text/plain
+addon-repository/src/main/resources/hide-poll-namespace.xml svneol=native#text/plain
+addon-repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+addon-repository/src/main/resources/poll-catalog.xml svneol=native#text/plain
+addon-repository/src/main/resources/poll-namespace.xml svneol=native#text/plain
+addon-repository/src/main/resources/poll-root-node.xml svneol=native#text/plain
+addon-repository/src/main/resources/poll-templates.xml svneol=native#text/plain
+addon-repository/src/main/resources/poll-translator.xml svneol=native#text/plain
+addon-repository/src/main/resources/poll.cnd -text
+addon-repository/src/main/resources/types/compound/option.xml svneol=native#text/plain
+addon-repository/src/main/resources/types/compound/poll-patch.xml svneol=native#text/plain
+addon-repository/src/main/resources/types/compound/poll.xml svneol=native#text/plain
+addon-repository/src/main/resources/types/polldocument.xml svneol=native#text/plain
+hst-client/pom.xml svneol=native#text/plain
+hst-client/src/main/resources/META-INF/web-resources/poll/catalog-poll.png -text svneol=unset#image/png
+/pom.xml svneol=native#text/plain
+src/site/resources/images/catalog.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/cms.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/component-instantiation.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/custom-template.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/drag-n-drop.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/new[!!-~]poll[!!-~]document.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/new[!!-~]poll.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/parameter-popup.png -text svneol=unset#image/png
+src/site/resources/images/site_form.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/site_voted.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/sitemap-item.jpg -text svneol=unset#image/jpeg
+src/site/resources/images/thumbs.jpg -text svneol=unset#image/jpeg
+src/site/site.xml svneol=native#text/plain
+src/site/xdoc/build-demo.xml svneol=native#text/plain
+src/site/xdoc/components.xml svneol=native#text/plain
+src/site/xdoc/content.xml svneol=native#text/plain
+src/site/xdoc/index.xml svneol=native#text/plain
+src/site/xdoc/install.xml svneol=native#text/plain
+src/site/xdoc/instantiation.xml svneol=native#text/plain
+src/site/xdoc/navigation.xml svneol=native#text/plain
+src/site/xdoc/parameters.xml svneol=native#text/plain
+src/site/xdoc/release-notes.xml svneol=native#text/plain
+src/site/xdoc/rendering.xml svneol=native#text/plain
+src/site/xdoc/screenshots.xml svneol=native#text/plain
+src/site/xdoc/template-composer.xml svneol=native#text/plain

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Rendering the Poll</title>
+  </properties>
+  <body>
+    <section name="Rendering the Poll">
+      <subsection name="Available Poll Data">
+        <p>
+          In order to be able to create rendering code (JSP or Freemarker), you have to know what data is available
+          for rendering. The following table describes this.
+        </p>
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>pollDocument</td>
+            <td>
+              Refers to the root-level HST bean, representing the processed poll document. For poll documents of the
+              plug-in-supplied type, the bean is implemented by <i>org.onehippo.forge.poll.contentbean.PollDocument</i>.
+              If no poll document is available, this field is <i>null</i> and no further rendering should be attempted.
+              While custom poll documents may provide extra properties, the plug-in-supplied document type only exposes
+              the <i>poll</i> field:
+            </td>
+          </tr>
+          <tr>
+            <td>pollDocument.poll</td>
+            <td>
+              Refers to the HST bean representing the poll compound. This bean is implemented by
+              <i>org.onehippo.forge.poll.contentbean.compound.Poll</i>.
+            </td>
+          </tr>
+          <tr>
+            <td>pollDocument.poll.text</td>
+            <td>String field containing the value of the <i>text</i> attribute of the poll compound.</td>
+          </tr>
+          <tr>
+            <td>pollDocument.poll.introduction</td>
+            <td>String field containing the value of the <i>introduction</i> attribute of the poll compound.</td>
+          </tr>
+          <tr>
+            <td>pollDocument.poll.options</td>
+            <td>
+              List of HST beans specifying the options available for this poll document. Each option is implemented
+              by <i>org.onehippo.forge.poll.contentbean.compound.Option</i>.
+            </td>
+          </tr>
+          <tr>
+            <td>pollDocument.poll.options[].value</td>
+            <td>String field containing the value of the <i>value</i> attribute of the selected option.</td>
+          </tr>
+          <tr>
+            <td>pollDocument.poll.options[].label</td>
+            <td>String field containing the value of the <i>label</i> attribute of the selected option.</td>
+          </tr>
+          <tr>
+            <td>voteSuccess</td>
+            <td>
+              Boolean indicating, when a voting attempt was made, if the attempt was successful or not.
+              If no voting attempt was made, the field is not available
+            </td>
+          </tr>
+          <tr>
+            <td>option</td>
+            <td>String containing the option previously voted on. May not be available.</td>
+          </tr>
+          <tr>
+            <td>pollVotes</td>
+            <td>
+              Refers to a (plain java) bean of type <i>org.onehippo.forge.poll.bean.PollVotesBean</i> which contains the
+              votes data corresponding to the <i>pollDocument</i>. Just like the poll compound, this bean provides
+              votes data as <i>options</i>:
+            </td>
+          </tr>
+          <tr>
+            <td>pollVotes.options</td>
+            <td>List of beans representing the options available for the poll document</td>
+          </tr>
+          <tr>
+            <td>pollVotes.options[].value</td>
+            <td>Same as pollDocument.poll.options[].value</td>
+          </tr>
+          <tr>
+            <td>pollVotes.options[].label</td>
+            <td>Same as pollDocument.poll.options[].label</td>
+          </tr>
+          <tr>
+            <td>pollVotes.options[].votesCount</td>
+            <td>Long indicating the number of votes cast onto this option.</td>
+          </tr>
+          <tr>
+            <td>pollVotes.options[].votesPercentage</td>
+            <td>Long indicating the (rounded-off) percentage of this option relative to all votes for this document.</td>
+          </tr>
+        </table>
+      </subsection>
+
+      <subsection name="Creating a Template">
+        <p>
+          Your poll is rendered using a JSP or Freemarker template. The poll plug-in comes with a freemarker
+          template illustrating the rendering of the attributes of the poll component. You can find the code
+          in the repository under
+          <i>hst:hst/hst:configurations/hst:default/hst:templates/poll.component.ftl@hst:script</i>.
+        </p>
+        <p>
+          If necessary, customize this code and make sure it is part of your <i>site.war</i>.
+        </p>
+        <p>
+          If you use your customized code, refer to it by creating a new template in the URL and Navigation
+          Management area of the CMS Channel Manager, pointing the Render path attribute to your code.
+        </p>
+        <img src="images/custom-template.jpg" alt="Custom Template"/>
+        <p>
+          If you use the default Freemarker code provided by the poll plug-in, a template called poll.component.ftl
+          is available (not shown in the CMS) to be used by your component.
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>

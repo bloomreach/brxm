@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>HST Components</title>
+  </properties>
+  <body>
+    <section name="HST Components">
+      <subsection name="Delegation">
+        <p>
+          The poll plug-in provides the standard poll component class <code>org.onehippo.forge.poll.component.PollComponent</code>,
+          taking care of the processing logic behind voting on and displaying a poll. For the case where your project
+          requires the use of a custom poll component, the poll plug-in has been implemented in such a way that the
+          poll logic is encapsulated in the <code>org.onehippo.forge.poll.component.PollProvider</code> class, to which the
+          PollComponent delegates. Like this, a custom poll component can easily replace the default PollComponent by
+          delegating to the PollProvider too.
+        </p>
+        <p>
+          See the default PollComponent for how to delegate the calls to the <code>doAction</code>, <code>doBeforeRender</code>
+          <code>getParameter</code> functions.
+        </p>
+      </subsection>
+
+      <subsection name="Template Composer Parameter Support">
+        <p>
+          In order to support the Template Composer's parameter pop-up mechanism, your custom poll component should be
+          annotated using the <code>org.onehippo.forge.poll.component.PollComponentInfo</code> interface. As the parameters
+          are defined and handled in the PollProvider, the PollComponentInfo interface can be re-used for custom
+          poll components.
+        </p>
+        <source>
+@ParametersInfo(type = PollComponentInfo.class)
+public class [...]</source>
+        <p>
+          Additionally, the custom component should override the <code>getParameter</code> function and delegate it to the
+          PollProvider.
+        </p>
+        <source>
+    @Override
+    public String getParameter(String name, HstRequest request) {
+        return PollProvider.getParameter(name, (PollComponentInfo)getParametersInfo(request));
+    }</source>
+        <p>
+          For more info on how the parameter pop-up works, see
+          <a href="http://www.onehippo.org/7_7/library/concepts/component-development/hstcomponent-parametersinfo-annotation.html">here</a>.
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>

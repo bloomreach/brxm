@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Poll Parameters</title>
+  </properties>
+  <body>
+    <section name="Poll Parameters">
+      <p>
+        The parameters of the poll plug-in are implemented in the <code>PollProvider</code> delegate class. As long as custom
+        components delegate to the PollProvider, they will "inherit" the set of parameters described here.
+      </p>
+      <table>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>poll-docsPath</td>
+          <td>
+            <p>
+              This parameter specifies a repository content path, relative to the site's root node,
+              where the poll component should look for active poll documents represented by content beans of class
+              <i>poll-docsClass</i>. The path should start with a forward slash ("/"), and should be considered
+              mandatory.
+            </p>
+            <p>
+              If multiple matching and active poll documents are found under the specified path, the "first" one will
+              be processed.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td>poll-docsClass</td>
+          <td>
+            This parameter specifies the class of the content beans that contain poll documents
+            to be processed by this instantiation of the poll component. By default, the parameter is set to
+            <i>org.onehippo.forge.poll.contentbean.PollDocument</i>. If you create your own document type, including
+            the poll compound type, you will have to write your own content bean, inheriting from
+            <i>org.hippoecm.hst.content.beans.standard.HippoDocumentBean</i>, representing the content of your poll
+            documents, and refer to that class through this parameter.
+          </td>
+        </tr>
+        <tr>
+          <td>poll-pollCompoundName</td>
+          <td>
+            This parameter specifies the JCR name of the poll compound inside your poll
+            document. It is used to access the core poll data of your poll document, managed by the PollProvider. By
+            default, the parameter is set to <i>poll:poll</i>, which works out of the box for the document type provided
+            by the poll plug-in.
+          </td>
+        </tr>
+        <tr>
+          <td>poll-dataPath</td>
+          <td>
+            This parameter specifies where the poll data (the votes of the poll) are kept. As
+            keeping this data together with the poll documents is tricky from a security point of view, the poll
+            plug-in, by default, keeps all poll data in a separate root-level folder called <i>/polldata</i> in the
+            repository. We recommend to keep this unchanged, as the creation of a root-level repository folder is not
+            allowed at runtime.
+          </td>
+        </tr>
+      </table>
+    </section>
+  </body>
+</document>
