@@ -158,7 +158,7 @@ public class AbstractActionTest {
                 // or #goImmutable() method.
             }
 
-            assertEquals(55, (long) eval(getParameter("oneExpression")));
+            assertEquals(55, (Object) eval(getParameter("oneExpression")));
         }
     }
 }
