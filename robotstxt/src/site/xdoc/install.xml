@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+
+<document>
+    <properties>
+        <title>Forge Robots.txt - Installation</title>
+    </properties>
+    <body>
+        <section name="Installation Instructions">
+            <subsection name="Prerequisites">
+                <p>
+                    These instructions assume that you have a Hippo project based on the Hippo project archetype, i.e.
+                    a Maven multiproject consisting of three submodules: cms, site and content.
+                </p>
+            </subsection>
+
+            <subsection name="Installation">
+                <ol>
+                    <li>Set a version property in the root pom.xml of your project in the &lt;properties&gt; section:
+                      <source><![CDATA[<forge.robotstxt.version>1.06.00</forge.robotstxt.version>]]></source>
+                  </li>
+                    <li>
+                        <p>Update the pom.xml of your <strong>CMS</strong> module to include the following dependency:</p>
+                        <source><![CDATA[
+<dependency>
+  <groupId>org.onehippo.forge.robotstxt</groupId>
+  <artifactId>robotstxt-addon-repository</artifactId>
+  <version>${forge.robotstxt.version}</version>
+</dependency>]]></source>
+                      <p>Note: before robotstxt version 1.04.00 the groupId was org.onehippo.forge</p>
+                    </li>
+                    <li>
+                        <p>Update the pom.xml of your <strong>site</strong> module to include the following dependency:</p>
+                        <source><![CDATA[
+<dependency>
+  <groupId>org.onehippo.forge.robotstxt</groupId>
+  <artifactId>robotstxt-hst-client</artifactId>
+  <version>${forge.robotstxt.version}</version>
+</dependency>]]></source>
+                      <p>Note: before robotstxt version 1.04.00 the groupId was org.onehippo.forge</p>
+                    </li>
+                    <li>
+                     <p>Also in the <strong>site</strong> module, add the classpath of the robotstxt beans to the
+                       'hst-beans-annotated-classes' context parameter in the web.xml</p>
+                     <source><![CDATA[
+<context-param>
+  <param-name>hst-beans-annotated-classes</param-name>
+  <param-value>
+    classpath*:org/onehippo/cms7/hst/beans/**/*.class,
+    classpath*:org/onehippo/forge/robotstxt/**/*.class
+  </param-value>
+</context-param>]]></source>
+                    </li>
+                    <li>
+                        <p>
+                            Rebuild your project using Maven. You should now be able to <a href="usage.html">
+                            create the robots.txt document(s) in the CMS</a>.
+                        </p>
+                      <p><span class="note">Note:</span> on <strong>Hippo 7.8</strong> and later, be sure to use startup option <code>-Drepo.bootstrap=true</code>
+                        for initializing the types, see
+                        <a href="http://www.onehippo.org/7_8/library/concepts/content-repository/content-bootstrap.html">Content Bootstrap</a></p>
+                    </li>
+                </ol>
+
+            </subsection>
+        </section>
+    </body>
+</document>

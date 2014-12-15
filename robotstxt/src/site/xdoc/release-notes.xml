@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+
+<document>
+  <properties>
+    <title>Forge Robots.txt - Release Notes</title>
+  </properties>
+  <body>
+    <section>
+      <subsection name="1.08.01">
+        <p class="smallinfo">Unreleased</p>
+        <ul>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-825">HIPPLUG-825</a><br/>
+            Make sure the query for facnav nodes get an encoded basepath
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.08.00">
+        <p class="smallinfo">Release Date: 22 May 2014</p>
+        <ul>
+          <li>Upgraded for Hippo CMS 7.9. Incompatible with 7.8 or lower.</li>
+        </ul>
+      </subsection>
+      <subsection name="1.06.00">
+        <ul>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-547">HIPPLUG-547</a><br/>
+            The Implementation-Build manifest entry has been added in order to keep projects using the plug-in from
+            issuing a warning about the absence thereof.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-546">HIPPLUG-546</a><br/>
+            The robots.txt resource for preview sites now disallows everything by default. Again, check the
+            Robotstxt component for information on how to override this behavior.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-567">HIPPLUG-567</a><br/>
+            The disallow faceted navigation URL mechanism is now enabled by default, and the UI does, by default,
+            not show the check box anymore. The behavior can be overridden through the console. Check the
+            Robotstxt component and bean for more info.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-577">HIPPLUG-577</a><br/>
+            The installation and configuration of the plug-in has been simplified by using an embedded Freemarker
+            rendering script. Configuration is now limited to adding the sitemap item. As the page configuration
+            is bootstrapped into the <code>hst:default</code> configuration, the sitemap item cannot be configured
+            through the Channel Manager, but you have to use the Console.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-544">HIPPLUG-544</a><br/>
+            Bump hst artifact version to 7.8.
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-548">HIPPLUG-548</a><br/>
+            Sequence numbering between 20000 and 30000.</li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-571">HIPPLUG-571</a><br/>
+            Cleanup and refresh LICENSE and NOTICE files.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/CMS7-6835">CMS7-6835</a><br/>
+            Translate to German.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.05.00">
+        <p>
+          In order to correctly update the plugin-specific definitions in the repository,
+          this version of the plugin requires a Hippo CMS project based on Release 7.6 or later.
+        </p>
+        <ul>
+          <li>Support for automatically disallowing faceted navigation links.</li>
+          <li>Rendering moved from bean to JSP.</li>
+          <li>Major documentation rewrite / actualization.</li>
+        </ul>
+        <p>
+          During CMS initialization, the Robots.txt configuration document type is
+          automatically extended to support the new
+          <i>disallow faceted navigation</i>
+          flag.
+          You can then
+          <a href="usage.html">adjust this setting</a>
+          on a per-document basis in
+          the CMS, if so desired.
+        </p>
+      </subsection>
+      <subsection name="1.04.xx and lower">
+        <p>
+          No information available here, you'll have to rely on SVN.
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>
