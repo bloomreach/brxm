@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Forge Related Docs - Installation and Configuration </title>
+    </properties>
+    <body>
+        <section name="Obtaining the plugin via maven repository">
+            <p>
+            The related documents plugin is available via the hippo forge maven repository. To use the plugin, first you need to add the
+        repository to your project's main pom.xml. You need to add the following snippet to your
+                <i>repositories</i> tag.
+              </p>
+                <source><![CDATA[
+<repository>
+  <id>hippo-forge</id>
+  <name>Hippo Forge maven 2 repository.</name>
+  <url>http://maven.onehippo.com/maven2-forge/</url>
+  <snapshots>
+    <enabled>false</enabled>
+  </snapshots>
+  <releases>
+    <updatePolicy>never</updatePolicy>
+  </releases>
+  <layout>default</layout>
+</repository>
+]]></source>
+          <p>
+            Once you added the repository, you can add the relateddocs dependency to your project's CMS pom.xml.
+            If your project structure is similar to the Hippo archetype project structure,
+            you can add the following to the pom.xml found in the cms module.
+            The version is normally managed from the parent pom but you can override it of course.
+          </p>
+          <source><![CDATA[
+<!-- Related documents plugin -->
+<dependency>
+    <groupId>org.onehippo.forge</groupId>
+    <artifactId>relateddocs</artifactId>
+</dependency>]]></source>
+
+          <p><span class="note">Note:</span> on <strong>Hippo 7.8</strong> and later, be sure to use startup option <code>-Drepo.bootstrap=true</code>
+            for initializing the types, see
+            <a href="http://www.onehippo.org/7_8/library/concepts/content-repository/content-bootstrap.html">Content Bootstrap</a></p>
+        </section>
+    </body>
+</document>

@@ -1,0 +1,17 @@
+* text=auto !eol
+/LICENSE -text
+/NOTICE -text
+/pom.xml svneol=native#text/plain
+src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+src/main/resources/relateddocs-clusterloader.xml svneol=native#text/plain
+src/main/resources/relateddocs-types.cnd -text
+src/main/resources/relateddocsproviders.xml svneol=native#text/plain
+src/site/resources/reldocs-edit.jpg -text svneol=unset#image/jpeg
+src/site/resources/reldocs-view.jpg -text svneol=unset#image/jpeg
+src/site/site.xml svneol=native#text/plain
+src/site/xdoc/build-demo.xml svneol=native#text/plain
+src/site/xdoc/configuration.xml svneol=native#text/plain
+src/site/xdoc/index.xml svneol=native#text/plain
+src/site/xdoc/install.xml svneol=native#text/plain
+src/site/xdoc/release-notes.xml svneol=native#text/plain
+src/site/xdoc/screenshots.xml svneol=native#text/plain

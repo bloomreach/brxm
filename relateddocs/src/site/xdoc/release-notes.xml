@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Related Docs - Release Notes</title>
+  </properties>
+  <body>
+    <section name="Release Notes">
+      <subsection name="2.10.01">
+        <p class="smallinfo">Release Date: 7 Nov 2014</p>
+        <ul>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-909">HIPPLUG-909</a><br/>
+            Show document title instead of node path in the related docs field.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.10.00">
+        <p class="smallinfo">Release Date: 22 May 2014</p>
+        <ul>
+          <li>
+           Updated the plugin for Hippo CMS 7.9, including Wicket 6 and Java 7.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-761">HIPPLUG-761</a><br/>
+            In SimilaritySearchRelatedDocsProvider and ReferringRelatedDocsProvider, search for availability=preview
+            instead of state='not drafts'. For 7.9, typically the preview and live variants will co-exist.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.12">
+        <p class="smallinfo">Release Date: 25 Nov 2013</p>
+      <ul>
+        <li>
+          <a href="https://issues.onehippo.com/browse/HIPPLUG-727">HIPPLUG-727</a><br/>
+          In newly created documents, selected related documents were not added visually before saving.
+        </li>
+        <li>
+          Maintenance: rename constants interface RelatingDocNodeType to RelatedDocsNodeType.
+        </li>
+      </ul>
+      </subsection>
+      <subsection name="2.08.11">
+      <ul>
+        <li>
+          <a href="https://issues.onehippo.com/browse/HIPPLUG-679">HIPPLUG-679</a><br/>
+          Fix for manual picking related documents if there is a cluster.options node.
+        </li>
+
+      </ul>
+      </subsection>
+      <subsection name="2.08.10">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-650">HIPPLUG-650</a><br/>
+            Make CMS plugin show when there is a broken reference.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-679">HIPPLUG-679</a><br/>
+            Possibility to add selective nodetypes attribute underneath the cluster.options node of the
+            RelatedDocsSuggestPlugin template (just as the linkpickerdialog).<br/>
+            Possibility to configure maximum allowed related documents in the RelatedDocsSuggestPlugin template.
+            Property: <code>max.allowed (long)</code>.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-680">HIPPLUG-680</a><br/>
+            Give user notification when a user tries to browse a related document that has been deleted.
+            When opening a document, clean up references to documents that no longer exist.<br/>
+            Changes entail some code refactoring, introduction of <code>AbstractRelatedDocsPlugin</code> and
+            base <code>InfoDialog</code>.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.09">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-548">HIPPLUG-548</a><br/>
+            Sequence numbering between 20000 and 30000.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-571">HIPPLUG-571</a><br/>
+            Clean up and refresh LICENSE and NOTICE files.</li>
+          <li>Clean up polluted hippoecm-extension.xml.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.08">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/CMS7-6812">CMS7-6812</a><br/>
+            Corrected license headers/ Added apache-rat plugin to check license headers, bumped parent version to 16.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-572">HIPPLUG-572</a><br/>
+            SimilaritySearchRelatedDocsProvider buggy when scope is root node.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-571">HIPPLUG-571</a><br/>
+            Clean up and refresh LICENSE and NOTICE files - Updated copyright year.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-544">HIPPLUG-544</a><br/>
+            Upgrade to 7.8.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.07a">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-679">HIPPLUG-679</a><br/>
+            Possibility to add selective nodetypes attribute underneath the cluster.options node of the
+            RelatedDocsSuggestPlugin template (just as the linkpickerdialog).<br/>
+            Possibility to configure maximum allowed related documents in the RelatedDocsSuggestPlugin template.
+            Property: <code>max.allowed (long)</code>.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.07">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-479">HIPPLUG-479</a><br/>
+            Have the related docs plugin only suggest similar documents through search that are of the current site's
+            content.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.06">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-533">HIPPLUG-533</a><br/>
+            German translation.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.02">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-232">HIPPLUG-232</a>
+            Related docs plugin should not use Session.save().</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.01">
+        <ul>
+          <li>Hiding the related documents namespace in the document type editor.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.00">
+        <ul>
+          <li>The released version is compatible with Hippo CMS 7.6 (2.19.XX).</li>
+        </ul>
+      </subsection>
+      <subsection name="2.07.01">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-232">HIPPLUG-232</a>
+            Related docs plugin should not use Session.save().</li>
+        </ul>
+      </subsection>
+      <subsection name="2.07.00">
+        <ul>
+          <li>The released version is compatible with Hippo CMS 7.5 (2.18.XX).</li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.03">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-232">HIPPLUG-232</a>
+            Related docs plugin should not use Session.save().</li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.02">
+        <ul>
+          <li>Better support for documents without relateddocs:docs subnode</li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.01">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-111">HIPPLUG-111</a>
+            Use limit on HippoQuery</li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.00">
+        <ul>
+          <li>Upgraded to ECM 7.4 (2.16.xx)</li>
+        </ul>
+      </subsection>
+      <subsection name="2.05.04">
+        <ul>
+          <li>Backported fix for max items retrieved (see 2.06.01)</li>
+        </ul>
+      </subsection>
+      <subsection name="2.05.0x">
+        <ul>
+          <li>Demo updated to ECM 7.3 (2.12.xx)</li>
+        </ul>
+      </subsection>
+      <subsection name="2.04.00">
+        <ul>
+          <li>2.04.xx is for latest Hippo ECM, 2.10.xx</li>
+        </ul>
+      </subsection>
+      <subsection name="2.03.00">
+        <ul>
+          <li>Bumped namespace to http://forge.onehippo.org/relateddocs/nt/1.1. </li>
+          <li>2.03.xx is for Hippo ECM 2.09.xx</li>
+        </ul>
+      </subsection>
+      <subsection name="2.02.00 and below">
+        <ul>
+          <li>Stable related docs for Hippo ECM 2.06.xx and below </li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>
