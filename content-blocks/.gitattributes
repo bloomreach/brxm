@@ -1,0 +1,6 @@
+* text=auto !eol
+/LICENSE -text
+/NOTICE -text
+/pom.xml svneol=native#text/plain
+src/main/resources/contentblocks-validator.xml svneol=native#text/plain
+src/main/resources/hippoecm-extension.xml svneol=native#text/plain
