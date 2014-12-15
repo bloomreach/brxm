@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Gallery Picker - Usage</title>
+  </properties>
+  <body>
+    <section name="Using the Gallery Picker Plugin">
+    
+      <subsection name="Adding an Image Link field to an editing template">
+        <p>There are two ways to add the Image Link to your editing template:</p>
+        <ol>
+          <li><p>Using the template editor GUI</p></li>
+          <li><p>Directly modifying CND and XML files</p></li>
+        </ol>
+        <p>Each approach is described in detail below.</p>
+        
+        <h4>Using the template editor GUI</h4>
+        <ol>
+          <li>Log in to Hippo CMS with admin privileges.</li>
+          <li>Open you template in the template editor.</li>
+          <li>
+            <p>Choose "imagelink" under "Compound fields" to add an Image Preview field to the template:</p>
+            <p><img src="images/imagelink.png" alt="screenshot: imagelink field type in template editor"/></p>
+          </li>
+          <li>
+            <p>Enter the field's caption and path name:</p>
+            <p><img src="images/imagelink-properties.png" alt="screenshot: imagelink field properties in template editor"/></p>
+          </li>
+          <li>Save and commit the template.</li>
+        </ol>
+        <p>
+          You will probably want to export the modified template and save it in your project.
+          A helpful tool to do this is <a href="http://manuel.forge.onehippo.org/">Manuel</a>.
+        </p>
+        
+        <h4>Directly modifying CND and XML files</h4>
+        <ol>
+          <li>
+            <p>Add the namespace to your template's definition in the CND:</p>
+            <source><![CDATA[<hippogallerypicker='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>]]></source>
+          </li>
+          <li>
+            <p>Add a child node to your template's definition in the CND:</p>
+            <source>+ mynamespace:image (hippogallerypicker:imagelink)</source>
+          </li>
+          <li>
+            <p>Add a field node to the node type definition in your template XML:</p>
+            <source><![CDATA[
+<sv:node sv:name="image">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposysedit:field</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:path" sv:type="String">
+    <sv:value>mynamespace:image</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposysedit:type" sv:type="String">
+    <sv:value>hippogallerypicker:imagelink</sv:value>
+  </sv:property>
+</sv:node>            
+]]></source>
+          </li>
+          <li>
+            <p>Add a node to the prototype definition in your template's XML:</p>
+            <source><![CDATA[
+<sv:node sv:name="myhippoproject:image">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippogallerypicker:imagelink</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:docbase" sv:type="String">
+    <sv:value></sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:facets" sv:type="String"/>
+  <sv:property sv:name="hippo:modes" sv:type="String"/>
+  <sv:property sv:name="hippo:values" sv:type="String"/>
+</sv:node>
+]]></source>
+          </li>
+          <li>
+            <p>Add a field node to the template definition in your template's XML:</p>
+            <source><![CDATA[
+<sv:node sv:name="image">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="caption" sv:type="String">
+    <sv:value>Image</sv:value>
+  </sv:property>
+  <sv:property sv:name="engine" sv:type="String">
+    <sv:value>${engine}</sv:value>
+  </sv:property>
+  <sv:property sv:name="field" sv:type="String">
+    <sv:value>image</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="model.compareTo" sv:type="String">
+    <sv:value>${model.compareTo}</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="validator.id" sv:type="String">
+    <sv:value>${validator.id}</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.field</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+  <sv:node sv:name="cluster.options">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:pluginconfig</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
+]]></source>
+          </li>
+          <li>Rebuild your project and restart your CMS to see you changes.</li>
+        </ol>
+      </subsection>
+
+      <subsection name="Restricting allowed imageset types">
+        <p>If you are using more than one imageset types, you can configure which ones the picker allows for the editors to pick.</p>
+        <p>To do that, simply add a multiple string property named "nodetypes" on the cluster.options of the picker field in your editor templates, and specify as a value one or more imageset types. The type of an imageset is simply its namespace name (e.g. the default type is hippogallery:imageset). If you don't specify the nodetypes property, then all imageset types will be available for picking</p>
+        <p>This feature is available for the 7.8 release of the plugin, starting with version 1.11.04, and will be available for 7.9 after 1.13.01 is released.</p>
+      </subsection>
+
+
+      <subsection name="Adding an image to a document">
+        <ol>
+          <li>Create a document of the type you added the Image Preview field to (or open an existing document).</li>
+          <li>
+            <p>In the Image field, click 'Select'.</p>
+            <p><img src="images/imagepreview-field.png" alt="screenshot: Image Preview field in editing template"/></p>
+          </li>
+          <li>
+            <p>In the Image Picker that pops up, select an image and click 'OK'.</p>
+            <p><img src="images/imagepicker.png" alt="screenshot: image picker"/></p>
+          </li>
+          <li>
+            <p>The Image field will show a thumbnail preview of the selected image:</p>
+            <p><img src="images/imagepreview-selected.png" alt="screenshot: Image Preview in editing template"/></p>
+          </li>
+        </ol>
+      </subsection>
+
+      <subsection name="Enable/Disable image upload">
+        <ol>
+          <li>/hippo:namespaces/hippogallerypicker/imagelink/editor:templates/_default_/root$enable.upload false or true</li>
+        </ol>
+      </subsection>
+      
+    </section>
+  </body>
+</document>

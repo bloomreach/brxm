@@ -1,0 +1,353 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!--
+    Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>26</version>
+  </parent>
+
+  <name>Hippo Forge Gallery Picker Plugin</name>
+  <description>Hippo Forge Gallery Picker Plugin</description>
+  <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
+  <artifactId>gallerypicker</artifactId>
+  <packaging>jar</packaging>
+  <version>1.14.00-SNAPSHOT</version>
+
+  <url>https://forge.onehippo.org/gf/project/gallerypicker</url>
+  <inceptionYear>2008</inceptionYear>
+
+  <properties>
+    <hippo.repository.version>2.26.04</hippo.repository.version>
+    <hippo.cms.version>2.26.04</hippo.cms.version>
+
+    <lib.commons-lang.version>2.1</lib.commons-lang.version>
+    <lib.easymock.version>2.4</lib.easymock.version>
+    <maven.plugin.site.version>3.2</maven.plugin.site.version>
+    <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
+
+    <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
+  </properties>
+
+  <scm>
+    <connection>scm:svn:https://forge.onehippo.org/svn/gallerypicker/trunk</connection>
+    <developerConnection>scm:svn:https://forge.onehippo.org/svn/gallerypicker/trunk</developerConnection>
+    <url>http://gallerypicker.forge.onehippo.org</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>gallery-picker-maven-repo</id>
+      <url>svn:https://forge.onehippo.org/svn/gallerypicker/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <system>Jira</system>
+    <url>https://issues.onehippo.com/browse/HIPPLUG/component/10855</url>
+  </issueManagement>
+
+  <developers>
+    <developer>
+      <id>jreijn</id>
+      <email>j.reijn@onehippo.com</email>
+      <name>Jeroen Reijn</name>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Project Lead</role>
+        <role>Java Developer</role>
+      </roles>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>fvlankvelt</id>
+      <name>Frank van Lankvelt</name>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>bvdschans</id>
+      <name>Bart van der Schans</name>
+      <email>schans@onehippo.com</email>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>dennis</id>
+      <name>Dennis Dam</name>
+      <roles>
+        <role>Java Developer</role>
+        <role>Emeritus</role>
+      </roles>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>nvankampenhout</id>
+      <name>Niels van Kampenhout</name>
+      <roles>
+        <role>Documentation Writer</role>
+        <role>Emeritus</role>
+      </roles>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <id>jjoachimsthal</id>
+      <name>Jasha Joachimsthal</name>
+      <email>j.joachimsthal@onehippo.com</email>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Documentation Writer</role>
+      </roles>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <dependencies>
+
+    <!-- These dependencies are needed by normal front-end plugins, but should be flagged differenty -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-gallery-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>${lib.easymock.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${lib.commons-lang.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>https://forge.onehippo.org/svn/gallerypicker/tags</tagBase>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${maven.plugin.site.version}</version>
+      </plugin>
+    </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.jvnet.wagon-svn</groupId>
+        <artifactId>wagon-svn</artifactId>
+        <version>1.9</version>
+      </extension>
+    </extensions>
+  </build>
+
+  <reporting>
+    <outputDirectory>target/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.plugin.javadoc.version}</version>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>${maven.plugin.jxr.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>src-xref</id>
+            <reports>
+              <report>jxr</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>test-xref</id>
+            <reports>
+              <report>test-jxr</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>net.sourceforge.maven-taglib</groupId>
+        <artifactId>maven-taglib-plugin</artifactId>
+        <version>${maven.plugin.taglib.version}</version>
+        <configuration>
+          <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
+          <title>HST ${project.version} JSP tag</title>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <repositories>
+    <repository>
+      <id>hippo-maven2</id>
+      <url>http://maven.onehippo.com/maven2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
+    </repository>
+    <repository>
+      <id>hippo-maven2-forge</id>
+      <name>Hippo Maven 2 Forge repository</name>
+      <url>http://maven.onehippo.com/maven2-forge/</url>
+      <snapshots />
+    </repository>
+  </repositories>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- ignore repository content XML -->
+                <exclude>src/main/resources/*.xml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <!-- overwrite mailinglists, removing the repository mailing list from inherited -->
+  <mailingLists>
+    <mailingList>
+      <name>Hippo CMS 7 User Forums</name>
+      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
+      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
+      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
+    </mailingList>
+  </mailingLists>
+
+  <!-- clear unused elements inherited from hippo-cms7-project pom -->
+  <contributors>
+    <contributor />
+  </contributors>
+  <ciManagement />
+
+</project>

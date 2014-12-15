@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="cms-pickers"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
+  <sv:node sv:name="images" h:merge="combine">
+    <sv:node sv:name="dialog-translator">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name" >
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>hippostd:translated</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="translator.id" sv:type="String">
+        <sv:value>imagepicker.translator</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippostd:translations">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:translations</sv:value>
+        </sv:property>
+        <sv:node sv:name="dialog-title">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Kies een afbeelding</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Image Picker</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>de</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Bildauswahl</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+</sv:node>

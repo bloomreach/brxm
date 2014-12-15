@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+        "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+        "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Gallery Picker - Release Notes</title>
+  </properties>
+  <body>
+    <section name="Release Notes">
+      <subsection name="1.13.01">
+        <p class="smallinfo">Unreleased</p>
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-922">HIPPLUG-922</a><br />
+            Hide upload functionality if user doesn't have write permissions
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-864">HIPPLUG-864</a><br />
+            Gallerypicker should support restricting allowed nodetypes
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-872">HIPPLUG-872</a><br />
+            Gallerypicker ignores available imageset nodetypes on upload
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.13.00">
+        <p class="smallinfo">Release Date: 22 May 2014</p>
+        <ul>
+          <li>Upgraded for Hippo CMS 7.9, involving Java 7 and Wicket 6. Incompatible with 7.8 or lower.</li>
+        </ul>
+      </subsection>
+      <subsection name="1.11.05">
+        <p class="smallinfo">Release Date: 8 Sep 2014</p>
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-921">HIPPLUG-921</a><br />
+            Hide upload functionality if user doesn't have write permissions (backport)
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.11.04">
+        <p class="smallinfo">Release Date: 4 Aug 2014</p>
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-548">HIPPLUG-548</a><br />
+            Sequence numbers of initialize items higher than 20000.
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-864">HIPPLUG-864</a><br />
+            Gallerypicker should support restricting allowed nodetypes (backport)
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-866">HIPPLUG-866</a><br />
+            Gallerypicker ignores available imageset nodetypes on upload
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.11.03">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-614">HIPPLUG-614</a><br />
+            Use the validation upload service when using the upload funtion in the gallery picker dialog.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.11.02">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-696">HIPPLUG-696</a><br />
+            Add missing Implementation-Build manifest entry so an initialize-item with flag <code>hippo:reloadonstartup</code>
+            will not be triggered on every CMS 7.7.x restart. This replaces the <code>hippo:version</code> property
+            which is not supported by versions 7.7.x and led to a warning in the logs.
+          </li>
+        </ul>
+      </subsection>
+     <subsection name="1.11.01">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/CMS7-7141">CMS7-7141</a><br/>
+             Better support for mandatory hippo mirror field.</li>
+        </ul>
+      </subsection>
+      <subsection name="1.11.00">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/CMS7-6810">CMS7-6810</a><br/>
+            Mandatory image field does not validate.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-544">HIPPLUG-544</a><br/>
+            Bump dependencies to 7.8 artifacts.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-571">HIPPLUG-571</a><br/>
+            Cleanup and refresh LICENSE and NOTICE files.</li>
+        </ul>
+      </subsection>
+      <subsection name="1.10.01">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-332">HIPPLUG-332</a><br/>
+            German Translation.</li>
+        </ul>
+      </subsection>
+      <subsection name="1.10.00">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/CMS7-5693">CMS7-5693</a><br/>
+            Hide namespace from folder view.</li>
+          <li><a href="https://issues.onehippo.com/browse/CMS7-2752">CMS7-2752</a><br/>
+            AbstractDialog no longer adds a default button to the form.</li>
+        </ul>
+      </subsection>
+      <subsection name="1.09.02">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/CMS7-5526">CMS7-5526</a><br/>
+            Update starttag after version changed</li>
+        </ul>
+      </subsection>
+      <subsection name="1.09.01">
+        <ul>
+          <li>Added support for uploading images to the gallery in the gallery picker dialog</li>
+          <li>*Note if you have used version 1.08.00, reinitialize the updater (starttag "v15a-gallerypicker")  </li>
+        </ul>
+      </subsection>
+      <subsection name="1.07.01">
+        <ul>
+          <li>Fixed French accents with native2ascii</li>
+          <li>Use the CMS helper class to get the primary item.
+            JackRabbit does not retrieve the primary item when it is declared in a super type.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.07.00">
+        <ul>
+          <li>Hippo CMS 7.5 compatibility</li>
+          <li>Added French translations</li>
+          <li>Added Italian translations</li>
+          <li>POM improvements</li>
+        </ul>
+      </subsection>
+      <subsection name="1.06.04">
+        <ul>
+          <li>Added two configuration options preview.width and preview.height</li>
+          <li>Don't inherit image component from contextimage</li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>
