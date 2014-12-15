@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
@@ -53,7 +54,7 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
     private ListColumn<Node> createIconAndStateColumn() {
         final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
         final ListColumn<Node> column = new ListColumn<>(iconHeader, "icon");
-        column.setComparator(new TypeComparator());
+        column.setComparator(new StateComparator());
         column.setRenderer(new DocumentIconAndStateRenderer());
         column.setAttributeModifier(new StateIconAttributeModifier());
         column.setCssClass(DocumentListColumn.ICON.getCssClass());

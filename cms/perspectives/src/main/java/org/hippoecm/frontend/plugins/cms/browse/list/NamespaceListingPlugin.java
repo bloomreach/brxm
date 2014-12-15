@@ -60,7 +60,7 @@ public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<No
     }
 
     private ListColumn<Node> createIconColumn() {
-        final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), "icon");
+        final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
         column.setRenderer(new SpriteIconRenderer(Icon.FOLDER_SMALL));
         column.setCssClass(DocumentListColumn.ICON.getCssClass());
         return column;

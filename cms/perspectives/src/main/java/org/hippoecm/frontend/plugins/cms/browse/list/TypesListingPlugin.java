@@ -37,6 +37,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
@@ -189,7 +190,8 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
         private ListColumn<Node> createIconColumn() {
             final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
-            final ListColumn<Node> column = new ListColumn<>(iconHeader, null);
+            final ListColumn<Node> column = new ListColumn<>(iconHeader, "icon");
+            column.setComparator(new StateComparator());
             column.setRenderer(new TypeIconAndStateRenderer());
             column.setCssClass(DocumentListColumn.ICON.getCssClass());
             return column;
