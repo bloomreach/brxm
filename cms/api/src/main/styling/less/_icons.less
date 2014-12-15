@@ -89,9 +89,17 @@
 }
 
 // Shift stacked document state icons a bit
-.hi-stack .hi-document + .hi-state {
+.hi-stack > .hi-document + .hi-state {
   top: -2px;
   left: -2px;
+}
+
+// Shift stacked translation flags a bit
+.hi-stack > .hi-folder + img {
+  top: auto;
+  left: auto;
+  bottom: -2px;
+  right: 0;
 }
 
 // Default colors of shapes in icons
