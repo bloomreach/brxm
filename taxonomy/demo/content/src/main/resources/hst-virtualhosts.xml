@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hst:hosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:virtualhosts</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>087d5aff-b704-4258-b1b0-dbb53b330080</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:defaulthostname" sv:type="String">
+    <sv:value>localhost</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:channelmanagerhostgroup" sv:type="String">
+    <sv:value>dev-localhost</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:homepage" sv:type="String">
+    <sv:value>root</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:locale" sv:type="String">
+    <sv:value>en_US</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:pagenotfound" sv:type="String">
+    <sv:value>error</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:prefixexclusions" sv:type="String">
+    <sv:value>/binaries/</sv:value>
+    <sv:value>/staticresource/</sv:value>
+    <sv:value>/images/</sv:value>
+    <sv:value>/login/</sv:value>
+    <sv:value>/examples/</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:scheme" sv:type="String">
+    <sv:value>http</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
+    <sv:value>true</sv:value>home
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:suffixexclusions" sv:type="String">
+    <sv:value>.do</sv:value>
+    <sv:value>.jsp</sv:value>
+    <sv:value>.css</sv:value>
+    <sv:value>.js</sv:value>
+    <sv:value>.pdf</sv:value>
+    <sv:value>.ico</sv:value>
+    <sv:value>.gif</sv:value>
+    <sv:value>.GIF</sv:value>
+    <sv:value>.jpg</sv:value>
+    <sv:value>.jpeg</sv:value>
+    <sv:value>.JPEG</sv:value>
+    <sv:value>.JPG</sv:value>
+    <sv:value>.png</sv:value>
+    <sv:value>.PNG</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
+  <sv:node sv:name="dev-localhost">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:virtualhostgroup</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>ad40878f-72f8-415a-8ec5-cfed6320de1d</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:cmslocation" sv:type="String">
+      <sv:value>http://localhost:8080/cms</sv:value>
+    </sv:property>
+    <sv:node sv:name="localhost">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:virtualhost</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>fc93daaf-549c-4124-995f-c83f57ad00ef</sv:value>
+      </sv:property>
+      <sv:node sv:name="hst:root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:mount</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>be19f01b-c60f-45fb-92d8-e2c4e8984d38</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:alias" sv:type="String">
+          <sv:value>site</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:mountpoint" sv:type="String">
+          <sv:value>/hst:hst/hst:sites/taxonomydemo-en</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:channelpath" sv:type="String">
+          <sv:value>/hst:hst/hst:channels/taxonomydemo-en</sv:value>
+        </sv:property>
+        <sv:node sv:name="fr">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>18dfd2f6-2b44-4056-ad51-46a9800240f6</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:alias" sv:type="String">
+            <sv:value>site-fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:locale" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/taxonomydemo-fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:channelpath" sv:type="String">
+            <sv:value>/hst:hst/hst:channels/taxonomydemo-fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:showport" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="cy">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>693c0607-aeb8-4b21-872a-e3b08cea048a</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:alias" sv:type="String">
+            <sv:value>site-cy</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:locale" sv:type="String">
+            <sv:value>cy</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/taxonomydemo-cy</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:channelpath" sv:type="String">
+            <sv:value>/hst:hst/hst:channels/taxonomydemo-cy</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:showport" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>
+
