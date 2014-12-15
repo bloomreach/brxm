@@ -276,6 +276,33 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     /**
+     * Locks the component
+     *
+     * @return whether the component was locked
+     */
+    @POST
+    @Path("/lock")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response lock(final @HeaderParam("versionStamp") long versionStamp) {
+        try {
+            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
+            componentParameters.save(versionStamp);
+            log.info("Component locked successfully.");
+            return ok("Component locked successfully.");
+        } catch (IllegalStateException e) {
+            log.warn("Could not lock component", e);
+            return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not lock component", e);
+            return error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.warn("Could not lock component", e);
+            throw new WebApplicationException(e);
+        }
+    }
+
+    /**
      * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the
      * old variant to the new one.
      *
