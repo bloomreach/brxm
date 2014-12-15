@@ -80,4 +80,14 @@ public class MockWorkflowContext implements WorkflowContext {
     public MockRepositoryMap getWorkflowConfiguration() {
         return configuration;
     }
+
+    @Override
+    public String getInteraction() {
+        return null;
+    }
+
+    @Override
+    public String getInteractionId() {
+        return null;
+    }
 }

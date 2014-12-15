@@ -31,6 +31,7 @@ import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
 import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
 import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
+import org.onehippo.repository.documentworkflow.action.LogEventAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RejectRequestAction;
 import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
@@ -87,6 +88,7 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "versionRestoreTo", VersionRestoreToAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestAction", RequestActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "logEvent", LogEventAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);

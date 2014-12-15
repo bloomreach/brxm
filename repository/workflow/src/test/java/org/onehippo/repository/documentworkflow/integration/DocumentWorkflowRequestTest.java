@@ -15,12 +15,20 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.jcr.Node;
 
 import org.junit.Test;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.events.HippoWorkflowEvent;
 
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON;
@@ -32,6 +40,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegrationTest {
+
+    private GuavaHippoEventBus eventBus;
+    private HippoEventListener listener;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        HippoServiceRegistry.registerService(eventBus = new GuavaHippoEventBus(), HippoEventBus.class);
+        HippoServiceRegistry.registerService(listener = new HippoEventListener(), HippoEventBus.class);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        HippoServiceRegistry.unregisterService(eventBus, HippoEventBus.class);
+        HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
+    }
 
     @Test
     public void testRequestAndAcceptPublication() throws Exception {
@@ -52,6 +77,7 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
         assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
         assertTrue("Document is not live", isLive());
         assertEquals("Edit did not make it to live", "bar", getVariant(PUBLISHED).getProperty("foo").getString());
+        assertTrue(listener.actions.contains("publish"));
     }
 
     @Test
@@ -67,6 +93,7 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
 
         assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
         assertFalse("Document is still live", isLive());
+        assertTrue(listener.actions.contains("depublish"));
     }
 
     @Test
@@ -157,5 +184,16 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
         workflow.cancelRequest(request.getIdentifier());
 
         assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
+    }
+
+    public static class HippoEventListener {
+        private Collection<String> actions = new ArrayList<>();
+        @Subscribe
+        public void handleEvent(HippoWorkflowEvent event) {
+            actions.add(event.action());
+        }
+        private void clear() {
+            actions.clear();
+        }
     }
 }

@@ -452,5 +452,15 @@ public class WorkflowManagerImpl implements WorkflowManager {
         public RepositoryMap getWorkflowConfiguration() {
             return workflowDefinition.getWorkflowConfiguration();
         }
+
+        @Override
+        public String getInteraction() {
+            return tlInteraction.get();
+        }
+
+        @Override
+        public String getInteractionId() {
+            return tlInteractionId.get();
+        }
     }
 }

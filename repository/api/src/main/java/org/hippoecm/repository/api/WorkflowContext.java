@@ -114,4 +114,8 @@ public interface WorkflowContext {
      * @return
      */
     public RepositoryMap getWorkflowConfiguration();
+
+    public String getInteraction();
+
+    public String getInteractionId();
 }

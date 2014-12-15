@@ -50,12 +50,11 @@ public class WorkflowLogger {
         if (eventBus != null) {
             final HippoWorkflowEvent event = new HippoWorkflowEvent();
             final String returnValue = getReturnValue(returnObject);
-            final String action = className + "." + methodName;
             final String handleUuid = getHandleUuid(subjectId);
             final String returnType = getReturnType(returnObject);
             final String[] arguments = replaceObjectsWithStrings(args);
             final Boolean system = isSystemUser(userName);
-            event.user(userName).action(action).result(returnValue).system(system);
+            event.user(userName).action(methodName).result(returnValue).system(system);
             event.className(className).methodName(methodName).handleUuid(handleUuid).subjectId(subjectId)
                     .returnType(returnType).returnValue(returnValue).documentPath(subjectPath).subjectPath(subjectPath)
                     .interactionId(interactionId).interaction(interaction).workflowCategory(category)

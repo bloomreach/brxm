@@ -24,10 +24,13 @@ import org.onehippo.cms7.event.HippoEvent;
 public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEvent<T> {
 
     private static final String CLASS_NAME = "className";
+    /**
+     * @deprecated use {@link #ACTION} instead
+     */
     private static final String METHOD_NAME = "methodName";
     private static final String SUBJECT_ID = "subjectId";
     /**
-     * @deprecated use {@link #SUBJECT_ID instead}
+     * @deprecated use {@link #SUBJECT_ID} instead
      */
     private static final String HANDLE_UUID = "handleUuid";
     private static final String SUBJECT_PATH = "subjectPath";
@@ -61,10 +64,18 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(CLASS_NAME, className);
     }
 
+    /**
+     * @deprecated use {@link #action()} instead
+     */
+    @Deprecated
     public String methodName() {
         return get(METHOD_NAME);
     }
 
+    /**
+     * @deprecated use {@link #action(String)} instead
+     */
+    @Deprecated
     public T methodName(String methodName) {
         return set(METHOD_NAME, methodName);
     }
