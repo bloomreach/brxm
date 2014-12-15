@@ -55,7 +55,7 @@ public class LinkCheckerTest {
             t.join();
 
             Mockito.verify(log).error(expectedException.getClass().getName() + ": Test", expectedException);
-            Mockito.verify(mockErr, atLeastOnce()).println(Matchers.anyObject());
+            Mockito.verify(mockErr, atLeastOnce()).println((Object)Matchers.anyObject());
         } finally {
             System.setErr(realErr);
         }
