@@ -57,28 +57,6 @@ public class HippoIcon extends Panel {
     }
 
     /**
-     * Please the Java type system: make a copy of any Hippo icon. This cannot happen
-     * in practice because this class does not have any public or proteced constructors.
-     * The only possible subtypes are internal static classes.
-     * @param icon the icon to copy.
-     * @param newId the new Wicket ID of the icon
-     * @return a copy of the given icon
-     */
-    public static HippoIcon copy(final HippoIcon icon, final String newId) {
-        return new HippoIcon(newId);
-    }
-
-    /**
-     * Renders a copy of the given icon, with a different Wicket ID.
-     * @param icon the icon to render
-     * @param newId the new Wicket ID
-     * @return a copy of the given icon
-     */
-    public static HippoIcon copy(final SvgIcon icon, final String newId) {
-        return new SvgIcon(newId, icon);
-    }
-
-    /**
      * Renders an icon stored in a resource. When the icon's file extension is '.svg',
      * the icon is rendered as an inline SVG image.
      * @param id the Wicket id of the icon
@@ -120,8 +98,13 @@ public class HippoIcon extends Panel {
      * @param newId the new Wicket ID
      * @return a copy of the given icon
      */
-    public static HippoIcon copy(final ResourceIcon icon, final String newId) {
-        return new ResourceIcon(newId, icon);
+    public static HippoIcon copy(final HippoIcon icon, final String newId) {
+        if (icon instanceof SvgIcon) {
+            return new SvgIcon(newId, (SvgIcon)icon);
+        } else if (icon instanceof ResourceIcon) {
+            return new ResourceIcon(newId, (ResourceIcon)icon);
+        }
+        throw new IllegalStateException("Expected HippoIcon's class to be either SvgIcon or ResourceIcon, but got " + icon.getClass());
     }
 
     private static class SvgIcon extends HippoIcon {
