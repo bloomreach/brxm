@@ -37,6 +37,10 @@ public class HippoIcon extends Panel {
     public static final String WICKET_FRAGMENT_IMAGE = "imageFragment";
     public static final String WICKET_FRAGMENT_SVG = "svgFragment";
 
+    private HippoIcon(final String id) {
+        super(id);
+    }
+
     /**
      * Renders a hippo icon via a reference to the icon sprite.
      * @param id the Wicket id of the icon
@@ -44,7 +48,7 @@ public class HippoIcon extends Panel {
      * @return the icon component
      */
     public static HippoIcon fromSprite(final String id, final Icon icon) {
-        return new HippoIcon(id, icon, false);
+        return new HippoSvgIcon(id, icon, false);
     }
 
     /**
@@ -55,28 +59,29 @@ public class HippoIcon extends Panel {
      * @return the icon component
      */
     public static HippoIcon inline(final String id, final Icon icon) {
-        return new HippoIcon(id, icon, true);
+        return new HippoSvgIcon(id, icon, true);
     }
 
-    private HippoIcon(final String id, final Icon icon, final boolean inline) {
-        super(id);
+    /**
+     * Please the Java type system: make a copy of any Hippo icon. This cannot happen
+     * in practice because this class does not have any public or proteced constructors.
+     * The only possible subtypes are internal static classes.
+     * @param icon the icon to copy.
+     * @param newId the new Wicket ID of the icon
+     * @return a copy of the given icon
+     */
+    public static HippoIcon copy(final HippoIcon icon, final String newId) {
+        return new HippoIcon(newId);
+    }
 
-        setRenderBodyOnly(true);
-
-        final WebMarkupContainer container = new WebMarkupContainer(WICKET_ID_CONTAINER) {
-            @Override
-            protected void onComponentTag(final ComponentTag tag) {
-                final Response response = RequestCycle.get().getResponse();
-                if (inline) {
-                    response.write(icon.getInlineSvg());
-                } else {
-                    response.write(icon.getSpriteReference());
-                }
-                super.onComponentTag(tag);
-            }
-        };
-        container.setRenderBodyOnly(true);
-        add(container);
+    /**
+     * Renders a copy of the given icon, with a different Wicket ID.
+     * @param icon the icon to render
+     * @param newId the new Wicket ID
+     * @return a copy of the given icon
+     */
+    public static HippoIcon copy(final HippoSvgIcon icon, final String newId) {
+        return new HippoSvgIcon(newId, icon);
     }
 
     /**
@@ -112,32 +117,94 @@ public class HippoIcon extends Panel {
      * @return the icon component
      */
     public static HippoIcon fromResource(final String id, final ResourceReference reference, final int width, final int height) {
-        return new HippoIcon(id, reference, width, height);
+        return new HippoResourceIcon(id, reference, width, height);
     }
 
-    private HippoIcon(final String id, final ResourceReference reference, final int width, final int height) {
-        super(id);
-        
-        setRenderBodyOnly(true);
+    /**
+     * Renders a copy of the given icon, with a different Wicket ID.
+     * @param icon the icon to render
+     * @param newId the new Wicket ID
+     * @return a copy of the given icon
+     */
+    public static HippoIcon copy(final HippoResourceIcon icon, final String newId) {
+        return new HippoResourceIcon(newId, icon);
+    }
 
-        Fragment fragment;
-        if (reference.getExtension().equalsIgnoreCase("svg")) {
-            fragment = new Fragment(WICKET_ID_CONTAINER, WICKET_FRAGMENT_SVG, this);
-            fragment.add(new InlineSvg(WICKET_ID_SVG, reference));
-        } else {
-            fragment = new Fragment (WICKET_ID_CONTAINER, WICKET_FRAGMENT_IMAGE, this);
-            Image image = new CachingImage(WICKET_ID_IMAGE, reference);
-            fragment.add(image);
-            
-            if (width >= 0) {
-                image.add(AttributeModifier.replace("width", width));
-            }
-            if (height >= 0) {
-                image.add(AttributeModifier.replace("height", height));
-            }
+    private static class HippoSvgIcon extends HippoIcon {
+
+        private final Icon icon;
+        private final boolean inline;
+
+        private HippoSvgIcon(final String id, final Icon icon, final boolean inline) {
+            super(id);
+
+            this.icon = icon;
+            this.inline = inline;
+
+            setRenderBodyOnly(true);
+
+            final WebMarkupContainer container = new WebMarkupContainer(WICKET_ID_CONTAINER) {
+                @Override
+                protected void onComponentTag(final ComponentTag tag) {
+                    final Response response = RequestCycle.get().getResponse();
+                    if (inline) {
+                        response.write(icon.getInlineSvg());
+                    } else {
+                        response.write(icon.getSpriteReference());
+                    }
+                    super.onComponentTag(tag);
+                }
+            };
+            container.setRenderBodyOnly(true);
+            add(container);
         }
 
-        fragment.setRenderBodyOnly(true);
-        add(fragment);
+        private HippoSvgIcon(final String newId, final HippoSvgIcon original) {
+            this(newId, original.icon, original.inline);
+        }
+
     }
+
+    private static class HippoResourceIcon extends HippoIcon {
+
+        private ResourceReference reference;
+        private int width;
+        private int height;
+
+        private HippoResourceIcon(final String id, final ResourceReference reference, final int width, final int height) {
+            super(id);
+
+            this.reference = reference;
+            this.width = width;
+            this.height = height;
+
+            setRenderBodyOnly(true);
+
+            Fragment fragment;
+            if (reference.getExtension().equalsIgnoreCase("svg")) {
+                fragment = new Fragment(WICKET_ID_CONTAINER, WICKET_FRAGMENT_SVG, this);
+                fragment.add(new InlineSvg(WICKET_ID_SVG, reference));
+            } else {
+                fragment = new Fragment (WICKET_ID_CONTAINER, WICKET_FRAGMENT_IMAGE, this);
+                Image image = new CachingImage(WICKET_ID_IMAGE, reference);
+                fragment.add(image);
+
+                if (width >= 0) {
+                    image.add(AttributeModifier.replace("width", width));
+                }
+                if (height >= 0) {
+                    image.add(AttributeModifier.replace("height", height));
+                }
+            }
+
+            fragment.setRenderBodyOnly(true);
+            add(fragment);
+        }
+
+        private HippoResourceIcon(final String newId, final HippoResourceIcon original) {
+            this(newId, original.reference, original.width, original.height);
+        }
+
+    }
+
 }

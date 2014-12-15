@@ -68,4 +68,9 @@ public class HippoIconStack extends Panel {
         return resourceIcon;
     }
 
+    public HippoIcon addCopyOf(final HippoIcon icon) {
+        HippoIcon copy = HippoIcon.copy(icon, icons.newChildId());
+        icons.add(copy);
+        return copy;
+    }
 }
