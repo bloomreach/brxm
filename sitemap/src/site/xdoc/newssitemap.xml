@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document>
+    <properties>
+        <title>News Sitemap</title>
+    </properties>
+    <body>
+        <section name="News Sitemap">
+            <subsection name="Resolving Sitemap Items">
+                <p>
+                    This module resolves all the news items of the site. Which document types are considered
+                    as news items can be specified in the HST configuration. The news sitemap acts according the
+                    <a href="http://support.google.com/news/publisher/bin/answer.py?hl=en-GB&amp;answer=74288">
+                    specifications</a> provided by Google, which means that Google accepts and recognizes the news
+                    sitemap. This will lead to better (i.e. higher percentage) findability of the news items in Google.
+                </p>
+                <p>
+                    News items which are older than 48 hours will not be included in the news sitemap. This means
+                    that each resolved news item in the news sitemap is topical.
+                </p>
+            </subsection>
+            <subsection name="Configuration">
+                <p>
+                    In the console under <i>hst:hst/hst:configurations/hst:default/hst:components</i> exists a component
+                    called <i>forge-news-sitemap-feed</i>. This component renders the news sitemap based on parameters,
+                    which are used in the component's class <i>NewsSitemapFeed</i>. These parameters can be set in the
+                    sitemapitem <i>news-sitemap.xml</i>, which can be found under <i>hst:hst/hst:configurations/[YOURDOMAIN]/hst:sitemap</i>.
+                    Here can the configurations and/or parameters be set. Only the parameters
+                    <i>publicationDateProperty</i> and <i>documentTypes</i> are required. The other parameters are optional,
+                    i.e. when these parameters are not filled, then they will be considered as not existing.
+                </p>
+                <p>
+                    The parameter <i>documentTypes</i>, which determines the documents that are considered to be a news item,
+                    takes primary types as argument separated by a comma, e.g. news:document,highlights:document,... etc.
+                </p>
+                <p>
+                    The parameter <i>publicationDateProperty</i>, which determines the publication date of the news item
+                    in order to validate if this item is older than 48 hours, must be manually set. This is done by creating
+                    a new Java class in your own project (e.g. NewsSitemapRenderer), which extends the <i>DefaultNewsInformationProvider</i>
+                    class from the forge sitemap project. In the constructor, invoke its super constructor with a new
+                    Publication class (containing the name and language) and publication date property.<br/>
+                    Something like this:<br/>
+                    <source><![CDATA[public class NewsSitemapRenderer extends DefaultNewsInformationProvider {
+  public NewsSitemapRenderer() {
+    super(new Publication(YOURDOMAIN, LANGUAGE), DATE);
+  }}]]></source>
+                </p>
+                <p>
+                    Where LANGUAGE is "en" or "nl" or "de", etc. and DATE the publication date property (e.g. common:publicationdate).
+                </p>
+                <p>
+                    More site specific configuration can be done in the NewsSitemapRenderer class. Simply by overriding
+                    the methods from the <i>DefaultNewsInformationProvider</i> and change the body of the method you can
+                    adjust it to your own preferences.
+                </p>
+                <h4>Parameters</h4>
+                <p>
+                    <table>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>publicationDateProperty</td>
+                            <td>Property where the date of the news item is defined</td>
+                        </tr>
+                        <tr>
+                            <td>documentTypes</td>
+                            <td>Primary types which are considered as news item</td>
+                        </tr>
+                        <tr>
+                            <td>propertyCriteria</td>
+                            <td>Extra criteria to which the news items must satisfy (e.g. the document has to be
+                                published: hippostd:state=published). The criteria are comma separated</td>
+                        </tr>
+                        <tr>
+                            <td>timezone</td>
+                            <td>The timezone of the news item. Default: UTC</td>
+                        </tr>
+                        <tr>
+                            <td>publicationName</td>
+                            <td>Name of site on which the news item is published</td>
+                        </tr>
+                        <tr>
+                            <td>publicationLanguage</td>
+                            <td>Language of the news item</td>
+                        </tr>
+                        <tr>
+                            <td>newsInformationProvider</td>
+                            <td>Location of the site specific class (which extends the DefaultNewsInformationProvider
+                                class from the forge sitemap project)</td>
+                        </tr>
+                    </table>
+                </p>
+            </subsection>
+            <subsection name="Admire the result">
+                <p>
+                    Start your CMS and site.
+                </p>
+                <p>
+                    Open your site in your browser, and check out your news sitemap! <br/>
+                    (http://[YOURDOMAIN]/site/preview/news-sitemap.xml)
+                </p>
+                <p>
+                    Your browser may not display the news sitemap as XML. View the page source to see
+                    the news sitemap XML.
+                </p>
+            </subsection>
+
+
+        </section>
+    </body>
+</document>

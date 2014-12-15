@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="forge-sitemap-based-on-hst-configuration-feed" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:component</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:componentclassname" sv:type="String">
+    <sv:value>org.onehippo.forge.sitemap.components.SitemapFeedBasedOnHstSitemap</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+    <sv:value>sitemapRefIdExclusions</sv:value>
+    <sv:value>splitter-enabled</sv:value>
+    <sv:value>splitter-destination-foldername</sv:value>
+    <sv:value>informationProvider</sv:value>
+    <sv:value>sitemapComponentConfigurationIdExclusions</sv:value>
+    <sv:value>sitemapPathExclusions</sv:value>
+    <sv:value>write-to-repository</sv:value>
+    <sv:value>amountOfWorkers</sv:value>
+    <sv:value>output-mode</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+    <sv:value>${sitemapRefIdExclusions}</sv:value>
+    <sv:value>${splitter-enabled}</sv:value>
+    <sv:value>${splitter-destination-foldername}</sv:value>
+    <sv:value>${informationProvider}</sv:value>
+    <sv:value>${sitemapComponentConfigurationIdExclusions}</sv:value>
+    <sv:value>${sitemapPathExclusions}</sv:value>
+    <sv:value>${write-to-repository}</sv:value>
+    <sv:value>${amountOfWorkers}</sv:value>
+    <sv:value>${output-mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:template" sv:type="String">
+    <sv:value>forge-sitemap-feed.ftl</sv:value>
+  </sv:property>
+</sv:node>

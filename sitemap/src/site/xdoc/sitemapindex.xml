@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+        "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+        "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Sitemap Index</title>
+    </properties>
+    <body>
+        <section name="Sitemap Index">
+            <subsection name="Resolving Sitemap Items">
+                <p>
+                    This module resolves a sitemap index file, which contains the locations of all the sitemaps of the site.
+                    A sitemap can contain up to 50.000 (unique) sitemap items. More items will result in multiple sitemaps.
+                    To provide Google all the sitemaps, a sitemap index file will be created. A sitemap index file
+                    is an overview of all the sitemaps that are relevant to the site, i.e. it simply indicates the
+                    locations of the multiple sitemaps. Again, it acts according the
+                    <a href="http://support.google.com/webmasters/bin/answer.py?hl=en&amp;answer=71453">specifications</a>
+                    provided by Google.  See also <a href="hstsitemapcrawler.html">HST Sitemap Crawler</a>.
+                </p>
+            </subsection>
+            <subsection name="Configuration">
+                <p>
+                    In the console under <i>hst:hst/hst:configurations/hst:default/hst:components</i> exists a component
+                    called <i>forge-sitemap-index-feed</i>. This component renders the sitemap index file based
+                    on parameters, which are used in the component's class <i>SitemapIndexFeed</i>. These
+                    parameters can be set in the sitemapitem <i>sitemapindex.xml</i>, which can be found under
+                    <i>hst:hst/hst:configurations/[YOURDOMAIN]/hst:sitemap</i>.
+                    Here can the configurations and/or parameters be set. Only the parameter <i>sitemap-location-foldername</i>
+                    is required. The other parameters are optional, i.e. when these parameters are not filled, then they
+                    will be considered as not existing.
+                </p>
+                <p>
+                    The parameter <i>sitemap-location-foldername</i> is the location where the sitemap files will be
+                    stored.
+                </p>
+                <h4>Parameters</h4>
+                <p>
+                    <table>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>sitemap-location-foldername</td>
+                            <td>The location of the sitemap folder, where the sitemap files are stored. These files
+                                will be used while generating the sitemap index file.</td>
+                        </tr>
+                        <tr>
+                            <td>assets-url-prefix</td>
+                            <td>For some systems the sitemap index files are stored in the repository asset folder.
+                                These systems might use url rewriting. With this parameter a prefix can be configured,
+                                which is placed in front of the asset url.</td>
+                        </tr>
+                        <tr>
+                            <td>additional-sitemap-file-url</td>
+                            <td>Provide additional urls which must be added to the sitemap index</td>
+                        </tr>
+                    </table>
+                </p>
+            </subsection>
+            <subsection name="Admire the result">
+                <p>
+                    Start your CMS and site.
+                </p>
+                <p>
+                    Open your site in your browser, and check out your sitemap index! <br/>
+                    (http://[YOURDOMAIN]/site/preview/sitemapindex.xml)
+                </p>
+                <p>
+                    Your browser may not display the sitemap index as XML. View the page source to see
+                    the sitemap index XML.
+                </p>
+            </subsection>
+
+
+        </section>
+    </body>
+</document>
