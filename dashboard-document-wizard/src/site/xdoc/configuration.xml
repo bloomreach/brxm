@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2001-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+    implied.
+    See the License for the specific language governing permissions and
+    limitations under the License
+
+-->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+    <properties>
+        <title>Forge Document Wizard - Configuration</title>
+    </properties>
+    <body>
+      <section name="Configuration">
+        <subsection name="How to configure the dashboard shortcuts">
+            <p>
+              The links (or buttons) to start creating a new document with the wizard are configured in the repository.
+              Go to the console of the cms and navigate to:
+              <source><![CDATA[
+/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts]]></source>
+              You will probably see some shortcuts already configured. At this location the wizard shortcuts must be configured too.
+            </p>
+          <p>
+            Add a node to the cms-dashboardshorts node of the primary type <code>frontend:plugin</code> and choose a name for your plugin.
+            Add some properties to this new node which are described below. All properties are of the type <code>String</code>.
+          </p>
+          <p>
+            <h4>First the four required properties to make the shortcut work:</h4>
+            <table>
+              <tr>
+                 <th>name</th>
+                 <th>value</th>
+                 <th>description</th>
+              </tr>
+              <tr>
+                 <td>browser.id</td>
+                 <td>service.browse</td>
+                <td><br/></td>
+              </tr>
+              <tr>
+                 <td>wicket.id</td>
+                 <td>shortcut</td>
+                <td><br/></td>
+              </tr>
+              <tr>
+                 <td>workaround</td>
+                 <td>4</td>
+                <td>The order of the shortcuts.</td>
+              </tr>
+              <tr>
+                 <td>plugin.class</td>
+                 <td><small>org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin</small></td>
+                <td>creates the dialog for the new document</td>
+              </tr>
+            </table>
+            </p>
+            <p>
+              <h4>Then add the three or four properties to make the wizard work:</h4>
+            <table>
+              <tr>
+                 <th>property name</th>
+                 <th>property value</th>
+                 <th>description</th>
+              </tr>
+              <tr>
+                 <td>baseFolder</td>
+                 <td>/content/documents/events</td>
+                 <td>base location of the documents to create</td>
+              </tr>
+              <tr>
+                 <td>documentType</td>
+                 <td>defaultcontent:news</td>
+                 <td>the type of the documents to create</td>
+              </tr>
+              <tr>
+                 <td>classificationType</td>
+                 <td>date or list</td>
+                 <td>choose one, determines the type of the wizard</td>
+              </tr>
+              <tr>
+                 <td>valueListPath</td>
+                 <td>/content/documents/valuelists/eventtypes</td>
+                 <td>only required when the classificationType is 'list'. the location of the values for the list</td>
+              </tr>
+            </table>
+            </p>
+          <p>
+            <h4>Optional property 'query'</h4>
+            By default the 'new-document' query is used to create the document. If you want to override that default,
+            you can specify it as follows. You can use the query to inject values from the wizard dialog into the new
+            document. See the <a href="valueinjection.html">value injection page</a>.
+          <table>
+            <tr>
+               <th>property name</th>
+               <th>property value</th>
+               <th>description</th>
+            </tr>
+            <tr>
+               <td>query</td>
+               <td>new-news-document</td>
+               <td>the query to create the document with</td>
+            </tr>
+          </table>
+          </p>
+            <p>
+              <h4>Finish with localization</h4>
+              For every language your site supports, you have to add a subnode to the configuration node described above.
+              This node is also of the primary type <code>frontend:pluginconfig</code> and the value is the locale, e.g. <code>en</code>,
+              <code>nl</code>, <code>es</code> etc. These are the properties to add:
+              <table>
+                <tr>
+                   <th>property name</th>
+                   <th>description</th>
+                </tr>
+                <tr>
+                   <td>shortcut-link-label</td>
+                   <td>The text you want to appear as a link on the dashboard.</td>
+                </tr>
+                <tr>
+                   <td>name-label</td>
+                   <td>Label of the document name field in the dialog. *</td>
+                </tr>
+                <tr>
+                   <td>date-label</td>
+                   <td>Label of the date field in the dialog. *</td>
+                </tr>
+                <tr>
+                   <td>list-label</td>
+                   <td>Label of the list field in the dialog. *</td>
+                </tr>
+              </table>
+              * For locales <code>en</code> and <code>nl</code> default labels are given. These settings override them.
+          </p>
+        </subsection>
+        <subsection name="Names of the created folders">
+            <p>When the classificationType is <code>date</code> the the document is
+              created in a folder structure following the /yyyy/mm format. E.g. if the date is December 16, 2010, the document
+              is created in the folder /2010/12.</p>
+          <p>When the classificationType is <code>list</code> the the document is
+            created in a folder with the name based on the choosen value. Please note: the <b>key</b> of the choosen value will be used
+            as the name of the folder.</p>
+
+        </subsection>
+
+        <subsection name="Example configuration files">
+          <p>
+            If you don't want to create the nodes your self, but rather want to import xml in the console, and then adapt them,
+            here are some files to start with:
+          </p>
+          <ul>
+            <li><a href="downloads/newEventShortcut.xml">newEventShortcut.xml</a></li>
+            <li><a href="downloads/newNewsItemShortcut.xml">newNewsItemShortcut.xml</a></li>
+            <li><a href="downloads/valuelists.xml">valuelists.xml</a></li>
+          </ul>
+
+        </subsection>
+
+
+      </section>
+    </body>
+</document>

@@ -1,0 +1,27 @@
+* text=auto !eol
+/LICENSE -text
+/NOTICE -text
+/pom.xml svneol=native#text/plain
+src/main/java/org/onehippo/forge/dashboard/documentwizard/document-new-16.png -text svneol=unset#image/png
+src/site/resources/downloads/newEventShortcut.xml svneol=native#text/plain
+src/site/resources/downloads/newNewsItemShortcut.xml svneol=native#text/plain
+src/site/resources/downloads/valuelists.xml svneol=native#text/plain
+src/site/resources/screenshots/chooselisttype.png -text svneol=unset#image/png
+src/site/resources/screenshots/customquery.png -text svneol=unset#image/png
+src/site/resources/screenshots/dashboard.png -text svneol=unset#image/png
+src/site/resources/screenshots/datedialog-small.png -text svneol=unset#image/png
+src/site/resources/screenshots/datedialog.png -text svneol=unset#image/png
+src/site/resources/screenshots/eventdocument.png -text svneol=unset#image/png
+src/site/resources/screenshots/listdialog-small.png -text svneol=unset#image/png
+src/site/resources/screenshots/listdialog.png -text svneol=unset#image/png
+src/site/resources/screenshots/modifiedquery.png -text svneol=unset#image/png
+src/site/resources/screenshots/newnewsdocument.png -text svneol=unset#image/png
+src/site/resources/screenshots/newnewsdocument2.png -text svneol=unset#image/png
+src/site/site.xml svneol=native#text/plain
+src/site/xdoc/build-demo.xml svneol=native#text/plain
+src/site/xdoc/configuration.xml svneol=native#text/plain
+src/site/xdoc/index.xml svneol=native#text/plain
+src/site/xdoc/installation.xml svneol=native#text/plain
+src/site/xdoc/release-notes.xml svneol=native#text/plain
+src/site/xdoc/screenshots.xml svneol=native#text/plain
+src/site/xdoc/valueinjection.xml svneol=native#text/plain

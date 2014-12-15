@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2001-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+    implied.
+    See the License for the specific language governing permissions and
+    limitations under the License
+
+-->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+    <properties>
+        <title>Forge Document Wizard - Installation</title>
+    </properties>
+    <body>
+      <section name="Usage">
+        <subsection name="Add repository">
+            <p>
+              Add the Hippo Maven 2 Forge Repository to the repositories section of the root pom, if not there already.
+              <source><![CDATA[
+<repositories>
+  <repository>
+    <id>Hippo Maven 2 Forge Repository</id>
+    <url>http://http://maven.onehippo.com/maven2-forge/</url>
+  </repository>
+</repositories>]]></source>
+            </p>
+          <p><span class="note">Note:</span> on <strong>Hippo 7.8</strong> and later, be sure to use startup option <code>-Drepo.bootstrap=true</code>
+            for initializing the types, see
+            <a href="http://www.onehippo.org/7_8/library/concepts/content-repository/content-bootstrap.html">Content Bootstrap</a></p>
+        </subsection>
+        <subsection name="Add dependencies">
+            <p>
+              Add the dependency to the plugin to the dependencies section of the pom of the cms.
+              Normally the version is managed from the parent Hippo release pom
+              (<code>org.onehippo.cms7:hippo-cms7-release</code>).
+              <source><![CDATA[
+<dependencies>
+  <dependency>
+    <groupId>org.onehippo.forge</groupId>
+    <artifactId>dashboard-document-wizard</artifactId>
+  </dependency>
+</dependencies>]]></source>
+            </p>
+            <p>
+              All dependencies of the plugin are declared as <i>provided</i>, so you have to make sure that you
+              have these dependencies declared as well. This plugin has the Selections plugin as dependency.
+              <source><![CDATA[
+<dependencies>
+  <dependency>
+    <groupId>org.onehippo.forge.selectionplugins</groupId>
+    <artifactId>selectionplugins-addon-repository</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.onehippo.forge.selectionplugins</groupId>
+    <artifactId>selectionplugins-addon-cms</artifactId>
+  </dependency>
+</dependencies>]]></source>
+            </p>
+          <p>The cms is now ready to <a href="configuration.html">configure some dashboard shortcuts</a>.</p>
+        </subsection>
+      </section>
+    </body>
+</document>
