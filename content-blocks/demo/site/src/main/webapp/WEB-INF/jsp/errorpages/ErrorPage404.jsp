@@ -1,3 +1,4 @@
+<!doctype html>
 <%--
   Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -13,7 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<!doctype html>
 <%@ include file="/WEB-INF/jspf/htmlTags.jspf" %>
 <%@ page isErrorPage="true" %>
 <% response.setStatus(404); %>

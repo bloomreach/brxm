@@ -45,9 +45,7 @@
     <junit.version>4.10</junit.version>
     <easymock.version>3.1</easymock.version>
     <freemarker.version>2.3.18</freemarker.version>
-     
-    <filesync.override>false</filesync.override>
-    <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
+
     <repo.bootstrap>true</repo.bootstrap>
 
   </properties>
