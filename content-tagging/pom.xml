@@ -19,105 +19,49 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
+    <version>27-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Forge CMS Tagging Addon</name>
-  <description>Hippo CMS addon to assign tags to a document with auto suggestions. Includes a tagcloud that can added to
+  <name>Hippo Plugin Content Tagging</name>
+  <description>Hippo Plugin to assign tags to a document with auto suggestions. Includes a tagcloud that can added to
     the document browser.
   </description>
-  <groupId>org.onehippo.forge</groupId>
-  <artifactId>ecm-tagging</artifactId>
+  <groupId>org.onehippo.csm7</groupId>
+  <artifactId>hippo-plugin-content-tagging</artifactId>
   <version>4.09.00-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</url>
+  </scm>
+
   <properties>
-    <hippo.repository.version>2.26.05</hippo.repository.version>
-    <hippo.cms.version>2.26.06</hippo.cms.version>
+    <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
 
     <lib.json.version>2.2.2</lib.json.version>
     <lib.junit.version>4.8.2</lib.junit.version>
-    <extension.wagon-svn.version>1.9</extension.wagon-svn.version>
-    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
-    <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
   </properties>
 
   <repositories>
     <repository>
       <id>hippo</id>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
     </repository>
   </repositories>
-
-  <url>https://forge.onehippo.org/gf/project/ecm-tagging/</url>
-
-  <developers>
-    <developer>
-      <name>Jeroen Tietema</name>
-      <id>jtietema</id>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <id>abogaart</id>
-      <name>Arthur Bogaart</name>
-      <email>a.bogaart@onehippo[dot]com</email>
-      <organization>Hippo</organization>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <id>jjoachimsthal</id>
-      <name>Jasha Joachimsthal</name>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <id>fvlankvelt</id>
-      <name>Frank van Lankvelt</name>
-      <email>f.vanlankvelt@onehippo[dot]com</email>
-      <organization>Hippo</organization>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>forge-ecm-tagging</id>
-      <url>svn:https://forge.onehippo.org/svn/ecm-tagging/maven2/</url>
-    </repository>
-  </distributionManagement>
-
-  <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/ecm-tagging/ecm-tagging/branches/ecm-tagging-7.10</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/ecm-tagging/ecm-tagging/branches/ecm-tagging-7.10</developerConnection>
-    <url>http://ecm-tagging.forge.onehippo.org/branches/ecm-tagging-7.10</url>
-  </scm>
-
+  
   <issueManagement>
-    <system>Jira Hippo Forge Plugins</system>
+    <system>Jira Hippo Plugins</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/12140</url>
   </issueManagement>
 
@@ -184,11 +128,6 @@
     </dependency>
   </dependencies>
 
-  <organization>
-    <name>Hippo</name>
-    <url>http://www.onehippo.com</url>
-  </organization>
-
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
@@ -213,71 +152,7 @@
         </includes>
       </resource>
     </resources>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>${maven.plugin.site.version}</version>
-        <configuration>
-          <port>9090</port>
-          <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>${extension.wagon-svn.version}</version>
-      </extension>
-    </extensions>
   </build>
-
-  <reporting>
-    <outputDirectory>target/site</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven.plugin.jxr.version}</version>
-        <reportSets>
-          <reportSet>
-            <id>src-xref</id>
-            <reports>
-              <report>jxr</report>
-            </reports>
-          </reportSet>
-          <reportSet>
-            <id>test-xref</id>
-            <reports>
-              <report>test-jxr</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>net.sourceforge.maven-taglib</groupId>
-        <artifactId>maven-taglib-plugin</artifactId>
-        <version>${maven.plugin.taglib.version}</version>
-        <configuration>
-          <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
-          <title>HST ${project.version} JSP tag</title>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
     <profile>
@@ -299,21 +174,5 @@
       </build>
     </profile>
   </profiles>
-
-  <!-- overwrite mailinglist, removing the repository mailing list from inherited -->
-  <mailingLists>
-    <mailingList>
-      <name>Hippo CMS 7 User Forums</name>
-      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <!-- clear unused elements inherited from hippo-cms7-project pom -->
-  <contributors>
-    <contributor />
-  </contributors>
-  <ciManagement />
 
 </project>

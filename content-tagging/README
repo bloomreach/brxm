@@ -1,11 +1,10 @@
 ===================================================
-  Hippo CMS 7 tagging addon
-  http://forge.onehippo.org/projects/ecm-tagging/
+  Hippo Plugin Content Tagging
 ===================================================
 
 About
 ==========
-The tagging addon contains multiple plug-ins to work with tags. 
+The content tagging plugin contains multiple plug-ins to work with tags. 
 It contains:
 - A tagcloud for browsing your documents based on tags
 - A plug-in for adding tags to documents
@@ -23,9 +22,9 @@ How to use
 
 <!-- tagging addon -->
 <dependency>
-   <groupId>org.hippoecm</groupId>
-   <artifactId>hippo-ecm-addon-tagging</artifactId>
-   <version>1.02.00-SNAPSHOT</version>
+   <groupId>org.hippo.cms7</groupId>
+   <artifactId>hippo-plugin-content-tagging</artifactId>
+   <version>4.09.00-SNAPSHOT</version>
    <type>jar</type>
 </dependency>
 
@@ -93,5 +92,5 @@ TODO
 
 Bugs
 ==========
-Please report all bugs to JIRA http://issues.hippo.nl/browse/HIPPLUG
+Please report all bugs to JIRA https://issues.onehippo.com/browse/HIPPLUG
 
