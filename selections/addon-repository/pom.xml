@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.forge.selectionplugins</groupId>
-    <artifactId>selectionplugins</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-selections</artifactId>
     <version>2.09.00-SNAPSHOT</version>
   </parent>
 
-  <artifactId>selectionplugins-addon-repository</artifactId>
-  <name>Hippo Forge Selection Plugins Addon Repository</name>
-  <description>Hippo Forge Selection Plugins Addon Repository</description>
+  <artifactId>hippo-plugin-selections-addon-repository</artifactId>
+  <name>Hippo Plugins Selections Addon Repository</name>
+  <description>Hippo Plugin Selections Addon Repository</description>
 
   <dependencies>
 
@@ -45,9 +45,5 @@
     </dependency>
 
   </dependencies>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-  </build>
 
 </project>

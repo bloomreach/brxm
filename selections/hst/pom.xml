@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
 <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.forge.selectionplugins</groupId>
-    <artifactId>selectionplugins</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-selections</artifactId>
     <version>2.09.00-SNAPSHOT</version>
   </parent>
 
-  <artifactId>selectionplugins-hst-client</artifactId>
-  <name>Hippo Forge Selection Plugins HST Client</name>
-  <description>Hippo Forge Selection Plugins HST Client</description>
+  <artifactId>hippo-plugin-selections-hst-client</artifactId>
+  <name>Hippo Plugin Selections HST Client</name>
+  <description>Hippo Plugin Selections HST Client</description>
 
   <dependencies>
 
@@ -45,23 +45,5 @@
     </dependency>
 
   </dependencies>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
