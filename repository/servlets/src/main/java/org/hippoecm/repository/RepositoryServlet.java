@@ -386,7 +386,9 @@ public class RepositoryServlet extends HttpServlet {
                     isXPathQuery = true;
                     queryString = req.getParameter("text");
                     templateParams.put("originalQuery", queryString);
-                    queryString = "//*[jcr:contains(* , '" + queryString + "') ]";
+                    if(StringUtils.isNotBlank(queryString)) {
+                        queryString = "//*[jcr:contains(* , '" + queryString + "') ]";
+                    }
                     queryString = addOrderbyClause(queryString, true);
 
                 } else if ("xpath".equals(searchType)) {
