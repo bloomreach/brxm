@@ -42,16 +42,16 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
 
     public static final String[] JQUERY_FILEUPLOAD_SCRIPTS={
             "js/jquery.ui.widget.js",
-            "js/tmpl.min.js",
-            "js/load-image.all.min.js",
-            "js/canvas-to-blob.min.js",
+            "js/tmpl.js",
+            "js/load-image.js",
+            "js/load-image-meta.js",
+            "js/canvas-to-blob.js",
             "js/jquery.iframe-transport.js",
             "js/jquery.fileupload.js",
             "js/jquery.fileupload-process.js",
             "js/jquery.fileupload-image.js",
             "js/jquery.fileupload-validate.js",
-            "js/jquery.fileupload-ui.js",
-            "js/jquery.blueimp-gallery.min.js"
+            "js/jquery.fileupload-ui.js"
     };
     public static final String CONFIG_JS = "js/main.js";
 

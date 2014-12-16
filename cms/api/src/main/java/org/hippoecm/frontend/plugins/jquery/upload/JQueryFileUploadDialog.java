@@ -60,16 +60,12 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
     private final List<String> errors = new ArrayList<>();
     private final Button ajaxOkButton;
 
-    // flag to close the dialog automatically if no error has been found
-    private boolean errorUploading;
-
     protected JQueryFileUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig){
         setOutputMarkupId(true);
         setMultiPart(true);
 
         setOkVisible(false);
         setOkEnabled(false);
-        errorUploading = false;
 
         // create custom OK button to call javascript uploading
         ajaxOkButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("ok", this, null)){
@@ -111,7 +107,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
             }
 
             @Override
-            protected void onFileUploadFinished() {
+            protected void onFinished() {
                 JQueryFileUploadDialog.this.onFinished();
             }
 
@@ -140,7 +136,6 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
                 for(Violation violation : result.getViolations()){
                     errors.add(violation.getMessage().getObject());
                 }
-                this.errorUploading = true;
                 throw new FileUploadViolationException(errors);
             }
         }finally {
@@ -168,19 +163,15 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
                 }
                 t = t.getCause();
             }
-            this.errorUploading = true;
             throw new FileUploadViolationException(errorMsgs);
         }
     }
 
     /**
      * Called when uploading files has done.
-     * Close dialog if no error is found, otherwise leave it to display errors
      */
-    protected void onFinished(){
-        if (!errorUploading) {
-            closeDialog();
-        }
+    protected void onFinished() {
+        log.debug("Finished uploading");
     }
 
     protected FileUploadValidationService getValidator() {

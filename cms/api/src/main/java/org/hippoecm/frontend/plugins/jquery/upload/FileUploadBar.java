@@ -33,8 +33,5 @@ public class FileUploadBar extends Panel {
 
         add(new Label("select-files-message", new StringResourceModel("select.files.caption",
                 this, Model.of(settings))));
-
-        Button cancelButton = new Button("button-cancel-id", new StringResourceModel("button-cancel-label", this, null));
-        add(cancelButton);
     }
 }
