@@ -502,11 +502,12 @@ public class RepositoryServlet extends HttpServlet {
     /**
      * Create Freemarker template to render result.
      * By default, this loads <code>RepositoryServlet-html.ftl</code> from the classpath.
-     * @param request
+     * @param request meant for possibly extensibility for subclasses requiring to load a different template than the
+     *                default embedded
      * @return
      * @throws IOException
      */
-    protected Template getRenderTemplate(final HttpServletRequest request) throws IOException {
+    protected Template getRenderTemplate(@SuppressWarnings("UnusedParameters") final HttpServletRequest request) throws IOException {
         final String templateName = getClass().getSimpleName() + "-html.ftl";
         return freeMarkerConfiguration.getTemplate(templateName);
     }
