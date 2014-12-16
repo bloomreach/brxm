@@ -79,7 +79,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_it.properties 
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/add-channel.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/add.svg -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/breadcrumb-arrow.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/breadcrumb-arrow.svg -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/button-edit-content.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-dimmed-32.png -text svneol=unset#image/png

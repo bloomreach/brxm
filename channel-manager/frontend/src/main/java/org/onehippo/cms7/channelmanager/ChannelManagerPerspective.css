@@ -29,7 +29,13 @@
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
     background: #E0E0E0 none;
     padding: 0 10px;
-    border-bottom: 0;
+    border-bottom: none;
+}
+
+#hippo-channelmanager-breadcrumb.x-toolbar {
+    background: transparent;
+    padding: 0 10px;
+    border-bottom: none;
 }
 
 #pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
@@ -65,6 +71,28 @@
 }
 
 /* breadcrumb */
+#hippo-channelmanager-breadcrumb {
+    background: none;
+    float: left;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left {
+    width: auto;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-text {
+    height: 40px;
+    margin: 0 5px;
+    background-image: url('breadcrumb-arrow.svg') !important;
+}
+
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left .x-toolbar-cell:first-child .x-btn-text {
+    background: none !important;
+    padding-left: 0;
+    margin-left: 2px;
+}
+
 .channel-manager .x-toolbar .breadcrumb-item {
     opacity: 1;
 }
@@ -487,7 +515,6 @@
     float: left;
     padding: 8px 17px;
     margin: 5px;
-    /*    margin: 10px 0 0 25px;*/
     text-align: center;
     line-height: 1.25em;
     color: #333;
@@ -507,7 +534,6 @@
 
 .channel-manager .channel span {
     color: #000;
-    /* display: block; */
     padding-left: 4px;
 }
 
@@ -576,7 +602,15 @@
 .channel-manager-toolbar .x-btn-mr,
 .channel-manager-toolbar .x-btn-bl,
 .channel-manager-toolbar .x-btn-bc,
-.channel-manager-toolbar .x-btn-br {
+.channel-manager-toolbar .x-btn-br,
+#hippo-channelmanager-breadcrumb .x-btn-tl,
+#hippo-channelmanager-breadcrumb .x-btn-tc,
+#hippo-channelmanager-breadcrumb .x-btn-tr,
+#hippo-channelmanager-breadcrumb .x-btn-ml,
+#hippo-channelmanager-breadcrumb .x-btn-mr,
+#hippo-channelmanager-breadcrumb .x-btn-bl,
+#hippo-channelmanager-breadcrumb .x-btn-bc,
+#hippo-channelmanager-breadcrumb .x-btn-br {
     display: none;
 }
 
@@ -661,11 +695,11 @@
 }
 
 .channel-manager-window-manage-changes .x-btn-small .publish-changes {
-    background-image: url("templatecomposer/button-publish.png");
+    background-image: url("templatecomposer/button-publish.svg");
 }
 
 .channel-manager-window-manage-changes .x-btn-small .discard-changes {
-    background-image: url("templatecomposer/button-discard.png");
+    background-image: url("templatecomposer/button-discard.svg");
 }
 
 /* Dropdowns */

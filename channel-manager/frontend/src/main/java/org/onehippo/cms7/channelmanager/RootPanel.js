@@ -31,10 +31,8 @@
             this.selectedChannelId = null;
 
             this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
-                autoWidth: true,
                 id: 'hippo-channelmanager-breadcrumb',
-                height: 27,
-                breadcrumbIconUrl: config.breadcrumbIconUrl,
+                renderTo: 'ft',
                 layoutConfig: {
                     pack: 'left'
                 }
@@ -48,8 +46,7 @@
                 viewConfig: {
                     forceFit: true
                 },
-                border: false,
-                tbar: this.toolbar
+                border: false
             });
 
             Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
