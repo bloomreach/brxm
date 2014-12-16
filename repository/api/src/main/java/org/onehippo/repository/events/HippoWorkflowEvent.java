@@ -46,6 +46,7 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
     private static final String WORKFLOW_CATEGORY = "workflowCategory";
     private static final String WORKFLOW_NAME = "workflowName";
     private static final String EXCEPTION = "exception";
+    private static final String DOCUMENT_TYPE = "documentType";
 
     public HippoWorkflowEvent() {
         super("repository");
@@ -198,5 +199,13 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
 
     public Boolean success() {
         return get(EXCEPTION) == null;
+    }
+
+    public String documentType() {
+        return get(DOCUMENT_TYPE);
+    }
+
+    public T documentType(String documentType) {
+        return set(DOCUMENT_TYPE, documentType);
     }
 }

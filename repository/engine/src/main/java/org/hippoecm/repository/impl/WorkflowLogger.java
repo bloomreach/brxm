@@ -25,12 +25,15 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public class WorkflowLogger {
 
@@ -54,11 +57,12 @@ public class WorkflowLogger {
             final String returnType = getReturnType(returnObject);
             final String[] arguments = replaceObjectsWithStrings(args);
             final Boolean system = isSystemUser(userName);
+            final String documentType = getDocumentType(subjectId);
             event.user(userName).action(methodName).result(returnValue).system(system);
             event.className(className).methodName(methodName).handleUuid(handleUuid).subjectId(subjectId)
                     .returnType(returnType).returnValue(returnValue).documentPath(subjectPath).subjectPath(subjectPath)
                     .interactionId(interactionId).interaction(interaction).workflowCategory(category)
-                    .workflowName(workflowName).exception(exception);
+                    .workflowName(workflowName).exception(exception).documentType(documentType);
             if (arguments != null) {
                 event.arguments(Arrays.asList(arguments));
             }
@@ -91,6 +95,26 @@ public class WorkflowLogger {
             }
             if (node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 return node.getParent().getIdentifier();
+            }
+        } catch (RepositoryException ignore) {
+        }
+        return null;
+    }
+
+    private String getDocumentType(final String subjectId) {
+        if (subjectId == null) {
+            return null;
+        }
+        try {
+            final Node subject = session.getNodeByIdentifier(subjectId);
+            if (subject.isNodeType(NT_HANDLE)) {
+                for (Node child : new NodeIterable(subject.getNodes())) {
+                    if (child.getName().equals(subject.getName())) {
+                        return child.getPrimaryNodeType().getName();
+                    }
+                }
+            } else if (subject.getParent().isNodeType(NT_HANDLE)) {
+                return subject.getPrimaryNodeType().getName();
             }
         } catch (RepositoryException ignore) {
         }
