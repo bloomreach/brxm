@@ -60,20 +60,19 @@ public abstract class FileUploadWidget extends Panel {
     public static final String APPLICATION_JSON = "application/json";
     private enum ResponseType {
         OK,
-        FAILED;
+        FAILED
 
     }
     final Logger log = LoggerFactory.getLogger(FileUploadWidget.class);
 
     private long fileUploadCounter = 0;
-    private int nNumberOfFiles;
+    private int nNumberOfFiles = 0;
 
     private FileUploadBar fileUploadBar;
     private FileUploadWidgetSettings settings;
 
     private AbstractAjaxBehavior ajaxCallbackDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
-
 
     private class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         private static final long serialVersionUID = 1L;
@@ -252,7 +251,6 @@ public abstract class FileUploadWidget extends Panel {
         createComponents();
     }
 
-
     private void createComponents() {
         ajaxFileUploadBehavior = new AjaxFileUploadBehavior();
         add(ajaxFileUploadBehavior);
@@ -285,11 +283,11 @@ public abstract class FileUploadWidget extends Panel {
                     }
                     log.debug("Number of files to be uploaded:{}", numberOfFiles);
                     response(ResponseType.OK);
-                    // If we have received all files, then close dialog, otherwise wait
                     FileUploadWidget.this.nNumberOfFiles = numberOfFiles;
                     if (fileUploadCounter < numberOfFiles) {
                         log.debug("Haven't received all files yet: {}/{}", fileUploadCounter, numberOfFiles);
                     } else {
+                        // Received all files
                         onFinished();
                     }
                 } catch (IOException | JSONException e) {
@@ -330,6 +328,7 @@ public abstract class FileUploadWidget extends Panel {
     private void increaseFileUploadingCounter() {
         this.fileUploadCounter++;
         log.debug("# uploaded files: {}", fileUploadCounter);
+        // if nNumberOfFiles <= 0 means that the notification message from client has not been sent yet
         if (nNumberOfFiles > 0 && fileUploadCounter >= nNumberOfFiles) {
             log.debug("Received all files");
             onFinished();
@@ -337,12 +336,12 @@ public abstract class FileUploadWidget extends Panel {
     }
     @Override
     protected void onBeforeRender() {
+        // Obtain callback urls used for uploading files & notification
         String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
         settings.setUploadUrl(uploadUrl);
 
         String uploadDoneNotificationUrl = ajaxCallbackDoneBehavior.getCallbackUrl().toString();
         settings.setUploadDoneNotificationUrl(uploadDoneNotificationUrl);
-
         super.onBeforeRender();
     }
 
