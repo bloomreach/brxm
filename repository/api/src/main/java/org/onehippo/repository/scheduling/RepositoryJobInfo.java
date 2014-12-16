@@ -17,7 +17,7 @@ package org.onehippo.repository.scheduling;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -37,7 +37,7 @@ public class RepositoryJobInfo {
     private final String name;
     private final String group;
     private final Class<? extends RepositoryJob> jobClass;
-    private final Map<String, String> attributes = new HashMap<>();
+    private final Map<String, String> attributes = new LinkedHashMap<>();
 
     /**
      * Create a job within the default group.
