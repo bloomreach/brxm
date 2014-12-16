@@ -1113,7 +1113,6 @@ api/src/main/resources/skin/images/transparent2.png -text
 api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
-api/src/main/styling/images/footer/background.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_ajax_loader.less -text

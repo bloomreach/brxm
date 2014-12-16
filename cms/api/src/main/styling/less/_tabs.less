@@ -39,19 +39,58 @@
       position: relative;
       width: unit(@tab-width, px);
       border-left: 1px solid @document-tab-border-color;
+
+      .hippo-tabs-documents-tab {
+        display: block;
+        width: unit(@tab-width - @tab-padding-left, px);
+        padding-left: unit(@tab-padding-left, px);
+        float: left;
+        color: @document-tab-title-color;
+        text-decoration: none;
+        white-space: nowrap;
+        user-select: none;
+
+        span {
+          width: unit(@tab-width - @tab-padding-left - @tab-padding-right - 20, px);
+          height: 20px;
+          padding-top: 12px;
+          display: inline-block;
+          .truncate();
+        }
+
+        img {
+          margin-right: 3px;
+          vertical-align: top;
+          position: relative;
+          top: 12px;
+        }
+      }
+
+      .hippo-tabs-documents-close {
+        position: absolute;
+        right: 8px;
+        top: 12px;
+        text-decoration: none;
+        width: 15px;
+        height: 15px;
+
+        svg {
+          fill: @document-tab-close-color;
+        }
+      }
     }
 
     li:hover {
       background-color: @document-tab-hover-bgcolor;
-      
-      .hippo-tabs-documents-close {
-        background-image: url('@{images}/icons/tabs/tab-close-black.svg');
+
+      .hippo-tabs-documents-close svg {
+        fill: @document-tab-hover-close-color
       }
-      .hippo-tabs-documents-close:hover {
-        background-image: url('@{images}/icons/tabs/tab-close-blue.svg');
+      .hippo-tabs-documents-close:hover svg {
+        fill: @document-tab-close-hover-color;
       }
     }
-    
+
     li:last-child {
       border-right: 0;
     }
@@ -65,42 +104,5 @@
     .selected + li {
       border-left-color: @footer-bgcolor;
     }
-  }
-
-  .hippo-tabs-documents-tab {
-    display: block;
-    width: unit(@tab-width - @tab-padding-left, px);
-    height: unit(@tab-height - @tab-padding-top, px);
-    padding-left: unit(@tab-padding-left, px);
-    //padding-top: unit(@tab-padding-top, px);
-    float: left;
-    color: @document-tab-title-color;
-    text-decoration: none;
-    white-space: nowrap;
-    user-select: none;
-
-    span {
-      width: unit(@tab-width - @tab-padding-left - @tab-padding-right - 20, px);
-      height: 20px;
-      padding-top: 15px;
-      display: inline-block;
-      .truncate();
-    }
-    
-    img {
-      margin-right: 3px;
-      vertical-align: 5px;
-    }
-  }
-
-  .hippo-tabs-documents-close {
-    position: absolute;
-    right: 8px;
-    top: 13px;
-    text-decoration: none;
-    //TODO: replace with inline svg and hover/selected color change through css
-    background-image: url('@{images}/icons/tabs/tab-close-grey.svg');
-    width: 15px;
-    height: 15px;
   }
 }
