@@ -44,14 +44,20 @@
                 },
 
                 _resize: function(table, sizes) {
-                    var theadRow = table.find('thead > tr'),
-                        tbody = table.children('tbody'),
+                    var theadRow, tbody, tfootRow;
+
+                    tbody = table.children('tbody');
+
+                    if (tbody.length > 0) {
+                        tbody.innerWidth(sizes.wrap.w);
+
+                        theadRow = table.find('thead > tr');
                         tfootRow = table.find('tfoot > tr');
 
-                    tbody.innerWidth(sizes.wrap.w);
-                    tbody.height(sizes.wrap.h - theadRow.height() - tfootRow.height());
+                        tbody.height(sizes.wrap.h - theadRow.height() - tfootRow.height());
 
-                    theadRow.width(tbody[0].scrollWidth);
+                        theadRow.width(tbody[0].scrollWidth);
+                    }
                 }
             });
         }());
