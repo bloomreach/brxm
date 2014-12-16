@@ -59,6 +59,8 @@
 
     <!-- Hippo standard plugin versions -->
     <hippo.plugin.content-tagging.version>4.09.00-SNAPSHOT</hippo.plugin.content-tagging.version>
+    <hippo.plugin.content-blocks.version>1.12.00-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.selections.version>2.09.00-SNAPSHOT</hippo.plugin.selections.version>
 
     <!-- Hippo Forge plugin versions -->
     <forge.content-blocks.version>1.11.02</forge.content-blocks.version>
@@ -663,6 +665,26 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-content-tagging</artifactId>
         <version>${hippo.plugin.content-tagging.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-content-blocks</artifactId>
+        <version>${hippo.plugin.content-blocks.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-selections-addon-repository</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-selections-addon-cms</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-selections-hst-client</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
       </dependency>
 
       <!-- Hippo forge plugins -->
