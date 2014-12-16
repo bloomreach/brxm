@@ -1,4 +1,6 @@
 * text=auto !eol
+/LICENSE -text
+/NOTICE -text
 bootstrap/configuration/pom.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/forms/formdata-domain.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/forms/formdata.xml svneol=native#text/plain
@@ -89,4 +91,3 @@ site/src/main/webapp/images/glyphicons-halflings.png -text svneol=unset#image/pn
 site/src/main/webapp/images/hippo.gif -text
 site/src/main/webapp/images/onehippo.gif -text
 site/src/test/resources/log4j.xml svneol=native#text/plain
-src/main/assembly/distribution.xml svneol=native#text/plain

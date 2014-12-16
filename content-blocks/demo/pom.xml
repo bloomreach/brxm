@@ -20,60 +20,23 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.4</version>
+    <version>7.10.0-SNAPSHOT</version>
   </parent>
 
-  <name>Content Blocks Plugin Demo</name>
-  <description>Demo site for the Hippo Forge Content Blocks Plugin</description>
-  <groupId>org.onehippo.forge.contentblocksdemo</groupId>
-  <artifactId>content-blocks-demo</artifactId>
+  <name>Hippo Plugin Content Blocks Demo</name>
+  <description>Demo for the Hippo Plugin Content Blocks</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-content-blocks-demo</artifactId>
   <version>1.12.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <!-- 
-    The below project elements are emptied/overridden as otherwise their metadata would be
-    inherited or merged from the parent hippo-cms7-release pom (or its hippo-cms7-project pom).
-
-    DO NOT remove these tags but instead fill them in appropriately as needed, 
-    UNLESS the inherited values are valid for your project.
-  -->
-  <url />
-  <inceptionYear />
-  <organization />
-  <licenses>
-    <license />
-  </licenses>
-  <mailingLists>
-    <mailingList />
-  </mailingLists>
-  <developers>
-    <developer />
-  </developers>
-  <contributors>
-    <contributor />
-  </contributors>
-  <issueManagement />
-  <ciManagement />
-  <distributionManagement>
-    <repository>
-      <id>-</id>
-      <url>-</url>
-    </repository>
-    <snapshotRepository>
-      <id>-</id>
-      <url>-</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <!-- End of emptied/overridden metadata from parent hippo-cms7-release pom. -->
-
   <scm>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/content-blocks/demo/trunk</developerConnection>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/trunk/</url>
   </scm>
 
   <properties>
-    <!-- ***START temporary override of versions*** -->
-    <forge.content-blocks.version>1.11.03-SNAPSHOT</forge.content-blocks.version>
-    <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.1</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
@@ -92,8 +55,14 @@
   <repositories>
     <repository>
       <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
 
@@ -147,64 +116,13 @@
   
   <build>
     <defaultGoal>package</defaultGoal>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>com.googlecode.mavenfilesync</groupId>
-          <artifactId>maven-filesync-plugin</artifactId>
-          <version>${maven.plugins.filesync.version}</version>
-          <configuration>
-            <override>${filesync.override}</override>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>${maven.plugin.buildnumber.version}</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-          <revisionOnScmFailure>-1</revisionOnScmFailure>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven.plugin.jar.version}</version>
+        <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <configuration>
-          <skipSource>true</skipSource>
+          <!-- don't deploy -->
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
@@ -249,7 +167,6 @@
               </configuration>
               <container>
                 <systemProperties>
-                  <derby.stream.error.file>${project.basedir}/target/derby.log</derby.stream.error.file>
                   <log4j.configuration>file:${project.basedir}/conf/log4j-dev.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
                   <!-- enables auto export: -->
@@ -279,48 +196,28 @@
     </profile>
 
     <profile>
-      <id>dist</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jcl-over-slf4j</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
+      <id>pedantic</id>
       <build>
-        <defaultGoal>validate</defaultGoal>
         <plugins>
           <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>distro-assembly</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>${project.basedir}/src/main/assembly/distribution.xml</descriptor>
-                  </descriptors>
-                </configuration>
-              </execution>
-            </executions>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- 3rd party -->
+                <exclude>site/src/main/webapp/js/html5shiv.js</exclude>
+                <exclude>site/src/main/webapp/css/style.css</exclude>
+                <!-- repository content XML -->
+                <exclude>bootstrap/configuration/src/main/resources/**/*.xml</exclude>
+                <exclude>bootstrap/content/src/main/resources/**/*.xml</exclude>
+              </excludes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
-
+    
   </profiles>
 
 </project>
