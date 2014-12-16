@@ -1,0 +1,355 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Selection Plugins - Release Notes</title>
+  </properties>
+  <body>
+    <section name="Release Notes">
+      <subsection name="2.08.02">
+        <p class="smallinfo">Release Date: 3 Oct 2014</p>
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-908">HIPPLUG-908</a><br/>
+            Use a <code>cluster.options</code> node as default for DynamicMultiSelect plugin configuration. If your project uses this field type,
+          rename the now deprecated <code>valuelist.options</code> node. You can use the groovy script mentioned
+          on <a href="configuration/dynamicmultiselect.html">this page</a>.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-926">HIPPLUG-926</a><br/>
+            Empty string option id value is now allowed and option text label can be configured in StaticDropDown field.<br/>
+            Also, to support static value list in SITE application, a new method was added in ValueListManager interface and its default implementation:<br/>
+            <code>org.onehippo.forge.selection.hst.manager.ValueListManager#getStaticOptionsMap(String)</code>.<br/>
+            See <a href="configuration/staticdropdown.html">this page</a> for detail.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.01">
+        <p class="smallinfo">Release Date: 8 Jul 2014</p>
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-823">HIPPLUG-823</a><br/>
+            <span class="note">API change!</span> Added interface method <code>ValueListManager#getValueListIdentifiers()</code>
+            for the possibility to retrieve the identifiers of the configured value lists without casting.
+            The implementation in <code>DefaultValueListManager</code> returns the keys of the map as configured in
+            the Spring configuration, see the <a href="install.html">installation page</a><br/>
+            Also, expose the field documentFieldLocationMapping of the DefaultValueListManager like in release 2.06.07.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.08.00">
+        <p class="smallinfo">Release Date: 10 Mar 2014</p>
+        <ul>
+           <li>Upgrade to Hippo 7.9.<br/>
+             Incompatible with earlier versions due to upgrade to Wicket 6 so use 2.06.xx range for 7.8.</li>
+         </ul>
+      </subsection>
+      <subsection name="2.06.07">
+        <p class="smallinfo">Release Date: 30 May 2014</p>
+        <ul>
+           <li><a href="https://issues.onehippo.com/browse/HIPPLUG-823">HIPPLUG-823</a><br/>
+             Expose the field documentFieldLocationMapping of the DefaultValueListManager. In a component, a cast to
+             DefaultValueListManager is necessary.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.06">
+        <p class="smallinfo">Release Date: 13 Mar 2014</p>
+        <ul>
+           <li><a href="https://issues.onehippo.com/browse/HIPPLUG-793">HIPPLUG-793</a><br/>
+            To deselect all items in the DynamicMultiSelect list, use a localized label 'Deselect all' instead of 'x'.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.05">
+        <p class="smallinfo">Release Date: 23 Dec 2013</p>
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-442">HIPPLUG-442</a><br/>
+            In DynamicDropdown, make the addition of a first "Choose One" option configurable by property <code>showDefault</code>.
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-618">HIPPLUG-618</a><br/>
+            Support for interdependent (chained) DynamicDropdown fields, see <code>observableId</code> and
+            <code>observerId</code> at <a href="configuration/dynamicdropdown.html">Dynamic Dropdown configuration page</a>.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.04">
+       <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-697">HIPPLUG-697</a> and
+            <a href="https://issues.onehippo.com/browse/HIPPLUG-700">HIPPLUG-700</a><br/>
+            Fix not saving chosen value by DynamicDropdown.
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-628">HIPPLUG-628</a> (part two)<br/>
+            In DynamicMultiSelect, use exact same HTML markup as the CMS's PropertyFieldPlugin so there is some space
+            between the label and the star.
+          </li>
+         </ul>
+      </subsection>
+      <subsection name="2.06.03 (don't use)">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-618">HIPPLUG-618</a><br/>
+            Intermediate  work for support for interdependent DynamicDropdown fields led to a bug in which the chosen
+            value is not saved.
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-628">HIPPLUG-628</a><br/>
+            Add star (*) in DynamicMultiSelect when field is required.
+          </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-645">HIPPLUG-645</a><br/>
+            Avoid exception when value list is not translated.
+           </li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-660">HIPPLUG-660</a><br/>
+            Preserve order of items in the returned map in <code>SelectionUtil#valueListAsMap()</code>
+           </li>
+         </ul>
+      </subsection>
+      <subsection name="2.06.02">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-601">HIPPLUG-601</a><br/>
+            Better handling of an absent configuration node in DynamicMultiSelectPlugin.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-624">HIPPLUG-624</a><br/>
+            Retrieving translated value lists in the CMS depended on deprecated virtual translation nodes.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.01">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-574">HIPPLUG-574</a><br/>
+            More careful logging and coding in DocumentValueListProvider.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-580">HIPPLUG-580</a><br/>
+            Support relative paths to value list documents in DefaultValueListManager on 7.8.<br/>
+            <strong>Note: </strong> when using relative paths in the site's identifier/path mapping, be sure to supply
+            the site content base bean as argument in the ValueListManager methods!</li>
+        </ul>
+      </subsection>
+      <subsection name="2.06.00">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-531">HIPPLUG-531</a><br/>
+            CMS doesn't store/show field's valuelist provider. <br/>
+            The property <code>valuelist.provider</code> in /hippo:namespaces was renamed to <code>valuelistProvider</code>
+            so in the document type editor, setting the value works.<br/>
+            <strong>Note: </strong> if you have such property valuelist.provider in a document type's editor
+            configuration, please rename the property in code base (XML) and in your environments (manually or by
+            making the type reload during deployment).</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-548">HIPPLUG-548</a><br/>
+            Set sequence numbers higher than 20000.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-544">HIPPLUG-544</a><br/>
+            Bump to CMS 7.8 dependency versions. Note: this release is also compatible with 7.7.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.05.08">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-529">HIPPLUG-529</a><br/>
+            DynamicDropdown is not loaded into new repositories.</li>
+       </ul>
+      </subsection>
+      <subsection name="2.05.07">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-497">HIPPLUG-497</a><br/>
+            Add hippo:availability to value list prototype avoiding new documents not being visible in
+            HST. Important when using repository 2.22.08 and higher.<br/>
+            <strong>Note:</strong> selection namespace nodes are reloaded in existing environments.</li>
+       </ul>
+      </subsection>
+      <subsection name="2.05.06">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-412">HIPPLUG-412</a><br/>
+            In HST, get translated bean by language only if not found by full locale.</li>
+       </ul>
+      </subsection>
+      <subsection name="2.05.05">
+        <ul>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-334">HIPPLUG-334</a><br/>
+            German translations in CMS.</li>
+       </ul>
+      </subsection>
+      <subsection name="2.05.04">
+        <ul>
+          <li>Hide namespace from CMS folder view.</li>
+       </ul>
+      </subsection>
+      <subsection name="2.05.03">
+        <ul>
+          <li>Improvement in support for translated value lists in compounds: <br/>
+            determine the locale for compounds (that should not be hippotranslation:translated) by using locale from parent(s).
+          </li>
+       </ul>
+      </subsection>
+      <subsection name="2.05.02">
+        <ul>
+          <li>Support for translated value lists:<br/>
+            - made a value list have hippotranslation:translated mixin on creation<br/>
+            - in CMS, added IValueListProvider method getValueList with a java.util.Locale<br/>
+            - in HST, added ValueListManager methods getValueList and getValueListItem with a java.util.Locale
+          </li>
+          <li>Support for finding value lists in HST outside site content root using an absolute path starting with slash.</li>
+          <li><a href="https://issues.onehippo.com/browse/HIPPLUG-225">HIPPLUG-225</a><br/>
+            Make sort helper objects serializable</li>
+          <li>Throw exception when the DynamicDropdown is used on a multiple field</li>
+          <li>Avoid warning log if configuration to valuelist is correct.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.05.00">
+        <ul>
+          <li>Compatibility with CMS 7.6 (2.20) and HST 2.22.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.04.01">
+        <ul>
+          <li>Sorting capabilities for plugins backed by a value list object (DynamicDropdownPlugin,
+              DynamicMultiSelectPlugin and RadioGroupPlugin).</li>
+        </ul>
+      </subsection>
+      <subsection name="2.04.00">
+        <ul>
+          <li>Compatibility with CMS 7.6 (2.19) and HST 2.20.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.03.00">
+        <ul>
+          <li>Compatibility with CMS 7.5 (2.18) and HST 2.20.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.02.03">
+        <ul>
+          <li>Backported sorting capabilities, see 2.04.01.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.02.02">
+        <ul>
+          <li>[#70] Behavior change between 2.01.xx and 2.02.xx</li>
+        </ul>
+      </subsection>
+      <subsection name="2.02.01">
+        <ul>
+          <li>HIPPLUG-127: in multiselect plugin, show value labels in compare mode.</li>
+          <li>HIPPLUG-124: remove UpgraderModule configuration from root pom.</li>
+          <li>HIPPLUG-96: different labels for RadioGroup and BooleanRadioGroup.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.02.00">
+        <ul>
+          <li>Ready for the ECM 2.16.xx series.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.01.03">
+        <ul>
+          <li>Support for optgroup elements in a dropdown element.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.01.02">
+        <ul>
+          <li>ECM 2.12.06 and HST 2.04.04.</li>
+          <li>Added upgrade module for the configuration.</li>
+        </ul>
+      </subsection>
+      <subsection name="2.01.01">
+        <ul>
+          <li>
+            Documentation improvements.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="2.01.00">
+        <ul>
+          <li>
+            Added a HST ValueListManager component to get HST valuelist content
+            beans from, enabling presentation of the labels corresponding to the
+            key values in a document.
+          </li>
+          <li>
+            Restructure of project, leading to three artifacts under group id
+            org.onehippo.forge.selectionplugins: selectionplugins-addon-repository,
+            selectionplugins-addon-cms and selectionplugins-hstclient.
+          </li>
+          <li>
+            Renamed package org.onehippo.forge.cms to org.onehippo.forge.selection.
+            Note that this applies also to the configuration of fields in the CMS.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.06.00">
+        <ul>
+          <li>
+            Upgrade to ECM 2.10.00 including Wicket 1.4 API.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.05.01">
+        <ul>
+          <li>
+            Style fixes for IE for RadioGroupPlugin.
+          </li>
+          <li>
+            Fix the DocumentValueListProvider for the namespace change.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.05.00">
+        <ul>
+          <li>
+            Changed formerly correct document namespace 'dropdown' to 'selection'.
+          </li>
+          <li>
+            In MultiSelectPlugin, added the possiblitity to configure style 'palette'
+            showing a palette a.k.a. shootbox, i.e. two lists with selection arrows between them.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.04.00">
+        <ul>
+          <li>
+            First release based on move from forge project 'dropdown-plugin'.
+          </li>
+          <li>
+            Adding radio group plugin.
+          </li>
+        </ul>
+      </subsection>
+    </section>
+    <section name="Release Notes of predecessor project 'dropdown'">
+      <subsection name="1.03.01">
+        <ul>
+          <li>
+            The key label pairs are now horizontally positioned on the page to save space.
+          </li>
+          <li>
+            The items in the value list can now be now ordered, so you can change the position
+            of the key value pairs in the list.
+          </li>
+          <li>
+            Added possiblitity to configure style 'checkboxes' besides 'selectlist'.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.03.00">
+        <ul>
+          <li>
+            Introduction of DynamicMultiSelect.
+          </li>
+          <li>
+            Usage of ValueListProvider services by DynamicMultiSelect and DynamicDropdown
+            to create the possibility for project specific list creation.
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="1.01.xx and 1.02.xx">
+        <ul>
+          <li>
+            DynamicDropdown.
+          </li>
+          <li>
+            StaticDropdown.
+          </li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>

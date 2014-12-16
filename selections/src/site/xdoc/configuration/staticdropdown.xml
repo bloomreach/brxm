@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Selection Plugins - StaticDropdown</title>
+  </properties>
+  <body>
+    <section name="StaticDropdown configuration">
+      <p>
+        In the document namespace, nodetype section, the <code>hipposysedit:type</code> property of your field
+        should be set to StaticDropdown. For example at "/hippo:namespaces/gettingstarted/textdocument/hipposysedit:nodetype/hipposysedit:nodetype/names",
+      </p>
+      <p>
+        In the document namespace, editor section, the <code>cluster.options</code> child node of your field
+        should contain a String property <code>selectable.options</code> with a comma delimited string,
+        defining your static options in the dropdown.
+      </p>
+      <p>
+        In the same example, you can have the StaticDropdown type node at
+        "/hippo:namespaces/gettingstarted/textdocument/editor:templates/_default_/names" and it has a
+        <code>cluster.options</code> child node. Add a String property named <code>selectable.options</code>
+        in the <code>cluster.options</code> child node with the values you need, e.g. "Apple,Pear,Orange".
+      </p>
+      <source><![CDATA[
+<sv:node sv:name="cluster.options">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:pluginconfig</sv:value>
+  </sv:property>
+  <sv:property sv:name="selectable.options" sv:type="String">
+    <sv:value>Apple,Pear,Orange</sv:value>
+  </sv:property>
+</sv:node>]]></source>
+      <p>
+        Since <strong>release 2.08.02</strong>, StaticDropDown supports key/label pairs as well.
+        For example, you can configure it like the following:
+      </p>
+      <source><![CDATA[
+<sv:node sv:name="cluster.options">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:pluginconfig</sv:value>
+  </sv:property>
+  <sv:property sv:name="selectable.options" sv:type="String">
+    <sv:value>=Not specified,linux=Linux,win=Windows,osx=Mac OS X</sv:value>
+  </sv:property>
+</sv:node>]]></source>
+      <p>
+        <strong>Note: </strong>
+        Each option item can be a key/label pair, delimitered by the first '='.
+        (If there's no key/label pair delimiter found, then key value is used for label as well.)
+        In the example above, it will generate options like the following:
+      </p>
+      <source><![CDATA[
+<select ...>
+  <option value="">Not specified</option>
+  <option value="linux">Linux</option>
+  <option value="win">Windows</option>
+  <option value="osx">Mac OS X</option>
+</select>]]></source>
+    </section>
+  </body>
+</document>

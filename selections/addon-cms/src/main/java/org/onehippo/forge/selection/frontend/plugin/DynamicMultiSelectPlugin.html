@@ -1,0 +1,64 @@
+<!--
+    Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <div class="hippo-editor-field">
+      <h3 class="hippo-editor-field-title">
+          <span wicket:id="name">[ field name ]</span>
+          <span class="hippo-editor-field-required" wicket:id="required">*</span>
+      </h3>
+      <div class="hippo-editor-field-subfield">
+        <div class="hippo-editor-field-value">
+          <wicket:container wicket:id="mode" />
+        </div>
+      </div>
+      <wicket:container wicket:id="unselectlink"/>
+    </div>
+  </wicket:panel>
+
+  <wicket:fragment wicket:id="edit">
+    <wicket:container wicket:id="type" />
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="view">
+    <ul class="multiselect-viewlist">
+      <li wicket:id="viewitems"><span wicket:id="viewitem"></span></li>
+    </ul>
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="edit-select">
+    <select wicket:id="multiselect" class="multiselect-select">
+      <option>Some value</option>
+      <option>Some other value</option>
+    </select>
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="edit-unselectlink">
+    <div class="multiselect-unselect-link">
+      <a href="#" wicket:id="unselect-link"><wicket:message key="unselect"/></a>
+    </div>
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="edit-checkboxes">
+    <span valign="top" wicket:id="checkboxes" class="multiselect-checkboxes">
+      <input type="checkbox">item1</input>
+    </span>
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="edit-palette">
+    <span wicket:id="palette"></span>
+  </wicket:fragment>
+</html>

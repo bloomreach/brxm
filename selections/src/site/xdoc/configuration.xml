@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Selection Plugins - Configuration</title>
+  </properties>
+  <body>
+    <section name="Configuration">
+      <p>
+        After installing the artifacts you can configure various types of selection plugins.
+        If not documented or unclear, please revert to the demo project (see the <a href="build-from-source.html">build from source page</a>).
+      </p>
+      <ul>
+        <li><a href="configuration/staticdropdown.html">StaticDropdown</a>: a single select or dropdown with static
+          configuration in the <code>editor:templates</code> part of you document type.</li>
+        <li><a href="configuration/dynamicdropdown.html">DynamicDropdown</a>: a single select or dropdown configured to
+          be reading options from a service backed by a value list document in the CMS.
+        </li>
+        <li><a href="configuration/dynamicmultiselect.html">DynamicMultiselect</a>: a multi select list editing a
+          multi-valued property, configured to be reading options from a service backed by a value list document in the CMS. Variants are multi select list,
+          checkboxes and palette (shootbox).
+        </li>
+        <li><strong>RadioGroup</strong>: a single select radio group configured to be reading options from a service
+          backed by a value list document in the CMS. </li>
+        <li><strong>BooleanRadiogroup</strong>: a single select radio group editing a boolean property. The value and
+          labels for 'true' and 'false' are statically configured and localized. </li>
+      </ul>
+    </section>
+  </body>
+</document>

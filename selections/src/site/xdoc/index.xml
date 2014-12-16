@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+      <title>Forge Selection Plugins - Introduction</title>
+  </properties>
+  <body>
+    <section name="Introduction">
+        <subsection name="What is the selection plugin?">
+            <p>
+                The selection plugin provides five plugins to be used within the CMS editor.<br/>
+                There are examples available in the demo project (see the <a href="build-from-source.html">build from source page</a>).
+            </p>
+            <ul>
+              <li><a href="configuration/staticdropdown.html">Static Dropdown</a>: a single select or dropdown with static
+                configuration in your document type.</li>
+              <li><a href="configuration/dynamicdropdown.html">Dynamic Dropdown</a>: a single select or dropdown
+                configured to be reading options from a service backed by a value list document in the CMS.
+              </li>
+              <li><a href="configuration/dynamicmultiselect.html">Dynamic Multiselect</a>: a multi select list editing a
+                multi-valued property, configured to be reading options from a service backed by a value list document
+                in the CMS. Variants are multi select list, checkboxes and palette (shootbox).
+              </li>
+              <li><strong>Radio Group</strong>: a single select radio group configured to be reading options from a service
+                backed by a value list document in the CMS. </li>
+              <li><strong>Boolean Radio Group</strong>: a single select radio group editing a boolean property. The value and
+                labels for 'true' and 'false' are statically configured and localized. </li>
+            </ul>
+        </subsection>
+        <subsection name="Screenshots">
+          <p>
+            <a href="screenshots.html"><img src="images/thm_cmsdocument.jpg" alt="CMS Document"/></a>
+            <a href="screenshots.html"><img src="images/thm_site.jpg" alt="Site"/></a><br/>
+            To get an idea of the possiblities, take a look at <a href="screenshots.html">more screenshots</a>.
+          </p>
+        </subsection>
+        <subsection name="Project status">
+          <p>
+            The latest version of selections plugin is 2.08.01 running on Hippo CMS 7.9.
+            <table border="1" cellpadding="0" cellspacing="5">
+              <tbody>
+                <tr>
+                  <th>Version</th>
+                  <th>Hippo CMS Suite</th>
+                  <th>CMS</th>
+                  <th>Repository</th>
+                  <th>HST</th>
+                </tr>
+                <tr>
+                  <td>2.08.00 - 2.08.02</td>
+                  <td>7.9</td>
+                  <td>2.26.xx</td>
+                  <td>2.26.xx</td>
+                  <td>2.28.xx</td>
+                </tr>
+                <tr>
+                  <td>2.06.00 - 2.06.07</td>
+                  <td>7.8, also 7.7.5 and up</td>
+                  <td>2.24.xx</td>
+                  <td>2.24.xx</td>
+                  <td>2.26.xx</td>
+                </tr>
+                <tr>
+                  <td>2.05.07, 2.05.08</td>
+                  <td>7.7.5 and up</td>
+                  <td>2.22.08+</td>
+                  <td>2.22.08 and up</td>
+                  <td>2.24.06 and up</td>
+                </tr>
+                <tr>
+                  <td>2.05.04, 2.05.05, 2.05.06</td>
+                  <td>7.7</td>
+                  <td>2.22.xx</td>
+                  <td>2.22.00 - 2.22.07</td>
+                  <td>2.24.xx</td>
+                </tr>
+                <tr>
+                  <td>2.05.00, 2.05.02, 2.05.03, 2.05.04</td>
+                  <td>7.6</td>
+                  <td>2.20.xx</td>
+                  <td>2.20.xx</td>
+                  <td>2.22.xx</td>
+                </tr>
+                <tr>
+                  <td>2.04.00, 2.04.01</td>
+                  <td>7.6</td>
+                  <td>2.19.xx</td>
+                  <td>2.19.xx</td>
+                  <td>2.20.xx</td>
+                </tr>
+                <tr>
+                  <td>2.03.00</td>
+                  <td>7.5</td>
+                  <td>2.18.xx</td>
+                  <td>2.18.xx</td>
+                  <td>2.20.xx</td>
+                </tr>
+                <tr>
+                  <td>2.02.00, 2.02.01, 2.02.02, 2.02.03</td>
+                  <td>7.4</td>
+                  <td>2.16.xx</td>
+                  <td>2.16.xx</td>
+                  <td>2.04.04+</td>
+                </tr>
+                <tr>
+                  <td>2.01.02, 2.01.03</td>
+                  <td>7.3</td>
+                  <td>2.12.06+</td>
+                  <td>2.12.xx</td>
+                  <td>2.04.04</td>
+                </tr>
+              </tbody>
+            </table>
+            For versions applicable to ECM 2.08.xx and before, please revert to the Hippo
+            forge project <a href="http://forge.onehippo.org/projects/dropdown-plugin">'dropdown'</a>.
+          </p>
+          <p>
+            See the <a href="https://issues.onehippo.com/browse/HIPPLUG/component/10996">Hippo JIRA</a>
+            for a list of bugs and feature requests.
+          </p>
+        </subsection>
+      </section>
+  </body>
+</document>

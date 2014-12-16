@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Forge Selection Plugins - How to install</title>
+  </properties>
+  <body>
+    <p class="alert alert-success">This page is for versions 2.08.00 for 7.9, for 7.8 see <a href="install_7_8.html">Installation for 7.8</a></p>
+    <section name="How to install CMS Selection Plugins">
+      <subsection name="Prerequisites">
+        <p>
+          These instructions assume that you have an Hippo project based on the Hippo project archetype, i.e.
+          a Maven multiproject consisting of at least three submodules: cms, site and content.
+        </p>
+      </subsection>
+
+      <subsection name="Installation in CMS/Repository">
+        <ol>
+          <li>
+            <p>Add the following dependencies to the pom.xml of your <i>cms</i> module:</p>
+            <source><![CDATA[
+  <dependency>
+    <groupId>org.onehippo.forge.selectionplugins</groupId>
+    <artifactId>selectionplugins-addon-repository</artifactId>
+  </dependency>
+
+  <dependency>
+    <groupId>org.onehippo.forge.selectionplugins</groupId>
+    <artifactId>selectionplugins-addon-cms</artifactId>
+  </dependency>]]></source>
+            <p><b>Note:</b> the correct accompanying version is managed from parent artifact <code>org.onehippo.cms7:hippo-cms7-release</code></p>
+          </li>
+          <li>
+            <p>
+              Rebuild your project using Maven and go to <a href="configuration.html">configuration</a>.
+            </p>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Installation in HST site">
+        <ol>
+          <li>
+            <p>Add this dependency:</p>
+            <source><![CDATA[
+  <dependency>
+    <groupId>org.onehippo.forge.selectionplugins</groupId>
+    <artifactId>selectionplugins-hst-client</artifactId>
+  </dependency>]]></source>
+            <p>Note: the correct accompanying version is managed from parent artifact <code>org.onehippo.cms7:hippo-cms7-release</code></p>
+          </li>
+          <li>
+            <p>Copy <a href="https://forge.onehippo.org/svn/selection/selection-demo/trunk/site/src/main/resources/META-INF/hst-assembly/overrides/springValueListManager.xml">springValueListManager.xml</a>
+              to site/src/main/resources/META-INF/hst-assembly/overrides/</p>
+            <p>It should look like something like this:</p>
+            <source><![CDATA[
+  <bean id="org.onehippo.forge.selection.hst.manager.ValueListManager"
+      class="org.onehippo.forge.selection.hst.manager.DefaultValueListManager">
+    <!-- Map for dynamic field values from site relative document paths -->
+    <constructor-arg>
+      <map>
+        <entry key="relativeValuelist1" value="valuelists/valuelist1"/>
+        <entry key="absoluteValuelist2" value="/content/documents/valuelists/valuelist2"/>
+      </map>
+    </constructor-arg>
+    <!-- Optionlal Map property for static field values -->
+    <property name="mapOfStaticOptionsMap">
+      <map>
+        <entry key="staticOptions1">
+          <map>
+            <entry key="" value="(None)" />
+            <entry key="sv1" value="Static Value 1" />
+            <entry key="sv2" value="Static Value 2" />
+            <entry key="sv3" value="Static Value 3" />
+            <entry key="sv4" value="sv4" />
+          </map>
+        </entry>
+      </map>
+    </property>
+  </bean>]]></source>
+
+            <p>For the default manager above, make a mapping for dynamic field values between either:</p>
+            <ul>
+              <li>An <em>identifier</em> and the <em>location</em> of the value list document, <strong>relative to the site content base bean</strong>.<br/>
+                Note that if there are multiple sites for which to retrieve (translated) value lists, the exact relative
+                path must exist for all the site content roots!</li>
+              <li>An <em>identifier</em> and the <em>absolute path</em> of the value list document, from repository
+                root.<br/> Translated variants will be found because they are linked.</li>
+            </ul>
+            <p>The <em>identifier</em> is then used in the API (ValueListManager methods).</p>
+
+            <p>
+              Also, you can set the optional <em>mapOfStaticOptionsMap</em> property for static field (e.g, StaticDropDown) values.
+              The map property contains pairs of <em>identifier</em> and <em>map</em> (string key-value pairs) for static fields.
+            </p>
+            <p>
+              The <em>identifier</em> is then used in the API as well (ValueListManager#getStaticOptionsMap(final String identifier) method)
+              to retrieve key-value pair map by the <em>identifier</em>.
+            </p>
+
+            <p><strong>Note:</strong> you can also provide your own custom manager.</p>
+          </li>
+          <li>
+            <p>Check in the web.xml that the context-param <code>hst-beans-annotated-classes</code> has this
+              <code>param-value</code> entry:</p>
+            <source><![CDATA[classpath*:org/onehippo/**/*.class]]></source>
+          </li>
+        </ol>
+        <p><span class="note">Note:</span> on <strong>existing repositories</strong>, be sure to
+          use startup option <code>-Drepo.bootstrap=true</code> for initializing the types, see
+          <a href="http://www.onehippo.org/library/concepts/content-repository/content-bootstrap.html">Content Bootstrap</a>.
+          In local development using Maven, this option is on by default.
+        </p>
+      </subsection>
+      <subsection name="Show the valuelist labels in the site">
+        <p>In case of Dynamic Dropdowns, when the editors select a value, the key of the chosen
+        key/value pair is actually stored in the document. Which is of course very nice, because now the values can
+        be changed without having to change all documents.</p>
+        <p>If the document is rendered in the site, just showing the stored property will of course show the key. So
+        in the site you must make sure that at render time the key is replaced by the value. Here are the steps to take
+        to make this work. In the demo project that belongs to this plugin, you can find a working example. Here you find
+        some relevant snippets of code.</p>
+        <ol>
+          <li>At some point in the rendering phase, you need to retrieve the value list document as a Bean, using the
+          ValueListManager.
+            <source><![CDATA[
+ValueListManager valueListManager = HstServices.getComponentManager().getComponent(ValueListManager.class.getName());
+HippoBean siteContentBaseBean = request.getRequestContext().getSiteContentBaseBean();
+
+ValueList valueList = valueListManager.getValueList(siteContentBaseBean, "relativeValuelist1");
+if (valueList != null) {
+    request.setAttribute("valueList1Values", SelectionUtil.valueListAsMap(valueList));
+}]]></source>
+          </li>
+          <li>
+            <p>Now the key/value pairs are available on the request, an in the jsp the key can be replaced with the
+            corresponding value.</p>
+            <source><![CDATA[
+<tr>
+  <td>DynamicDropdown</td>
+  <td>${valueList1Values[document.dynamicDropdownValue]}</td>
+</tr>]]></source>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Show the labels of StaticDropDown in the site">
+        <p>In case of StaticDropDown, you can use the following API to retrieve configured value-label pairs.</p>
+        <ol>
+          <li>In the rendering phase, you need to retrieve the value-label pairs by using the ValueListManager.
+            <source><![CDATA[
+            ValueListManager valueListManager = HstServices.getComponentManager().getComponent(ValueListManager.class.getName());
+            Map<String, String> staticOptions1 = valueListManager.getStaticOptionsMap("staticOptions1");
+            request.setAttribute("staticOptions1", staticOptions1);
+            ]]></source>
+          </li>
+          <li>
+            <p>Now the value/label pairs are available on the request, an in the jsp the key can be replaced with the
+            corresponding value.</p>
+            <source><![CDATA[
+    <tr>
+      <td>StaticDropdown</td>
+      <td>${staticOptions1[document.staticDropdownValue]}</td>
+    </tr>
+            ]]></source>
+          </li>
+        </ol>
+      </subsection>
+    </section>
+  </body>
+</document>
