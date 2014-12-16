@@ -23,9 +23,12 @@ import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 
 public class ImageCropSettings extends WidgetSettings {
 
-    private static final String FIXED_BOTH = "both";
-    private static final String FIXED_WIDTH = "width";
-    private static final String FIXED_HEIGHT = "height";
+    private static final int MAX_PREVIEW_RESOLUTION = 1600;
+
+    static final String FIXED_NONE = "";
+    static final String FIXED_BOTH = "both";
+    static final String FIXED_WIDTH = "width";
+    static final String FIXED_HEIGHT = "height";
 
     private String regionInputId;
     private String imagePreviewContainerId;
@@ -44,7 +47,7 @@ public class ImageCropSettings extends WidgetSettings {
     private boolean previewVisible;
     private boolean status;
 
-    private String fixedDimension = "";
+    private String fixedDimension = FIXED_NONE;
     private String thumbnailSizeLabelId = "";
 
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
@@ -58,7 +61,7 @@ public class ImageCropSettings extends WidgetSettings {
         this.thumbnailHeight = (int) thumbnailDimension.getHeight();
         
         this.upscalingEnabled = upscalingEnabled;
-        previewVisible = thumbnailWidth <= 1600;
+        previewVisible = thumbnailWidth <= MAX_PREVIEW_RESOLUTION;
 
         if (configuredDimension.getHeight() > 0 && configuredDimension.getWidth() > 0) {
             fixedDimension = FIXED_BOTH;

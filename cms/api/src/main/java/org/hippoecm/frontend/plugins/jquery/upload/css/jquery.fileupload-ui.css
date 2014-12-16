@@ -139,6 +139,9 @@
     .table.table-striped .filename {
         width: 280px;
     }
+    .table.table-striped .filesize {
+        text-align: right;
+    }
 }
 
 .btn-warning.cancel.remove {

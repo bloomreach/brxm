@@ -233,6 +233,10 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
         @Override
         public void detach() {
+            treeNode.detach();
+            for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
+                entry.getValue().detach();
+            }
         }
     }
 
