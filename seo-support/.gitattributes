@@ -1,0 +1,3 @@
+* text=auto !eol
+/pom.xml svneol=native#text/plain
+src/test/resources/log4j.xml svneol=native#text/plain
