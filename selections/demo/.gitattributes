@@ -1,4 +1,5 @@
 * text=auto !eol
+/NOTICE -text
 cms/pom.xml svneol=native#text/plain
 cms/src/main/resources/log4j.xml svneol=native#text/plain
 cms/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
@@ -40,8 +41,6 @@ site/pom.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/springValueListManager.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/template-composer-rest.xml svneol=native#text/plain
-site/src/main/webapp/META-INF/context.xml svneol=native#text/plain
 site/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 site/src/main/webapp/images/hippo.gif -text
 site/src/main/webapp/images/onehippo.gif -text
-src/main/assemebly/distribution.xml svneol=native#text/plain
