@@ -22,7 +22,6 @@ ${response.setContentType("text/html;charset=UTF-8")}
   <head>
     <title>Hippo Repository Browser</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="${request.contextPath}/repository-servlet.css" />
     <style>
         * {font-family: tahoma, arial, helvetica, sans-serif;}
         * {font-size: 14px;}
