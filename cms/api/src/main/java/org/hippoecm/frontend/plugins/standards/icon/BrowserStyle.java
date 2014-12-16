@@ -33,10 +33,6 @@ public final class BrowserStyle {
     private BrowserStyle() {
     }
 
-    public static ResourceReference getStyleSheet() {
-        return new CssResourceReference(BrowserStyle.class, "res/style.css");
-    }
-
     public static ResourceReference getIconOrNull(String name, IconSize size) {
         final Session session = Session.get();
         final String customPngPath = getPackageResourcePath(name, size, ".png");
