@@ -57,6 +57,10 @@
     <hippo.services.webresources.version>1.05.00-SNAPSHOT</hippo.services.webresources.version>
     <hippo.utilities.version>1.04.00-SNAPSHOT</hippo.utilities.version>
 
+    <!-- Hippo standard plugin versions -->
+    <hippo.plugin.content-tagging.version>4.09.00-SNAPSHOT</hippo.plugin.content-tagging.version>
+
+    <!-- Hippo Forge plugin versions -->
     <forge.content-blocks.version>1.11.02</forge.content-blocks.version>
     <forge.dashboard-document-wizard.version>1.05.01</forge.dashboard-document-wizard.version>
     <forge.ecm-tagging.version>4.09.00-SNAPSHOT</forge.ecm-tagging.version>
@@ -652,6 +656,13 @@
         <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
         <artifactId>hst-addon-unittestcontents</artifactId>
         <version>${hippo.hst.version}</version>
+      </dependency>
+
+      <!-- Hippo standard plugins -->
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-content-tagging</artifactId>
+        <version>${hippo.plugin.content-tagging.version}</version>
       </dependency>
 
       <!-- Hippo forge plugins -->
