@@ -57,17 +57,22 @@
         </div>
       </div>
 
-      
-      <div class="hippo-developer-extensions font-size-tiny">
-        <ul class="hippo-menu-items">
-          <li class="hippo-menu-item" wicket:id="view">
-            <div wicket:id="item" />
-          </li>
-        </ul>
+      <div class="hippo-perspectives-toolbar font-size-tiny">
+        <div class="hippo-developer-extensions">
+          <ul class="hippo-menu-items">
+            <li class="hippo-menu-item" wicket:id="view">
+              <div wicket:id="item" />
+            </li>
+          </ul>
+        </div>
+        <div class="hippo-current-user-name">
+          <span wicket:id="currentUserName"></span>
+        </div>
       </div>
+
       <div class="hippo-logo">
       </div>
 
-      <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
+      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>

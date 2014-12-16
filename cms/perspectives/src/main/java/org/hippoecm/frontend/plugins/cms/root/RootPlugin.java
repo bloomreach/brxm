@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -99,6 +101,8 @@ public class RootPlugin extends TabsPlugin {
         } else {
             add(new Pinger("pinger"));
         }
+
+        add(new Label("currentUserName", Model.of(getCurrentUserName())));
 
         services = new LinkedList<IRenderService>();
 
@@ -184,6 +188,11 @@ public class RootPlugin extends TabsPlugin {
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
+    }
+
+    private String getCurrentUserName() {
+        final String userID = getSession().getJcrSession().getUserID();
+        return new User(userID).getDisplayName();
     }
 
     private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
