@@ -17,13 +17,13 @@ package org.hippoecm.addon.workflow;
 
 import java.util.List;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -34,6 +34,8 @@ import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 
 class MenuButton extends Panel implements IContextMenu {
 
@@ -93,12 +95,12 @@ class MenuButton extends Panel implements IContextMenu {
             }
         });
         
-        link.add(new AttributeModifier("class", new AbstractReadOnlyModel<String>() {
+        link.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 return content.isVisible() ? "menu-item-active" : "menu-item-inactive";
             }
-        }));
+        }, " "));
 
         Component label = null;
         if (descriptions != null) {
@@ -112,6 +114,8 @@ class MenuButton extends Panel implements IContextMenu {
             }
             link.add(label);
         }
+        
+        link.add(HippoIcon.fromSprite("icon", Icon.DROPDOWN_TINY));
     }
 
     protected IContextMenuManager getContextMenuManager() {
