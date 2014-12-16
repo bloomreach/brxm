@@ -111,7 +111,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
             }
 
             @Override
-            protected void onFileUploadFinished() {
+            protected void onFinished() {
                 JQueryFileUploadDialog.this.onFinished();
             }
 
@@ -175,12 +175,9 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
     /**
      * Called when uploading files has done.
-     * Close dialog if no error is found, otherwise leave it to display errors
      */
-    protected void onFinished(){
-        if (!errorUploading) {
-            closeDialog();
-        }
+    protected void onFinished() {
+        log.debug("Finished uploading");
     }
 
     protected FileUploadValidationService getValidator() {

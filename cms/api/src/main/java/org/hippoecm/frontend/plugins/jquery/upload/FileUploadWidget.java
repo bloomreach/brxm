@@ -16,22 +16,24 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONException;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -55,8 +57,16 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
  */
 public abstract class FileUploadWidget extends Panel {
     private static final long serialVersionUID = 1L;
+    public static final String APPLICATION_JSON = "application/json";
+    private enum ResponseType {
+        OK,
+        FAILED;
 
+    }
     final Logger log = LoggerFactory.getLogger(FileUploadWidget.class);
+
+    private long fileUploadCounter = 0;
+    private int nNumberOfFiles;
 
     private FileUploadBar fileUploadBar;
     private FileUploadWidgetSettings settings;
@@ -91,22 +101,24 @@ public abstract class FileUploadWidget extends Panel {
                 Map<String, FileUploadInfo> allUploadedFiles = new HashMap<>();
                 // try to upload all files
                 for (List<FileItem> files : multipartServletWebRequest.getFiles().values()) {
-                    log.debug("Uploading files: #{}", files.size());
                     for (FileItem file : files) {
                         // save file info prior uploading because temporary files may be deleted,
                         // thus their file sizes won't be correct.
                         FileUploadInfo fileUploadInfo = new FileUploadInfo(file.getName(), file.getSize());
                         try {
+                            log.debug("Processed a file: {}", file.getName());
                             onFileUpload(file);
                         } catch (FileUploadViolationException e) {
                             for (String errorMsg : e.getViolationMessages()) {
                                 fileUploadInfo.addErrorMessage(errorMsg);
                             }
                             if (log.isDebugEnabled()) {
-                                log.debug("file {} uploading has some violation: {}", file.getName(),
+                                log.debug("Uploading file '{}' has some violation: {}", file.getName(),
                                         StringUtils.join(fileUploadInfo.getErrorMessages().toArray()), e);
                             }
                         }
+                        // increase file counter after processed a file
+                        increaseFileUploadingCounter();
                         allUploadedFiles.put(file.getName(), fileUploadInfo);
                     }
                 }
@@ -142,7 +154,7 @@ public abstract class FileUploadWidget extends Panel {
             if (wantsHtml(request)) {
                 contentType = "text/html; charset=" + encoding;
             } else {
-                contentType = "application/json";
+                contentType = APPLICATION_JSON;
             }
             TextRequestHandler textRequestHandler = new TextRequestHandler(contentType, encoding, responseContent);
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(textRequestHandler);
@@ -232,13 +244,14 @@ public abstract class FileUploadWidget extends Panel {
                 return size;
             }
         }
-    };
+    }
 
     public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
         super(uploadPanel);
         this.settings = new FileUploadWidgetSettings(pluginConfig, validator);
         createComponents();
     }
+
 
     private void createComponents() {
         ajaxFileUploadBehavior = new AjaxFileUploadBehavior();
@@ -247,23 +260,51 @@ public abstract class FileUploadWidget extends Panel {
         ajaxCallbackDoneBehavior = new AbstractAjaxBehavior(){
 
             /**
-             * Called when a request to a behavior is received.
+             * Handle notification from the file upload dialog. The notification contains number of files to be uploaded
+             * in the following JSON format:
+             * {
+             *     total: #numberOfFiles
+             * }
+             *
+             * The response is either of following:
+             * {
+             *     status: 'OK'|'FAILED'
+             * }
              */
             @Override
             public void onRequest() {
-                WebApplication app = (WebApplication)getComponent().getApplication();
-                AjaxRequestTarget target = app.newAjaxRequestTarget(getComponent().getPage());
-
-                RequestCycle requestCycle = RequestCycle.get();
-                requestCycle.scheduleRequestHandlerAfterCurrent(target);
-
-                respond();
+                HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+                try {
+                    // The 'total' key contains expected #files uploaded.
+                    JSONObject json = new JSONObject(IOUtils.toString(request.getReader()));
+                    int numberOfFiles = json.getInt("total");
+                    if (numberOfFiles < 0 || numberOfFiles > settings.getMaxNumberOfFiles()) {
+                        log.error("Invalid notification parameter from jquery file upload dialog: numberOfFiles={}", numberOfFiles);
+                        response(ResponseType.FAILED);
+                        return;
+                    }
+                    log.debug("Number of files to be uploaded:{}", numberOfFiles);
+                    response(ResponseType.OK);
+                    // If we have received all files, then close dialog, otherwise wait
+                    FileUploadWidget.this.nNumberOfFiles = numberOfFiles;
+                    if (fileUploadCounter < numberOfFiles) {
+                        log.debug("Haven't received all files yet: {}/{}", fileUploadCounter, numberOfFiles);
+                    } else {
+                        onFinished();
+                    }
+                } catch (IOException | JSONException e) {
+                    log.error("Failed to process the close notification from jquery file upload dialog", e);
+                    response(ResponseType.FAILED);
+                }
             }
 
-            private void respond() {
-                log.debug("Finished uploading");
-                FileUploadWidget.this.onFileUploadFinished();
+            private void response(final ResponseType responseType) {
+                String content = String.format("{\"status\":\"%s\"}", responseType.name());
+                TextRequestHandler textRequestHandler = new
+                        TextRequestHandler(APPLICATION_JSON, "UTF-8", content);
+                RequestCycle.get().scheduleRequestHandlerAfterCurrent(textRequestHandler);
             }
+
         };
         add(ajaxCallbackDoneBehavior);
 
@@ -283,6 +324,17 @@ public abstract class FileUploadWidget extends Panel {
         add(downloadTemplate);
     }
 
+    /**
+     * Call this method every time an uploading file has been processed
+     */
+    private void increaseFileUploadingCounter() {
+        this.fileUploadCounter++;
+        log.debug("# uploaded files: {}", fileUploadCounter);
+        if (nNumberOfFiles > 0 && fileUploadCounter >= nNumberOfFiles) {
+            log.debug("Received all files");
+            onFinished();
+        }
+    }
     @Override
     protected void onBeforeRender() {
         String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
@@ -300,5 +352,5 @@ public abstract class FileUploadWidget extends Panel {
 
     protected abstract void onFileUpload(FileItem fileItem) throws FileUploadViolationException;
 
-    protected abstract void onFileUploadFinished();
+    protected abstract void onFinished();
 }

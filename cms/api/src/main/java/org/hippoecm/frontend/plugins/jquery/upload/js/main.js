@@ -17,12 +17,14 @@
 /* global $, window */
 
 jqueryFileUploadImpl = {
-    filelist: {},
+    numberOfCompletedFiles: 0,
+    hasError: false,
     fileuploadWidget: {},
     init: function () {
         console.log('init jquery fileupload');
-        // clean the file list
-        this.filelist = {};
+        this.hasError = false;
+        this.numberOfCompletedFiles = 0;
+
         this.fileuploadWidget = $('#${componentMarkupId}').fileupload({
             url: '${url}',
             maxNumberOfFiles: ${maxNumberOfFiles},
@@ -31,46 +33,91 @@ jqueryFileUploadImpl = {
             dataType: 'json',
             previewMaxWidth: 32,
             previewMaxHeight: 32
-        }).bind('fileuploadcompleted', function (e, data) {
-            var filesContainer = $(this).find('.files');
-            // remove all 'template-download' rows after uploading
-            filesContainer.find('.template-upload').remove();
-            console.log("fileuploadcompleted");
         }).bind('fileuploaddone', function (e, data) {
-            var wcall = Wicket.Ajax.get({ 'u': '${fileUploadDoneUrl}'});
-            console.log('fileuploaddone : ' + wcall);
-        }).bind('fileuploadchange', function (e, data) {
-            var fileNames = [];
-            $.each(data.files, function (idx, file) {
-                fileNames.push(file.name);
-                jqueryFileUploadImpl.filelist[file.name] = file;
+            // this event is fired after each file uploading is sent
+            var widget = $('#${componentMarkupId}').fileupload("instance"),
+                filesList = widget.options.filesContainer,
+                isError = false,
+                numberOfSentFiles = Math.min(filesList.children().length, widget.options.maxNumberOfFiles);
+
+            if (data.result.files && data.result.files.length) {
+                jqueryFileUploadImpl.numberOfCompletedFiles += data.result.files.length;
+            } else {
+                console.error('Invalid jquery fileupload response from server');
+            }
+            console.log('Complete %s/%s', jqueryFileUploadImpl.numberOfCompletedFiles, numberOfSentFiles);
+            $.each(data.result.files, function (idx, file) {
+               if (file.error) {
+                   console.error('uploading error: %s', file.error);
+                   isError = true;
+               }
             });
-            console.log("fileuploadchange:%s", fileNames.join());
-        }).bind('fileuploadfail', function (e, data) {
-            var fileNames = [];
-            $.each(data.files, function (idx, file) {
-                fileNames.push(file.name);
-                delete jqueryFileUploadImpl.filelist[file.name];
-            });
-            console.log("fileuploadfail:%s", fileNames.join());
-        }).bind('fileuploadprocessfail', function (e, data) {
-            var fileNames = [];
-            $.each(data.files, function (idx, file) {
-                fileNames.push(file.name);
-                delete jqueryFileUploadImpl.filelist[file.name];
-            });
-            console.log('fileuploadprocessfail:%s', fileNames.join());
+
+            if (!jqueryFileUploadImpl.hasError && isError) {
+                jqueryFileUploadImpl.hasError = true;
+            }
+            if (jqueryFileUploadImpl.numberOfCompletedFiles >= numberOfSentFiles
+                && !jqueryFileUploadImpl.hasError) {
+                // close the dialog if no error has found
+                Wicket.Window.get().close();
+            }
         });
     },
-    // upload all files in the container in a single POST request
+    // upload all files in the container simultaneously, each in a POST request
     uploadFiles: function () {
-        var uploadfiles = [];
-        for (var filename in this.filelist) {
-            uploadfiles.push(this.filelist[filename]);
-        }
+        var widget = $('#${componentMarkupId}').fileupload("instance"),
+            filesList = widget.options.filesContainer,
+            numberOfSentFiles = 0;
+
+        $.each(filesList.children(), function (idx, template) {
+            if (numberOfSentFiles < widget.options.maxNumberOfFiles) {
+                var data = $.data(template, 'data');
+                if (data && data.submit) {
+                    console.log("uploading #%s", idx);
+                    data.submit();
+                    numberOfSentFiles++;
+                }
+            }
+        });
         // disable inputs
         $('#${componentMarkupId}').find('input').prop('disabled', true);
-        console.log("Total uploading files: %s", uploadfiles.join());
-        this.fileuploadWidget.fileupload('send', {files: uploadfiles});
+
+        this.notifyUpload(numberOfSentFiles);
+    },
+    /**
+     * Notify server on number of uploading files. The message format:
+     * {
+     *  "total" : numberOfFiles
+     * }
+     * Expected to receive:
+     * {
+     *  "status" : "OK" | "FAILED"
+     * }
+     *
+     * @param numberOfFiles
+     */
+    notifyUpload: function (numberOfFiles){
+        var notificationData = {};
+        notificationData.total = numberOfFiles;
+        console.log("total uploaded: %s", numberOfFiles);
+
+        $.ajax({
+            url: '${fileUploadDoneUrl}',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            dataType: 'json',
+            data: JSON.stringify(notificationData),
+            success: function (json) {
+                if (json.status === 'OK') {
+                    console.log('Sent notification successfully');
+                } else {
+                    console.error('Failed to send notification');
+                }
+            },
+            error : function (XMLHttpRequest, textStatus, errorThrow) {
+                console.error("error response: %s; %s; %s", XMLHttpRequest.responseText, textStatus, errorThrow);
+            }
+        });
     }
 };

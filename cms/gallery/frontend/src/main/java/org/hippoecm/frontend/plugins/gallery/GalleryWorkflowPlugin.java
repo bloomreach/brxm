@@ -86,13 +86,10 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
         @Override
         protected void onFileUpload(final FileUpload file) throws FileUploadException {
-            // synchronize to prevent concurrent writing to gallery from multiple posts
-            synchronized (this){
-                try {
-                    createGalleryItem(file);
-                } catch (GalleryException e) {
-                    throw new FileUploadException("Error while creating gallery item", e);
-                }
+            try {
+                createGalleryItem(file);
+            } catch (GalleryException e) {
+                throw new FileUploadException("Error while creating gallery item", e);
             }
         }
 

@@ -40,8 +40,9 @@
     display: none;
 }
 
-.fileupload-processing .fileupload-loading {
-    display: block;
+.fileupload-process {
+    float: right;
+    display: none;
 }
 
 .progress {
@@ -110,7 +111,7 @@
     }
 
     .files .error {
-        max-width: 100px;
+        max-width: 250px;
         display: inline-block;
         word-wrap: break-word;
         padding: 4px;
@@ -128,7 +129,6 @@
         background-color: #f4f4f4;
     }
     .table.table-striped td {
-        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         padding: 4px;
