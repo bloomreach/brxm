@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Install guide</title>
+    </properties>
+    <body>
+        <section name="Install guide">
+            <p>
+                If some of the steps are unclear you can find more documentation on plugins at
+                <a href="http://www.onehippo.org/cms7/documentation/development/plugin-development/user+interface/hello+world+plugin.html">
+                    the plugin tutorial</a>.
+            </p>
+        </section>
+        <section name="Obtaining the plugin">
+            <p>
+              Each release of the plugin is deployed into a Maven repository.
+            </p>
+        </section>
+        <section name="Compile the jar into your war archive">
+            <p>
+                Add this dependency to the pom.xml of your CMS module.
+                Look for the dependencies section and add the following code:
+            </p>
+<source><![CDATA[<!-- Hippo CMS Tagging plugin -->
+<dependency>
+  <groupId>org.onehippo.forge</groupId>
+  <artifactId>ecm-tagging</artifactId>
+</dependency> ]]></source>
+          <p><span class="note">Note:</span> on <strong>Hippo 7.8</strong> and later, be sure to use startup option <code>-Drepo.bootstrap=true</code>
+            for initializing the types, see
+            <a href="http://www.onehippo.org/7_8/library/concepts/content-repository/content-bootstrap.html">Content Bootstrap</a></p>
+        </section>
+
+    </body>
+</document>

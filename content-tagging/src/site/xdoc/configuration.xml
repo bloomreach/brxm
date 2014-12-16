@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Configuration</title>
+  </properties>
+  <body>
+    <section name="Making sure the plugins load with the correct document">
+      <p>
+        If you want to add it to your own document type follow the instructions below.<br />
+        In this example the namespace is "ecmtagging" and the document type for tagging is "textdocument".
+      </p>
+      <subsection name="Change the CND">
+        <ul>
+          <li>Go to the document definition in your
+            <a href="http://www.onehippo.org/cms7/documentation/development/content+repository/defining+nodetypes_x003a_+CND.html">CND</a>
+          </li>
+          <li>Add the mixin hippostd:taggable</li>
+        </ul>
+        <p>Example:</p>
+        <source>[ecmtagging:textdocument] > hippo:document,
+          hippostd:publishableSummary, hippostdpubwf:document,
+          <em>hippostd:taggable</em></source>
+      </subsection>
+      <subsection name="Locate your document types">
+        <p>
+          First lets fire up the console (<a href="http://localhost:8080/cms/console">http://localhost:8080/cms/console</a>).
+        </p>
+        <source>/hippo:namespaces/</source>
+        <p>
+          This reveals all your registered namespaces including the one for your documents.<br />
+          Navigate to:
+        </p>
+        <source>/hippo:namespaces/ecmtagging/textdocument</source>
+        <p>
+          Here you will find all configuration regarding your document type.
+          Of special interest for us is the following location.
+        </p>
+        <source>/hippo:namespaces/ecmtagging/textdocument/editor:templates/_default_</source>
+        <p>
+          You will notice here that every field in your template is backend by a plugin. All we have to do is add
+          our plugins here to enable tagging for this document type.
+        </p>
+      </subsection>
+      <subsection name="Adding tagging plugins to your document types">
+        <p>
+          Add the following node to the "editor:templates/_default_" node of your document to enable tag input.
+        </p>
+        <source><![CDATA[<sv:node sv:name="tags" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.forge.ecmtagging.editor.TagsPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.field</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="engine" sv:type="String">
+    <sv:value>${engine}</sv:value>
+  </sv:property>
+  <sv:property sv:name="caption" sv:type="String">
+    <sv:value>Tags</sv:value>
+  </sv:property>
+  <sv:property sv:name="widget.cols" sv:type="String">
+    <sv:value>20</sv:value>
+  </sv:property>
+  <sv:property sv:name="widget.rows" sv:type="String">
+    <sv:value>2</sv:value>
+  </sv:property>
+  <sv:property sv:name="search.paths" sv:type="String">
+      <sv:value>/content</sv:value>
+    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="anim.vert" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="use.shadow" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="container.id" sv:type="String">
+        <sv:value>tagging-autocomplete</sv:value>
+      </sv:property>
+      <sv:property sv:name="schema.result.list" sv:type="String">
+        <sv:value>response.results</sv:value>
+      </sv:property>
+      <sv:property sv:name="schema.fields" sv:type="String">
+        <sv:value>label</sv:value>
+        <sv:value>url</sv:value>
+      </sv:property>
+      <sv:node sv:name="schema.meta.fields">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="totalHits" sv:type="String">
+          <sv:value>response.totalHits</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+</sv:node>]]></source>
+        <p>
+          And add the following node to the "editor:templates/_default_" node of your document to enable suggestions.
+        </p>
+        <source><![CDATA[<sv:node sv:name="tagsuggest" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.forge.ecmtagging.editor.TagSuggestPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.field</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="engine" sv:type="String">
+    <sv:value>${engine}</sv:value>
+  </sv:property>
+  <sv:property sv:name="numberOfSuggestions" sv:type="Long">
+    <sv:value>20</sv:value>
+  </sv:property>
+  <sv:property sv:name="caption" sv:type="String">
+    <sv:value>Keyword suggestions</sv:value>
+  </sv:property>
+</sv:node>]]></source>
+        <p>Add the following to your hippoecm-extensions.xml:</p>
+        <source><![CDATA[<sv:node sv:name="tagging-facetnavigation">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:initializeitem</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:sequence" sv:type="Double">
+    <sv:value>10502</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:contentresource" sv:type="String">
+    <sv:value>tagging/ecm-tagging-facetnavigation.xml</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:contentroot" sv:type="String">
+    <sv:value>/</sv:value>
+  </sv:property>
+</sv:node>]]></source>
+        <p>Create a tagging/ecm-tagging-facetnavigation.xml with the correct docbase of your /content UUID:</p>
+        <source><![CDATA[<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="tags">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippofacnav:facetnavigation</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>entery-ourc-onte-ntrootuuid00</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippofacnav:facets" sv:type="String">
+    <sv:value>hippostd:tags</sv:value>
+  </sv:property>
+</sv:node> ]]></source>
+        <p>
+          Your node structure should now be as follows:
+        </p>
+        <source>
+          "yourdocument"
+          + editor:templates
+          + _default_
+          - "your template nodes
+          - tags
+          - tagsuggest
+        </source>
+      </subsection>
+    </section>
+    <section name="Tag Cloud">
+      <p>The Hippo CMS Tagging displays a Tag Cloud section in the CMS' browse perspective.
+        Reconfiguring or removing can be done in your project.</p>
+      <subsection name="Reconfiguring the tag cloud">
+        <p>Open the console and go to <code>/hippo:configuration/hippo:frontend/cms/cms-tree-views/tagcloud/browseTagcloud</code></p>
+        <p>Set the correct 'tags.index' property. Absolute path to your tagcloud facetnavigation node, by default at <code>/tags</code></p>
+      </subsection>
+      <subsection name="Removing the tag cloud section">
+        <p>If the tag cloud section is not wanted, go to <code>/hippo:configuration/hippo:frontend/cms/cms-browser/navigator</code>
+          and remove value 'section.tagcloud' from property 'sections', and remove propery 'section.tagcloud' altogether.</p>
+      </subsection>
+      <subsection name="Tag Cloud not working for projects on 7.7">
+        <p>If the tag cloud section is not working on 7.7 projects, some configuration may be missing.
+          Using the CMS console, go to <code>/hippo:configuration/hippo:frontend/cms/cms-folder-views/hippofacnav:facetsubnavigation</code>.<br/>
+          If it's not available, please download
+          <a href="https://forge.onehippo.org/svn/ecm-tagging/ecm-tagging/trunk/src/main/resources/hippofacnav_facetsubnavigation.xml">this configuration file</a>
+          from svn and import it at that location. If it is already available, check/fix String properties
+          <code>wicket.id=${wicket.id}</code> and <code>model.document=${model.document}</code> on the
+          <code>root</code> subnode.</p>
+      </subsection>
+    </section>
+  </body>
+</document>

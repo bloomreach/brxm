@@ -1,0 +1,35 @@
+/*
+ * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@CHARSET "UTF-8";
+a.tagging-keyword {
+	font-size: 16pt;
+}
+a:hover.tagging-link {
+	text-decoration: underline;
+}
+.hippo-editor-field-tagsuggest{
+font-size: 12px; line-height: 24px; background: transparent; border: none; color: #333333; margin: 2px; font-family: arial,sans-serif,helvetica;}
+
+span.tagsuggest1 { font-size: 0.9em; }
+span.tagsuggest2 { font-size: 1.0em; }
+span.tagsuggest3 { font-size: 1.1em;}
+span.tagsuggest4 { font-size: 1.2em; }
+span.tagsuggest5 { font-size: 1.3em; }
+span.tagsuggest6 { font-size: 1.4em; }
+span.tagsuggest7 { font-size: 1.5em;}
+span.tagsuggest8 { font-size: 1.6em;}
+span.tagsuggest9 { font-size: 1.7em;}
+span.tagsuggest10 { font-size: 1.8em;}

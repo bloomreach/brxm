@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Developer guide</title>
+    </properties>
+    <body>
+        <section name="Developer guide">
+            <p>
+            	This guide contains two sections. In the first section we will look at the tagging plugin
+            	itself. This is useful if you what to modify the inner workings or want to extend the plugin.
+            </p>
+            <p>
+            	In the second section we will look a writing your very own tagging provider. You won't need any
+            	knowledge of the tagging plugin itself. A tagging provider is a plugin for the tagging framework 
+            	which can suggest tags for a document. <br />
+            	In the tagging plugin every provider inspects the document and makes a suggestion (if it can) 
+            	for some tags for the document. <br />
+            	If you have you own (complex) document type and want to add some tagging capability you can just
+            	add a provider for some property of the document.
+            </p>
+            <ul>
+            	<li><a href="provider.html">Writing your own tagging provider</a></li>
+            </ul>
+            
+        </section>
+    </body>
+</document>
