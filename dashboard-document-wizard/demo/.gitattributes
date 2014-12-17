@@ -95,5 +95,3 @@ site/src/main/webapp/images/glyphicons-halflings-white.png -text svneol=unset#im
 site/src/main/webapp/images/glyphicons-halflings.png -text svneol=unset#image/png
 site/src/main/webapp/images/hippo.gif -text
 site/src/main/webapp/images/onehippo.gif -text
-site/src/test/resources/log4j.xml svneol=native#text/plain
-src/main/assembly/distribution.xml svneol=native#text/plain
