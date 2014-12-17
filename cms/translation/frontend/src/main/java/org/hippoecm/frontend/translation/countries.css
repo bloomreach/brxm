@@ -53,6 +53,10 @@ table#translations-break-link {
     overflow-y: scroll;
 }
 
+.hippo-folder-translations .hi-folder {
+    fill: #858585;
+}
+
 .hippo-translation-country {
     background: no-repeat 100% 100%;
 }
