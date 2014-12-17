@@ -39,9 +39,6 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Search Service</notice.project.name>
 
-    <jsp-api.version>2.0</jsp-api.version>
-    <jstl.version>1.1.2</jstl.version>
-    
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
     <junit.version>4.5</junit.version>
@@ -105,19 +102,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet.jsp</groupId>
-        <artifactId>jsp-api</artifactId>
-        <version>${jsp-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${jstl.version}</version>
       </dependency>
 
       <!-- Apache Commons -->
