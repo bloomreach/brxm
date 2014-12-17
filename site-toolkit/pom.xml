@@ -55,9 +55,8 @@
     <product_name>Hippo HST</product_name>
     <product_abr>HST</product_abr>
 
-    <jsp-api.version>2.0</jsp-api.version>
-    <jstl.version>1.1.2</jstl.version>
-    <taglibs.version>1.1.2</taglibs.version>
+    <jsp-api.version>2.2</jsp-api.version>
+    <taglibs.version>1.2.1</taglibs.version>
 
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
@@ -190,14 +189,14 @@
       </dependency>
 
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${jstl.version}</version>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-spec</artifactId>
+        <version>${taglibs.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>taglibs</groupId>
-        <artifactId>standard</artifactId>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-impl</artifactId>
         <version>${taglibs.version}</version>
       </dependency>
 

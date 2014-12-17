@@ -21,6 +21,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -311,6 +313,38 @@ public class MockHstResponseBase implements HttpServletResponse {
     public void setStatus(int sc, String msg) {
         statusCode = sc;
         statusMessage = msg;
+    }
+
+    @Override
+    public int getStatus() {
+        return statusCode;
+    }
+
+    @Override
+    public String getHeader(final String s) {
+        final Collection<String> headers = getHeaders(s);
+        if (headers.isEmpty()) {
+            return null;
+        }
+        return headers.iterator().next();
+    }
+
+    @Override
+    public Collection<String> getHeaders(final String s) {
+        final List<Object> headers = this.headers.get(s);
+        if (headers == null) {
+            return Collections.emptyList();
+        }
+        final List<String> result = new ArrayList<>(headers.size());
+        for (Object header : headers) {
+            result.add(header.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headers.keySet();
     }
 
     private void addHeaderValue(String name, Object value) {
