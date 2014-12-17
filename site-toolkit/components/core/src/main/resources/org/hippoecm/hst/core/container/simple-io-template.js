@@ -22,6 +22,34 @@ Hippo.Hst.AsyncPage = {
             }
         }
 
+        /**
+         * Identify if the <code>script</code> node contains executable scripts.
+         * @param script
+         * @returns {boolean}
+         */
+        function isExecutableScript(script) {
+            var TEXT_JAVASCRIPT = "text/javascript",
+                APP_JAVASCRIPT = "application/javascript",
+                supportedScripts = [TEXT_JAVASCRIPT, APP_JAVASCRIPT],
+                scriptType = TEXT_JAVASCRIPT;
+
+            // default script type is text/javascript in HTML5
+            if (script.hasAttribute('type')) {
+                scriptType = script.getAttribute('type').toLowerCase();
+            }
+            // find the script type in the list (case insensitive)
+            if (Array.prototype.indexOf){
+                return supportedScripts.indexOf(scriptType) > -1;
+            } else { // IE8 or less
+                for (var i = 0, length = supportedScripts.length; i < length; i++) {
+                    if (scriptType === supportedScripts[i]){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
         // Find all script elements, extract them from the fragment and store
         // them into a new array. Cloning the nodes does not work as the script
         // will not be executed that way, so we have to clone them manually.
@@ -34,21 +62,23 @@ Hippo.Hst.AsyncPage = {
 
             for (i = 0, length = scripts.length; i < length; i++) {
                 script = scripts[i];
-                node = document.createElement('script');
-                if (window.addEventListener) {
-                    node.appendChild(document.createTextNode(script.innerHTML));
-                } else { // IE8 or less
-                    node.text = script.innerHTML;
-                }
-                for (j = 0; j < atts.length; j++) {
-                    if (script.hasAttribute(atts[j])) {
-                        node.setAttribute(atts[j], script.getAttribute(atts[j]));
+                // Only extract executable scripts, i.e "text/javascript"
+                if (isExecutableScript(script)) {
+                    node = document.createElement('script');
+                    if (window.addEventListener) {
+                        node.appendChild(document.createTextNode(script.innerHTML));
+                    } else { // IE8 or less
+                        node.text = script.innerHTML;
                     }
+                    for (j = 0; j < atts.length; j++) {
+                        if (script.hasAttribute(atts[j])) {
+                            node.setAttribute(atts[j], script.getAttribute(atts[j]));
+                        }
+                    }
+                    script.parentNode.removeChild(script);
+                    nodes.push(node);
                 }
-                script.parentNode.removeChild(script);
-                nodes.push(node);
             }
-
             return nodes;
         }
 
