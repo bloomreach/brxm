@@ -83,12 +83,12 @@
 #hippo-channelmanager-breadcrumb .x-btn-text {
     height: 40px;
     margin: 0 5px;
-    background-image: url('breadcrumb-arrow.svg') !important;
+    padding-left: 25px;
+    background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
 }
 
-
 #hippo-channelmanager-breadcrumb .x-toolbar-left .x-toolbar-cell:first-child .x-btn-text {
-    background: none !important;
+    background: none;
     padding-left: 0;
     margin-left: 2px;
 }
