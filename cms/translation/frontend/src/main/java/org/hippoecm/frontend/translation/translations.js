@@ -32,7 +32,7 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
     },
 
     renderPath: function(path) {
-        var text, locale, i, len, countryClass, candidate;
+        var text, locale, i, len, iconClass, countryClass, candidate;
 
         text = '<div style="float: left;">';
         locale = null;
@@ -42,16 +42,18 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
                 text += ' / ';
             }
 
-            countryClass = 'hippo-translation-country';
+            iconClass = 'hippo-translated-folder-without-flag';
+            countryClass = '';
             if ((locale === null || locale === undefined) && path[i].lang !== undefined) {
                 candidate = this.locales[path[i].lang];
                 if (candidate !== null && candidate !== undefined) {
                     locale = candidate;
+                    iconClass = 'hippo-translated-folder-with-flag';
                     countryClass = 'hippo-translation-country-' + locale.country;
                 }
             }
 
-            text += '<span class="hi-stack hi-tiny">'
+            text += '<span class="hi-stack hi-tiny ' + iconClass + '">'
                     + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder-tiny"></use></svg>'
                     + '<span class="hi hi-tiny hippo-translation-country ' + countryClass + '"></span>'
                     + '</span> ';

@@ -57,6 +57,10 @@ table#translations-break-link {
     fill: #858585;
 }
 
+.hippo-folder-translations .hippo-translated-folder-without-flag > .hi-folder {
+    top: 3px;
+}
+
 .hippo-translation-country {
     background: no-repeat 100% 100%;
 }
