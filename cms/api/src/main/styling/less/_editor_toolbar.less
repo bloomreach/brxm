@@ -65,15 +65,6 @@
         fill: @editor-toolbar-color;
       }
 
-      &.menu-label-item {
-        margin-left: 12px;
-        // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to 14px
-        line-height: 14px;
-        color: @editor-toolbar-color;
-        padding-top: 14px;
-        white-space: nowrap;
-      }
-   
       // Buttons like 'Edit' & 'Save'
       .menu-action {
         display: block;
@@ -151,6 +142,15 @@
           }
         }
       }
+    }
+
+    .menu-label-item {
+      margin-left: 12px;
+      // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to 14px
+      line-height: 14px;
+      color: @editor-toolbar-color;
+      padding-top: 14px;
+      white-space: nowrap;
     }
   }
 }
