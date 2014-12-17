@@ -20,30 +20,39 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
+    <version>27-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.onehippo.forge</groupId>
-  <artifactId>dashboard-document-wizard</artifactId>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
   <version>1.06.00-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <inceptionYear>2010</inceptionYear>
 
-  <name>Hippo Forge Dashboard Document Wizard</name>
+  <name>Hippo Plugin Dashboard Document Wizard</name>
   <description>
-    This ${project.name} plugin makes it possible to easily create dashboard shortcuts
+    The ${project.name} makes it possible to easily create dashboard shortcuts
     that allow the user to create new documents from the CMS dashboard. The shortcut opens a wizard dialog
     where the document name can be entered. The folder where the document will be stored can be determined
     by supplying a date or a value from a list. Version ${project.version}.
   </description>
 
-  <properties>
-    <hippo.repository.version>2.26.01</hippo.repository.version>
-    <hippo.cms.version>2.26.01</hippo.cms.version>
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</url>
+  </scm>
 
-    <!-- FORGE PLUGINS -->
-    <forge.selection.version>2.08.00</forge.selection.version>
+  <issueManagement>
+    <system>Jira Hippo Plugins</system>
+    <url>https://issues.onehippo.com/browse/HIPPLUG/component/11940</url>
+  </issueManagement>
+
+  <properties>
+    <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
+    <hippo.plugins.selections.version>2.09.00-SNAPSHOT</hippo.plugins.selections.version>
 
     <testng.version>6.0.1</testng.version>
 
@@ -52,27 +61,19 @@
 
   <repositories>
     <repository>
-      <id>hippo-maven2-public</id>
-      <name>Hippo Maven 2 Public Repository</name>
-      <url>http://maven.onehippo.com/maven2</url>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge Repositories</name>
-      <url>http://maven.onehippo.com/maven2-forge</url>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>hippoecm</id>
-      <name>Hippo Maven 2 Plugin Repository.</name>
-      <url>http://repository.hippocms.org/maven2</url>
-    </pluginRepository>
-  </pluginRepositories>
-
+  
   <dependencies>
-    <!-- CMS -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
@@ -95,24 +96,16 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <version>${javax.jcr.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- FORGE PLUGINS -->
-    <dependency>
-      <groupId>org.onehippo.forge.selectionplugins</groupId>
-      <artifactId>selectionplugins-addon-repository</artifactId>
-      <version>${forge.selection.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-selections-addon-repository</artifactId>
+      <version>${hippo.plugins.selections.version}</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.forge.selectionplugins</groupId>
-      <artifactId>selectionplugins-addon-cms</artifactId>
-      <version>${forge.selection.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-selections-addon-cms</artifactId>
+      <version>${hippo.plugins.selections.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -139,33 +132,6 @@
         </includes>
       </resource>
     </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-3</version>
-      </plugin>
-    </plugins>
-    <extensions>
-     <extension>
-      <groupId>org.jvnet.wagon-svn</groupId>
-      <artifactId>wagon-svn</artifactId>
-      <version>1.9</version>
-    </extension>
-    </extensions>
   </build>
 
   <profiles>
@@ -183,51 +149,5 @@
     </profile>
 
   </profiles>
-
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>document-wizard-maven-repo</id>
-      <url>svn:https://forge.onehippo.org/svn/documentwizard/maven2/</url>
-    </repository>
-    <site>
-      <id>document-wizard-documentation</id>
-      <url>svn:http://forge.onehippo.org/svn/documentwizard/dashboard-document-wizard/trunk/src/site/</url>
-    </site>
-  </distributionManagement>
-
-  <scm>
-    <connection>scm:svn:http://forge.onehippo.org/svn/documentwizard/dashboard-document-wizard/trunk/</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/documentwizard/dashboard-document-wizard/trunk/</developerConnection>
-    <url>https://forge.onehippo.org/gf/project/documentwizard/</url>
-  </scm>
-
-  <issueManagement>
-    <system>Jira Hippo Forge Plugins</system>
-    <url>https://issues.onehippo.com/browse/HIPPLUG/component/11940</url>
-  </issueManagement>
-
-  <developers>
-    <developer>
-      <name>Bert Leunis</name>
-      <email>b.leunis@onehippo.com</email>
-    </developer>
-  </developers>
-
-  <mailingLists>
-    <mailingList>
-      <name>Hippo CMS 7 User Forums</name>
-      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <!-- clear unused elements inherited from hippo-cms7-project pom -->
-  <url />
-  <contributors>
-    <contributor />
-  </contributors>
-  <ciManagement />
 
 </project>
