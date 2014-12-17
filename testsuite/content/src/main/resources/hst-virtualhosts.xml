@@ -28,8 +28,6 @@
   <sv:property sv:name="hst:cmspreviewprefix" sv:type="String">
     <sv:value>_testsuiteExamplePrefix</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:prefixexclusions" sv:type="String">
-  </sv:property>
   <sv:property sv:name="hst:homepage" sv:type="String">
     <sv:value>home</sv:value>
   </sv:property>
