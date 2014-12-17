@@ -19,15 +19,23 @@
   > .hippo-toolbar-section {
     display: block;
     float: left;
-
+    
     > li {
       float: left;
-      min-width: unit(@editor-toolbar-item-minwidth, px);
       height: unit(@editor-toolbar-height, px);
+      
+      &:first-child a {
+        padding-left: 12px;
+      }
+
+      a {
+        text-decoration: none;
+        padding-left: 8px;
+        padding-right: 4px;
+      }
 
       &.menu-item:hover {
         a {
-          text-decoration: none;
 
           &.menu-action .menu-action-text,
           &.hippo-toolbar-section-button {
@@ -43,11 +51,9 @@
       }
 
       a.hippo-toolbar-section-button {
-        text-decoration: none;
         
         &.menu-item-active {
           color: @editor-toolbar-active-color;
-          text-decoration: none;
         }
       }
 
@@ -60,14 +66,12 @@
       }
 
       &.menu-label-item {
-        white-space: nowrap;
-        color: @editor-toolbar-color;
         margin-left: 12px;
-        
-        .menu-label {
-          padding-top: 14px;
-          white-space: nowrap;
-        }
+        // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to 14px
+        line-height: 14px;
+        color: @editor-toolbar-color;
+        padding-top: 14px;
+        white-space: nowrap;
       }
    
       // Buttons like 'Edit' & 'Save'
@@ -75,7 +79,7 @@
         display: block;
         cursor: pointer;
         height: unit(@editor-toolbar-height, px);
-        text-align: right;
+        padding-left: 8px;
 
         .menu-action-icon {
           position: relative;
@@ -86,7 +90,6 @@
           position: relative;
           top: 10px;
           color: @cool-shale;
-          padding-right: unit(@editor-toolbar-item-margin-right, px);
         }
       }
 
@@ -131,6 +134,11 @@
         .hippo-toolbar-menu-item {
           position: absolute;
           left: 0;
+          
+          a {
+            padding-left: 0;
+            padding-right: 0;
+          }
 
           .hippo-toolbar-menu-item-button-icon {
             margin-left: 4px;
