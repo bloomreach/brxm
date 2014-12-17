@@ -125,6 +125,10 @@
     background-image: none;
 }
 
+.x-notification {
+    margin-top: 3px;
+}
+
 .channel-manager .x-notification .x-window-header {
     padding: 0 0 1px 0
 }
@@ -712,25 +716,26 @@
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-text {
-    height: 22px !important;
+    height: 24px !important;
     padding: 0 12px;
     line-height: 24px;
-    border: 1px solid #c2c2c2;
+    border: none;
     background: #ffffff;
-    border-radius: 5px 0 0 5px;
+    border-radius: 3px 0 0 3px;
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-trigger {
-    height: 22px;
+    height: 24px;
     width: 23px;
-    border: 1px solid #c2c2c2;
-    border-left: none;
-    border-radius: 0 5px 5px 0;
-    background: url('templatecomposer/trigger.svg') no-repeat center center #ffffff;
+    border: none;
+    border-radius: 0 3px 3px 0;
+    background: url('templatecomposer/trigger.svg') no-repeat center center #bbbec0;
 }
 
 .x-combo-list {
-    border-radius: 5px;
+    border-radius: 3px;
+    border: none !important;
+    border-top: 1px solid transparent !important;
 }
 
 .x-combo-list .x-combo-list-item {
