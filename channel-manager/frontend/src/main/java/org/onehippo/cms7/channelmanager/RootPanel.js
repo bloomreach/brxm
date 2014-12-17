@@ -35,7 +35,8 @@
                 renderTo: 'ft',
                 layoutConfig: {
                     pack: 'left'
-                }
+                },
+                hidden: true
             });
 
             Ext.apply(config, {
@@ -66,6 +67,16 @@
                     self.setSize(sizes.body.w, sizes.body.h);
                     self.doLayout();
                 }, true);
+            }, this, {single: true});
+
+            this.on('afterrender', function() {
+                // only show the channel manager breacrumb when channel manager is active
+                var perspectiveElement = this.el.findParent(".perspective");
+                if (perspectiveElement) {
+                    Ext.EventManager.addListener(perspectiveElement, 'readystatechange', function(event) {
+                        self.toolbar.setVisible(event.active);
+                    }, this, { normalized: false });
+                }
             }, this, {single: true});
 
             // get all child components
