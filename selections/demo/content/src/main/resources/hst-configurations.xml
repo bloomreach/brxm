@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright (C) 2010 Hippo B.V.
+    Copyright (C) 2010-2014 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
     limitations under the License.
 
 -->
-<sv:node sv:name="hst:configurations" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:configurations</sv:value>
-  </sv:property>
+<sv:node sv:name="hst:configurations" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" esv:merge="combine">
   <sv:node sv:name="selectiondemo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
