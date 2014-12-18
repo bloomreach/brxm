@@ -54,6 +54,11 @@
   <!-- The default classpath resource scanner -->
   <bean id="org.hippoecm.hst.util.ClasspathResourceScanner" class="org.hippoecm.hst.site.container.SpringMetadataReaderClasspathResourceScanner">
   </bean>
-  
+
+  <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory"
+        class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl">
+    <constructor-arg ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
+  </bean>
+
 </beans>
 

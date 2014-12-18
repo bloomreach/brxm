@@ -29,10 +29,5 @@
     <property name="hstRequestProcessor" ref="org.hippoecm.hst.core.container.HstRequestProcessor" />
   </bean>
 
-  <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory"
-        class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl">
-    <constructor-arg ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
-  </bean>
-
 
 </beans>
