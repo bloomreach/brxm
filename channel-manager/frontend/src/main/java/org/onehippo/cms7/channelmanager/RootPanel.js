@@ -36,7 +36,8 @@
                 layoutConfig: {
                     pack: 'left'
                 },
-                hidden: true
+                hidden: true,
+                hideMode: 'visibility'
             });
 
             Ext.apply(config, {
