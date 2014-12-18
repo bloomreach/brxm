@@ -185,9 +185,6 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
-                <!-- 3rd party -->
-                <exclude>site/src/main/webapp/js/html5shiv.js</exclude>
-                <exclude>site/src/main/webapp/css/style.css</exclude>
                 <!-- repository content XML -->
                 <exclude>content/src/main/resources/**/*.xml</exclude>
               </excludes>
