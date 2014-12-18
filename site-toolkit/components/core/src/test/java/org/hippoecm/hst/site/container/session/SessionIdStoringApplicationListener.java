@@ -17,12 +17,12 @@ package org.hippoecm.hst.site.container.session;
 
 import java.util.List;
 
+import com.google.common.eventbus.Subscribe;
+
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
-
-import com.google.common.eventbus.Subscribe;
 
 public class SessionIdStoringApplicationListener implements ComponentManagerAware {
 

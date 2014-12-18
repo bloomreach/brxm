@@ -35,13 +35,13 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-spec</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>taglibs</groupId>
-      <artifactId>standard</artifactId>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-impl</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

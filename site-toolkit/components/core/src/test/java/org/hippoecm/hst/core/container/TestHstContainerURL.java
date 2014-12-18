@@ -15,14 +15,14 @@
  */
 package org.hippoecm.hst.core.container;
 
-import static org.junit.Assert.assertFalse;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
 
 /**
  * @version $Id$

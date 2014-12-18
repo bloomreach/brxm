@@ -42,8 +42,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.event.ChannelPublicationEvent;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
@@ -63,13 +66,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/hst:mount/")
-public class MountResource extends AbstractConfigResource {
+public class MountResource extends AbstractConfigResource implements ComponentManagerAware {
     private static Logger log = LoggerFactory.getLogger(MountResource.class);
 
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
     private LockHelper lockHelper = new LockHelper();
+    private ComponentManager componentManager;
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -81,6 +85,11 @@ public class MountResource extends AbstractConfigResource {
 
     public void setPagesHelper(final PagesHelper pagesHelper) {
         this.pagesHelper = pagesHelper;
+    }
+
+    @Override
+    public void setComponentManager(ComponentManager componentManager) {
+        this.componentManager = componentManager;
     }
 
     @GET
@@ -251,9 +260,10 @@ public class MountResource extends AbstractConfigResource {
 
     private Response publishChangesOfUsers(List<String> userIds) {
         try {
-            String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
-            String previewConfigurationPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
-            Session session = getPageComposerContextService().getRequestContext().getSession();
+            PageComposerContextService context = getPageComposerContextService();
+            String liveConfigurationPath = context.getEditingLiveConfigurationPath();
+            String previewConfigurationPath = context.getEditingPreviewConfigurationPath();
+            Session session = context.getRequestContext().getSession();
 
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
@@ -262,6 +272,13 @@ public class MountResource extends AbstractConfigResource {
             siteMapHelper.publishChanges(userIds);
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
+
+            ChannelPublicationEvent event = new ChannelPublicationEvent(
+                    ChannelPublicationEvent.Action.PUBLISH,
+                    userIds,
+                    context.getRenderingMountId(), session);
+            componentManager.publishEvent(event);
+
             HstConfigurationUtils.persistChanges(session);
             log.info("Site is published");
             return ok("Site is published");
@@ -417,9 +434,10 @@ public class MountResource extends AbstractConfigResource {
 
     private Response discardChanges(List<String> userIds) {
         try {
-            final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-            String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
-            final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
+            PageComposerContextService context = getPageComposerContextService();
+            final HstRequestContext requestContext = context.getRequestContext();
+            String liveConfigurationPath = context.getEditingLiveConfigurationPath();
+            final HstSite editingPreviewSite = context.getEditingPreviewSite();
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             Session session = requestContext.getSession();
@@ -431,7 +449,14 @@ public class MountResource extends AbstractConfigResource {
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
 
+            ChannelPublicationEvent event = new ChannelPublicationEvent(
+                    ChannelPublicationEvent.Action.DISCARD,
+                    userIds,
+                    context.getRenderingMountId(), session);
+            componentManager.publishEvent(event);
+
             HstConfigurationUtils.persistChanges(session);
+
             log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
             return ok("Changes of user '"+session.getUserID()+"' for site '"+editingPreviewSite.getName()+"' are discarded.");
         } catch (RepositoryException e) {
@@ -614,6 +639,5 @@ public class MountResource extends AbstractConfigResource {
         channelFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
         JcrUtils.copy(session, fromConfig, toConfig);
     }
-
 
 }

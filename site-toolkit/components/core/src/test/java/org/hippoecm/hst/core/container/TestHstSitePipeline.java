@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.order.ObjectOrdererRuntimeException;
@@ -31,6 +26,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * TestHstSitePipeline

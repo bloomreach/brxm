@@ -16,8 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 
-import java.util.NoSuchElementException;
-
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Test;

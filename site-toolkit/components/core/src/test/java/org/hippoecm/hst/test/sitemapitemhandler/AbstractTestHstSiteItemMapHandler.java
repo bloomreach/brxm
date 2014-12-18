@@ -19,7 +19,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;

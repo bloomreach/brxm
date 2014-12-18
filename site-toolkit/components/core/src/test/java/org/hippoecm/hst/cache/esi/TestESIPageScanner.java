@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.cache.esi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -29,6 +25,10 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestESIPageScanner

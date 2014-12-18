@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +25,10 @@ import org.apache.commons.beanutils.DynaProperty;
 import org.apache.commons.beanutils.LazyDynaBean;
 import org.apache.commons.beanutils.LazyDynaMap;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class TestDynaBeanProxyUtils {

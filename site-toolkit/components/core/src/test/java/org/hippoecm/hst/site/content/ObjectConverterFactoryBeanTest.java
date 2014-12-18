@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.site.content;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.site.container.SpringMetadataReaderClasspathResourceScanner;
@@ -26,6 +23,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * ObjectConverterFactoryBeanTest

@@ -30,7 +30,6 @@ api/src/main/java/org/hippoecm/hst/configuration/internal/ContextualizableMount.
 api/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationAugmenter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstManager.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstNode.java -text svneol=unset#text/plain
-api/src/main/java/org/hippoecm/hst/configuration/model/MutableHstManager.java -text
 api/src/main/java/org/hippoecm/hst/configuration/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/site/HstSite.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/site/package-info.java -text svneol=unset#text/plain
@@ -44,6 +43,7 @@ api/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuItemConfigu
 api/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenusConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/sitemenu/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/HstContainerRequest.java -text
+api/src/main/java/org/hippoecm/hst/container/event/ChannelPublicationEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/ComponentManagerBeforeReplacedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionCreatedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionDestroyedEvent.java -text
@@ -1220,7 +1220,6 @@ toolkit-resources/addon/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/java/org/onehippo/cms7/hst/toolkit/addon/formdata/FormDataCleanupJob.java -text
 toolkit-resources/addon/repository/src/main/resources/formdata.xml -text
-toolkit-resources/addon/repository/src/main/resources/hippo-configuration/domain-hst-security.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/formdata-domain.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/group-webmaster.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/hstconfig-domain.xml -text svneol=unset#text/plain

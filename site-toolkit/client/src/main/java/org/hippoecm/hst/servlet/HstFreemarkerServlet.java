@@ -55,6 +55,8 @@ import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEBR
 
 public class HstFreemarkerServlet extends FreemarkerServlet {
 
+    public static final String INIT_PARAM_LOGGER_LIBRARY = "loggerLibrary";
+
     private static final Logger log = LoggerFactory.getLogger(HstFreemarkerServlet.class);
 
     private static final long serialVersionUID = 1L;
@@ -72,14 +74,17 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     @Override
     public void init() throws ServletException {
+        configureLoggerLibrary();
+
         super.init();
 
         Configuration conf = super.getConfiguration();
 
         if (!hasInitParameter(Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY)) {
-            log.info("No '" + Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY + "' init param set. HST will set FreeMarker servlet to log and *continue* " +
-                    "(TemplateExceptionHandler.IGNORE_HANDLER) rendering in case of template exceptions. ");
-            conf.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
+            log.info("No '" + Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY + "' init param set. HST will instruct" +
+                    " the FreeMarker servlet to rethrow exceptions (TemplateExceptionHandler.RETHROW_HANDLER)" +
+                    " in case of template exceptions.");
+            conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         }
 
         final String projectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
@@ -88,19 +93,62 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             conf.setTemplateUpdateDelay(0);
         }
         conf.setLocalizedLookup(false);
+    }
 
+    private void configureLoggerLibrary() {
+        final int loggerLibrary = getLoggerLibrary();
+        try {
+            log.info("Using freemarker.log.Logger library '{}'", loggerLibrary);
+            freemarker.log.Logger.selectLoggerLibrary(loggerLibrary);
+        } catch (ClassNotFoundException e) {
+            log.warn("Failed to enable logging with freemarker.log.Logger library '{}'", loggerLibrary, e);
+        }
+    }
+
+    private int getLoggerLibrary() {
+        if (!hasInitParameter(INIT_PARAM_LOGGER_LIBRARY)) {
+            return freemarker.log.Logger.LIBRARY_NONE;
+        }
+
+        final String initParamValue = getInitParameter(INIT_PARAM_LOGGER_LIBRARY);
+        switch (initParamValue) {
+            case "auto": return freemarker.log.Logger.LIBRARY_AUTO;
+            case "none": return freemarker.log.Logger.LIBRARY_NONE;
+            case "java": return freemarker.log.Logger.LIBRARY_JAVA;
+            case "avalon": return freemarker.log.Logger.LIBRARY_AVALON;
+            case "log4j": return freemarker.log.Logger.LIBRARY_LOG4J;
+            case "commons": return freemarker.log.Logger.LIBRARY_COMMONS;
+            case "slf4j": return freemarker.log.Logger.LIBRARY_SLF4J;
+            default:
+                log.warn("HstFreemarkerServlet has invalid value for init param '{}': '{}'." +
+                        " Valid values are 'auto', 'none' (the default), 'java', 'avalon', 'log4j', 'commons', and 'slf4j'. " +
+                        " Using 'none' instead'.",
+                        INIT_PARAM_LOGGER_LIBRARY, initParamValue);
+                return freemarker.log.Logger.LIBRARY_NONE;
+        }
     }
 
     @Override
     public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         try {
             super.doGet(request, response);
+        } catch (IOException e) {
+            logFreemarkerException(e);
         } catch (ServletException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Freemarker template exception : ", e);
-            } else {
-                log.warn("Freemarker template exception : {}", e.toString());
+            Throwable wrapped = e.getCause();
+            if (wrapped == null) {
+                wrapped = e;
             }
+            logFreemarkerException(wrapped);
+        }
+    }
+
+    private static void logFreemarkerException(final Throwable t) {
+        if (log.isDebugEnabled()) {
+            log.warn("Error in Freemarker template:", t);
+        } else {
+            // by default, log a clean error message without stack traces
+            log.warn(t.getMessage());
         }
     }
 

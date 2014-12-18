@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -32,11 +33,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.hippoecm.hst.mock.util.IteratorEnumeration;
 
@@ -48,7 +58,7 @@ public class MockHstRequestBase implements HttpServletRequest {
     private Map<String, Object> attrs = new HashMap<String, Object>();
     private List<Locale> locales = Arrays.asList(new Locale [] { Locale.getDefault() });
     private Map<String, List<String>> params = new HashMap<String, List<String>>();
-    
+
     public String getAuthType() {
         return (String) props.get("authType");
     }
@@ -285,6 +295,29 @@ public class MockHstRequestBase implements HttpServletRequest {
         return (v != null && v.booleanValue());
     }
 
+    @Override
+    public boolean authenticate(final HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        return false;
+    }
+
+    @Override
+    public void login(final String s, final String s2) throws ServletException {
+    }
+
+    @Override
+    public void logout() throws ServletException {
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Part getPart(final String s) throws IOException, ServletException {
+        return null;
+    }
+
     public void setRequestedSessionIdFromUrl(boolean requestedSessionIdFromUrl) {
         props.put("requestedSessionIdFromUrl", Boolean.valueOf(requestedSessionIdFromUrl));
     }
@@ -365,7 +398,42 @@ public class MockHstRequestBase implements HttpServletRequest {
         
         return 0;
     }
-    
+
+    @Override
+    public ServletContext getServletContext() {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync() throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
+        return false;
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+        return false;
+    }
+
+    @Override
+    public AsyncContext getAsyncContext() {
+        return null;
+    }
+
+    @Override
+    public DispatcherType getDispatcherType() {
+        return null;
+    }
+
     public void setLocalPort(int localPort) {
         props.put("localPort", Integer.valueOf(localPort));
     }

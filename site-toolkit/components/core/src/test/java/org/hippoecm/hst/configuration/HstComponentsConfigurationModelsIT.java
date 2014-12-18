@@ -23,11 +23,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -43,6 +38,11 @@ import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class HstComponentsConfigurationModelsIT extends AbstractTestConfigurations {
 

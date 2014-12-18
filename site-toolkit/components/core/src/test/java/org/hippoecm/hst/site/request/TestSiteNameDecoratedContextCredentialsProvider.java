@@ -15,14 +15,6 @@
  */
 package org.hippoecm.hst.site.request;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
@@ -30,10 +22,18 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class TestSiteNameDecoratedContextCredentialsProvider {

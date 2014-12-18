@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -177,12 +177,16 @@ public class HstComponentParameters {
 
     public void save(long versionStamp) throws RepositoryException, IllegalStateException {
         setNodeChanges();
+        lock(versionStamp);
+    }
+
+    public void lock(long versionStamp) throws RepositoryException, IllegalStateException {
         if (RequestContextProvider.get() == null) {
             node.getSession().save();
         } else {
             if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                throw new IllegalStateException("Node to be saved must be of type '"+HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT+"' but " +
-                        "was of type '"+node.getPrimaryNodeType().getName()+"'. Skip save");
+                throw new IllegalStateException("Node to be saved must be of type '" + HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT + "' but " +
+                        "was of type '" + node.getPrimaryNodeType().getName() + "'. Skip save");
             }
             containerItemHelper.acquireLock(node, versionStamp);
             HstConfigurationUtils.persistChanges(node.getSession());

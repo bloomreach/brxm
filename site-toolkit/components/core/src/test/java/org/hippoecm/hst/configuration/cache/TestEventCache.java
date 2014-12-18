@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

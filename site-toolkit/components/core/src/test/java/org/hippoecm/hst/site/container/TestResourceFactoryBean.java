@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.site.container;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -29,6 +26,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class TestResourceFactoryBean {

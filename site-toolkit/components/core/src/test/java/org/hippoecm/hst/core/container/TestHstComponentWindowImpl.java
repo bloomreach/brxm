@@ -15,12 +15,12 @@
  */
 package org.hippoecm.hst.core.container;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestHstComponentWindowImpl {
 

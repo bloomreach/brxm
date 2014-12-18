@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.test;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,6 +47,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ServletContextAware;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
 /**
  * <p>
  * AbstractSpringTestCase
@@ -59,7 +59,6 @@ import org.springframework.web.context.ServletContextAware;
  *
  * </p>
  *
- * @version $Id$
  *
  */
 public abstract class AbstractSpringTestCase

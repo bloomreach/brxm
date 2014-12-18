@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -271,6 +271,33 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             return error(e.getMessage());
         } catch (RepositoryException e) {
             log.warn("Could not save parameters for variant '{}'", variant, e);
+            throw new WebApplicationException(e);
+        }
+    }
+
+    /**
+     * Locks the component
+     *
+     * @return whether the component was locked
+     */
+    @POST
+    @Path("/lock")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response lock(final @HeaderParam("versionStamp") long versionStamp) {
+        try {
+            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
+            componentParameters.lock(versionStamp);
+            log.info("Component locked successfully.");
+            return ok("Component locked successfully.");
+        } catch (IllegalStateException e) {
+            log.warn("Could not lock component", e);
+            return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not lock component", e);
+            return error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.warn("Could not lock component", e);
             throw new WebApplicationException(e);
         }
     }

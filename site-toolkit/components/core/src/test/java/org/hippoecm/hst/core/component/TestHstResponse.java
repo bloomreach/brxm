@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.core.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
