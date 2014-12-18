@@ -736,6 +736,10 @@
     border-radius: 3px;
     border: none !important;
     border-top: 1px solid transparent !important;
+    box-shadow: 0 0 0 0 #000000,
+                10px 10px 30px -15px #000000,
+                0 10px 30px -15px #000000,
+                -10px 10px 30px -15px #000000;
 }
 
 .x-combo-list .x-combo-list-item {
@@ -747,4 +751,9 @@
     color: #ffffff;
     border: none !important;
     background-color: #444954;
+}
+
+.x-shadow,
+.x-ie-shadow {
+    display: none !important;
 }
