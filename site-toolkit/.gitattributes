@@ -579,6 +579,8 @@ components/core/src/main/java/org/hippoecm/hst/configuration/sitemapitemhandler/
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuItemConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenusConfigurationService.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/container/AbstractFilterBean.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/container/HstDelegateeFilterBean.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/channelmanager/CmsComponentWindowResponseAppender.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstComponentMetadataReader.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstRequestImpl.java svneol=native#text/plain
