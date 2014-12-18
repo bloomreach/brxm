@@ -1,22 +1,11 @@
 * text=auto !eol
 /LICENSE -text
 /NOTICE -text
-addon/pom.xml svneol=native#text/plain
-addon/repository/pom.xml svneol=native#text/plain
-addon/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-addon/repository/src/main/resources/hst/configurations/default/pages/robotstxt-page.xml svneol=native#text/plain
-addon/repository/src/main/resources/hst/configurations/default/templates/robotstxt-template.xml svneol=native#text/plain
-addon/repository/src/main/resources/namespace.xml svneol=native#text/plain
-addon/repository/src/main/resources/robotstxt.cnd -text
 hst/pom.xml svneol=native#text/plain
 /pom.xml svneol=native#text/plain
-src/site/resources/images/robotstxt_CMS.jpg -text svneol=unset#image/jpeg
-src/site/resources/images/robotstxt_Site.jpg -text svneol=unset#image/jpeg
-src/site/resources/images/robotstxt_Sitemap.jpg -text svneol=unset#image/jpeg
-src/site/site.xml svneol=native#text/plain
-src/site/xdoc/build-demo.xml svneol=native#text/plain
-src/site/xdoc/index.xml svneol=native#text/plain
-src/site/xdoc/install.xml svneol=native#text/plain
-src/site/xdoc/release-notes.xml svneol=native#text/plain
-src/site/xdoc/upgrade.xml svneol=native#text/plain
-src/site/xdoc/usage.xml svneol=native#text/plain
+repository/pom.xml svneol=native#text/plain
+repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+repository/src/main/resources/hst/configurations/default/pages/robotstxt-page.xml svneol=native#text/plain
+repository/src/main/resources/hst/configurations/default/templates/robotstxt-template.xml svneol=native#text/plain
+repository/src/main/resources/namespace.xml svneol=native#text/plain
+repository/src/main/resources/robotstxt.cnd -text

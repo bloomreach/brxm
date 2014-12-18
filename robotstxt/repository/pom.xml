@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
   
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.onehippo.forge.robotstxt</groupId>
-    <artifactId>robotstxt-addons</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-robotstxt</artifactId>
     <version>1.09.00-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.onehippo.forge.robotstxt</groupId>
-  <artifactId>robotstxt-addon-repository</artifactId>
-  <name>Hippo Forge Robots.txt Addon Repository</name>
+  <artifactId>hippo-plugin-robotstxt-addon-repository</artifactId>
+  <name>Hippo Plugin Robots.txt Addon Repository</name>
 
 </project>

@@ -20,74 +20,49 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
-    <relativePath />
+    <version>27-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Forge Robots.txt Generator</name>
-  <description>Hippo Forge Robots.txt Generator</description>
-  <groupId>org.onehippo.forge.robotstxt</groupId>
-  <artifactId>robotstxt</artifactId>
+  <name>Hippo Plugin Robots.txt Generator</name>
+  <description>Hippo Plugin Robots.txt Generator</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-robotstxt</artifactId>
   <version>1.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <url>https://forge.onehippo.org/gf/project/robotstxt/</url>
+
   <inceptionYear>2009</inceptionYear>
+
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/robotstxt/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/robotstxt/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/robotstxt/trunk/</url>
+  </scm>
 
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
-    <notice.project.name>Hippo Forge Robots.txt Generator</notice.project.name>
-    <hippo.hst.version>2.28.02</hippo.hst.version>
+    <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
+    <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
     <taglibs.version>1.1.2</taglibs.version>
-    <jackrabbit.version>2.6.5</jackrabbit.version>
   </properties>
 
-  <developers>
-    <developer>
-      <id>jjoachimsthal</id>
-      <name>Jasha Joachimsthal</name>
-    </developer>
-    <developer>
-      <id>jhoffman</id>
-      <name>Jeroen Hoffman</name>
-      <email>j.hoffman[at]onehippo[dot]com</email>
-      <organization>Hippo</organization>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-    </developer>
-    <developer>
-      <id>tjeger</id>
-      <name>Tobias Jeger</name>
-      <email>t.jeger[at]onehippo[dot]com</email>
-      <organization>Hippo</organization>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-    </developer>
-  </developers>
-
-  <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/robotstxt/robotstxt/trunk</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/robotstxt/robotstxt/trunk</developerConnection>
-    <url>http://robotstxt.forge.onehippo.org/</url>
-  </scm>
-
-  <distributionManagement>
+  <repositories>
     <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>forge-robotstxt-maven-repo</id>
-      <url>svn:https://forge.onehippo.org/svn/robotstxt/maven2/</url>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
-  </distributionManagement>
-
+  </repositories>
+  
   <issueManagement>
     <system>Jira</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/12847</url>
   </issueManagement>
-
-  <licenses>
-    <license>
-      <name>Apache Software License, Version 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
 
   <dependencyManagement>
     <dependencies>
@@ -124,91 +99,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <repositories>
-    <repository>
-      <id>hippo</id>
-      <name>Hippo maven repository.</name>
-      <url>http://maven.onehippo.com/maven2/</url>
-      <snapshots />
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>hippo</id>
-      <name>Hippo Maven Repository</name>
-      <url>http://maven.onehippo.com/maven2</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org/</url>
-      <layout>default</layout>
-      <snapshots> </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>1.0-alpha-6</version>
-      </extension>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <forkMode>always</forkMode>
-            <workingDirectory>${project.build.directory}</workingDirectory>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-archetype-plugin</artifactId>
-          <version>2.0-alpha-4</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
   <profiles>
     <profile>
       <id>pedantic</id>
@@ -221,7 +111,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- repository content XML -->
-                <exclude>addon/repository/src/main/resources/*.xml</exclude>
+                <exclude>repository/src/main/resources/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -232,24 +122,8 @@
   </profiles>
 
   <modules>
-    <module>addon</module>
+    <module>repository</module>
     <module>hst</module>
   </modules>
-
-  <!-- overwrite mailinglist, removing the repository mailing list from inherited -->
-  <mailingLists>
-    <mailingList>
-      <name>Hippo CMS 7 User Forums</name>
-      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <!-- clear unused elements inherited from hippo-cms7-project pom -->
-  <contributors>
-    <contributor />
-  </contributors>
-  <ciManagement />
 
 </project>
