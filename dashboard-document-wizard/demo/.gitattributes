@@ -1,4 +1,5 @@
 * text=auto !eol
+/LICENSE -text
 bootstrap/configuration/pom.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/modules/eventlogcleanup-module.xml svneol=native#text/plain
