@@ -59,7 +59,7 @@
 
             Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(self, arguments);
             self.body.update(self.message);
-            self.el.alignTo(Ext.getCmp(self.alignToElementId).getEl(), "tl-bl", [30, 0]);
+            self.el.alignTo(Ext.getCmp(self.alignToElementId).getEl(), "tl-bl", [30, 3]);
 
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, self, function() {
                 self.setWidth(arguments[0].body.w - 60 - Ext.getScrollBarWidth());
