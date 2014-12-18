@@ -2,10 +2,8 @@
 /LICENSE -text
 /NOTICE -text
 bootstrap/configuration/pom.xml svneol=native#text/plain
-bootstrap/configuration/src/main/resources/configuration/forms/formdata-domain.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/forms/formdata.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml svneol=native#text/plain
-bootstrap/configuration/src/main/resources/configuration/modules/eventlogcleanup-module.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/queries/templates/new-subsite/contentblocksdemo-subsite.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/hst/channels.xml svneol=native#text/plain
