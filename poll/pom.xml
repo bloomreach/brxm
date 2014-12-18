@@ -21,65 +21,50 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
+    <version>27-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.onehippo.forge.poll</groupId>
-  <artifactId>poll</artifactId>
-  <name>Hippo Forge Poll Plugin</name>
-  <description>Hippo Forge Poll Plugin</description>
+  <name>Hippo Plugin Poll</name>
+  <description>Hippo Plugin Poll</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-poll</artifactId>
   <version>1.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <url>https://forge.onehippo.org/gf/project/poll</url>
   <inceptionYear>2009</inceptionYear>
+
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</url>
+  </scm>
 
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
-    <notice.project.name>Hippo Forge Poll Plugin</notice.project.name>
+    <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.repository.version>2.26.01</hippo.repository.version>
-    <hippo.hst.version>2.28.02</hippo.hst.version>
+    <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
   </properties>
 
-  <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/poll/poll/trunk</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/poll/poll/trunk</developerConnection>
-    <url>http://poll.forge.onehippo.org/</url>
-  </scm>
-
-  <distributionManagement>
+  <repositories>
     <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>poll-maven-repo</id>
-      <url>svn:https://forge.onehippo.org/svn/poll/maven2/</url>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
-  </distributionManagement>
-
+  </repositories>
+  
   <issueManagement>
     <system>Hippo Forge</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/10874</url>
   </issueManagement>
-
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-
-  <developers>
-    <developer>
-      <name>Jeroen Hoffman</name>
-      <id>jhoffman</id>
-      <email>j.hoffman@onehippo.com</email>
-    </developer>
-    <developer>
-      <name>Tobi Jeger</name>
-      <id>tjeger</id>
-      <email>t.jeger@onehippo.com</email>
-    </developer>
-  </developers>
 
   <dependencyManagement>
     <dependencies>
@@ -129,68 +114,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <repositories>
-    <repository>
-      <id>hippo</id>
-      <url>http://maven.onehippo.com/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>hippo-maven2</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org/</url>
-      <layout>default</layout>
-      <snapshots />
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-scm-plugin</artifactId>
-          <version>1.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
   <profiles>
     <profile>
       <id>pedantic</id>
@@ -216,21 +139,5 @@
     <module>addon-repository</module>
     <module>hst-client</module>
   </modules>
-
-  <!-- overwrite mailinglist, removing the repository mailing list from inherited -->
-  <mailingLists>
-    <mailingList>
-      <name>Hippo CMS 7 User Forums</name>
-      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <!-- clear unused elements inherited from hippo-cms7-project pom -->
-  <contributors>
-    <contributor />
-  </contributors>
-  <ciManagement />
 
 </project>
