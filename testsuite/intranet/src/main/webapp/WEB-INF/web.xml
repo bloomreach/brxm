@@ -103,12 +103,6 @@ limitations under the License. -->
   <filter>
     <filter-name>HstFilter</filter-name>
     <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>
-    <init-param>
-      <param-name>prefixExclusions</param-name>
-      <!-- on purpose /resources/ is not added here a prefix exclusion as resources should be catched
-      in general by suffixExclusions -->
-      <param-value>/ping/, /binaries/, /login/, /hst/pagecomposer/sources/</param-value>
-    </init-param>
   </filter>
 
   <filter-mapping>
