@@ -1,73 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version
+    2.0 (the "License"); you may not use this file except in compliance
+    with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+    applicable law or agreed to in writing, software distributed under the
+    License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+    CONDITIONS OF ANY KIND, either express or implied. See the License for
+    the specific language governing permissions and limitations under the
+    License.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.0</version>
+    <version>7.10.0-SNAPSHOT</version>
   </parent>
 
-  <name>Poll Demo Project</name>
-  <description>Poll Demo Project</description>
-  <groupId>org.onehippo.forge.poll</groupId>
-  <artifactId>poll-demo</artifactId>
+  <name>Hippo Plugin Poll Demo</name>
+  <description>Hippo Plugin Poll Demo</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-poll-demo</artifactId>
   <version>1.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <!--
-    The below project elements are emptied/overridden as otherwise their metadata would be
-    inherited or merged from the parent hippo-cms7-release pom (or its hippo-cms7-project pom).
-
-    DO NOT remove these tags but instead fill them in appropriately as needed,
-    UNLESS the inherited values are valid for your project.
-  -->
-  <url />
-  <inceptionYear />
-  <organization />
-  <licenses>
-    <license />
-  </licenses>
-  <mailingLists>
-    <mailingList />
-  </mailingLists>
-  <developers>
-    <developer />
-  </developers>
-  <contributors>
-    <contributor />
-  </contributors>
-  <issueManagement />
-  <ciManagement />
-  <distributionManagement>
-    <repository>
-      <id />
-      <url />
-    </repository>
-    <snapshotRepository>
-      <id />
-      <url />
-    </snapshotRepository>
-  </distributionManagement>
-  <!-- End of emptied/overridden metadata from parent hippo-cms7-release pom. -->
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/plugin/demo/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/plugin/demo/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/trunk/</url>
+  </scm>
 
   <properties>
-    <forge.poll.version>1.08.02-SNAPSHOT</forge.poll.version>
 
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
     <junit.version>4.10</junit.version>
     <freemarker.version>2.3.18</freemarker.version>
-    <filesync.override>false</filesync.override>
-    <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
   </properties>
 
   <repositories>
     <repository>
       <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
 
@@ -113,63 +100,18 @@
   </dependencyManagement>
 
   <build>
-    <defaultGoal>package</defaultGoal>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>com.googlecode.mavenfilesync</groupId>
-          <artifactId>maven-filesync-plugin</artifactId>
-          <version>${maven.plugins.filesync.version}</version>
-          <configuration>
-            <override>${filesync.override}</override>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>${maven.plugin.buildnumber.version}</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-          <revisionOnScmFailure>-1</revisionOnScmFailure>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven.plugin.jar.version}</version>
+        <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
-            </manifestEntries>
-          </archive>
+          <!-- don't deploy -->
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
+  
   <profiles>
 
     <profile>
@@ -222,7 +164,6 @@
               </configuration>
               <container>
                 <systemProperties>
-                  <derby.stream.error.file>${project.basedir}/target/derby.log</derby.stream.error.file>
                   <log4j.configuration>file:${project.basedir}/conf/log4j-dev.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
                   <project.basedir>${project.basedir}</project.basedir>
@@ -235,53 +176,27 @@
     </profile>
 
     <profile>
-      <id>dist</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jcl-over-slf4j</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
+      <id>pedantic</id>
       <build>
-        <defaultGoal>validate</defaultGoal>
         <plugins>
           <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>distro-assembly</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>${project.basedir}/src/main/assembly/distribution.xml</descriptor>
-                  </descriptors>
-                </configuration>
-              </execution>
-            </executions>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- 3rd party -->
+                <exclude>site/src/main/webapp/js/html5shiv.js</exclude>
+                <exclude>site/src/main/webapp/css/style.css</exclude>
+                <!-- repository content XML -->
+                <exclude>content/src/main/resources/**/*.xml</exclude>
+              </excludes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
 
   </profiles>
-
-  <scm>
-     <developerConnection>scm:svn:https://forge.onehippo.org/svn/poll/poll-demo/trunk</developerConnection>
-     <connection>scm:svn:http://forge.onehippo.org/svn/poll/poll-demo/branches/trunk</connection>
-  </scm>
 
 </project>
