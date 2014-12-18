@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,7 +65,6 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private HttpServletResponse servletResponse;
     private Session session;
     private HstContainerURL baseURL;
-    private String contextNamespace;
     private HstURLFactory urlFactory;
     private ResolvedMount resolvedMount;
     private ResolvedSiteMapItem resolvedSiteMapItem;
@@ -147,14 +146,6 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     public void setBaseURL(HstContainerURL baseURL) {
         this.baseURL = baseURL;
-    }
-
-    public String getContextNamespace() {
-        return this.contextNamespace;
-    }
-
-    public void setContextNamespace(String contextNamespace) {
-        this.contextNamespace = contextNamespace;
     }
 
     public Credentials getDefaultCredentials() {

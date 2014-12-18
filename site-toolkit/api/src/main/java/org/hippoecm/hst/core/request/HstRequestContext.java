@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -121,16 +121,7 @@ public interface HstRequestContext {
      * @see Mount#isPreview()
      */
     boolean isPreview();
-    
-    /**
-     * Returns the context namespace. If there are multiple HstContainer based applications,
-     * it could be necessary to separate the component window's namespaces.
-     * This context namespace can be used for the purpose.
-     * 
-     * @return
-     */
-    String getContextNamespace();
-    
+
     /**
      * Returns the base container URL ({@link HstContainerURL} ) of the current request lifecycle.
      * 

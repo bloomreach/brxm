@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,8 +53,6 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setServletRequest(HttpServletRequest servletRequest);
 
     public void setServletResponse(HttpServletResponse servletResponse);
-
-	public void setContextNamespace(String contextNamespace);
 
 	public void setSession(Session session);
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -88,7 +88,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
-    protected String contextNamespace = "";
     protected HstLinkCreator linkCreator;
     protected HstParameterInfoProxyFactory parameterInfoProxyFactory;
     protected HstSiteMapMatcher siteMapMatcher;
@@ -150,14 +149,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     public void setServletResponse(HttpServletResponse servletResponse) {
         this.servletResponse = servletResponse;
-    }
-
-    public void setContextNamespace(String contextNamespace) {
-        this.contextNamespace = contextNamespace;
-    }
-
-    public String getContextNamespace() {
-        return this.contextNamespace;
     }
 
     public Session getSession() throws RepositoryException {
