@@ -584,9 +584,6 @@ public class JCRJobStore implements JobStore {
         synchronized (session) {
             try {
                 for (Node triggerNode : getPendingTriggers(session, noLaterThan)) {
-                    if (maxCount-- <= 0) {
-                        break;
-                    }
                     if (!JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true)) {
                         continue;
                     }
@@ -603,6 +600,9 @@ public class JCRJobStore implements JobStore {
                                     triggers = new ArrayList<>();
                                 }
                                 triggers.add(createTriggerFromNode(triggerNode));
+                                if (--maxCount <= 0) {
+                                    break;
+                                }
                             } else {
                                 unlock(session, triggerNode.getPath());
                             }
