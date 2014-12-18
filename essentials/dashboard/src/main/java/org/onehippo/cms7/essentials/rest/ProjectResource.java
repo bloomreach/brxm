@@ -16,11 +16,21 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import com.google.common.base.Strings;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
@@ -36,14 +46,9 @@ import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Strings;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Api(
@@ -56,7 +61,8 @@ public class ProjectResource {
 
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
-    @Inject private PluginStore pluginStore;
+    @Inject
+    private PluginStore pluginStore;
 
 
     @ApiOperation(
@@ -108,14 +114,13 @@ public class ProjectResource {
             response = MessageRestful.class)
     @POST
     @Path("/settings")
-    public MessageRestful saveProjectSettings(final ProjectSettingsBean projectSettings) {
+    public MessageRestful saveProjectSettings(final ProjectSettings projectSettings) {
         // Remove empty plugin repository entries
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         if (pluginRepositories != null) {
             final Iterator<String> iterator = pluginRepositories.iterator();
-            for (; iterator.hasNext(); ) {
-                final String next = iterator.next();
-                if (Strings.isNullOrEmpty(next)) {
+            for (String repo : pluginRepositories) {
+                if (Strings.isNullOrEmpty(repo)) {
                     iterator.remove();
                 }
             }

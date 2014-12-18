@@ -18,6 +18,9 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 
 public class PluginContextFactory {
 
+    private PluginContextFactory() {
+    }
+
     public static PluginContext getContext() {
         return new DefaultPluginContext();
     }

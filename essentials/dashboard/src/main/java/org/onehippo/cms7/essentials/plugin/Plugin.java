@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.plugin;
 
-import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
@@ -28,6 +27,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import com.google.common.base.Strings;
 
 public class Plugin {
     private final static Logger log = LoggerFactory.getLogger(Plugin.class);
@@ -100,7 +101,6 @@ public class Plugin {
 
     @Override
     public String toString() {
-        final PluginDescriptor descriptor = getDescriptor();
         return descriptor != null ? descriptor.getName() : "unknown";
     }
 
