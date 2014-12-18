@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,94 +20,48 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
+    <version>27-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Forge Related Documents Plugin</name>
-  <description>Hippo Forge Related Documents Plugin</description>
-  <groupId>org.onehippo.forge</groupId>
-  <artifactId>relateddocs</artifactId>
+  <name>Hippo Plugin Related Documents</name>
+  <description>Hippo Plugin Related Documents</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-relateddocs</artifactId>
   <version>2.11.00-SNAPSHOT</version>
   <packaging>jar</packaging>
+  
   <inceptionYear>2009</inceptionYear>
 
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</url>
+  </scm>
+  
   <properties>
-    <hippo.cms.version>2.26.01</hippo.cms.version>
-    <hippo.repository.version>2.26.01</hippo.repository.version>
-    <lib.wicket.version>6.8.0</lib.wicket.version>
-    <extension.wagon-svn.version>1.9</extension.wagon-svn.version>
-    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
-    <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
+    <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
 
-  <developers>
-    <developer>
-      <name>Frank van Lankvelt</name>
-      <id>fvlankvelt</id>
-      <email>f.vanlankvelt@onehippo.com</email>
-      <organization>Hippo</organization>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Jeroen Hoffman</name>
-      <id>jhoffman</id>
-      <email>j.hoffman@onehippo.com</email>
-      <organization>Hippo</organization>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/relateddocs/relateddocs/trunk</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/relateddocs/relateddocs/trunk</developerConnection>
-    <url>http://relateddocs.forge.onehippo.org/</url>
-  </scm>
-
-  <url>https://forge.onehippo.org/projects/relateddocs/</url>
-
-  <issueManagement>
-    <url>https://issues.onehippo.com/browse/HIPPLUG/component/10871</url>
-  </issueManagement>
-
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>relateddocs-maven-repo</id>
-      <url>svn:https://forge.onehippo.org/svn/relateddocs/maven2/</url>
-    </repository>
-  </distributionManagement>
-
   <repositories>
     <repository>
-      <id>hippo-maven2</id>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
-       <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
     </repository>
   </repositories>
+  
+  <issueManagement>
+    <url>https://issues.onehippo.com/browse/HIPPLUG/component/10871</url>
+  </issueManagement>
 
   <dependencies>
 
@@ -143,15 +97,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <!--
-   finalName>${project.artifactId}-1.01.00.${buildNumber}-SNAPSHOT</finalName -->
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>${extension.wagon-svn.version}</version>
-      </extension>
-    </extensions>
     <resources>
       <resource>
         <filtering>false</filtering>
@@ -174,27 +119,6 @@
         </includes>
       </resource>
     </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.plugin.surefire.version}</version>
-        <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.plugin.compiler.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>${maven.plugin.site.version}</version>
-      </plugin>
-    </plugins>
   </build>
 
   <profiles>
@@ -217,71 +141,6 @@
       </build>
     </profile>
   </profiles>
-
-  <reporting>
-    <outputDirectory>target/site</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven.plugin.javadoc.version}</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <source>1.7</source>
-          <links>
-            <link>http://docs.oracle.com/javase/7/docs/api</link>
-          </links>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven.plugin.jxr.version}</version>
-        <reportSets>
-          <reportSet>
-            <id>src-xref</id>
-            <reports>
-              <report>jxr</report>
-            </reports>
-          </reportSet>
-          <reportSet>
-            <id>test-xref</id>
-            <reports>
-              <report>test-jxr</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>net.sourceforge.maven-taglib</groupId>
-        <artifactId>maven-taglib-plugin</artifactId>
-        <version>${maven.plugin.taglib.version}</version>
-        <configuration>
-          <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
-          <title>HST ${project.version} JSP tag</title>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
-  <!-- overwrite mailinglist, removing the repository mailing list from inherited -->
-  <mailingLists>
-    <mailingList>
-      <name>Hippo CMS 7 User Forums</name>
-      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <!-- clear unused elements inherited from hippo-cms7-project pom -->
-  <contributors>
-    <contributor />
-  </contributors>
-  <ciManagement />
 
 </project>
 
