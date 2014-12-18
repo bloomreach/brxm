@@ -77,8 +77,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private String contextNamespace;
 
-    private boolean doClientRedirectAfterJaasLoginBehindProxy = true;
-
     private HstContainerConfig requestContainerConfig;
 
     private HstManager hstManager;
@@ -98,10 +96,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setContextNamespace(String contextNamespace) {
         this.contextNamespace = contextNamespace;
-    }
-
-    public void setDoClientRedirectAfterJaasLoginBehindProxy(boolean doClientRedirectAfterJaasLoginBehindProxy) {
-        this.doClientRedirectAfterJaasLoginBehindProxy = doClientRedirectAfterJaasLoginBehindProxy;
     }
 
     public void setHstManager(HstManager hstManager) {
@@ -201,19 +195,17 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
              * always a http redirect is done by the container. Hence we check below whether there is an attribute
              * on the http session that is only present after a jaas login attempt. If present, we do another redirect.
              */
-            if (doClientRedirectAfterJaasLoginBehindProxy) {
-                HttpSession session = req.getSession(false);
-                if (session != null && session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN) != null ) {
-                    if (session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN).equals(req.getParameter("token"))) {
-                        // we are dealing with client side redirect from the container after JAAS login. This redirect typically
-                        // fails in case of proxy taking care of the context path in front of the application.
-                        // hence we need another redirect.
-                        String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
-                        session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
-                        session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
-                        res.sendRedirect(resourceURL);
-                        return;
-                    }
+            HttpSession session = req.getSession(false);
+            if (session != null && session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN) != null ) {
+                if (session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN).equals(req.getParameter("token"))) {
+                    // we are dealing with client side redirect from the container after JAAS login. This redirect typically
+                    // fails in case of proxy taking care of the context path in front of the application.
+                    // hence we need another redirect.
+                    String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                    session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                    session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
+                    res.sendRedirect(resourceURL);
+                    return;
                 }
             }
 
@@ -256,7 +248,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
-                        HttpSession session = containerRequest.getSession(false);
                         if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
                             requestContext.setCmsRequest(true);
                             session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, resolvedMount.getMount().getIdentifier());
