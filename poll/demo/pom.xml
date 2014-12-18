@@ -24,7 +24,6 @@
 
   <name>Hippo Plugin Poll Demo</name>
   <description>Hippo Plugin Poll Demo</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-poll-demo</artifactId>
   <version>1.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -37,8 +36,7 @@
 
   <properties>
 
-    <jstl.version>1.1.2</jstl.version>
-    <taglibs.version>1.1.2</taglibs.version>
+    <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
     <junit.version>4.10</junit.version>
     <freemarker.version>2.3.18</freemarker.version>
@@ -63,15 +61,15 @@
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${jstl.version}</version>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-spec</artifactId>
+        <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
 
       <dependency>
-        <groupId>taglibs</groupId>
-        <artifactId>standard</artifactId>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-impl</artifactId>
         <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
