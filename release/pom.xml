@@ -61,6 +61,8 @@
     <hippo.plugin.content-tagging.version>4.09.00-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.content-blocks.version>1.12.00-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.selections.version>2.09.00-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.plugin.dashboard-document-wizard.version>1.06.00-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.resource-bundle-editor.version>1.03.00-SNAPSHOT</hippo.plugin.resource-bundle-editor.version>
 
     <!-- Hippo Forge plugin versions -->
     <forge.content-blocks.version>1.11.02</forge.content-blocks.version>
@@ -685,6 +687,16 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-selections-hst-client</artifactId>
         <version>${hippo.plugin.selections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
+        <version>${hippo.plugin.dashboard-document-wizard.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-resource-bundle-editor</artifactId>
+        <version>${hippo.plugin.resource-bundle-editor.version}</version>
       </dependency>
 
       <!-- Hippo forge plugins -->
