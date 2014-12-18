@@ -50,6 +50,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropBehavior;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropSettings;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
@@ -77,6 +79,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     private Dimension originalImageDimension;
     private Dimension configuredDimension;
     private Dimension thumbnailDimension;
+    private float compressionQuality;
 
     public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
         super(jcrImageNodeModel);
@@ -84,7 +87,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         this.galleryProcessor = galleryProcessor;
         Node thumbnailImageNode = jcrImageNodeModel.getObject();
 
-        HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<String>(this, "region"));
+         HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<String>(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
@@ -110,7 +113,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
         imagePreviewContainer.setOutputMarkupId(true);
         try {
-        	configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
+            configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
             thumbnailDimension = handleZeroValueInDimension(originalImageDimension, configuredDimension);
 
             final double previewCropFactor = determinePreviewScalingFactor(thumbnailDimension.getWidth(), thumbnailDimension.getHeight());
@@ -136,7 +139,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null));
         thumbnailSize.setOutputMarkupId(true);
         add(thumbnailSize);
-               
+
         ImageCropSettings cropSettings = new ImageCropSettings(regionField.getMarkupId(),
                 imagePreviewContainer.getMarkupId(),
                 originalImageDimension,
@@ -154,9 +157,16 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         add(imagePreviewContainer);
 
         add(new Label("preview-description", cropSettings.isPreviewVisible() ?
-                new StringResourceModel("preview-description-enabled", this, null) :
-                new StringResourceModel("preview-description-disabled", this, null))
+                        new StringResourceModel("preview-description-enabled", this, null) :
+                        new StringResourceModel("preview-description-disabled", this, null))
         );
+
+        compressionQuality = 1.0f;
+        try{
+            compressionQuality = galleryProcessor.getScalingParametersMap().get(thumbnailImageNode.getName()).getCompressionQuality();
+        } catch (RepositoryException e) {
+            log.info("Cannot retrieve compression quality.", e);
+        }
     }
 
     /**
@@ -219,7 +229,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             if (writer == null) {
                 throw new GalleryException("Unsupported MIME type for writing: " + mimeType);
             }
-            
+
             Binary binary = originalImageNode.getProperty(JcrConstants.JCR_DATA).getBinary();
             MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(binary.getStream());
             reader.setInput(imageInputStream);
@@ -235,12 +245,29 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                 hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
                 highQuality = false;
             }
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height, 
+            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height,
                     (int) dimension.getWidth(), (int) dimension.getHeight(), hints, highQuality);
-            ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail);
+            ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
+
+            //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
+            InputStream stored = new ByteArrayInputStream(bytes.toByteArray());
+            final ScalingParameters parameters = galleryProcessor.getScalingParametersMap().get(getModelObject().getName());
+            if (parameters != null) {
+                try {
+                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(parameters.getWidth(), parameters.getHeight(),
+                            parameters.getUpscaling(), parameters.getStrategy(), parameters.getCompressionQuality());
+                    scaleOperation.execute(stored, mimeType);
+                    stored = scaleOperation.getScaledData();
+                } catch (GalleryException e) {
+                    log.warn("Scaling failed, using original image instead", e);
+                }
+            } else {
+                log.debug("No scaling parameters specified for {}, using original image", galleryProcessor.getScalingParametersMap().get(getModelObject().getName()));
+            }
+
 
             final Node cropped = getModelObject();
-            cropped.setProperty(JcrConstants.JCR_DATA, newBinaryFromBytes(cropped, bytes));
+            cropped.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(cropped).createBinary(stored));//newBinaryFromBytes(cropped, bytes));
             cropped.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
             cropped.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, dimension.getWidth());
             cropped.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, dimension.getHeight());
@@ -260,24 +287,24 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     /**
      * If height or width in the thumbnailDimension is equal to 0 it is a special case. 
      * The value 0 represents a value that according to the dimension of the original image.
-     *  
+     *
      * With this function a new dimension is created according to the original dimension
-     * 
+     *
      * @param originalDimension dimension of the original image
      * @param thumbnailDimension dimension of the thumbnail image
      * @return scaled dimension based on width or height value
      */
     private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
         Dimension normalized = new Dimension(thumbnailDimension);
-        if(thumbnailDimension.height == 0) {            	
-        	int height = (int) ((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());             	
-        	normalized.setSize(thumbnailDimension.width, height);
-        }            
+        if(thumbnailDimension.height == 0) {
+            int height = (int) ((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
+            normalized.setSize(thumbnailDimension.width, height);
+        }
         if(thumbnailDimension.width == 0) {
-        	int width = (int) ((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
+            int width = (int) ((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
             normalized.setSize(width, thumbnailDimension.height);
         }
-        return normalized;    	
+        return normalized;
     }
 
     private Binary newBinaryFromBytes(final Node node, final ByteArrayOutputStream baos) throws RepositoryException {

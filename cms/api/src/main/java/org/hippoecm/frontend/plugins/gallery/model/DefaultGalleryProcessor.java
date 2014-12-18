@@ -25,7 +25,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -44,6 +46,7 @@ import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +66,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
 
     private int thumbnailSize = DEFAULT_THUMBNAIL_SIZE;
 
-    public void setThumbnailSize(int thumbnailSize) {
+ public void setThumbnailSize(int thumbnailSize) {
         this.thumbnailSize = thumbnailSize;
     }
 
@@ -355,5 +358,10 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
     @Override
     public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException {
         return true;
+    }
+
+  @Override
+    public Map<String, ScalingParameters> getScalingParametersMap() {
+        return new HashMap<String, ScalingParameters>();
     }
 }

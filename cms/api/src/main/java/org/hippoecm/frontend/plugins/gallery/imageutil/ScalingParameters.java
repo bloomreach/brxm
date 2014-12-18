@@ -13,11 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery.processor;
+package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.Serializable;
-
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
 
 /**
  * Parameters for a scaling operation: the width and height of the bounding box, and whether to do
