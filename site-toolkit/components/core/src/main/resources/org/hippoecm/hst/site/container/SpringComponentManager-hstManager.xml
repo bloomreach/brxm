@@ -24,10 +24,6 @@
     <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry"
-        class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl"/>
-
-
   <bean id="hstModelMutex" class="java.lang.Object"/>
 
   <bean id="hstEventsCollector" class="org.hippoecm.hst.configuration.cache.HstEventsCollector">
