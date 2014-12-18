@@ -122,8 +122,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
      */
     private String defaultContextPath = null;
     private boolean showPort = true;
-    private String[] prefixExclusions;
-    private String[] suffixExclusions;
 
     /**
      * the cms preview prefix : The prefix all URLs when accessed through the CMS
@@ -217,8 +215,15 @@ public class VirtualHostsService implements MutableVirtualHosts {
             channelMngrSitesNodeName = sites;
         }
         showPort = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
-        prefixExclusions = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
-        suffixExclusions = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
+
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS)) {
+            logUnusedExclusionsProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
+        }
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS)) {
+            logUnusedExclusionsProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
+        }
+
+
         scheme = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
         locale = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         homepage = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
@@ -336,23 +341,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     public boolean isExcluded(String pathInfo) {
-        // test prefix
-        if (prefixExclusions != null && prefixExclusions.length != 0) {
-            for(String excludePrefix : prefixExclusions) {
-                if(pathInfo.startsWith(excludePrefix)) {
-                    return true;
-                }
-            }
-        }
-
-        // test suffix
-        if (suffixExclusions != null && suffixExclusions.length != 0) {
-            for(String excludeSuffix : suffixExclusions) {
-                if(pathInfo.endsWith(excludeSuffix)) {
-                    return true;
-                }
-            }
-        }
         return hstManager.isExcludedByHstFilterInitParameter(pathInfo);
     }
 
@@ -1088,5 +1076,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
         preview.setContextPath(channel.getContextPath());
         preview.setHostname(channel.getHostname());
         preview.setUrl(channel.getUrl());
+    }
+
+    private void logUnusedExclusionsProperty(String property) {
+        log.warn("Property '{}' not used any more. Remove it from hst:hosts node. Use a (hst:default) sitemap item to account for prefixes/suffixes " +
+                "that need special handling or use hst-config.properties to set comma separated list for filter.prefix.exclusions or " +
+                "filter.suffix.exclusions.", property);
     }
 }

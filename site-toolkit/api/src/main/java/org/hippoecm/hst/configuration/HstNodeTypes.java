@@ -126,7 +126,17 @@ public interface HstNodeTypes {
     String SITEMENUITEM_PROPERTY_MOUNTALIAS = "hst:mountalias";
     String SITEMENUITEM_PROPERTY_ROLES = "hst:roles";
 
+    /**
+     * @deprecated Not used since 7.10 (HST 2.30.00). Use a (hst:default) sitemap item to account
+     * for prefixes/suffixes that need special handling.
+     */
+    @Deprecated
     String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
+    /**
+     * @deprecated Not used since 7.10 (HST 2.30.00). Use a (hst:default) sitemap item to account
+     * for prefixes/suffixes that need special handling.
+     */
+    @Deprecated
     String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
     String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
     String VIRTUALHOSTS_PROPERTY_SCHEME = "hst:scheme";
