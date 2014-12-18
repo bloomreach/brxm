@@ -58,8 +58,6 @@ public class TestMockHstRequestContext {
         HstContainerURL baseURL = EasyMock.createNiceMock(HstContainerURL.class);
         MockBeanTestHelper.verifyReadWriteProperty(bean, "baseURL", baseURL);
         
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "contextNamespace", "test-contextNamespace");
-        
         HstURLFactory urlFactory = EasyMock.createNiceMock(HstURLFactory.class);
         MockBeanTestHelper.verifyReadWriteProperty(bean, "URLFactory", urlFactory);
         
