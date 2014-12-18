@@ -2,7 +2,6 @@
 /LICENSE -text
 bootstrap/configuration/pom.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml svneol=native#text/plain
-bootstrap/configuration/src/main/resources/configuration/modules/eventlogcleanup-module.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/queries/templates/new-events-document.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/queries/templates/new-events-folder.xml svneol=native#text/plain
 bootstrap/configuration/src/main/resources/configuration/queries/templates/new-news-document.xml svneol=native#text/plain
