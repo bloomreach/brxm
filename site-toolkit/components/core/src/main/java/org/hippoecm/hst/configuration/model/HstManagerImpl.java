@@ -130,11 +130,15 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public void setCmsPreviewPrefix(String cmsPreviewPrefix) {
         this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
-    
+
+    /** @deprecated Since CMS 7.10, HST 2.30.00.
+    */
+    @Deprecated
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
     }
 
+    @Deprecated
     public HstURLFactory getUrlFactory() {
         return this.urlFactory;
     }
@@ -159,11 +163,19 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public void addHstConfigurationAugmenter(HstConfigurationAugmenter augmenter) {
         hstConfigurationAugmenters.add(augmenter);
     }
-    
+
+    /**
+     * @deprecated since CMS 7.10, HST 2.30.00
+     */
+    @Deprecated
     public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
         this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
     }
-    
+
+    /**
+     * @deprecated since CMS 7.10, HST 2.30.00
+     */
+    @Deprecated
     public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {
         return siteMapItemHandlerFactory;
     } 

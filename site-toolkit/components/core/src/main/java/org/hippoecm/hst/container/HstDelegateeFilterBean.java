@@ -37,6 +37,7 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
@@ -87,6 +88,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private HstRequestProcessor requestProcessor;
 
+    private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
+
+    private HstURLFactory urlFactory;
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -98,6 +103,14 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setHstRequestContextComponent(HstRequestContextComponent requestContextComponent) {
         this.requestContextComponent = requestContextComponent;
+    }
+
+    public void setUrlFactory(HstURLFactory urlFactory) {
+        this.urlFactory = urlFactory;
+    }
+
+    public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
+        this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
     }
 
     public void setMountDecorator(MountDecorator mountDecorator) {
@@ -139,8 +152,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         Task rootTask = null;
 
         try {
-            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstManager.getSiteMapItemHandlerFactory();
-
             // Sets up the container request wrapper
             HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
 
@@ -499,7 +510,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         HstContainerURL hstContainerURL = requestContext.getBaseURL();
 
         if (hstContainerURL == null) {
-            hstContainerURL = hstSitesManager.getUrlFactory().getContainerURLProvider().parseURL(containerRequest, response, mount);
+            hstContainerURL = urlFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
             requestContext.setBaseURL(hstContainerURL);
         }
 
@@ -604,7 +615,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
             requestContext.clearObjectAndQueryManagers();
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-            requestContext.setBaseURL(hstSitesManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
+            requestContext.setBaseURL(urlFactory.getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
             processResolvedSiteMapItem(req, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true);
         }
@@ -653,4 +664,5 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
         return newResolvedSiteMapItem;
     }
+
 }

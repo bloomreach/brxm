@@ -43,7 +43,10 @@ public interface HstManager {
 
     /**
      * @return the HstURLFactory
+     * @deprecated Since CMS 7.10, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
+     * can be fetched through  the HST Spring Component Manager
      */
+    @Deprecated
     HstURLFactory getUrlFactory();
     
     /**
@@ -55,7 +58,10 @@ public interface HstManager {
     
     /**
      * @return the siteMapItemHandler factory which can create {@link HstSiteMapItemHandler} instances
+     * @deprecated Since CMS 7.10, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
+     * can be fetched through  the HST Spring Component Manager
      */
+    @Deprecated
     HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory();
 
     /**
