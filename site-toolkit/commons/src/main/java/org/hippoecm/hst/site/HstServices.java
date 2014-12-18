@@ -65,7 +65,10 @@ public class HstServices {
     
     /**
      * @return Returns the {@link HstRequestProcessor} component to serve requests.
+     * @deprecated since CMS 7.10 (hst 2.30). If needed, use
+     * {@link HstServices#getComponentManager() componentManager.getComponent(HstRequestProcessor.class.getName()}
      */
+    @Deprecated
     public static HstRequestProcessor getRequestProcessor() {
         return componentManager.getComponent(HstRequestProcessor.class.getName());
     }
