@@ -37,7 +37,9 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     public static final String[] JQUERY_FILEUPLOAD_CSS={
-            "css/jquery.fileupload-ui.css"
+            "css/jquery.fileupload.css",
+            "css/jquery.fileupload-ui.css",
+            "css/jquery.fileupload-ui-hippo.css"
     };
 
     public static final String[] JQUERY_FILEUPLOAD_SCRIPTS={

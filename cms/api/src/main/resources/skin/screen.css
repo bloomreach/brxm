@@ -1880,6 +1880,10 @@ div.wicket-modal div.wicket-tree {
   background-image: url("images/icons/edit-delete-16.png")
 }
 
+.alert-16 {
+  background-image: url("images/icons/alert-16.png")
+}
+
 .delete-inline-16 {
   background-image: url("images/icons/delete-inline-16.png")
 }
