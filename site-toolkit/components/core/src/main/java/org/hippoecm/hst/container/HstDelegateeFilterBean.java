@@ -75,8 +75,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private ServletContext servletContext;
 
-    private String contextNamespace;
-
     private HstContainerConfig requestContainerConfig;
 
     private HstManager hstManager;
@@ -92,10 +90,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
-    }
-
-    public void setContextNamespace(String contextNamespace) {
-        this.contextNamespace = contextNamespace;
     }
 
     public void setHstManager(HstManager hstManager) {
@@ -221,9 +215,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             if (requestContext == null) {
                 requestContext = requestContextComponent.create();
-                if (contextNamespace != null) {
-                    requestContext.setContextNamespace(contextNamespace);
-                }
                 containerRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
             }
             requestContext.setServletContext(servletContext);
