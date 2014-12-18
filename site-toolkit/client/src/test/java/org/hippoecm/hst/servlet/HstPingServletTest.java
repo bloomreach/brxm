@@ -26,8 +26,6 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;

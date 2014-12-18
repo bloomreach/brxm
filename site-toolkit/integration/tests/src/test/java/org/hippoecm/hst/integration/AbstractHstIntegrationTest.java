@@ -27,7 +27,6 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.jackrabbit.spi.Event;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -38,6 +37,8 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 public class AbstractHstIntegrationTest {
 
@@ -59,8 +60,10 @@ public class AbstractHstIntegrationTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site");
+        ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
+                .setServletContext(servletContext);
 
         // register hst config changes listener
         localSession = createLocalSession(new SimpleCredentials("admin", "admin".toCharArray()));

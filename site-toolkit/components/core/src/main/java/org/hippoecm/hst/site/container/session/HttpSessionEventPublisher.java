@@ -20,7 +20,6 @@ import java.util.EventObject;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -76,14 +75,5 @@ public class HttpSessionEventPublisher implements HttpSessionListener {
         log.debug("Publishing event object to component manager(s): {}", eventObject);
 
         containerComponentManager.publishEvent(eventObject);
-
-        ComponentManager clientComponentManager = HstFilter.getClientComponentManager(event.getSession().getServletContext());
-
-        if (clientComponentManager == null) {
-            log.debug("ClientComponentManager not found. Skips session created event publishing to clientComponentManager: {}", eventObject);
-            return;
-        }
-
-        clientComponentManager.publishEvent(eventObject);
     }
 }

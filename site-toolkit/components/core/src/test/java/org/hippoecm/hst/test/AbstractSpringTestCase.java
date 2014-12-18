@@ -24,7 +24,6 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -45,6 +44,8 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -58,7 +59,6 @@ import static org.easymock.EasyMock.replay;
  *
  * </p>
  *
- * @version $Id$
  *
  */
 public abstract class AbstractSpringTestCase
@@ -76,8 +76,10 @@ public abstract class AbstractSpringTestCase
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
         final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site");
         if (hstManager != null) {
-            ((MutableHstManager) hstManager).setContextPath("/site");
+            ((ServletContextAware) hstManager).setServletContext(servletContext);
         }
     }
 

@@ -22,14 +22,12 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,21 +95,6 @@ public class HstTagSupport extends TagSupport {
      */
     protected boolean isPreview(final HstRequest request) {
         return request.getRequestContext().isPreview();
-    }
-    
-    /**
-     * Get the default Spring configured client component manager.
-     * @deprecated since 2.28.00 client component manager should not be used any more. Instead use the core
-     * {@link org.hippoecm.hst.site.HstServices#getComponentManager()}
-     */
-    @Deprecated
-    protected ComponentManager getDefaultClientComponentManager() {
-        logger.warn("Do not use deprecated clientComponentManager any more but core HstServices#getComponentManager()");
-        ComponentManager clientComponentManager = HstFilter.getClientComponentManager(pageContext.getServletContext());
-        if(clientComponentManager == null) {
-            logger.warn("Cannot get a client component manager (although deprecated) from servlet context for attribute name '{}'", HstFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
-        }
-        return clientComponentManager;
     }
 
     /**

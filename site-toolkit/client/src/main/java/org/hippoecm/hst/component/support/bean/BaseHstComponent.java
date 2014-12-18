@@ -26,7 +26,6 @@ import javax.servlet.ServletContext;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -41,7 +40,6 @@ import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -388,23 +386,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectBeanManager getObjectBeanManager(HstRequest request) {
        return request.getRequestContext().getObjectBeanManager();
     }
-    
-    /**
-     * This returns the client ComponentManager if one is configured with its default name. If set on the context with a different
-     * attribute name, you need to fetch it yourself with a different attr name
-     * @return the client ComponentManager or <code>null</code> if none configured 
-     * @deprecated since 2.28.00 client component manager should not be used any more. Instead use the core
-     * {@link org.hippoecm.hst.site.HstServices#getComponentManager()}
-     */
-    @Deprecated
-    public ComponentManager getDefaultClientComponentManager(){
-        ComponentManager clientComponentManager = HstFilter.getClientComponentManager(servletContext);
-        if(clientComponentManager == null) {
-            log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
-        }
-        return  clientComponentManager;
-    }
-    
+
     /**
      * <p>
      * Facility method for sending a redirect to a sitemap path. You do not have to take into account the context path or {@link Mount} path

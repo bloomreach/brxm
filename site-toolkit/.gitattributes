@@ -30,7 +30,6 @@ api/src/main/java/org/hippoecm/hst/configuration/internal/ContextualizableMount.
 api/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationAugmenter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstManager.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstNode.java -text svneol=unset#text/plain
-api/src/main/java/org/hippoecm/hst/configuration/model/MutableHstManager.java -text
 api/src/main/java/org/hippoecm/hst/configuration/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/site/HstSite.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/site/package-info.java -text svneol=unset#text/plain
@@ -454,6 +453,7 @@ client/src/test/resources/org/hippoecm/hst/component/support/bean/TestBaseHstCom
 client/src/test/resources/org/hippoecm/hst/utils/TestMessageUtils.properties -text
 commons/pom.xml svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/cache/NOOPHstCache.java -text
+commons/src/main/java/org/hippoecm/hst/container/DelegatingFilter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/container/HstContainerConfigImpl.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstContainerRequestImpl.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstFilter.java svneol=native#text/plain
@@ -707,6 +707,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-content-beans.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-esi.xml -text
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-fitlerDelegatee.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain

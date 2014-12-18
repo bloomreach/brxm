@@ -30,7 +30,6 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -58,6 +57,8 @@ import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 public class AbstractPageComposerTest {
 
@@ -80,8 +81,10 @@ public class AbstractPageComposerTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site");
         this.hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        ((MutableHstManager)hstManager).setContextPath("/site");
+        ((ServletContextAware)hstManager).setServletContext(servletContext);
         this.siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");

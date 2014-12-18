@@ -18,13 +18,14 @@ package org.hippoecm.hst.configuration.channel;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -52,8 +53,10 @@ public class ChannelManagerOtherContextPathIT extends AbstractTestConfigurations
     public void channels_for_current_contextpath_slashsite2_only_are_loaded() throws Exception {
         // now change the contextpath to site2: Now only 'intranettestchannel' is expected to be part of the channels
 
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site2");
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site2");
+        ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
+                .setServletContext(servletContext);
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertFalse("testchannel should not be part of channels since has wrong contextpath",
                 channels.containsKey("testchannel"));
