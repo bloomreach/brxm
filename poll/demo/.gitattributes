@@ -8,7 +8,6 @@ conf/context.xml svneol=native#text/plain
 conf/log4j-dev.xml svneol=native#text/plain
 conf/log4j-prod.xml svneol=native#text/plain
 content/pom.xml svneol=native#text/plain
-content/src/main/resources/configuration/forms/formdata-domain.xml svneol=native#text/plain
 content/src/main/resources/configuration/forms/formdata.xml svneol=native#text/plain
 content/src/main/resources/configuration/modules/autoexport-module.xml svneol=native#text/plain
 content/src/main/resources/configuration/queries/templates/new-subsite/poll-demo-subsite.xml svneol=native#text/plain

@@ -713,21 +713,6 @@
       <sv:value>33000.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="polldemo-formdata-domain">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>configuration/forms/formdata-domain.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:domains</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>33000.1</sv:value>
-    </sv:property>
-  </sv:node>
-
   <!-- Security and default available users -->
   <sv:node sv:name="polldemo-user-editor">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
