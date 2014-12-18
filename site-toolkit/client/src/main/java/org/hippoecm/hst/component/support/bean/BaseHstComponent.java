@@ -175,13 +175,8 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return The public request parameter for parameterName. If there are multiple values, the first one is returned. If no value, <code>null</code> is returned
      */
     public String getPublicRequestParameter(HstRequest request, String parameterName) {
-        String contextNamespaceReference = request.getRequestContext().getContextNamespace();
-        
-        if (contextNamespaceReference == null) {
-            contextNamespaceReference = "";
-        }
-        
-        Map<String, String []> namespaceLessParameters = request.getParameterMap(contextNamespaceReference);
+
+        Map<String, String []> namespaceLessParameters = request.getParameterMap("");
         String [] paramValues = namespaceLessParameters.get(parameterName);
         
         if (paramValues != null && paramValues.length > 0) {
@@ -199,13 +194,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return The public request parameters String array for parameterName. If no values for parameterName found, <code>new String[0]</code> is returned
      */
     public String[] getPublicRequestParameters(HstRequest request, String parameterName) {
-        String contextNamespaceReference = request.getRequestContext().getContextNamespace();
-        
-        if (contextNamespaceReference == null) {
-            contextNamespaceReference = "";
-        }
-        
-        Map<String, String []> namespaceLessParameters = request.getParameterMap(contextNamespaceReference);
+        Map<String, String []> namespaceLessParameters = request.getParameterMap("");
         String [] paramValues = namespaceLessParameters.get(parameterName);
         
         if (paramValues != null && paramValues.length > 0) {
