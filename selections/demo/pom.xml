@@ -25,7 +25,6 @@
 
   <name>Hippo Plugin Selections Demo Project</name>
   <description>Hippo Plugin Selections Demo Project</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-selections-demo</artifactId>
   <version>2.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -37,8 +36,7 @@
   </scm>
 
   <properties>
-    <jstl.version>1.1.2</jstl.version>
-    <taglibs.version>1.1.2</taglibs.version>
+    <taglibs.version>1.2.1</taglibs.version>
 
     <commons.lang.version>2.5</commons.lang.version>
     <junit.version>4.5</junit.version>
@@ -68,15 +66,15 @@
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${jstl.version}</version>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-spec</artifactId>
+        <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
 
       <dependency>
-        <groupId>taglibs</groupId>
-        <artifactId>standard</artifactId>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-impl</artifactId>
         <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>

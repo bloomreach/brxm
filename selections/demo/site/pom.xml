@@ -35,9 +35,13 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <scope>runtime</scope>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-spec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-impl</artifactId>
     </dependency>
 
     <dependency>
@@ -56,12 +60,6 @@
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-client-dependencies</artifactId>
       <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>taglibs</groupId>
-      <artifactId>standard</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
