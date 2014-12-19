@@ -402,7 +402,7 @@
 
 .channel-manager .toolbar .icon {
     text-align: center;
-    height: 37px;
+    height: 36px;
 }
 
 .channel-manager .toolbar .name {
@@ -423,20 +423,20 @@
 
 .channel-manager .toolbar-window .scroll-left {
     left: 0;
-    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat right center;
+    background: url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat center center transparent;
 }
 
 .channel-manager .toolbar-window .scroll-right {
     right: 0;
-    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat left center;
-}
-
-.channel-manager .toolbar-window .scroll-right:hover {
-    background-color: #d3d3d3;
+    background: url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat center center transparent;
 }
 
 .channel-manager .toolbar-window .scroll-left:hover {
-    background-color: #d3d3d3;
+    background: url(templatecomposer/component-toolbar-arrow-left-hover.svg) no-repeat center center transparent;
+}
+
+.channel-manager .toolbar-window .scroll-right:hover {
+    background: url(templatecomposer/component-toolbar-arrow-right-hover.svg) no-repeat center center transparent;
 }
 
 .channel-manager .x-grid3-cell-inner a {
