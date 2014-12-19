@@ -45,7 +45,6 @@ import org.apache.wicket.util.upload.DiskFileItemFactory;
 import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +89,7 @@ public abstract class FileUploadWidget extends Panel {
                     @Override
                     public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
                         FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
-                        return new MagicMimeTypeFileItem(item);
+                        return new TemporaryFileItem(item);
                     }
                 };
 
@@ -115,6 +114,9 @@ public abstract class FileUploadWidget extends Panel {
                                 log.debug("Uploading file '{}' has some violation: {}", file.getName(),
                                         StringUtils.join(fileUploadInfo.getErrorMessages().toArray()), e);
                             }
+                        } finally {
+                            // remove from cache
+                            file.delete();
                         }
                         // increase file counter after processed a file
                         increaseFileUploadingCounter();

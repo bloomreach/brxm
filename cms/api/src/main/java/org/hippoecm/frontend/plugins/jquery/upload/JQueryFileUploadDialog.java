@@ -128,19 +128,14 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
         }
 
         IValidationResult result = validator.getValidationResult();
-        try{
-            if (result.isValid()){
-                handleFileUpload(fileUpload);
-            } else {
-                List<String> errors = new ArrayList<>();
-                for(Violation violation : result.getViolations()){
-                    errors.add(violation.getMessage().getObject());
-                }
-                throw new FileUploadViolationException(errors);
+        if (result.isValid()){
+            handleFileUpload(fileUpload);
+        } else {
+            List<String> errors = new ArrayList<>();
+            for(Violation violation : result.getViolations()){
+                errors.add(violation.getMessage().getObject());
             }
-        }finally {
-            // remove from cache
-            fileUpload.delete();
+            throw new FileUploadViolationException(errors);
         }
     }
 
