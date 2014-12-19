@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
@@ -114,18 +115,18 @@ public class ProjectResource {
             response = MessageRestful.class)
     @POST
     @Path("/settings")
-    public MessageRestful saveProjectSettings(final ProjectSettings projectSettings) {
+    public MessageRestful saveProjectSettings(final ProjectSettingsBean projectSettings) {
         // Remove empty plugin repository entries
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
+        final Set<String> validatedRepositories = new HashSet<>();
         if (pluginRepositories != null) {
-            final Iterator<String> iterator = pluginRepositories.iterator();
             for (String repo : pluginRepositories) {
-                if (Strings.isNullOrEmpty(repo)) {
-                    iterator.remove();
+                if (!Strings.isNullOrEmpty(repo)) {
+                    validatedRepositories.add(repo);
                 }
             }
         }
-
+        projectSettings.setPluginRepositories(validatedRepositories);
         projectSettings.setSetupDone(true);
 
         try {
