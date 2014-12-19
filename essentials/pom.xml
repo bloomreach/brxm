@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.3</version>
+    <version>7.9.4</version>
   </parent>
 
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <artifactId>hippo-essentials</artifactId>
-  <version>1.02.06-SNAPSHOT</version>
+  <version>1.02.07-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -36,17 +36,8 @@
     <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
 
     <!--***START temporary override of versions*** -->
-
-    <!-- These must stay in line with the overrides in the Essentials archetype
-         in order to avoid duplicate JARs in the Essentials WAR.
-         See /home/tjeger/Projects/essentials/essentials/archetype/website/src/main/resources/archetype-resources/pom.xml
-     -->
-    <hippo.cms.version>2.26.03</hippo.cms.version>
-    <hippo.hst.version>2.28.03</hippo.hst.version>
-    <hippo.repository.version>2.26.03</hippo.repository.version>
-    <maven.plugin.release.version>2.5</maven.plugin.release.version>
-
     <!-- ***END temporary override of versions*** -->
+    <maven.plugin.release.version>2.5</maven.plugin.release.version>
 
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
