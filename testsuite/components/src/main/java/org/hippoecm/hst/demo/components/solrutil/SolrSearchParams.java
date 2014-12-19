@@ -224,11 +224,7 @@ public class SolrSearchParams {
     }
 
     private String getPublicRequestParameter(HstRequest request, String parameterName) {
-        String contextNamespaceReference = request.getRequestContext().getContextNamespace();
-        if (contextNamespaceReference == null) {
-            contextNamespaceReference = "";
-        }
-        Map<String, String []> namespaceLessParameters = request.getParameterMap(contextNamespaceReference);
+        Map<String, String []> namespaceLessParameters = request.getParameterMap("");
         String [] paramValues = namespaceLessParameters.get(parameterName);
 
         if (paramValues != null && paramValues.length > 0) {
