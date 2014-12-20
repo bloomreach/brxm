@@ -422,15 +422,15 @@ public class SEOHelperComponentTest {
 		}
     }
 
-    private interface Titled {
+    public interface Titled {
         public String getTitle();
     }
 
-    private interface Descripted {
+    public interface Descripted {
         public String getDescription();
     }
 
-    private interface Keyworded {
+    public interface Keyworded {
         public String getKeywords();
     }
 }
