@@ -67,6 +67,7 @@
     <hippo.plugin.poll.version>1.09.00-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>2.11.00-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.robotstxt.version>1.09.00-SNAPSHOT</hippo.plugin.robotstxt.version>
+    <hippo.plugin.seo-support.version>1.02.00-SNAPSHOT</hippo.plugin.seo-support.version>
 
     <!-- Hippo Forge plugin versions -->
     <forge.content-blocks.version>1.11.02</forge.content-blocks.version>
@@ -731,6 +732,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-robotstxt-hst-client</artifactId>
         <version>${hippo.plugin.robotstxt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-seo-support</artifactId>
+        <version>${hippo.plugin.seo-support.version}</version>
       </dependency>
 
       <!-- Hippo forge plugins -->
