@@ -41,10 +41,6 @@
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
-    <junit.version>4.10</junit.version>
-    <easymock.version>3.1</easymock.version>
-     
-    <repo.bootstrap>true</repo.bootstrap>
   </properties>
 
   <repositories>
@@ -105,20 +101,6 @@
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${freemarker.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>${easymock.version}</version>
-        <scope>test</scope>
       </dependency>
 
     </dependencies>
