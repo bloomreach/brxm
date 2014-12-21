@@ -68,6 +68,7 @@
     <hippo.plugin.relateddocs.version>2.11.00-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.robotstxt.version>1.09.00-SNAPSHOT</hippo.plugin.robotstxt.version>
     <hippo.plugin.seo-support.version>1.02.00-SNAPSHOT</hippo.plugin.seo-support.version>
+    <hippo.plugin.sitemap.version>1.07.00-SNAPSHOT</hippo.plugin.sitemap.version>
 
     <!-- Hippo Forge plugin versions -->
     <forge.content-blocks.version>1.11.02</forge.content-blocks.version>
@@ -737,6 +738,16 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-seo-support</artifactId>
         <version>${hippo.plugin.seo-support.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-sitemap-content</artifactId>
+        <version>${hippo.plugin.sitemap.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-sitemap-component</artifactId>
+        <version>${hippo.plugin.sitemap.version}</version>
       </dependency>
 
       <!-- Hippo forge plugins -->
