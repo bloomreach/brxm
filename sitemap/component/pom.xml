@@ -17,14 +17,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.onehippo.forge.sitemap</groupId>
-    <artifactId>sitemap</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-sitemap</artifactId>
     <version>1.07.00-SNAPSHOT</version>
   </parent>
-  <name>Hippo Forge Sitemap HST Component</name>
-  <description>Hippo Forge Sitemap HST Component</description>
-  <artifactId>sitemap-component</artifactId>
-  <packaging>jar</packaging>
+  <name>Hippo Plugin Sitemap Component</name>
+  <description>Hippo Plugin Sitemap Component</description>
+  <artifactId>hippo-plugin-sitemap-component</artifactId>
+  
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
@@ -70,15 +70,6 @@
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-jaxrs</artifactId>
       <version>${hippo.hst.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Warning: Sun/Oracle specific (provided) dependency: assumes com.sun.xml.bind.marshaller.CharacterEscapeHandler
-         is available on the classpath (from the rt.jar), which is Sun/Oracle Java specific -->
-    <!-- Include a newer version of the JAXB implementation, so that namespace prefixes are propertly rendered -->
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>${com-sun-jaxb-impl.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

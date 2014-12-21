@@ -73,7 +73,7 @@ public class SitemapIndexGenerator {
         HippoBean scope = assetContentRoot.getBean(siteMapFolder);
         List<HippoBean> sitemapAssets = scope.getChildBeans("hippogallery:exampleAssetSet");
         for (HippoBean assetBean : sitemapAssets) {
-            HstLink sitemapLink = linkCreator.create(assetBean.getCanonicalBean(), requestContext);
+            HstLink sitemapLink = linkCreator.create((HippoBean)assetBean.getCanonicalBean(), requestContext);
             rewriteAssetLink(sitemapLink, assetUrlPrefix);
             String sitemapLinkUrl = sitemapLink.toUrlForm(requestContext, true);
             TSitemap tSitemap = createSitemapIndexItem(sitemapLinkUrl);

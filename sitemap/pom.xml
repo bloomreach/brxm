@@ -20,116 +20,53 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
+    <version>27-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Forge Sitemap Component</name>
-  <description>Hippo Forge Sitemap Component</description>
-  <groupId>org.onehippo.forge.sitemap</groupId>
-  <artifactId>sitemap</artifactId>
+  <name>Hippo Plugin Sitemap</name>
+  <description>Hippo Plugin Sitemap</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-sitemap</artifactId>
   <packaging>pom</packaging>
   <version>1.07.00-SNAPSHOT</version>
 
   <inceptionYear>2009</inceptionYear>
-  <url>https://forge.onehippo.org/gf/project/sitemap</url>
+
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitempa/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</url>
+  </scm>
 
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
-    <notice.project.name>Hippo Forge Sitemap Component</notice.project.name>
+    <notice.project.name>Hippo Plugin Sitemap</notice.project.name>
 
-    <hippo.hst.version>2.28.02</hippo.hst.version>
-    <hippo.repository.version>2.26.01</hippo.repository.version>
-
-    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
-    <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
+    <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
 
     <commons-compress.version>1.4.1</commons-compress.version>
-
     <jaxb-api.version>2.1</jaxb-api.version>
-    <!-- Warning! hard Sun/Oracle specific implementation dependency -->
-    <com-sun-jaxb-impl.version>2.1.13</com-sun-jaxb-impl.version>
   </properties>
 
-  <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/sitemap/trunk</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/sitemap/trunk</developerConnection>
-    <url>http://sitemap.forge.onehippo.org/</url>
-  </scm>
-
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+  
   <issueManagement>
     <system>Jira</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/10856</url>
   </issueManagement>
-
-  <developers>
-    <developer>
-      <id>ard</id>
-      <name>Ard Schrijvers</name>
-      <email>a.schrijvers@onehippo.com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Project Lead</role>
-        <role>Java Developer</role>
-      </roles>
-      <organizationUrl>http://www.onehippo.com</organizationUrl>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <id>dennis</id>
-      <name>Dennis Dam</name>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
-
-  <modules>
-    <module>component</module>
-    <module>content</module>
-  </modules>
-
-  <dependencies />
-
-  <repositories>
-    <repository>
-      <id>hippo-maven2</id>
-      <name>Hippo Maven 2 Repository</name>
-      <url>http://maven.onehippo.com/maven2</url>
-      <snapshots />
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
-    </repository>
-  </repositories>
-
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>1.0-alpha-6</version>
-      </extension>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <tagBase>https://forge.onehippo.org/svn/sitemap/tags</tagBase>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <profiles>
     <profile>
@@ -158,64 +95,10 @@
       </build>
     </profile>
   </profiles>
-
-  <reporting>
-    <outputDirectory>target/site</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven.plugin.jxr.version}</version>
-        <reportSets>
-          <reportSet>
-            <id>src-xref</id>
-            <reports>
-              <report>jxr</report>
-            </reports>
-          </reportSet>
-          <reportSet>
-            <id>test-xref</id>
-            <reports>
-              <report>test-jxr</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>net.sourceforge.maven-taglib</groupId>
-        <artifactId>maven-taglib-plugin</artifactId>
-        <configuration>
-          <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
-          <title>HST ${project.version} JSP tag</title>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
-  <!-- overwrite mailinglist, removing the repository mailing list from inherited -->
-  <mailingLists>
-    <mailingList>
-      <name>Hippo CMS 7 User Forums</name>
-      <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-      <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-      <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <!-- clear unused elements inherited from hippo-cms7-project pom -->
-  <contributors>
-    <contributor />
-  </contributors>
-  <ciManagement />
+  
+  <modules>
+    <module>component</module>
+    <module>content</module>
+  </modules>
 
 </project>

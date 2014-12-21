@@ -19,7 +19,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.onehippo.forge.sitemap.components.UrlInformationProvider;
 import org.onehippo.forge.sitemap.components.model.ChangeFrequency;
 
