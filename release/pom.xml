@@ -69,6 +69,7 @@
     <hippo.plugin.robotstxt.version>1.09.00-SNAPSHOT</hippo.plugin.robotstxt.version>
     <hippo.plugin.seo-support.version>1.02.00-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>1.07.00-SNAPSHOT</hippo.plugin.sitemap.version>
+    <hippo.plugin.taxonomy.version>1.12.00-SNAPSHOT</hippo.plugin.taxonomy.version>
 
     <!-- Hippo Forge plugin versions -->
     <forge.content-blocks.version>1.11.02</forge.content-blocks.version>
@@ -748,6 +749,31 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-sitemap-component</artifactId>
         <version>${hippo.plugin.sitemap.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-taxonomy-api</artifactId>
+        <version>${hippo.plugin.taxonomy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-taxonomy-addon-frontend</artifactId>
+        <version>${hippo.plugin.taxonomy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-taxonomy-addon-repository</artifactId>
+        <version>${hippo.plugin.taxonomy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-taxonomy-hst-api</artifactId>
+        <version>${hippo.plugin.taxonomy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-taxonomy-hstclient</artifactId>
+        <version>${hippo.plugin.taxonomy.version}</version>
       </dependency>
 
       <!-- Hippo forge plugins -->
