@@ -33,7 +33,7 @@
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitempa/trunk/</connection>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</connection>
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</developerConnection>
     <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</url>
   </scm>

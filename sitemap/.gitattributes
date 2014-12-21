@@ -2,6 +2,7 @@
 /LICENSE -text
 /NOTICE -text
 component/pom.xml svneol=native#text/plain
+component/src/main/appended-resources/META-INF/LICENSE -text
 content/pom.xml svneol=native#text/plain
 content/src/main/resources/component.xml svneol=native#text/plain
 content/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
