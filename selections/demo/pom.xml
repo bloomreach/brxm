@@ -37,14 +37,8 @@
 
   <properties>
     <taglibs.version>1.2.1</taglibs.version>
-
-    <commons.lang.version>2.5</commons.lang.version>
-    <junit.version>4.5</junit.version>
-
-    <freemarker.version>2.3.16</freemarker.version>
+    <commons.lang.version>2.6</commons.lang.version>
     <lib.spring-js.version>2.0.5.RELEASE</lib.spring-js.version>
-
-    <commons-proxy.version>1.0</commons-proxy.version>
   </properties>
 
   <repositories>
@@ -98,33 +92,8 @@
         <version>${lib.spring-js.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>hippo</id>
-      <name>Hippo Maven 2 Repository</name>
-      <url>http://maven.onehippo.org/maven2</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org/</url>
-      <layout>default</layout>
-      <snapshots>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <defaultGoal>package</defaultGoal>
