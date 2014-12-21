@@ -13,17 +13,18 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
- <parent>
-    <groupId>org.onehippo</groupId>
-    <artifactId>taxonomy</artifactId>
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-taxonomy</artifactId>
     <version>1.12.00-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>taxonomy-addon</artifactId>
-  <name>Hippo Taxonomy Addons</name>
-
+  <name>Hippo Plugin Taxonomy Addon</name>
+  <description>Hippo Plugin Taxonomy Addon</description>
+  <artifactId>hippo-plugin-taxonomy-addon</artifactId>
   <packaging>pom</packaging>
 
   <modules>

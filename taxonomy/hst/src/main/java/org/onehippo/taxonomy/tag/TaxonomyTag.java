@@ -20,14 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
+
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.container.HstFilter;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -71,28 +70,17 @@ public class TaxonomyTag extends TagSupport {
         }
         TaxonomyManager taxonomyManager = HstServices.getComponentManager().getComponent(TaxonomyManager.class.getName());
         if (taxonomyManager == null) {
-            ComponentManager deprecatedClientComponentManager = (ComponentManager) this.pageContext.getServletConfig().getServletContext().getAttribute(HstFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
-            if (deprecatedClientComponentManager == null) {
-                log.warn("There is no TaxonomyManager available. Configure this in your Spring configuration");
-                return EVAL_PAGE;
-            }
-            taxonomyManager = deprecatedClientComponentManager.getComponent(TaxonomyManager.class.getName());
-            if (taxonomyManager == null) {
-                log.warn("There is no TaxonomyManager available. Configure this in your Spring configuration");
-                return EVAL_PAGE;
-            } else {
-                log.warn("TaxonomyManager is fetched from the deprecated HST ClientComponentManager. Move the spring configuration " +
-                        "for the taxonomy manager to  hst-assembly.overrides according http://taxonomy.forge.onehippo.org/hst-configuration.html");
-            }
+            log.warn("There is no TaxonomyManager available. Configure this in your Spring configuration");
+            return EVAL_PAGE;
         }
 
-        List<LinkedList<Category>> resolvedTaxonomyItemLists = new ArrayList<LinkedList<Category>>();
+        List<LinkedList<Category>> resolvedTaxonomyItemLists = new ArrayList<>();
       
         for(String taxonomyItemKey : keys) {
             for(Taxonomy taxonomy : taxonomyManager.getTaxonomies().getRootTaxonomies()) {
                 if(taxonomy.getCategoryByKey(taxonomyItemKey) != null) {
                     Category taxonomyItem = taxonomy.getCategoryByKey(taxonomyItemKey);
-                    LinkedList<Category> taxonomyItemList = new LinkedList<Category>(taxonomyItem.getAncestors());
+                    LinkedList<Category> taxonomyItemList = new LinkedList<>(taxonomyItem.getAncestors());
                     
                     taxonomyItemList.addLast(taxonomyItem);
                    

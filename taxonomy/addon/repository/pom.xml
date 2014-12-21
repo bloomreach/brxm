@@ -15,33 +15,15 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.onehippo</groupId>
-    <artifactId>taxonomy-addon</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-taxonomy-addon</artifactId>
     <version>1.12.00-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>taxonomy-addon-repository</artifactId>
-  <name>Hippo Taxonomy Repository Addon</name>
-
-  <dependencies>
-   <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-utilities</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-  </build>
+  <name>Hippo Plugin Taxonomy Addon Repository</name>
+  <description>Hippo Plugin Taxonomy Addon Repository</description>
+  <artifactId>hippo-plugin-taxonomy-addon-repository</artifactId>
 
 </project>
