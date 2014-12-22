@@ -43,9 +43,7 @@
 
                 YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
                     var yuiLayoutWidth = yuiLayout.getWidth(),
-                        iframe = yuiLayout.query('iframe')[0],
-                        scrollBarVisible = iframe.scrollHeight < iframe.contentDocument.body.scrollHeight,
-                        scrollBarWidth = scrollBarVisible ? Ext.getScrollBarWidth() : 0;
+                        scrollBarWidth = self._calculateScrollBarWidth(yuiLayout);
 
                     self.setWidth(yuiLayoutWidth - 60 - scrollBarWidth);
                 }, true);
@@ -60,17 +58,21 @@
         },
 
         show: function() {
-            var self = this,
-                yuiLayout = Ext.get(self.getEl().findParent("div.yui-layout-unit")),
+            var yuiLayout = Ext.get(this.getEl().findParent("div.yui-layout-unit")),
                 yuiLayoutWidth = yuiLayout.getWidth(),
-                iframe = yuiLayout.query('iframe')[0],
-                scrollBarVisible = iframe.scrollHeight < iframe.contentDocument.body.scrollHeight,
-                scrollBarWidth = scrollBarVisible ? Ext.getScrollBarWidth() : 0;
+                scrollBarWidth = this._calculateScrollBarWidth(yuiLayout);
 
-            Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(self, arguments);
-            self.body.update(self.message);
-            self.el.alignTo(Ext.getCmp(self.alignToElementId).getEl(), "tl-bl", [30, 3]);
-            self.setWidth(yuiLayoutWidth - 60 - scrollBarWidth);
+            Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(this, arguments);
+            this.body.update(this.message);
+            this.el.alignTo(Ext.getCmp(this.alignToElementId).getEl(), "tl-bl", [30, 3]);
+            this.setWidth(yuiLayoutWidth - 60 - scrollBarWidth);
+        },
+
+        _calculateScrollBarWidth: function (wrapper) {
+            var iframe = wrapper.query('iframe')[0],
+                scrollBarVisible = iframe.scrollHeight < iframe.contentDocument.body.scrollHeight;
+
+            return scrollBarVisible ? Ext.getScrollBarWidth() : 0;
         }
 
     });
