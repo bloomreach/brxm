@@ -62,7 +62,7 @@
     <hippo.plugin.content-blocks.version>1.12.00-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.selections.version>2.09.00-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.plugin.dashboard-document-wizard.version>1.06.00-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.resource-bundle-editor.version>1.03.00-SNAPSHOT</hippo.plugin.resource-bundle-editor.version>
+    <hippo.plugin.resourcebundle-editor.version>1.03.00-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.gallerypicker.version>1.14.00-SNAPSHOT</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>1.09.00-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>2.11.00-SNAPSHOT</hippo.plugin.relateddocs.version>
@@ -702,8 +702,8 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-resource-bundle-editor</artifactId>
-        <version>${hippo.plugin.resource-bundle-editor.version}</version>
+        <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
+        <version>${hippo.plugin.resourcebundle-editor.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
