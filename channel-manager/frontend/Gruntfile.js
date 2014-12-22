@@ -137,7 +137,7 @@ module.exports = function (grunt) {
             },
 
             channelmanager: {
-                files: ['src/main/java/**/*.{html,js,css,png,svg}'],
+                files: ['src/main/resources/**/*.{html,js,css,png,svg}'],
                 tasks: ['newer:copy:channelmanager']
             }
         },
