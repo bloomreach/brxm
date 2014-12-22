@@ -58,15 +58,15 @@
     <hippo.utilities.version>1.04.00-SNAPSHOT</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.plugin.content-tagging.version>4.09.00-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.content-blocks.version>1.12.00-SNAPSHOT</hippo.plugin.content-blocks.version>
-    <hippo.plugin.selections.version>2.09.00-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.plugin.content-tagging.version>4.09.00-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>1.06.00-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.resourcebundle-editor.version>1.03.00-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.gallerypicker.version>1.14.00-SNAPSHOT</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>1.09.00-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>2.11.00-SNAPSHOT</hippo.plugin.relateddocs.version>
+    <hippo.plugin.resourcebundle-editor.version>1.03.00-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.robotstxt.version>1.09.00-SNAPSHOT</hippo.plugin.robotstxt.version>
+    <hippo.plugin.selections.version>2.09.00-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>1.02.00-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>1.07.00-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>1.12.00-SNAPSHOT</hippo.plugin.taxonomy.version>
@@ -672,38 +672,18 @@
       <!-- Hippo standard plugins -->
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-content-tagging</artifactId>
-        <version>${hippo.plugin.content-tagging.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-content-blocks</artifactId>
         <version>${hippo.plugin.content-blocks.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-selections-addon-repository</artifactId>
-        <version>${hippo.plugin.selections.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-selections-addon-cms</artifactId>
-        <version>${hippo.plugin.selections.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-selections-hst-client</artifactId>
-        <version>${hippo.plugin.selections.version}</version>
+        <artifactId>hippo-plugin-content-tagging</artifactId>
+        <version>${hippo.plugin.content-tagging.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
         <version>${hippo.plugin.dashboard-document-wizard.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
-        <version>${hippo.plugin.resourcebundle-editor.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -727,6 +707,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
+        <version>${hippo.plugin.resourcebundle-editor.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-robotstxt-addon-repository</artifactId>
         <version>${hippo.plugin.robotstxt.version}</version>
       </dependency>
@@ -737,13 +722,23 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-seo-support</artifactId>
-        <version>${hippo.plugin.seo-support.version}</version>
+        <artifactId>hippo-plugin-selections-addon-cms</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-sitemap-content</artifactId>
-        <version>${hippo.plugin.sitemap.version}</version>
+        <artifactId>hippo-plugin-selections-addon-repository</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-selections-hst-client</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-seo-support</artifactId>
+        <version>${hippo.plugin.seo-support.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -752,8 +747,8 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-taxonomy-api</artifactId>
-        <version>${hippo.plugin.taxonomy.version}</version>
+        <artifactId>hippo-plugin-sitemap-content</artifactId>
+        <version>${hippo.plugin.sitemap.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -763,6 +758,11 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-taxonomy-addon-repository</artifactId>
+        <version>${hippo.plugin.taxonomy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-taxonomy-api</artifactId>
         <version>${hippo.plugin.taxonomy.version}</version>
       </dependency>
       <dependency>
