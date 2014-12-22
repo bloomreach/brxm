@@ -63,7 +63,11 @@
           span {
             min-width: 0;
             display: inline-block;
+            line-height: @line-height-computed;
             .truncate();
+
+            // enforce ellipsis in IE10
+            max-width: 90%;
           }
 
           img {
