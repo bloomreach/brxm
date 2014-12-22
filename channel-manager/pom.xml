@@ -185,9 +185,9 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- 3rd-party licenses -->
-                <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
-                <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
-                <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
 
                 <!-- ignore frontend dependencies pulled in by npm -->
                 <exclude>frontend/node_modules/**/*</exclude>
