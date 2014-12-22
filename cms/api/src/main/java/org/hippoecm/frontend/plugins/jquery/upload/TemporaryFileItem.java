@@ -50,7 +50,9 @@ public class TemporaryFileItem extends MagicMimeTypeFileItem {
             }
             for (InputStream is : lstOpeningIS) {
                 try {
-                    is.close();
+                    if (is != null) {
+                        is.close();
+                    }
                 } catch (IOException e) {
                     log.warn("Error closing an InputStream of the temporary file {}", getName(), e);
                 }
@@ -63,13 +65,16 @@ public class TemporaryFileItem extends MagicMimeTypeFileItem {
             }
             for (OutputStream os : lstOpeningOS) {
                 try {
-                    os.close();
+                    if (os != null) {
+                        os.close();
+                    }
                 } catch (IOException e) {
                     log.warn("Error closing an OutputStream of the temporary file {}", getName(), e);
                 }
             }
             lstOpeningOS.clear();
         }
+        super.delete();
     }
 
     @Override
