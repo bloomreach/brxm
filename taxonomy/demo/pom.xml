@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2014 Hippo
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,33 +20,42 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.0</version>
+    <version>7.10.0-SNAPSHOT</version>
   </parent>
 
-  <name>Taxonomy demo</name>
-  <groupId>org.onehippo.forge</groupId>
-  <artifactId>taxonomy-demo</artifactId>
+  <name>Hippo Plugin Taxonomy demo</name>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-taxonomy-demo</artifactId>
   <version>1.12.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <scm>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/taxonomy/demo/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/taxonomy/demo/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/taxonomy/demo/trunk/</url>
+  </scm>
+
   <properties>
-
-    <forge.taxonomy.version>1.11.03-SNAPSHOT</forge.taxonomy.version>
-
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
-
     <junit.version>4.5</junit.version>
-
-    <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
-
     <commons.lang.version>2.6</commons.lang.version>
-    <commons-proxy.version>1.0</commons-proxy.version>
-
     <lib.spring-js.version>2.0.5.RELEASE</lib.spring-js.version>
-    <freemarker.version>2.3.18</freemarker.version>
-
   </properties>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
 
   <dependencyManagement>
 
@@ -108,42 +117,18 @@
 
   </dependencyManagement>
 
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>taxonomy-maven-repo</id>
-      <url>svn:http://forge.onehippo.org/svn/taxonomy/maven2/</url>
-    </repository>
-  </distributionManagement>
-
-  <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/taxonomy/taxonomy-demo/trunk</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/taxonomy/taxonomy-demo/trunk</developerConnection>
-    <url>https://forge.onehippo.org/svn/taxonomy/taxonomy-demo/trunk</url>
-  </scm>
-
-  <repositories>
-    <repository>
-      <id>hippo-maven2</id>
-      <url>http://maven.onehippo.com/maven2/</url>
-      <snapshots />
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2-snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
- </repositories>
-
   <build>
     <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <!-- don't deploy -->
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>
@@ -190,12 +175,31 @@
               </deployables>
               <container>
                 <systemProperties>
-                  <derby.stream.error.file>${project.basedir}/target/derby.log</derby.stream.error.file>
                   <log4j.configuration>file:${project.basedir}/conf/log4j-dev.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
              </container>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- repository content XML -->
+                <exclude>content/src/main/resources/**/*.xml</exclude>
+                <exclude>plugin/src/main/resources/**/*.xml</exclude>
+              </excludes>
             </configuration>
           </plugin>
         </plugins>

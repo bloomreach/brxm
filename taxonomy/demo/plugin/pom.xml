@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2014 Hippo
+  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.forge</groupId>
-    <artifactId>taxonomy-demo</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-plugin-taxonomy-demo</artifactId>
     <version>1.12.00-SNAPSHOT</version>
   </parent>
 
-  <name>Taxonomy Addon Demo Plugin JAR</name>
-  <description>Taxonomy Addon Demo Plugin JAR</description>
-  <artifactId>taxonomy-addon-demo-plugin</artifactId>
+  <name>Hippo Plugin Taxonomy Demo Plugin</name>
+  <description>Hippo Plugin Taxonomy Demo Plugin</description>
+  <artifactId>hippo-plugin-taxonomy-demo-plugin</artifactId>
 
   <dependencies>
 
@@ -36,23 +36,20 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>taxonomy-api</artifactId>
-      <version>${forge.taxonomy.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-taxonomy-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>taxonomy-addon-frontend</artifactId>
-      <version>${forge.taxonomy.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-taxonomy-addon-frontend</artifactId>
       <scope>provided</scope>
     </dependency>
 
   </dependencies>
 
   <build>
-    <defaultGoal>package</defaultGoal>
     <resources>
       <resource>
         <filtering>false</filtering>

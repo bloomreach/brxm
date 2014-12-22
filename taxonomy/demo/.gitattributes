@@ -1,4 +1,6 @@
 * text=auto !eol
+/LICENSE -text
+/NOTICE -text
 cms/pom.xml svneol=native#text/plain
 cms/src/main/resources/log4j.xml svneol=native#text/plain
 cms/src/main/resources/org/hippoecm/frontend/translation/icons/flags/flag-16_gb_cy.png -text svneol=unset#image/png
