@@ -50,9 +50,7 @@ content/src/main/resources/taxonomy-demo-root-en.xml svneol=native#text/plain
 content/src/main/resources/taxonomy-demo-root-fr.xml svneol=native#text/plain
 content/src/main/resources/taxonomy-demo-types.cnd -text
 plugin/pom.xml svneol=native#text/plain
-plugin/src/main/resources/canontextpage-custom-taxonomy-field.xml svneol=native#text/plain
 plugin/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-plugin/src/main/resources/taxonomy-custom-editor.xml svneol=native#text/plain
 plugin/src/main/resources/textpage-custom-taxonomy-field.xml svneol=native#text/plain
 /pom.xml svneol=native#text/plain
 site/pom.xml svneol=native#text/plain
