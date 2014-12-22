@@ -34,7 +34,6 @@
 
 #hippo-channelmanager-breadcrumb.x-toolbar {
     background: transparent;
-    padding: 0 10px;
     border-bottom: none;
 }
 
@@ -72,8 +71,9 @@
 
 /* breadcrumb */
 #hippo-channelmanager-breadcrumb {
-    background: none;
-    float: left;
+    order: 0;
+    flex-shrink: 0;
+    padding: 0;
 }
 
 #hippo-channelmanager-breadcrumb .x-toolbar-left {
@@ -85,6 +85,11 @@
     margin: 0 5px;
     padding-left: 25px;
     background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left {
+    padding: 0 10px;
+    width: auto;
 }
 
 #hippo-channelmanager-breadcrumb .x-toolbar-left .x-toolbar-cell:first-child .x-btn-text {

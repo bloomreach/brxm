@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,7 @@
                 layoutConfig: {
                     pack: 'left'
                 },
-                hidden: true,
-                hideMode: 'visibility'
+                hidden: true
             });
 
             Ext.apply(config, {
@@ -71,11 +70,15 @@
             }, this, {single: true});
 
             this.on('afterrender', function() {
-                // only show the channel manager breacrumb when channel manager is active
+                // only show the channel manager breadcrumb when channel manager is active
                 var perspectiveElement = this.el.findParent(".perspective");
                 if (perspectiveElement) {
                     Ext.EventManager.addListener(perspectiveElement, 'readystatechange', function(event) {
-                        self.toolbar.setVisible(event.active);
+                        if (event.active) {
+                            this._showBreadcrumb();
+                        } else {
+                            this._hideBreadcrumb();
+                        }
                     }, this, { normalized: false });
                 }
             }, this, {single: true});
@@ -122,6 +125,41 @@
             }, this);
 
             Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
+        },
+
+        _hideBreadcrumb: function() {
+            var toolbarEl = this.toolbar.getEl();
+
+            this.toolbarWidth = toolbarEl.getWidth();
+
+            toolbarEl.animate(
+                {
+                    width: { to: 0 }
+                },
+                0.5,
+                function() {
+                    this.toolbar.hide();
+                }
+            );
+        },
+
+        _showBreadcrumb: function() {
+            var toolbarEl;
+
+            this.toolbar.show();
+
+            if (Ext.isDefined(this.toolbarWidth)) {
+                toolbarEl = this.toolbar.getEl();
+                toolbarEl.animate(
+                    {
+                        width: { to: this.toolbarWidth }
+                    },
+                    0.5,
+                    function() {
+                        toolbarEl.setWidth('auto');
+                    }
+                );
+            }
         },
 
         selectCard: function(itemId) {
