@@ -37,12 +37,6 @@
       <artifactId>hippo-repository-dependencies</artifactId>
       <version>${hippo.repository.version}</version>
       <type>pom</type>
-      <exclusions>
-        <exclusion>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-repository-handle-migration</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
