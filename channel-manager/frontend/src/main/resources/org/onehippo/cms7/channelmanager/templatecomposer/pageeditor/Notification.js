@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,9 +39,15 @@
         initComponent: function() {
             var self = this;
             this.on('afterrender', function() {
-                var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
+                var yuiLayout = Ext.get(self.getEl().findParent("div.yui-layout-unit"));
+
                 YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                    self.setWidth(arguments[0].body.w - 60 - Ext.getScrollBarWidth());
+                    var yuiLayoutWidth = yuiLayout.getWidth(),
+                        iframe = yuiLayout.query('iframe')[0],
+                        scrollBarVisible = iframe.scrollHeight < iframe.contentDocument.body.scrollHeight,
+                        scrollBarWidth = scrollBarVisible ? Ext.getScrollBarWidth() : 0;
+
+                    self.setWidth(yuiLayoutWidth - 60 - scrollBarWidth);
                 }, true);
             }, this, {single: true});
 
@@ -55,15 +61,16 @@
 
         show: function() {
             var self = this,
-                yuiLayout = self.getEl().findParent("div.yui-layout-unit");
+                yuiLayout = Ext.get(self.getEl().findParent("div.yui-layout-unit")),
+                yuiLayoutWidth = yuiLayout.getWidth(),
+                iframe = yuiLayout.query('iframe')[0],
+                scrollBarVisible = iframe.scrollHeight < iframe.contentDocument.body.scrollHeight,
+                scrollBarWidth = scrollBarVisible ? Ext.getScrollBarWidth() : 0;
 
             Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(self, arguments);
             self.body.update(self.message);
             self.el.alignTo(Ext.getCmp(self.alignToElementId).getEl(), "tl-bl", [30, 3]);
-
-            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, self, function() {
-                self.setWidth(arguments[0].body.w - 60 - Ext.getScrollBarWidth());
-            }, true);
+            self.setWidth(yuiLayoutWidth - 60 - scrollBarWidth);
         }
 
     });
