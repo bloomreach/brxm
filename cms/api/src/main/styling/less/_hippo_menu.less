@@ -22,7 +22,7 @@
 .hippo-toolbar-menu-item {
   background-color: @hippo-menu-bgcolor;
   min-width: 156px;
-  font-size: 11px;
+  font-size: unit(@hippo-menu-fontsize, px);
 
   li {
     clear: left;
@@ -31,7 +31,15 @@
     .hippo-toolbar-menu-item-button {
       display: block;
       width: auto;
-      padding: 4px 8px 4px 4px;
+      padding: 6px 12px;
+    }
+    
+    &:first-of-type .hippo-toolbar-menu-item-button {
+      padding-top: 12px;
+    }
+
+    &:last-of-type .hippo-toolbar-menu-item-button {
+      padding-bottom: 12px;
     }
 
     // enabled item
@@ -53,10 +61,10 @@
     }
 
     .hippo-toolbar-menu-item-button-icon {
+      display: inline-flex;
       position: relative;
       top: 1px;
-      margin-left: 4px;
-      margin-right: 8px;
+      padding-right: 6px;
     }
 
     .hippo-toolbar-menu-item-button-label {

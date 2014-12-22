@@ -15,7 +15,7 @@
  */
 
 .hippo-editor-top {
-  background-color: @editor-top-bgcolor;
+  background-color: @editor-toolbar-bgcolor;
   
   > .hippo-toolbar > div > .hippo-toolbar-section {
 
@@ -28,14 +28,15 @@
       height: unit(@editor-toolbar-height, px);
       
       &:first-child a {
-        padding-left: 12px;
+        padding-left: 32px;
       }
 
       > span > a {
         color: @editor-toolbar-color;
         text-decoration: none;
-        padding-left: 8px;
-        padding-right: 4px;
+        padding-left: 12px;
+        padding-right: 8px;
+        font-size: unit(@editor-toolbar-fontsize, px);
       }
 
       &.menu-item:hover {
@@ -72,18 +73,22 @@
       // Buttons like 'Edit' & 'Save'
       .menu-action {
         display: block;
-        cursor: pointer;
         height: unit(@editor-toolbar-height, px);
-        padding-left: 8px;
+        
+        > span {
+          float: left;
+          display: inline-flex;
+        }
 
         .menu-action-icon {
           position: relative;
           top: 12px;
+          padding-right: 6px;
         }
 
         .menu-action-text {
           position: relative;
-          top: 10px;
+          top: 12px;
         }
       }
 
@@ -91,31 +96,39 @@
       .hippo-toolbar-section-button {
         display: block;
         height: unit(@editor-toolbar-height, px);
-        text-align: right;
-
         
+        // The dropdown icon has a 3 px space right from the arrow-down, so remove those from the padding-right
+        padding-right: 5px;
+
         > span {
+          float: left;
           position: relative;
-          top: 10px;
-          right: -2px;
+          top: 12px;
+
+          >.menu-action-text {
+            vertical-align: top;
+          }
           
+          // Language dropdown button
           >.menu-action-icon {
+            display: inline-flex;
             position: relative;
-            top: 3px;
-            padding-right: 5px;
+            top: 2px;
+            padding-right: 4px;
           }
         }
 
         > svg {
+          float: left;
           position: relative;
-          top: 14px;
-          right: 2px;
+          top: 15px;
+          left: 1px;
         }
       }
 
       // Dropdown is shown
       .menu-item-active {
-        display: block; // Needed for background color to fill button complete button
+        display: block; // Needed for background color to fill the complete button
         background-color: @editor-toolbar-active-bgcolor;
         color: @editor-toolbar-active-color;
       }
@@ -126,7 +139,6 @@
 
         .hippo-toolbar-menu-item {
           position: absolute;
-          left: 0;
 
           > li {
             padding: 0;
@@ -136,17 +148,6 @@
             }
           }
           
-          a {
-            display: block;
-            width: auto;
-            padding: 4px 8px 4px 4px;
-          }
-
-          .hippo-toolbar-menu-item-button-icon {
-            margin-left: 4px;
-            margin-right: 8px;
-          }
-
           .hippo-toolbar-menu-item-button-label {
             position: relative;
             top: -2px;
@@ -157,11 +158,16 @@
 
     .menu-label-item {
       margin-left: 12px;
-      // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to 14px
-      line-height: 14px;
       color: @editor-toolbar-color;
-      padding-top: 14px;
       white-space: nowrap;
+      font-size: unit(@editor-toolbar-fontsize, px);
+      // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to (font-size - 1)
+      line-height: unit(@editor-toolbar-fontsize - 1, px);
+      
+      .menu-action-text {
+        position: relative;
+        top: 14px;
+      }
     }
   }
 }
