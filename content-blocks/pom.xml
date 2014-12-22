@@ -25,7 +25,7 @@
 
   <inceptionYear>2009</inceptionYear>
 
-  <name>hippo-plugin-content-blocks</name>
+  <name>Hippo Plugin Content Blocks</name>
   <description>Hippo Plugin Content Blocks</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-blocks</artifactId>
