@@ -85,16 +85,7 @@ public abstract class FileUploadWidget extends Panel {
         public void onRequest() {
             ServletWebRequest servletWebRequest = (ServletWebRequest) RequestCycle.get().getRequest();
             try {
-                DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory(Application.get().getResourceSettings().getFileCleaner()) {
-                    @Override
-                    public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
-                        FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
-                        return new TemporaryFileItem(item);
-                    }
-                };
-
-                MultipartServletWebRequest multipartServletWebRequest = servletWebRequest.
-                        newMultipartWebRequest(getMaxSize(), getPage().getId(), diskFileItemFactory);
+                MultipartServletWebRequest multipartServletWebRequest = createMultipartWebRequest(servletWebRequest);
 
                 Map<String, FileUploadInfo> allUploadedFiles = new HashMap<>();
                 // try to upload all files
@@ -126,6 +117,35 @@ public abstract class FileUploadWidget extends Panel {
                 setResponse(servletWebRequest, allUploadedFiles);
             } catch (FileUploadException e) {
                 log.error("Error handling file upload request", e);
+                String responseContent = String.format("{\"error\": \"%s\"}", "Error handling file upload request");
+                setResponse(servletWebRequest, responseContent);
+            }
+        }
+
+        /**
+         * Create a multi-part request containing uploading files that supports disk caching.
+         * @param request
+         * @return the multi-part request or exception thrown if there's any error.
+         * @throws FileUploadException
+         */
+        private MultipartServletWebRequest createMultipartWebRequest(final ServletWebRequest request) throws FileUploadException {
+            DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory(Application.get().getResourceSettings().getFileCleaner()) {
+                @Override
+                public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
+                    FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
+                    return new TemporaryFileItem(item);
+                }
+            };
+
+            try {
+                long contentLength = Long.valueOf(request.getHeader("Content-Length"));
+                if (contentLength > 0) {
+                    return request.newMultipartWebRequest(Bytes.bytes(contentLength), getPage().getId(), diskFileItemFactory);
+                } else {
+                    throw new FileUploadException("Invalid file upload content length");
+                }
+            }catch(java.lang.NumberFormatException e){
+                throw new FileUploadException("Invalid file upload content length", e);
             }
         }
 
@@ -345,10 +365,6 @@ public abstract class FileUploadWidget extends Panel {
         String uploadDoneNotificationUrl = ajaxCallbackDoneBehavior.getCallbackUrl().toString();
         settings.setUploadDoneNotificationUrl(uploadDoneNotificationUrl);
         super.onBeforeRender();
-    }
-
-    private Bytes getMaxSize() {
-        return Bytes.bytes(settings.getMaxFileSize());
     }
 
     protected abstract void onFileUpload(FileItem fileItem) throws FileUploadViolationException;
