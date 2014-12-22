@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-.hippo-editor-top > .hippo-toolbar > div {
+.hippo-editor-top {
+  background-color: @editor-top-bgcolor;
+  
+  > .hippo-toolbar > div > .hippo-toolbar-section {
 
-  > .hippo-toolbar-section {
     display: block;
     float: left;
-
+    height: unit(@editor-toolbar-height, px);
+    
     > li {
       float: left;
       height: unit(@editor-toolbar-height, px);
-
+      
       &:first-child a {
         padding-left: 12px;
       }
 
-      a {
+      > span > a {
+        color: @editor-toolbar-color;
         text-decoration: none;
         padding-left: 8px;
         padding-right: 4px;
@@ -36,25 +40,25 @@
 
       &.menu-item:hover {
         a {
-
           &.menu-action .menu-action-text,
           &.hippo-toolbar-section-button {
             color: @editor-toolbar-hover-color;
+            svg {
+              fill: @editor-toolbar-hover-color;
+            }
+            
             &.menu-item-active {
               color: @editor-toolbar-active-color;
             }
-            &.menu-item-inactive svg {
-              fill: @editor-toolbar-hover-color;
+            &.menu-item-active svg{
+              fill: @editor-toolbar-active-color;
             }
           }
         }
       }
 
-      a.hippo-toolbar-section-button {
-
-        &.menu-item-active {
-          color: @editor-toolbar-active-color;
-        }
+      .menu-item-active {
+        color: @editor-toolbar-active-color;
       }
 
       .menu-item-active svg {
@@ -80,23 +84,21 @@
         .menu-action-text {
           position: relative;
           top: 10px;
-          color: @cool-shale;
         }
       }
 
       // Dropdown buttons like 'Publication'
       .hippo-toolbar-section-button {
-        color: @cool-shale;
         display: block;
         height: unit(@editor-toolbar-height, px);
         text-align: right;
 
-
+        
         > span {
           position: relative;
           top: 10px;
           right: -2px;
-
+          
           >.menu-action-icon {
             position: relative;
             top: 3px;
@@ -128,8 +130,12 @@
 
           > li {
             padding: 0;
+            
+            &:hover a {
+              color: @hippo-menu-enabled-hover-color;
+            }
           }
-
+          
           a {
             display: block;
             width: auto;
@@ -159,13 +165,12 @@
     }
   }
 }
-
 /* Split the dropdown in columns if there are many languages */
 .hippo-toolbar .hippo-toolbar-section {
   div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
   div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
     overflow:hidden;
-
+    
     > li {
       float:left;
       clear: none;
@@ -177,7 +182,7 @@
 
   div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
     width: 320px;
-
+    
     li {
       width: 50%;
     }
@@ -185,7 +190,7 @@
 
   div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
     width: 480px;
-
+    
     li {
       width: 33.333%;
     }

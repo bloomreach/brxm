@@ -38,17 +38,18 @@
     a.hippo-toolbar-menu-item-button {
       white-space: nowrap;
       text-decoration: none;
-      color: @cool-shale;
+      color: @hippo-menu-enabled-color;
+    }
+
+    // enabled item hover
+    &:hover a.hippo-toolbar-menu-item-button {
+      color: @hippo-menu-enabled-hover-color;
+      background-color: @hippo-menu-enabled-hover-bgcolor;
     }
 
     // disabled item
     span.hippo-toolbar-menu-item-button {  
       color: @hippo-menu-disabled-color;
-    }
-
-    &:hover a {
-        background-color: @cool-shale;
-        color: @white;
     }
 
     .hippo-toolbar-menu-item-button-icon {
