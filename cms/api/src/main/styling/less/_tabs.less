@@ -20,62 +20,70 @@
 @tab-width: @document-tab-width;
 @tab-height: @document-tab-height;
 @tab-padding-left: 8;
-@tab-padding-right: 28;
-@tab-padding-top: @tab-height / 2 - 8;
 
 .hippo-tabs-documents {
-  width: auto;
-  position: absolute;
+  width: 100%;
   text-align: left;
   right: 0;
+  order: 1;
+  flex-grow: 2;
 
   ul {
     display: flex;
+    justify-content: flex-end;
 
-    li {
+    > li {
+      flex: 1;
       height: unit(@footer-height, px);
-      display: block;
-      float: left;
-      position: relative;
-      width: unit(@tab-width, px);
+      display: flex;
+      align-items: stretch;
+      max-width: unit(@tab-width, px);
+      min-width: 0;
       border-left: 1px solid @document-tab-border-color;
 
-      .hippo-tabs-documents-tab {
-        display: block;
-        width: unit(@tab-width - @tab-padding-left, px);
-        padding-left: unit(@tab-padding-left, px);
-        float: left;
-        color: @document-tab-title-color;
-        text-decoration: none;
-        white-space: nowrap;
-        user-select: none;
+      > div {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        min-width: 0;
 
-        span {
-          width: unit(@tab-width - @tab-padding-left - @tab-padding-right - 20, px);
-          height: 20px;
-          padding-top: 12px;
-          display: inline-block;
-          .truncate();
+        .hippo-tabs-documents-tab {
+          flex: 1;
+          display: flex;
+          align-items: center;
+
+          min-width: 0;
+          padding-left: unit(@tab-padding-left, px);
+
+          color: @document-tab-title-color;
+          text-decoration: none;
+          white-space: nowrap;
+          user-select: none;
+
+          span {
+            min-width: 0;
+            display: inline-block;
+            .truncate();
+          }
+
+          img {
+            flex: none;
+            min-width: 0;
+            margin-right: 6px;
+          }
         }
 
-        img {
-          margin-right: 3px;
-          vertical-align: top;
-          position: relative;
-          top: 12px;
-        }
-      }
+        .hippo-tabs-documents-close {
+          flex: none;
+          text-decoration: none;
+          width: 16px;
+          height: 16px;
+          margin-left: 2px;
+          margin-right: 8px;
 
-      .hippo-tabs-documents-close {
-        position: absolute;
-        right: 8px;
-        top: 12px;
-        text-decoration: none;
-        width: 15px;
-        height: 15px;
-
-        svg {
-          fill: @document-tab-close-color;
+          svg {
+            fill: @document-tab-close-color;
+          }
         }
       }
     }
