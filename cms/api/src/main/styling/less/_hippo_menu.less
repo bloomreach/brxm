@@ -25,28 +25,30 @@
   font-size: 11px;
 
   li {
-    //display: block;hippo-toolbar-menu-item
     clear: left;
     margin-right: 0;
-    padding: 4px 8px 4px 4px;
 
-    a {
-      color: @cool-shale;
-      white-space: nowrap;
+    .hippo-toolbar-menu-item-button {
+      display: block;
+      width: auto;
+      padding: 4px 8px 4px 4px;
     }
 
-    &:hover {
-      background-color: @cool-shale;
+    // enabled item
+    a.hippo-toolbar-menu-item-button {
+      white-space: nowrap;
+      text-decoration: none;
+      color: @cool-shale;
+    }
 
-      // disabled item
-      span.hippo-toolbar-menu-item-button {
-        color: @white;
-      }
+    // disabled item
+    span.hippo-toolbar-menu-item-button {  
+      color: @hippo-menu-disabled-color;
+    }
 
-      a {
+    &:hover a {
+        background-color: @cool-shale;
         color: @white;
-        text-decoration: none;
-      }
     }
 
     .hippo-toolbar-menu-item-button-icon {
@@ -59,11 +61,6 @@
     .hippo-toolbar-menu-item-button-label {
       position: relative;
       top: -2px;
-    }
-
-    /* disabled menu item */
-    span.hippo-toolbar-menu-item-button {
-      color: @hippo-menu-disabled-color;
     }
   }
 }
