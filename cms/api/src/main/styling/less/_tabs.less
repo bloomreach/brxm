@@ -30,7 +30,7 @@
 
   ul {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: row-reverse;
 
     > li {
       flex: 1;
@@ -39,7 +39,7 @@
       align-items: stretch;
       max-width: unit(@tab-width, px);
       min-width: 0;
-      border-left: 1px solid @document-tab-border-color;
+      border-right: 1px solid @document-tab-border-color;
 
       > div {
         flex: 1;
@@ -103,18 +103,26 @@
       }
     }
 
-    li:last-child {
+    li:first-child {
       border-right: 0;
+    }
+
+    li:last-child {
+      border-left: 1px solid @document-tab-border-color;
     }
 
     .selected:hover,
     .selected {
-      border-left-color: @document-tab-selected-bgcolor;
+      border-right-color: @document-tab-selected-bgcolor;
       background-color: @document-tab-selected-bgcolor;
     }
 
-    .selected + li {
+    .selected:last-child {
       border-left-color: @footer-bgcolor;
+    }
+
+    .selected + li {
+      border-right-color: @footer-bgcolor;
     }
   }
 }
