@@ -188,7 +188,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.action.LogEventAction</sv:value>
+        <sv:value>org.onehippo.repository.scxml.LogEventAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="version">

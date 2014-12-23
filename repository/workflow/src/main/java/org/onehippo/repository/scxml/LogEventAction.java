@@ -13,34 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.documentworkflow.task;
-
-import java.rmi.RemoteException;
+package org.onehippo.repository.scxml;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.scxml2.ActionExecutionContext;
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.impl.WorkflowLogger;
 
-public class LogEventTask extends AbstractDocumentTask {
+public class LogEventAction extends AbstractAction {
 
-    private String action;
+    public void setActionexpr(final String actionexpr) {
+        setParameter("actionexpr", actionexpr);
+    }
 
-    public void setAction(final String action) {
-        this.action = action;
+    public String getActionexpr() {
+        return getParameter("actionexpr");
     }
 
     @Override
-    protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        final WorkflowContext context = getWorkflowContext();
+    protected void doExecute(final ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException,
+            WorkflowException, RepositoryException {
+        final WorkflowContext context = this.getSCXMLWorkflowContext().getWorkflowContext();
         final WorkflowLogger logger = new WorkflowLogger(context.getInternalWorkflowSession());
-        final Node handle = getDocumentHandle().getHandle();
-        logger.logWorkflowStep(context.getUserIdentity(), null, action, null, null,
-                handle.getIdentifier(), handle.getPath(), context.getInteraction(), context.getInteractionId(),
+        final Node subject = context.getSubject();
+        logger.logWorkflowStep(context.getUserIdentity(), null, eval(getActionexpr()), null, null,
+                subject.getIdentifier(), subject.getPath(), context.getInteraction(), context.getInteractionId(),
                 null, null, null);
-        return null;
     }
-
 }

@@ -16,6 +16,7 @@
 
 package org.onehippo.repository.scxml;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -24,7 +25,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.mock.MockSession;
 
 public class MockWorkflowContext implements WorkflowContext {
 
@@ -59,6 +59,11 @@ public class MockWorkflowContext implements WorkflowContext {
     @Override
     public String getUserIdentity() {
         return userIdentity;
+    }
+
+    @Override
+    public Node getSubject() {
+        return null;
     }
 
     @Override

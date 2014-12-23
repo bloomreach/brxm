@@ -263,7 +263,7 @@
           <if cond="!targetDate">
             <!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event -->
             <send event="workflowType"/>
-            <hippo:logEvent action="workflowType" />
+            <hippo:logEvent actionexpr="workflowType" />
           <else/>
             <!-- the request did have a targetDate: trigger a 'scheduled' workflow action event -->
             <send event="workflowType" namelist="targetDate"/>
