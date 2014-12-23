@@ -473,6 +473,15 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
       <description>
         Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
         By default, this is set to true.

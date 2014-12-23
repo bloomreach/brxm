@@ -65,6 +65,8 @@ public class HstWebResourceTag extends ParamContainerTag {
 
     protected String scope;
 
+    protected boolean fullyQualified;
+
     protected Boolean escapeXml = true;
 
     /* (non-Javadoc)
@@ -158,7 +160,7 @@ public class HstWebResourceTag extends ParamContainerTag {
 
             final String fullWebResourcePath = webResourcesPrefix.append("/").append(webResourcePath).toString();
             HstLink link = reqContext.getHstLinkCreator().create(fullWebResourcePath, resolvedMount.getMount(), true);
-            String urlString = link.toUrlForm(reqContext, false);
+            String urlString = link.toUrlForm(reqContext, fullyQualified);
 
             try {
                 if (!parametersMap.isEmpty()) {
@@ -187,6 +189,7 @@ public class HstWebResourceTag extends ParamContainerTag {
         super.cleanup();
         var = null;
         escapeXml = true;
+        fullyQualified = false;
         scope = null;
         path = null;
     }
@@ -209,6 +212,10 @@ public class HstWebResourceTag extends ParamContainerTag {
         return var;
     }
 
+    public boolean isFullyQualified() {
+        return fullyQualified;
+    }
+
     /**
      * Returns escapeXml property.
      * @return Boolean
@@ -219,6 +226,10 @@ public class HstWebResourceTag extends ParamContainerTag {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setFullyQualified(boolean fullyQualified) {
+        this.fullyQualified = fullyQualified;
     }
 
     /**
