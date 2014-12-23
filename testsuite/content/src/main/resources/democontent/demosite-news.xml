@@ -166,7 +166,7 @@
                                 enterprise content. This flexible architecture also allows
                                 developers to easily add custom functionality if no suitable plug-in
                                 is available.&lt;/p&gt; &lt;p&gt; &lt;img
-                                src="screenshot_cms_small.jpg/screenshot_cms_small.jpg/hippogallery:original"
+                                src="screenshot_cms_small.jpg/{_document}/hippogallery:original"
                                 /&gt; The Hippo architecture introduced in the previous version
                                 (6.0), with strong separation of concerns and its content driven
                                 repository, has been further improved, introducing a high
