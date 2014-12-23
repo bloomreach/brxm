@@ -256,18 +256,24 @@ public interface HstLinkCreator {
     HstLink createByRefId(String siteMapItemRefId, Mount mount);
 
     /**
-     * Regardless the current context, create a HstLink for the <code>path</code> and <code>mount</code>
-     * @param path the path to the sitemap item
+     * Creates an HstLink for the <code>path</code> and <code>mount</code>. If the <code>mount</code> is a sub mount,
+     * eg <i>/fr</i>, then the resulting link includes /fr after the context path.
+     * @param path the path to the sitemap item, where the sitemap item or one of its ancestors may contain wildcards
      * @param mount the {@link Mount} the path should be in
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(String path, Mount mount);
      
     /**
-     * Regardless the current context, create a HstLink to the path that you use as argument. 
+     * Creates an HstLink for the <code>path</code> and <code>mount</code>. If <code>containerResource</code> is
+     * <code>false</code>, the resulting URL <b>WILL</b> include the {@link Mount#getMountPath()} after the webapp
+     * relative part (context path). When <code>containerResource</code> is <code>false</code>, the resulting URL
+     * <b>WILL</b> include the {@link Mount#getMountPath()} after the webapp relative part (context path).
+     *
      * @param path the path to the sitemap item
      * @param mount the {@link Mount} for which the link should be created
-     * @param containerResource whether it is a static link, for example for css/js
+     * @param containerResource <code>true</code> if the link to be created must be a webapp relative link and not relative
+     *                          to {@link Mount#getMountPath()}
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(String path, Mount mount, boolean containerResource);

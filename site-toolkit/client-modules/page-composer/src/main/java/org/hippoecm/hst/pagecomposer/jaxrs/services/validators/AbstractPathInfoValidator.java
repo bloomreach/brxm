@@ -65,14 +65,14 @@ abstract class AbstractPathInfoValidator implements Validator {
         }
 
         HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        if (hstManager.isExcludedByHstFilterInitParameter(info)) {
+        if (hstManager.isHstFilterExcludedPath(info)) {
             String msg = String.format("PathInfo '%s' cannot be used because it is skipped through web.xml prefix or postfix " +
                     "exclusions.", info);
             log.info(msg);
             throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
-        if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isExcluded(info)) {
+        if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(info)) {
             String msg = String.format("PathInfo '%s' cannot be used because it is skipped through prefix or postfix " +
                     "exclusions on /hst:hst/hst:hosts configuration.", info);
             log.info(msg);

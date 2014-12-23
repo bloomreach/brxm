@@ -162,7 +162,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-            if ((containerRequest.getPathSuffix() == null && hstManager.isExcludedByHstFilterInitParameter(containerRequest.getPathInfo()))) {
+            if ((containerRequest.getPathSuffix() == null && hstManager.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -217,7 +217,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-            if (vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(containerRequest.getPathInfo()))) {
+            if (vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
                 chain.doFilter(request, response);
                 return;
             }

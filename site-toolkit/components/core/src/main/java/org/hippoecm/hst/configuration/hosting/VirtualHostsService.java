@@ -58,7 +58,6 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.provider.ValueProvider;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
@@ -340,8 +339,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
         return hstManager;
     }
 
-    public boolean isExcluded(String pathInfo) {
-        return hstManager.isExcludedByHstFilterInitParameter(pathInfo);
+    @Deprecated
+    @Override
+    public boolean isExcluded(final String pathInfo) {
+        return isHstFilterExcludedPath(pathInfo);
+    }
+
+    public boolean isHstFilterExcludedPath(String pathInfo) {
+        return hstManager.isHstFilterExcludedPath(pathInfo);
     }
 
     @Override

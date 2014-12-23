@@ -32,6 +32,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
@@ -58,6 +59,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAM
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_CONTAINER_RESOURCE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PAGE_TITLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
@@ -83,6 +85,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
     private static final String PARENT_PROPERTY_PLACEHOLDER = "${parent}";
+    private static final String PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME = "PlainFilterChainInvokingPipeline";
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
 
@@ -176,6 +179,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
     private final String [] resourceBundleIds;
+    private boolean containerResource;
 
     HstSiteMapItemService(final HstNode node,
                           final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -418,17 +422,45 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             users = new HashSet<>();
         }
 
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_CONTAINER_RESOURCE)) {
+            containerResource = node.getValueProvider().getBoolean(SITEMAPITEM_CONTAINER_RESOURCE);
+        } else if(parentItem != null) {
+            containerResource = parentItem.isContainerResource();
+        }
+
+        if (containerResource) {
+            if (!this.canonicalPath.contains("/"+HstNodeTypes.NODENAME_HST_HSTDEFAULT + "/" + HstNodeTypes.NODENAME_HST_SITEMAP + "/")) {
+                final String msg = String.format("Invalid sitemap item configuration for '%s'. A sitemap item is only " +
+                        "allowed to be marked with '%s = true' if the sitemap item is located in '%s'.",
+                        canonicalPath, HstNodeTypes.SITEMAPITEM_CONTAINER_RESOURCE,
+                        "/"+HstNodeTypes.NODENAME_HST_HSTDEFAULT + "/" + HstNodeTypes.NODENAME_HST_SITEMAP + "/" );
+                throw new ModelLoadingException(msg);
+            }
+            log.info("Sitemap item '{}' is a container resource item. Default the properties '{}' will be" +
+                            " set to '{}', '{}' = true and '{}' = true, unless the properties are explicitly configured on the item" +
+                            " to have a different value",
+                    canonicalPath, SITEMAPITEM_PROPERTY_NAMEDPIPELINE, PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME,
+                    SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING, GENERAL_PROEPRTY_SCHEME_AGNOSTIC
+            );
+
+            isExcludedForLinkRewriting = true;
+            schemeAgnostic = true;
+            namedPipeline = PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME;
+        }
+
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
-            this.isExcludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+            isExcludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             namedPipeline = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
-        } else if(this.parentItem != null) {
-            namedPipeline = parentItem.getNamedPipeline();
-        } else {
-            // inherit the namedPipeline from the mount (can be null)
-            namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
+        } else if (!containerResource) {
+            if (this.parentItem != null) {
+                namedPipeline = parentItem.getNamedPipeline();
+            } else {
+                // inherit the namedPipeline from the mount (can be null)
+                namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
+            }
         }
 
         namedPipeline = StringPool.get(namedPipeline);
@@ -451,7 +483,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(node.getValueProvider().hasProperty(GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
             schemeAgnostic = node.getValueProvider().getBoolean(GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
-        } else {
+        } else if (!containerResource) {
             schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mountSiteMapConfiguration.isSchemeAgnostic();
         }
 
@@ -658,6 +690,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
 
         return (String[]) ArrayUtils.clone(resourceBundleIds);
+    }
+
+    @Override
+    public boolean isContainerResource() {
+        return containerResource;
     }
 
     public HstSiteMapItem getParentItem() {

@@ -65,17 +65,33 @@ public interface HstLink {
      * @param subPath
      */
     void setSubPath(String subPath);
-    
+
     /**
-     * @return <code>true</code> when the HstLink represents a container resource, like a repository binary
-     */
+     * @deprecated since 7.10, HSTTWO 2.30.00. Use {@link #isContainerResource()} instead
+      */
+    @Deprecated
     boolean getContainerResource();
-    
+
     /**
-     * @param containerResource sets the containerResource
+     * <p>
+     *     When {@link #isContainerResource()} returns <code>true</code>, the resulting URL will be webapp relative and not
+     *     relative to {@link Mount#getMountPath()}
+     * </p>
+     * <p>
+     *     When {@link #isContainerResource()} returns <code>false</code>, the resulting URL <b>WILL</b> include the
+     *     {@link Mount#getMountPath()} after the webapp relative part (context path).
+     * </p>
+     * @return <code>true</code> when the HstLink represents a container resource, like a repository binary, a web resource
+     * or a static css file served by the container.
+     */
+    boolean isContainerResource();
+
+    /**
+     * @param containerResource sets whether this {@link HstLink} is a <code>containerResource</code> or not.
+     * @see #isContainerResource()
      */
     void setContainerResource(boolean containerResource);
-    
+
     /**
      * @param requestContext
      * @param fullyQualified if true, the returned link is a fully qualified URL, in other words including http/https etc

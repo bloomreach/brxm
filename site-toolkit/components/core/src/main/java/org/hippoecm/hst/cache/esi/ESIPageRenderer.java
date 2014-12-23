@@ -50,7 +50,6 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PropertyParser;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,7 +301,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
     protected void includeLocalURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
         if (localContainerURL.getComponentRenderingWindowReferenceNamespace() != null || localContainerURL.getResourceWindowReferenceNamespace() != null) {
             includeLocalESIPipelineURL(writer, uri, localContainerURL);
-        } else if (RequestContextProvider.get().getVirtualHost().getVirtualHosts().isExcluded(uri.getPath())) {
+        } else if (RequestContextProvider.get().getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(uri.getPath())) {
                 includeLocalDispatchURL(writer, uri, localContainerURL);
         } else {
             log.warn("Ignoring ESI Include Tag. ESI Include Tag for a local HST navigational " +

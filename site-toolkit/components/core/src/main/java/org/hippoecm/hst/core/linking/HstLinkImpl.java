@@ -21,6 +21,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -44,28 +45,55 @@ public class HstLinkImpl implements HstLink {
     private String subPath;
     private Mount mount;
     private HstSiteMapItem siteMapItem;
-    private boolean containerResource;
+    private boolean siteMapItemResolvedAlready;
     private boolean notFound = false;
     private final static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
-    
-    public HstLinkImpl(String path, Mount mount) {
-        this(path, mount,false);
+
+    /**
+     * <p>
+     *     The {@link Type} of the {@link HstLink}. An {@link HstLink} can be of type <i>container resource</i> or of
+     *     type <i>mount resource</i>. When not yet known, the type is set to {@link Type#UNKNOWN}. The meaning of
+     *     <i>container resource</i> vs <i>mount resource</i> is:
+     * </p>
+     * <p>
+     *     <ol>
+     *         <li>{@link Type#CONTAINER_RESOURCE} : The resulting URL will be webapp relative and not
+     *             relative to {@link Mount#getMountPath()}</li>
+     *         <li>{@link Type#MOUNT_RESOURCE}: The resulting URL <b>WILL</b> include the {@link Mount#getMountPath()} after
+     *         the webapp relative part (context path). For sub mounts below the root mount (/)
+     *         the {@link Mount#getMountPath()} is the path to the sub mount, for example /fr</li>
+     *     </ol>
+     * </p>
+     */
+    private Type type;
+    enum Type {
+        CONTAINER_RESOURCE,
+        MOUNT_RESOURCE,
+        UNKNOWN
     }
-    
+
+    public HstLinkImpl(String path, Mount mount) {
+        this(path, mount, null, Type.UNKNOWN, true);
+    }
+
     public HstLinkImpl(String path, Mount mount, boolean containerResource) {
-        this(path, mount,null,containerResource);
+        this(path, mount, null, containerResource);
     }
 
     public HstLinkImpl(String path, Mount mount, HstSiteMapItem siteMapItem, boolean containerResource) {
-        this(path, mount,siteMapItem,containerResource, true);
+        this(path, mount, siteMapItem, containerResource, true);
     }
-
 
     public HstLinkImpl(String path, Mount mount, boolean containerResource, boolean rewriteHomePagePath) {
         this(path, mount, null,containerResource, rewriteHomePagePath);
     }
 
     public HstLinkImpl(String path, Mount mount, HstSiteMapItem siteMapItem, boolean containerResource, boolean rewriteHomePagePath) {
+        this(path, mount, siteMapItem, containerResource ? Type.CONTAINER_RESOURCE : Type.MOUNT_RESOURCE, rewriteHomePagePath);
+    }
+
+    private HstLinkImpl(final String path, final Mount mount, final HstSiteMapItem siteMapItem, final Type type, boolean rewriteHomePagePath) {
+
         if (path != null && path.startsWith("//")) {
             // fully qualified path
             this.path = "//" + PathUtils.normalizePath(path);
@@ -74,10 +102,17 @@ public class HstLinkImpl implements HstLink {
         }
         this.mount = mount;
         this.siteMapItem = siteMapItem;
-        this.containerResource = containerResource;
+        this.type = type;
+
+        if (type == Type.UNKNOWN && mount != null) {
+            if (mount.getVirtualHost().getVirtualHosts().isHstFilterExcludedPath("/" + path)) {
+                this.type = Type.CONTAINER_RESOURCE;
+            }
+        }
+
         if(rewriteHomePagePath) {
             // check whether path is equal to homepage : if so, replace with ""
-            if(this.path != null && !containerResource && mount != null) {
+            if(this.path != null && mount != null) {
                 // get the homePagePath : the mount.getHomePage can be the homepage path OR the sitemap item refId
                 // with HstSiteMapUtils.getPath we get the homepage path regardless whether mount.getHomePage() is the path of the refId
                 String homePagePath = HstSiteMapUtils.getPath(mount, mount.getHomePage());
@@ -88,6 +123,8 @@ public class HstLinkImpl implements HstLink {
             }
         }
     }
+
+
 
     public Mount getMount() {
         return mount;
@@ -110,15 +147,36 @@ public class HstLinkImpl implements HstLink {
         this.subPath = subPath;
     }
 
-    
+    @Deprecated
     public boolean getContainerResource() {
-        return this.containerResource;
+        return isContainerResource();
+    }
+
+    @Override
+    public boolean isContainerResource() {
+        if (Type.UNKNOWN == type) {
+            if (RequestContextProvider.get() == null) {
+                type = Type.CONTAINER_RESOURCE;
+            } else {
+                final HstSiteMapItem hstSiteMapItem = resolveSiteMapItem(RequestContextProvider.get());
+                if (hstSiteMapItem == null || hstSiteMapItem.isContainerResource()) {
+                    type = Type.CONTAINER_RESOURCE;
+                } else {
+                    type = Type.MOUNT_RESOURCE;
+                }
+            }
+        }
+        return Type.CONTAINER_RESOURCE == type;
     }
 
     public void setContainerResource(boolean containerResource) {
-       this.containerResource = containerResource;
+        if (containerResource) {
+            type = Type.CONTAINER_RESOURCE;
+        } else {
+            type = Type.MOUNT_RESOURCE;
+        }
     }
-    
+
     public String[] getPathElements() {
         if(this.path == null) {
             return null;
@@ -158,7 +216,7 @@ public class HstLinkImpl implements HstLink {
         }
 
         String urlString;
-        if (this.containerResource) {
+        if (isContainerResource()) {
             HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE, null, requestContext, explicitContextPath);
             hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
@@ -170,9 +228,9 @@ public class HstLinkImpl implements HstLink {
                 // subPath is allowed to be empty ""
                 path += subPathDelimeter + subPath;
             } else if (mount != null && !mount.isSite()) {
-                // mount is configured to support subPath: Include the PATH_SUBPATH_DELIMITER for locations that that would be exclused by virtualhosts configuration
+                // mount is configured to support subPath: Include the PATH_SUBPATH_DELIMITER for locations that that would be excluded by virtualhosts configuration
                 // like resources ending on .jpg or .pdf etc 
-                if (mount.getVirtualHost().getVirtualHosts().isExcluded(path)) {
+                if (mount.getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(path)) {
                     // path should not be excluded for hst request processing because for example it is a REST call for a binary. Add the PATH_SUBPATH_DELIMITER
                     // to avoid this
                     path += subPathDelimeter;
@@ -241,7 +299,7 @@ public class HstLinkImpl implements HstLink {
             }
         }
 
-        if (renderHost != null && !this.containerResource) {
+        if (renderHost != null && !isContainerResource()) {
             // we need to append the render host as a request parameter but it is not needed for resources
             if (urlString.contains("?")) {
                 urlString += "&";
@@ -289,7 +347,7 @@ public class HstLinkImpl implements HstLink {
                 return true;
             }
 
-            if (containerResource) {
+            if (isContainerResource()) {
                 // containerResource are only fully qualified if explicitly defined by explicitlyFullyQualified
                 // or by  requestContext.isFullyQualifiedURLs()
                 return false;
@@ -340,14 +398,14 @@ public class HstLinkImpl implements HstLink {
                 // in case (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))
                 // is true: currently link is over https. This might be the result of custom https support. Hence, create
                 // http link in case the mount/sitemap item indicates http
-                final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
-                if (resolvedSiteMapItem != null) {
-                    if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
+                final HstSiteMapItem siteMapItem = resolveSiteMapItem(requestContext);
+                if (siteMapItem != null) {
+                    if (siteMapItem.isSchemeAgnostic()) {
                         scheme = SCHEME_AGNOSTIC;
                         return false;
                     }
-                    if (!farthestRequestScheme.equals(resolvedSiteMapItem.getHstSiteMapItem().getScheme())) {
-                        scheme = resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+                    if (!farthestRequestScheme.equals(siteMapItem.getScheme())) {
+                        scheme = siteMapItem.getScheme();
                         return true;
                     }
                 }
@@ -381,13 +439,13 @@ public class HstLinkImpl implements HstLink {
                 scheme = mount.getScheme();
                 return scheme;
             }
-            final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
-            if (resolvedSiteMapItem != null) {
-                if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
+            final HstSiteMapItem siteMapItem = resolveSiteMapItem(requestContext);
+            if (siteMapItem != null) {
+                if (siteMapItem.isSchemeAgnostic()) {
                     scheme = SCHEME_AGNOSTIC;
                     return scheme;
                 }
-                scheme = resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+                scheme = siteMapItem.getScheme();
                 return scheme;
             }
             if (mount.isSchemeAgnostic()) {
@@ -407,47 +465,68 @@ public class HstLinkImpl implements HstLink {
             return false;
         }
 
-        private ResolvedSiteMapItem resolveSiteMapItem() {
-            try {
-                MutableResolvedVirtualHost resolvedHostForLink = new MutableResolvedVirtualHost() {
-                    private ResolvedMount resolvedMountForLink = null;
 
-                    @Override
-                    public VirtualHost getVirtualHost() {
-                        return mount.getVirtualHost();
-                    }
-
-                    @Override
-                    public String getResolvedHostName() {
-                        return mount.getVirtualHost().getHostName();
-                    }
-
-                    @Override
-                    public int getPortNumber() {
-                        return mount.getPort();
-                    }
-
-                    @Override
-                    public ResolvedMount matchMount(final String contextPath, final String requestPath) throws MatchException {
-                        return resolvedMountForLink;
-                    }
-
-                    @Override
-                    public void setResolvedMount(ResolvedMount resMount) {
-                        this.resolvedMountForLink = resMount;
-                    }
-                };
-
-                ResolvedMount resMount = new ResolvedMountImpl(mount, resolvedHostForLink, mount.getMountPath(),
-                        mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix(), requestContext.getResolvedMount().getPortNumber());
-                resolvedHostForLink.setResolvedMount(resMount);
-                return mount.getHstSiteMapMatcher().match(path, resMount);
-            } catch (Exception e) {
-                // cannot match a sitemap item
-                return null;
-            }
-        }
     }
 
+    private HstSiteMapItem resolveSiteMapItem(HstRequestContext requestContext) {
+        if (siteMapItemResolvedAlready || siteMapItem != null) {
+            return siteMapItem;
+        }
+        ResolvedSiteMapItem resolved = null;
+        try {
+            MutableResolvedVirtualHost resolvedHostForLink = new MutableResolvedVirtualHost() {
+                private ResolvedMount resolvedMountForLink = null;
 
+                @Override
+                public VirtualHost getVirtualHost() {
+                    return mount.getVirtualHost();
+                }
+
+                @Override
+                public String getResolvedHostName() {
+                    return mount.getVirtualHost().getHostName();
+                }
+
+                @Override
+                public int getPortNumber() {
+                    return mount.getPort();
+                }
+
+                @Override
+                public ResolvedMount matchMount(final String contextPath, final String requestPath) throws MatchException {
+                    return resolvedMountForLink;
+                }
+
+                @Override
+                public void setResolvedMount(ResolvedMount resMount) {
+                    this.resolvedMountForLink = resMount;
+                }
+            };
+
+            ResolvedMount resMount = new ResolvedMountImpl(mount, resolvedHostForLink, mount.getMountPath(),
+                    mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix(), requestContext.getResolvedMount().getPortNumber());
+            resolvedHostForLink.setResolvedMount(resMount);
+
+            if("".equals(path) || "/".equals(path)) {
+                log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
+                resolved = mount.getHstSiteMapMatcher().match(resMount.getMount().getHomePage(), resMount);
+            } else {
+                resolved = mount.getHstSiteMapMatcher().match(path, resMount);
+            }
+
+        } catch (Exception e) {
+            // cannot match a sitemap item
+            if (log.isDebugEnabled()) {
+                log.info("Could not match a sitemap item ", e);
+            } else {
+                log.info("Could not match a sitemap item ", e.toString());
+            }
+        }
+
+        if (resolved != null) {
+            siteMapItem  = resolved.getHstSiteMapItem();
+        }
+        siteMapItemResolvedAlready = true;
+        return siteMapItem;
+    }
 }

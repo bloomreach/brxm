@@ -205,7 +205,13 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.staleConfigurationSupported = staleConfigurationSupported;
     }
 
+    @Deprecated
     public boolean isExcludedByHstFilterInitParameter(String pathInfo) {
+        return isHstFilterExcludedPath(pathInfo);
+    }
+
+    @Override
+    public boolean isHstFilterExcludedPath(final String pathInfo) {
         if (hstFilterPrefixExclusions != null) {
             for(String excludePrefix : hstFilterPrefixExclusions) {
                 if(pathInfo.startsWith(excludePrefix)) {

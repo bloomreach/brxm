@@ -581,15 +581,21 @@ public class MountDecoratorImpl implements MountDecorator {
             this.delegatee = delegatee;
         }
 
-        @Override
         @Deprecated
+        @Override
         public HstManager getHstManager() {
             return delegatee.getHstManager();
         }
 
+        @Deprecated
         @Override
         public boolean isExcluded(final String pathInfo) {
-            return delegatee.isExcluded(pathInfo);
+            return isHstFilterExcludedPath(pathInfo);
+        }
+
+        @Override
+        public boolean isHstFilterExcludedPath(final String pathInfo) {
+            return delegatee.isHstFilterExcludedPath(pathInfo);
         }
 
         @Deprecated

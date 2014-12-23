@@ -174,6 +174,8 @@
 - hst:cacheable (boolean)
 - hst:resourcebundleid (string)
 - hst:lastmodified (date)
+// to indicate whether the sitemap item serves container resources like webapp css, js etc.
+- hst:containerresource (boolean)
 
 + * (hst:sitemapitem)
 

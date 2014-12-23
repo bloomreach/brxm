@@ -50,16 +50,20 @@ public interface VirtualHosts {
     HstManager getHstManager();
 
     /**
+     * @deprecated since CMS 7.10, HST 2.30.00. Use {@link #isHstFilterExcludedPath(String)} instead
+     */
+    @Deprecated
+    boolean isExcluded(String pathInfo);
+    /**
      *
-     * Typically, some paths we do not want to be handle by the hst framework request processing. Typically, this would
-     * be for example paths starting with /binaries/, or paths ending with some extension, like .pdf
+     * Some paths should not be handled by the hst framework request processing, eg /ping/
      *
      * When a path must be excluded, this method return true.
      *
      * @param pathInfo
      * @return true when the path must be excluded for matching to a host.
      */
-    boolean isExcluded(String pathInfo);
+    boolean isHstFilterExcludedPath(String pathInfo);
 
     /**
      * <p>This method tries to match a hstContainerURL to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the

@@ -221,7 +221,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     @Override
     public HstLink createPageNotFoundLink(Mount mount) {
-        HstLink link = new HstLinkImpl(pageNotFoundPath, mount);
+        HstLink link = new HstLinkImpl(pageNotFoundPath, mount, false);
         link.setNotFound(true);
         return link;
 

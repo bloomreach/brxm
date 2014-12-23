@@ -348,4 +348,16 @@ public interface HstSiteMapItem {
      * sitemapitem from {@link org.hippoecm.hst.configuration.hosting.Mount#getDefaultResourceBundleIds()}
      */
     String [] getResourceBundleIds();
+
+    /**
+     * A sitemap item that should serve (a) container resource(s) can be marked to do so by returning <code>true</code>
+     * from {@link #isContainerResource()}. When an {@link org.hippoecm.hst.core.linking.HstLink} for such a
+     * {@link HstSiteMapItem} is created, the resulting URL will be webapp relative and not
+     * relative to {@link Mount#getMountPath()} for this {@link HstSiteMapItem}.
+     *
+     * @return <code>true</code> when the this sitemap item should serve(a) container resource(s).
+     *
+     */
+    boolean isContainerResource();
+
 }

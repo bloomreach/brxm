@@ -85,9 +85,9 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
                     rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ModelLoadingException e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath(), e);
+                        log.warn("Skipping sitemap item '{}'", child.getValueProvider().getPath(), e);
                     } else if (log.isWarnEnabled()) {
-                        log.warn("Skipping root sitemap '{}' : '{}'", child.getValueProvider().getPath(), e.getMessage());
+                        log.warn("Skipping sitemap item '{}' : '{}'", child.getValueProvider().getPath(), e.getMessage());
                     }
                 }
             } else {

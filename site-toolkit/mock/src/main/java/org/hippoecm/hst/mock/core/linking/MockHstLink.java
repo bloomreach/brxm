@@ -46,7 +46,13 @@ public class MockHstLink implements HstLink {
         this.path = path;
     }
 
+    @Deprecated
     public boolean getContainerResource() {
+        return containerResource;
+    }
+
+    @Override
+    public boolean isContainerResource() {
         return containerResource;
     }
 
