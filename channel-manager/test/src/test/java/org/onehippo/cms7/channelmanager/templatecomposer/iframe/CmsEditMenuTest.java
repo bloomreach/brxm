@@ -35,7 +35,7 @@ public class CmsEditMenuTest extends AbstractTemplateComposerTest {
     @Before
     public void startPage() throws Exception {
         setUp("cmseditmenu.html");
-        initializeIFrameHead();
+        evalWithScriptElement("");
         initializeTemplateComposer(false, false);
     }
 

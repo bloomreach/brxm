@@ -34,6 +34,7 @@
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/mockYahooHippoLayoutManager.js"></script>
 
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/template-composer-api-all.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/common/MarkRequiredFields.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconGridView.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitGridPanel.js"></script>
@@ -43,8 +44,6 @@
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/RestStore.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitStore.js"></script>
-  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/MessageBus.js"></script>
-  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IFramePanel.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModelStore.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js"></script>
   <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js"></script>
@@ -74,7 +73,8 @@
           previewMode: true,
           iFrameCssHeadContributions: [],
           iFrameJsHeadContributions: [],
-          iFrameErrorPage: []
+          iFrameErrorPage: [],
+          pageStoreFuture: Hippo.Future.FAIL
         });
         assert.isEqual('hippo', panel.getId());
       });
