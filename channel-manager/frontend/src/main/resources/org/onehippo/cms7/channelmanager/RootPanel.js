@@ -128,7 +128,8 @@
         },
 
         _hideBreadcrumb: function() {
-            var toolbarEl = this.toolbar.getEl();
+            var toolbar = this.toolbar,
+                toolbarEl = toolbar.getEl();
 
             this.toolbarWidth = toolbarEl.getWidth();
 
@@ -138,7 +139,7 @@
                 },
                 0.5,
                 function() {
-                    this.toolbar.hide();
+                    toolbar.hide();
                 }
             );
         },
