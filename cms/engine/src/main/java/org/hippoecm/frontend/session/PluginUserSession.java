@@ -333,6 +333,7 @@ public class PluginUserSession extends UserSession {
 
     public void logout() {
         releaseJcrSession();
+        jcrSessionModel = null;
 
         JcrObservationManager.getInstance().cleanupListeners(this);
         pageId = 0;
