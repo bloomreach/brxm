@@ -589,19 +589,21 @@
 /* channel icon panel overview switch buttons */
 
 .channel-manager .x-btn-small .icon-view {
-    background-image: url("channels/icon-view.png");
+    background-image: url("channels/icon-view.svg");
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .icon-view {
-    background-image: url("channels/icon-view-active.png");
+    background-image: url("channels/icon-view.svg");
+    border-bottom: 3px solid #0086F8;
 }
 
 .channel-manager .x-btn-small .list-view {
-    background-image: url("channels/list-view.png");
+    background-image: url("channels/list-view.svg");
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .list-view {
-    background-image: url("channels/list-view-active.png");
+    background-image: url("channels/list-view.svg");
+    border-bottom: 3px solid #0086F8;
 }
 
 .channel-manager-toolbar .x-btn-tl,
@@ -632,14 +634,12 @@
     margin-left: 0;
     margin-right: 0;
     width: 26px;
-    height: 22px;
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
     margin-left: 0;
     margin-right: 0;
     width: 24px;
-    height: 22px;
 }
 
 .channel-manager-toolbar .xtb-spacer {
