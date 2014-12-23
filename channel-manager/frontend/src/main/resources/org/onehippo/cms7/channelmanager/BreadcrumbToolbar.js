@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,9 @@
             breadcrumbItem.setDisabled(true);
 
             // IE ignores all style attributes when a containing element (table in this case) has been disabled
-            breadcrumbItem.getEl().dom.disabled = false;
+            if (breadcrumbItem.rendered) {
+                breadcrumbItem.getEl().dom.disabled = false;
+            }
 
             breadcrumbItem.on('click', function() {
                 if (index === this.breadcrumbStackSize) {
