@@ -846,7 +846,6 @@ components/core/src/test/resources/org/hippoecm/hst/cache/esi/esi-result-page-1.
 components/core/src/test/resources/org/hippoecm/hst/cache/esi/esi-source-page-1.html -text
 components/core/src/test/resources/org/hippoecm/hst/core/component/HstRequestIT.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml -text
-components/core/src/test/resources/org/hippoecm/hst/core/container/ContainerURLProviderIT.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/DefaultPipelineIT.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/PageCachingValveIT.xml -text

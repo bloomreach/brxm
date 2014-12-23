@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,9 +34,12 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,7 +48,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
-public class ContainerURLProviderIT extends AbstractSpringTestCase {
+public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
@@ -61,7 +65,7 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
         this.urlFactory = getComponent(HstURLFactory.class.getName());
         this.requestContext = new HstRequestContextImpl(null);
         this.urlProvider = this.urlFactory.getContainerURLProvider();
-        ((HstMutableRequestContext) this.requestContext).setURLFactory(urlFactory);
+        this.requestContext.setURLFactory(urlFactory);
 
         rootWindow = new MockHstComponentWindow();
         rootWindow.setReferenceName("root");
@@ -80,8 +84,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testBasicContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         // need to set the resolved mount on the requestContext
         setResolvedMount(requestContext);
@@ -101,8 +105,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
 
@@ -163,8 +167,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testRenderContainerURLParameterMerging() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
 
@@ -206,8 +210,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testNamespacelessRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
 
@@ -272,8 +276,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testActionContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
 
@@ -305,8 +309,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testResourceContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
 
@@ -333,8 +337,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testComponentRenderingContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
 
@@ -413,8 +417,8 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
 
     @Test
     public void testComponentRenderingContainerURLParameterMerging() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
-        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+        HttpServletRequest request = mockRequest();
+        HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
 
@@ -511,5 +515,23 @@ public class ContainerURLProviderIT extends AbstractSpringTestCase {
         assertNull(containerURL.getActionWindowReferenceNamespace());
         assertNull(containerURL.getResourceWindowReferenceNamespace());
         assertEquals("r1", containerURL.getComponentRenderingWindowReferenceNamespace());
+    }
+
+    private HttpServletResponse mockResponse() {
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setCharacterEncoding("UTF-8");
+        return response;
+    }
+
+    private HttpServletRequest mockRequest() {
+        MockHttpServletRequest request = new MockHttpServletRequest(new MockServletContext());
+        request.setScheme("http");
+        request.setServerName("preview.myproject.hippoecm.org");
+        request.setServerPort(8080);
+        request.setMethod("GET");
+        request.setContextPath("/site");
+        request.setPathInfo("/news/2008/08");
+        request.addHeader("Accept-Language", "da, en-gb, en");
+        return request;
     }
 }
