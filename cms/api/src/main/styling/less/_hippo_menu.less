@@ -21,8 +21,9 @@
 
 .hippo-toolbar-menu-item {
   background-color: @hippo-menu-bgcolor;
-  min-width: 156px;
+  min-width: 80px;
   font-size: unit(@hippo-menu-fontsize, px);
+  padding: 6px 0;
 
   li {
     clear: left;
@@ -33,14 +34,6 @@
       width: auto;
       padding: 6px 12px;
       white-space: nowrap;
-    }
-    
-    &:first-of-type .hippo-toolbar-menu-item-button {
-      padding-top: 12px;
-    }
-
-    &:last-of-type .hippo-toolbar-menu-item-button {
-      padding-bottom: 12px;
     }
 
     // enabled item
@@ -64,7 +57,7 @@
     .hippo-toolbar-menu-item-button-icon {
       display: inline-flex;
       position: relative;
-      top: 1px;
+      top: 2px;
       padding-right: 6px;
     }
 
