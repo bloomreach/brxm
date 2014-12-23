@@ -37,7 +37,7 @@ public interface WorkflowContext {
      *   or {@link Session#refresh(boolean) Session.refresh(false)}.
      * </p>
      * @param category Name of the workflow category
-     * @return
+     * @return a workflow instance
      * @throws MappingException
      * @throws WorkflowException
      * @throws RepositoryException
@@ -57,7 +57,7 @@ public interface WorkflowContext {
      * </p>
      * @param category Name of the workflow category
      * @param document Document subject for which the new workflow instance will be returned
-     * @return
+     * @return a workflow instance
      * @throws org.hippoecm.repository.api.MappingException
      * @throws org.hippoecm.repository.api.WorkflowException
      * @throws javax.jcr.RepositoryException
@@ -75,6 +75,12 @@ public interface WorkflowContext {
      * @return the invocation user session
      */
     public Session getUserSession();
+
+    /**
+     * Obtains the subject of this WorkflowContext
+     * @return the subject of this WorkflowContext
+     */
+    public Node getSubject();
 
     /**
      * Obtain the subject session used to check and load the current workflow.
@@ -109,10 +115,6 @@ public interface WorkflowContext {
      */
     public Session getInternalWorkflowSession();
 
-    /**
-     *
-     * @return
-     */
     public RepositoryMap getWorkflowConfiguration();
 
     public String getInteraction();

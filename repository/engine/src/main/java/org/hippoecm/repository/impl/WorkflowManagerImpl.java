@@ -439,6 +439,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
             return userSession;
         }
 
+        @Override
+        public Node getSubject() {
+            return subject;
+        }
+
+        @Override
         public Session getSubjectSession() {
             return subjectSession;
         }
