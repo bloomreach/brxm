@@ -179,6 +179,25 @@
     </pluginManagement>
   </build>
 
+  <modules>
+    <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
+    modules, also see HSTTWO-2038 -->
+    <module>api</module>
+    <module>random-numbers</module>
+    <module>linear-algebra</module>
+    <!-- End Add-on component context -->
+    <module>content</module>
+    <module>intranet-bootstrap</module>
+    <module>components</module>
+    <module>dependencies</module>
+    <module>resources</module>
+    <module>cms</module>
+    <module>site</module>
+    <module>intranet</module>
+    <module>prod-server-config</module>
+    <module>solr</module>
+  </modules>
+
   <profiles>
     <profile>
       <id>default</id>
@@ -188,24 +207,6 @@
           <name>jrebel</name>
         </property>
       </activation>
-      <modules>
-        <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
-        modules, also see HSTTWO-2038 -->
-        <module>api</module>
-        <module>random-numbers</module>
-        <module>linear-algebra</module>
-        <!-- End Add-on component context -->
-        <module>content</module>
-        <module>intranet-bootstrap</module>
-        <module>components</module>
-        <module>dependencies</module>
-        <module>resources</module>
-        <module>cms</module>
-        <module>site</module>
-        <module>intranet</module>
-        <module>prod-server-config</module>
-        <module>solr</module>
-      </modules>
     </profile>
     <profile>
       <id>cargo.run</id>
