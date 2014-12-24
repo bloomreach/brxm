@@ -119,6 +119,7 @@ content/pom.xml -text
 content/src/main/resources/configuration/frontend/cms.xml -text
 content/src/main/resources/configuration/queries/templates/new-image-folder.xml -text
 content/src/main/resources/default-ecm-content.xml -text
+content/src/main/resources/default/sitemap/images.xml -text
 content/src/main/resources/democontent/demosite-assets.xml -text
 content/src/main/resources/democontent/demosite-common.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-facetproducts.xml svneol=native#text/plain
