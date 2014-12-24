@@ -41,6 +41,7 @@
 
       &.menu-item:hover {
         a {
+          &.menu-action .menu-action-icon,
           &.menu-action .menu-action-text,
           &.hippo-toolbar-section-button {
             color: @editor-toolbar-hover-color;
@@ -84,6 +85,12 @@
           position: relative;
           top: 11px;
           padding-right: 6px;
+          
+          svg {
+            position: relative;
+            top: 1px;
+            fill: @editor-toolbar-color;
+          }
         }
 
         .menu-action-text {

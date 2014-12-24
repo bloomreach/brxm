@@ -21,6 +21,8 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -31,8 +33,8 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
 
-    private HippoIcon(final String id) {
-        super(id);
+    private HippoIcon(final String id, IModel model) {
+        super(id, model);
     }
 
     /**
@@ -46,6 +48,16 @@ public class HippoIcon extends Panel {
     }
 
     /**
+     * Renders a hippo icon via a reference to the icon sprite.
+     * @param id the Wicket id of the icon
+     * @param model the model containing the icon to render
+     * @return the icon component
+     */
+    public static HippoIcon fromSprite(final String id, final IModel<Icon> model) {
+        return new SvgIcon(id, model, false);
+    }
+
+    /**
      * Renders a hippo icon as an inline SVG. This makes it possible to, for example,
      * style the individual shapes in the SVG via CSS.
      * @param id the Wicket id of the icon
@@ -54,6 +66,17 @@ public class HippoIcon extends Panel {
      */
     public static HippoIcon inline(final String id, final Icon icon) {
         return new SvgIcon(id, icon, true);
+    }
+
+    /**
+     * Renders a hippo icon as an inline SVG. This makes it possible to, for example,
+     * style the individual shapes in the SVG via CSS.
+     * @param id the Wicket id of the icon
+     * @param model the model containing the icon to render
+     * @return the icon component
+     */
+    public static HippoIcon inline(final String id, final IModel<Icon> model) {
+        return new SvgIcon(id, model, true);
     }
 
     /**
@@ -93,6 +116,17 @@ public class HippoIcon extends Panel {
     }
 
     /**
+     * Renders an icon stored in a resource which is referenced by a Wicket model.
+     * When the icon's file extension is '.svg', the icon is rendered as an inline SVG image.
+     * @param id the Wicket id of the icon
+     * @param model the model containing the resource to render
+     * @return the icon component
+     */
+    public static HippoIcon fromResourceModel(final String id, final IModel<ResourceReference> model) {
+        return new ResourceIcon(id, model, -1, -1);
+    }
+
+    /**
      * Renders a copy of the given icon, with a different Wicket ID.
      * @param icon the icon to render
      * @param newId the new Wicket ID
@@ -109,25 +143,26 @@ public class HippoIcon extends Panel {
 
     private static class SvgIcon extends HippoIcon {
 
-        private final Icon icon;
         private final boolean inline;
 
-        private SvgIcon(final String id, final Icon icon, final boolean inline) {
-            super(id);
-
-            this.icon = icon;
+        private SvgIcon(final String id, final IModel<Icon> model, final boolean inline) {
+            super(id, model);
+            
             this.inline = inline;
-
             setRenderBodyOnly(true);
+        }
+
+        private SvgIcon(final String id, final Icon icon, final boolean inline) {
+            this(id, Model.of(icon), inline);
 
             final WebMarkupContainer container = new WebMarkupContainer("svgIcon") {
                 @Override
                 protected void onComponentTag(final ComponentTag tag) {
                     final Response response = RequestCycle.get().getResponse();
                     if (inline) {
-                        response.write(icon.getInlineSvg());
+                        response.write(getIcon().getInlineSvg());
                     } else {
-                        response.write(icon.getSpriteReference());
+                        response.write(getIcon().getSpriteReference());
                     }
                     super.onComponentTag(tag);
                 }
@@ -137,7 +172,11 @@ public class HippoIcon extends Panel {
         }
 
         private SvgIcon(final String newId, final SvgIcon original) {
-            this(newId, original.icon, original.inline);
+            this(newId, original.getIcon(), original.inline);
+        }
+        
+        private Icon getIcon() {
+            return (Icon) getDefaultModelObject();
         }
 
     }
@@ -150,26 +189,35 @@ public class HippoIcon extends Panel {
         private static final String WICKET_FRAGMENT_IMAGE = "imageFragment";
         private static final String WICKET_FRAGMENT_SVG = "svgFragment";
 
-        private ResourceReference reference;
         private int width;
         private int height;
 
-        private ResourceIcon(final String id, final ResourceReference reference, final int width, final int height) {
-            super(id);
+        private ResourceIcon(final String id, final IModel<ResourceReference> model, final int width, final int height) {
+            super(id, model);
 
-            this.reference = reference;
             this.width = width;
             this.height = height;
 
             setRenderBodyOnly(true);
+        }
 
+        private ResourceIcon(final String id, final ResourceReference reference, final int width, final int height) {
+            this(id, Model.of(reference), width, height);
+        }
+
+        private ResourceIcon(final String newId, final ResourceIcon original) {
+            this(newId, original.getReference(), original.width, original.height);
+        }
+
+        @Override
+        protected void onBeforeRender() {
             Fragment fragment;
-            if (reference.getExtension().equalsIgnoreCase("svg")) {
+            if (getReference().getExtension().equalsIgnoreCase("svg")) {
                 fragment = new Fragment(WICKET_ID_CONTAINER, WICKET_FRAGMENT_SVG, this);
-                fragment.add(new InlineSvg(WICKET_ID_SVG, reference));
+                fragment.add(new InlineSvg(WICKET_ID_SVG, getReference()));
             } else {
                 fragment = new Fragment (WICKET_ID_CONTAINER, WICKET_FRAGMENT_IMAGE, this);
-                Image image = new CachingImage(WICKET_ID_IMAGE, reference);
+                Image image = new CachingImage(WICKET_ID_IMAGE, getReference());
                 fragment.add(image);
 
                 if (width >= 0) {
@@ -181,13 +229,14 @@ public class HippoIcon extends Panel {
             }
 
             fragment.setRenderBodyOnly(true);
-            add(fragment);
-        }
+            addOrReplace(fragment);
 
-        private ResourceIcon(final String newId, final ResourceIcon original) {
-            this(newId, original.reference, original.width, original.height);
+            super.onBeforeRender();
         }
-
+        
+        private ResourceReference getReference() {
+            return (ResourceReference) getDefaultModelObject();
+        }
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@ package org.hippoecm.frontend.editor.workflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +62,16 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
             }
         }, context.getReference(editor).getServiceId());
 
-        add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new PackageResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png"), getModel()) {
+        add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"), getModel()) {
 
             @Override
             public String getSubMenu() {
                 return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.SAVE_TINY);
             }
 
             @Override
@@ -80,12 +86,16 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new PackageResourceReference(getClass(), "document-saveclose-16.png"), getModel()) {
+        add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"), getModel()) {
 
             @Override
             public String getSubMenu() {
                 return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.inline(id, Icon.SAVE_CLOSE_TINY);
             }
 
             @Override

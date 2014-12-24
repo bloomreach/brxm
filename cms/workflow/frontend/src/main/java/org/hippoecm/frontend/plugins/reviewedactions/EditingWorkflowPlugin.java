@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,16 +27,17 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -60,12 +61,16 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public EditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new PackageResourceReference(EditingWorkflowPlugin.class, "img/document-save-16.png"), context, getModel()) {
+        add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
                 return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.SAVE_TINY);
             }
 
             @Override
@@ -87,12 +92,16 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new PackageResourceReference(EditingWorkflowPlugin.class, "img/document-saveclose-16.png"), context, getModel()) {
+        add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
                 return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.inline(id, Icon.SAVE_CLOSE_TINY);
             }
 
             @Override
