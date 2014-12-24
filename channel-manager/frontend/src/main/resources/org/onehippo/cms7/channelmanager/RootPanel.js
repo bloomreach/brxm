@@ -16,6 +16,8 @@
 (function() {
     "use strict";
 
+    var BREADCRUMB_ANIMATION_SECONDS = 0.35;
+
     Ext.namespace('Hippo.ChannelManager');
 
     /**
@@ -73,6 +75,7 @@
                 // only show the channel manager breadcrumb when channel manager is active
                 var perspectiveElement = this.el.findParent(".perspective");
                 if (perspectiveElement) {
+                    this._initBreadcrumbAnimation();
                     Ext.EventManager.addListener(perspectiveElement, 'readystatechange', function(event) {
                         if (event.active) {
                             this._showBreadcrumb();
@@ -127,40 +130,49 @@
             Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
         },
 
-        _hideBreadcrumb: function() {
+        _initBreadcrumbAnimation: function() {
             var toolbar = this.toolbar,
-                toolbarEl = toolbar.getEl();
+                toolbarEl = toolbar.getEl(),
+                toolbarWidth;
 
-            this.toolbarWidth = toolbarEl.getWidth();
+            this.hideBreadcrumbTask = new Ext.util.DelayedTask(function() {
+                toolbarWidth = toolbarEl.getWidth();
+                toolbarEl.animate(
+                    {
+                        width: { to: 0 }
+                    },
+                    BREADCRUMB_ANIMATION_SECONDS,
+                    function() {
+                        toolbar.hide();
+                    }
+                );
+            }, this);
 
-            toolbarEl.animate(
-                {
-                    width: { to: 0 }
-                },
-                0.5,
-                function() {
-                    toolbar.hide();
+            this.showBreadcrumbTask = new Ext.util.DelayedTask(function() {
+                toolbar.show();
+                if (toolbarWidth) {
+                    toolbarEl = toolbar.getEl();
+                    toolbarEl.animate(
+                        {
+                            width: { to: toolbarWidth }
+                        },
+                        BREADCRUMB_ANIMATION_SECONDS,
+                        function() {
+                            toolbarEl.setWidth('auto');
+                        }
+                    );
                 }
-            );
+            }, this);
+        },
+
+        _hideBreadcrumb: function() {
+            this.showBreadcrumbTask.cancel();
+            this.hideBreadcrumbTask.delay(500);
         },
 
         _showBreadcrumb: function() {
-            var toolbarEl;
-
-            this.toolbar.show();
-
-            if (Ext.isDefined(this.toolbarWidth)) {
-                toolbarEl = this.toolbar.getEl();
-                toolbarEl.animate(
-                    {
-                        width: { to: this.toolbarWidth }
-                    },
-                    0.5,
-                    function() {
-                        toolbarEl.setWidth('auto');
-                    }
-                );
-            }
+            this.hideBreadcrumbTask.cancel();
+            this.showBreadcrumbTask.delay(0);
         },
 
         selectCard: function(itemId) {
