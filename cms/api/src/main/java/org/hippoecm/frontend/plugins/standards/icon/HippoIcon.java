@@ -150,10 +150,6 @@ public class HippoIcon extends Panel {
             
             this.inline = inline;
             setRenderBodyOnly(true);
-        }
-
-        private SvgIcon(final String id, final Icon icon, final boolean inline) {
-            this(id, Model.of(icon), inline);
 
             final WebMarkupContainer container = new WebMarkupContainer("svgIcon") {
                 @Override
@@ -169,6 +165,10 @@ public class HippoIcon extends Panel {
             };
             container.setRenderBodyOnly(true);
             add(container);
+        }
+
+        private SvgIcon(final String id, final Icon icon, final boolean inline) {
+            this(id, Model.of(icon), inline);
         }
 
         private SvgIcon(final String newId, final SvgIcon original) {
