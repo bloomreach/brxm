@@ -85,6 +85,8 @@
     margin: 0 5px;
     padding-left: 25px;
     background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
 }
 
 #hippo-channelmanager-breadcrumb .x-toolbar-left {
@@ -96,6 +98,14 @@
     background: none;
     padding-left: 0;
     margin-left: 2px;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-over .x-btn-mc {
+    background-image: none;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-over .x-btn-text {
+    color: #0086f8;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item {
