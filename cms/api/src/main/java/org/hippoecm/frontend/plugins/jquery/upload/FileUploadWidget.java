@@ -144,7 +144,7 @@ public abstract class FileUploadWidget extends Panel {
                 } else {
                     throw new FileUploadException("Invalid file upload content length");
                 }
-            }catch(java.lang.NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new FileUploadException("Invalid file upload content length", e);
             }
         }
