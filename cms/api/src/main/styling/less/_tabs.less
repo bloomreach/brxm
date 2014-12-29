@@ -90,25 +90,26 @@
           }
         }
       }
-    }
 
-    li:hover {
-      background-color: @document-tab-hover-bgcolor;
+      &:hover {
+        background-color: @document-tab-hover-bgcolor;
+        cursor: pointer;
 
-      .hippo-tabs-documents-close svg {
-        fill: @document-tab-hover-close-color
+        .hippo-tabs-documents-close svg {
+          fill: @document-tab-hover-close-color
+        }
+        .hippo-tabs-documents-close:hover svg {
+          fill: @document-tab-close-hover-color;
+        }
       }
-      .hippo-tabs-documents-close:hover svg {
-        fill: @document-tab-close-hover-color;
+
+      &:first-child {
+        border-right: 0;
       }
-    }
 
-    li:first-child {
-      border-right: 0;
-    }
-
-    li:last-child {
-      border-left: 1px solid @document-tab-border-color;
+      &:last-child {
+        border-left: 1px solid @document-tab-border-color;
+      }
     }
 
     .selected:hover,
