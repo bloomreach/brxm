@@ -61,7 +61,7 @@ public class ContentFileInfo {
         return "combine".equals(deltaDirective) || "overlay".equals(deltaDirective);
     }
 
-    public static ContentFileInfo readInfo(final Node item) throws RepositoryException {
+    public static ContentFileInfo readInfo(final Node item) {
         ContentFileInfoReader contentFileInfoReader = null;
         InputStream in = null;
         try {
@@ -79,13 +79,14 @@ public class ContentFileInfo {
                 factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
                 factory.newSAXParser().parse(new InputSource(in), contentFileInfoReader);
             }
+            return contentFileInfoReader.getContentFileInfo();
         } catch (ContentFileInfoReadingShortCircuitException ignore) {
         } catch (FactoryConfigurationError | SAXException | ParserConfigurationException | IOException | RepositoryException e) {
-            throw new RepositoryException("Could not read root node name from content file", e);
+            BootstrapConstants.log.error("Could not read root node name from content file", e);
         } finally {
             IOUtils.closeQuietly(in);
         }
-        return contentFileInfoReader.getContentFileInfo();
+        return null;
     }
 
     private static class ContentFileInfoReader extends DefaultHandler {
