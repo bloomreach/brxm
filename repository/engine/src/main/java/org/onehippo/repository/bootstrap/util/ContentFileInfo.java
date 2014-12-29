@@ -79,14 +79,13 @@ public class ContentFileInfo {
                 factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
                 factory.newSAXParser().parse(new InputSource(in), contentFileInfoReader);
             }
-            return contentFileInfoReader.getContentFileInfo();
         } catch (ContentFileInfoReadingShortCircuitException ignore) {
         } catch (FactoryConfigurationError | SAXException | ParserConfigurationException | IOException | RepositoryException e) {
             BootstrapConstants.log.error("Could not read root node name from content file", e);
         } finally {
             IOUtils.closeQuietly(in);
         }
-        return null;
+        return contentFileInfoReader == null ? null : contentFileInfoReader.getContentFileInfo();
     }
 
     private static class ContentFileInfoReader extends DefaultHandler {
