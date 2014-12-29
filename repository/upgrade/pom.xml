@@ -24,9 +24,6 @@
   <name>Repository Upgrade</name>
   <description>Hippo Repository Upgrade</description>
   <artifactId>hippo-repository-upgrade</artifactId>
-  <packaging>pom</packaging>
-
-  <modules>
-  </modules>
+  <packaging>jar</packaging>
 
 </project>
