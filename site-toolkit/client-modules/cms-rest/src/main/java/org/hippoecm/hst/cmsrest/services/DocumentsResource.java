@@ -31,7 +31,6 @@ import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.slf4j.Logger;
