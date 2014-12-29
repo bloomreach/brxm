@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
-import java.awt.Dimension;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -40,6 +35,10 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.awt.*;
 
 public class ImageCropPlugin extends RenderPlugin<Node> {
 
@@ -87,6 +86,10 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
             areExceptionsThrown = true;
         } catch (GalleryException e) {
+            error(e);
+            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
+            areExceptionsThrown = true;
+        }catch (NullPointerException e) {
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
             areExceptionsThrown = true;

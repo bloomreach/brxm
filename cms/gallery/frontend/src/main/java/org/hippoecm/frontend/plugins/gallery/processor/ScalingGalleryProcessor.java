@@ -15,15 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.gallery.processor;
 
-import java.awt.Dimension;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
@@ -32,6 +23,14 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.awt.*;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Gallery processor that puts a scaled version of an image in each resource node. How to scale the image
@@ -127,6 +126,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             int height = scaleOperation.getHeight();
             return new Dimension(width, height);
         } else {
+            log.warn("No scaling parameters found for: {}. This might contain a typo.",nodeName);
             return null;
         }
     }
