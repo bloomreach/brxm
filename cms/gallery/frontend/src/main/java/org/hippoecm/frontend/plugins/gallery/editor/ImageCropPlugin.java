@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
+import java.awt.Dimension;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -35,10 +40,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.awt.*;
 
 public class ImageCropPlugin extends RenderPlugin<Node> {
 
@@ -81,15 +82,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
             isOriginalImageWidthSmallerThanThumbWidth = thumbnailDimension.getWidth() > originalImageDimension.getWidth();
             isOriginalImageHeightSmallerThanThumbHeight = thumbnailDimension.getHeight() > originalImageDimension.getHeight();
 
-        } catch (RepositoryException e) {
-            error(e);
-            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
-            areExceptionsThrown = true;
-        } catch (GalleryException e) {
-            error(e);
-            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
-            areExceptionsThrown = true;
-        }catch (NullPointerException e) {
+        } catch (RepositoryException | GalleryException | NullPointerException e) {
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
             areExceptionsThrown = true;
@@ -99,8 +92,8 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         cropButton.setVisible("edit".equals(mode) && !isOriginal);
 
         if ("edit".equals(mode)) {
-            if (!isOriginal && !areExceptionsThrown 
-                    && !isOriginalImageWidthSmallerThanThumbWidth 
+            if (!isOriginal && !areExceptionsThrown
+                    && !isOriginalImageWidthSmallerThanThumbWidth
                     && !isOriginalImageHeightSmallerThanThumbHeight) {
 
                 cropButton.add(new AjaxEventBehavior("onclick") {
@@ -112,12 +105,12 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
                 });
             }
 
-            String cropButtonClass = isOriginal 
-                    || areExceptionsThrown 
-                    || isOriginalImageWidthSmallerThanThumbWidth 
-                    || isOriginalImageHeightSmallerThanThumbHeight 
+            String cropButtonClass = isOriginal
+                    || areExceptionsThrown
+                    || isOriginalImageWidthSmallerThanThumbWidth
+                    || isOriginalImageHeightSmallerThanThumbHeight
                     ? "crop-button inactive" : "crop-button active";
-            
+
             cropButton.add(new AttributeAppender("class", Model.of(cropButtonClass), " "));
 
             String buttonTipProperty =
