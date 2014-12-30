@@ -64,8 +64,9 @@ public class ContentFileInfo {
     public static ContentFileInfo readInfo(final Node item) {
         ContentFileInfoReader contentFileInfoReader = null;
         InputStream in = null;
+        String contentResource = null;
         try {
-            final String contentResource = StringUtils.trim(item.getProperty(HIPPO_CONTENTRESOURCE).getString());
+            contentResource = StringUtils.trim(item.getProperty(HIPPO_CONTENTRESOURCE).getString());
             if (contentResource.endsWith(".zip") || contentResource.endsWith(".jar")) {
                 return null;
             }
@@ -81,7 +82,7 @@ public class ContentFileInfo {
             }
         } catch (ContentFileInfoReadingShortCircuitException ignore) {
         } catch (FactoryConfigurationError | SAXException | ParserConfigurationException | IOException | RepositoryException e) {
-            BootstrapConstants.log.error("Could not read root node name from content file", e);
+            BootstrapConstants.log.error("Could not read root node name from content file {}", contentResource, e);
         } finally {
             IOUtils.closeQuietly(in);
         }
