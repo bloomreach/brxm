@@ -28,7 +28,9 @@ package org.hippoecm.repository.api;
  * cron specification will be the same as org.quartz.CronExpression.
  * Note however that constructing a CronExpression will not throw a exception
  * when the string cannot be parsed.  Instead the call to a work-flow will fail.
+ * @deprecated use {@link org.onehippo.repository.scheduling.RepositoryScheduler}.
  */
+@Deprecated
 public class CronExpression {
     String cron;
 
