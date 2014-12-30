@@ -28,7 +28,7 @@ limitations under the License. -->
       <sv:value>new-image-folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:gallerytype" sv:type="String">
-      <sv:value>hippogallery:imageset</sv:value>
+      <sv:value>demosite:qaimageset</sv:value>
     </sv:property>
     <sv:node sv:name="news">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -46,7 +46,7 @@ limitations under the License. -->
         <sv:value>new-image-folder</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:gallerytype" sv:type="String">
-        <sv:value>hippogallery:imageset</sv:value>
+        <sv:value>demosite:qaimageset</sv:value>
       </sv:property>
       <sv:node sv:name="hippo:translation">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -74,7 +74,7 @@ limitations under the License. -->
           <sv:value>new-image-folder</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:gallerytype" sv:type="String">
-          <sv:value>hippogallery:imageset</sv:value>
+          <sv:value>demosite:qaimageset</sv:value>
         </sv:property>
         <sv:node sv:name="toyota-a-glass-of-water-image.jpg">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
