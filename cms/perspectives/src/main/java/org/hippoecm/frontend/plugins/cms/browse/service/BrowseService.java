@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -143,10 +143,9 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             private static final long serialVersionUID = 1L;
 
             public void onChange() {
-                String active = sections.getActiveSection();
+                IBrowserSection active = sections.getActiveSection();
                 if (active != null) {
-                    IBrowserSection section = sections.getSection(active);
-                    collectionModel.setObject(section.getCollection());
+                    collectionModel.setObject(active.getCollection());
                 }
             }
         });
@@ -195,12 +194,12 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         Match closestMatch = null;
         String closestName = null;
         // Get the match for the active section
-        IBrowserSection activeSection = sections.getSection(sections.getActiveSection());
+        IBrowserSection activeSection = sections.getActiveSection();
         if (activeSection != null) {
             Match match = activeSection.contains(document);
             if (match != null) {
                 closestMatch = match;
-                closestName = sections.getActiveSection();
+                closestName = sections.getActiveSectionName();
             }
         }
         for (String name : sections.getSections()) {

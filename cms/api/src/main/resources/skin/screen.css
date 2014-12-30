@@ -1171,84 +1171,6 @@ table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/
 table tr.selected span.document-virtual-16, .document-virtual-16{background-image:url("images/icons/document-16.png")}
 table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("images/icons/folder-virtual-16.gif")}
 
-/* Accordion */
-/* Moved to _navigator.less
-.hippo-accordion-unit {
-  background: #f4f4f4;
-}
-*/
-
-.hippo-accordion-unit h2 {
-  /*background-image: url("images/accordion-unit-back2.png");*/
-  background-repeat: repeat-x
-}
-
-.hippo-accordion-unit h2 a {
-  /*background-image: url("images/accordion-unit-back.png");*/
-  background-repeat: no-repeat;
-  color: #666666;
-  display: block;
-  height: 14px;
-  width: 100%;
-  padding: 5px;
-  padding-left: 0;
-  padding-right: 0;
-  border-bottom: 1px solid #afafaf;
-  font-weight: bold;
-}
-
-.hippo-accordion-unit h2 a span {
-  padding-left: 20px;
-}
-
-.hippo-accordion-unit h2 a {
-  background-position: 0 0;
-}
-
-.hippo-accordion-unit h2 a:hover {
-  background-position: 0 -96px;
-}
-
-.hippo-accordion-unit h2 a:active {
-  background-position: 0 -120px;
-}
-
-.hippo-accordion-unit h2 a.focus {
-  background-position: 0 -24px;
-}
-
-.hippo-accordion-unit h2 a.focus:hover {
-  background-position: 0 -48px;
-}
-
-.hippo-accordion-unit h2 a.focus:active {
-  background-position: 0 -72px;
-}
-
-/* Show add-root button in tree*/
-.hippo-accordion-unit-add {
-  display: block;
-  background-image: url("images/list-add-16.png");
-  background-repeat: no-repeat;
-  background-position: 0 6px;
-  text-align: left;
-  padding-left: 21px;
-  padding-top: 6px;
-  margin-left: 5px;
-  height: 20px;
-  color: #333;
-}
-
-/* But hide it in pickers */
-.wicket-modal .hippo-accordion-unit-add {
-  display: none;
-}
-
-/* Hide the context-menu-left-click-icon as well */
-.wicket-modal .hippo-tree-dropdown-icon-container {
-  display: none;
-}
-
 /* Editor Plugin */
 /* ================================================ */
 /* default background when nothing is selected */
@@ -1636,31 +1558,6 @@ table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
   display: table-row-group;
   overflow-y: hidden;
   height: 100%;
-}
-
-.hippo-accordion-unit-center {
-  -ms-overflow: auto;
-  overflow: auto;
-}
-
-.hippo-accordion-unit-top {
-  background-color: #ebebeb;
-  height: 44px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.hippo-accordion-unit-bottom {
-  background-color: #ebebeb;
-  cursor: pointer;
-  height: 26px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  white-space: nowrap;
 }
 
 .hippo-revision-help {

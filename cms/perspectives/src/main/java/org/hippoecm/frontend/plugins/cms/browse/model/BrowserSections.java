@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.IChangeListener;
@@ -36,8 +36,8 @@ public class BrowserSections implements IClusterable {
     private String active;
 
     public BrowserSections() {
-        this.sections = new LinkedHashMap<String, IBrowserSection>();
-        this.listeners = new LinkedList<IChangeListener>();
+        this.sections = new LinkedHashMap<>();
+        this.listeners = new LinkedList<>();
     }
 
     public Collection<String> getSections() {
@@ -47,7 +47,16 @@ public class BrowserSections implements IClusterable {
     public IBrowserSection getSection(String name) {
         return sections.get(name);
     }
-    
+
+    public String getName(final IBrowserSection section) {
+        for (Entry<String, IBrowserSection> entry : sections.entrySet()) {
+            if (entry.getValue().equals(section)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public void addSection(String name, IBrowserSection section) {
         if (sections.size() == 0) {
             active = name;
@@ -68,15 +77,36 @@ public class BrowserSections implements IClusterable {
         notifyListeners();
     }
 
-    public String getActiveSection() {
+    public String getActiveSectionName() {
         return active;
     }
 
-    public void setActiveSection(String name) {
+    public IBrowserSection getActiveSection() {
+        if (active != null) {
+            return sections.get(active);
+        }
+        return null;
+    }
+
+    public void setActiveSection(final String name) {
         if (active != name) {
             this.active = name;
             notifyListeners();
         }
+    }
+
+    public boolean isActive(final IBrowserSection section) {
+        if (section == null || active == null) {
+            return false;
+        }
+        return sections.get(active).equals(section);
+    }
+
+    public boolean isActive(final String name) {
+        if (name == null || active == null) {
+            return false;
+        }
+        return name.equals(active);
     }
 
     public void addListener(IChangeListener listener) {
@@ -88,9 +118,6 @@ public class BrowserSections implements IClusterable {
     }
 
     private void notifyListeners() {
-        for (IChangeListener listener : new ArrayList<IChangeListener>(listeners)) {
-            listener.onChange();
-        }
+        listeners.forEach(org.hippoecm.frontend.model.IChangeListener::onChange);
     }
-
 }

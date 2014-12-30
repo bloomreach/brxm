@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,53 +19,42 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ICardView;
 import org.hippoecm.frontend.widgets.AbstractView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * An accordion for the browser.
- */
-public class BrowserSectionAccordion extends Panel implements ICardView {
-
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(BrowserSectionAccordion.class);
+public class SectionViewer extends Panel implements ICardView {
 
     private IRenderService parentService;
     private BrowserSections sections;
-    private IBrowserSection focussed;
 
-    public BrowserSectionAccordion(String id, final BrowserSections sections,
-            final AccordionManagerBehavior accordionManager, IRenderService parentRenderService) {
+    public SectionViewer(final String id, final BrowserSections sections, IRenderService parentRenderService) {
         super(id, new Model<String>(null));
+
+        setOutputMarkupId(true);
+        
+        add(new AttributeAppender("class", Model.of("section-viewer"), " "));
 
         this.parentService = parentRenderService;
         this.sections = sections;
-
-        add(accordionManager);
-        setOutputMarkupId(true);
 
         IDataProvider<String> sectionProvider = new IDataProvider<String>() {
             private static final long serialVersionUID = 1L;
@@ -74,7 +63,7 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
 
             private void load() {
                 if (names == null) {
-                    names = new ArrayList<String>(sections.getSections());
+                    names = new ArrayList<>(sections.getSections());
                 }
             }
 
@@ -86,7 +75,7 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
 
             @Override
             public IModel<String> model(String object) {
-                return new Model<String>(object);
+                return new Model<>(object);
             }
 
             @Override
@@ -99,43 +88,27 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
                 names = null;
             }
         };
+
         add(new AbstractView<String>("list", sectionProvider) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(final Item<String> item) {
                 final IBrowserSection section = sections.getSection(item.getModelObject());
-                AjaxLink<Void> link = new AjaxLink<Void>("link") {
-                    private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        onSelect(item.getModelObject());
-                    }
-                };
-
-                IModel<String> focusModel = new LoadableDetachableModel<String>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected String load() {
-                        if (section == focussed) {
-                            return "focus";
-                        } else {
-                            return "unfocus";
-                        }
-                    }
-                };
-                link.add(new AttributeModifier("class", true, focusModel));
-                link.add(new Label("header", section.getTitle()));
-                item.add(link);
-
-                section.bind(parentService, "id");
+                section.bind(parentService, "section-view");
 
                 final Component component = section.getComponent();
                 component.setOutputMarkupId(true);
                 component.setOutputMarkupPlaceholderTag(true);
                 item.add(component);
+                
+                item.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+                    @Override
+                    public String getObject() {
+                        return sections.isActive(section) ? "selected" : "unselected";
+                    }
+                }, " "));
             }
 
             @Override
@@ -147,11 +120,47 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
 
         String selectedBrowserSection = (String) getDefaultModelObject();
         if (selectedBrowserSection != null) {
-            IBrowserSection section = sections.getSection(selectedBrowserSection);
-            if (section != null) {
-                onFocusSection(section);
-            }
+            select(selectedBrowserSection);
         }
+
+        final Form form = new Form("selection-form");
+        add(form);
+
+        final SectionNamesModel sectionNamesModel = new SectionNamesModel();
+        this.sections.addListener(sectionNamesModel);
+        
+        //final IModel<String> selectModel = Model.of(selectedBrowserSection == null ? "0" : selectedBrowserSection);
+        final IModel<String> selectModel = new SelectedSectionModel();
+        
+        DropDownChoice<String> select = new DropDownChoice<>("select", selectModel, sectionNamesModel, 
+            new IChoiceRenderer<String>() {
+                @Override
+                public Object getDisplayValue(final String object) {
+                    final IBrowserSection section = sections.getSection(object);
+                    return section.getTitle().getObject();
+                }
+    
+                @Override
+                public String getIdValue(final String object, final int index) {
+                    return object;
+                }
+            }
+        );
+        select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                onSelect(selectModel.getObject());
+            }
+        });
+        form.add(select);
+
+        this.sections.addListener(new IChangeListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void onChange() {
+                select(sections.getActiveSectionName());
+            }
+        });
 
     }
 
@@ -160,19 +169,20 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
             sections.getSection(name).render(target);
         }
     }
-    
+
     @Override
     public void onBeforeRender() {
         if (sections != null) {
             for (String extension : sections.getSections()) {
                 IBrowserSection section = sections.getSection(extension);
                 Component component = section.getComponent();
-                component.setVisible(section == focussed);
+                component.setVisible(sections.isActive(extension));
             }
         }
         super.onBeforeRender();
     }
 
+    /*
     @Override
     public void renderHead(final HtmlHeaderContainer container) {
         super.renderHead(container);
@@ -183,41 +193,34 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
             final IBrowserSection section = sections.getSection(activeSection);
             Component component = section.getComponent();
             response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" + getMarkupId() + "', '"
-                            + component.getMarkupId() + "')"));
+                    + component.getMarkupId() + "')"));
         }
     }
+    */
 
     public void onSelect(String extension) {
+        sections.setActiveSection(extension);
     }
 
-    private void onFocusSection(IBrowserSection section) {
-        if (section != focussed) {
-            focussed = section;
+    public void select(String sectionName) {
+        if (sectionName != null) {
+            sections.setActiveSection(sectionName);
+
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
                 target.add(this);
             }
         }
     }
-
-    public void select(String extension) {
-        if (extension != null) {
-            onFocusSection(sections.getSection(extension));
-        }
-    }
-
-    private boolean isActive() {
-        ICardView cardView = findParent(ICardView.class);
-        return cardView == null || cardView.isActive(this);
-    }
-
+    
     @Override
     public boolean isActive(Component component) {
         if (isActive()) {
-            if (focussed != null) {
-                Component focussedComponent = focussed.getComponent();
+            final IBrowserSection active = sections.getActiveSection();
+            if (active != null) {
+                Component focusedComponent = active.getComponent();
                 while (component != this) {
-                    if (component == focussedComponent) {
+                    if (component == focusedComponent) {
                         return true;
                     }
                     component = component.getParent();
@@ -227,5 +230,46 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
             }
         }
         return false;
+    }
+
+    private boolean isActive() {
+        ICardView cardView = findParent(ICardView.class);
+        return cardView == null || cardView.isActive(this);
+    }
+
+    private class SectionNamesModel extends AbstractReadOnlyModel<List<String>> implements IChangeListener {
+
+        private ArrayList<String> names;
+        
+        @Override
+        public List<String> getObject() {
+            if (names == null) {
+                names = new ArrayList<>(sections.getSections());
+            }
+            return names;
+        }
+
+        @Override
+        public void onChange() {
+            names = null;
+        }
+    }
+
+    private class SelectedSectionModel implements IModel<String> {
+
+        @Override
+        public String getObject() {
+            return sections.getActiveSectionName();
+        }
+
+        @Override
+        public void setObject(final String object) {
+            sections.setActiveSection(object);
+        }
+
+        @Override
+        public void detach() {
+            // Not implemented
+        }
     }
 }

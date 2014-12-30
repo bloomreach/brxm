@@ -29,12 +29,13 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -57,7 +58,6 @@ import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.util.MaxLengthNodeNameFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +77,8 @@ public class FolderTreePlugin extends RenderPlugin {
 
     public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+        
+        add(new AttributeAppender("class", Model.of("section-center"), " "));
 
         String startingPath = config.getString("path", DEFAULT_START_PATH);
         try {

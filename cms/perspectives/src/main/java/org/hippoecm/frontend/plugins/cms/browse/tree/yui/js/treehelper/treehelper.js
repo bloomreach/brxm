@@ -54,9 +54,11 @@ if (!YAHOO.hippo.TreeHelper) {
             init : function(id, cfg){
                 YAHOO.log('Register[' + id + '] cfg=' + Lang.dump(cfg), 'info', 'TreeHelper');
 
-                var el = Dom.get(id);
-                if (exists(el)) {
-                    el.treeHelper = {
+                var tree, sectionCenter;
+
+                tree = Dom.get(id);
+                if (exists(tree)) {
+                    tree.treeHelper = {
                         cfg: cfg,
                         registered: false,
                         layoutUnit: null,
@@ -66,8 +68,9 @@ if (!YAHOO.hippo.TreeHelper) {
                     };
                     
                     // Notify the context menu the tree is scrolling so it can reposition the context menu
-                    if (Dom.hasClass(el.parentNode, 'hippo-accordion-unit-center')) {
-                        YAHOO.util.Event.on(el.parentNode, 'scroll', function(e) {
+                    sectionCenter = Dom.getAncestorByClassName(tree, 'section-center');
+                    if (exists(sectionCenter)) {
+                        YAHOO.util.Event.on(sectionCenter, 'scroll', function () {
                             Hippo.ContextMenu.redraw();
                         });
                     }
@@ -251,7 +254,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     }
 
                     regionTree = Dom.getRegion(ar[0]);
-                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
+                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'section-center'));
                     if (regionTree.height > regionUnitCenter.height) {
                         //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
                         isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());

@@ -101,7 +101,7 @@ if (!YAHOO.hippo.TreeWidget) {
                     }
 
                     regionTree = Dom.getRegion(ar[0]);
-                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
+                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'section-center'));
                     if (regionTree.height > regionUnitCenter.height) {
                         //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
                         isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());

@@ -822,8 +822,6 @@ api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/persp
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-32.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-48.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-64.png -text svneol=unset#image/png
-api/src/main/resources/skin/images/accordion-unit-back.png -text
-api/src/main/resources/skin/images/accordion-unit-back2.png -text
 api/src/main/resources/skin/images/addfolder.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/ajaxback.png -text
 api/src/main/resources/skin/images/box-blue-back.png -text
@@ -1133,8 +1131,10 @@ api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_navigator.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text
+api/src/main/styling/less/_picker_section_viewer.less -text
 api/src/main/styling/less/_revision_history.less -text
 api/src/main/styling/less/_scaffolding.less -text
+api/src/main/styling/less/_section_viewer.less -text
 api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
 api/src/main/styling/less/_typography.less -text
@@ -2293,10 +2293,9 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserG
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.html svneol=native#text/plain
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/DocumentCollectionView.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/Navigator.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/SectionViewer.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DefaultListColumnProviderPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.properties -text

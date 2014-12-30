@@ -303,7 +303,7 @@ public class BrowseServiceTest extends PluginTest {
         start(browseSectionClone);
 
         getDocumentService().setModel(new JcrNodeModel("/test/other"));
-        assertEquals("section.more", service.getSections().getActiveSection());
+        assertEquals("section.more", service.getSections().getActiveSectionName());
     }
 
     /*
