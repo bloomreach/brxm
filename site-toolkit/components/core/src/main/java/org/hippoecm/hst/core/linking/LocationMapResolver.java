@@ -283,30 +283,24 @@ public class LocationMapResolver {
      * 
      * 1) A sitemap item that returns true for isUseableInRightContextOnly() is not useable and ignored
      * 2) The sitemap item that has the lowest depth (getDepth()) is used as canonical.
-     * 3) When multiple sitemap items have equal depth, the first is returned 
+     * 3) When multiple sitemap items have equal depth, the lexically first ordered is returned
      * 
      * @param preferredSiteMapItems
      * @return the canonical <code>HstSiteMapItem</code> or <code>null</code> if not succeeded.
      */
     private HstSiteMapItem getCanonicalItem(List<HstSiteMapItem> matchedHstSiteMapItema) {
-        List<HstSiteMapItem> canonicals = new ArrayList<HstSiteMapItem>();
-        int lowestDepth = Integer.MAX_VALUE;
+        List<HstSiteMapItemService> canonicals = new ArrayList<>();
         for(HstSiteMapItem item : matchedHstSiteMapItema) {
             HstSiteMapItemService serviceItem = (HstSiteMapItemService)item;
             if(serviceItem.isUseableInRightContextOnly()) {
-                // unuseable for canonical
+                // unusable for canonical
                 continue;
             }
-            if(serviceItem.getDepth() < lowestDepth) {
-                lowestDepth = serviceItem.getDepth();
-                canonicals.clear();
-                canonicals.add(serviceItem);
-            } else if (serviceItem.getDepth() == lowestDepth) {
-                canonicals.add(serviceItem);
-            }
+            canonicals.add(serviceItem);
         }
         if(!canonicals.isEmpty()) {
             // even if multiple canonicals are equally suited, we cannot do better then pick the first
+            Collections.sort(canonicals, new LowestDepthFirstAndThenLexicalComparator());
             return canonicals.get(0);
         }
         return null;
