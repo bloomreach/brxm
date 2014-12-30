@@ -311,6 +311,13 @@ public class RepositoryServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String currentNodePath = req.getRequestURI();
+
+        if (!currentNodePath.endsWith("/")) {
+            res.sendRedirect(currentNodePath + "/");
+            return;
+        }
+
         // explicitly set character encoding
         req.setCharacterEncoding("UTF-8");
         res.setCharacterEncoding("UTF-8");
@@ -322,13 +329,6 @@ public class RepositoryServlet extends HttpServlet {
         Session jcrSession = FormAuth.authorize(req, repository);
         if(jcrSession == null) {
             FormAuth.showLoginPage(req, res, "");
-            return;
-        }
-
-        String currentNodePath = req.getRequestURI();
-
-        if (!currentNodePath.endsWith("/")) {
-            res.sendRedirect(currentNodePath + "/");
             return;
         }
 
