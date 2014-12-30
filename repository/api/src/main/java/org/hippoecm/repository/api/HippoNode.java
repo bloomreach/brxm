@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.api;
 
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
@@ -30,27 +28,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
  * Any {@link javax.jcr.Node} instance returned by any method of a Hippo Repostitory may be cast to the HippoNode interface to expose additional functionality.
  */
 public interface HippoNode extends Node {
-
-    /*
-     * Other (future) extensions to the interface may include:
-     *
-     *   public boolean isDocument();
-     * Which would at this time be equivalent to
-     * isNodeType(HippoNodeType.NT_DOCUMENT)
-     * and could be used to check whether the Node is in fact
-     * a full blown document bonzai.
-     *
-     *   public Node getPrimaryNode();
-     *   public Node getPrimaryNode(Map<String,String> facets);
-     * These calls can be used to look up the primary handle of
-     * the document.  The handle of a document is the JCR Node
-     * under which all instances of a particular document reside
-     * and which should be used for reference purposes.
-     * The second version of this call returns in a pre-initialized
-     * map the facets which should (according to the handle definition)
-     * uniquely identify the document node for which the handle was
-     * requested.
-     */
 
     /**
      * Get a localized name of this node if available.  If this name is not
