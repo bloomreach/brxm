@@ -316,12 +316,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         groupIds.clear();
         currentDomainRoleIds.clear();
 
-        // Aggressively nullify
-        subject = null;
-        hierMgr = null;
-        itemMgr = null;
-        ntMgr = null;
-        npRes = null;
         log.info("Closed HippoAccessManager for user " + getUserIdAsString());
     }
 
