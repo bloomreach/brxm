@@ -25,27 +25,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hippo-addon-channel-manager-angularjs-api</artifactId>
+  <name>Addon Channel Manager AngularJS API</name>
+  <packaging>pom</packaging>
 
   <build>
-    <sourceDirectory>.</sourceDirectory>
+    <defaultGoal>validate</defaultGoal>
     <plugins>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-        <configuration>
-          <includePom>true</includePom>
-          <includes>
-            <include>.bowerrc</include>
-            <include>.jshintrc</include>
-            <include>*.json</include>
-            <include>*.js</include>
-            <include>js/**/*</include>
-          </includes>
-          <excludes>
-            <exclude>js/components/**</exclude>
-          </excludes>
-          <forceCreation>true</forceCreation>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -54,9 +39,7 @@
           <execution>
             <id>npm-install</id>
             <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
+            <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>install</commandlineArgs>
@@ -65,9 +48,7 @@
           <execution>
             <id>bower-install</id>
             <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
+            <goals><goal>exec</goal></goals>
             <configuration>
               <executable>bower</executable>
               <commandlineArgs>install</commandlineArgs>
@@ -76,24 +57,38 @@
           <execution>
             <id>grunt-build</id>
             <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
+            <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
-              <commandlineArgs>build</commandlineArgs>
+              <commandlineArgs>build:dist</commandlineArgs>
             </configuration>
           </execution>
           <execution>
             <id>grunt-test</id>
             <phase>test</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
+            <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
               <commandlineArgs>test</commandlineArgs>
               <skip>${skipTests}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>dist-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>${basedir}/maven-distribution.xml</descriptor>
+              </descriptors>
             </configuration>
           </execution>
         </executions>
@@ -103,7 +98,7 @@
 
   <profiles>
     <profile>
-      <id>clean-bower</id>
+      <id>grunt-clean</id>
       <activation>
         <file>
           <exists>node_modules/grunt</exists>
@@ -117,14 +112,12 @@
             <version>${maven.plugin.exec.version}</version>
             <executions>
               <execution>
-                <id>clean-bower</id>
+                <id>grunt-clean</id>
                 <phase>clean</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
+                <goals><goal>exec</goal></goals>
                 <configuration>
                   <executable>grunt</executable>
-                  <commandlineArgs>clean:bower</commandlineArgs>
+                  <commandlineArgs>clean</commandlineArgs>
                 </configuration>
               </execution>
             </executions>

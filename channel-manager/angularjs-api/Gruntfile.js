@@ -15,26 +15,8 @@
  */
 
 module.exports = function (grunt) {
-    'use strict';
 
-    function readDeclutterConfig() {
-        return grunt.file.readJSON('declutter.config.json');
-    }
-
-    function readDeclutteredComponentFiles() {
-        var declutterConfig = readDeclutterConfig(),
-            components = Object.keys(declutterConfig),
-            declutteredFiles = [];
-
-        components.forEach(function(component) {
-            var componentRules = declutterConfig[component];
-            componentRules.forEach(function(rule) {
-                declutteredFiles.push(component + '/' + rule);
-            });
-        });
-
-        return declutteredFiles;
-    }
+    var userhome = require('userhome');
 
     // display execution time of each task
     require('time-grunt')(grunt);
@@ -42,164 +24,250 @@ module.exports = function (grunt) {
     // load all grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
-    // project configuration
+    var cfg = {
+        tmpDir: '.tmp'
+    };
+
+    cfg.tmpRepoDir = userhome(cfg.tmpDir);
+
     grunt.initConfig({
-        build: require('./build.config.js'),
+        // Configuration
+        cfg: cfg,
+        userhome: userhome,
+
+        // Watch for file changes and run corresponding tasks
+        watch: {
+            options: {
+                livereload: true,
+                interrupt: true,
+                livereloadOnError: false
+            },
+            gruntfile: {
+                files: ['Gruntfile.js']
+            },
+            less: {
+                options: {
+                    livereload: false
+                },
+                files: ['src/**/*.less'],
+                tasks: ['less', 'autoprefixer', 'csslint', 'concat:css']
+            },
+            js: {
+                files: ['src/**/*.js', '!**/*.spec.js'],
+                tasks: ['concat:dist', 'uglify:dist']
+            },
+            images: {
+                files: ['src/images/**/*.{png,jpg,gif}'],
+                tasks: ['imagemin']
+            },
+            livereload: {
+                files: [
+                    '<%= cfg.demoSrc %>/**/*.html',
+                    'dist/css/**/*.css'
+                ]
+            }
+        },
 
         // clean target (distribution) folder
         clean: {
-            target: {
-                src: '<%= build.target %>'
-            },
-
-            bower: {
-                src: '<%= build.source %>/components/**'
-            }
+            bower: [ 'components/**' ],
+            dist: [ 'dist/**/*' ]
         },
 
-        // copy files to target folder
-        copy: {
-            apps: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= build.source %>',
-                        dest: '<%= build.target %>',
-                        src: [
-                            '**/*.html',
-                            '**/*.js',
-                            '!**/*.spec.js',
-                            '**/assets/css/*',
-                            '**/assets/images/*',
-                            '**/i18n/*.json',
-                            '!components/**'
-                        ]
-                    }
-                ]
-            },
-
-            components: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= build.source %>/components',
-                        dest: '<%= build.target %>/components',
-                        src: readDeclutteredComponentFiles()
-                    }
-                ]
-            }
-        },
-
-        // add hashes to file names to avoid caching issues
-        filerev: {
-            css: {
-                src: '<%= build.target %>/**/*.css'
-            },
-            js: {
-                src: '<%= build.target %>/**/*.js'
-            },
-            images: {
-                src: '<%= build.target %>/**/*.{gif,png}'
-            }
-        },
-
-        // replace file references in HTML files with their hashed versions
-        usemin: {
-            css: '<%= build.target %>/**/*.css',
-            html: '<%= build.target %>/**/*.html'
-        },
-
-        // watch source files and rebuild when they change
-        watch: {
-            options: {
-                spawn: false,
-                interrupt: true
-            },
-
-            apps: {
-                files: [
-                    '<%= build.source %>/**/*',
-                    '!<%= build.source %>/components/**/*'
-                ],
-                tasks: ['build']
-            },
-
-            livereload: {
-                options: {
-                    livereload: true
-                },
-                files: [
-                    '<%= build.source %>/**/*',
-                    '!<%= build.source %>/components/**/*'
-                ]
-            }
-        },
-
-        // only use a sub-set of files in Bower components
-        declutter: {
-            options: {
-                rules: readDeclutterConfig()
-            },
-            files: [
-                '<%= build.source %>/components/*'
-            ]
-        },
-
-        // validate source code with jslint
+        // Check if JS files are according to conventions specified in .jshintrc
         jshint: {
-            options: {
-                reporter: require('jshint-stylish'),
-                jshintrc: true
-            },
-            apps: [
-                '<%= build.source %>/**/*.js',
-                '!<%= build.source %>/**/*.spec.js',
-                '!<%= build.source %>/components/**/*'
+            all: [
+                'src/**/*.js',
+                '!**/*.spec.js'
             ],
-            tests: [
-                '<%= build.source %>/**/*.spec.js',
-                '!<%= build.source %>/components/**/*'
-            ]
+            options: {
+                'jshintrc': true,
+                reporter: require('jshint-stylish')
+            }
         },
 
-        // testing with karma
+        // Concat files
+        concat: {
+            options: {
+                stripBanners: true
+            },
+            dist: {
+                src: [
+                    'src/shared/*.js',
+                    'src/shared/**/*.js',
+                    '!src/shared/**/*.spec.js'
+                ],
+                dest: 'dist/js/main.js'
+            },
+            css: {
+                src: [
+                    '.tmp/css/main.css'
+                ],
+                dest: 'dist/css/main.css'
+            }
+        },
+
+        // Minify JS files
+        uglify: {
+            options: {
+                preserveComments: 'some'
+            },
+            dist: {
+                files: {
+                    'dist/js/main.min.js': ['dist/js/main.js']
+                }
+            }
+        },
+
+        // Lint the css output
+        csslint: {
+            lessOutput: {
+                options: {
+                    csslintrc: '.csslintrc'
+                },
+
+                src: ['.tmp/css/main.css']
+            }
+        },
+
+        // Autoprefix vendor prefixes
+        autoprefixer: {
+            dist: {
+                options: {
+                    browsers: ['> 0%']
+                },
+                src: '.tmp/css/main.css',
+                dest: '.tmp/css/main.css'
+            }
+        },
+
+        // Compile LessCSS to CSS.
+        less: {
+            main: {
+                files: {
+                    '.tmp/css/main.css': 'src/less/main.less'
+                }
+            },
+            vendors: {
+                files: {
+                    '.tmp/css/bootstrap.css': 'src/less/bootstrap.less',
+                    '.tmp/css/font-awesome.css': 'src/less/font-awesome.less',
+                    '.tmp/css/bootstrap-chosen.css': 'src/less/bootstrap-chosen.less'
+                }
+            }
+        },
+        // Minify CSS files
+        cssmin: {
+            options: {
+                report: 'min'
+            },
+            dist: {
+                files: {
+                    'dist/css/main.min.css': ['dist/css/main.css']
+                }
+            }
+        },
+
+        // Minify images
+        imagemin: {
+            src: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/images',
+                    src: ['**/*.{png,jpg,gif}'],
+                    dest: 'src/images/'
+                }]
+            }
+        },
+
+        // Copy files
+        copy: {
+
+            dist: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'components/bootstrap/fonts',
+                        src: ['**/*'],
+                        dest: 'dist/fonts/'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'components/font-awesome/fonts',
+                        src: ['**/*'],
+                        dest: 'dist/fonts/'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'src/images',
+                        src: ['**/*.{png,jpg,gif}'],
+                        dest: 'dist/images/'
+                    }
+                ]
+            }
+
+        },
+
+        // Testing with karma
         karma: {
             options: {
-                configFile: 'karma.config.js',
+                configFile: 'karma.conf.js',
                 autoWatch: true
             },
 
             single: {
-                singleRun: true
+                singleRun: true,
+                browsers: ['PhantomJS']
             },
 
             continuous: {
-                singleRun: false
+                singleRun: false,
+                browsers: ['PhantomJS']
+            }
+        },
+
+        connect: {
+            options: {
+                port: 9000,
+                hostname: '0.0.0.0',
+                open: 'http://localhost:9000/#/'
+            }
+        },
+
+        // Execute commands
+        shell: {
+            options: {
+                stdout: true,
+                stderr: true
             }
         }
+
     });
 
-    grunt.registerTask('default', 'Build and test', [
-        'build',
-        'test'
+    // default
+    grunt.registerTask('default', [
+        'build:dist'
     ]);
 
-    grunt.registerTask('build', 'Build everything', [
-        'jshint:apps',
-        'declutter',
-        'clean:target',
-        'copy',
-        'filerev',
-        'usemin'
+    // build dist
+    grunt.registerTask('build:dist', 'Build the distribution', [
+        'jshint',
+        'less',
+        'csslint',
+        'imagemin',
+        'clean:dist',
+        'copy:dist',
+        'concat',
+        'uglify:dist',
+        'cssmin:dist'
     ]);
 
+    // test
     grunt.registerTask('test', 'Test the source code', [
-        'jshint:tests',
         'karma:single'
     ]);
 
     grunt.registerTask('test:continuous', 'Test the source code continuously', [
-        'jshint:tests',
         'karma:continuous'
     ]);
 

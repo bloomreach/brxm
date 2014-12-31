@@ -2,11 +2,12 @@
 /LICENSE -text
 /NOTICE -text
 angularjs-api/.bowerrc -text
+angularjs-api/.csslintrc -text
 angularjs-api/.jshintrc -text
 angularjs-api/bower.json -text
 angularjs-api/declutter.config.json -text
-angularjs-api/js/shared/assets/images/loader.gif -text
 angularjs-api/package.json -text
+angularjs-api/src/images/loader.gif -text
 frontend-api/src/main/appended-resources/META-INF/LICENSE -text
 frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrlService.java -text
 frontend/.bowerrc -text
