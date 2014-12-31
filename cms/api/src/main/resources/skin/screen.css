@@ -1108,9 +1108,11 @@ body .hippo-picker-properties div.text-input input {
   padding-top: 5px;
 }
 
+/*
 .hippo-browser-documents-small {
-  background: transparent
+  background: transparent;
 }
+*/
 
 .hippo-browser-documents-small .hippo-browser-documents-small-folders h3 {
   background: transparent url(images/filelistHeaderback.png) repeat-x;
@@ -1126,13 +1128,14 @@ body .hippo-picker-properties div.text-input input {
   background: white;
 }
 
+/*
 .hippo-browser-documents-small .hippo-browser-documents-small-folders {
   background: #f4f4f4;
   border-left: 0;
   border-bottom: 0;
   border-top: 0;
 }
-
+*/
 /*
 .hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details {
   clear: both;

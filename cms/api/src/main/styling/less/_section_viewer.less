@@ -75,15 +75,22 @@
       }
 
       .section-bottom {
-        min-height: unit(@sections-bottom-height, px);
-        height: unit(@sections-bottom-height, px);
-
-        background-color: #ebebeb;
-        cursor: pointer;
-        margin: 0;
-        padding: 0;
-        border: 0;
+        min-height: unit(@sections-bottom-height + 1, px);
+        height: unit(@sections-bottom-height + 1, px);
+        border-top: 1px solid @sections-border-color;
         white-space: nowrap;
+        
+        .add-root-folder {
+          margin: 8px;
+          border: 1px solid @sections-border-color;
+          cursor: pointer;
+          border-radius: 4px;
+          height: 25px;
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
   }
