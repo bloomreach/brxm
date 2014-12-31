@@ -32,6 +32,10 @@ import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
 public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
+            // do not html encode but utf-8 encode hence entities = false
+            + "  entities: false,"
+            // &gt; must not be replaced with > hence basicEntities = true
+            + "  basicEntities: true,"
             + "  autoUpdateElement: false,"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  plugins: 'basicstyles,button,clipboard,contextmenu,divarea,enterkey,entities,floatingspace,floatpanel,htmlwriter,listblock,magicline,menu,menubutton,panel,panelbutton,removeformat,richcombo,stylescombo,tab,toolbar,undo',"
