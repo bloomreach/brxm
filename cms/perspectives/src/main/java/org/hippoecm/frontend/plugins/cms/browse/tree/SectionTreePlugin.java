@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,18 +19,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -109,20 +112,24 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 log.warn(e.getMessage());
             }
         }
-        add(accordionManager = new AccordionManagerBehavior(accordionConfig));
+        //add(accordionManager = new AccordionManagerBehavior(accordionConfig));
+
+        setOutputMarkupId(true);
+        add(new AttributeAppender("class", Model.of("section-viewer"), " "));
 
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
         String[] behaviours = config.getStringArray("behaviours");
         if (behaviours != null) {
-            for (int i = 0; i < behaviours.length; i++) {
-                if ("toggle".equals(behaviours[i])) {
+            for (final String behaviour : behaviours) {
+                if ("toggle".equals(behaviour)) {
                     toggleBehaviour = true;
+                    break;
                 }
             }
         }
 
         List<String> extensions = Arrays.asList(config.getStringArray(RenderService.EXTENSIONS_ID));
-        sections = new ArrayList<Section>(extensions.size());
+        sections = new ArrayList<>(extensions.size());
         for (String extension : extensions) {
             sections.add(new Section(extension));
         }
@@ -137,44 +144,69 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             @Override
             protected void populateItem(ListItem<Section> item) {
                 final Section section = item.getModelObject();
-                AjaxLink<Void> link = new AjaxLink<Void>("link") {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        if (section.extPt.getChildren().size() > 0) {
-                            IRenderService renderer = (IRenderService) section.extPt.getChildren().get(0);
-                            IModelReference modelService = context.getService(context.getReference(renderer)
-                                    .getServiceId(), IModelReference.class);
-                            if (modelService != null) {
-                                IModel sectionModel = modelService.getModel();
-                                SectionTreePlugin.this.setDefaultModel(sectionModel);
-                            } else {
-                                focusSection(section, true);
-                            }
-                            SectionTreePlugin.this.redraw();
-                        }
-                    }
-                };
-                link.add(new AttributeModifier("class", true, section.focusModel));
-                item.add(link);
-
-                String label = section.extension;
-                if (sections.indexOf(section) < headers.size()) {
-                    label = headers.get(sections.indexOf(section));
-                }
-                link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
-
                 if (section.extPt.getChildren().size() > 0) {
                     Component c = ((IRenderService)section.extPt.getChildren().get(0)).getComponent();
                     item.add(c);
                 } else {
                     item.add(new EmptyPanel("id"));
-                    link.setVisible(false);
-                    item.setVisible(false);
                 }
+
+                item.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+                    @Override
+                    public String getObject() {
+                        return section.focussed ? "selected" : "unselected";
+                    }
+                }, " "));
+
             }
         });
+
+        final Form form = new Form("selection-form");
+        add(form);
+        
+        final IModel<Section> selectModel = Model.of(sections.size() > 0 ? sections.get(0) : null);
+        DropDownChoice<Section> select = new DropDownChoice<>("select", selectModel, sections,
+                new IChoiceRenderer<Section>() {
+                    @Override
+                    public Object getDisplayValue(final Section object) {
+                        String label = object.extension;
+                        int index = sections.indexOf(object);
+
+                        if (index < headers.size()) {
+                            label = headers.get(index);
+                        }
+                        return new StringResourceModel(label, SectionTreePlugin.this, null).getObject();
+                    }
+
+                    @Override
+                    public String getIdValue(final Section object, final int index) {
+                        return object.extension;
+                    }
+                }
+        );
+        select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                System.out.println("On select van " + selectModel.getObject().extension);
+
+                Section section = selectModel.getObject();
+                if (section.extPt.getChildren().size() > 0) {
+                    IRenderService renderer = (IRenderService) section.extPt.getChildren().get(0);
+                    IModelReference modelService = context.getService(context.getReference(renderer)
+                            .getServiceId(), IModelReference.class);
+                    if (modelService != null) {
+                        IModel sectionModel = modelService.getModel();
+                        SectionTreePlugin.this.setDefaultModel(sectionModel);
+                    } else {
+                        focusSection(section, true);
+                    }
+                } else {
+                    focusSection(section, false);
+                }
+                SectionTreePlugin.this.redraw();
+            }
+        });
+        form.add(select);
     }
 
     @Override
@@ -197,22 +229,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             }
         }
         super.onBeforeRender();
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        for (Section section : sections) {
-            final List sectionChildren = section.extPt.getChildren();
-            if (sectionChildren.size() > 0) {
-                final Component component = ((IRenderService) sectionChildren.get(0)).getComponent();
-                if (component.isVisible()) {
-                    accordionManager.activate(component);
-                    break;
-                }
-            }
-        }
     }
 
     @Override

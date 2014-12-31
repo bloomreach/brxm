@@ -248,7 +248,7 @@ public class FolderTreePlugin extends RenderPlugin {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (target != null && isActive()) {
+        if (target != null && isActive() && isVisible()) {
             tree.updateTree();
         }
     }
