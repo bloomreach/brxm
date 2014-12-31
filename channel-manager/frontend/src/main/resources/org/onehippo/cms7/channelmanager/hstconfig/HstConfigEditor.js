@@ -28,6 +28,7 @@
 
             this.title = config.title;
             config.header = false;
+            config.border = false;
 
             Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
 
