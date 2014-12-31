@@ -28,6 +28,7 @@ components/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventLi
 components/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/components/Algebra.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/AllLinksForANewsItem.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/components/BannerInfo.java -text
 components/src/main/java/org/hippoecm/hst/demo/components/Block.java -text
@@ -375,6 +376,7 @@ resources/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=
 resources/src/main/webapp/WEB-INF/jsp/components/layout/mashup.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/layout/threecolumnlayout.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/main/algebra.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/alllinkforanewsitem.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/main/archive.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/main/banner.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/main/block.jsp -text
