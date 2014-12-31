@@ -94,7 +94,16 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     }
 
     private TagNode filter(final TagNode node) {
-        if (node.getName() != null && !whitelist.containsKey(node.getName())) {
+        if (node.getName() == null) {
+            for (TagNode childNode : node.getChildTags()) {
+                if (filter(childNode) == null) {
+                    node.removeChild(childNode);
+                }
+            }
+            return node;
+        }
+
+        if (!whitelist.containsKey(node.getName())) {
             return null;
         }
         final Element element = whitelist.get(node.getName());
