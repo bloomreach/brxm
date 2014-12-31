@@ -1,5 +1,5 @@
 {
-  "name": "hippo-addon-channel-manager-frontend",
+  "name": "hippo-addon-channel-manager-angularjs-api",
   "private": true,
   "dependencies": {
     "angular": "1.3.1",
