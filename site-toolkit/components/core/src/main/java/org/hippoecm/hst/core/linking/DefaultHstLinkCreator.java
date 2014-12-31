@@ -179,7 +179,16 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         linkResolver.resolverProperties.canonicalLink = true;
         return linkResolver.resolve();
     }
-    
+
+    @Override
+    public HstLink create(final Node node, final Mount mount, final HstSiteMapItem preferredItem, final boolean fallback) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
+        linkResolver.resolverProperties.tryOtherMounts = false;
+        linkResolver.resolverProperties.preferredItem = preferredItem;
+        linkResolver.resolverProperties.fallback = fallback;
+        return linkResolver.resolve();
+    }
+
     public HstLink create(Node node, HstRequestContext requestContext,  String mountAlias) {
         Mount targetMount = requestContext.getMount(mountAlias);
         if(targetMount == null) {

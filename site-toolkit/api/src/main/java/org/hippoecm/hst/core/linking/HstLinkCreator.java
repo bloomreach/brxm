@@ -67,8 +67,9 @@ public interface HstLinkCreator {
      * @param node the jcr node
      * @param requestContext the HstRequestContext
      * @param preferredItem if not null (null means no preferred sitemap item), first a link is trying to be created for this item
-     * @param fallback value true or false
-      * @return the HstLink for this jcr Node or <code>null</code>
+     * @param fallback whether to fallback to link rewriting without <code>preferredItem</code> in case link rewriting
+     *                 with <code>preferredItem</code> resulted in a not found link
+     * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem, boolean fallback);
     
@@ -91,12 +92,13 @@ public interface HstLinkCreator {
      * @param node the jcr node 
      * @param requestContext the HstRequestContext
      * @param preferredItem  if not null (null means no preferred sitemap item), first a link is trying to be created for this item
-     * @param fallback value true or false
+     * @param fallback whether to fallback to link rewriting without <code>preferredItem</code> in case link rewriting
+     *                 with <code>preferredItem</code> resulted in a not found link
      * @param navigationStateful value true or false
      * @return  the HstLink for this jcr Node or <code>null</code>
      */
     HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem, boolean fallback, boolean navigationStateful);
-    
+
     /**
      * This creates a canonical HstLink: regardless the current requestContext, one and the same jcr Node is guaranteed to return the same HstLink. This is
      * useful when showing one and the same content via multiple urls, for example in faceted navigation. Search engines can better index your
@@ -170,6 +172,24 @@ public interface HstLinkCreator {
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mount</code> or <code>null</code> when no link for the node can be made in the <code>mount</code>
      */
     HstLink create(Node node, Mount mount);
+
+    /**
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>mount</code> and <code>preferredItem</code>.
+     * When <code>preferredItem</code> is not <code>null</code>, the link is tried to be rewritten to one of the descendants (including itself)
+     * of the preferred {@link HstSiteMapItem}. When this does not result in a match, then, depending on  whether
+     * <code>fallback = true</code>,a fallback to an attempt to link rewrite for the entire sitemap is done
+     * Note that this HstLink creation does only take into account the <code>mount</code> and not the current context.
+     * The <code>mount</code> can be a different one then the one of the current request context.
+     * If the <code>mount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
+     * to a different (sub)site, a page not found link is returned. </p>
+     * @param node the jcr node for that should be translated into a HstLink
+     * @param mount the (sub)site for which the hstLink should be created for
+     * @param preferredItem  if not null (null means no preferred sitemap item), first a link is trying to be created for this item
+     * @param fallback whether to fallback to link rewriting without <code>preferredItem</code> in case link rewriting
+     *                 with <code>preferredItem</code> resulted in a not found link
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mount</code> or <code>null</code> when no link for the node can be made in the <code>mount</code>
+     */
+    HstLink create(Node node, Mount mount, HstSiteMapItem preferredItem, boolean fallback);
 
 
     /**

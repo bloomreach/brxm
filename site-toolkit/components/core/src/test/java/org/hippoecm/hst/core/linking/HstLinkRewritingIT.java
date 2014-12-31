@@ -27,6 +27,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -295,6 +296,18 @@ public class HstLinkRewritingIT extends AbstractBeanTestCase {
         newsLink = linkCreator.create(node, requestContext, preferSiteMapItem, false);
         assertEquals("wrong link.getPath for News/News1", "pagenotfound", newsLink.getPath());
 
+    }
+
+
+    @Test
+    public void test_preferred_siteMapItem_for_other_mount_than_request_context() throws Exception {
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/news");
+        Node node = requestContext.getSession().getNode("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
+        final Mount subsite = requestContext.getMount("subsite");
+        final HstSiteMapItem preferredItem = subsite.getHstSite().getSiteMap().getSiteMapItem("news");
+        final HstLink newsLink = linkCreator.create(node, subsite, preferredItem, false);
+        assertEquals("subsite", newsLink.getMount().getName());
+        System.out.println(newsLink.toUrlForm(requestContext, false));
     }
 
     /**

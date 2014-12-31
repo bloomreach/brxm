@@ -90,6 +90,9 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:mount</sv:value>
           </sv:property>
+          <sv:property sv:name="hst:alias" sv:type="String">
+            <sv:value>subsite</sv:value>
+          </sv:property>
           <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/hst:hst/hst:sites/unittestsubproject</sv:value>
           </sv:property>
