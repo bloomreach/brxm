@@ -56,7 +56,10 @@ public class AllLinksForANewsItem extends BaseHstComponent {
 
         // now per canonical link, add all extra possible links as well
         for (HstLink canonicalLink : allAvailableCanonicals) {
+            long start = System.currentTimeMillis();
             augmentLinks(allLinks, canonicalLink, hstLinkCreator, newsNode);
+            log.info("Finding all possible links from the canonical links took '{}' ms",
+                    String.valueOf(System.currentTimeMillis() - start));
         }
 
         // now we most likely have picked up some duplicate links. Filter duplicates out
