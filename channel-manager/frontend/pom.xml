@@ -141,6 +141,15 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-angularjs-api</artifactId>
+      <version>${project.version}</version>
+      <classifier>distribution</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
@@ -289,9 +298,9 @@
             <phase>initialize</phase>
             <goals><goal>copy-dependencies</goal></goals>
             <configuration>
-              <includeGroupIds>org.onehippo.cms7.frontend</includeGroupIds>
+              <includeGroupIds>org.onehippo.cms7, frontend,org.onehippo.cms7</includeGroupIds>
               <includeArtifactIds>
-                hippo-theme
+                hippo-theme, hippo-addon-channel-manager-angularjs-api
               </includeArtifactIds>
               <stripClassifier>true</stripClassifier>
               <stripVersion>true</stripVersion>
