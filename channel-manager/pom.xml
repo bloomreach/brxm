@@ -123,6 +123,7 @@
     <module>frontend</module>
     <module>repository</module>
     <module>test</module>
+    <module>angularjs-api</module>
   </modules>
 
   <scm>
