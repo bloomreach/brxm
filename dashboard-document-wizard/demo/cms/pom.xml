@@ -63,18 +63,12 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-      <artifactId>gallerypicker</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>wicket</artifactId>
-          <groupId>org.apache.wicket</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-gallerypicker</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-resource-bundle-editor</artifactId>
+      <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
