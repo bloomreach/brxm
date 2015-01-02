@@ -1122,6 +1122,7 @@ api/src/main/styling/less/_editor_feedback.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_editor_toolbar.less -text
 api/src/main/styling/less/_footer.less -text
+api/src/main/styling/less/_form_elements.less -text
 api/src/main/styling/less/_globals.less -text
 api/src/main/styling/less/_hippo_dev_extensions.less -text
 api/src/main/styling/less/_hippo_logo.less -text

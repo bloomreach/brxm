@@ -1,0 +1,72 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.selectric {
+  border: 0;
+  border-radius: unit(@forms-select-border-radius, px);
+  height: 25px;
+  background-color: @forms-select-bgcolor;
+
+  .label {
+    line-height: 12px;
+    padding: 7px 0 0 8px;
+  }
+
+  .button {
+    width: 26px;
+    height: 25px;
+    background-color: @forms-select-button-color;
+    border-radius: 0 unit(@forms-select-border-radius, px) unit(@forms-select-border-radius, px) 0;
+
+    &:after {
+      border-color: @forms-select-arrow-color transparent;
+      border-width: 6px;
+    }
+  }
+}
+
+.selectricOpen .selectric {
+  background-color: @forms-select-open-bgcolor;
+}
+
+.selectricHover .selectric {
+  .button {
+    background-color: @forms-select-button-hover-color;
+    &:after {
+      border-color: @forms-select-arrow-hover-color transparent;
+    }
+  }
+}
+
+.selectricItems {
+  .remove-outline();
+  border-radius: unit(@forms-select-border-radius, px);
+  background-color: @forms-select-items-bgcolor;
+
+  li {
+    border: 0;
+    padding: 4px 4px 4px 8px;
+
+    &:hover {
+      color: @forms-select-items-hover-color;
+      background-color: @forms-select-items-hover-bgcolor;
+
+      &:last-child {
+        border-radius: 0 0 unit(@forms-select-border-radius, px) unit(@forms-select-border-radius, px);
+      }
+    }
+  }
+}
