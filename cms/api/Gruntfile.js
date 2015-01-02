@@ -26,7 +26,7 @@ module.exports = function (grunt) {
 
     var buildConfig = require('./build.config.js');
     function classPathExists() {
-        return fs.existsSync(buildConfig.target + '/classes/skin/hippo-cms');
+        return fs.existsSync(buildConfig.target + '/classes/');
     }
 
     grunt.initConfig({
@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             },
             images: {
                 files: ['<%= build.src %>/images/**'],
-                tasks: ['newer:copy:binaries', 'newer:copy:images2classpath']
+                tasks: ['newer:copy:binaries', 'svgmin:theme', 'svgstore:theme', 'newer:copy:images2classpath']
             }
         },
 
@@ -112,11 +112,8 @@ module.exports = function (grunt) {
         svgmin: {
             options: {
                 plugins: [
-                    {
-                        removeViewBox: false
-                    }, {
-                        removeUselessStrokeAndFill: true
-                    }
+                    { removeViewBox: false },
+                    { removeUselessStrokeAndFill: true }
                 ]
             },
             theme: {
@@ -133,7 +130,8 @@ module.exports = function (grunt) {
                 svg: {
                     xmlns: 'http://www.w3.org/2000/svg',
                     class: 'hi-defs'
-                }
+                },
+                cleanup: true
             },
             theme: {
                 files: {
@@ -183,8 +181,8 @@ module.exports = function (grunt) {
                 // Copy resources to classpath so Wicket will pick them up
                 expand: true,
                 cwd: '<%= build.skin %>',
-                src: ['**'],
-                dest: '<%= build.target %>/classes/skin/hippo-cms/',
+                src: '**/*',
+                dest: '<%= build.target %>/classes/skin/hippo-cms',
                 filter: function () {
                     //little hack to force it to only copy when dest exists
                     return classPathExists();
@@ -195,7 +193,7 @@ module.exports = function (grunt) {
                 // Copy images to the classpath so Wicket will pick them up
                 expand: true,
                 cwd: '<%= build.images %>',
-                src: ['**'],
+                src: '**/*',
                 dest: '<%= build.target %>/classes/org/hippoecm/frontend/skin/images',
                 filter: function () {
                     //little hack to force it to only copy when dest exists
@@ -239,6 +237,7 @@ module.exports = function (grunt) {
 
     // build theme
     grunt.registerTask('build', 'Build the theme', [
+        'clean:copies',
         'less',
         'autoprefixer',
         'csslint',
@@ -253,7 +252,8 @@ module.exports = function (grunt) {
     // install
     grunt.registerTask('install', 'Build and install the theme', [
         'build',
-        'copy:sources2classpath'
+        'newer:copy:sources2classpath',
+        'newer:copy:images2classpath'
     ]);
 
 };
