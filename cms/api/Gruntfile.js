@@ -21,6 +21,7 @@ module.exports = function (grunt) {
 
     // load all grunt tasks automatically
     require('load-grunt-tasks')(grunt);
+
     // display execution time of each task
     require('time-grunt')(grunt);
 
@@ -51,7 +52,7 @@ module.exports = function (grunt) {
                 tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:tmp']
             },
             livereload: {
-                files: ['<%= build.skin %>/**'],
+                files: ['<%= build.skin %>/**/*.css'],
                 tasks: ['newer:copy:sources2classpath', 'shell:notify']
             },
             images: {
@@ -149,11 +150,26 @@ module.exports = function (grunt) {
                 src: [
                     '<%= build.tmp %>/css/open-sans.css',
                     '<%= build.bower %>/normalize.css/normalize.css',
+                    '<%= build.bower %>/jquery-selectric/dist/selectric.css',
                     '<%= build.tmp %>/css/style-test.css',
                     '<%= build.tmp %>/css/<%= build.file %>.css',
                     '<%= build.tmp %>/css/wicket.css'
                 ],
                 dest: '<%= build.skin %>/css/<%= build.file %>.css'
+            },
+            js: {
+                src: [
+                    '<%= build.bower %>/jquery-selectric/dist/jquery.selectric.js'
+                ],
+                dest: '<%= build.skin %>/js/<%= build.file %>.js'
+            }
+        },
+
+        uglify: {
+            dist: {
+                files: {
+                    '<%= build.skin %>/js/<%= build.file %>.min.js': ['<%= concat.js.dest %>']
+                }
             }
         },
 
@@ -242,6 +258,7 @@ module.exports = function (grunt) {
         'autoprefixer',
         'csslint',
         'concat',
+        'uglify',
         'cssmin:theme',
         'copy:binaries',
         'svgmin:theme',

@@ -23,9 +23,12 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -129,9 +132,7 @@ public class SectionViewer extends Panel implements ICardView {
         final SectionNamesModel sectionNamesModel = new SectionNamesModel();
         this.sections.addListener(sectionNamesModel);
         
-        //final IModel<String> selectModel = Model.of(selectedBrowserSection == null ? "0" : selectedBrowserSection);
         final IModel<String> selectModel = new SelectedSectionModel();
-        
         DropDownChoice<String> select = new DropDownChoice<>("select", selectModel, sectionNamesModel, 
             new IChoiceRenderer<String>() {
                 @Override
@@ -161,7 +162,6 @@ public class SectionViewer extends Panel implements ICardView {
                 select(sections.getActiveSectionName());
             }
         });
-
     }
 
     public void render(PluginRequestTarget target) {
@@ -182,21 +182,13 @@ public class SectionViewer extends Panel implements ICardView {
         super.onBeforeRender();
     }
 
-    /*
     @Override
     public void renderHead(final HtmlHeaderContainer container) {
         super.renderHead(container);
 
-        IHeaderResponse response = container.getHeaderResponse();
-        final String activeSection = sections.getActiveSection();
-        if (activeSection != null) {
-            final IBrowserSection section = sections.getSection(activeSection);
-            Component component = section.getComponent();
-            response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" + getMarkupId() + "', '"
-                    + component.getMarkupId() + "')"));
-        }
+        final IHeaderResponse response = container.getHeaderResponse();
+        response.render(OnDomReadyHeaderItem.forScript("jQuery('.section-selection-dropdown').selectric();"));        
     }
-    */
 
     public void onSelect(String extension) {
         sections.setActiveSection(extension);

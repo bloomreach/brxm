@@ -49,5 +49,6 @@ public class CmsHeaderItem extends HippoHeaderItem {
 
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_JS : THEME_JS).render(response);
     }
 }

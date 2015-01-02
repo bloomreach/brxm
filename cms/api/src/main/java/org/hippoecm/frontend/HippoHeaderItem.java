@@ -33,6 +33,9 @@ public abstract class HippoHeaderItem extends HeaderItem {
     protected static final ResourceReference THEME_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-theme.css");
     protected static final ResourceReference THEME_MIN_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-theme.min.css");
 
+    protected static final ResourceReference THEME_JS = getUniqueResourceReference("skin/hippo-cms/js/hippo-cms-theme.js");
+    protected static final ResourceReference THEME_MIN_JS = getUniqueResourceReference("skin/hippo-cms/js/hippo-cms-theme.min.js");
+
     protected static final ResourceReference FUTURE_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/future.js");
     protected static final ResourceReference GLOBAL_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/global.js");
 
