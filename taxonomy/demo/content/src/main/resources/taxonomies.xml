@@ -49,10 +49,8 @@
       <sv:property sv:name="hippotaxonomy:locales" sv:type="String" sv:multiple="true">
         <sv:value>en</sv:value>
         <sv:value>fr</sv:value>
-        <sv:value>es</sv:value>
         <sv:value>it</sv:value>
         <sv:value>nl</sv:value>
-        <sv:value>cy</sv:value>
       </sv:property>
       <sv:node sv:name="Transport_and_infrastructure">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1545,16 +1543,16 @@
             <sv:value>hippotaxonomy:translation</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>cy</sv:value>
+            <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Gwybodaeth Economi a chyflogaeth</sv:value>
+            <sv:value>Kennis economie en werkgelegenheid</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:description" sv:type="String">
-            <sv:value>Categori o wybodaeth cyflogaeth Economi a</sv:value>
+            <sv:value>Categorie voor kennis economie en werkgelegenheid</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
-            <sv:value>Mae hwn yn Categori o wybodaeth cyflogaeth Economi a</sv:value>
+            <sv:value>Dit is een categorie voor kennis economie en werkgelegenheid</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

@@ -16,7 +16,7 @@
     <sv:value>taxonomydemo-common-id</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>cy</sv:value>
+    <sv:value>nl</sv:value>
   </sv:property>
   
   <sv:node sv:name="hippo:translation">
@@ -87,10 +87,10 @@
         <sv:value>taxonomydemo-common-homepage-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>cy</sv:value>
+        <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="taxonomydemo:summary" sv:type="String">
-        <sv:value>This is the home page of the generated HST website.</sv:value>
+        <sv:value>Dit is de homepage van de door de HST gegenereerde website.</sv:value>
       </sv:property>
       <sv:property sv:name="taxonomydemo:title" sv:type="String">
         <sv:value>taxonomydemo Home Page</sv:value>
@@ -101,7 +101,7 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>&lt;p&gt;Now go ahead and build your own website!&lt;/p&gt;
+          <sv:value>&lt;p&gt;Je kan nu je eigen site gaan maken!&lt;/p&gt;
           </sv:value>
         </sv:property>
       </sv:node>
@@ -123,7 +123,7 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Amdanom Ni</sv:value>
+        <sv:value>Over ons</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="About Us">
@@ -164,13 +164,13 @@
         <sv:value>taxonomydemo-common-about-us-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>cy</sv:value>
+        <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="taxonomydemo:summary" sv:type="String">
-        <sv:value>Pwy ydym ni.</sv:value>
+        <sv:value>Wie wij zijn.</sv:value>
       </sv:property>
       <sv:property sv:name="taxonomydemo:title" sv:type="String">
-        <sv:value>Amdanom Ni</sv:value>
+        <sv:value>Over ons</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hippotaxonomy:keys" sv:type="String">
         <sv:value>key_77536ad5-c640-451d-b663-c10f55a94317</sv:value>
@@ -181,7 +181,7 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>Rydym yn Hippo! Dewch i ymweld &#131; ni yn &lt;a href="http://www.onehippo.com" target="_blank" title="Hippo
+          <sv:value>Wij zijn Hippo! Kom en bezoek onze website &lt;a href="http://www.onehippo.com" target="_blank" title="Hippo
             website"&gt;www.onehippo.com&lt;/a&gt;!
           </sv:value>
         </sv:property>

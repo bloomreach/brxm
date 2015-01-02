@@ -11,10 +11,10 @@
       <sv:value>hst:pages/home</sv:value>
     </sv:property>
     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>taxonomydemo-cy/common/homepage</sv:value>
+      <sv:value>taxonomydemo-nl/common/homepage</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="amdanom">
+  <sv:node sv:name="over">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -22,7 +22,7 @@
       <sv:value>hst:pages/detailpage</sv:value>
     </sv:property>
     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>taxonomydemo-cy/common/About Us</sv:value>
+      <sv:value>taxonomydemo-nl/common/About Us</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="bulk">
@@ -74,7 +74,7 @@
       <sv:value>hst:pages/detailpage</sv:value>
     </sv:property>
     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>taxonomydemo-cy/common/Taxonomy</sv:value>
+      <sv:value>taxonomydemo-nl/common/Taxonomy</sv:value>
     </sv:property>
     <sv:node sv:name="_default_">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

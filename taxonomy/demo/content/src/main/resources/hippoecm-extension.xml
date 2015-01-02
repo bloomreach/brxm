@@ -60,20 +60,6 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="taxonomydemo-loginpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30152.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>loginpage.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/login/login</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="hst-sites">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -144,7 +130,7 @@
       <sv:value>/hst:hst/hst:configurations/taxonomydemo-fr</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitemap-cy">
+  <sv:node sv:name="sitemap-nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -152,10 +138,10 @@
       <sv:value>30156.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemap-cy.xml</sv:value>
+      <sv:value>hstconfiguration/sitemap-nl.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/taxonomydemo-cy</sv:value>
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-nl</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="sitemenus-en">
@@ -186,7 +172,7 @@
       <sv:value>/hst:hst/hst:configurations/taxonomydemo-fr</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitemenus-cy">
+  <sv:node sv:name="sitemenus-nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -194,10 +180,10 @@
       <sv:value>30157.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemenus-cy.xml</sv:value>
+      <sv:value>hstconfiguration/sitemenus-nl.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/taxonomydemo-cy</sv:value>
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-nl</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="conf-pages">
@@ -271,7 +257,7 @@
       <sv:value>/content/documents</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="taxonomydemo-root-cy">
+  <sv:node sv:name="taxonomydemo-root-nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -279,7 +265,7 @@
       <sv:value>30400.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>taxonomy-demo-root-cy.xml</sv:value>
+      <sv:value>taxonomy-demo-root-nl.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content/documents</sv:value>
@@ -313,7 +299,7 @@
       <sv:value>/content/documents/taxonomydemo-fr</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="taxonomydemo-common-cy">
+  <sv:node sv:name="taxonomydemo-common-nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -321,10 +307,10 @@
       <sv:value>30404.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>taxonomy-demo-common-cy.xml</sv:value>
+      <sv:value>taxonomy-demo-common-nl.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content/documents/taxonomydemo-cy</sv:value>
+      <sv:value>/content/documents/taxonomydemo-nl</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="taxonomies">

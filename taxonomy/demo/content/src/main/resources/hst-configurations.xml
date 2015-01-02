@@ -38,7 +38,7 @@
       <sv:value>../taxonomydemo-common</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="taxonomydemo-cy">
+  <sv:node sv:name="taxonomydemo-nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
     </sv:property>

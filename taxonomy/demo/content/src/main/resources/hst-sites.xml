@@ -3,7 +3,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sites</sv:value>
   </sv:property>
-  <sv:node sv:name="taxonomydemo-cy">
+  <sv:node sv:name="taxonomydemo-nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>

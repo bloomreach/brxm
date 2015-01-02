@@ -28,7 +28,7 @@
       |
       <a href="<hst:link path='/'  mount='site-fr' />">French</a>
       |
-      <a href="<hst:link path='/'  mount='site-cy' />">Welsh</a>
+      <a href="<hst:link path='/'  mount='site-nl' />">Dutch</a>
     </td>
   </tr>
   <tr>

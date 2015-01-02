@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node
   xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  sv:name="taxonomydemo-cy">
+  sv:name="taxonomydemo-nl">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
@@ -13,7 +13,7 @@
     <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>cy</sv:value>
+    <sv:value>nl</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <!-- same for all 'root' language nodes: do not change -->
