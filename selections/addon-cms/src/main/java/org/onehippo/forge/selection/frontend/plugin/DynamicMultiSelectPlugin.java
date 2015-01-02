@@ -260,15 +260,12 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
         Fragment typeFragment;
         final String type = config.getString(CONFIG_TYPE);
-        switch (type) {
-            case CONFIG_CHECKBOXES:
-                typeFragment = addCheckboxes(model, valueList, choicesModel);
-                break;
-            case CONFIG_PALETTE:
-                typeFragment = addPalette(config, model, valueList, choicesModel);
-                break;
-            default:
-                typeFragment = addList(config, model, valueList, choicesModel);
+        if (CONFIG_CHECKBOXES.equals(type)) {
+            typeFragment = addCheckboxes(model, valueList, choicesModel);
+        } else if (CONFIG_PALETTE.equals(type)) {
+            typeFragment = addPalette(config, model, valueList, choicesModel);
+        } else {
+            typeFragment = addList(config, model, valueList, choicesModel);
         }
         modeFragment.add(typeFragment);
         return modeFragment;
