@@ -48,6 +48,7 @@ public class SectionViewer extends Panel implements ICardView {
 
     private IRenderService parentService;
     private BrowserSections sections;
+    private DropDownChoice<String> select;
 
     public SectionViewer(final String id, final BrowserSections sections, IRenderService parentRenderService) {
         super(id, new Model<String>(null));
@@ -133,7 +134,7 @@ public class SectionViewer extends Panel implements ICardView {
         this.sections.addListener(sectionNamesModel);
         
         final IModel<String> selectModel = new SelectedSectionModel();
-        DropDownChoice<String> select = new DropDownChoice<>("select", selectModel, sectionNamesModel, 
+        select = new DropDownChoice<>("select", selectModel, sectionNamesModel, 
             new IChoiceRenderer<String>() {
                 @Override
                 public Object getDisplayValue(final String object) {
@@ -187,7 +188,7 @@ public class SectionViewer extends Panel implements ICardView {
         super.renderHead(container);
 
         final IHeaderResponse response = container.getHeaderResponse();
-        response.render(OnDomReadyHeaderItem.forScript("jQuery('.section-selection-dropdown').selectric();"));        
+        response.render(OnDomReadyHeaderItem.forScript(String.format("jQuery('#%s').selectric();", select.getMarkupId())));        
     }
 
     public void onSelect(String extension) {
