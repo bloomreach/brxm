@@ -23,9 +23,12 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -41,7 +44,6 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
@@ -95,11 +97,10 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     static final Logger log = LoggerFactory.getLogger(SectionTreePlugin.class);
 
-    List<Section> sections;
+    final DropDownChoice<Section> select;
+    final List<Section> sections;
     boolean toggleBehaviour = false;
     boolean findSectionForInitialFocus = false;
-
-    AccordionManagerBehavior accordionManager;
 
     public SectionTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -112,7 +113,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 log.warn(e.getMessage());
             }
         }
-        //add(accordionManager = new AccordionManagerBehavior(accordionConfig));
 
         setOutputMarkupId(true);
         add(new AttributeAppender("class", Model.of("section-viewer"), " "));
@@ -165,7 +165,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         add(form);
         
         final IModel<Section> selectModel = Model.of(sections.size() > 0 ? sections.get(0) : null);
-        DropDownChoice<Section> select = new DropDownChoice<>("select", selectModel, sections,
+        select = new DropDownChoice<>("select", selectModel, sections,
                 new IChoiceRenderer<Section>() {
                     @Override
                     public Object getDisplayValue(final Section object) {
@@ -187,8 +187,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
-                System.out.println("On select van " + selectModel.getObject().extension);
-
                 Section section = selectModel.getObject();
                 if (section.extPt.getChildren().size() > 0) {
                     IRenderService renderer = (IRenderService) section.extPt.getChildren().get(0);
@@ -229,6 +227,14 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             }
         }
         super.onBeforeRender();
+    }
+
+    @Override
+    public void renderHead(final HtmlHeaderContainer container) {
+        super.renderHead(container);
+
+        final IHeaderResponse response = container.getHeaderResponse();
+        response.render(OnDomReadyHeaderItem.forScript(String.format("jQuery('#%s').selectric();", select.getMarkupId())));
     }
 
     @Override

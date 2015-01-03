@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+.selectricWrapper {
+  width: 100%;
+  margin: 0;
+}
+
 .selectric {
   border: 0;
   border-radius: unit(@forms-select-border-radius, px);
@@ -28,6 +33,7 @@
   .button {
     width: 26px;
     height: 25px;
+    line-height: 25px;
     background-color: @forms-select-button-color;
     border-radius: 0 unit(@forms-select-border-radius, px) unit(@forms-select-border-radius, px) 0;
 
@@ -69,4 +75,10 @@
       }
     }
   }
+}
+
+// Fix font sizes the ugly way due to * rule in ChannelManager
+.channel-manager .x-panel-body .selectric .button,
+.channel-manager .x-panel-body .selectric .label {
+  font-size: 12px !important;
 }
