@@ -16,7 +16,7 @@
 
 /**
  * @class a simple helper class to calculate tree width
- * @requires yahoo, dom, event, layoutmanager, hippodom
+ * @requires yahoo, dom, event, layoutmanager, hippodom, hippoajax
  * @constructor
  * @param {String} id the id of the linked element
  * @param {String} config
@@ -26,7 +26,7 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.TreeHelper) {
     (function($) {
-        "use strict";
+        'use strict';
 
         var Dom = YAHOO.util.Dom, 
             Lang = YAHOO.lang;
@@ -80,13 +80,19 @@ if (!YAHOO.hippo.TreeHelper) {
             register : function(id, tree, helper) {
                 var self;
 
-                if (helper.cfg.bindToLayoutUnit && Lang.isUndefined(helper.onRender)) {
+                if (helper.cfg.bindToLayoutUnit) {
                     self = this;
                     YAHOO.hippo.LayoutManager.registerResizeListener(tree, self, function() {
                         self.render(id);
                     });
-                    helper.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(tree);
-                    helper.onRender = {set: true};
+
+                    if (YAHOO.env.ua.ie > 0) {
+                        YAHOO.hippo.LayoutManager.registerRenderListener(tree, self, function () {
+                            if (!exists(helper.layoutUnit)) {
+                                helper.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(tree);
+                            }
+                        });
+                    }
                 }
                 helper.wicketTree = byClass('wicket-tree', 'div', tree);
             },
@@ -156,7 +162,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     el = null;
 
                 if (hippoTree !== null) {
-                    el = document.createElement("div");
+                    el = document.createElement('div');
                     hippoTree.appendChild(el);
                     Dom.addClass(el, 'hippo-tree-highlight-widget');
                 }
@@ -241,24 +247,25 @@ if (!YAHOO.hippo.TreeHelper) {
             },
 
             _setWidth : function(id, el, helper, width) {
-                var ar, layoutMax, regionTree, regionUnitCenter, isWin;
+                var ar, layoutMax, regionTree, regionUnitCenter;
 
                 //try to set width to child element with classname 'hippo-tree'. We can't directly take
                 //the childnode of 'id' because of the wicket:panel elements in dev-mode
                 ar = Dom.getElementsByClassName(helper.cfg.setWidthToClassname, 'div', id);
                 if (!Lang.isUndefined(ar.length) && ar.length > 0) {
-                    //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
-                    layoutMax = this.getLayoutMax(id, el, helper);
-                    if (exists(layoutMax) && layoutMax > width) {
-                        width = layoutMax;
+                    if (exists(helper.layoutUnit)) {
+                        // Ensure width is at least the same as the first ancestorial layout unit 
+                        layoutMax = this.getLayoutMax(id, el, helper);
+                        if (exists(layoutMax) && layoutMax > width) {
+                            width = layoutMax;
+                        }
                     }
 
                     regionTree = Dom.getRegion(ar[0]);
                     regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'section-center'));
                     if (regionTree.height > regionUnitCenter.height) {
                         //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
-                        isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
-                        width -= (isWin ? 17 : 15);
+                        width -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
                     }
 
                     Dom.setStyle(ar[0], 'width', width + 'px');
@@ -285,7 +292,7 @@ if (!YAHOO.hippo.TreeHelper) {
     }(jQuery));
 
     YAHOO.hippo.TreeHelper = new YAHOO.hippo.TreeHelperImpl();
-    YAHOO.register("TreeHelper", YAHOO.hippo.TreeHelper, {
-        version: "2.9.0", build: "1"
+    YAHOO.register('TreeHelper', YAHOO.hippo.TreeHelper, {
+        version: '2.9.0', build: '1'
     });
 }
