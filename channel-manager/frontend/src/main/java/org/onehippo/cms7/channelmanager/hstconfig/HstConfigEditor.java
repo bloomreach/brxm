@@ -1,5 +1,5 @@
 /**
-  * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -134,8 +134,8 @@ public class HstConfigEditor extends ExtPanel {
 
         IPluginConfig yuiConfig = new JavaPluginConfig();
         yuiConfig.put("left", "id=hst-perspective-left,body=hst-perspective-left-body,resize=true,scroll=false,minWidth=200,width=200,gutter=0px 0px 0px 0px");
-        yuiConfig.put("center", "id=hst-perspective-center,body=hst-perspective-center-body,minWidth=400,scroll=true,gutter=0px 0px 0px 0px");
-        yuiConfig.put("linked.with.parent", false);
+        yuiConfig.put("center", "id=hst-perspective-center,body=hst-perspective-center-body,minWidth=400,scroll=false,gutter=0px 0px 0px 0px");
+        yuiConfig.put("linked.with.parent", true);
         yuiConfig.put("root.id", "hst-perspective-wrapper");
         yuiConfig.put("client.class.name", "Hippo.ChannelManager.ExtWireframe");
         yuiConfig.put("units", new String[]{"left", "center"});

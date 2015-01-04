@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,19 @@
     YAHOO.extend(Hippo.ChannelManager.ExtWireframe, YAHOO.hippo.Wireframe, {
 
         getDimensions: function() {
-            var wireFrame, extCmp, size;
-            wireFrame = this;
+            var extCmp, size, id;
+
+            id = this.id;
             extCmp = Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance');
 
             if (extCmp !== undefined) {
                 if (!this.bodyResizeListenerRegistered) {
                     this.bodyResizeListenerRegistered = true;
                     extCmp.on('bodyresize', function() {
-                        wireFrame.resize();
+                        var wireframe = YAHOO.hippo.LayoutManager.getWireframe(id);
+                        if (wireframe !== null) {
+                            wireframe.resize();
+                        }
                     });
                 }
                 size = extCmp.body.getSize();
