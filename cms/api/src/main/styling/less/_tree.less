@@ -99,12 +99,6 @@
         }
       }
 
-      .hippo-tree-node-link:hover {
-        span {
-          text-decoration: underline;
-        }
-      }
-
       .hippo-tree-dropdown-icon-container {
         background: transparent;
         position: absolute;
@@ -140,6 +134,14 @@
         }
       }
     }
+    
+    div.row .hippo-tree-node-link:hover {
+      color: @tree-hover-color;
+
+      svg {
+        fill: @tree-hover-color;
+      }
+    }
 
     .indent-line,   // tree whitespace
     .indent-blank,  // tree whitespace
@@ -161,7 +163,7 @@
       }
 
       .hi-bullet {
-        //top: 1px;
+        top: 1px;
         width: 9px;
         height: 9px;
       }
