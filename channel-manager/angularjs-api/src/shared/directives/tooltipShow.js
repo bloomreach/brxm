@@ -21,7 +21,7 @@
 
         /**
          * @ngdoc directive
-         * @name hippo.channel.directive:tooltipShow
+         * @name hippo.channel.directive:hippoChannelTooltipShow
          * @restrict A
          *
          * @description
@@ -33,13 +33,13 @@
          *     'show': 'hide'
          *   });
          *
-         * @param {string} tooltipShow An expression
+         * @param {string} tooltipShow a boolean expression
          */
-        .directive('tooltipShow', ['$timeout', function($timeout) {
+        .directive('hippoChannelTooltipShow', ['$timeout', function($timeout) {
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
-                    scope.$watch(attrs.tooltipShow, function (shouldShowTooltip) {
+                    scope.$watch(attrs.hippoChannelTooltipShow, function (shouldShowTooltip) {
                         $timeout(function() {
                             element.triggerHandler(shouldShowTooltip ? 'show' : 'hide');
                         });

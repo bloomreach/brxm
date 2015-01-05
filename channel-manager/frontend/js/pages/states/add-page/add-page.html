@@ -38,7 +38,7 @@
                            data-hippo-channel-auto-focus
                            data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
                            data-tooltip-trigger="show"
-                           data-tooltip-show="form.title.$dirty && form.title.$error.required"
+                           data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
                            data-tooltip-placement="top">
                     <i class="fa form-control-feedback"
                        data-ng-class="{
@@ -61,7 +61,7 @@
                                data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()"
                                data-tooltip="{{ tooltips.url() }}"
                                data-tooltip-trigger="show"
-                               data-tooltip-show="form.url.$dirty && form.url.$invalid"
+                               data-hippo-channel-tooltip-show="form.url.$dirty && form.url.$invalid"
                                data-tooltip-placement="top">
                     </div>
                     <i class="fa form-control-feedback"
