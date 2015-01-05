@@ -648,6 +648,12 @@
     border: none;
 }
 
+.channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-variants-label,
+.channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-alter-ego-button .x-btn-text {
+    font-size: 11px !important;
+    padding: 0;
+}
+
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
     margin-left: 0;
     margin-right: 0;
