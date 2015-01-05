@@ -131,8 +131,7 @@ module.exports = function (grunt) {
                 svg: {
                     xmlns: 'http://www.w3.org/2000/svg',
                     class: 'hi-defs'
-                },
-                cleanup: true
+                }
             },
             theme: {
                 files: {
