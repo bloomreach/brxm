@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpSession;
  *   <li>Check for static custom return message, else</li>
  *   <ul>
  *     <li>obtain the repository with the connection string</li>
- *     <li>obtain the session with the specified username and password</li>
+ *     <li>obtain the session with the specified username and password or an anonymous session</li>
  *     <li>try to read the check node</li>
  *     <li>try to write to the repository if enabled</li>
  *     <li>logout and close jcr session</li>
@@ -49,7 +49,8 @@ import javax.servlet.http.HttpSession;
  * printed and a 500 (internal server error) status is returned.</p>
  * <p>In case the custom message is provided, a service unavailable error (503) is returned</p>
  * 
- * <p>To enable the servlet add the following to your web.xml</p>
+ * <p>To enable the servlet add the following to your web.xml. Set the username to anonymous or leave out the username
+  * for anonymous checks.</p>
  * <code><![CDATA[
     <servlet>
       <servlet-name>PingServlet</servlet-name>
@@ -105,9 +106,9 @@ public class PingServlet extends HttpServlet {
 
     /** Default values */
     private static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
-    private static final String DEFAULT_USERNAME = "admin";
-    private static final String DEFAULT_PASSWORD = "admin";
-    private static final String DEFAULT_NODE = "content/documents";
+    private static final String DEFAULT_USERNAME = "anonymous";
+    private static final String DEFAULT_PASSWORD = "";
+    private static final String DEFAULT_NODE = "";
     private static final String DEFAULT_WRITE_ENABLE = "false";
     private static final String DEFAULT_WRITE_PATH = "pingcheck";
     private static final String DEFAULT_CLUSTER_NODE_ID = "default";
@@ -253,6 +254,9 @@ public class PingServlet extends HttpServlet {
             obtainRepository();
         }
         try {
+            if (username.isEmpty() || "anonymous".equalsIgnoreCase(username)) {
+                return repository.login();
+            }
             return repository.login(username, password.toCharArray());
         } catch (LoginException e) {
             String msg = "FAILURE - Wrong credentials for obtaining session from repository in ping servlet : " + ""
@@ -278,7 +282,7 @@ public class PingServlet extends HttpServlet {
     private void doReadTest(Session session) throws PingException {
         String msg;
         try {
-            if (checkNode.length() == 0) {
+            if (checkNode.isEmpty()) {
                 session.getRootNode();
             } else {
                 session.getRootNode().getNode(checkNode);
