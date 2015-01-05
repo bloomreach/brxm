@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -105,35 +105,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         // use built-in picture
         image = toImageName(Perspective.class.getSimpleName(), size, fallbackImageExtension);
-        if (PackageResource.exists(Perspective.class, image, null, null, null)) {
-            return new PackageResourceReference(Perspective.class, image);
-        }
-
-        return null;
-    }
-
-    @Override
-    public ResourceReference getActiveIcon(IconSize size) {
-        // try (name)-active-(size).svg
-        String image = toImageName(getClass().getSimpleName() + activeSuffix, size, imageExtension);
-        if (PackageResource.exists(getClass(), image, null, null, null)) {
-            return new PackageResourceReference(getClass(), image);
-        }
-
-        // try (name)-active.svg
-        image = toImageName(getClass().getSimpleName() + activeSuffix, null, imageExtension);
-        if (PackageResource.exists(getClass(), image, null, null, null)) {
-            return new PackageResourceReference(getClass(), image);
-        }
-
-        // try (name)-active-(size).png
-        image = toImageName(getClass().getSimpleName() + activeSuffix, size, fallbackImageExtension);
-        if (PackageResource.exists(getClass(), image, null, null, null)) {
-            return new PackageResourceReference(getClass(), image);
-        }
-
-        // use built-in active picture
-        image = toImageName(Perspective.class.getSimpleName() + activeSuffix, size, fallbackImageExtension);
         if (PackageResource.exists(Perspective.class, image, null, null, null)) {
             return new PackageResourceReference(Perspective.class, image);
         }

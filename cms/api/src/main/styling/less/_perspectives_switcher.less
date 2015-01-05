@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,41 +24,43 @@
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
   top: 0;
   left: 0;
-  padding-top: 4px;
+  padding-top: 6px;
 
   li {
     margin-bottom: 20px;
   }
   
-  li div a {
-    color: @main-menu-text-color;
+  li > div {
+    padding: 4px 0 6px;
+    a {
+      color: @main-menu-text-color;
 
-    img, svg {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
+      img, svg {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
 
-    svg path {
-      fill: @main-menu-icon-color;
-    }
+      svg {
+        fill: @main-menu-icon-color;
+      }
 
-    span {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
+      span {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+      }
     }
   }
-  
-  li:first-child div {
-    margin-top: 4px; 
-  }
 
-  .selected div a {
-    color: @main-menu-selected-text-color;
-    
-    svg path {
-      fill: @main-menu-selected-text-color;
+  .selected div {
+    background-color: #4c5a66;
+    a {
+      color: @main-menu-selected-text-color;
+
+      svg {
+        fill: @main-menu-selected-icon-color;
+      }
     }
   }
 }

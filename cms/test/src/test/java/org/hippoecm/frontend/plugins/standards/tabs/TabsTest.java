@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,13 +61,6 @@ public class TabsTest extends PluginTest {
                 }
 
                 public ResourceReference getIcon(IconSize type) {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
-
-                @Override
-                public ResourceReference getActiveIcon(final IconSize type) {
-                    // TODO Auto-generated method stub
                     return null;
                 }
 

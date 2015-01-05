@@ -816,12 +816,6 @@ api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/persp
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-32.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-48.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-64.png -text svneol=unset#image/png
-api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-128.png -text svneol=unset#image/png
-api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-16.png -text svneol=unset#image/png
-api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-24.png -text svneol=unset#image/png
-api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-32.png -text svneol=unset#image/png
-api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-48.png -text svneol=unset#image/png
-api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-active-64.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/addfolder.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/ajaxback.png -text
 api/src/main/resources/skin/images/box-blue-back.png -text
@@ -2287,8 +2281,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.htm
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
@@ -2366,10 +2358,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/widgets/
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-active-32.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-active-64.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_fr.properties -text
@@ -2406,10 +2394,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/Dash
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_it.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-32.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-64.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-active-32.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-active-64.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.properties -text
