@@ -16,7 +16,7 @@
 
 /**
  * @class a simple helper class to calculate tree width
- * @requires yahoo, dom, event, layoutmanager, hippodom, hippoajax
+ * @requires yahoo, dom, event, layoutmanager, hippodom
  * @constructor
  * @param {String} id the id of the linked element
  * @param {String} config
@@ -200,13 +200,11 @@ if (!YAHOO.hippo.TreeHelper) {
             },
 
             setTreeWidth : function(id, el, helper) {
-                var width, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes,
-                        j, jLen, childNode, reg, ref;
+                var width, computedWidth, items, i, iLen, item, itemChildNodes, j, jLen, childNode;
 
                 width = 0;
                 if (helper.cfg.treeAutowidth) {
                     computedWidth = 0;
-                    computedHeight = 0;
                     items = Dom.getElementsByClassName('a_', 'div', id);
 
                     //Calculate width&height of items and save largest computedWidth value in var 'width'
@@ -215,22 +213,12 @@ if (!YAHOO.hippo.TreeHelper) {
                         itemChildNodes = Dom.getChildren(item);
                         for (j = 0, jLen = itemChildNodes.length; j < jLen; j++) {
                             childNode = itemChildNodes[j];
-                            reg = Dom.getRegion(childNode);
-                            computedWidth += reg.width;
-                            if (j === 0) {
-                                computedHeight += reg.height;
-                            }
+                            computedWidth += Dom.getRegion(childNode).width;
                         }
                         if (computedWidth > width) {
                             width = computedWidth;
                         }
                         computedWidth = 0;
-                    }
-
-                    ref = Dom.getRegion(el.parentNode);
-                    if (computedHeight > ref.height) {
-                        //tree content overflows container element, browser will render scrollbars, so change width
-                        width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
                     }
 
                     //Add magic width
@@ -247,12 +235,11 @@ if (!YAHOO.hippo.TreeHelper) {
             },
 
             _setWidth : function(id, el, helper, width) {
-                var ar, layoutMax, regionTree, regionUnitCenter;
+                var layoutMax, target;
 
-                //try to set width to child element with classname 'hippo-tree'. We can't directly take
-                //the childnode of 'id' because of the wicket:panel elements in dev-mode
-                ar = Dom.getElementsByClassName(helper.cfg.setWidthToClassname, 'div', id);
-                if (!Lang.isUndefined(ar.length) && ar.length > 0) {
+                // Set width to child element with classname configured in property helper.cfg.setWidthToClassname
+                target = byClass(helper.cfg.setWidthToClassname, 'div', id);
+                if (target !== null) {
                     if (exists(helper.layoutUnit)) {
                         // Ensure width is at least the same as the first ancestorial layout unit 
                         layoutMax = this.getLayoutMax(id, el, helper);
@@ -261,14 +248,7 @@ if (!YAHOO.hippo.TreeHelper) {
                         }
                     }
 
-                    regionTree = Dom.getRegion(ar[0]);
-                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'section-center'));
-                    if (regionTree.height > regionUnitCenter.height) {
-                        //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
-                        width -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
-                    }
-
-                    Dom.setStyle(ar[0], 'width', width + 'px');
+                    Dom.setStyle(target, 'width', width + 'px');
                 }
             },
 
@@ -277,15 +257,14 @@ if (!YAHOO.hippo.TreeHelper) {
             },
 
             getLayoutMax : function(id, el, helper) {
-                var result, e;
-                result = null;
+                var target;
                 if (helper.cfg.bindToLayoutUnit && exists(helper.layoutUnit)) {
-                    result = helper.layoutUnit.getSizes().body.w;
+                    return helper.layoutUnit.getSizes().body.w;
                 } else if (exists(helper.cfg.useWidthFromClassname)) {
-                    e = Dom.getAncestorByClassName(el, helper.cfg.useWidthFromClassname);
-                    result = parseInt(Dom.getStyle(e, 'width'), 10);
+                    target = Dom.getAncestorByClassName(el, helper.cfg.useWidthFromClassname);
+                    return parseInt(Dom.getStyle(target, 'width'), 10);
                 }
-                return result;
+                return null;
             }
         };
 
