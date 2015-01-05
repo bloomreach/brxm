@@ -20,10 +20,12 @@
       <div class="fileupload-buttonbar">
           <div class="fileinput-buttons">
               <!-- The fileinput-button is used to style the file input field as button -->
-              <button class="fileinput-button">
-                <wicket:message key="button-add-label"/>
-                <input type="file" name="files[]" multiple>
-              </button>
+              <span class="fileinput-button">
+                  <button>
+                    <wicket:message key="button-add-label"/>
+                  </button>
+                  <input type="file" name="files[]" multiple>
+              </span>
               <span wicket:id="select-files-message"></span>
               <!-- The global file processing state -->
               <span class="fileupload-process"></span>
