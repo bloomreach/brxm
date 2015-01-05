@@ -18,31 +18,31 @@ describe('filter', function () {
 
     beforeEach(module('hippo.channel'));
 
-    it('should should leave capitals or lowercase characters unchanged', inject(function (alphanumericFilter) {
-        expect(alphanumericFilter('a')).toEqual('a');
-        expect(alphanumericFilter('B')).toEqual('B');
+    it('should should leave capitals or lowercase characters unchanged', inject(function (hippoChannelAlphanumericFilter) {
+        expect(hippoChannelAlphanumericFilter('a')).toEqual('a');
+        expect(hippoChannelAlphanumericFilter('B')).toEqual('B');
     }));
 
-    it('should convert spaces to dashes', inject(function (alphanumericFilter) {
-        expect(alphanumericFilter(' ')).toEqual('-');
+    it('should convert spaces to dashes', inject(function (hippoChannelAlphanumericFilter) {
+        expect(hippoChannelAlphanumericFilter(' ')).toEqual('-');
     }));
 
-    it('should convert an escaped non-alphanumerical character to a dash', inject(function (alphanumericFilter) {
-        expect(alphanumericFilter('\'')).toEqual('-');
+    it('should convert an escaped non-alphanumerical character to a dash', inject(function (hippoChannelAlphanumericFilter) {
+        expect(hippoChannelAlphanumericFilter('\'')).toEqual('-');
     }));
 
-    it('should convert a set of non-alphanumerical characters to dashes', inject(function (alphanumericFilter) {
-        expect(alphanumericFilter('`~@#$%^&*()_+-[]{};"')).toEqual('--------------------');
+    it('should convert a set of non-alphanumerical characters to dashes', inject(function (hippoChannelAlphanumericFilter) {
+        expect(hippoChannelAlphanumericFilter('`~@#$%^&*()_+-[]{};"')).toEqual('--------------------');
     }));
 
-    it('should convert special characters to dashes', inject(function (alphanumericFilter) {
-        expect(alphanumericFilter('é')).toEqual('-');
-        expect(alphanumericFilter('á')).toEqual('-');
-        expect(alphanumericFilter('í')).toEqual('-');
-        expect(alphanumericFilter('ó')).toEqual('-');
-        expect(alphanumericFilter('ú')).toEqual('-');
-        expect(alphanumericFilter('ü')).toEqual('-');
-        expect(alphanumericFilter('ñ')).toEqual('-');
+    it('should convert special characters to dashes', inject(function (hippoChannelAlphanumericFilter) {
+        expect(hippoChannelAlphanumericFilter('é')).toEqual('-');
+        expect(hippoChannelAlphanumericFilter('á')).toEqual('-');
+        expect(hippoChannelAlphanumericFilter('í')).toEqual('-');
+        expect(hippoChannelAlphanumericFilter('ó')).toEqual('-');
+        expect(hippoChannelAlphanumericFilter('ú')).toEqual('-');
+        expect(hippoChannelAlphanumericFilter('ü')).toEqual('-');
+        expect(hippoChannelAlphanumericFilter('ñ')).toEqual('-');
     }));
 
 });

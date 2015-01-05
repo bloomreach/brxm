@@ -20,7 +20,7 @@
             <button type="button" class="close" data-ng-click="dismissFeedback()">&times;</button>
             {{feedback.message}}
         </p>
-        <h1><strong>{{ selectedMenuItem.title | placeholder:'UNTITLED' }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
+        <h1><strong>{{ selectedMenuItem.title | hippoChannelPlaceholder:'UNTITLED' }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
         <div class="form-group has-feedback"
              data-ng-class="{
             'has-success': form.title.$dirty && form.title.$valid,
@@ -29,7 +29,7 @@
             <label for="hippo.channel.menu.menuItem.add.title">{{ 'LABEL' | translate }}</label>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.add.title"
                    data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
-                   data-auto-focus
+                   data-hippo-channel-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-focus="form.title.$setPristine();"
                    data-ng-required="true"

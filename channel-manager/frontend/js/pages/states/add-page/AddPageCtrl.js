@@ -26,7 +26,7 @@
             'hippo.channel.PageService',
             'hippo.channel.Container',
             'lowercaseFilter',
-            'alphanumericFilter',
+            'hippoChannelAlphanumericFilter',
             function ($scope, $filter, FeedbackService, PrototypeService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
                 var updateURLAutomatically = true,
                     translate = $filter('translate');

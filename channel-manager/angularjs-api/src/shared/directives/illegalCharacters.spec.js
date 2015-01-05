@@ -31,7 +31,7 @@ describe('illegal character directive', function () {
         };
         element = angular.element(
             '<form name="form">' +
-                '<input type="text" ng-model="model.validatedField" name="validatedField" data-illegal-characters="{{ validation.illegalCharacters }}">' +
+                '<input type="text" ng-model="model.validatedField" name="validatedField" data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}">' +
             '</form>');
 
         $scope.model = {validatedField: null};

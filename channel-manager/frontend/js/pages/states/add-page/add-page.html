@@ -35,7 +35,7 @@
                            data-ng-model="page.title"
                            data-ng-focus="form.title.$setPristine();"
                            data-ng-required="true"
-                           data-auto-focus
+                           data-hippo-channel-auto-focus
                            data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
                            data-tooltip-trigger="show"
                            data-tooltip-show="form.title.$dirty && form.title.$error.required"
@@ -56,7 +56,7 @@
                         <span class="input-group-addon">{{ host }}/</span>
                         <input type="text" name="url" class="form-control" id="page-url"
                                data-ng-model="page.url"
-                               data-illegal-characters="{{ validation.illegalCharacters }}"
+                               data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                                data-ng-focus="form.url.$setPristine();"
                                data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()"
                                data-tooltip="{{ tooltips.url() }}"

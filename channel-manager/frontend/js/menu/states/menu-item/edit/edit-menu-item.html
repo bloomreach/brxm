@@ -62,7 +62,7 @@
             <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
                    data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
-                   data-auto-focus
+                   data-hippo-channel-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
                    data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';"

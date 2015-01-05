@@ -29,7 +29,7 @@ describe('the autofocus directive', function () {
     });
 
     beforeEach(inject(function (_$compile_, _$rootScope_, _$timeout_) {
-        element = angular.element('<input auto-focus>');
+        element = angular.element('<input data-hippo-channel-auto-focus>');
         _$compile_(element)(_$rootScope_);
         _$rootScope_.$digest();
         element.appendTo(document.body);

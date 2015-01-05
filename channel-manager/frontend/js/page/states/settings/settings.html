@@ -75,7 +75,7 @@
                     <input type="text" name="url" class="form-control" id="page-url"
                            data-ng-model="page.url"
                            data-ng-readonly="!state.isEditable"
-                           data-illegal-characters="{{ validation.illegalCharacters }}"
+                           data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                            data-ng-focus="form.url.$setPristine();"
                            data-ng-required="true"
                            data-tooltip="{{ tooltips.url() }}"

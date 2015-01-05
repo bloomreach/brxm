@@ -31,8 +31,8 @@ describe('filter', function () {
         module('hippo.channel', function($provide) {
             $provide.value('$filter', filterMock);
         });
-        inject(function (_placeholderFilter_) {
-            placeholderFilter = _placeholderFilter_;
+        inject(function (_hippoChannelPlaceholderFilter_) {
+            placeholderFilter = _hippoChannelPlaceholderFilter_;
         });
     });
 
