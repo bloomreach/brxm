@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -108,11 +108,6 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.properties</include>
-          <include>**/*.js</include>
           <include>**/*.groovy</include>
         </includes>
       </resource>
@@ -120,9 +115,12 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
+          <include>**/*.css</include>
+          <include>**/*.js</include>
           <include>**/*.jpg</include>
           <include>**/*.gif</include>
           <include>**/*.png</include>
+          <include>**/*.properties</include>
           <include>**/*.svg</include>
         </includes>
       </resource>
@@ -183,7 +181,7 @@
             YAHOO,
             jQuery
           </predefinedVars>
-          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
         </configuration>
       </plugin>
    </plugins>
