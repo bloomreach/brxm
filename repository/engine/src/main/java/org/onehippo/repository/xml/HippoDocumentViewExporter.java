@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.commons.xml.DocumentViewExporter;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.util.JcrUtils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -35,12 +36,9 @@ public class HippoDocumentViewExporter extends DocumentViewExporter {
 
     @Override
     protected void exportNodes(Node node) throws RepositoryException, SAXException {
-        if (!isVirtual(node)) {
+        if (!JcrUtils.isVirtual(node)) {
             super.exportNodes(node);
         }
     }
 
-    private boolean isVirtual(Node node) throws RepositoryException {
-        return node instanceof HippoNode && ((HippoNode) node).isVirtual();
-    }
 }

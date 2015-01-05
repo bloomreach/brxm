@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.onehippo.repository.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
 
 import javax.jcr.Node;
@@ -32,22 +31,16 @@ import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.value.ValueHelper;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-/**
- * SysViewSAXEventGenerator with the following changes:
- * - virtual nodes are not exported
- * - references are rewritten to paths
- * - some auto generated properties are dropped (hippo:path)
- *
- * Store references as: [MULTI_VALUE|SINGLE_VALUE]+REFERENCE_SEPARATOR+propname+REFERENCE_SEPARATOR+refpath
- */
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_TYPE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_VALUE;
+
 public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEventGenerator {
 
     private static Logger log = LoggerFactory.getLogger(DereferencedSysViewSAXEventGenerator.class);
@@ -78,96 +71,33 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
     }
 
     @Override
-    protected void process(Property prop, int level) throws RepositoryException, SAXException {
-
-
-        if (prop.getParent().getPrimaryNodeType().getName().equals(HippoNodeType.NT_FACETSEARCH)
-                && HippoNodeType.HIPPO_COUNT.equals(prop.getName())) {
-            // this is a virtual hippo:count property
-            return;
+    protected boolean skip(final Property prop) throws RepositoryException {
+        if (isVersioningProperty(prop) || isLockProperty(prop)) {
+            return true;
         }
-
-        if (isVersioningProperty(prop)) {
-            // don't export version info
-            return;
-        }
-
-        if (isLockProperty(prop)) {
-            // don't export lock info
-            return;
-        }
-
-        super.process(prop, level);
+        return super.skip(prop);
     }
 
-
     @Override
-    protected void entering(Property prop, int level)
-            throws RepositoryException, SAXException {
+    protected void entering(Property prop, int level) throws RepositoryException, SAXException {
 
         if (prop.getType() == PropertyType.REFERENCE) {
-            AttributesImpl attrs = new AttributesImpl();
+            final AttributesImpl attrs = new AttributesImpl();
+            addAttribute(attrs, SV_NAME, CDATA_TYPE, prop.getName() + Reference.REFERENCE_SUFFIX);
+            addAttribute(attrs, SV_TYPE, ENUMERATION_TYPE, PropertyType.TYPENAME_STRING);
 
-            // name attribute -> hippo:pathreference_propname
-            addAttribute(attrs, NameConstants.SV_NAME, CDATA_TYPE, prop.getName() + Reference.REFERENCE_SUFFIX);
-
-            // type attribute
-            try {
-                addAttribute(attrs, NameConstants.SV_TYPE, ENUMERATION_TYPE, PropertyType.TYPENAME_STRING);
-            } catch (IllegalArgumentException e) {
-                // should never be getting here
-                throw new RepositoryException(
-                        "unexpected property-type ordinal: " + prop.getType(), e);
-            }
-
-            // start property element
             startElement(NameConstants.SV_PROPERTY, attrs);
 
-            boolean multiValued = prop.getDefinition().isMultiple();
-            Value[] vals;
-            if (multiValued) {
-                vals = prop.getValues();
-            } else {
-                vals = new Value[]{prop.getValue()};
-            }
+            Value[] vals = getValues(prop);
 
             Reference ref = new Reference(basePath, vals, prop.getName());
             Value[] derefVals = ref.getPathValues(session);
 
-            for (int i = 0; i < derefVals.length; i++) {
-                Value val = derefVals[i];
-
-                Attributes attributes = new AttributesImpl();
-
-                // start value element
-                startElement(NameConstants.SV_VALUE, attributes);
-
-                // characters
-                Writer writer = new Writer() {
-                    @Override
-                    public void close() /*throws IOException*/ {
-                    }
-
-                    @Override
-                    public void flush() /*throws IOException*/ {
-                    }
-
-                    @Override
-                    public void write(char[] cbuf, int off, int len) throws IOException {
-                        try {
-                            contentHandler.characters(cbuf, off, len);
-                        } catch (SAXException se) {
-                            throw new IOException(se.toString());
-                        }
-                    }
-                };
+            for (Value val : derefVals) {
+                startElement(SV_VALUE, new AttributesImpl());
                 try {
-                    ValueHelper.serialize(val, false, false, writer);
-                    // no need to close our Writer implementation
-                    //writer.close();
+                    ValueHelper.serialize(val, false, false, new ContentHandlerWriter(contentHandler));
                 } catch (IOException ioe) {
-                    // check if the exception wraps a SAXException
-                    // (see Writer.write(char[], int, int) above)
                     Throwable t = ioe.getCause();
                     if (t != null && t instanceof SAXException) {
                         throw (SAXException) t;
@@ -175,9 +105,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
                         throw new SAXException(ioe);
                     }
                 }
-
-                // end value element
-                endElement(NameConstants.SV_VALUE);
+                endElement(SV_VALUE);
             }
         } else {
             super.entering(prop, level);
@@ -185,9 +113,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
     }
 
     private boolean isVersioningProperty(Property prop) throws RepositoryException {
-        // quick check
         if (prop.getName().startsWith(JCR_PREFIX)) {
-            // full check
             Name propQName = NameParser.parse(prop.getName(), nsResolver, FACTORY);
             if (NameConstants.JCR_PREDECESSORS.equals(propQName)) {
                 return true;
@@ -221,9 +147,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
     }
 
     private boolean isLockProperty(Property prop) throws RepositoryException{
-        // quick check
         if (prop.getName().startsWith(JCR_PREFIX)) {
-            // full check
             Name propQName = NameParser.parse(prop.getName(), nsResolver, FACTORY);
             if (NameConstants.JCR_LOCKOWNER.equals(propQName)) {
                 return true;

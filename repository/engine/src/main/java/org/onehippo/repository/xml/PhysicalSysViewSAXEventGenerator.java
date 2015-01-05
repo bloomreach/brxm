@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,15 +18,17 @@ package org.onehippo.repository.xml;
 import java.io.File;
 import java.util.Collection;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_COUNT;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSEARCH;
 
 public class PhysicalSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
 
@@ -45,39 +47,32 @@ public class PhysicalSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
 
     @Override
     protected void process(Node node, int level) throws RepositoryException, SAXException {
-        if (node instanceof HippoNode) {
-            HippoNode hippoNode = (HippoNode) node;
-            try {
-                if (hippoNode.getCanonicalNode() == null) {
-                    // virtual node
-                    return;
-                }
-                if (!hippoNode.getCanonicalNode().isSame(hippoNode)) {
-                    // virtual node
-                    return;
-                }
-            } catch (ItemNotFoundException e) {
-                // can happen only for virtual nodes while HREPTWO-599
-                return;
-            }
-
+        if (skip(node)) {
+            return;
         }
-        // if here, we have a physical node: continue
         super.process(node, level);
     }
 
     @Override
     protected void process(Property prop, int level) throws RepositoryException, SAXException {
-
-        if (prop.getParent().getPrimaryNodeType().getName().equals(HippoNodeType.NT_FACETSEARCH)
-                && HippoNodeType.HIPPO_COUNT.equals(prop.getName())) {
-            // this is a virtual hippo:count property
-            return;
-        }
-        if (prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
+        if (skip(prop)) {
             return;
         }
         super.process(prop, level);
     }
 
+    protected boolean skip(final Node node) throws RepositoryException {
+        return JcrUtils.isVirtual(node);
+    }
+
+    protected boolean skip(final Property prop) throws RepositoryException {
+        final String primaryNodeTypeName = prop.getParent().getPrimaryNodeType().getName();
+        if (primaryNodeTypeName.equals(NT_FACETSEARCH) && HIPPO_COUNT.equals(prop.getName())) {
+            return true;
+        }
+        if (prop.getName().equals(HIPPO_PATHS)) {
+            return true;
+        }
+        return false;
+    }
 }

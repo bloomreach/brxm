@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,12 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import static javax.jcr.PropertyType.BINARY;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_NAME;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_PROPERTY;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_TYPE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.SV_VALUE;
+
 /**
  * A <code>SysViewSAXEventGenerator</code> instance can be used to generate SAX events
  * representing the serialized form of an item in System View XML.
@@ -71,24 +77,9 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
         ATTRS_BINARY_ENCODED_VALUE = attrs;
     }
 
-    /**
-     * Name resolver for producing qualified XML names.
-     */
     private final NameResolver resolver;
-
     private Collection<File> binaries;
 
-    /**
-     * Constructor
-     *
-     * @param node           the node state which should be serialized
-     * @param noRecurse      if true, only <code>node</code> and its properties will
-     *                       be serialized; otherwise the entire hierarchy starting with
-     *                       <code>node</code> will be serialized.
-     * @param skipBinary     flag governing whether binary properties are to be serialized.
-     * @param contentHandler the content handler to feed the SAX events to
-     * @throws RepositoryException if an error occurs
-     */
     public SysViewSAXEventGenerator(Node node, boolean noRecurse,
                                     boolean skipBinary,
                                     ContentHandler contentHandler)
@@ -102,164 +93,90 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
         this.binaries = binaries;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void entering(Node node, int level)
-            throws RepositoryException, SAXException {
-        AttributesImpl attrs = new AttributesImpl();
+    protected void entering(Node node, int level) throws RepositoryException, SAXException {
+        final AttributesImpl attrs = new AttributesImpl();
 
-        // name attribute
         String nodeName;
         if (node.getDepth() == 0) {
-            // root node needs a name
             nodeName = jcrRoot;
         } else {
-            // encode node name to make sure it's a valid xml name
             nodeName = node.getName();
         }
 
-        addAttribute(attrs, NameConstants.SV_NAME, CDATA_TYPE, nodeName);
-        // start node element
+        addAttribute(attrs, SV_NAME, CDATA_TYPE, nodeName);
         startElement(NameConstants.SV_NODE, attrs);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void enteringProperties(Node node, int level)
-            throws RepositoryException, SAXException {
-        // nop
+    protected void enteringProperties(Node node, int level) throws RepositoryException, SAXException {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void leavingProperties(Node node, int level)
-            throws RepositoryException, SAXException {
-        // nop
+    protected void leavingProperties(Node node, int level) throws RepositoryException, SAXException {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void leaving(Node node, int level)
-            throws RepositoryException, SAXException {
-        // end node element
+    protected void leaving(Node node, int level) throws RepositoryException, SAXException {
         endElement(NameConstants.SV_NODE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void entering(Property prop, int level)
-            throws RepositoryException, SAXException {
-        AttributesImpl attrs = new AttributesImpl();
-        // name attribute
-        addAttribute(attrs, NameConstants.SV_NAME, CDATA_TYPE, prop.getName());
-        // type attribute
-        try {
-            String typeName = PropertyType.nameFromValue(prop.getType());
-            addAttribute(attrs, NameConstants.SV_TYPE, ENUMERATION_TYPE, typeName);
-        } catch (IllegalArgumentException e) {
-            // should never be getting here
-            throw new RepositoryException(
-                    "unexpected property-type ordinal: " + prop.getType(), e);
-        }
+    protected void entering(Property prop, int level) throws RepositoryException, SAXException {
 
-        // multiple attribute
+        final AttributesImpl attrs = new AttributesImpl();
+        addAttribute(attrs, SV_NAME, CDATA_TYPE, prop.getName());
+        final String typeName = PropertyType.nameFromValue(prop.getType());
+        addAttribute(attrs, SV_TYPE, ENUMERATION_TYPE, typeName);
         if (prop.isMultiple()) {
-            addAttribute(attrs, SV_MULTIPLE, CDATA_TYPE, "true");
+            addAttribute(attrs, SV_MULTIPLE, CDATA_TYPE, String.valueOf(true));
         }
-        
-        // start property element
-        startElement(NameConstants.SV_PROPERTY, attrs);
 
-        // values
-        if (prop.getType() == PropertyType.BINARY && skipBinary) {
-            // empty value element
-            startElement(NameConstants.SV_VALUE, new AttributesImpl());
-            endElement(NameConstants.SV_VALUE);
+        startElement(SV_PROPERTY, attrs);
+
+        if (prop.getType() == BINARY && skipBinary) {
+            startElement(SV_VALUE, new AttributesImpl());
+            endElement(SV_VALUE);
         } else {
-            boolean multiValued = prop.getDefinition().isMultiple();
-            Value[] vals;
-            if (multiValued) {
-                vals = prop.getValues();
-            } else {
-                vals = new Value[]{prop.getValue()};
-            }
+            Value[] vals = getValues(prop);
             for (final Value val : vals) {
                 exportValue(val);
             }
         }
     }
 
+    protected Value[] getValues(final Property prop) throws RepositoryException {
+        if (prop.getDefinition().isMultiple()) {
+            return prop.getValues();
+        } else {
+            return new Value[] { prop.getValue() };
+        }
+    }
+
     private void exportValue(final Value val) throws RepositoryException, SAXException {
 
-        if (val.getType() == PropertyType.BINARY && binaries != null) {
+        if (val.getType() == BINARY && binaries != null) {
             File file = createBinaryFile(val);
             binaries.add(file);
             AttributesImpl attributes = new AttributesImpl();
             attributes.addAttribute(NS_XMLIMPORT_URI, "file", "h:file", CDATA_TYPE, file.getName());
             contentHandler.startPrefixMapping(NS_XMLIMPORT_PREFIX, NS_XMLIMPORT_URI);
-            startElement(NameConstants.SV_VALUE, attributes);
-            endElement(NameConstants.SV_VALUE);
+            startElement(SV_VALUE, attributes);
+            endElement(SV_VALUE);
             contentHandler.endPrefixMapping(NS_XMLIMPORT_PREFIX);
         } else {
             Attributes attributes = ATTRS_EMPTY;
-            boolean mustSendBinary = false;
-
-            if (val.getType() != PropertyType.BINARY) {
-                String ser = val.getString();
-                for (int ci = 0; ci < ser.length() && mustSendBinary == false; ci++) {
-                    char c = ser.charAt(ci);
-                    if (c >= 0 && c < 32 && c != '\r' && c != '\n' && c != '\t') {
-                        mustSendBinary = true;
-                    }
-                }
-
-                if (mustSendBinary) {
-                    contentHandler.startPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX, NS_XMLSCHEMA_INSTANCE_URI);
-                    contentHandler.startPrefixMapping(NS_XMLSCHEMA_PREFIX, NS_XMLSCHEMA_URI);
-                    attributes = ATTRS_BINARY_ENCODED_VALUE;
-                }
+            final boolean mustSendBinary = mustSendBinary(val);
+            if (mustSendBinary) {
+                contentHandler.startPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX, NS_XMLSCHEMA_INSTANCE_URI);
+                contentHandler.startPrefixMapping(NS_XMLSCHEMA_PREFIX, NS_XMLSCHEMA_URI);
+                attributes = ATTRS_BINARY_ENCODED_VALUE;
             }
+            startElement(SV_VALUE, attributes);
 
-            // start value element
-            startElement(NameConstants.SV_VALUE, attributes);
-
-
-            // characters
-            Writer writer = new Writer() {
-                @Override
-                public void close() /*throws IOException*/ {
-                }
-
-                @Override
-                public void flush() /*throws IOException*/ {
-                }
-
-                @Override
-                public void write(char[] cbuf, int off, int len) throws IOException {
-                    try {
-                        contentHandler.characters(cbuf, off, len);
-                    } catch (SAXException se) {
-                        throw new IOException(se.toString());
-                    }
-                }
-            };
             try {
-                ValueHelper.serialize(val, false, mustSendBinary, writer);
-                // no need to close our Writer implementation
-                //writer.close();
+                ValueHelper.serialize(val, false, mustSendBinary, new ContentHandlerWriter(contentHandler));
             } catch (IOException ioe) {
-                // check if the exception wraps a SAXException
-                // (see Writer.write(char[], int, int) above)
                 Throwable t = ioe.getCause();
                 if (t != null && t instanceof SAXException) {
                     throw (SAXException) t;
@@ -268,8 +185,7 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
                 }
             }
 
-            // end value element
-            endElement(NameConstants.SV_VALUE);
+            endElement(SV_VALUE);
 
             if (mustSendBinary) {
                 contentHandler.endPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX);
@@ -279,63 +195,37 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    private boolean mustSendBinary(final Value val) throws RepositoryException {
+        if (val.getType() != BINARY) {
+            final String ser = val.getString();
+            for (int i = 0; i < ser.length(); i++) {
+                char c = ser.charAt(i);
+                if (c >= 0 && c < 32 && c != '\r' && c != '\n' && c != '\t') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void leaving(Property prop, int level)
             throws RepositoryException, SAXException {
-        endElement(NameConstants.SV_PROPERTY);
+        endElement(SV_PROPERTY);
     }
 
-    //-------------------------------------------------------------< private >
 
-    /**
-     * Adds an attribute to the given XML attribute set. The local part of
-     * the given {@link Name} is assumed to be a valid XML NCName, i.e. it
-     * won't be encoded.
-     *
-     * @param attributes the XML attribute set
-     * @param name name of the attribute
-     * @param type XML type of the attribute
-     * @param value value of the attribute
-     * @throws NamespaceException if the namespace of the attribute is not found
-     */
-    protected void addAttribute(
-            AttributesImpl attributes, Name name, String type, String value)
+    protected void addAttribute(AttributesImpl attributes, Name name, String type, String value)
             throws NamespaceException {
-        attributes.addAttribute(
-                name.getNamespaceURI(), name.getLocalName(),
-                resolver.getJCRName(name), type, value);
+        attributes.addAttribute(name.getNamespaceURI(), name.getLocalName(), resolver.getJCRName(name), type, value);
     }
 
-    /**
-     * Starts an XML element. The local part of the given {@link Name} is
-     * assumed to be a valid XML NCName, i.e. it won't be encoded.
-     *
-     * @param name name of the element
-     * @param attributes XML attributes
-     * @throws NamespaceException if the namespace of the element is not found
-     */
-    protected void startElement(Name name, Attributes attributes)
-            throws NamespaceException, SAXException {
-        contentHandler.startElement(
-                name.getNamespaceURI(), name.getLocalName(),
-                resolver.getJCRName(name), attributes);
+    protected void startElement(Name name, Attributes attributes) throws NamespaceException, SAXException {
+        contentHandler.startElement(name.getNamespaceURI(), name.getLocalName(), resolver.getJCRName(name), attributes);
     }
 
-    /**
-     * Ends an XML element. The local part of the given {@link Name} is
-     * assumed to be a valid XML NCName, i.e. it won't be encoded.
-     *
-     * @param name name of the element
-     * @throws NamespaceException if the namespace of the element is not found
-     */
-    protected void endElement(Name name)
-            throws NamespaceException, SAXException {
-        contentHandler.endElement(
-                name.getNamespaceURI(), name.getLocalName(),
-                resolver.getJCRName(name));
+    protected void endElement(Name name) throws NamespaceException, SAXException {
+        contentHandler.endElement(name.getNamespaceURI(), name.getLocalName(), resolver.getJCRName(name));
     }
 
     private File createBinaryFile(final Value value) throws SAXException, RepositoryException {
@@ -352,6 +242,29 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
             return file;
         } catch (IOException e) {
             throw new RepositoryException(e);
+        }
+    }
+
+    protected static class ContentHandlerWriter extends Writer {
+        private final ContentHandler handler;
+
+        public ContentHandlerWriter(final ContentHandler handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        public void close() {}
+
+        @Override
+        public void flush() {}
+
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            try {
+                handler.characters(cbuf, off, len);
+            } catch (SAXException se) {
+                throw new IOException(se.toString());
+            }
         }
     }
 

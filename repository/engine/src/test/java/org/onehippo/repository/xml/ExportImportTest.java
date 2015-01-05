@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,17 @@ import org.hippoecm.repository.api.HippoSession;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW;
+import static org.hippoecm.repository.api.ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
 import static org.junit.Assert.assertEquals;
 
-public class DereferencedExportTest extends RepositoryTestCase {
+public class ExportImportTest extends RepositoryTestCase {
     
     private final static String[] content = {
         "/test", "nt:unstructured",
         "foo", "bar",
-        "/test/quz", "nt:unstructured"
+        "/test/quz", "nt:unstructured",
+        "qux", String.valueOf((char)27) // character that causes base64 encoding of value
     };
 
     @Test
@@ -39,6 +42,13 @@ public class DereferencedExportTest extends RepositoryTestCase {
         ((HippoSession) session).exportDereferencedView("/test", out, false, false);
         String actual = normalize(new String(out.toByteArray()));
         String expected = normalize(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("export/expected.xml")));
+        assertEquals(expected, actual);
+        ((HippoSession) session).importEnhancedSystemViewXML("/",
+                getClass().getClassLoader().getResourceAsStream("export/expected.xml"),
+                IMPORT_UUID_COLLISION_THROW, IMPORT_REFERENCE_NOT_FOUND_THROW, null);
+        out = new ByteArrayOutputStream();
+        ((HippoSession) session).exportDereferencedView("/test[2]", out, false, false);
+        actual = normalize(out.toString());
         assertEquals(expected, actual);
     }
 
