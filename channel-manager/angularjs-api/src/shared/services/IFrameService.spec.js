@@ -17,7 +17,7 @@
 describe('IFrame Service', function () {
     'use strict';
 
-    var iframeConfig, parentIFramePanel, $log, $window, iframeService;
+    var iframeConfig, parentIFramePanel, $log, $window, iframeService, publisMock, subscribeMock;
 
     beforeEach(module('hippo.channel'));
 
@@ -26,10 +26,14 @@ describe('IFrame Service', function () {
             testProperty: 'testValue'
         };
 
+        publisMock = jasmine.createSpy('publish');
+        subscribeMock = jasmine.createSpy('subscribe');
         parentIFramePanel = {
             initialConfig: {
                 iframeConfig: iframeConfig
-            }
+            },
+            iframeToHost: {publish: publisMock},
+            hostToIFrame: {subscribe: subscribeMock}
         };
 
         $window = {
@@ -65,8 +69,14 @@ describe('IFrame Service', function () {
         expect(iframeService.isActive).toEqual(true);
     });
 
-    it('should return the parent IFramePanel as the container', function() {
-        expect(iframeService.getContainer()).toEqual(parentIFramePanel);
+    it('should call the parent IFramePanel.iFrameToHost.publish', function() {
+        iframeService.publish('test');
+        expect(publisMock).toHaveBeenCalledWith('test');
+    });
+
+    it('should call the parent IFramePanel.hostToIFrame.subscribe', function() {
+        iframeService.subscribe('test', 'callback', 'scope');
+        expect(subscribeMock).toHaveBeenCalledWith('test', 'callback', 'scope');
     });
 
     it('should return the iframe config from the parent', function() {
