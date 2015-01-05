@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -94,39 +94,31 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     }
 
     private TagNode filter(final TagNode node) {
-        if (node.getName() == null) {
-            for (TagNode childNode : node.getChildTags()) {
-                if (filter(childNode) == null) {
-                    node.removeChild(childNode);
+        if (node.getName() != null) {
+            if (!whitelist.containsKey(node.getName())) {
+                return null;
+            }
+            final Element element = whitelist.get(node.getName());
+
+            final Map<String, String> attributes = node.getAttributes();
+            final List<String> attributesToRemove = new ArrayList<>();
+
+            for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+                final String attributeName = attribute.getKey();
+                final String attributeValue = attribute.getValue();
+                if (!element.attributes.contains(attributeName)) {
+                    attributesToRemove.add(attributeName);
+                    continue;
+                }
+                final String value = escaper.escapeText(attributeValue.toLowerCase().trim());
+                if (value.startsWith(JAVASCRIPT_PROTOCOL)) {
+                    attributes.put(attributeName, "");
                 }
             }
-            return node;
+
+            attributes.keySet().removeAll(attributesToRemove);
+            node.setAttributes(attributes);
         }
-
-        if (!whitelist.containsKey(node.getName())) {
-            return null;
-        }
-        final Element element = whitelist.get(node.getName());
-
-        final Map<String, String> attributes = node.getAttributes();
-        final List<String> attributesToRemove = new ArrayList<>();
-
-        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
-            final String attributeName = attribute.getKey();
-            final String attributeValue = attribute.getValue();
-            if (!element.attributes.contains(attributeName)) {
-                attributesToRemove.add(attributeName);
-                continue;
-            }
-            final String value = escaper.escapeText(attributeValue.toLowerCase().trim());
-            if (value.startsWith(JAVASCRIPT_PROTOCOL)) {
-                attributes.put(attributeName, "");
-            }
-        }
-
-        attributes.keySet().removeAll(attributesToRemove);
-
-        node.setAttributes(attributes);
         for (TagNode childNode : node.getChildTags()) {
             if (filter(childNode) == null) {
                 node.removeChild(childNode);
