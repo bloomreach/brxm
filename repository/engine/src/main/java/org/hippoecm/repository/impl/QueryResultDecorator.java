@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
+
 import org.apache.jackrabbit.core.query.lucene.QueryResultImpl;
 import org.hippoecm.repository.decorating.AbstractDecorator;
 import org.hippoecm.repository.decorating.DecoratorFactory;
@@ -52,18 +53,18 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
      * @inheritDoc
      */
     public RowIterator getRows() throws RepositoryException {
-        return result.getRows();
+        return new RowIteratorDecorator(factory, session, result.getRows());
     }
 
     /**
      * @inheritDoc
      */
     public NodeIterator getNodes() throws RepositoryException {
-        NodeIterator nodes = result.getNodes();
-        return new NodeIteratorDecorator(factory, (SessionDecorator)session, nodes, totalSize);
+        return new NodeIteratorDecorator(factory, session, result.getNodes(), totalSize);
     }
 
     public String[] getSelectorNames() throws RepositoryException {
         return result.getSelectorNames();
     }
+
 }

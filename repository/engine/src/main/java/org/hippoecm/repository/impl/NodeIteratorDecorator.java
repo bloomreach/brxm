@@ -17,6 +17,8 @@ package org.hippoecm.repository.impl;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Session;
+
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.RangeIteratorDecorator;
@@ -39,16 +41,16 @@ public class NodeIteratorDecorator extends RangeIteratorDecorator implements Nod
      * @param session decorated session
      * @param iterator underlying node iterator
      */
-    NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator) {
+    NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator) {
         super(factory, session, iterator);
     }
 
-    NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator, long totalSize) {
+    NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator, long totalSize) {
         super(factory, session, iterator);
         this.totalSize = totalSize;
     }
 
-    NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator, NodeDecorator parent) {
+    NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator, NodeDecorator parent) {
         super(factory, session, iterator, parent);
     }
 
