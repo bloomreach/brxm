@@ -162,8 +162,10 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/FR.png -te
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/NL.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/RU.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/US.png -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/icon-view-active.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/icon-view.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/ipad-magazine.png -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/list-view-active.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/list-view.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/mobile.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/triangle-collapsed.png -text
