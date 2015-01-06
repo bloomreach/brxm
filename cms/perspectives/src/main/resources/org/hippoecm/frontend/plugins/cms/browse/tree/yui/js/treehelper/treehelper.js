@@ -28,7 +28,7 @@ if (!YAHOO.hippo.TreeHelper) {
     (function($) {
         'use strict';
 
-        var Dom = YAHOO.util.Dom, 
+        var Dom = YAHOO.util.Dom,
             Lang = YAHOO.lang;
 
         function byClass(name, tag, root) {
@@ -50,10 +50,8 @@ if (!YAHOO.hippo.TreeHelper) {
             cfg : null,
             timeoutID: null,
             timeoutLength: 200,
-                
-            init : function(id, cfg){
-                YAHOO.log('Register[' + id + '] cfg=' + Lang.dump(cfg), 'info', 'TreeHelper');
 
+            init : function(id, cfg) {
                 var tree, sectionCenter;
 
                 tree = Dom.get(id);
@@ -66,7 +64,7 @@ if (!YAHOO.hippo.TreeHelper) {
                         highlight: null,
                         overId: null
                     };
-                    
+
                     // Notify the context menu the tree is scrolling so it can reposition the context menu
                     sectionCenter = Dom.getAncestorByClassName(tree, 'section-center');
                     if (exists(sectionCenter)) {
@@ -115,7 +113,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 //    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
                 //    width: -moz-max-content;    /* Firefox/Gecko */
                 //    width: -webkit-max-content; /* Chrome */
-                // which causes the child elements to define the width of the element, IE still needs help from javascript 
+                // which causes the child elements to define the width of the element, IE still needs help from javascript
                 if (YAHOO.env.ua.ie > 0) {
                     this.setTreeWidth(id, tree, helper);
                 }
@@ -130,12 +128,12 @@ if (!YAHOO.hippo.TreeHelper) {
             updateHighlight : function(id, tree, helper) {
                 var selected, selectedY, highlight;
 
-                highlight = helper.highlight = helper.highlight === null ? this.createHighlight(tree) : helper.highlight; 
+                highlight = helper.highlight = helper.highlight === null ? this.createHighlight(tree) : helper.highlight;
 
                 if (highlight === null) {
                     return;
                 }
-                
+
                 selected = Dom.getFirstChildBy(helper.wicketTree, function(node) {
                     return Dom.hasClass(node, 'row-selected');
                 });
@@ -156,9 +154,9 @@ if (!YAHOO.hippo.TreeHelper) {
                     }
                 }
             },
-            
+
             createHighlight: function(tree) {
-                var hippoTree = byClass('hippo-tree', 'div', tree), 
+                var hippoTree = byClass('hippo-tree', 'div', tree),
                     el = null;
 
                 if (hippoTree !== null) {
@@ -168,7 +166,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 }
                 return el;
             },
-            
+
             updateContextIcon: function(id, tree, helper) {
                 if (helper.overId === null) {
                     return;
@@ -191,7 +189,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     Hippo.ContextMenu.hideContextLink(this.id);
                     helper.overId = null;
                 }
-                
+
                 $('.register-mouse', tree).each(function(index, el) {
                     var parent = el.parentNode;
                     $(el).removeClass('register-mouse');
@@ -241,7 +239,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 target = byClass(helper.cfg.setWidthToClassname, 'div', id);
                 if (target !== null) {
                     if (exists(helper.layoutUnit)) {
-                        // Ensure width is at least the same as the first ancestorial layout unit 
+                        // Ensure width is at least the same as the first ancestorial layout unit
                         layoutMax = this.getLayoutMax(id, el, helper);
                         if (exists(layoutMax) && layoutMax > width) {
                             width = layoutMax;
