@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
+@Deprecated
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
     DynamicTextTemplate template;

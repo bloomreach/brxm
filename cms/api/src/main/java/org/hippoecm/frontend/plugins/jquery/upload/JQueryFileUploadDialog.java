@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package org.hippoecm.frontend.plugins.jquery.upload;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -34,9 +34,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +41,9 @@ import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
+/**
+ * The multi-files upload dialog using jQuery File Upload plugin
+ */
 public abstract class JQueryFileUploadDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
@@ -57,7 +57,6 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
     private FileUploadWidget fileUploadWidget;
 
     private final FileUploadValidationService validator;
-    private final List<String> errors = new ArrayList<>();
     private final Button ajaxOkButton;
 
     protected JQueryFileUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig){
@@ -100,65 +99,45 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
      private void createComponents() {
         fileUploadWidget = new FileUploadWidget(FILEUPLOAD_WIDGET_ID, pluginConfig, validator){
+
             @Override
-            protected void onFileUpload(FileItem fileItem) throws FileUploadViolationException {
-                // handle for validation
-                JQueryFileUploadDialog.this.process(new FileUpload(fileItem));
+            protected void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
+                JQueryFileUploadDialog.this.handleFileUpload(fileUpload);
             }
 
             @Override
             protected void onFinished() {
                 JQueryFileUploadDialog.this.onFinished();
             }
-
         };
         add(fileUploadWidget);
     }
 
     /**
-     * process uploading file
-     * @param fileUpload
+     * Invoke file upload event and translate error messages.
+     *
+     * @param file
+     * @throws FileUploadViolationException
      */
-    protected void process(FileUpload fileUpload) throws FileUploadViolationException {
-        try {
-            validator.validate(fileUpload);
-        } catch (ValidationException e) {
-            log.error("Error while validating upload", e);
-            throw new FileUploadViolationException("Error while validating upload" + e.getMessage());
-        }
-
-        IValidationResult result = validator.getValidationResult();
-        if (result.isValid()){
-            handleFileUpload(fileUpload);
-        } else {
-            List<String> errors = new ArrayList<>();
-            for(Violation violation : result.getViolations()){
-                errors.add(violation.getMessage().getObject());
-            }
-            throw new FileUploadViolationException(errors);
-        }
-    }
-
     private void handleFileUpload(final FileUpload file) throws FileUploadViolationException {
         try {
             onFileUpload(file);
         } catch (FileUploadException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("FileUploadException caught", e);
-            } else {
-                log.info("FileUploadException caught: " + e);
-            }
-            List<String> errorMsgs = new ArrayList<>();
+            List<String> errors = new ArrayList<>();
             Throwable t = e;
             while(t != null) {
                 final String translatedMessage = (String) getExceptionTranslation(t, file.getClientFileName()).getObject();
                 if (translatedMessage != null && !errors.contains(translatedMessage)) {
-                    this.errors.add(translatedMessage);
-                    errorMsgs.add(translatedMessage);
+                    errors.add(translatedMessage);
                 }
                 t = t.getCause();
             }
-            throw new FileUploadViolationException(errorMsgs);
+            if (log.isDebugEnabled()) {
+                log.debug("FileUploadException caught: {}", StringUtils.join(errors.toArray(), ";"), e);
+            } else {
+                log.info("FileUploadException caught: ", e);
+            }
+            throw new FileUploadViolationException(errors);
         }
     }
 

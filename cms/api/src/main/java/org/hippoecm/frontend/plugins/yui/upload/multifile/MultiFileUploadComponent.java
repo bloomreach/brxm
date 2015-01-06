@@ -45,6 +45,7 @@ import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 
+@Deprecated
 public class MultiFileUploadComponent extends Panel {
 
     private static final JavaScriptResourceReference JS = new JavaScriptResourceReference(

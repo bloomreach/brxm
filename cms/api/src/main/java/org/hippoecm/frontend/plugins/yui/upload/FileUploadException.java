@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.plugins.yui.upload;
 
+@Deprecated
 public class FileUploadException extends Exception {
 
     public FileUploadException(final String message, final Exception ex) {

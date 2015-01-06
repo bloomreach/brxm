@@ -49,6 +49,7 @@ import wicket.contrib.input.events.key.KeyType;
 /**
  * A multi file upload dialog that can be configured by means of the {@link FileUploadWidgetSettings}.
  */
+@Deprecated
 public abstract class MultiFileUploadDialog<T> extends AbstractDialog<T> {
     private static final long serialVersionUID = 1L;
 

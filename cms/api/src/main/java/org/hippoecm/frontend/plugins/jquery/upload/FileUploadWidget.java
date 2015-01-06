@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.wicket.ajax.json.JSONException;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -45,6 +46,7 @@ import org.apache.wicket.util.upload.DiskFileItemFactory;
 import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +54,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
- * A panel that combines all the parts of the file uploader
+ * The multi-files upload widget
  */
-public abstract class FileUploadWidget extends Panel {
+public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     private static final long serialVersionUID = 1L;
     public static final String APPLICATION_JSON = "application/json";
     private enum ResponseType {
@@ -68,7 +70,6 @@ public abstract class FileUploadWidget extends Panel {
     private int nNumberOfFiles = 0;
 
     private FileUploadBar fileUploadBar;
-    private FileUploadWidgetSettings settings;
 
     private AbstractAjaxBehavior ajaxCallbackDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
@@ -96,14 +97,12 @@ public abstract class FileUploadWidget extends Panel {
                         FileUploadInfo fileUploadInfo = new FileUploadInfo(file.getName(), file.getSize());
                         try {
                             log.debug("Processed a file: {}", file.getName());
-                            onFileUpload(file);
+                            process(new FileUpload(file));
                         } catch (FileUploadViolationException e) {
-                            for (String errorMsg : e.getViolationMessages()) {
-                                fileUploadInfo.addErrorMessage(errorMsg);
-                            }
+                            e.getViolationMessages().forEach(errorMsg -> fileUploadInfo.addErrorMessage(errorMsg));
                             if (log.isDebugEnabled()) {
                                 log.debug("Uploading file '{}' has some violation: {}", file.getName(),
-                                        StringUtils.join(fileUploadInfo.getErrorMessages().toArray()), e);
+                                        StringUtils.join(fileUploadInfo.getErrorMessages().toArray(), ";"), e);
                             }
                         } finally {
                             // remove from cache
@@ -268,8 +267,8 @@ public abstract class FileUploadWidget extends Panel {
     }
 
     public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
-        super(uploadPanel);
-        this.settings = new FileUploadWidgetSettings(pluginConfig, validator);
+        super(uploadPanel, pluginConfig, validator);
+
         createComponents();
     }
 
@@ -366,8 +365,6 @@ public abstract class FileUploadWidget extends Panel {
         settings.setUploadDoneNotificationUrl(uploadDoneNotificationUrl);
         super.onBeforeRender();
     }
-
-    protected abstract void onFileUpload(FileItem fileItem) throws FileUploadViolationException;
 
     protected abstract void onFinished();
 }

@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  *     <li>file.extensions = allowed upload file extensions</li>
  * </ul>
  */
+@Deprecated
 public class FileUploadWidgetSettings implements IClusterable {
 
     public static final String FILEUPLOAD_FLASH_ENABLED_SETTING = "fileupload.flashEnabled";

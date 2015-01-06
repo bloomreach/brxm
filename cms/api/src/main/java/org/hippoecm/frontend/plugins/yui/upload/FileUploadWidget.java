@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * default the flash upload is used. For more configuration options please take a look at {@link
  * FileUploadWidgetSettings}.
  */
+@Deprecated
 public class FileUploadWidget extends Panel {
 
     private static final long serialVersionUID = 1L;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
@@ -34,8 +35,8 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
-import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
+import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
+import org.hippoecm.frontend.plugins.jquery.upload.SingleFileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -43,7 +44,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Plugin for uploading resources into the JCR repository.
- * The plugin supports multi-file upload with instant or delayed upload.
  * This plugin can be configured with specific types, so not all file types are allowed to be uploaded.
  */
 public class ResourceUploadPlugin extends RenderPlugin {
@@ -75,28 +75,32 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private class FileUploadForm extends Form {
         private static final long serialVersionUID = 1L;
 
-        private FileUploadWidget widget;
+        private SingleFileUploadWidget widget;
 
         public FileUploadForm(String name) {
             super(name);
+            setMultiPart(true);
 
             String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.asset.validation");
             FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
-            FileUploadWidgetSettings settings = new FileUploadWidgetSettings(getPluginConfig());
 
-            add(widget = new FileUploadWidget("multifile", settings, validator) {
-
+            add(widget = new SingleFileUploadWidget("fileUploadPanel", getPluginConfig() ,validator) {
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) {
                     handleUpload(fileUpload);
                 }
-
             });
+
+            setMaxSize(Bytes.bytes(widget.getSettings().getMaxFileSize()));
         }
 
         @Override
         protected void onSubmit() {
-            widget.onFinishHtmlUpload();
+            try {
+                widget.onSubmit();
+            } catch (FileUploadViolationException e) {
+                e.getViolationMessages().forEach(this::error);
+            }
         }
     }
 

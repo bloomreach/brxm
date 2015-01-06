@@ -46,6 +46,7 @@ import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public abstract class AjaxMultiFileUploadComponent extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(AjaxMultiFileUploadComponent.class);
