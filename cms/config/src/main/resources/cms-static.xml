@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Verken</sv:value>
+            <sv:value>Content</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -75,7 +75,40 @@
             <sv:value>en</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Browse</sv:value>
+            <sv:value>Content</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Contenu</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Contenuto</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Inhalte</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -108,6 +141,39 @@
             <sv:value>Users</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Utilisateurs</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Users</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Benutzer</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="admin-perspective-title">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -136,6 +202,39 @@
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
             <sv:value>Admin</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Administrateur</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Administratore</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Administration</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -168,6 +267,39 @@
             <sv:value>Documenten</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Documents</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Documenti</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Dokumente</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="section-images">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -196,6 +328,39 @@
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
             <sv:value>Beeldbank</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Images</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Immagini</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Bilder</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -228,6 +393,39 @@
             <sv:value>Bestanden</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Fichiers</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Files</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Dateien</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="section-configuration">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -256,6 +454,39 @@
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
             <sv:value>Configuratie</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Configuration</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Configurazione</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Konfiguration</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -288,6 +519,39 @@
             <sv:value>New user</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nouvel utilisateur</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nuovo utente</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Neuer Benutzer</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="mgmt-new-group">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -316,6 +580,39 @@
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
             <sv:value>New group</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nouveau groupe</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nuovo gruppo</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Neue Gruppe</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -348,6 +645,39 @@
             <sv:value>New domain</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nouveau domaine</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nuovo dominio</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Neue Domaine</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="mgmt-new-role">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -376,6 +706,39 @@
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
             <sv:value>New role</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nouveau rôle</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Nuovo ruolo</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Neue Rolle</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

@@ -1352,8 +1352,6 @@ config/src/main/resources/cms-search-views.xml svneol=native#text/plain
 config/src/main/resources/cms-services-passwordvalidation.xml -text
 config/src/main/resources/cms-services.xml svneol=native#text/plain
 config/src/main/resources/cms-static.xml -text svneol=unset#text/plain
-config/src/main/resources/cms-static_de.xml -text
-config/src/main/resources/cms-static_it.xml -text
 config/src/main/resources/cms.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-defaultread-reporting.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain

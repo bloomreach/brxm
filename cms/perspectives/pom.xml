@@ -23,8 +23,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>CMS Perspectives</name>
-  <description>Hippo CMS Browse perspective</description>
-  <groupId>org.onehippo.cms7</groupId>
+  <description>Hippo CMS Perspectives</description>
   <artifactId>hippo-cms-perspectives</artifactId>
   <packaging>jar</packaging>
 
