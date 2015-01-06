@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-/* Tree Plugin */
-
-/* overriding standard wicket tree styling */
-/*
-.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
-*/
-
 .hippo-tree {
   min-width: 100%;
 
@@ -28,7 +21,7 @@
   width: -moz-max-content;    /* Firefox/Gecko */
   width: -webkit-max-content;
 
-  div.wicket-tree {
+  .wicket-tree {
     padding: 4px 0;
     white-space: nowrap;
 
@@ -37,8 +30,8 @@
     z-index: 2;
 
     // Make the rows expand so it will activate the scrolling of the .hippotree div
-    div.row,
-    div.row-selected {
+    .row,
+    .row-selected {
       white-space: nowrap;
       // set row height to a little higher for better clickability
       height: 1.8em;
@@ -46,10 +39,7 @@
       clear: both;
       font-size: @font-size-svg-fix;
 
-      //.help-align-horizontal-center();
-
       .a_ {
-        //padding-top: 1px;
         height: 1.8em;
 
         a:first-of-type:focus {
@@ -110,7 +100,17 @@
       }
     }
 
-    div.row-selected {
+    // Tree item hover highlight
+    .row .hippo-tree-node-link:hover {
+      color: @tree-hover-color;
+
+      svg {
+        fill: @tree-hover-color
+      }
+    }
+
+    // Selected tree item
+    .row-selected {
       font-weight: 600;
 
       // Text label
@@ -135,14 +135,6 @@
       }
     }
 
-    div.row .hippo-tree-node-link:hover {
-      color: @tree-hover-color;
-
-      svg {
-        fill: @tree-hover-color;
-      }
-    }
-
     .indent-line,   // tree whitespace
     .indent-blank,  // tree whitespace
     .icon {         // legacy icon
@@ -152,11 +144,11 @@
       min-height: 18px;
     }
 
+    // Junction icons
     .junction,
     .junction-last,
     .corner {
 
-      // Caret icons
       .hi {
         position: relative;
         fill: @tree-junction-color;
@@ -179,6 +171,7 @@
     }
   }
 
+  // Blue highlight widget
   .hippo-tree-highlight-widget {
     border-radius: 4px;
     background-color: @aqua;
@@ -192,7 +185,3 @@
   }
 }
 
-// TODO: move to console styling
-.hippo-console-tree .hippo-tree div.wicket-tree {
-  width: auto;
-}
