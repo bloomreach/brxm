@@ -39,7 +39,6 @@ textarea {
 
 
 // Links
-
 a {
   color: @link-color;
   text-decoration: none;
@@ -53,9 +52,4 @@ a {
   &:focus {
     .tab-focus();
   }
-}
-
-// No need to trigger events from SVG, this fixes mouseenter/mouseleave issues in FF
-svg {
-  pointer-events: none;
 }

@@ -15,7 +15,7 @@
  */
 
 (function() {
-    "use strict";
+    'use strict';
 
     function byClass(name, tag, root) {
         var found = YAHOO.util.Dom.getElementsByClassName(name, tag, root);
@@ -28,26 +28,26 @@
     if (typeof Hippo === 'undefined') {
 		Hippo = {};
 	}
-	
+
 	Hippo.Set = function() {
 		this.entries = [];
 	};
-	
+
 	Hippo.Set.prototype = {
 		add : function (entry) {
 			this.entries.push(entry);
 		},
-	
+
 		remove : function (entry) {
 		    if(this.entries.length === 0) {
 		        return null;
 		    }
-		    
+
 			var index = this._getIndex(entry);
 			if (index >= 0) {
 			    var part1 = this.entries.slice(0, index);
 			    var part2 = this.entries.slice(index + 1);
-	
+
 			    this.entries = part1.concat(part2);
 			    return index;
 			}
@@ -57,7 +57,7 @@
 		contains : function (entry) {
 			return this._getIndex(entry) >= 0;
 		},
-		
+
 		_getIndex : function (entry) {
 	        for (var i = 0; i < this.entries.length; i++) {
 	            if (this.entries[ i ] === entry) {
@@ -67,7 +67,7 @@
 	        return -1;
 	    }
 	};
-    
+
     var menus = new Hippo.Set();
 
 	Hippo.ContextMenu = {
@@ -79,7 +79,7 @@
     Hippo.ContextMenu.init = function() {
 	    if (document.getElementById('context-menu-container') === null) {
 	        var x = document.createElement('div');
-	        x.id = "context-menu-container";
+	        x.id = 'context-menu-container';
 	        document.body.appendChild(x);
 	    }
 	};
@@ -99,12 +99,12 @@
 	Hippo.ContextMenu.isShown = function(id) {
 		return menus.contains(id);
 	};
-	
+
 	Hippo.ContextMenu.renderInTree = function(id) {
 	    var xy = this.getContextPosition(id);
 	    this.renderAtPosition(id, xy[0] + 13, xy[1] - 13);
 	};
-	
+
 	Hippo.ContextMenu.renderAtPosition = function(id, posX, posY) {
         var YUID = YAHOO.util.Dom;
         var container = YUID.get('context-menu-container');
@@ -132,15 +132,15 @@
         YUID.setXY(container, [posX,posY]);
         YUID.setStyle(id, 'visibility', 'visible');
     };
-    
+
     Hippo.ContextMenu.showContextLink = function(id) {
-        var YUID = YAHOO.util.Dom; 
+        var YUID = YAHOO.util.Dom;
 
         if (this.isShowing) {
             return;
         }
-        
-        var el = byClass('hippo-tree-dropdown-icon-container', 'span', id);
+
+        var el = byClass('hippo-tree-dropdown-icon-container', 'a', id);
         if (el !== null) {
             YUID.addClass(el, 'container-selected');
 
@@ -156,7 +156,7 @@
     };
 
     Hippo.ContextMenu.hideContextLink = function(id) {
-        var el = this.currentContentLink || byClass('hippo-tree-dropdown-icon-container', 'span', id);
+        var el = this.currentContentLink || byClass('hippo-tree-dropdown-icon-container', 'a', id);
         if (el !== null) {
             YAHOO.util.Dom.removeClass(el, 'container-selected');
         }
@@ -181,7 +181,7 @@
             return [myX, myY];
         }
     };
-    
+
     Hippo.ContextMenu.getLayoutUnit = function(el) {
         return YAHOO.hippo.LayoutManager.findLayoutUnit(el);
     };
@@ -189,7 +189,7 @@
     // Render the context menu at the stored position
     Hippo.ContextMenu.redraw = function() {
         if (Hippo.ContextMenu.currentContentLink !== null) {
-            YAHOO.util.Dom.setX(Hippo.ContextMenu.currentContentLink, Hippo.ContextMenu.currentContentXY[0]);   
+            YAHOO.util.Dom.setX(Hippo.ContextMenu.currentContentLink, Hippo.ContextMenu.currentContentXY[0]);
         }
     };
 
