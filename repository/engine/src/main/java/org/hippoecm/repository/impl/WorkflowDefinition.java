@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,31 +19,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
 
 import org.hippoecm.repository.RepositoryMapImpl;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CLASSNAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONFIG;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DISPLAY;
+
 class WorkflowDefinition {
 
-    static final Logger log = LoggerFactory.getLogger(WorkflowDefinition.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkflowDefinition.class);
 
-    private final Node node;
+    private final Node workflowNode;
+    private Map<String, String> attributes;
 
     WorkflowDefinition(Node workflowNode) {
-        this.node = workflowNode;
+        this.workflowNode = workflowNode;
     }
 
     Class<? extends Workflow> getWorkflowClass() throws RepositoryException {
-        String classname = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+        String classname = workflowNode.getProperty(HIPPO_CLASSNAME).getString();
         Class clazz;
         try {
             clazz = Class.forName(classname);
@@ -53,46 +57,42 @@ class WorkflowDefinition {
                 throw new RepositoryException("Invalid class " + classname + " configured as workflow; it does not implement the Workflow interface");
             }
         } catch (ClassNotFoundException e) {
-            final String message = "Workflow specified at " + node.getPath() + " not present";
-            log.error(message);
-            throw new RepositoryException(message, e);
+            throw new RepositoryException("Workflow specified at " + JcrUtils.getNodePathQuietly(workflowNode) + " not present", e);
         }
     }
 
     String getCategory() throws RepositoryException {
-        return node.getParent().getName();
+        return workflowNode.getParent().getName();
     }
 
     String getName() throws RepositoryException {
-        return node.getName();
+        return workflowNode.getName();
     }
 
     String getDisplayName() throws RepositoryException {
-        if (node.hasProperty(HippoNodeType.HIPPO_DISPLAY)) {
-            return node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
-        } else {
-            return getName();
-        }
+        return JcrUtils.getStringProperty(workflowNode, HIPPO_DISPLAY, getName());
     }
 
     String getPath() throws RepositoryException {
-        return node.getPath();
+        return workflowNode.getPath();
     }
 
     Map<String, String> getAttributes() throws RepositoryException {
-        Map<String, String> attributes = new HashMap<String, String>();
-        for (PropertyIterator attributeIter = node.getProperties(); attributeIter.hasNext(); ) {
-            Property p = attributeIter.nextProperty();
-            if (!p.getName().startsWith("hippo:") && !p.getName().startsWith("hipposys:")) {
-                if (!p.getDefinition().isMultiple()) {
-                    attributes.put(p.getName(), p.getString());
+        if (attributes == null) {
+            attributes = new HashMap<>();
+            for (Property property : new PropertyIterable(workflowNode.getProperties())) {
+                final String propertyName = property.getName();
+                if (!propertyName.startsWith("hippo:") && !propertyName.startsWith("hipposys:")) {
+                    if (!property.getDefinition().isMultiple()) {
+                        attributes.put(propertyName, property.getString());
+                    }
                 }
             }
-        }
-        for (NodeIterator attributeIter = node.getNodes(); attributeIter.hasNext(); ) {
-            Node n = attributeIter.nextNode();
-            if (!n.getName().startsWith("hippo:") && !n.getName().startsWith("hipposys:")) {
-                attributes.put(n.getName(), n.getPath());
+            for (Node node : new NodeIterable(workflowNode.getNodes())) {
+                final String nodeName = node.getName();
+                if (!nodeName.startsWith("hippo:") && !nodeName.startsWith("hipposys:")) {
+                    attributes.put(nodeName, node.getPath());
+                }
             }
         }
         return attributes;
@@ -100,71 +100,13 @@ class WorkflowDefinition {
 
     RepositoryMap getWorkflowConfiguration() {
         try {
-            if (node.hasNode("hipposys:config")) {
-                return new RepositoryMapImpl(node.getNode("hipposys:config"));
+            if (workflowNode.hasNode(HIPPO_CONFIG)) {
+                return new RepositoryMapImpl(workflowNode.getNode(HIPPO_CONFIG));
             }
-        } catch (RepositoryException ex) {
-            try {
-                log.error("Cannot access configuration of workflow defined in " + node.getPath());
-            } catch (RepositoryException e) {
-                log.error("Double access error accessing configuration of workflow");
-            }
+        } catch (RepositoryException e) {
+            log.error("Cannot access configuration of workflow defined in " + JcrUtils.getNodePathQuietly(workflowNode), e);
         }
         return new RepositoryMapImpl();
     }
 
-    boolean isSimpleQueryPostAction() throws RepositoryException {
-        return node.isNodeType("hipposys:workflowsimplequeryevent");
-    }
-
-    boolean isMethodBoundPostAction() throws RepositoryException {
-        return node.isNodeType("hipposys:workflowboundmethodevent");
-    }
-
-    Node getEventDocument() throws RepositoryException {
-        if (node.hasNode("hipposys:eventdocument")) {
-            // TODO
-        } else if (node.hasProperty("hipposys:eventdocument")) {
-            return node.getProperty("hipposys:eventdocument").getNode();
-        }
-        return null;
-    }
-
-    boolean matchesEventCondition(final String workflowCategory, final String workflowMethod) throws RepositoryException {
-        if (node.hasProperty("hipposys:eventconditioncategory")) {
-            if (!node.getProperty("hipposys:eventconditioncategory").getString().equals(workflowCategory)) {
-                return false;
-            }
-        }
-        if (node.hasProperty("hipposys:eventconditionmethod")) {
-            if (!node.getProperty("hipposys:eventconditionmethod").getString().equals(workflowMethod)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    Query getPreConditionQuery() throws RepositoryException {
-        if (node.hasNode("hipposys:eventprecondition")) {
-            return node.getSession().getWorkspace().getQueryManager().getQuery(node.getNode("hipposys:eventprecondition"));
-        } else {
-            return null;
-        }
-    }
-
-    Query getPostConditionQuery() throws RepositoryException {
-        if (node.hasNode("hipposys:eventpostcondition")) {
-            return node.getSession().getWorkspace().getQueryManager().getQuery(node.getNode("hipposys:eventpostcondition"));
-        } else {
-            return null;
-        }
-    }
-
-    String getConditionOperator() throws RepositoryException {
-        String conditionOperator = "post\\pre";
-        if (node.hasProperty("hipposys:eventconditionoperator")) {
-            conditionOperator = node.getProperty("hipposys:eventconditionoperator").getString();
-        }
-        return conditionOperator;
-    }
 }

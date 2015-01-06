@@ -217,6 +217,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CHANGERECORD = "hippo:changerecord";
 
+    public static final String HIPPO_CONFIG = "hipposys:config";
+
     public static final String HIPPO_CONTENTDELETE = "hippo:contentdelete";
 
     public static final String HIPPO_CONTENTPROPDELETE = "hippo:contentpropdelete";

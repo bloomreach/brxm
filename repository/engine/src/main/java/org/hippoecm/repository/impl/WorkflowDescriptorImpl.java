@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
@@ -37,59 +35,37 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     private final WorkflowManagerImpl manager;
     private final String uuid;
     private final String category;
-    private final String displayName;
-    private final Map<String, String> attributes;
-    private final String serviceName;
+    private final Class workflowClass;
+    private WorkflowDefinition definition;
     private Map<String, Serializable> hints = null;
 
-    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition node, Document document) throws RepositoryException {
-        this(manager, category, node, document.getIdentity());
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition definition, Document document) throws RepositoryException {
+        this(manager, category, definition, document.getIdentity());
     }
 
-    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition node, Node item) throws RepositoryException {
-        this(manager, category, node, item.getIdentifier());
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition definition, Node item) throws RepositoryException {
+        this(manager, category, definition, item.getIdentifier());
     }
 
-    private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition node, String uuid) throws RepositoryException {
+    private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition definition, String uuid) throws RepositoryException {
         this.manager = manager;
         this.category = category;
         this.uuid = uuid;
-        try {
-            try {
-                serviceName = node.getWorkflowClass().getName();
-                displayName = node.getDisplayName();
-            } catch (PathNotFoundException ex) {
-                WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
-                throw new RepositoryException("workflow specification corrupt", ex);
-            }
-
-            attributes = node.getAttributes();
-        } catch (ValueFormatException ex) {
-            WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
-            throw new RepositoryException("workflow specification corrupt", ex);
-        }
+        this.definition = definition;
+        workflowClass = definition.getWorkflowClass();
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getDisplayName() throws RepositoryException {
+        return definition.getDisplayName();
     }
 
     public String getAttribute(String key) throws RepositoryException {
-        if (key == null) {
-            StringBuilder sb = new StringBuilder();
-            for (String k : attributes.keySet()) {
-                sb.append(" ");
-                sb.append(k);
-            }
-            return sb.toString();
-        }
-        return attributes.get(key);
+        return definition.getAttributes().get(key);
     }
 
     public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException {
-        Class impl = Class.forName(serviceName);
         List<Class<Workflow>> interfaces = new LinkedList<Class<Workflow>>();
-        for (Class cls : impl.getInterfaces()) {
+        for (Class cls : workflowClass.getInterfaces()) {
             if (Workflow.class.isAssignableFrom(cls)) {
                 interfaces.add(cls);
             }
@@ -101,10 +77,8 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
         if (this.hints == null) {
             try {
                 this.hints = manager.getWorkflow(this).hints();
-            } catch (WorkflowException ex) {
-                throw new RepositoryException("Workflow hints corruption", ex);
-            } catch (RemoteException ex) {
-                throw new RepositoryException("Workflow hints corruption", ex);
+            } catch (WorkflowException | RemoteException e) {
+                throw new RepositoryException("Workflow hints corruption", e);
             }
         }
         return this.hints;
@@ -119,7 +93,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     public String toString() {
-        return getClass().getName() + "[node=" + uuid + ",category=" + category + ",service=" + serviceName + ",attributes=" + attributes.toString() + "]";
+        return getClass().getName() + "[node=" + uuid + ",category=" + category + ",workflowClass=" + workflowClass.getName() + "]";
     }
 
 }
