@@ -41,7 +41,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
 
-    public static final String ACTIVE_SUFFIX = "-active";
     public static final String IMAGE_EXTENSION = "svg";
     public static final String FALLBACK_IMAGE_EXTENSION = "png";
 
@@ -49,7 +48,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     private boolean rendered;
 
-    private String activeSuffix;
     private String imageExtension;
     private String fallbackImageExtension;
 
@@ -60,7 +58,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
             title = new StringResourceModel(config.getString(TITLE), this, null);
         }
 
-        activeSuffix = config.getString("active.suffix", ACTIVE_SUFFIX);
         imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
     }
