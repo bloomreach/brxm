@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2014 Hippo B.V. (http://www.onehippo.com)
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+  ~ Licensed under the Apache License, Version 2.0 (the  "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
@@ -20,17 +19,12 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
 <g>
-	<g>
-		<path fill="#4C4C4C" d="M12,4l-0.083,8.167c0,0.393-0.467,0.833-0.859,0.833H3c-0.393,0-1-0.607-1-1V1c0-0.393,0.607-1,1-1h4.782
-			C8.177,0,8.725,0.229,9,0.504l2.497,2.28C11.771,3.059,12,3.607,12,4z M11,5H8C7.608,5,7,4.393,7,4V1H3v11.207l8.084-0.04L11,5z
-			 M8,4h3c-0.044-0.126-0.112-0.252-0.165-0.304l-2.53-2.532C8.253,1.112,8.127,1.045,8,1V4z"/>
-	</g>
+	<path fill="#0086f8" d="M12,13c0,0.416-0.584,1-1,1H0.754C0.338,14,0,13.662,0,13.246V2.753C0,2.337,0.338,2,0.754,2h7.279
+		c0.416,0,0.988,0.235,1.286,0.533l2.196,2.196C11.813,5.028,12,5.584,12,6V13z M11,13V6c0-0.149-0.089-0.455-0.19-0.556L8.605,3.24
+		C8.496,3.13,8.156,3,8,3v3c0,0.416-0.584,1-1,1H3C2.584,7,2,6.416,2,6V3H1v10h1v-3c0-1,1-1,1.049-1h6C9.465,9,10,9.584,10,10v3H11z
+		 M9,13v-3H3v3H9z M7.016,3H5v3.016h2L7.016,3z M2,13v-3c0-1,1-1,1.049-1 M9,9c0.416,0,1,0.584,1,1v3"/>
 </g>
-<polygon fill="#FFFFFF" points="14.061,12 9.342,11.948 10.261,6.099 14.134,4.933 "/>
-<g>
-	<rect x="6.499" y="10.499" fill="#4C4C4C" width="5.002" height="5.002"/>
-	<path fill="#4C4C4C" d="M11.002,10.998v4.004H6.998v-4.004H11.002 M12,10H6v6h6V10L12,10z"/>
-</g>
-<path fill="none" stroke="#4C4C4C" stroke-miterlimit="10" d="M13.516,9.828L13.5,8.25c0-0.907-0.593-0.719-1.5-0.719l0,0
-	c-0.907,0-1.487-0.001-1.487,0.906v2.644"/>
+<circle fill="#0086f8" cx="11" cy="11" r="5"/>
+<rect x="8.22" y="10.593" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -4.5363 11.0297)" fill="#FFFFFF" width="5.653" height="0.795"/>
+<rect x="8.193" y="10.567" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 11.0569 26.5086)" fill="#FFFFFF" width="5.652" height="0.794"/>
 </svg>

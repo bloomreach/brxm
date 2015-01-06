@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
-  ~ Copyright 2014 Hippo B.V. (http://www.onehippo.com)
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+  ~ Licensed under the Apache License, Version 2.0 (the  "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
@@ -20,17 +20,13 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
 <g>
-	<g>
-		<path fill="#4C4C4C" d="M12,4l-0.083,8.167c0,0.393-0.467,0.833-0.859,0.833H3c-0.393,0-1-0.607-1-1V1c0-0.393,0.607-1,1-1h4.782
-			C8.177,0,8.725,0.229,9,0.504l2.497,2.28C11.771,3.059,12,3.607,12,4z M11,5H8C7.608,5,7,4.393,7,4V1H3v11.207l8.084-0.04L11,5z
-			 M8,4h3c-0.044-0.126-0.112-0.252-0.165-0.304l-2.53-2.532C8.253,1.112,8.127,1.045,8,1V4z"/>
-	</g>
+	<path fill="#0086f8" d="M7.999,16c-4.416,0-8-3.584-8-8c0-4.417,3.584-8,8-8C12.416,0,16,3.583,16,8C16,12.416,12.416,16,7.999,16z
+		"/>
 </g>
-<polygon fill="#FFFFFF" points="14.061,12 9.342,11.948 10.261,6.099 14.134,4.933 "/>
 <g>
-	<rect x="6.499" y="10.499" fill="#4C4C4C" width="5.002" height="5.002"/>
-	<path fill="#4C4C4C" d="M11.002,10.998v4.004H6.998v-4.004H11.002 M12,10H6v6h6V10L12,10z"/>
+	<path fill="#FFFFFF" d="M12.796,5.358l-0.563-0.583c-0.125-0.125-0.291-0.197-0.469-0.197c-0.176,0-0.344,0.072-0.469,0.197
+		L7.031,9L4.689,6.661C4.564,6.535,4.397,6.463,4.22,6.463c-0.178,0-0.344,0.072-0.468,0.198l-0.594,0.63
+		C3.034,7.416,2.971,7.594,2.971,7.77c0,0.178,0.063,0.345,0.188,0.469l3.404,3.215c0.125,0.124,0.302,0.197,0.468,0.197
+		c0.178,0,0.355-0.073,0.48-0.197l5.286-5.146c0.123-0.126,0.186-0.292,0.186-0.469C12.981,5.66,12.919,5.483,12.796,5.358z"/>
 </g>
-<path fill="none" stroke="#4C4C4C" stroke-miterlimit="10" d="M13.516,9.828L13.5,8.25c0-0.907-0.593-0.719-1.5-0.719l0,0
-	c-0.907,0-1.487-0.001-1.487,0.906v2.644"/>
 </svg>

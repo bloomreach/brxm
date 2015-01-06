@@ -46,6 +46,10 @@
     height: 40px;
 }
 
+.channel-manager .x-btn-text:hover {
+    color: #0086f8;
+}
+
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tr,
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tc,
@@ -312,32 +316,69 @@
     background-image: url("add.svg");
 }
 
+.channel-manager .x-btn-small .add-channel:hover,
+.channel-manager .x-btn-small .add-components:hover {
+    background-image: url("add-blue.svg");
+}
+
 .channel-manager .x-btn-small .edit-channel {
     background-image: url("templatecomposer/button-edit.svg");
+}
+
+.channel-manager .x-btn-small .edit-channel {
+    background-image: url("templatecomposer/button-edit.svg");
+}
+
+.channel-manager .x-btn-small .edit-channel:hover {
+    background-image: url("templatecomposer/button-edit-blue.svg");
 }
 
 .channel-manager .x-btn-small .btn-pages {
     background-image: url("templatecomposer/button-pages.svg");
 }
 
+.channel-manager .x-btn-small .btn-pages:hover {
+    background-image: url("templatecomposer/button-pages-blue.svg");
+}
+
 .channel-manager .x-btn-small .publish-channel {
     background-image: url("templatecomposer/button-publish.svg");
+}
+
+.channel-manager .x-btn-small .publish-channel:hover {
+    background-image: url("templatecomposer/button-publish-blue.svg");
 }
 
 .channel-manager .x-btn-small .save-close-channel {
     background-image: url("templatecomposer/button-save-close.svg");
 }
 
+.channel-manager .x-btn-small .save-close-channel:hover {
+    background-image: url("templatecomposer/button-save-close-blue.svg");
+}
+
 .channel-manager .x-btn-small .save-channel {
     background-image: url("templatecomposer/button-save.svg");
+}
+
+.channel-manager .x-btn-small .save-channel:hover {
+    background-image: url("templatecomposer/button-save-blue.svg");
 }
 
 .channel-manager .x-btn-small .discard-channel {
     background-image: url("templatecomposer/button-discard.svg");
 }
 
+.channel-manager .x-btn-small .discard-channel:hover {
+    background-image: url("templatecomposer/button-discard-blue.svg");
+}
+
 .channel-manager .x-btn-small .remove-lock {
     background-image: url("templatecomposer/button-remove-lock.svg");
+}
+
+.channel-manager .x-btn-small .remove-lock:hover {
+   background-image: url("templatecomposer/button-remove-lock-blue.svg");
 }
 
 .channel-manager .x-btn-small .page-settings,
@@ -345,16 +386,33 @@
     background-image: url("templatecomposer/gear.svg");
 }
 
+.channel-manager .x-btn-small .page-settings:hover,
+.channel-manager .x-btn-small .channel-settings:hover {
+    background-image: url("templatecomposer/gear-blue.svg");
+}
+
 .channel-manager .x-btn-small .channel-gear {
     background-image: url("templatecomposer/button-url-navigation.svg");
+}
+
+.channel-manager .x-btn-small .channel-gear:hover {
+    background-image: url("templatecomposer/button-url-navigation-blue.svg");
 }
 
 .channel-manager .x-btn-small .expand {
     background-image: url("templatecomposer/expand.svg");
 }
 
+.channel-manager .x-btn-small .expand:hover {
+    background-image: url("templatecomposer/expand-blue.svg");
+}
+
 .channel-manager .x-btn-small .collapse {
     background-image: url("templatecomposer/collapse.svg");
+}
+
+.channel-manager .x-btn-small .collapse:hover {
+    background-image: url("templatecomposer/collapse-blue.svg");
 }
 
 /* toolkit window */
@@ -731,8 +789,16 @@
     background-image: url("templatecomposer/button-publish.svg");
 }
 
+.channel-manager-window-manage-changes .x-btn-small .publish-changes:hover {
+    background-image: url("templatecomposer/button-publish-blue.svg");
+}
+
 .channel-manager-window-manage-changes .x-btn-small .discard-changes {
     background-image: url("templatecomposer/button-discard.svg");
+}
+
+.channel-manager-window-manage-changes .x-btn-small .discard-changes:hover {
+    background-image: url("templatecomposer/button-discard-blue.svg");
 }
 
 /* Dropdowns */

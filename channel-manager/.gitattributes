@@ -122,6 +122,7 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/RootPanel_de.proper
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/RootPanel_fr.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/RootPanel_it.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/RootPanel_nl.properties -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/add-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/add-channel.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/add.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/breadcrumb-arrow.svg -text
@@ -201,14 +202,23 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/Pa
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_fr.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_it.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-discard-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-discard.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-edit-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-pages-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-pages.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-publish-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-remove-lock-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-remove-lock.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-save-blue.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-save.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-url-navigation-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-url-navigation.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/collapse-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/collapse.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-left-hover.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-left.svg -text
@@ -220,7 +230,9 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/de
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/ipad_portrait.png -text svneol=unset#image/png
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/iphone_landscape.png -text svneol=unset#image/png
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/iphone_portrait.png -text svneol=unset#image/png
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/expand-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/expand.svg -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/gear-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/gear.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/iframe/error.html -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
