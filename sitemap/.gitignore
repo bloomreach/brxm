@@ -1,0 +1,11 @@
+/.project
+/.settings
+component/.classpath
+component/.project
+component/.settings
+component/target
+content/.classpath
+content/.project
+content/.settings
+content/target
+/target
