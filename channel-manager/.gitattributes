@@ -126,8 +126,6 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/add-channel.png -te
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/add.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/breadcrumb-arrow.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/button-edit-content.png -text
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/channel-manager-dimmed-32.png -text svneol=unset#image/png
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/CN.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text
