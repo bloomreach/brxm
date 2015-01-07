@@ -44,6 +44,19 @@
     border-bottom: none;
 }
 
+/* do not gray out 'disabled' breadcrumb items */
+#hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled {
+    opacity: 1;
+}
+#hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled * {
+    color: #333 !important;
+}
+
+/* highlight the breadcrumb when it becomes active */
+#hippo-channelmanager-breadcrumb.x-toolbar.hippo-breadcrumb-active {
+    background: #f3f3f3;
+}
+
 #pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
     border-bottom: 2px solid #565B65;
 }
@@ -91,11 +104,6 @@
     -webkit-flex: 0 0 auto;
     -ms-flex: 0 0 auto;
     flex: 0 0 auto;
-    -webkit-box-ordinal-group: 0;
-    -moz-box-ordinal-group: 0;
-    -ms-flex-order: 0;
-    -webkit-order: 0;
-    order: 0;
     padding: 0;
 }
 

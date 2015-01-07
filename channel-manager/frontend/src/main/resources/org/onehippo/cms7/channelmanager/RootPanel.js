@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@
 
             this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
                 id: 'hippo-channelmanager-breadcrumb',
-                renderTo: 'ft',
                 layoutConfig: {
                     pack: 'left'
                 },
@@ -72,8 +71,14 @@
             }, this, {single: true});
 
             this.on('afterrender', function() {
+                var hippoFooter, perspectiveElement;
+
+                // render the toolbar as the first item in the footer
+                hippoFooter = Ext.getDom('ft');
+                this.toolbar.render(hippoFooter, 0);
+
                 // only show the channel manager breadcrumb when channel manager is active
-                var perspectiveElement = this.el.findParent(".perspective");
+                perspectiveElement = this.el.findParent(".perspective");
                 if (perspectiveElement) {
                     this._initBreadcrumbAnimation();
                     Ext.EventManager.addListener(perspectiveElement, 'readystatechange', function(event) {
@@ -167,11 +172,13 @@
 
         _hideBreadcrumb: function() {
             this.showBreadcrumbTask.cancel();
+            this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
             this.hideBreadcrumbTask.delay(500);
         },
 
         _showBreadcrumb: function() {
             this.hideBreadcrumbTask.cancel();
+            this.toolbar.getEl().addClass('hippo-breadcrumb-active');
             this.showBreadcrumbTask.delay(0);
         },
 
