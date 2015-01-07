@@ -27,39 +27,39 @@
   padding-top: 6px;
 
   li {
-    margin-bottom: 20px;
-  }
-  
-  li > div {
-    padding: 4px 0 6px;
+    margin-bottom: 4px;
 
-    &:hover svg {
-      fill: @main-menu-hover-icon-color;
-    }
+    > div {
+      padding: 5px 0;
 
-    a {
-      color: @main-menu-text-color;
-
-      img, svg {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
+      &:hover svg {
+        fill: @main-menu-hover-icon-color;
       }
 
-      svg {
-        fill: @main-menu-icon-color;
-      }
+      a {
+        color: @main-menu-text-color;
 
-      span {
-        display: inline-block;
-        width: 100%;
-        text-align: center;
+        img, svg {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        svg {
+          fill: @main-menu-icon-color;
+        }
+
+        span {
+          display: inline-block;
+          width: 100%;
+          text-align: center;
+        }
       }
     }
   }
 
   .selected div {
-    background-color: #4c5a66;
+    background-color: @main-menu-selected-bgcolor;
     a {
       color: @main-menu-selected-text-color;
 
