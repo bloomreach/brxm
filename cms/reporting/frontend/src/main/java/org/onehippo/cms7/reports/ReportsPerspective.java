@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,13 +32,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
-import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
 
 public class ReportsPerspective extends PanelPluginPerspective {
@@ -72,7 +70,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
                     Session session = UserSession.get().getJcrSession();
                     session.save();
                     session.refresh(false);
-                    lastRefreshDateLabel.setDefaultModel(new Model<Date>(new Date()));
+                    lastRefreshDateLabel.setDefaultModel(Model.of(new Date()));
                     target.add(lastRefreshDateLabel);
                 } catch (RepositoryException repositoryException) {
                     log.error("Error refreshing jcr session.", repositoryException);
@@ -103,18 +101,13 @@ public class ReportsPerspective extends PanelPluginPerspective {
         boolean refreshGroupVisible = !(getBreadCrumbBar().getActive() instanceof PanelPluginPanel);
         refreshGroup.setVisible(refreshGroupVisible);
         if (refreshGroupVisible) {
-            lastRefreshDateLabel.setDefaultModel(new Model<Date>(new Date()));
+            lastRefreshDateLabel.setDefaultModel(Model.of(new Date()));
         }
     }
 
     @Override
     public IModel<String> getTitle() {
-        return new StringResourceModel("perspective-title", this, new Model<String>("Reports"));
-    }
-
-    @Override
-    public ResourceReference getIcon(IconSize type) {
-        return new PackageResourceReference(ReportsPerspective.class, "reports-" + type.getSize() + ".png");
+        return new StringResourceModel("perspective-title", this, null);
     }
 
 }

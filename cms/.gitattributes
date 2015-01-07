@@ -2467,7 +2467,6 @@ reporting/frontend/src/main/resources/org/onehippo/cms7/reports/layout/portal/Hi
 reporting/frontend/src/main/resources/org/onehippo/cms7/reports/layout/portal/Hippo.Reports.Portal.js -text
 reporting/frontend/src/main/resources/org/onehippo/cms7/reports/layout/reporting.css -text
 reporting/frontend/src/main/resources/org/onehippo/cms7/reports/plugins/report-panel-bg.gif -text
-reporting/frontend/src/main/resources/org/onehippo/cms7/reports/reports-32.png -text
 reporting/repository/src/main/resources/hippo-reports-facets.xml -text
 reporting/repository/src/main/resources/hippoecm-extension.xml -text
 reporting/repository/src/main/resources/hipporeport.cnd -text
