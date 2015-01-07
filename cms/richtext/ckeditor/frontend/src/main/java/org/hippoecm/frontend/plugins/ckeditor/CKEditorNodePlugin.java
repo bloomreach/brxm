@@ -67,6 +67,10 @@ import org.slf4j.LoggerFactory;
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
+            // do not html encode but utf-8 encode hence entities = false
+            + "  entities: false,"
+            // &gt; must not be replaced with > hence basicEntities = true
+            + "  basicEntities: true,"
             + "  autoUpdateElement: false,"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  dialog_buttonsOrder: 'ltr',"

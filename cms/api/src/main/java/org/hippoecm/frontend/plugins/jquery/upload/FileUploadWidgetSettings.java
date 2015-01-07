@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ public class FileUploadWidgetSettings implements IClusterable {
     public static final String MAX_WIDTH_PROP = "max.width";
     public static final String MAX_HEIGHT_PROP = "max.height";
     public static final String MAX_FILESIZE_PROP = "max.file.size";
+    public static final String FILEUPLOAD_MAX_ITEMS = "fileupload.maxItems";
+
     private static final long DEFAULT_MAX_NUMBER_OF_FILES = 25;
 
     private long maxWidth;
@@ -33,7 +35,6 @@ public class FileUploadWidgetSettings implements IClusterable {
     private String uploadUrl;
     private String uploadDoneNotificationUrl;
     private long maxNumberOfFiles;
-    private String paramName;
     private String[] allowedExtensions;
 
     public FileUploadWidgetSettings(final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
@@ -46,47 +47,76 @@ public class FileUploadWidgetSettings implements IClusterable {
 
         this.maxWidth = pluginConfig.getAsLong(MAX_WIDTH_PROP, ImageUploadValidationService.DEFAULT_MAX_WIDTH);
         this.maxHeight = pluginConfig.getAsLong(MAX_HEIGHT_PROP, ImageUploadValidationService.DEFAULT_MAX_HEIGHT);
-        this.maxNumberOfFiles = pluginConfig.getAsLong("fileupload.maxItems", DEFAULT_MAX_NUMBER_OF_FILES);
+        this.maxNumberOfFiles = pluginConfig.getAsLong(FILEUPLOAD_MAX_ITEMS, DEFAULT_MAX_NUMBER_OF_FILES);
     }
 
+    /**
+     * Maximal width of allowed upload images.
+     * @return
+     */
     public long getMaxWidth() {
         return maxWidth;
     }
 
+    /**
+     * Maximal height of allowed upload images.
+     *
+     * @return
+     */
     public long getMaxHeight() {
         return maxHeight;
     }
 
+    /**
+     * Maximal file size of allowed upload files.
+     * @return
+     */
     public long getMaxFileSize() {
         return maxFileSize;
     }
 
+    /**
+     * The url to receive uploading files. This setting is used for multi-files uploads only.
+     *
+     * @return
+     */
     public String getUploadUrl() {
         return uploadUrl;
     }
 
+    /**
+     * The url to receive uploading files. This setting is used for multi-files uploads only.
+     *
+     * @param url
+     */
     public void setUploadUrl(String url) {
         this.uploadUrl = url;
     }
 
+    /**
+     * The url to notify on the completion of uploading. This setting is used for multi-files uploads only.
+     *
+     * @param notificationUrl
+     */
     public void setUploadDoneNotificationUrl(final String notificationUrl) {
         this.uploadDoneNotificationUrl = notificationUrl;
     }
 
+    /**
+     * The url to notify on the completion of uploading. This setting is used for multi-files uploads only.
+     *
+     * @return
+     */
     public String getUploadDoneNotificationUrl() {
         return uploadDoneNotificationUrl;
     }
 
+    /**
+     * The maximal number of files to upload. This setting is used for multi-files uploads only.
+     * @return
+     */
     public long getMaxNumberOfFiles() {
         return maxNumberOfFiles;
-    }
-
-    public void setParamName(final String paramName) {
-        this.paramName = paramName;
-    }
-
-    public String getParamName() {
-        return paramName;
     }
 
     public String[] getAllowedExtensions(){

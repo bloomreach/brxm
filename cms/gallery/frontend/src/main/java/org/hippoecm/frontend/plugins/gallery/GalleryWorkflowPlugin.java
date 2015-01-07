@@ -119,10 +119,9 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     }
 
     private void createGalleryItem(FileUpload upload) throws GalleryException {
-        try {
+        try (InputStream is = upload.getInputStream()) {
             String filename = upload.getClientFileName();
             String mimetype = upload.getContentType();
-            InputStream is = upload.getInputStream();
 
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             HippoNode node;

@@ -79,6 +79,7 @@ public class ChildFacetUuidsModel implements IModel<String> {
         final CleanerProperties properties = cleaner.getProperties();
         properties.setOmitXmlDeclaration(true);
         properties.setOmitHtmlEnvelope(true);
+        properties.setTranslateSpecialEntities(false);
         properties.setUseEmptyElementTags(true);
     }
 

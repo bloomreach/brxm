@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Gallery processor that puts a scaled version of an image in each resource node. How to scale the image
- * in each resource node is specified by an associated {@link ScalingParameters} object. Also stores the file name
+ * in each resource node is specified by an associated {@link org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters} object. Also stores the file name
  * of the image in the main node, and the width and height of each scaled image in the resource nodes.
  */
 public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
@@ -126,6 +127,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             int height = scaleOperation.getHeight();
             return new Dimension(width, height);
         } else {
+            log.warn("No scaling parameters found for: {}.",nodeName);
             return null;
         }
     }
@@ -134,5 +136,10 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
         String nodeName = resource.getName();
         ScalingParameters scaleOperation = scalingParametersMap.get(nodeName);
         return scaleOperation == null || scaleOperation.getUpscaling();
+    }
+
+    @Override
+    public Map<String, ScalingParameters> getScalingParametersMap() {
+        return scalingParametersMap;
     }
 }

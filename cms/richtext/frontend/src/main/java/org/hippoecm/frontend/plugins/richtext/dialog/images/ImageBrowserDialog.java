@@ -302,11 +302,19 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
     private List<String> getMultipleString(final String key) {
         List<String> result = new ArrayList<>();
-        if (!getPluginConfig().containsKey(key)) {
+        IPluginConfig pluginConfig = getPluginConfig();
+        if (!pluginConfig.containsKey(key)) {
             return null;
         }
-        final String values = getPluginConfig().getString(key);
-        final String[] stringArray = values.split(",");
+        // starting version 7.10 values are stored in multiple property
+        String[] stringArray = pluginConfig.getStringArray(key);
+        // before 7.10 values were stored as comma separated string
+        // backward compatibility start
+        if (stringArray.length == 1) {
+            final String values = pluginConfig.getString(key);
+            stringArray = values.split(",");
+        }
+        // backward compatibility end
         for (String value : stringArray) {
             result.add(value.trim());
         }

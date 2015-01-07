@@ -36,7 +36,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * <ul>
  *     <li>file.extensions = allowed upload file extensions</li>
  * </ul>
+ *
+ * @deprecated since the version 2.28.00, the file upload component is replaced by
+ * {@link org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidget}
  */
+@Deprecated
 public class FileUploadWidgetSettings implements IClusterable {
 
     public static final String FILEUPLOAD_FLASH_ENABLED_SETTING = "fileupload.flashEnabled";

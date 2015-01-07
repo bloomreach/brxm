@@ -540,6 +540,12 @@ public class ChildFacetUuidsModelTest {
         assertEquals("<img src=\"image.jpg/{_document}/hippogallery:original\" /><img src=\"image.jpg_1/{_document}/hippogallery:original\" />", textModel.getObject());
     }
 
+    @Test
+    public void htmlEntitiesStaysTheSame() {
+        model.setObject("&gt;&lt;&amp;&acute;");
+        assertEquals("&gt;&lt;&amp;&acute;", model.getObject());
+    }
+
     private class PrefixingImageUrlProvider implements IImageURLProvider {
 
         private String prefix;

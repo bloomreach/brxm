@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ package org.hippoecm.frontend.plugins.gallery.model;
 import java.awt.Dimension;
 import java.io.InputStream;
 import java.util.Calendar;
-
+import java.util.Map;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -37,5 +38,8 @@ public interface GalleryProcessor extends IClusterable {
     public Dimension getDesiredResourceDimension(Node node) throws GalleryException, RepositoryException;
 
     public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException;
+
+    public Map<String, ScalingParameters> getScalingParametersMap() throws RepositoryException;
+
 }
 

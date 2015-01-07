@@ -21,25 +21,31 @@
         <!-- The template to display files available for download -->
 <script id="template-download" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
-    <tr class="template-download fade">
+    <tr class="template-download">
         <td class="thumbnail">
             <span class="preview"></span>
         </td>
         <td class="filename">
-            <p class="name">
+            <div class="name">
                 {% if (file.url) { %}
                     <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
                 {% } else { %}
-                    <span>{%=file.name%}</span>
+                    {%=file.name%}
                 {% } %}
-            </p>
+            </div>
             {% if (file.error) { %}
-            <br/>
-            <span class="error">{%=file.error%}</span>
+            <div class="error">{%=file.error%}</div>
             {% } %}
         </td>
         <td class="filesize">
             <span class="size">{%=o.formatFileSize(file.size)%}</span>
+        </td>
+        <td class="controls">
+            {% if (file.error) { %}
+            <span class="alert-16 icon-16"></span>
+            {% } else { %}
+            <span class="publish-16 icon-16"></span>
+            {% } %}
         </td>
     </tr>
 

@@ -50,7 +50,11 @@ import org.slf4j.LoggerFactory;
  * Widget for uploading files. This widget allows both flash and non-flash uploads based on the configuration. By
  * default the flash upload is used. For more configuration options please take a look at {@link
  * FileUploadWidgetSettings}.
+ *
+ * @deprecated since the version 2.28.00, the file upload component is replaced by
+ * {@link org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidget}
  */
+@Deprecated
 public class FileUploadWidget extends Panel {
 
     private static final long serialVersionUID = 1L;

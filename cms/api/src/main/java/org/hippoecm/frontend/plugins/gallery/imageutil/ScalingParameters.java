@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,11 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery.processor;
+package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.Serializable;
-
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
 
 /**
  * Parameters for a scaling operation: the width and height of the bounding box, and whether to do

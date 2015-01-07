@@ -17,23 +17,24 @@
 
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel>
-      <div class="row fileupload-buttonbar">
-          <div class="col-lg-7">
-              <!-- The fileinput-button span is used to style the file input field as button -->
-                <span class="btn btn-success fileinput-button">
-                    <input type="file" name="files[]" multiple>
-                </span>
-              <br/>
+      <div class="fileupload-buttonbar">
+          <div class="fileinput-buttons">
+              <!-- The fileinput-button is used to style the file input field as button -->
+              <span class="fileinput-button">
+                  <button>
+                    <wicket:message key="button-add-label"/>
+                  </button>
+                  <input type="file" name="files[]" multiple>
+              </span>
+              <span wicket:id="select-files-message"></span>
               <!-- The global file processing state -->
               <span class="fileupload-process"></span>
           </div>
-          <br/><br/>
-          <div wicket:id="select-files-message"/>
           <!-- The global progress state -->
-          <div class="col-lg-5 fileupload-progress fade">
+          <div class="fileupload-progress">
               <!-- The global progress bar -->
-              <div class="progress orange stripes" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                  <span class="progress-bar" style="width:0%;"></span>
+              <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                  <span class="progress-bar"></span>
               </div>
               <!-- The extended global progress state -->
               <div class="progress-extended">&nbsp;</div>
@@ -41,7 +42,7 @@
       </div>
       <!-- The table listing the files available for upload/download -->
       <div class="fileupload-listing-files">
-          <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+          <table role="presentation"><tbody class="files"></tbody></table>
       </div>
 </wicket:panel>
 </html>

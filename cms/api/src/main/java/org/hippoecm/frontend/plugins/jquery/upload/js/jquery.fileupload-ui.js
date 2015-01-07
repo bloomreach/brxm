@@ -322,7 +322,9 @@
                         that._trigger('started', e);
                     }
                 );
-            },
+                that._disableFileInputButton();
+                that._showProgressBar();
+           },
             // Callback for uploads stop, equivalent to the global ajaxStop event:
             stop: function (e) {
                 if (e.isDefaultPrevented()) {
@@ -344,6 +346,7 @@
                         deferred.resolve();
                     }
                 );
+                that._hideProgressBar();
             },
             processstart: function (e) {
                 if (e.isDefaultPrevented()) {
@@ -630,15 +633,20 @@
         },
 
         _enableFileInputButton: function () {
+            this.element.find('.fileinput-button')
+                    .prop('disabled', false)
+                    .removeClass('disabled');
             this.element.find('.fileinput-button input')
-                .prop('disabled', false)
-                .parent().removeClass('disabled');
+                .prop('disabled', false);
         },
 
         _disableFileInputButton: function () {
-            this.element.find('.fileinput-button input')
+            this.element.find('.fileinput-button')
                 .prop('disabled', true)
-                .parent().addClass('disabled');
+                .addClass('disabled');
+            this.element.find('.fileinput-button input')
+                    .prop('disabled', true)
+                    .addClass('disabled');
         },
 
         _initTemplates: function () {
@@ -677,6 +685,14 @@
             if (!$.support.fileInput) {
                 this._disableFileInputButton();
             }
+        },
+
+        _showProgressBar: function () {
+            this.element.find('.progress').addClass('visible');
+        },
+
+        _hideProgressBar: function () {
+            this.element.find('.progress').removeClass('visible');
         },
 
         enable: function () {

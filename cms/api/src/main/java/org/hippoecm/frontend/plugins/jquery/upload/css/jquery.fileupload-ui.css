@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /*
- * jQuery File Upload UI Plugin CSS 6.10
+ * jQuery File Upload UI Plugin CSS 9.0.0
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -9,152 +9,49 @@
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
  */
-.hippo-dialog-container .uploadpanel {
-    position: relative;
-    width: 100%;
-    float: left;
-}
-
-.fileinput-button {
-    position: relative;
-    overflow: hidden;
-    float: left;
-    margin-right: 4px;
-}
 
 .fileupload-buttonbar .btn,
 .fileupload-buttonbar .toggle {
     margin-bottom: 5px;
 }
-
-.files .progress {
-    width: 200px;
+.progress-animated .progress-bar,
+.progress-animated .bar {
+    background: url("../img/progressbar.gif") !important;
+    filter: none;
 }
-
-.fileupload-loading {
-    position: absolute;
-    left: 50%;
-    width: 128px;
-    height: 128px;
-    background: url(../img/loading.gif) center no-repeat;
-    display: none;
-}
-
 .fileupload-process {
     float: right;
     display: none;
 }
-
-.progress {
-    background-color: #a8a8a8;
-    height: 15px;
-    padding: 3px;
-    width: 430px;
-    margin: 3px 0;
-    border-radius: 5px;
-    box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+.fileupload-processing .fileupload-process,
+.files .processing .preview {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background: url("../img/loading.gif") center no-repeat;
+    background-size: contain;
+}
+.files audio,
+.files video {
+    max-width: 300px;
 }
 
-.progress span {
-    display: inline-block;
-    height: 100%;
-    border-radius: 3px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
-    transition: width .4s ease-in-out;
-}
-
-.orange span {
-    background-color: #fecf23;
-    background-image: linear-gradient(top, #fecf23, #fd9215);
-}
-
-.stripes span {
-    background-size: 30px 30px;
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
-    transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
-    transparent 75%, transparent);
-
-    animation: animate-stripes 3s linear infinite;
-}
-
-/* Fix for IE 6: */
-* html .fileinput-button {
-    line-height: 24px;
-    margin: 1px -3px 0 0;
-}
-
-/* Fix for IE 7: */
-* + html .fileinput-button {
-    padding: 2px 15px;
-    margin: 1px 0 0 0;
-}
-
-@media screen {
+@media (max-width: 767px) {
+    .fileupload-buttonbar .toggle,
+    .files .toggle,
     .files .btn span {
         display: none;
     }
-
-    .files .preview * {
-        width: 40px;
-        padding: 4px;
-    }
-
     .files .name {
-        max-width: 250px;
-        display: inline-block;
+        width: 80px;
         word-wrap: break-word;
     }
-
-    .files .size {
+    .files audio,
+    .files video {
         max-width: 80px;
-        display: inline-block;
     }
-
-    .files .error {
-        max-width: 250px;
-        display: inline-block;
-        word-wrap: break-word;
-        padding: 4px;
+    .files img,
+    .files canvas {
+        max-width: 100%;
     }
-
-    .files .progress {
-        width: 20px;
-    }
-
-    .table.table-striped {
-        width: 100%;
-        table-layout: fixed;
-    }
-    .table.table-striped tbody tr:nth-child(2n) {
-        background-color: #f4f4f4;
-    }
-    .table.table-striped td {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding: 4px;
-    }
-    .table.table-striped .thumbnail {
-        max-width: 40px;
-    }
-    .table.table-striped .filename {
-        width: 280px;
-    }
-    .table.table-striped .filesize {
-        text-align: right;
-    }
-}
-
-.btn-warning.cancel.remove {
-    float: left;
-    background-image: url("../img/delete-small-16.png");
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-.fileupload-listing-files {
-    overflow: auto;
-    max-height: 200px;
-    width: 450px;
 }

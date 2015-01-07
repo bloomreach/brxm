@@ -48,7 +48,11 @@ import wicket.contrib.input.events.key.KeyType;
 
 /**
  * A multi file upload dialog that can be configured by means of the {@link FileUploadWidgetSettings}.
+ *
+ * @deprecated since the version 2.28.00, the file upload component is replaced by
+ * {@link org.hippoecm.frontend.plugins.jquery.upload.JQueryFileUploadDialog}
  */
+@Deprecated
 public abstract class MultiFileUploadDialog<T> extends AbstractDialog<T> {
     private static final long serialVersionUID = 1L;
 
