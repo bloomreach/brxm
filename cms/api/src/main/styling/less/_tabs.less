@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@
   width: 100%;
   min-width: 0;
   text-align: left;
-  order: 1;
   flex: 1 1 auto;
 
   ul {
@@ -111,24 +110,29 @@
         border-left: 1px solid @document-tab-border-color;
       }
     }
-
-    .selected:hover,
-    .selected {
-      border-right-color: @document-tab-selected-bgcolor;
-      background-color: @document-tab-selected-bgcolor;
-    }
-
-    .selected:last-child {
-      border-left-color: @footer-bgcolor;
-    }
-
-    .selected + li {
-      border-right-color: @footer-bgcolor;
-    }
   }
 }
 
-.hippo-toolbar-menu-item.hippo-tabs-documents-menu { 
+// highlight selected tab when there's no active breadcrumb of another perspective
+// or there's no breadcrumb of another perspective at all
+:not(.hippo-breadcrumb-active) + .hippo-tabs-documents,
+.hippo-tabs-documents:first-child {
+  .selected:hover,
+  .selected {
+    border-right-color: @document-tab-selected-bgcolor;
+    background-color: @document-tab-selected-bgcolor;
+  }
+
+  .selected:last-child {
+    border-left-color: @footer-bgcolor;
+  }
+
+  .selected + li {
+    border-right-color: @footer-bgcolor;
+  }
+}
+
+.hippo-toolbar-menu-item.hippo-tabs-documents-menu {
   min-width: 124px;
 
   li {
