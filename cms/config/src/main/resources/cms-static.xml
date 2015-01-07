@@ -190,7 +190,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Administratie</sv:value>
+            <sv:value>Admin</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -212,7 +212,7 @@
             <sv:value>fr</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Administrateur</sv:value>
+            <sv:value>Admin</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -223,7 +223,7 @@
             <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Administratore</sv:value>
+            <sv:value>Admin</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -234,7 +234,7 @@
             <sv:value>de</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Administration</sv:value>
+            <sv:value>Admin</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
