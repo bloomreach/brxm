@@ -170,7 +170,9 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/list-view-
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/list-view.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/mobile.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/triangle-collapsed.png -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/triangle-collapsed.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/triangle-expanded.png -text
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/triangle-expanded.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/unknown_countrycode.png -text svneol=unset#image/png
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/channels/website.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/common/MarkRequiredFields.js -text

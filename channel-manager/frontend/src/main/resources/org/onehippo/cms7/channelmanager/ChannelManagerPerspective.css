@@ -586,7 +586,7 @@
 .channel-manager .channel-group.even,
 .channel-manager .channel-group-handle.collapsed.even,
 .channel-manager .channel-group-handle.expanded.even {
-    background-color: #f6f6f6
+    background-color: #f3f3f3;
 }
 
 .channel-manager .channel-group.odd,
@@ -643,14 +643,14 @@
 }
 
 .channel-manager .channel-group-handle.expanded {
-    background: url(channels/triangle-expanded.png) no-repeat;
+    background: url(channels/triangle-expanded.svg) no-repeat;
     padding-top: 3px;
     height: 17px;
     display: block;
 }
 
 .channel-manager .channel-group-handle.collapsed {
-    background: url(channels/triangle-collapsed.png) no-repeat;
+    background: url(channels/triangle-collapsed.svg) no-repeat;
     padding-top: 3px;
     height: 17px;
     display: block;
