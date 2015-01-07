@@ -31,44 +31,25 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
     protected GroupManager groupManager = new DummyGroupManager();
     protected RoleManager roleManager = new DummyRoleManager();
 
-    /**
-     * {@inheritDoc}
-     */
     public void remove() {
-        // shutdown hook for things like listeners
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UserManager getUserManager() {
         return userManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public GroupManager getGroupManager() {
         return groupManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public RoleManager getRoleManager() {
         return roleManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UserManager getUserManager(Session session) throws RepositoryException {
         return userManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public GroupManager getGroupManager(Session session) throws RepositoryException {
         return groupManager;
     }

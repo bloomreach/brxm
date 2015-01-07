@@ -297,6 +297,11 @@ public class LdapGroupManager extends AbstractGroupManager {
         return groups;
     }
 
+    @Override
+    public boolean isExternal() {
+        return true;
+    }
+
     /**
      * Synchronize all ldap groups with the repository. This method can take a long time if
      * there are a lot of groups with a lot of members in the ldap and should run in it's
@@ -554,4 +559,5 @@ public class LdapGroupManager extends AbstractGroupManager {
         }
         return null;
     }
+
 }

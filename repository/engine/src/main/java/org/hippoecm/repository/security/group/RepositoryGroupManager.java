@@ -28,8 +28,7 @@ import org.hippoecm.repository.security.ManagerContext;
  */
 public class RepositoryGroupManager extends AbstractGroupManager {
 
-    /** SVN id placeholder */
-
+    @Override
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
     }
@@ -37,15 +36,24 @@ public class RepositoryGroupManager extends AbstractGroupManager {
     /**
      * The backend is the repository, so just return the current memberships
      */
+    @Override
     public Set<String> backendGetMemberships(Node user) throws RepositoryException {
         return getMembershipIds(user.getName());
     }
 
+    @Override
+    public boolean isExternal() {
+        return false;
+    }
+
+    @Override
     public String getNodeType() {
         return HippoNodeType.NT_GROUP;
     }
 
+    @Override
     public boolean isCaseSensitive() {
         return true;
     }
+
 }

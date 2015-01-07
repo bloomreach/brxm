@@ -44,6 +44,11 @@ public class DummyGroupManager extends AbstractGroupManager {
         return new HashSet<String>(0);
     }
 
+    @Override
+    public boolean isExternal() {
+        return false;
+    }
+
     public String getNodeType() {
         return HippoNodeType.NT_GROUP;
     }

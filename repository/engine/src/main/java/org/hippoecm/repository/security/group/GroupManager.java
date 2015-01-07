@@ -201,4 +201,6 @@ public interface GroupManager {
      * @throws RepositoryException
      */
     public boolean backendDeleteGroup(String groupId) throws NotSupportedException, RepositoryException;
+
+    public boolean isExternal();
 }

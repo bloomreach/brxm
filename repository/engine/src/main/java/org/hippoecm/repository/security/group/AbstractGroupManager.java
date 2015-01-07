@@ -35,6 +35,8 @@ import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER;
+
 /**
  * Abstract group manager for managing groups. 
  * 
@@ -148,7 +150,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         Node group = groupsNode.addNode(NodeNameCodec.encode(groupId, true), getNodeType());
         group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[] {});
-        if (!org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId)) {
+        if (!INTERNAL_PROVIDER.equals(providerId)) {
             group.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
             log.debug("Group: {} created by {} ", groupId, providerId);
         }
@@ -268,7 +270,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         if (group.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {
             return providerId.equals(group.getProperty(HippoNodeType.HIPPO_SECURITYPROVIDER).getString());
         } else {
-            return org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId);
+            return INTERNAL_PROVIDER.equals(providerId);
         }
     }
 
@@ -325,8 +327,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final void syncMemberships(Node user) throws RepositoryException {
-        if (org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId)) {
-            // no sync needed for internal users and groups
+        if (!isExternal()) {
             return;
         }
         String userId = user.getName();
@@ -344,26 +345,20 @@ public abstract class AbstractGroupManager implements GroupManager {
         repositoryMemberships.removeAll(inSync);
         backendMemberships.removeAll(inSync);
 
-        Node group;
+
         // remove memberships that have been removed in the backend
-        if (repositoryMemberships.size() > 0) {
-            for (String groupId : repositoryMemberships) {
-                group = getGroup(groupId);
-                if (group != null) {
-                    log.debug("Remove membership of user '{}' for group '{}' by provider '{}'", new Object[] { userId,
-                            groupId, providerId });
-                    removeMember(group, userId);
-                }
+        for (String groupId : repositoryMemberships) {
+            Node group = getGroup(groupId);
+            if (group != null) {
+                log.debug("Remove membership of user '{}' for group '{}' by provider '{}'", userId, groupId, providerId);
+                removeMember(group, userId);
             }
         }
         // add memberships that have been added in the backend
-        if (backendMemberships.size() > 0) {
-            for (String groupId : backendMemberships) {
-                group = getOrCreateGroup(groupId);
-                log.debug("Add membership of user '{}' for group '{}' by provider '{}'", new Object[] { userId,
-                        groupId, providerId });
-                addMember(group, userId);
-            }
+        for (String groupId : backendMemberships) {
+            Node group = getOrCreateGroup(groupId);
+            log.debug("Add membership of user '{}' for group '{}' by provider '{}'", userId, groupId, providerId);
+            addMember(group, userId);
         }
     }
 
