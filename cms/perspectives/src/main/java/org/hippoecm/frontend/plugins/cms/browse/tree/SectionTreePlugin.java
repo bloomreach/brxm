@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,13 +43,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.util.MappingException;
-import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,15 +102,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     public SectionTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        AccordionConfiguration accordionConfig = new AccordionConfiguration();
-        if (config.containsKey("yui.config.accordion")) {
-            try {
-                PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
-            } catch (MappingException e) {
-                log.warn(e.getMessage());
-            }
-        }
-
         setOutputMarkupId(true);
         add(new AttributeAppender("class", Model.of("section-viewer"), " "));
 
@@ -163,7 +151,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
         final Form form = new Form("selection-form");
         add(form);
-        
+
         final IModel<Section> selectModel = Model.of(sections.size() > 0 ? sections.get(0) : null);
         select = new DropDownChoice<>("select", selectModel, sections,
                 new IChoiceRenderer<Section>() {

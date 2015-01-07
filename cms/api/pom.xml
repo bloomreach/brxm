@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -227,7 +227,6 @@
           <assumeABrowser>true</assumeABrowser>
           <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
           <excludes>
-            <exclude>org/hippoecm/frontend/plugins/yui/accordion/init.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/autocomplete/init_autocomplete.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/datetime/resources/init.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/dragdrop/Drag.js</exclude>
@@ -279,7 +278,7 @@
           </archive>
         </configuration>
       </plugin>
-      
+
       <!-- Use NPM/Bower to install/build Hippo theme -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

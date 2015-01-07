@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -69,20 +69,6 @@
       </sv:property>
       <sv:property sv:name="list.view.size" sv:type="String">
         <sv:value>8</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="yui.config.accordion">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="ancestor.classname" sv:type="String">
-        <sv:value>hippo-picker</sv:value>
-      </sv:property>
-      <sv:property sv:name="register.render.listener" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="register.resize.listener" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

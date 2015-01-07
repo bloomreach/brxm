@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,10 +53,7 @@ import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
-import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
-import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
-import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 import org.hippoecm.frontend.widgets.LabelWithTitle;
@@ -94,15 +91,6 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
-
-        add(new AbstractYuiBehavior() {
-
-            @Override
-            public void addHeaderContribution(IYuiContext yuiContext) {
-                yuiContext.addModule(HippoNamespace.NS, "accordionmanager");
-            }
-        });
-
 
         this.setClassName("hippo-gallery-images");
 
