@@ -45,6 +45,10 @@ import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 
+/**
+ * @deprecated since the version 2.28.00, the file upload component is replaced by
+ * {@link org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidget}
+ */
 @Deprecated
 public class MultiFileUploadComponent extends Panel {
 

@@ -31,6 +31,10 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated not used
+ */
+@Deprecated
 public class UploadPlugin extends RenderPlugin {
     private final static long serialVersionUID = 1L;
 

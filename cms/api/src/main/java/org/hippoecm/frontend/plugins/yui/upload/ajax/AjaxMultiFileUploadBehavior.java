@@ -29,6 +29,10 @@ import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
+/**
+ * @deprecated since the version 2.28.00, the file upload component is replaced by
+ * {@link org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidget}
+ */
 @Deprecated
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 

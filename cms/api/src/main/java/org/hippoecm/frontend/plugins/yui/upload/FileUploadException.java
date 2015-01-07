@@ -16,6 +16,10 @@
 
 package org.hippoecm.frontend.plugins.yui.upload;
 
+/**
+ * @deprecated since the version 2.28.00, the file upload component is replaced by
+ * {@link org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidget}
+ */
 @Deprecated
 public class FileUploadException extends Exception {
 
