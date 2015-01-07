@@ -60,7 +60,7 @@ public abstract class AbstractFileUploadWidget extends Panel {
             validator.validate(fileUpload);
         } catch (ValidationException e) {
             log.error("Error while validating upload", e);
-            throw new FileUploadViolationException("Error while validating upload" + e.getMessage());
+            throw new FileUploadViolationException("Error while validating upload " + e.getMessage());
         }
 
         IValidationResult result = validator.getValidationResult();

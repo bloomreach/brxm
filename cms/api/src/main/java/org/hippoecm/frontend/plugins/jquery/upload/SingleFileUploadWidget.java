@@ -45,12 +45,7 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
 
         add(fileUploadField = new FileUploadField(COMPONENT_FILE_INPUT_ID));
         // Supporting auto upload feature
-        fileUploadField.add(new AjaxFormSubmitBehavior("change") {
-            @Override
-            protected void onSubmit(final AjaxRequestTarget target) {
-                super.onSubmit(target);
-            }
-        });
+        fileUploadField.add(new AjaxFormSubmitBehavior("change") {});
     }
 
     /**
