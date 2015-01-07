@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,15 @@
  */
 
 /* Channel manager specific font */
-.channel-manager .x-panel-body *,
-.channel-manager .x-panel-tbar * {
+.channel-manager button,
+.channel-manager input {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 14px !important;
+}
+
+#hippo-channelmanager-breadcrumb button,
+.channel-manager .channel-group-handle,
+.channel-manager .channel-name {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 13px !important;
 }
@@ -48,6 +55,10 @@
 
 .channel-manager .x-btn-text:hover {
     color: #0086f8;
+}
+
+.channel-manager .x-toolbar .x-btn-text-icon .x-btn-text {
+    padding-left: 22px;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
@@ -598,15 +609,13 @@
 
 .channel-manager ul.channel-group li {
     float: left;
-    padding: 8px 17px;
-    margin: 5px;
+    margin: 32px 0 32px 48px;
     text-align: center;
     line-height: 1.25em;
     color: #333;
     height: 113px;
     width: 112px;
     overflow: hidden;
-    border-top: 1px solid transparent;
     cursor: pointer;
 }
 
@@ -628,7 +637,7 @@
 
 .channel-manager .channel-group-handle {
     cursor: pointer;
-    padding-left: 20px;
+    padding-left: 23px;
     height: 17px;
     clear: both;
 }
