@@ -144,40 +144,19 @@
     Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
 
         constructor: function(config) {
-            var self, toolbar, channelTypeDataView, channelRegionDataView;
+            var channelTypeDataView,
+                channelRegionDataView;
+
             this.resources = config.resources;
             this.store = config.store;
             this.userId = config.userId;
 
-            self = this;
-            toolbar = new Ext.Toolbar({
-                items: [
-                    {
-                        text: config.resources.type,
-                        enableToggle: true,
-                        pressed: true,
-                        toggleGroup: 'channelPropertyGrouping',
-                        handler: function() {
-                            self.layout.setActiveItem(0);
-                        }
-                    },
-                    {
-                        text: config.resources.region,
-                        enableToggle: true,
-                        toggleGroup: 'channelPropertyGrouping',
-                        handler: function() {
-                            self.layout.setActiveItem(1);
-                        }
-                    }
-                ]
-            });
             channelTypeDataView = this.createDataView('channelType');
             channelRegionDataView = this.createDataView('channelRegion');
 
             Ext.apply(config, {
                 id: 'channelIconPanel',
                 border: false,
-                tbar: toolbar,
                 layout: 'card',
                 activeItem: 0,
                 layoutOnCardChange: true,

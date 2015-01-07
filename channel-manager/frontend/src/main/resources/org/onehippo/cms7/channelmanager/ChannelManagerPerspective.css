@@ -28,7 +28,7 @@
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
     background: #E0E0E0 none;
-    padding: 0 10px;
+    padding: 0 8px;
     border-bottom: none;
 }
 
@@ -42,7 +42,7 @@
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
-    margin: 0 5px;
+    margin: 0 4px;
     height: 40px;
 }
 
@@ -663,9 +663,24 @@
 }
 
 /* channel icon panel overview switch buttons */
+.channel-manager .x-toolbar-right .x-btn-noicon .x-btn-text {
+    padding-top: 3px;
+    border-bottom: 3px solid transparent;
+}
+
+.channel-manager .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
+    color: #0086F8;
+    border-bottom: 3px solid #0086F8;
+}
+
+.channel-manager .x-toolbar-right .xtb-spacer {
+    width: 16px;
+}
 
 .channel-manager .x-btn-small .icon-view {
+    padding-top: 3px;
     background-image: url("channels/icon-view.svg");
+    border-bottom: 3px solid transparent;
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .icon-view {
@@ -674,7 +689,9 @@
 }
 
 .channel-manager .x-btn-small .list-view {
+    padding-top: 3px;
     background-image: url("channels/list-view.svg");
+    border-bottom: 3px solid transparent;
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .list-view {
@@ -713,19 +730,11 @@
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
-    margin-left: 0;
-    margin-right: 0;
     width: 26px;
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
-    margin-left: 0;
-    margin-right: 0;
     width: 24px;
-}
-
-.channel-manager-toolbar .xtb-spacer {
-    width: 25px;
 }
 
 #channelIconPanel .x-toolbar {
@@ -734,7 +743,6 @@
 
 #channelOverview .x-toolbar .x-toolbar-right {
     padding-bottom: 1px;
-    padding-right: 5px;
 }
 
 .x-combo-list-item {

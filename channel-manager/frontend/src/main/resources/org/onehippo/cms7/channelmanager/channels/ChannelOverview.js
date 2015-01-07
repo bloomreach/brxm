@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
+(function () {
     "use strict";
 
     Ext.namespace('Hippo.ChannelManager');
@@ -24,21 +24,75 @@
      */
     Hippo.ChannelManager.ChannelOverview = Ext.extend(Ext.Panel, {
 
-        constructor: function(config) {
-            this.resources = config.resources;
+        constructor: function (config) {
+            var iconPanel, toolbar;
 
+            iconPanel = Ext.getCmp('channelIconPanel');
+            this.resources = config.resources;
             this.canModifyChannels = config.canModifyChannels;
             this.blueprintsAvailable = config.blueprintsAvailable;
 
-            var toolbar = new Ext.Toolbar({
+            toolbar = new Ext.Toolbar({
                 height: 40,
                 cls: 'channel-manager-toolbar',
-                items: []
+                items: [
+                    '->',
+                    {
+                        text: config.resources.type,
+                        id: 'type-button',
+                        enableToggle: true,
+                        pressed: true,
+                        toggleGroup: 'channelPropertyGrouping',
+                        handler: function () {
+                            iconPanel.layout.setActiveItem(0);
+                        }
+                    },
+                    {
+                        text: config.resources.region,
+                        id: 'region-button',
+                        enableToggle: true,
+                        toggleGroup: 'channelPropertyGrouping',
+                        handler: function () {
+                            iconPanel.layout.setActiveItem(1);
+                        }
+                    },
+                    ' ',
+                    {
+                        handler: function () {
+                            var typeButton = Ext.getCmp('type-button'),
+                                regionButton = Ext.getCmp('region-button');
+
+                            typeButton.show();
+                            regionButton.show();
+                            this.selectCard(0);
+                        },
+                        toggleGroup: 'channelViewGrouping',
+                        enableToggle: true,
+                        pressed: true,
+                        scope: this,
+                        iconCls: 'icon-view'
+                    },
+                    {
+                        handler: function () {
+                            var typeButton = Ext.getCmp('type-button'),
+                                regionButton = Ext.getCmp('region-button');
+
+                            typeButton.hide();
+                            regionButton.hide();
+                            this.selectCard(1);
+                        },
+                        toggleGroup: 'channelViewGrouping',
+                        enableToggle: true,
+                        scope: this,
+                        iconCls: 'list-view'
+                    }
+                ]
             });
+
             if (this.canModifyChannels && this.blueprintsAvailable) {
-                toolbar.add({
+                toolbar.insert(0, {
                     text: config.resources['action.add.channel'],
-                    handler: function() {
+                    handler: function () {
                         this.fireEvent('add-channel');
                     },
                     allowDepress: false,
@@ -46,27 +100,6 @@
                     iconCls: 'add-channel'
                 });
             }
-
-            toolbar.add('->');
-            toolbar.add({
-                handler: function() {
-                    this.selectCard(0);
-                },
-                toggleGroup: 'channelViewGrouping',
-                enableToggle: true,
-                pressed: true,
-                scope: this,
-                iconCls: 'icon-view'
-            });
-            toolbar.add({
-                handler: function() {
-                    this.selectCard(1);
-                },
-                toggleGroup: 'channelViewGrouping',
-                enableToggle: true,
-                scope: this,
-                iconCls: 'list-view'
-            });
 
             Ext.apply(config, {
                 id: 'channelOverview',
@@ -84,7 +117,7 @@
             Hippo.ChannelManager.ChannelOverview.superclass.constructor.call(this, config);
         },
 
-        selectCard: function(itemId) {
+        selectCard: function (itemId) {
             if (itemId) {
                 this.layout.setActiveItem(itemId);
             } else {
@@ -92,7 +125,7 @@
             }
         },
 
-        update: function(config) {
+        update: function (config) {
             this.selectCard(config.activeItem);
         }
 
