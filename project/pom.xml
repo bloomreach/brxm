@@ -852,81 +852,14 @@
       </build>
     </profile>
     <profile>
-      <id>jrebelmac</id>
+      <id>jrebel</id>
       <activation>
         <property>
           <name>jrebel</name>
         </property>
-        <os>
-          <family>mac</family>
-        </os>
       </activation>
       <properties>
-        <javaagent>-agentpath:${env.REBEL_HOME}/lib/libjrebel64.dylib</javaagent>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.zeroturnaround</groupId>
-            <artifactId>jrebel-maven-plugin</artifactId>
-            <version>${maven.plugin.jrebel.version}</version>
-            <executions>
-              <execution>
-                <id>generate-rebel-xml</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jrebellinux</id>
-      <activation>
-        <property>
-          <name>jrebel</name>
-        </property>
-        <os>
-          <family>unix</family>
-        </os>
-      </activation>
-      <properties>
-        <javaagent>-agentpath:${env.REBEL_HOME}/lib/libjrebel64.so</javaagent>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.zeroturnaround</groupId>
-            <artifactId>jrebel-maven-plugin</artifactId>
-            <version>${maven.plugin.jrebel.version}</version>
-            <executions>
-              <execution>
-                <id>generate-rebel-xml</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jrebelwindows</id>
-      <activation>
-        <property>
-          <name>jrebel</name>
-        </property>
-        <os>
-          <family>windows</family>
-        </os>
-      </activation>
-      <properties>
-        <javaagent>-agentpath:${env.REBEL_HOME}/lib/jrebel64.dll</javaagent>
+        <javaagent>-javaagent:${env.REBEL_HOME}/jrebel.jar</javaagent>
       </properties>
       <build>
         <plugins>
