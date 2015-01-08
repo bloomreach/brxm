@@ -69,7 +69,7 @@
     -->
     <google.gdata.analytics.version>2.1</google.gdata.analytics.version>
     <google.gdata.core.version>1.47.1</google.gdata.core.version>
-    <cxf.version>2.6.13</cxf.version>
+    <cxf.version>3.0.3</cxf.version>
     <jackson.version>1.9.13</jackson.version>
     <spring.version>3.2.12.RELEASE</spring.version>
     <groovy.version>2.3.0</groovy.version>
