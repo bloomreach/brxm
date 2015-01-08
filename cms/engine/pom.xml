@@ -77,7 +77,7 @@
     <!-- Dependencies for the CMS-HST REST API -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <artifactId>cxf-rt-rs-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
