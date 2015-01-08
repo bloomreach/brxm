@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,14 +76,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
      * </p>
      */
     private final Session userSession;
-    Session rootSession;
-    String configuration;
+    private Session rootSession;
+    private String configurationId;
     private final WorkflowLogger workflowLogger;
 
     public WorkflowManagerImpl(Session session) throws RepositoryException {
         this.userSession = session;
         this.rootSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
-        configuration = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
+        configurationId = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
         workflowLogger = new WorkflowLogger(rootSession);
     }
 
@@ -91,8 +91,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return userSession;
     }
 
-    WorkflowDefinition getWorkflowDefinition(String category, Node item) {
-        if (configuration == null) {
+    private WorkflowDefinition  getWorkflowDefinition(String category, Node item) {
+        if (configurationId == null) {
             return null;
         }
         if (item == null) {
@@ -103,9 +103,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for node {}", category, item.getPath());
 
-            Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
-            if (node != null) {
-                for (Node workflowNode : new NodeIterable(node.getNodes())) {
+            Node configuration = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configurationId), category);
+            if (configuration != null) {
+                for (Node workflowNode : new NodeIterable(configuration.getNodes())) {
                     if (!workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                         continue;
                     }
@@ -118,7 +118,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                     if (workflowNode.hasProperty(HippoNodeType.HIPPOSYS_SUBTYPE)) {
                         if (!HippoNodeType.NT_HANDLE.equals(nodeTypeName)) {
-                            log.warn("Unsupported property 'hipposys:subtype' on nodetype '" + nodeTypeName + "'");
+                            log.warn("Unsupported property '{}' on nodetype '{}'", HippoNodeType.HIPPOSYS_SUBTYPE, nodeTypeName);
                         } else {
                             if (!item.hasNode(item.getName())) {
                                 log.warn("No child node exists for handle {}", item.getPath());
