@@ -58,7 +58,7 @@ import static org.hippoecm.repository.api.HippoNodeType.WORKFLOWS_PATH;
 
 public class WorkflowManagerImpl implements WorkflowManager {
 
-    static final Logger log = LoggerFactory.getLogger(WorkflowManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkflowManagerImpl.class);
 
     private static final ThreadLocal<String> tlInteractionId = new ThreadLocal<>();
     private static final ThreadLocal<String> tlInteraction = new ThreadLocal<>();
@@ -77,7 +77,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
      */
     private final Session userSession;
     private Session rootSession;
-    private String configurationId;
+    private final String configurationId;
     private final WorkflowLogger workflowLogger;
 
     public WorkflowManagerImpl(Session session) throws RepositoryException {
@@ -236,14 +236,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return getWorkflow(category, getDocumentNode(userSession, document));
     }
 
-    Workflow createProxiedWorkflow(WorkflowDefinition definition, Node subject) throws RepositoryException {
+    private Workflow createProxiedWorkflow(WorkflowDefinition definition, Node subject) throws RepositoryException {
         final Workflow workflow = createWorkflow(subject, definition);
         final InvocationHandler handler = new WorkflowInvocationHandler(definition, workflow, subject);
         final Class[] interfaces = getRemoteInterfaces(workflow.getClass());
         return createWorkflowProxy(workflow.getClass(), interfaces, handler);
     }
 
-    Workflow createWorkflow(Node item, WorkflowDefinition workflowDefinition) throws RepositoryException {
+    private Workflow createWorkflow(Node item, WorkflowDefinition workflowDefinition) throws RepositoryException {
         if (workflowDefinition == null) {
             return null;
         }
