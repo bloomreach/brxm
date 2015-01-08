@@ -1096,17 +1096,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         try {
             // try zombie parent, probably a property
-            PropertyId pId = zombieHierMgr.resolvePropertyPath(absPath);
-            if (pId != null) {
-                NodeId id = pId.getParentId();
-                return id;
+            final ItemId itemId = zombieHierMgr.resolvePath(absPath);
+            if (itemId instanceof PropertyId) {
+                return ((PropertyId) itemId).getParentId();
             }
-
-            // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
-            NodeId id = zombieHierMgr.resolveNodePath(absPath);
-            if (id != null) {
-                return id;
-            }
+            return (NodeId) itemId;
         } catch (RepositoryException e) {
             // fall thru and throw a path not found exception
             if (log.isDebugEnabled()) {
