@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.dev.updater;
+package org.hippoecm.frontend.plugins.cms.admin.updater;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -41,7 +41,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.dev.codemirror.CodeMirrorEditor;
+import org.hippoecm.frontend.plugins.cms.codemirror.CodeMirrorEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;

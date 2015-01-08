@@ -2186,6 +2186,27 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/D
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/PermissionBean.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/ViewDomainActionLink.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin$ChangePasswordFeedbackPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/DeleteUpdaterDialog.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/DeleteUpdaterDialog.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/LabelledCheckBoxTableRow.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/LabelledCheckBoxTableRow.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/LabelledInputFieldTableRow.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/LabelledInputFieldTableRow.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/LabelledTextAreaTableRow.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/LabelledTextAreaTableRow.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/RadioLabelledInputFieldTableRow.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/RadioLabelledInputFieldTableRow.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterEditor.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterEditor.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterHistoryEditor.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterOutput.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterOutput.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanelPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterQueueEditor.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterRegistryEditor.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterTemplate.groovy -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/DeleteUserDialog.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/GroupsLinkListPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/GroupsLinkListPanel.java -text
@@ -2224,6 +2245,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/Section
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperBehavior.java -text svneol=unset#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperSettings.java -text svneol=unset#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/YuiTreeNamespace.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/codemirror/CodeMirrorEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLink.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLink.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTarget.java svneol=native#text/plain
@@ -2235,28 +2257,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/Todo
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPanelPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/CodeMirrorEditor.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledCheckBoxTableRow.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledCheckBoxTableRow.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledInputFieldTableRow.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledInputFieldTableRow.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledTextAreaTableRow.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledTextAreaTableRow.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/RadioLabelledInputFieldTableRow.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/RadioLabelledInputFieldTableRow.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterEditor.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterEditor.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterHistoryEditor.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterOutput.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterOutput.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanelPlugin.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterQueueEditor.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterRegistryEditor.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text
@@ -2332,6 +2332,11 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/s
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-24.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel.properties -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_de.properties -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_it.properties -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_nl.properties -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/updater-panel-32.png -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
@@ -2377,6 +2382,22 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/search-back.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/search.css svneol=native#text/plain
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/tree/yui/js/treehelper/treehelper.js -text svneol=unset#text/plain
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/css/css.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/groovy/groovy.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/htmlmixed/htmlmixed.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/javascript/javascript.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/xml/xml.js -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/cobalt.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/eclipse.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/elegant.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/monokai.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/neat.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/night.css -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/rubyblue.css -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_de.properties -text
@@ -2387,29 +2408,8 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspec
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_nl.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/cobalt.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/eclipse.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/elegant.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/monokai.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/neat.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-32.png -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/dev-perspective.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_de.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_it.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_nl.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/updater/updater-panel-32.png -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-128.png -text svneol=unset#image/png

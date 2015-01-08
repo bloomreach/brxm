@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -65,5 +65,13 @@
     </sv:property>
   </sv:node>
 
-</sv:node>
+  <sv:node sv:name="updater">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.admin.updater.UpdaterPanelPlugin</sv:value>
+    </sv:property>
+  </sv:node>
 
+</sv:node>

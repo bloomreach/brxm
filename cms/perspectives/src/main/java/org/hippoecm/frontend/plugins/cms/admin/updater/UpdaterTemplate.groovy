@@ -1,4 +1,4 @@
-package org.hippoecm.frontend.plugins.cms.dev.updater
+package org.hippoecm.frontend.plugins.cms.admin.updater
 
 import org.onehippo.repository.update.BaseNodeUpdateVisitor
 import javax.jcr.Node
