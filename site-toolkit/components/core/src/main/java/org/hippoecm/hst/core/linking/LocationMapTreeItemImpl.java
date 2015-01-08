@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,18 +39,18 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem {
     void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem) {
         if(pathFragment.isEmpty()) {
             // when the pathFragments are empty, the entire relative content path is processed.
-            this.hstSiteMapItems.add(hstSiteMapItem);
+            hstSiteMapItems.add(hstSiteMapItem);
             return;
         }
         LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getChild(pathFragment.get(0));
         if(child == null) {
             child = new LocationMapTreeItemImpl();
-            this.children.put(StringPool.get(pathFragment.get(0)), child);
+            children.put(StringPool.get(pathFragment.get(0)), child);
             child.setParentItem(this);
             if(HstNodeTypes.WILDCARD.equals(pathFragment.get(0))){
-                child.setIsWildCard(true);
+                child.isWildCard = true;
             } else if (HstNodeTypes.ANY.equals(pathFragment.get(0))){
-                child.setIsAny(true);
+                child.isAny =true;
             }
         }
         pathFragment.remove(0);
@@ -75,20 +75,12 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem {
     }
     
     public boolean isAny() {
-        return this.isAny;
+        return isAny;
     }
 
 
     public boolean isWildCard() {
-        return this.isWildCard;
-    }
-    
-    void setIsAny(boolean isAny) {
-        this.isAny = isAny;
-    }
-
-    void setIsWildCard(boolean isWildCard) {
-        this.isWildCard = isWildCard;
+        return isWildCard;
     }
 
     void optimize() {

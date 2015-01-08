@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,13 @@ public class ResolvedLocationMapTreeItemImpl implements ResolvedLocationMapTreeI
 
     private final String path;
     private final HstSiteMapItem siteMapItem;
+    private final boolean representsDocument;
     
-    public ResolvedLocationMapTreeItemImpl(final String path, final HstSiteMapItem siteMapItem){
+    public ResolvedLocationMapTreeItemImpl(final String path, final HstSiteMapItem siteMapItem, final boolean representsDocument){
         this.path = path;
+        // siteMapItem can be null!
         this.siteMapItem = siteMapItem;
+        this.representsDocument = representsDocument;
     }
 
     @Override
@@ -37,5 +40,19 @@ public class ResolvedLocationMapTreeItemImpl implements ResolvedLocationMapTreeI
     @Override
     public HstSiteMapItem getSiteMapItem() {
         return siteMapItem;
+    }
+
+    @Override
+    public boolean representsDocument() {
+        return representsDocument;
+    }
+
+    @Override
+    public String toString() {
+        return "ResolvedLocationMapTreeItemImpl{" +
+                "path='" + path + '\'' +
+                ", siteMapItem=" + siteMapItem +
+                ", representsDocument=" + representsDocument +
+                '}';
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,18 +15,31 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -39,29 +52,97 @@ public class LocationMapTreeImpl implements LocationMapTree {
 
     private final static Logger log = LoggerFactory.getLogger(LocationMapTreeImpl.class);
     
-    private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
-   
-    public LocationMapTreeImpl(List<HstSiteMapItem> siteMapItems) {
+    private Map<String, LocationMapTreeItem> children = new HashMap<>();
+
+    // simple cache to avoid class method and annotation scanning over and over. Needs to be
+    // synchronized since LocationMapTreeImpl construction can be invoked concurrent
+    private final static ConcurrentMap<String, Set<String>> componentClassToDocumentParameterNamesCache = new ConcurrentHashMap<>();
+
+    public LocationMapTreeImpl(final List<HstSiteMapItem> siteMapItems) {
+        this(siteMapItems, null, null);
+    }
+
+    public LocationMapTreeImpl(final List<HstSiteMapItem> siteMapItems,
+                               final HstComponentsConfiguration configuration,
+                               final String mountContentPath) {
         for(HstSiteMapItem siteMapItem : siteMapItems ){
-            add2LocationMap(siteMapItem);
+            add2LocationMap(siteMapItem, configuration, mountContentPath);
         }
-        children = CollectionOptimizer.optimizeHashMap(children);
-        for (LocationMapTreeItem child : children.values()) {
-            ((LocationMapTreeItemImpl)child).optimize();
-        }
+        optimize();
     }
 
-    private void add2LocationMap(HstSiteMapItem siteMapItem) {
+    public LocationMapTreeImpl(final HstSiteMapItem siteMapItem) {
+        this(siteMapItem, null, null);
+    }
+
+    public LocationMapTreeImpl(final HstSiteMapItem siteMapItem,
+                               final HstComponentsConfiguration configuration,
+                               final String mountContentPath) {
+        add2LocationMap(siteMapItem, configuration, mountContentPath);
+        optimize();
+    }
+
+    private void add2LocationMap(final HstSiteMapItem siteMapItem,
+                                 final HstComponentsConfiguration configuration,
+                                 final String mountContentPath) {
+
         String normPath = PathUtils.normalizePath(siteMapItem.getRelativeContentPath());
-        if( !(normPath == null || "".equals(normPath))) {
-            this.addSiteMapItem(normPath, siteMapItem);
+        if (StringUtils.isNotEmpty(normPath)) {
+            log.debug("Adding to location map path '{}' for sitemap item '{}'", normPath, siteMapItem.getQualifiedId());
+            addSiteMapItem(normPath, siteMapItem);
         }
+
+        // for explicit sitemap item paths (no wildcards in it) include possible component item picked documents
+        if (configuration != null && siteMapItem.getComponentConfigurationId() != null && siteMapItem.isExplicitPath()) {
+            final HstComponentConfiguration cc = configuration.getComponentConfiguration(siteMapItem.getComponentConfigurationId());
+            if (cc == null) {
+                log.warn("Sitemap item '{}' for site '{}' contains unresolvable hst:componentconfigurationid '{}'.",
+                        siteMapItem.getQualifiedId(), siteMapItem.getHstSiteMap().getSite().getName(), siteMapItem.getComponentConfigurationId());
+            } else {
+
+                // find all extra document paths possibly stored in the components belonging to the page of this siteMapItem
+                List<String> documentPaths = findDocumentPathsRecursive(cc);
+
+                Properties siteMapItemParameters = new Properties();
+                for (Map.Entry<String, String> param : siteMapItem.getParameters().entrySet()) {
+                    siteMapItemParameters.put(param.getKey(), param.getValue());
+                }
+                PropertyParser pp = new PropertyParser(siteMapItemParameters);
+                for (String documentPath : documentPaths) {
+                    // documentPath can have property place holders referring to a property from sitemap item, for example
+                    // images/${bannerlocation} hence we need to resolve these first
+                    String parsedDocumentPath = (String)pp.resolveProperty("documentPath", documentPath);
+
+                    if (parsedDocumentPath.startsWith("/")) {
+                        // absolute path, strip the current mount root path and if does not start with mount root path
+                        // skip the document link.
+                        if (mountContentPath == null) {
+                            continue;
+                        }
+                        if (!parsedDocumentPath.startsWith(mountContentPath)) {
+                            continue;
+                        }
+                        parsedDocumentPath = parsedDocumentPath.substring(mountContentPath.length());
+                    }
+                    String normalizedParsedDocumentPath = PathUtils.normalizePath(parsedDocumentPath);
+                    if (StringUtils.isNotEmpty(normalizedParsedDocumentPath)) {
+                        log.debug("Adding document path '{}' from page to location map for sitemap item '{}'",
+                                normalizedParsedDocumentPath, siteMapItem.getQualifiedId());
+                        // TODO mark this item that it is linked via component document to be later in a position to
+                        // know the difference between sitemap item relative content path linked and component linked
+                        // items
+                        addSiteMapItem(normalizedParsedDocumentPath, siteMapItem);
+                    }
+                }
+            }
+        }
+
         for(HstSiteMapItem child : siteMapItem.getChildren()) {
-           add2LocationMap(child);
+           add2LocationMap(child, configuration, mountContentPath);
         }
     }
 
-    
+
     private void addSiteMapItem(String unresolvedPath, HstSiteMapItem hstSiteMapItem) {
         if(unresolvedPath == null) {
             log.debug("HstSiteMapItem '{}' will not be used for linkrewriting as it has an empty relative content path.", hstSiteMapItem.getId());
@@ -81,47 +162,49 @@ public class LocationMapTreeImpl implements LocationMapTree {
         List<HstSiteMapItem> ancestorItems = new ArrayList<HstSiteMapItem>();
         ancestorItems.add(hstSiteMapItem);
         HstSiteMapItem parent = hstSiteMapItem.getParentItem();
-        while(parent != null) {
+        while (parent != null) {
             ancestorItems.add(parent);
             parent = parent.getParentItem();
         }
         
         // traverse the ancestors list now to see if there are wildcard or any matchers
-        int index = ancestorItems.size();
-        while(index-- != 0) {
-            HstSiteMapItemService s = (HstSiteMapItemService)ancestorItems.get(index);
-            if(s.isWildCard()) {
-                params.put(String.valueOf(params.size()+1), HstNodeTypes.WILDCARD);
-                propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
-            } else if(s.isAny()) {
-                params.put(String.valueOf(params.size()+1), HstNodeTypes.ANY);
-                propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
-            } else if( s.containsWildCard() ) {
-                // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
-                String paramVal = s.getPrefix()+HstNodeTypes.WILDCARD;
-                if(s.getPostfix().indexOf(".") > -1) {
-                    String post = s.getPostfix().substring(0,s.getPostfix().indexOf("."));
-                    if(!"".equals(post)) {
-                        paramVal += post;
+        if (!hstSiteMapItem.isExplicitPath()) {
+            int index = ancestorItems.size();
+            while (index-- != 0) {
+                HstSiteMapItemService s = (HstSiteMapItemService) ancestorItems.get(index);
+                if (s.isWildCard()) {
+                    params.put(String.valueOf(params.size() + 1), HstNodeTypes.WILDCARD);
+                    propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
+                } else if (s.isAny()) {
+                    params.put(String.valueOf(params.size() + 1), HstNodeTypes.ANY);
+                    propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
+                } else if (s.containsWildCard()) {
+                    // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
+                    String paramVal = s.getPrefix() + HstNodeTypes.WILDCARD;
+                    if (s.getPostfix().indexOf(".") > -1) {
+                        String post = s.getPostfix().substring(0, s.getPostfix().indexOf("."));
+                        if (!"".equals(post)) {
+                            paramVal += post;
+                        }
+                    } else {
+                        paramVal += s.getPostfix();
                     }
-                } else {
-                    paramVal += s.getPostfix();
-                }
-                params.put(String.valueOf(params.size()+1), paramVal);
-                propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
-            } else if( s.containsAny() ) {
-               // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
-                String paramVal = s.getPrefix()+HstNodeTypes.ANY;
-                if(s.getPostfix().indexOf(".") > -1) {
-                    String post = s.getPostfix().substring(0,s.getPostfix().indexOf("."));
-                    if(!"".equals(post)) {
-                        paramVal += post;
+                    params.put(String.valueOf(params.size() + 1), paramVal);
+                    propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
+                } else if (s.containsAny()) {
+                    // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
+                    String paramVal = s.getPrefix() + HstNodeTypes.ANY;
+                    if (s.getPostfix().indexOf(".") > -1) {
+                        String post = s.getPostfix().substring(0, s.getPostfix().indexOf("."));
+                        if (!"".equals(post)) {
+                            paramVal += post;
+                        }
+                    } else {
+                        paramVal += s.getPostfix();
                     }
-                } else {
-                    paramVal += s.getPostfix();
+                    params.put(String.valueOf(params.size() + 1), paramVal);
+                    propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
                 }
-                params.put(String.valueOf(params.size()+1), paramVal);
-                propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
             }
         }
         
@@ -160,10 +243,13 @@ public class LocationMapTreeImpl implements LocationMapTree {
             }
         }
         
-        String resolvedPath = (String)pp.resolveProperty("relative contentpah", unresolvedPath);
+        String resolvedPath = (String)pp.resolveProperty("relative contentpath", unresolvedPath);
        
         if(resolvedPath == null) {
-            log.warn("Unable to translate relative content path : '{}' because the wildcards in sitemap item path ('{}') does not match the property placeholders in the relative content path. We skip this path for linkrewriting", unresolvedPath, hstSiteMapItem.getId());
+            log.warn("Skipping sitemap item '{}' for linkrewriting : Unable to translate relative content path '{}' " +
+                    "because the wildcards in sitemap item path ('{}') do not match the property placeholders in the " +
+                    "relative content path. ",
+                    hstSiteMapItem.getQualifiedId(), unresolvedPath, hstSiteMapItem.getId());
             return;
         } 
         log.debug("Translated relative contentpath '{}' --> '{}'", unresolvedPath, resolvedPath);
@@ -183,9 +269,72 @@ public class LocationMapTreeImpl implements LocationMapTree {
         pathFragment.remove(0);
         child.addSiteMapItem(pathFragment , hstSiteMapItem);
     }
-    
+
+
     public LocationMapTreeItem getTreeItem(String name) {
         return children.get(name);
+    }
+
+    private List<String> findDocumentPathsRecursive(final HstComponentConfiguration config) {
+        final ArrayList<String> populate = new ArrayList<>();
+        findDocumentPathsRecursive(config, populate);
+        return populate;
+    }
+
+    private void findDocumentPathsRecursive(final HstComponentConfiguration config,
+                                            final List<String> populate) {
+
+        final String componentClassName = config.getComponentClassName();
+        if (StringUtils.isNotEmpty(componentClassName)) {
+            Set<String> parameterNames = componentClassToDocumentParameterNamesCache.get(componentClassName);
+            if (parameterNames == null) {
+                try {
+                    parameterNames = new HashSet<>();
+                    final Class<?> compClass = Class.forName(componentClassName);
+                    HstComponent component = (HstComponent) compClass.newInstance();
+                    ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+
+                    if (parametersInfo != null) {
+                        Class<?> parametersInfoType = parametersInfo.type();
+
+                        if (!parametersInfoType.isInterface()) {
+                            throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
+                        }
+                        for (Method method : parametersInfoType.getMethods()) {
+                            if (method.isAnnotationPresent(Parameter.class) &&
+                                    (method.isAnnotationPresent(JcrPath.class) || method.isAnnotationPresent(DocumentLink.class))) {
+                                Parameter parameter = method.getAnnotation(Parameter.class);
+                                parameterNames.add(parameter.name());
+                            }
+                        }
+                    }
+                }  catch (Exception e) {
+                    log.warn("Exception while finding documentLink or JcrPath annotations for {}. Skip it: {}",
+                            config.getCanonicalStoredLocation(), e.toString());
+                }
+                componentClassToDocumentParameterNamesCache.putIfAbsent(componentClassName, parameterNames);
+            }
+
+            for (String param : parameterNames) {
+                String documentPath = config.getParameter(param);
+                if (StringUtils.isNotEmpty(documentPath)) {
+                    // TODO possibly later improvement is to even included targeted locations (prefix parameter names)
+                    populate.add(documentPath);
+                }
+            }
+
+        }
+
+        for (HstComponentConfiguration child : config.getChildren().values()) {
+            findDocumentPathsRecursive(child, populate);
+        }
+    }
+
+    private void optimize() {
+        children = CollectionOptimizer.optimizeHashMap(children);
+        for (LocationMapTreeItem child : children.values()) {
+            ((LocationMapTreeItemImpl)child).optimize();
+        }
     }
 
 }

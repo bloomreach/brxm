@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -580,6 +580,12 @@ public class MountService implements ContextualizableMount, MutableMount {
                     mountException(mount);
                 }
 
+                contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+
+                if (StringUtils.isNotEmpty(contentPath)) {
+                    contentPath = "/"+ PathUtils.normalizePath(contentPath);
+                }
+
                 MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
                 long start = System.currentTimeMillis();
                 if (Mount.PREVIEW_NAME.equals(type)) {
@@ -591,13 +597,8 @@ public class MountService implements ContextualizableMount, MutableMount {
                     previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
                 }
 
-                contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
-
-                if (StringUtils.isNotEmpty(contentPath)) {
-                    contentPath = "/"+ PathUtils.normalizePath(contentPath);
-                }
-
                 assertContentPathNotEmpty(mount, contentPath);
+
                 log.info("Successfull initialized hstSite '{}' for Mount '{}' in '{}' ms.",
                         new String[]{hstSite.getName(), getName(), String.valueOf(System.currentTimeMillis() - start)});
                 // add this Mount to the maps in the VirtualHostsService
@@ -1015,7 +1016,6 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.channel = channel;
         this.previewChannel = previewChannel;
     }
-
 
     @Override
     public String toString() {

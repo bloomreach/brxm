@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,8 +47,7 @@ public interface HstLinkCreator {
      * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink create(Node node, HstRequestContext requestContext);
-    
-   
+
     /**
      * Rewrite a jcr Node to a HstLink wrt its current HstRequestContext and preferredItem. When <code>preferredItem</code> is not <code>null</code>, the link is tried to be rewritten to 
      * one of the descendants (including itself) of the preferred {@link HstSiteMapItem}. When <code>preferredItem</code> is <code>null</code>, a link is created against the entire sitemap item tree. When there cannot be created an HstLink to a descendant HstSiteMapItem 
@@ -72,8 +71,7 @@ public interface HstLinkCreator {
      * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem, boolean fallback);
-    
-   
+
     /**
      * <p>
      * This method creates the same {@link HstLink} as {@link #create(Node, HstRequestContext, HstSiteMapItem, boolean)} when <code>navigationStateful = false</code>. When <code>navigationStateful = true</code>, 
@@ -240,7 +238,7 @@ public interface HstLinkCreator {
      * @param node the jcr node
      * @param requestContext the current request context
      * @param mountAlias the alias of the {@link Mount} for which the link should be created for
-     * @param type the type tha should be contained in the {@link Mount#getTypes()} where the {@link Mount} is the mount belonging to the returned {@link HstLink}
+     * @param type the type that should be contained in the {@link Mount#getTypes()} where the {@link Mount} is the mount belonging to the returned {@link HstLink}
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mountAlias</code> or <code>null</code> when no link for the node can be made in the <code>{@link Mount}</code> belonging to the alias or when there belongs no {@link Mount} to the alias
      * @see {@link #create(Node, Mount)} 
      */
@@ -297,6 +295,31 @@ public interface HstLinkCreator {
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(String path, Mount mount, boolean containerResource);
+
+    /**
+     * Rewrite a jcr Node to a List of {@link HstLink}s
+     * @param node
+     * @param requestContext the HstRequestContext
+     * @param crossMount if <code>true</code> also mounts not belonging to the current request context
+     *                   ({@link HstRequestContext#getResolvedMount()}) are tried.
+     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found
+     */
+    List<HstLink> createAll(Node node, HstRequestContext requestContext, boolean crossMount);
+
+    /**
+     * Rewrite a jcr Node to a List of {@link HstLink}s
+     * @param node
+     * @param requestContext the HstRequestContext
+     * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belong to
+     * @param type the type that should be contained in the {@link Mount#getTypes()} where the {@link Mount} is the
+     *             mount belonging to the returned {@link HstLink}. If <code>type</code> is <code>null</code>, the type
+     *             of the {@link org.hippoecm.hst.core.request.HstRequestContext#getResolvedMount()} is used.
+     * @param crossMount if <code>true</code> also mounts not belonging to the current request context
+     *                   ({@link HstRequestContext#getResolvedMount()}) are tried.
+     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found
+     */
+    List<HstLink> createAll(Node node, HstRequestContext requestContext, String hostGroupName, String type, boolean crossMount);
+
 
     /**
      * @return a link that can be used for page not found links for <code>mount</code>

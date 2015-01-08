@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,43 +19,23 @@ package org.hippoecm.hst.core.linking;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class HstLinkRewritingCrossSchemeIT extends AbstractBeanTestCase {
-
-    private ObjectConverter objectConverter;
-    private HstLinkCreator linkCreator;
-    private Repository repository;
-    private Credentials credentials;
+public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
 
     private final static String HTTP_SCHEME = "http";
     private final static String HTTPS_SCHEME = "https";
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.objectConverter = getObjectConverter();
-        this.linkCreator = getComponent(HstLinkCreator.class.getName());
-        this.repository = getComponent(Repository.class.getName());
-        this.credentials = getComponent(Credentials.class.getName() + ".hstconfigreader");
-
-    }
 
     private class SiteMapItemReference {
         String jcrPath;
@@ -262,7 +242,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractBeanTestCase {
     private void makeSiteMapItemsHttps(final List<SiteMapItemReference> siteMapItemsToSetHttpsScheme) throws Exception {
         Session session = null;
         try {
-            session = repository.login(credentials);
+            session = createAdminSession();
             for (SiteMapItemReference siteMapItemReference : siteMapItemsToSetHttpsScheme) {
                 Node jcrNode = session.getNode(siteMapItemReference.jcrPath);
                 if (jcrNode.hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME)) {
@@ -281,7 +261,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractBeanTestCase {
     private void revertSiteMapItemsToValueBefore(final List<SiteMapItemReference> siteMapItemsToSetHttpsScheme) throws Exception {
         Session session = null;
         try {
-            session = repository.login(credentials);
+            session = createAdminSession();
             for (SiteMapItemReference siteMapItemReference : siteMapItemsToSetHttpsScheme) {
                 Node jcrNode = session.getNode(siteMapItemReference.jcrPath);
                 if (siteMapItemReference.originalScheme == null) {

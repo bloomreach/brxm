@@ -91,4 +91,10 @@ public interface HstSite {
      * @return <code>true</code> when this {@link HstSite} has a different configuration than the live.
      */
     boolean hasPreviewConfiguration();
+
+    /**
+     * @return <code>true</code> when the link rewriting should next to the sitemap also include documents picked in hst components
+     */
+    boolean isComponentLinkRewritingSupported();
+
 }
