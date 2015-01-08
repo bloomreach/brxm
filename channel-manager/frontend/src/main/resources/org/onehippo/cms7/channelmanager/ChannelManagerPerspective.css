@@ -702,8 +702,12 @@
     border-bottom: 3px solid transparent;
 }
 
-.channel-manager .x-btn-pressed .x-btn-small .icon-view {
+.channel-manager .x-btn-pressed .x-btn-small .icon-view,
+.channel-manager .x-btn-small .icon-view:hover {
     background-image: url("channels/icon-view-active.svg");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .icon-view {
     border-bottom: 3px solid #0086F8;
 }
 
@@ -713,8 +717,12 @@
     border-bottom: 3px solid transparent;
 }
 
-.channel-manager .x-btn-pressed .x-btn-small .list-view {
+.channel-manager .x-btn-pressed .x-btn-small .list-view,
+.channel-manager .x-btn-small .list-view:hover {
     background-image: url("channels/list-view-active.svg");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .list-view {
     border-bottom: 3px solid #0086F8;
 }
 
