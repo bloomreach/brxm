@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms7.channelmanager.plugins.channelactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -184,9 +185,11 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
             @Override
             protected List<String> load() {
-                List<String> names = new ArrayList<String>();
-                names.addAll(idToChannelMap.keySet());
-                return names;
+                if (!idToChannelMap.isEmpty()) {
+                    return new ArrayList<>(idToChannelMap.keySet());
+                } else {
+                    return Arrays.asList("<empty>");
+                }
             }
 
         }) {
@@ -199,7 +202,11 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             protected void populateItem(final ListItem<String> item) {
                 final String channelId = item.getModelObject();
                 ChannelDocument channel = idToChannelMap.get(channelId);
-                item.add(new ViewChannelAction("view-channel", channel));
+                if (channel != null) {
+                    item.add(new ViewChannelAction("view-channel", channel));
+                } else {
+                    item.add(new ViewChannelUnavailablePanel("view-channel"));
+                }
             }
         };
 
@@ -207,6 +214,24 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
     protected Comparator<ChannelDocument> getChannelDocumentComparator() {
         return DEFAULT_CHANNEL_DOCUMENT_COMPARATOR;
+    }
+
+    private class ViewChannelUnavailablePanel extends StdWorkflow {
+
+        public ViewChannelUnavailablePanel(final String id) {
+            super(id, "channelactions");
+            setEnabled(false);
+        }
+
+        @Override
+        protected ResourceReference getIcon() {
+            return new PackageResourceReference(getClass(), "channel-icon-16.png");
+        }
+
+        @Override
+        protected IModel getTitle() {
+            return new StringResourceModel("unavailable", ChannelActionsPlugin.this, null);
+        }
     }
 
     private class ViewChannelAction extends StdWorkflow {
