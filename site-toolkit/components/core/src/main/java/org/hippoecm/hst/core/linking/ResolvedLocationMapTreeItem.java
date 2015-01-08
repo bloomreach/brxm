@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,19 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 /**
  * 
  */
-public interface ResolvedLocationMapTreeItem extends Serializable{
+public interface ResolvedLocationMapTreeItem extends Serializable {
     
-    public String getPath();
+    String getPath();
 
     /**
      * @return {@link HstSiteMapItem} belonging to this {@link ResolvedLocationMapTreeItem}. Returns <code>null</code> if
      * no {@link HstSiteMapItem} is attached to this  {@link ResolvedLocationMapTreeItem}.
      */
-    public HstSiteMapItem getSiteMapItem();
+    HstSiteMapItem getSiteMapItem();
+
+    /**
+     * @return <code>true</code> when the {@link org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem} is a representation
+     * of a document
+     */
+    boolean representsDocument();
 }

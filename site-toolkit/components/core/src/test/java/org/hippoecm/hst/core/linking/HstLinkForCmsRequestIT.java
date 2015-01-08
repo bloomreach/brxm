@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package org.hippoecm.hst.core.linking;
 
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -28,9 +26,7 @@ import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -75,28 +71,19 @@ import static org.junit.Assert.assertTrue;
  *  the host that needs to be 'faked' to render the page.
  * </p>
  */
-public class HstLinkForCmsRequestIT extends AbstractBeanTestCase {
+public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
 
-    private Repository repository;
-    private Credentials credentials;
     private HstManager hstManager;
     private HstURLFactory hstURLFactory;
-    private ObjectConverter objectConverter;
-    private HstLinkCreator linkCreator;
     private HstSiteMapMatcher siteMapMatcher;
     protected MountDecorator mountDecorator;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        this.repository = getComponent(Repository.class.getName());
-        this.credentials= getComponent(Credentials.class.getName()+".hstconfigreader");
         this.hstManager = getComponent(HstManager.class.getName());
         this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
-        this.objectConverter = getObjectConverter();
-        this.linkCreator = getComponent(HstLinkCreator.class.getName());
         this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
 
     }
@@ -131,7 +118,7 @@ public class HstLinkForCmsRequestIT extends AbstractBeanTestCase {
         // NOW we do the same tests as above, but we first SET the showcontextpath on hst:hst/hst:hosts to FALSE : 
         // EVEN when contextpath is set to FALSE, for the URLs in cms context, still the contextpath should be included.
         // When acessing the site over the host of the cms, ALWAYS the context path needs to be included
-        Session session = repository.login(credentials);
+        Session session = createAdminSession();
         Node hstHostsNode = session.getNode("/hst:hst/hst:hosts");
         boolean before = hstHostsNode.getProperty("hst:showcontextpath").getBoolean();
         hstHostsNode.setProperty("hst:showcontextpath", false);

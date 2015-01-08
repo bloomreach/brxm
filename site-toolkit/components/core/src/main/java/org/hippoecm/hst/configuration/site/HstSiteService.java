@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class HstSiteService implements HstSite {
     private MountSiteMapConfiguration mountSiteMapConfiguration;
     private HstConfigurationLoadingCache configLoadingCache;
     private final Object hstModelMutex;
-
+    private boolean componentLinkRewritingSupported;
 
     public static HstSiteService createLiveSiteService(final HstNode site,
                                                        final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -76,6 +76,7 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
+        componentLinkRewritingSupported = site.getValueProvider().getBoolean(HstNodeTypes.SITE_PROPERTY_COMPONENT_LINK_REWRITING_SUPPORTED);
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
         init();
     }
@@ -245,7 +246,12 @@ public class HstSiteService implements HstSite {
             if (locationMapTree != null) {
                 return locationMapTree;
             }
-            locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems());
+            if (isComponentLinkRewritingSupported()) {
+                locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems(),
+                        getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
+            } else {
+                locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems());
+            }
             return locationMapTree;
         }
     }
@@ -306,4 +312,16 @@ public class HstSiteService implements HstSite {
         }
     }
 
+    @Override
+    public boolean isComponentLinkRewritingSupported() {
+        return componentLinkRewritingSupported;
+    }
+
+    @Override
+    public String toString() {
+        return "HstSiteService{" +
+                "name='" + name + '\'' +
+                ",configurationPath='" + configurationPath + '\'' +
+                '}';
+    }
 }

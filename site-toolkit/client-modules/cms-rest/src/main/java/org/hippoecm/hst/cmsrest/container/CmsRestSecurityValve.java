@@ -105,16 +105,12 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
             final String hostGroupNameForCmsHost = resolvedVirtualHost.getVirtualHost().getHostGroupName();
             requestContext.setAttribute(HOST_GROUP_NAME_FOR_CMS_HOST, hostGroupNameForCmsHost);
             context.invokeNext();
-        } catch (SignatureException se) {
-            log.warn("SignatureException while processing CMS REST credentails : {}", se.toString());
-            setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
-            return;
-        } catch (LoginException e) {
-            log.warn("LoginException while processing CMS REST credentails : {}", e.toString());
-            setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
-            return;
-        }  catch (RepositoryException e) {
-            log.warn("RepositoryException while processing CMS REST credentails : {}", e.toString());
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("{} while processing CMS REST credentials :", e.getClass().getSimpleName(), e);
+            } else {
+                log.warn("{} while processing CMS REST credentials : {}", e.getClass().getSimpleName(), e.toString());
+            }
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         } finally {

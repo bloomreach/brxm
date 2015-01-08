@@ -112,7 +112,7 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 
     protected synchronized ServletController getController(Bus bus, ServletContext servletContext) {
         if (controller == null) {
-            HTTPTransportFactory df = new HTTPTransportFactory(bus);
+            HTTPTransportFactory df = new HTTPTransportFactory();
             jaxrsServerFactoryBean.setDestinationFactory(df);
             server = jaxrsServerFactoryBean.create();
             if (inInterceptors != null && !inInterceptors.isEmpty()) {

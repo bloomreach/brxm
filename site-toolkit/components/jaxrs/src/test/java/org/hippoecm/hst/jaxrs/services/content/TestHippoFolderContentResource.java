@@ -46,7 +46,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/News/2009/April./folders/");
         request.setContextPath("/testapp");
@@ -80,7 +79,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/News/2009/April./folders/Day5/");
         request.setContextPath("/testapp");
@@ -112,7 +110,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("POST");
         request.setRequestURI("/testapp/preview/services/News/2009/April./folders/unittestfolder1/");
         request.setContextPath("/testapp");
@@ -129,7 +126,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("DELETE");
         request.setRequestURI("/testapp/preview/services/News/2009/April./folders/unittestfolder1/");
         request.setContextPath("/testapp");
@@ -152,7 +148,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/News/2009/April./documents/");
         request.setContextPath("/testapp");
@@ -186,7 +181,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products./documents/HippoCMS");
         request.setContextPath("/testapp");
@@ -220,7 +214,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("POST");
         request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest/");
         request.setContextPath("/testapp");
@@ -242,7 +235,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest");
         request.setContextPath("/testapp");
@@ -267,7 +259,6 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("DELETE");
         request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest/");
         request.setContextPath("/testapp");

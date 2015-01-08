@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ public class MountSiteMapConfiguration {
     private final int schemeNotMatchingResponseCode;
     private final String[] defaultResourceBundleIds;
     private int hashCode;
+    private final String mountContentPath;
 
     public MountSiteMapConfiguration(Mount mount) {
         parameters = mount.getParameters();
@@ -57,6 +58,7 @@ public class MountSiteMapConfiguration {
         schemeNotMatchingResponseCode = mount.getSchemeNotMatchingResponseCode();
         defaultResourceBundleIds = mount.getDefaultResourceBundleIds();
         hashCode = computeHashCode();
+        mountContentPath = mount.getContentPath();
     }
 
     public Map<String, String> getParameters() {
@@ -93,6 +95,10 @@ public class MountSiteMapConfiguration {
 
     public String[] getDefaultResourceBundleIds() {
         return defaultResourceBundleIds;
+    }
+
+    public String getMountContentPath() {
+        return mountContentPath;
     }
 
     @Override
@@ -133,6 +139,9 @@ public class MountSiteMapConfiguration {
         if (scheme != null ? !scheme.equals(that.scheme) : that.scheme != null) {
             return false;
         }
+        if (mountContentPath != null ? !mountContentPath.equals(that.mountContentPath) : that.mountContentPath != null) {
+            return false;
+        }
 
         return true;
     }
@@ -152,6 +161,7 @@ public class MountSiteMapConfiguration {
         result = 31 * result + (schemeAgnostic ? 1 : 0);
         result = 31 * result + schemeNotMatchingResponseCode;
         result = 31 * result + (defaultResourceBundleIds != null ? Arrays.hashCode(defaultResourceBundleIds) : 0);
+        result = 31 * result + (mountContentPath != null ? mountContentPath.hashCode() : 0);
         return result;
     }
 }

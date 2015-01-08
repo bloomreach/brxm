@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,25 +16,14 @@
 package org.hippoecm.hst.core.linking;
 
 
-import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
-public class HstContainerResourceLinkRewritingIT extends AbstractBeanTestCase {
-
-    private HstLinkCreator linkCreator;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.linkCreator = getComponent(HstLinkCreator.class.getName());
-    }
+public class HstContainerResourceLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
     @Test
     public void root_mount_container_resource_link_implicit_container_resource() throws Exception {

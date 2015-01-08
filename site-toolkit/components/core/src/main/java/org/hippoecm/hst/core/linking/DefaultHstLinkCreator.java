@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -114,14 +117,29 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     public HstLink create(HippoBean bean, HstRequestContext hstRequestContext) {
         return create(bean.getNode(), hstRequestContext);
     }
-    
-    
+
+
     public HstLink create(Node node, HstRequestContext hstRequestContext) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, hstRequestContext);
         return linkResolver.resolve();
     }
-    
-    
+
+    public List<HstLink> createAll(final Node node, final HstRequestContext hstRequestContext, final boolean crossMount) {
+        final Mount mount = hstRequestContext.getResolvedMount().getMount();
+        final String type = mount.getType();
+        final String hostGroupName = mount.getVirtualHost().getHostGroupName();
+       return createAll(node, hstRequestContext, hostGroupName, type , crossMount);
+    }
+
+    public List<HstLink> createAll(final Node node, final HstRequestContext hstRequestContext,
+                                   final String hostGroupName, final String type, final boolean crossMount) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, hstRequestContext);
+        if (!crossMount) {
+            linkResolver.resolverProperties.tryOtherMounts = false;
+        }
+        return linkResolver.resolveAll(type, hostGroupName);
+    }
+
     public HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem,
             boolean fallback) {
         return this.create(node, requestContext, preferredItem, fallback, false);
@@ -179,7 +197,16 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         linkResolver.resolverProperties.canonicalLink = true;
         return linkResolver.resolve();
     }
-    
+
+    @Override
+    public HstLink create(final Node node, final Mount mount, final HstSiteMapItem preferredItem, final boolean fallback) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
+        linkResolver.resolverProperties.tryOtherMounts = false;
+        linkResolver.resolverProperties.preferredItem = preferredItem;
+        linkResolver.resolverProperties.fallback = fallback;
+        return linkResolver.resolve();
+    }
+
     public HstLink create(Node node, HstRequestContext requestContext,  String mountAlias) {
         Mount targetMount = requestContext.getMount(mountAlias);
         if(targetMount == null) {
@@ -267,19 +294,18 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return false;
     }
 
-    
-    private LocationMapResolver getSubLocationMapResolver(HstSiteMapItem preferredItem) {
+    private LocationMapResolver getSubLocationMapResolver(final HstSiteMapItem preferredItem,
+                                                          final HstComponentsConfiguration componentsConfiguration,
+                                                          final String mountContentPath) {
         LocationMapTree subLocationMapTree = loadedSubLocationMapTree.get(preferredItem);
         if(subLocationMapTree == null) {
-            List<HstSiteMapItem> subRootItems = new ArrayList<HstSiteMapItem>();
-            subRootItems.add(preferredItem);
-            subLocationMapTree = new LocationMapTreeImpl(subRootItems);
+            subLocationMapTree = new LocationMapTreeImpl(preferredItem, componentsConfiguration, mountContentPath);
             loadedSubLocationMapTree.put(preferredItem, subLocationMapTree);
         }
         return new LocationMapResolver(subLocationMapTree);
     }
 
-    protected RewriteContext createRewriteContext(final Node node, final Mount mount,
+    private RewriteContext createRewriteContext(final Node node, final Mount mount,
                               final ResolverProperties resolverProperties) throws RepositoryException, RewriteContextException {
 
         if (rewriteContextResolver == null) {
@@ -365,7 +391,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return createPageNotFoundLink(mount);
             }
 
-            boolean postProcess = true;
             Node canonicalNode = null;
             if(!resolverProperties.navigationStateful) {
                 // not context relative, so we try to compute a link wrt the canonical location of the jcr node. If the canonical location is null (virtual only nodes)
@@ -373,7 +398,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 canonicalNode = NodeUtils.getCanonicalNode(node);
             }
 
-            LinkInfo linkInfo = null;
+            HstLink hstLink = null;
             try {
                 if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
                     /*
@@ -423,9 +448,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     final String rewritePath = rewriteContext.getPath();
                     final Mount rewriteMount = rewriteContext.getMount();
 
-                    linkInfo = resolveToLinkInfo(rewritePath , rewriteMount, resolverProperties);
+                    hstLink = resolveToHstLink(rewritePath, rewriteMount, resolverProperties);
 
-                    if (linkInfo == null && resolverProperties.tryOtherMounts) {
+                    if (hstLink == null && resolverProperties.tryOtherMounts) {
 
                         log.debug("We cannot create a link for '{}' for the mount '{}' belonging to the current request. Try to create a cross-domain/site/channel link.",
                                 rewritePath, rewriteMount.getName());
@@ -445,67 +470,31 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          * Mount that can create a link for it. If there is no Mount that can create a link, a pagenotfound link is created with the original mount.
                          * 
                          * Note that we only create a cross-domain link if and only if there is a Mount that 
-                         * 1) Has a #getCanonicalContentPath() or #getContentPath() (for virtual nodes) that start
-                         * with or are equal to the 'nodePath' we have here
+                         * 1) Has a #getContentPath() (for virtual nodes) that start
+                         * with or are equal to the 'nodePath'
                          * 2) Belong to the same HostNameGroup as the Mount for this HstLinkResolver (normally the same as for the current request)
                          * 3) Has at least one type (preview, live, composer, etc ) in common with the Mount for this HstLinkResolver 
                          *
                          * Note that if there is a preferredItem we ignore this one for cross domain linking as preferredItem only work within the same Mount
                          */
 
-                        List<Mount> mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts()
-                                .getMountsByHostGroup(rewriteMount.getVirtualHost().getHostGroupName());
+                        List<Mount> candidateMounts = findAllCandidateMounts(rewriteMount, rewritePath,
+                                rewriteMount.getVirtualHost().getHostGroupName(), rewriteMount.getType());
 
-                        /*
-                         * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
-                         * choose the best suited Mount as follows:
-                         * a) The Mount must have a #getCanonicalContentPath() or #getContentPath() that is a prefix of the nodePath
-                         * b) The Mount must have at least ONE type in common as the current Mount of this HstLinkResolver
-                         * 
-                         * The resulting list of candidate Mounts can all be tried to create a link for until there is a Mount that
+                        /** The resulting list of candidate Mounts can all be tried to create a link for until there is a Mount that
                          * returned a non null LinkInfo. The order in which we try the candidate mount for a LinkInfo is as follows:
-                         * 
+                         *
                          * 1) Firstly order the candidate mounts to have the same primary type as the current Mount of this HstLinkResolver
                          * 2) Secondly order the candidate mounts that have the most 'types' in common with the current Mount of this HstLinkResolver
                          * 3) Thirdly order the Mounts to have the fewest types first: The fewer types it has, and the number of matching types is equal to the current Mount, indicates
                          * that it can be considered more precise
                          * 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper the more specific.
                          */
-                        List<Mount> candidateMounts = new ArrayList<Mount>();
-
-                        for(Mount candidateMount : mountsForHostGroup) {
-                           if(candidateMount == rewriteMount) {
-                               // do not try the already used mount above again
-                               continue;
-                           }
-                           if(!candidateMount.isMapped()) {
-                               // not a mount for a HstSite
-                               continue;
-                           }
-
-                           // (a)
-                           if(rewritePath.startsWith(candidateMount.getContentPath() + "/") || rewritePath.equals(candidateMount.getContentPath())) {
-                              // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
-                              // (b)
-                               if (Collections.disjoint(candidateMount.getTypes(), rewriteMount.getTypes())) {
-                                   // The Mount did not have a type in common with the current Mount. Try another one.
-                                   log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to link rewrite '{}', but it " +
-                                           "does not have at least one type in common with the current request Mount hence cannot be used. Try next one",
-                                           new String[]{candidateMount.getName(), candidateMount.getAlias(), rewritePath});
-                               } else {
-                                   log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '{}' belongs to. Add this " +
-                                           "Mount to the list of possible suited mounts",
-                                           new String[]{candidateMount.getName(), candidateMount.getAlias(), rewritePath});
-                                   candidateMounts.add(candidateMount);
-                               }
-                           }
-                        }
-
                         if(candidateMounts.size() == 0) {
                             log.info("There is no Mount available that is suited to linkrewrite '{}'. Return page not found link.", rewritePath);
                             return createPageNotFoundLink(rewriteMount);
                         } else if(candidateMounts.size() == 1) {
-                            linkInfo = resolveToLinkInfo(rewritePath, candidateMounts.get(0), resolverProperties);
+                            hstLink = resolveToHstLink(rewritePath, candidateMounts.get(0), resolverProperties);
                         } else {
                             // sort the candidate mounts according the algorithm mount ordering (1), (2), (3) and (4) applied
                             // this is done by the CandidateMountComparator which gets the current 'mount' as reference for
@@ -514,8 +503,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             Collections.sort(candidateMounts, new CandidateMountComparator(rewriteMount));
 
                             for(Mount tryMount : candidateMounts) {
-                                linkInfo = resolveToLinkInfo(rewritePath, tryMount, resolverProperties);
-                                if(linkInfo != null) {
+                                hstLink = resolveToHstLink(rewritePath, tryMount, resolverProperties);
+                                if(hstLink != null) {
                                     // succeeded
                                     break;
                                 }
@@ -535,19 +524,17 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 log.error("Exception during creating link", e);
             }
 
-            if(linkInfo == null) {
+            if (hstLink == null) {
                 log.info("Cannot create a link for node with path '{}'. Return a page not found link", originalNodePath);
                 return createPageNotFoundLink(mount);
             }
-            
-            HstLink link = new HstLinkImpl(linkInfo.pathInfo, linkInfo.mount, linkInfo.siteMapItem, linkInfo.containerResource);
-            if(postProcess) {
-                link = postProcess(link);
+            if (hstLink.isContainerResource()) {
+                // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
+                return hstLink;
+            } else {
+                return postProcess(hstLink);
             }
-            return link;
-            
         }
-
 
         /**
          * If <code>type</code> is null, the types of the current {@link Mount} are used. If <code>hostGroupName</code> is null, the 
@@ -557,7 +544,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          * @return the List of all available links. When no links at all are found, an empty list is returned. 
          */
         List<HstLink> resolveAllCanonicals(String type, String hostGroupName) {
-            
+
             resolverProperties.canonicalLink = true;
             if(resolverProperties.preferredItem != null) {
                 log.info("preferredItem is not supported in combination with 'all available canonical links'. It will be ignored");
@@ -565,7 +552,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             if(resolverProperties.navigationStateful) {
                 log.info("navigationStateful is not supported in combination with 'all available canonical links'. It will be ignored");
             }
-            
+
             if (mount == null) {
                 log.info("Cannot create link when the mount is null. Return empty list for canonicalLinks.");
                 return Collections.emptyList();
@@ -575,21 +562,19 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return Collections.emptyList();
             }
 
-            boolean postProcess = true;
-            Node canonicalNode;
-            canonicalNode = NodeUtils.getCanonicalNode(node);
-           
-            List<LinkInfo> linkInfoList = new ArrayList<>();
+            Node canonicalNode = NodeUtils.getCanonicalNode(node);
+
+            List<HstLink> hstLinkList = new ArrayList<>();
             try {
                 if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
                     // we do not support all canonical links for resources (yet)
                     log.info("For binary resources the HST has no support to return all available canonical links");
                     return Collections.emptyList();
-                } 
+                }
                 if(canonicalNode == null) {
                     log.debug("The HST has no support to return all available canonical links for virtual only nodes");
                     return Collections.emptyList();
-                } 
+                }
 
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                     node = NodeUtils.getDeref(node);
@@ -598,7 +583,102 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         return Collections.emptyList();
                     }
                 }
-    
+
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    resolverProperties.representsDocument = true;
+                } else if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        node = node.getParent();
+                        resolverProperties.representsDocument = true;
+                    }
+                }
+
+                final RewriteContext rewriteContext = createRewriteContext(node, mount, resolverProperties);
+
+                final String rewritePath = rewriteContext.getPath();
+                final Mount rewriteMount = rewriteContext.getMount();
+
+                if (type == null) {
+                    type = rewriteMount.getType();
+                }
+
+                List<Mount> candidateMounts = new ArrayList<>();
+                if(hostGroupName == null) {
+                    candidateMounts.addAll(findAllCandidateMounts(rewriteMount, rewritePath,
+                            rewriteMount.getVirtualHost().getHostGroupName(), type));
+                } else {
+                    candidateMounts.addAll(findAllCandidateMounts(rewriteMount, rewritePath, hostGroupName, type));
+                }
+
+                if(candidateMounts.size() == 0) {
+                    log.info("There is no Mount available that is suited to linkrewrite '{}'. Return empty list for canonicalLinks..", rewritePath);
+                    return Collections.emptyList();
+
+                }
+
+                for(Mount tryMount : candidateMounts) {
+                    HstLink hstLink = resolveToHstLink(rewritePath, tryMount, resolverProperties);
+                    if(hstLink != null) {
+                        if (hstLink.isContainerResource()) {
+                            // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
+                            hstLinkList.add(hstLink);
+                        } else {
+                            hstLinkList.add(postProcess(hstLink));
+                        }
+                    }
+                }
+
+            } catch (RewriteContextException e) {
+                log.debug ("LinkPathNotFoundException for '{}'. Return empty list", originalNodePath, e);
+                return Collections.emptyList();
+            } catch(RepositoryException e){
+                log.warn("Repository Exception during creating link", e);
+            } catch (Exception e) {
+                log.warn("Exception during creating link", e);
+            }
+
+            if(hstLinkList.isEmpty()) {
+                log.debug("Cannot create any link for node with path '{}'. Return empty list for canonicalLinks.", originalNodePath);
+                return Collections.emptyList();
+            }
+
+            return hstLinkList;
+        }
+
+        List<HstLink> resolveAll(String type, String hostGroupName) {
+
+            if(resolverProperties.preferredItem != null) {
+                log.warn("preferredItem is not supported in combination with 'all links'. It will be ignored");
+            }
+            if(resolverProperties.navigationStateful) {
+                log.warn("navigationStateful is not supported in combination with 'all links'. It will be ignored");
+            }
+
+            if (mount == null) {
+                log.info("Cannot create link when the mount is null. Return empty list for canonicalLinks.");
+                return Collections.emptyList();
+            }
+            if (node == null) {
+                log.info("Cannot create link when the jcr node is null. Return empty list for canonicalLinks.");
+                return Collections.emptyList();
+            }
+
+            final List<HstLink> hstLinkList = new ArrayList<>();
+            try {
+                if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                    // we do not support all canonical links for resources (yet)
+                    log.info("For binary resources the HST has no support to return all available canonical links");
+                    return Collections.emptyList();
+                }
+
+                if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
+                    node = NodeUtils.getDeref(node);
+                    if (node == null) {
+                        log.debug("Broken content internal link for '{}'. Cannot create a HstLink for it. Return an empty list for canonical links.", originalNodePath);
+                        return Collections.emptyList();
+                    }
+                }
+
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     resolverProperties.representsDocument = true;
                 } else if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -619,137 +699,269 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
                 // try to get the list of candidateMounts to get a HstLink for
 
-                List<Mount> mountsForHostGroup;
-                
-                if(hostGroupName == null) {
-                    mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts()
-                            .getMountsByHostGroup(rewriteMount.getVirtualHost().getHostGroupName());
+                final List<Mount> candidateMounts = new ArrayList<>();
+
+                if (resolverProperties.tryOtherMounts) {
+                    candidateMounts.addAll(findAllCandidateMounts(rewriteMount, rewritePath, hostGroupName, type));
                 } else {
-                    mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(hostGroupName);
-                    if(mountsForHostGroup == null || mountsForHostGroup.isEmpty()) {
-                        log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
-                        return Collections.emptyList();
-                    }
+                    // only from current context
+                    candidateMounts.add(rewriteMount);
                 }
 
-                /*
-                 * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
-                 * choose the candicate mounts as follows:
-                 * 
-                 * If the 'type' argument is not null, the candidate mount must at least have one of it types equal to type.
-                 * Else : The Mount must have at least ONE type in common as the current Mount of this HstLinkResolver
-                 * 
-                 * The candidate Mount must have a #getCanonicalContentPath() or #getContentPath() that is a prefix of the nodePath
-                 * 
-                 */
-
-                List<Mount> candidateMounts = new ArrayList<Mount>();
-                for(Mount candidateMount : mountsForHostGroup) {
-                    
-                   if(!candidateMount.isMapped()) {
-                       // not a mount for a HstSite
-                       continue;
-                   }
-                 
-                   // (a)
-                   if(rewritePath.startsWith(candidateMount.getContentPath() + "/") || rewritePath.equals(candidateMount.getContentPath())) {
-                      // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
-                      // (b)
-                      if(type != null) {
-                          if(candidateMount.getTypes().contains(type)) {
-                              candidateMounts.add(candidateMount);
-                          } else {
-                              log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '{}', but " +
-                                      "it does not have at least one type equal to '"+type+"' hence cannot be used. Try next one",
-                                      new String[]{candidateMount.getName(), candidateMount.getAlias(), rewritePath});
-                          }
-                      } else if (Collections.disjoint(candidateMount.getTypes(), rewriteMount.getTypes())) {
-                          // The Mount did not have a type in common with the current Mount. Try another one.
-                          log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '{}', but it " +
-                                  "does not have at least one type in common with the current request Mount hence cannot be used. Try next one",
-                                  new String[]{candidateMount.getName(), candidateMount.getAlias(), rewritePath});
-                      } else {
-                          log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '{}' belongs to. Add this Mount to the " +
-                                  "list of possible suited mounts",
-                                  new String[]{candidateMount.getName(), candidateMount.getAlias(), rewritePath});
-                          candidateMounts.add(candidateMount);
-                      }
-                   }
-                }
-                
                 if(candidateMounts.size() == 0) {
-                    log.info("There is no Mount available that is suited to linkrewrite '{}'. Return empty list for canonicalLinks..", rewritePath);
+                    log.info("There is no Mount available that is suited to linkrewrite '{}'. Return empty list.", rewritePath);
                     return Collections.emptyList();
-                    
-                } 
-                      
+                }
+
                 for(Mount tryMount : candidateMounts) {
-                    LinkInfo linkInfo = resolveToLinkInfo(rewritePath, tryMount, resolverProperties);
-                    if(linkInfo != null) {
-                        linkInfoList.add(linkInfo);
+                    List<HstLinkImpl> hstLinkListForMount = resolveToHstLinkList(rewritePath, tryMount, resolverProperties);
+                    // strip doubles here.
+                    // Two HstLinks with same getPath for one mount are collapsed
+                    // Tow HstLinks with same getPath except one with extension (/foo and /foo.html) are collapsed to a
+                    // one, where in case HstLinkImpl has contentType DOCUMENT the one with extension is kept, and
+                    // contentType FOLDER the /foo. If contentType unknown, we keep both
+
+                    Map<String, HstLinkImpl> collapsedLinks = new TreeMap<>();
+                    for (HstLinkImpl hstLink : hstLinkListForMount) {
+                        String path = hstLink.getPath();
+                        if (path == null) {
+                            continue;
+                        }
+                        final int index = path.indexOf(".");
+                        if (index > -1) {
+                            // most likely document
+                            String pathBeforeExt = path.substring(0, index);
+                            if (collapsedLinks.containsKey(pathBeforeExt)) {
+                                // most likely a folder sitemap item. If already exists in collapsed, check the contentType
+                                if (hstLink.getContentType() == HstLinkImpl.ContentType.DOCUMENT) {
+                                    // replace existing because might be one with .html and we have a folder node
+                                    collapsedLinks.put(pathBeforeExt, hstLink);
+                                } else {
+                                    // nothing because exists already
+                                }
+                            } else {
+                                collapsedLinks.put(path, hstLink);
+                            }
+                        } else {
+                            if (collapsedLinks.containsKey(path)) {
+                                // most likely a folder sitemap item. If already exists in collapsed, check the contentType
+                                if (hstLink.getContentType() == HstLinkImpl.ContentType.FOLDER) {
+                                    // replace existing because might be one with .html and we have a folder node
+                                    collapsedLinks.put(path, hstLink);
+                                } else {
+                                    // nothing because exists already
+                                }
+                            } else {
+                                collapsedLinks.put(path, hstLink);
+                            }
+                        }
+                    }
+
+                    for (HstLink hstLink : collapsedLinks.values()) {
+                        if (hstLink.isContainerResource()) {
+                            hstLinkList.add(hstLink);
+                        } else {
+                            hstLinkList.add(postProcess(hstLink));
+                        }
                     }
                 }
-            
-                
             } catch (RewriteContextException e) {
                 log.debug ("LinkPathNotFoundException for '{}'. Return empty list", originalNodePath, e);
                 return Collections.emptyList();
             } catch(RepositoryException e){
                 log.warn("Repository Exception during creating link", e);
             } catch (Exception e) {
-                log.error("Exception during creating link", e);
+                log.warn("Exception during creating link", e);
             }
-            
-            if(linkInfoList.isEmpty()) {
+
+            if(hstLinkList.isEmpty()) {
                 log.debug("Cannot create any link for node with path '{}'. Return empty list for canonicalLinks.", originalNodePath);
                 return Collections.emptyList();
             }
-            
-            List<HstLink>  allLinks = new ArrayList<HstLink>();
-            for(LinkInfo info : linkInfoList) {
 
-                HstLink link = new HstLinkImpl(info.pathInfo, info.mount, info.siteMapItem, info.containerResource);
-                if(postProcess) {
-                    link = postProcess(link);
+            return hstLinkList;
+        }
+
+        /*
+         * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
+         * choose the best suited Mount as follows:
+         * a) The Mount must have a #getContentPath() that is a prefix of the nodePath
+         * b) The Mount must have at least ONE type in common as the current Mount of this HstLinkResolver
+         *
+         */
+        private List<Mount> findAllCandidateMounts(final Mount rewriteMount, final String rewritePath,
+                                                   final String hostGroupName, final String type) {
+            final List<Mount> candidateMounts = new ArrayList<>();
+            List<Mount> mountsForHostGroup;
+            if (hostGroupName == null) {
+                mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts()
+                        .getMountsByHostGroup(rewriteMount.getVirtualHost().getHostGroupName());
+            } else {
+                mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(hostGroupName);
+                if(mountsForHostGroup == null || mountsForHostGroup.isEmpty()) {
+                    log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
+                    return Collections.emptyList();
                 }
-                allLinks.add(link);
             }
-            
-            return allLinks;
+
+                /*
+                 * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
+                 * choose the candicate mounts as follows:
+                 *
+                 * If the 'type' argument is not null, the candidate mount must at least have one of it types equal to type.
+                 * Else : The Mount must have at least ONE type in common as the current Mount of this HstLinkResolver
+                 *
+                 * The candidate Mount must have a #getCanonicalContentPath() or #getContentPath() that is a prefix of the nodePath
+                 *
+                 */
+
+            for (Mount candidateMount : mountsForHostGroup) {
+
+                if(!candidateMount.isMapped()) {
+                    // not a mount for a HstSite
+                    continue;
+                }
+
+                // (a)
+                if (rewritePath.startsWith(candidateMount.getContentPath() + "/") || rewritePath.equals(candidateMount.getContentPath())) {
+                    // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
+                    // (b)
+                    if (type != null) {
+                        if (candidateMount.getTypes().contains(type)) {
+                            candidateMounts.add(candidateMount);
+                        } else {
+                            log.debug("Mount '{}' has the correct canonical content path to link rewrite '{}', but " +
+                                            "it does not have at least one type equal to '{}' hence cannot be used. Try next one",
+                                    candidateMount, rewritePath, type);
+                        }
+                    } else if (Collections.disjoint(candidateMount.getTypes(), rewriteMount.getTypes())) {
+                        // The Mount did not have a type in common with the current Mount. Try another one.
+                        log.debug("Mount '{}' has the correct canonical content path to link rewrite '{}', but it " +
+                                        "does not have at least one type in common with the current request Mount '{}'. Try next one",
+                                candidateMount, rewritePath, rewriteMount);
+                    } else {
+                        log.debug("Found a Mount '{}' where the nodePath '{}' belongs to. Add this Mount to the " +
+                                "list of possible suited mounts", candidateMount, rewritePath);
+                        candidateMounts.add(candidateMount);
+                    }
+                }
+            }
+            return candidateMounts;
+        }
+
+
+        private List<HstLinkImpl> resolveToHstLinkList(String nodePath, Mount tryMount, ResolverProperties resolverProperties){
+            List<HstLinkImpl> hstLinkList = new ArrayList<>();
+            if(!resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) {
+                // the root node of the site. Return the homepage
+                String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
+                if (pathInfo != null) {
+                    hstLinkList.add(new HstLinkImpl(pathInfo, tryMount, false));
+                }
+            } else if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath() + "/")) {
+                String relPath = nodePath.substring(tryMount.getContentPath().length());
+                List<ResolvedLocationMapTreeItem> resolvedLocations = resolveToAllLocationMapTreeItem(relPath, tryMount, resolverProperties);
+                for (ResolvedLocationMapTreeItem resolvedLocation : resolvedLocations) {
+                    if (resolvedLocation.getPath() != null) {
+                        hstLinkList.add(new HstLinkImpl(resolvedLocation, tryMount,false));
+                    }
+                }
+            } else if (resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) {
+                // the root node of the site. Return the homepage
+                String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
+                if (pathInfo != null) {
+                    hstLinkList.add(new HstLinkImpl(pathInfo, tryMount, false));
+                }
+            }  else if (resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath()  + "/")) {
+                String relPath = nodePath.substring(tryMount.getContentPath().length());
+                List<ResolvedLocationMapTreeItem> resolvedLocations = resolveToAllLocationMapTreeItem(relPath, tryMount, resolverProperties);
+                for (ResolvedLocationMapTreeItem resolvedLocation : resolvedLocations) {
+                    if (resolvedLocation.getPath() != null) {
+                        hstLinkList.add(new HstLinkImpl(resolvedLocation, tryMount, false));
+                    }
+                }
+            } else if (isBinaryLocation(nodePath)) {
+                log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
+                String pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
+                if (pathInfo != null) {
+                    hstLinkList.add(new HstLinkImpl(pathInfo, tryMount, true));
+                }
+            }
+            return hstLinkList;
         }
 
         /**
+         * Tries to translate the <code>path</code> with the {@link Mount} <code>tryMount</code> to a sitemap pathInfo. If
+         * the <code>tryMount<code> does not have a sitemap that is capable of translating the <code>path</code> to a pathInfo, <code>null</code>
+         * is returned. If the <code>tryMount</code> is not mapped at all, the <code>path</code> itself is the result
+         * @param path
+         * @param tryMount
+         * @return pathInfo for <code>tryMount</code> or <code>null</code>
+         */
+        private List<ResolvedLocationMapTreeItem> resolveToAllLocationMapTreeItem(String path, Mount tryMount, ResolverProperties resolverProperties) {
+            List<ResolvedLocationMapTreeItem> resolvedLocations = new ArrayList<>();
+            if (tryMount.isMapped() && tryMount.getHstSite() != null) {
+                LocationMapResolver resolver = new LocationMapResolver(tryMount.getHstSite().getLocationMapTree());
+                resolver.setRepresentsDocument(resolverProperties.representsDocument);
+                resolver.setCanonical(resolverProperties.canonicalLink);
+                resolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
+                resolvedLocations.addAll(resolver.resolveAll(path));
+            } else {
+                // the Mount does not have a HstSite attached to it. Just use the 'nodePath' we have so far as
+                // we do not have a further SiteMap mapping. We only have a site content base path mapping
+                resolvedLocations.add(new ResolvedLocationMapTreeItemImpl(path, null, resolverProperties.representsDocument));
+            }
+            if (log.isDebugEnabled()) {
+                if (resolvedLocations.isEmpty()) {
+                    log.debug("Could not resolve path '{}' to a sitemap item for mount '{}'. Other mounts will be tried if available.",
+                            path,  tryMount);
+                } else {
+                    for (ResolvedLocationMapTreeItem resolvedLocation : resolvedLocations) {
+                        log.debug("Successful resolved path '{}' to '{}' for mount '{}'", path, resolvedLocation, tryMount);
+                    }
+                }
+            }
+            return resolvedLocations;
+        }
+
+
+    /**
          * @param nodePath jcr node path
          * @param tryMount the current mount to try
          * @param resolverProperties whether the jcr node path belongs to a virtual node
          * @return LinkInfo for <code>tryMount</code>and <code>nodePath</code> or <code>null</code>
          */
-        private LinkInfo resolveToLinkInfo(String nodePath, Mount tryMount, ResolverProperties resolverProperties){
+        private HstLink resolveToHstLink(String nodePath, Mount tryMount, ResolverProperties resolverProperties){
             if(!resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) {
                 // the root node of the site. Return the homepage
                 String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
-                return pathInfo == null ? null : new LinkInfo(pathInfo, false, tryMount);
-            }
-            if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath() + "/")) {
+                return pathInfo == null ? null : new HstLinkImpl(pathInfo, tryMount, false);
+            } else if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath() + "/")) {
                 String relPath = nodePath.substring(tryMount.getContentPath().length());
                 ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
-                return (resolvedLocation == null || resolvedLocation.getPath() == null) ? null : new LinkInfo(resolvedLocation, false, tryMount);
+                if (resolvedLocation == null || resolvedLocation.getPath() == null) {
+                    return null;
+                }
+                return new HstLinkImpl(resolvedLocation, tryMount, false);
             } else if (resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) { 
                 // the root node of the site. Return the homepage
                 String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
-                return pathInfo == null ? null : new LinkInfo(pathInfo, false, tryMount);
+                return pathInfo == null ? null : new HstLinkImpl(pathInfo, tryMount, false);
             }  else if (resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath()  + "/")) { 
                 String relPath = nodePath.substring(tryMount.getContentPath().length());
                 ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
-                return (resolvedLocation == null || resolvedLocation.getPath() == null) ? null : new LinkInfo(resolvedLocation, false, tryMount);
+                if (resolvedLocation == null || resolvedLocation.getPath() == null) {
+                    return null;
+                }
+                return new HstLinkImpl(resolvedLocation, tryMount, false);
             } else if (isBinaryLocation(nodePath)) {
                 log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
-                // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
                 String pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
-                return pathInfo == null ? null : new LinkInfo(pathInfo, true, tryMount);
+                return pathInfo == null ? null : new HstLinkImpl(pathInfo, tryMount, true);
             }
             return null;
-        }    
+        }
+
         /**
          * Tries to translate the <code>path</code> with the {@link Mount} <code>tryMount</code> to a sitemap pathInfo. If
          * the <code>tryMount<code> does not have a sitemap that is capable of translating the <code>path</code> to a pathInfo, <code>null</code>
@@ -762,14 +974,21 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             ResolvedLocationMapTreeItem resolvedLocation = null;
             if (tryMount.isMapped() && tryMount.getHstSite() != null) {
                 if (resolverProperties.preferredItem != null) {
-                    LocationMapResolver subResolver = getSubLocationMapResolver(resolverProperties.preferredItem);
+                    final LocationMapResolver subResolver;
+                    if (tryMount.getHstSite() != null && tryMount.getHstSite().isComponentLinkRewritingSupported()) {
+                        subResolver = getSubLocationMapResolver(resolverProperties.preferredItem,
+                                tryMount.getHstSite().getComponentsConfiguration(), tryMount.getContentPath());
+                    }  else {
+                        subResolver = getSubLocationMapResolver(resolverProperties.preferredItem, null, null);
+                    }
                     subResolver.setRepresentsDocument(resolverProperties.representsDocument);
                     subResolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
                     subResolver.setCanonical(resolverProperties.canonicalLink);
                     subResolver.setSubResolver(true);
                     resolvedLocation = subResolver.resolve(path);
                     if ((resolvedLocation == null || resolvedLocation.getPath() == null) && !resolverProperties.fallback) {
-                        log.debug("Could not create a link for '"+path+"' preferredItem '{}' for mount '{}' (host = "+tryMount.getVirtualHost().getHostName()+"). Fallback is false. Other mounts will be tried if available.",resolverProperties.preferredItem.getId(), tryMount.getMountPath());
+                        log.debug("Could not resolve path '{}' for preferredItem '{}' for mount '{}'. Fallback is false. " +
+                                        "Other mounts will be tried if available.", path, resolverProperties.preferredItem.getId(), tryMount);
                         return null;
                     }
                 }
@@ -781,25 +1000,25 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     resolvedLocation = resolver.resolve(path);
                 }
                 if (resolvedLocation != null && resolvedLocation.getPath() != null) {
-                    log.debug("Creating a link for node '{}' succeeded", path);
-
-                    log.info("Succesfull linkcreation for path '{}' to new pathInfo '{}'", path, resolvedLocation.getPath());
-
+                    log.debug("Successful resolved path '{}' to '{}' for mount '{}'", path, resolvedLocation, tryMount);
                     return resolvedLocation;
                 }
-                log.debug("Could not create a link for '"+path+"' for mount '{}' (host = {}). Other mounts will be tried if available.", tryMount.getMountPath(), tryMount.getVirtualHost().getHostName());
+                log.debug("Could not resolve path '{}' to a sitemap item for mount '{}'. Other mounts will be tried if available.",
+                        path,  tryMount);
                 return null;
 
             } else {
                 // the Mount does not have a HstSite attached to it. Just use the 'nodePath' we have so far as
                 // we do not have a further SiteMap mapping. We only have a site content base path mapping
-                return new ResolvedLocationMapTreeItemImpl(path, null);
+                final ResolvedLocationMapTreeItemImpl r = new ResolvedLocationMapTreeItemImpl(path, null, resolverProperties.representsDocument);
+                log.debug("Mount '{}' does not have a sitemap. Return unmapped resolved location '{}'", tryMount, r);
+                return r;
             }
         }
 
     }
     
-    private class ResolverProperties {
+    private static class ResolverProperties {
         
         ResolvedSiteMapItem resolvedSiteMapItem;
         HstSiteMapItem preferredItem;
@@ -814,25 +1033,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         boolean navigationStateful;
     }
     
-    private class LinkInfo {
-        private final String pathInfo;
-        private final HstSiteMapItem siteMapItem;
-        private final boolean containerResource;
-        private final Mount mount;
 
-        private LinkInfo(final String pathInfo, final boolean containerResource, final Mount mount) {
-            this.pathInfo = pathInfo;
-            this.containerResource = containerResource;
-            this.mount = mount;
-            this.siteMapItem = null;
-        }
-        private LinkInfo(final ResolvedLocationMapTreeItem resolvedLocationMapTreeItem, final boolean containerResource, final Mount mount) {
-            pathInfo = resolvedLocationMapTreeItem.getPath();
-            siteMapItem = resolvedLocationMapTreeItem.getSiteMapItem();
-            this.containerResource = containerResource;
-            this.mount = mount;
-        }
-    }
     
     private class CandidateMountComparator implements Comparator<Mount> {
 

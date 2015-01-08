@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -171,6 +171,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private boolean containsAny;
     private boolean containsWildCard;
+    private boolean isExplicitItem;
     private String postfix;
     private String extension;
     private String prefix;
@@ -262,6 +263,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         else {
             parameterizedPath = parameterizedPath + value;
         }
+
+        isExplicitItem = !(isWildCard || isAny || containsWildCard || containsAny);
 
         parameterizedPath = StringPool.get(parameterizedPath);
         prefix = StringPool.get(prefix);
@@ -806,6 +809,16 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return containsAny;
     }
 
+    @Override
+    public boolean isExplicitElement() {
+        return isExplicitItem;
+    }
+
+    @Override
+    public boolean isExplicitPath() {
+        return  parentItem == null ? isExplicitElement() : isExplicitElement() && parentItem.isExplicitPath();
+    }
+
     public void setUseableInRightContextOnly(boolean useableInRightContextOnly) {
         this.useableInRightContextOnly = useableInRightContextOnly;
     }
@@ -878,4 +891,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
     }
 
+    @Override
+    public String toString() {
+        return "HstSiteMapItemService{" +
+                "canonicalPath='" + canonicalPath + '\'' +
+                ", site=" + hstSiteMap.getSite() +
+                '}';
+    }
 }

@@ -781,8 +781,11 @@ components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSe
 components/core/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenterIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositoryIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/AbstractHstLinkRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstContainerResourceLinkRewritingIT.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkAllRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkForCmsRequestIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingComponentPickedIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingCrossSchemeIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text

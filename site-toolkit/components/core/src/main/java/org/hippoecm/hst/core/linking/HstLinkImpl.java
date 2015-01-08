@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,16 +72,34 @@ public class HstLinkImpl implements HstLink {
         UNKNOWN
     }
 
+    /**
+     * <p>
+     *     Indicates whether this {@link org.hippoecm.hst.core.linking.HstLink} instance was created from a jcr node
+     *     representing a document, a folder, or whether unknown. Default is {@link ContentType#UNKNOWN}
+     * </p>
+     */
+    ContentType contentType;
+    enum ContentType {
+        FOLDER,
+        DOCUMENT,
+        UNKNOWN
+    }
+
     public HstLinkImpl(String path, Mount mount) {
         this(path, mount, null, Type.UNKNOWN, true);
     }
 
     public HstLinkImpl(String path, Mount mount, boolean containerResource) {
-        this(path, mount, null, containerResource);
+        this(path, mount, null, containerResource, true);
     }
 
-    public HstLinkImpl(String path, Mount mount, HstSiteMapItem siteMapItem, boolean containerResource) {
-        this(path, mount, siteMapItem, containerResource, true);
+    public HstLinkImpl(ResolvedLocationMapTreeItem resolvedLocationMapTreeItem, Mount mount, boolean containerResource) {
+        this(resolvedLocationMapTreeItem.getPath(), mount, resolvedLocationMapTreeItem.getSiteMapItem(), containerResource, true);
+        if (resolvedLocationMapTreeItem.representsDocument()) {
+            contentType = ContentType.DOCUMENT;
+        } else {
+            contentType = ContentType.FOLDER;
+        }
     }
 
     public HstLinkImpl(String path, Mount mount, boolean containerResource, boolean rewriteHomePagePath) {
@@ -137,7 +155,6 @@ public class HstLinkImpl implements HstLink {
     public void setPath(String path) {
         this.path = PathUtils.normalizePath(path);
     }
-    
 
     public String getSubPath() {
         return subPath;
@@ -145,6 +162,10 @@ public class HstLinkImpl implements HstLink {
 
     public void setSubPath(String subPath) {
         this.subPath = subPath;
+    }
+
+    ContentType getContentType() {
+        return contentType;
     }
 
     @Deprecated

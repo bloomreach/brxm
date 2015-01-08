@@ -40,7 +40,6 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian");
         request.setContextPath("/testapp");
@@ -69,7 +68,6 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./facetresult");
         request.setContextPath("/testapp");
@@ -98,7 +96,6 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./root");
         request.setContextPath("/testapp");
@@ -127,7 +124,6 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./folders/tags/");
         request.setContextPath("/testapp");
@@ -156,7 +152,6 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./documents/");
         request.setContextPath("/testapp");

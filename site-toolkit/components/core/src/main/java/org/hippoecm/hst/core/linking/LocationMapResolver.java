@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,10 +57,8 @@ public class LocationMapResolver {
      */
     private ResolvedSiteMapItem resolvedSiteMapItem;
 
-    private Set<LocationMapTreeItem> checkedLocationMapTreeItems = new HashSet<LocationMapTreeItem>();
-    private Set<LocationMapTreeItem> globalCheckedLocationMapTreeItems = new HashSet<LocationMapTreeItem>();
-    private Map<String,String> propertyPlaceHolderMap = new HashMap<String,String>();
-    
+    private Set<LocationMapTreeItem> checkedLocationMapTreeItems = new HashSet<>();
+
     public LocationMapResolver(LocationMapTree locationMapTree) {
        this.locationMapTree = locationMapTree;
     }
@@ -108,64 +106,58 @@ public class LocationMapResolver {
         long start = System.nanoTime();
         // normalize leading and trailing slashes
         path = PathUtils.normalizePath(path);
-     
-        
-        String[] elements = path.split("/"); 
-        
+
+        String[] elements = path.split("/");
+
         LocationMapTreeItem matchedLocationMapTreeItem = null;
         LocationMapTreeItem locationMapTreeItem = locationMapTree.getTreeItem(elements[0]);
         HstSiteMapItem matchingSiteMapItem = null;
-        if(locationMapTreeItem != null) {
-            while(matchingSiteMapItem == null) {
+        final Map<String,String> propertyPlaceHolderMap = new HashMap<>();
+        if (locationMapTreeItem != null) {
+            while (matchingSiteMapItem == null) {
                 propertyPlaceHolderMap.clear();
-                checkedLocationMapTreeItems.clear();
-                checkedLocationMapTreeItems.addAll(globalCheckedLocationMapTreeItems);
-                LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements);
+                LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements, propertyPlaceHolderMap);
                 if(newMatched == null || newMatched == matchedLocationMapTreeItem) {
                     /*
                      * we did not find a matching sitemap item not having the first entry as a wildcard or we found an item that
-                     * we allready tested before
-                     */ 
+                     * we already tested before
+                     */
                     break;
                 }
-                globalCheckedLocationMapTreeItems.add(newMatched);
                 matchedLocationMapTreeItem = newMatched;
-                matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem);
+                matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem, propertyPlaceHolderMap);
             }
         }
-        
+
         // test for * matcher because we were not yet able to resolve to a matching sitemap
-        if(matchingSiteMapItem == null) {
+        if (matchingSiteMapItem == null) {
             locationMapTreeItem = locationMapTree.getTreeItem(HstNodeTypes.WILDCARD);
-            if(locationMapTreeItem != null) {
-                while(matchingSiteMapItem == null) {
+            if (locationMapTreeItem != null) {
+                while (matchingSiteMapItem == null) {
                     propertyPlaceHolderMap.clear();
-                    checkedLocationMapTreeItems.clear();
-                    checkedLocationMapTreeItems.addAll(globalCheckedLocationMapTreeItems);
                     propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX+String.valueOf(propertyPlaceHolderMap.size()+1), elements[0]);
-                    LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements);
+                    LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements, propertyPlaceHolderMap);
                     /*
                      * we did not find a matching sitemap item not having the first entry as a wildcard or we found an item that
                      * we allready tested before
-                     */ 
+                     */
                     if(newMatched == null || newMatched == matchedLocationMapTreeItem) {
                         break;
                     }
-                    globalCheckedLocationMapTreeItems.add(newMatched);
                     matchedLocationMapTreeItem = newMatched;
-                    matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem);
+                    matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem, propertyPlaceHolderMap);
                 }
             }
         }
-        
+
        // test for ** matcher because we were not yet able to resolve to a matching sitemap
-        if(matchingSiteMapItem == null) {
+        if (matchingSiteMapItem == null) {
             propertyPlaceHolderMap.clear();
             locationMapTreeItem = locationMapTree.getTreeItem(HstNodeTypes.ANY);
-            if(locationMapTreeItem != null) {
+            if (locationMapTreeItem != null) {
                 propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX+String.valueOf(propertyPlaceHolderMap.size()+1), path);
                 matchedLocationMapTreeItem =  locationMapTreeItem;
-                matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem);
+                matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem, propertyPlaceHolderMap);
             }
         }
 
@@ -173,7 +165,21 @@ public class LocationMapResolver {
             log.debug("Unable to linkrewrite '{}' to any sitemap item", path);
             return null;
         }
-        
+
+        ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(path, matchingSiteMapItem, propertyPlaceHolderMap);
+
+        log.debug("Trying to resolve '{}' took '{}' ms.", path, String.valueOf((System.nanoTime() - start)/ 1000000D) );
+
+        if (r == null) {
+            return null;
+        }
+
+        return r;
+    }
+
+    private ResolvedLocationMapTreeItem createResolvedLocationMapTreeItem(final String path,
+                                                                          final HstSiteMapItem matchingSiteMapItem,
+                                                                          final Map<String,String> propertyPlaceHolderMap) {
         Properties params = new Properties();
         for(Entry<String,String> entry : propertyPlaceHolderMap.entrySet()){
             Map<String,String> keyToPropertyPlaceHolderMap = ((HstSiteMapItemService)matchingSiteMapItem).getKeyToPropertyPlaceHolderMap();
@@ -182,32 +188,105 @@ public class LocationMapResolver {
                 params.put(keyToPropertyPlaceHolderMap.get(entry.getKey()), entry.getValue());
             } else {
                 if(!keyToPropertyPlaceHolderMap.containsValue(entry.getKey())) {
-                    // inherited params from current ctx: when the keyToPropertyPlaceHolderMap contains the entry.getKey() as value, 
-                    // the param is already mapped. 
+                    // inherited params from current ctx: when the keyToPropertyPlaceHolderMap contains the entry.getKey() as value,
+                    // the param is already mapped.
                     params.put(entry.getKey(), entry.getValue());
                 }
             }
         }
-        
+
         PropertyParser pp = new PropertyParser(params);
-        
-        String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
+
+        String resolvedPath = (String)pp.resolveProperty("parameterized Path", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
         if(resolvedPath == null) {
             if(!isSubResolver) {
-                log.debug("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
+                log.debug("Unable to resolve parameterized path '{}' for sitemap item '{}' for current context and path '{}'. Return null",
+                        ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath(), matchingSiteMapItem, path);
             }
             return null;
         }
-        
-        log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", path, resolvedPath);
-        log.debug("creating link for '{}' took '{}' ms.", path, String.valueOf((System.nanoTime() - start)/ 1000000D) );
-        
-        ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, matchingSiteMapItem);
 
-
-        return r;
-      
+        return new ResolvedLocationMapTreeItemImpl(resolvedPath, matchingSiteMapItem, representsDocument);
     }
+
+
+    public List<ResolvedLocationMapTreeItem> resolveAll(String path) {
+        long start = System.nanoTime();
+        // normalize leading and trailing slashes
+        path = PathUtils.normalizePath(path);
+
+        String[] elements = path.split("/");
+
+        LocationMapTreeItem locationMapTreeItem = locationMapTree.getTreeItem(elements[0]);
+        List<ResolvedLocationMapTreeItem> resolvedLocationMapTreeItemList = new ArrayList<>();
+        final Map<String,String> propertyPlaceHolderMap = new HashMap<>();
+        if (locationMapTreeItem != null) {
+            LocationMapTreeItem matchedLocationMapTreeItem = null;
+            while(true) {
+                propertyPlaceHolderMap.clear();
+                LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements, propertyPlaceHolderMap);
+                if(newMatched == null || newMatched == matchedLocationMapTreeItem) {
+                    /*
+                     * we did not find a matching sitemap item not having the first entry as a wildcard or we found an item that
+                     * we already tested before
+                     */
+                    break;
+                }
+                matchedLocationMapTreeItem = newMatched;
+                for (HstSiteMapItem hstSiteMapItem : matchedLocationMapTreeItem.getHstSiteMapItems()) {
+                    ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(path, hstSiteMapItem, propertyPlaceHolderMap);
+                    if (r != null) {
+                        resolvedLocationMapTreeItemList.add(r);
+                    }
+                }
+
+            }
+        }
+
+        // test for * matcher
+        locationMapTreeItem = locationMapTree.getTreeItem(HstNodeTypes.WILDCARD);
+        if(locationMapTreeItem != null) {
+            LocationMapTreeItem matchedLocationMapTreeItem = null;
+            while(true) {
+                propertyPlaceHolderMap.clear();
+                propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX+String.valueOf(propertyPlaceHolderMap.size()+1), elements[0]);
+                LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements, propertyPlaceHolderMap);
+                /*
+                 * we did not find a matching sitemap item not having the first entry as a wildcard or we found an item that
+                 * we allready tested before
+                 */
+                if(newMatched == null || newMatched == matchedLocationMapTreeItem) {
+                    break;
+                }
+                matchedLocationMapTreeItem = newMatched;
+                for (HstSiteMapItem hstSiteMapItem : matchedLocationMapTreeItem.getHstSiteMapItems()) {
+                    ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(path, hstSiteMapItem, propertyPlaceHolderMap);
+                    if (r != null) {
+                        resolvedLocationMapTreeItemList.add(r);
+                    }
+                }
+            }
+        }
+
+        // test for ** matcher
+        propertyPlaceHolderMap.clear();
+        LocationMapTreeItem matchedLocationMapTreeItem = locationMapTree.getTreeItem(HstNodeTypes.ANY);
+        if(matchedLocationMapTreeItem != null) {
+            propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX+String.valueOf(propertyPlaceHolderMap.size()+1), path);
+            for (HstSiteMapItem hstSiteMapItem : matchedLocationMapTreeItem.getHstSiteMapItems()) {
+                ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(path, hstSiteMapItem, propertyPlaceHolderMap);
+                if (r != null) {
+                    resolvedLocationMapTreeItemList.add(r);
+                }
+            }
+        }
+
+        log.debug("Trying to resolve '{}' took '{}' ms and resulted in '{}' resolved ResolvedLocationMapTreeItems.",
+                path, String.valueOf((System.nanoTime() - start) / 1000000D), resolvedLocationMapTreeItemList.size());
+
+        return resolvedLocationMapTreeItemList;
+    }
+
 
     /**
      * Extracts the correct sitemap item from the matchedLocationMapTreeItem. If there are multiple sitemap items in the 
@@ -216,7 +295,8 @@ public class LocationMapResolver {
      * @param matchedLocationMapTreeItem
      * @return
      */
-    private HstSiteMapItem resolveToSiteMapItem(LocationMapTreeItem matchedLocationMapTreeItem) {
+    private HstSiteMapItem resolveToSiteMapItem(final LocationMapTreeItem matchedLocationMapTreeItem,
+                                                final Map<String,String> propertyPlaceHolderMap ) {
         
         if(matchedLocationMapTreeItem == null || matchedLocationMapTreeItem.getHstSiteMapItems().size() == 0) {
             return null;
@@ -224,8 +304,8 @@ public class LocationMapResolver {
         
         HstSiteMapItem hstSiteMapItem = null;
 
-        List<HstSiteMapItem> typeMatchedSiteMapItems = new ArrayList<HstSiteMapItem>();
-        List<HstSiteMapItem> fallbackSiteMapItems = new ArrayList<HstSiteMapItem>();
+        List<HstSiteMapItem> typeMatchedSiteMapItems = new ArrayList<>();
+        List<HstSiteMapItem> fallbackSiteMapItems = new ArrayList<>();
         for(HstSiteMapItem item : matchedLocationMapTreeItem.getHstSiteMapItems()) {
             HstSiteMapItemService serv = (HstSiteMapItemService)item;
             if(representsDocument) {
@@ -245,7 +325,7 @@ public class LocationMapResolver {
             }
         }
         
-        if(this.canonical || resolvedSiteMapItem == null) {
+        if(canonical || resolvedSiteMapItem == null) {
             // let's return the canonical location. 
             hstSiteMapItem = getCanonicalItem(typeMatchedSiteMapItems);
             if(hstSiteMapItem == null) {
@@ -255,7 +335,7 @@ public class LocationMapResolver {
             // fetch the best matching sitemap item: 
             List<HstSiteMapItem> contextOrderedMatches = orderToBestInContext(typeMatchedSiteMapItems);
             for(HstSiteMapItem item : contextOrderedMatches) {
-                hstSiteMapItem = contextualize((HstSiteMapItemService)item);  
+                hstSiteMapItem = contextualize((HstSiteMapItemService)item, propertyPlaceHolderMap);
                 if(hstSiteMapItem != null) {
                     break;
                 } 
@@ -266,7 +346,7 @@ public class LocationMapResolver {
                 List<HstSiteMapItem> contextFallBackOrderedMatches = orderToBestInContext(fallbackSiteMapItems);
                 for(HstSiteMapItem item : contextFallBackOrderedMatches) {
                     
-                    hstSiteMapItem = contextualize((HstSiteMapItemService)item);  
+                    hstSiteMapItem = contextualize((HstSiteMapItemService)item, propertyPlaceHolderMap);
                     if(hstSiteMapItem != null) {
                         break;
                     } 
@@ -283,30 +363,24 @@ public class LocationMapResolver {
      * 
      * 1) A sitemap item that returns true for isUseableInRightContextOnly() is not useable and ignored
      * 2) The sitemap item that has the lowest depth (getDepth()) is used as canonical.
-     * 3) When multiple sitemap items have equal depth, the first is returned 
+     * 3) When multiple sitemap items have equal depth, the lexically first ordered is returned
      * 
      * @param preferredSiteMapItems
      * @return the canonical <code>HstSiteMapItem</code> or <code>null</code> if not succeeded.
      */
     private HstSiteMapItem getCanonicalItem(List<HstSiteMapItem> matchedHstSiteMapItema) {
-        List<HstSiteMapItem> canonicals = new ArrayList<HstSiteMapItem>();
-        int lowestDepth = Integer.MAX_VALUE;
+        List<HstSiteMapItemService> canonicals = new ArrayList<>();
         for(HstSiteMapItem item : matchedHstSiteMapItema) {
             HstSiteMapItemService serviceItem = (HstSiteMapItemService)item;
             if(serviceItem.isUseableInRightContextOnly()) {
-                // unuseable for canonical
+                // unusable for canonical
                 continue;
             }
-            if(serviceItem.getDepth() < lowestDepth) {
-                lowestDepth = serviceItem.getDepth();
-                canonicals.clear();
-                canonicals.add(serviceItem);
-            } else if (serviceItem.getDepth() == lowestDepth) {
-                canonicals.add(serviceItem);
-            }
+            canonicals.add(serviceItem);
         }
         if(!canonicals.isEmpty()) {
             // even if multiple canonicals are equally suited, we cannot do better then pick the first
+            Collections.sort(canonicals, new LowestDepthFirstAndThenLexicalComparator());
             return canonicals.get(0);
         }
         return null;
@@ -317,10 +391,11 @@ public class LocationMapResolver {
      * 
      * if isUseableInRightContextOnly but the context is not ok, null is returned
      */
-    private HstSiteMapItem contextualize(HstSiteMapItemService matchedHstSiteMapItem) {
+    private HstSiteMapItem contextualize(final HstSiteMapItemService matchedHstSiteMapItem,
+                                         final Map<String,String> propertyPlaceHolderMap) {
         
-        if(matchedHstSiteMapItem.isUseableInRightContextOnly()) {
-            boolean mergeable = mergeMatchedItemWithCurrentCtx(matchedHstSiteMapItem);
+        if (matchedHstSiteMapItem.isUseableInRightContextOnly()) {
+            boolean mergeable = mergeMatchedItemWithCurrentCtx(matchedHstSiteMapItem, propertyPlaceHolderMap);
             
             // if not succeeded, return null
             if(!mergeable)  {
@@ -338,13 +413,14 @@ public class LocationMapResolver {
      * When the matched sitemap item can be resolved with the currentCtxResolvedSiteMapItem, true is returned
      * and the missing properties in the propertyPlaceHolderMap are added from the currentCtxResolvedSiteMapItem.
      */
-    private boolean mergeMatchedItemWithCurrentCtx(HstSiteMapItemService matchedHstSiteMapItem) {
+    private boolean mergeMatchedItemWithCurrentCtx(final HstSiteMapItemService matchedHstSiteMapItem,
+                                                   final Map<String,String> propertyPlaceHolderMap) {
         
          
         // check whether *all* unresolved wildcards in the matchedHstSiteMapItem can be filled in by the currentCtxResolvedSiteMapItem
         
-        LinkedList<HstSiteMapItemService> matchedAncestorOrSelfWildcardList = new LinkedList<HstSiteMapItemService>();
-        HstSiteMapItemService matchedAncestorOrSelf = (HstSiteMapItemService)matchedHstSiteMapItem;
+        LinkedList<HstSiteMapItemService> matchedAncestorOrSelfWildcardList = new LinkedList<>();
+        HstSiteMapItemService matchedAncestorOrSelf = matchedHstSiteMapItem;
         while(matchedAncestorOrSelf != null) {
             if(matchedAncestorOrSelf.isWildCard() || matchedAncestorOrSelf.containsWildCard() || matchedAncestorOrSelf.isAny() || matchedAncestorOrSelf.containsAny()) {
                 matchedAncestorOrSelfWildcardList.add(0,matchedAncestorOrSelf);
@@ -352,8 +428,8 @@ public class LocationMapResolver {
             matchedAncestorOrSelf = (HstSiteMapItemService)matchedAncestorOrSelf.getParentItem();
         }
         
-        LinkedList<HstSiteMapItemService> currentCtxAncestorOrSeldWildcardList = new LinkedList<HstSiteMapItemService>();
-        HstSiteMapItemService currentAncestorOrSelf = (HstSiteMapItemService)this.resolvedSiteMapItem.getHstSiteMapItem();
+        LinkedList<HstSiteMapItemService> currentCtxAncestorOrSeldWildcardList = new LinkedList<>();
+        HstSiteMapItemService currentAncestorOrSelf = (HstSiteMapItemService)resolvedSiteMapItem.getHstSiteMapItem();
         while(currentAncestorOrSelf != null) {
             if(currentAncestorOrSelf.isWildCard() || currentAncestorOrSelf.containsWildCard() || currentAncestorOrSelf.isAny() || currentAncestorOrSelf.containsAny()) {
                 currentCtxAncestorOrSeldWildcardList.add(0,currentAncestorOrSelf);
@@ -368,8 +444,8 @@ public class LocationMapResolver {
         
         // iterate the matchedAncestorWildcardList and see which items are shared: the parameters in the linkedList can be inherited
         
-        Properties currentCtxProperties = this.resolvedSiteMapItem.getParameters();
-        Map<String, String> propertiesToMerge = new HashMap<String,String>();
+        Properties currentCtxProperties = resolvedSiteMapItem.getParameters();
+        Map<String, String> propertiesToMerge = new HashMap<>();
         for(HstSiteMapItemService matchedAncestorItem : matchedAncestorOrSelfWildcardList) {
             int index = currentCtxAncestorOrSeldWildcardList.indexOf(matchedAncestorItem);
             if( index > -1 && currentCtxProperties.containsKey(String.valueOf(index+1))) {
@@ -379,74 +455,83 @@ public class LocationMapResolver {
         }
         
         if(matchedHstSiteMapItem.getWildCardAnyOccurences() <= (propertiesToMerge.size() + propertyPlaceHolderMap.size())) {
-            log.debug("Succeful contextualized matched sitemap item");
             propertyPlaceHolderMap.putAll(propertiesToMerge);
             return true;
         }
-        log.debug("Unsucceful contextualized matched sitemap item");
         return false;
     }
 
-    private LocationMapTreeItem resolveMatchingLocationMapTreeItem(LocationMapTreeItem locationMapTreeItem, int position, String[] elements) {
-        return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements);
+    private LocationMapTreeItem resolveMatchingLocationMapTreeItem(final LocationMapTreeItem locationMapTreeItem,
+                                                                   final int position,
+                                                                   final String[] elements,
+                                                                   final Map<String,String> propertyPlaceHolderMap) {
+        return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
      }
 
-     private LocationMapTreeItem traverseInToLocationMapTreeItem(LocationMapTreeItem locationMapTreeItem, int position, String[] elements) {
-         
+     private LocationMapTreeItem traverseInToLocationMapTreeItem(final LocationMapTreeItem locationMapTreeItem,
+                                                                 int position,
+                                                                 final String[] elements,
+                                                                 final Map<String,String> propertyPlaceHolderMap) {
+
          checkedLocationMapTreeItems.add(locationMapTreeItem);
-         if(position == elements.length) {
-            // we are ready if this locationMapTreeItem contains at least one HstSiteMapItem
-            if(locationMapTreeItem.getHstSiteMapItems().size() > 0) {
-               return locationMapTreeItem;
-            } 
-            // there was a matched locationMapTreeItem, but it did not have sitemap items attached to it. Continue searching after 
-            // a move up: if the current locationMapTreeItem is a wildcard, we need to remove the param wrt to wildcard again
-            if(((LocationMapTreeItemImpl)locationMapTreeItem).isWildCard()) {
-                propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX+(propertyPlaceHolderMap.size()));
-            }
-            return traverseUp(locationMapTreeItem.getParentItem(), position, elements);
-        }
-        if(locationMapTreeItem.getChild(elements[position]) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(elements[position]))) {
-            return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(elements[position]), ++position, elements);
-        } else if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))) {
-            propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX+(propertyPlaceHolderMap.size()+1), elements[position]);
-            return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD), ++position, elements);
-        } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))) {
-            checkedLocationMapTreeItems.add(locationMapTreeItem.getChild(HstNodeTypes.ANY));
-            return getANYMatchingLocationMapTreeItem(locationMapTreeItem,position, elements);
-        }  
-        else {
-            // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
-            return traverseUp(locationMapTreeItem, position, elements);
-        }
+         if (position == elements.length) {
+             // we are ready if this locationMapTreeItem contains at least one HstSiteMapItem
+             if (locationMapTreeItem.getHstSiteMapItems().size() > 0) {
+                 return locationMapTreeItem;
+             }
+             // there was a matched locationMapTreeItem, but it did not have sitemap items attached to it. Continue searching after
+             // a move up: if the current locationMapTreeItem is a wildcard, we need to remove the param wrt to wildcard again
+             if (((LocationMapTreeItemImpl) locationMapTreeItem).isWildCard()) {
+                 propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX + (propertyPlaceHolderMap.size()));
+             }
+             return traverseUp(locationMapTreeItem.getParentItem(), position, elements, propertyPlaceHolderMap);
+         }
+         if (locationMapTreeItem.getChild(elements[position]) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(elements[position]))) {
+             return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(elements[position]), ++position, elements, propertyPlaceHolderMap);
+         } else if (locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))) {
+             propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX + (propertyPlaceHolderMap.size() + 1), elements[position]);
+             return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD), ++position, elements, propertyPlaceHolderMap);
+         } else if (locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))) {
+             checkedLocationMapTreeItems.add(locationMapTreeItem.getChild(HstNodeTypes.ANY));
+             return getANYMatchingLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
+         } else {
+             // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
+             return traverseUp(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
+         }
         
      }
 
 
-     private LocationMapTreeItem traverseUp(LocationMapTreeItem locationMapTreeItem, int position, String[] elements) {
+     private LocationMapTreeItem traverseUp(final LocationMapTreeItem locationMapTreeItem,
+                                            int position,
+                                            final String[] elements,
+                                            final Map<String,String> propertyPlaceHolderMap) {
         if(locationMapTreeItem == null) {
             return null;
         }
         if(((LocationMapTreeItemImpl)locationMapTreeItem).isWildCard()) {
             if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
-                return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements);
+                return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
             } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))){
-                return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements);
+                return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements, propertyPlaceHolderMap);
             }
             // as this tree path did not result in a match, remove some params again
             propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX+(propertyPlaceHolderMap.size()));
-            return traverseUp(locationMapTreeItem.getParentItem(), --position, elements );
+            return traverseUp(locationMapTreeItem.getParentItem(), --position, elements, propertyPlaceHolderMap);
         } else if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
-            return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements);
+            return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
         } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))){
-            return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements);
+            return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements, propertyPlaceHolderMap);
         } else {    
-            return traverseUp(locationMapTreeItem.getParentItem(), --position, elements );
+            return traverseUp(locationMapTreeItem.getParentItem(), --position, elements, propertyPlaceHolderMap);
         }
         
      }
      
-     private LocationMapTreeItem getANYMatchingLocationMapTreeItem(LocationMapTreeItem locationMapTreeItem, int position, String[] elements) {
+     private LocationMapTreeItem getANYMatchingLocationMapTreeItem(final LocationMapTreeItem locationMapTreeItem,
+                                                                   int position,
+                                                                   final String[] elements,
+                                                                   final Map<String,String> propertyPlaceHolderMap) {
              StringBuffer remainder = new StringBuffer(elements[position]);
              while(++position < elements.length) {
                  remainder.append("/").append(elements[position]);
@@ -476,8 +561,8 @@ public class LocationMapResolver {
         int bestDepth = Integer.MAX_VALUE;
         HstSiteMapItem bestMatch = null;
         
-        List<HstSiteMapItem> unsortedItems = new ArrayList<HstSiteMapItem>(matchingSiteMapItems);
-        List<HstSiteMapItem> contextOrderedMatches = new ArrayList<HstSiteMapItem>();
+        List<HstSiteMapItem> unsortedItems = new ArrayList<>(matchingSiteMapItems);
+        List<HstSiteMapItem> contextOrderedMatches = new ArrayList<>();
         for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
             // step (1) algorithm
             if(siteMapItem == this.resolvedSiteMapItem.getHstSiteMapItem()) {
@@ -529,7 +614,7 @@ public class LocationMapResolver {
         
         for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
             HstSiteMapItem current = siteMapItem;
-            List<HstSiteMapItem> parentList = new ArrayList<HstSiteMapItem>();
+            List<HstSiteMapItem> parentList = new ArrayList<>();
             while(current.getParentItem() != null) {
                 current = current.getParentItem();
                 parentList.add(current);
@@ -539,7 +624,7 @@ public class LocationMapResolver {
         
         // now, for the current context item, we iterate up, and see which matchingSiteMapItems are the first to have a common ancestor as the current context. In the
         // Integer we store how deep the matchingSiteMapItem is below the common ancestor, which is needed in step (4) if we get there
-        TreeMap<Integer, List<HstSiteMapItem>> commonAncestorMap = new TreeMap<Integer, List<HstSiteMapItem>>();
+        TreeMap<Integer, List<HstSiteMapItem>> commonAncestorMap = new TreeMap<>();
         
         HstSiteMapItem checkForCommonAncestor = this.resolvedSiteMapItem.getHstSiteMapItem();
         while(checkForCommonAncestor.getParentItem() != null && commonAncestorMap.size() == 0) {
@@ -549,7 +634,7 @@ public class LocationMapResolver {
                     // we found a common ancestor! Add to commonAncestorMap
                     List<HstSiteMapItem> items = commonAncestorMap.get(entry.getValue().indexOf(checkForCommonAncestor));
                     if(items == null) {
-                        items = new ArrayList<HstSiteMapItem>();
+                        items = new ArrayList<>();
                         items.add(entry.getKey());
                         commonAncestorMap.put(entry.getValue().indexOf(checkForCommonAncestor), items);
                     } else {

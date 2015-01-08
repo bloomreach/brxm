@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -95,6 +95,19 @@ public interface HstSiteMapItem {
      * is not equals to <code>**</code> (for example **.html)
      */
     boolean containsAny();
+
+    /**
+     * @return <code>true</code> when {@link #isWildCard()}, {@link #isAny()}, {@link #containsWildCard()} and
+     * {@link #containsAny()} all return false
+     */
+    boolean isExplicitElement();
+
+
+    /**
+     * @return <code>true</code> when this item plus all its ancestor {@link HstSiteMapItem}s return <code>true</code>
+     * for {@link #isExplicitElement()}
+     */
+    boolean isExplicitPath();
 
     /**
      * This method returns a content path, relative to the {@link Mount#getContentPath()}. This value can

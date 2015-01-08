@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,39 +21,23 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 
-public class HstLinkRewritingIT extends AbstractBeanTestCase {
-
-    private ObjectConverter objectConverter;
-    private HstLinkCreator linkCreator;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.objectConverter = getObjectConverter();
-        this.linkCreator = getComponent(HstLinkCreator.class.getName());
-    }
+public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
     @Test
     public void testSimpleHstLinkForBean() throws Exception {
@@ -131,7 +115,7 @@ public class HstLinkRewritingIT extends AbstractBeanTestCase {
     @Test
     public void test_multiple_sitemap_items_qualify_results_in_lowest_depth_item() throws Exception {
 
-        Session session = createSession();
+        Session session = createAdminSession();
         try {
             createHstConfigBackup(session);
             // add set of sitemap items, only one level deeper every time
@@ -166,7 +150,7 @@ public class HstLinkRewritingIT extends AbstractBeanTestCase {
     @Test
     public void test_multiple_equal_lowest_depth_sitemap_items_qualify_results_in_lexically_smallest_item() throws Exception {
 
-        Session session = createSession();
+        Session session = createAdminSession();
         try {
             createHstConfigBackup(session);
             // add set of sitemap items, only one level deeper every time
@@ -295,6 +279,18 @@ public class HstLinkRewritingIT extends AbstractBeanTestCase {
         newsLink = linkCreator.create(node, requestContext, preferSiteMapItem, false);
         assertEquals("wrong link.getPath for News/News1", "pagenotfound", newsLink.getPath());
 
+    }
+
+
+    @Test
+    public void test_preferred_siteMapItem_for_other_mount_than_request_context() throws Exception {
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/news");
+        Node node = requestContext.getSession().getNode("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
+        final Mount subsite = requestContext.getMount("subsite");
+        final HstSiteMapItem preferredItem = subsite.getHstSite().getSiteMap().getSiteMapItem("news");
+        final HstLink newsLink = linkCreator.create(node, subsite, preferredItem, false);
+        assertEquals("subsite", newsLink.getMount().getName());
+        System.out.println(newsLink.toUrlForm(requestContext, false));
     }
 
     /**
@@ -698,11 +694,6 @@ public class HstLinkRewritingIT extends AbstractBeanTestCase {
         link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
         result = link.toUrlForm(requestContext, false);
         assertEquals("/site/ho+me?hint=one#chapter1" + URLEncoder.encode("&delay=two", "UTF-8"), result);
-    }
-
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
 }

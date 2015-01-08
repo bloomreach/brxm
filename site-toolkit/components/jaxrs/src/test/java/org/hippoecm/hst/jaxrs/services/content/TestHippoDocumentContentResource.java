@@ -41,7 +41,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS");
         request.setContextPath("/testapp");
@@ -70,7 +69,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
         request.setContextPath("/testapp");
@@ -99,7 +97,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
         request.setContextPath("/testapp");
@@ -124,7 +121,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("PUT");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
         request.setContextPath("/testapp");
@@ -152,7 +148,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("PUT");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
         request.setContextPath("/testapp");
@@ -176,7 +171,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
         request.setContextPath("/testapp");
@@ -205,7 +199,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
         request.setContextPath("/testapp");
@@ -230,7 +223,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("PUT");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
         request.setContextPath("/testapp");
@@ -258,7 +250,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setScheme("http");
         request.setServerName("localhost");
         request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("PUT");
         request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
         request.setContextPath("/testapp");
