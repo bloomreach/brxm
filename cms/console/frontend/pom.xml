@@ -98,6 +98,8 @@
           <include>**/*.ico</include>
           <include>**/*.properties</include>
           <include>**/*.xml</include>
+          <include>**/*.ttf</include>
+          <include>**/*.woff</include>
         </includes>
       </resource>
     </resources>

@@ -612,3 +612,10 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/them
     licences.
        This code is dedicated to the public domain.
        All copyrights (and warranties) are disclaimed.
+
+------------------------------------------------------------------------------------------------------------------------
+/console/frontend/src/main/java/org/hippoecm/frontend/plugins/console
+/org/hippoecm/frontend/widgets
+
+    These packages use the Wicket Bootstrap theme from http://wb.agilecoders.de/demo-3.1.0/fontawesome. It uses the
+    Creative Commons License 3.0. http://creativecommons.org/licenses/by/3.0/

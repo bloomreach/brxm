@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,6 +47,9 @@ public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     public static final CssResourceReference CSS = new CssResourceReference(RootPlugin.class, "screen-console.css");
+    public static final CssResourceReference FA_CSS = new CssResourceReference(RootPlugin.class, "font-awesome/css/font-awesome.css");
+    public static final CssResourceReference FA_FONT = new CssResourceReference(RootPlugin.class, "font-awesome/fonts/fontawesome-webfont.woff");
+    public static final CssResourceReference FA_TTF = new CssResourceReference(RootPlugin.class, "font-awesome/fonts/fontawesome-webfont.ttf");
 
     private boolean rendered = false;
     private ParameterHistoryBehavior parameterHistoryBehavior;
@@ -100,6 +103,9 @@ public class RootPlugin extends RenderPlugin {
 
         response.render(CmsHeaderItem.get());
         response.render(CssHeaderItem.forReference(CSS));
+        response.render(CssHeaderItem.forReference(FA_CSS));
+        response.render(CssHeaderItem.forReference(FA_FONT));
+        response.render(CssHeaderItem.forReference(FA_TTF));
     }
 
     private String getPageTitle(IPluginConfig config) {

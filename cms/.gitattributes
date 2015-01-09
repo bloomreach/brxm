@@ -1391,6 +1391,36 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/edit
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-collapsed.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-expanded.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/list-add-16.png -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/fonts/FontAwesome.otf -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/fonts/fontawesome-webfont.eot -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/fonts/fontawesome-webfont.ttf -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/fonts/fontawesome-webfont.woff -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/bordered-pulled.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/core.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/fixed-width.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/font-awesome.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/icons.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/larger.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/list.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/mixins.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/path.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/rotated-flipped.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/spinning.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/stacked.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/less/variables.less -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_bordered-pulled.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_core.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_fixed-width.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_icons.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_larger.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_list.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_mixins.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_path.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_rotated-flipped.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_spinning.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_stacked.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/_variables.scss -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/scss/font-awesome.scss -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/SortMenuPlugin.html -text svneol=unset#text/plain

@@ -54,7 +54,9 @@ div.wicket-tree span.icon {
 	float: left;
 	width: 18px;
 	height: 1.5em;	
+	line-height: 1.5em;
 	min-height: 18px;
+  font-size: 1.1em;
 }
 
 div.wicket-tree span.junction,
@@ -102,14 +104,6 @@ div.wicket-tree span.indent {
 
 div.wicket-tree a:hover {
 	text-decoration: underline;
-}
-
-
-div.wicket-tree span.icon {
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
-	margin-left: 2px;
-	margin-top: -1px;
 }
 
 div.wicket-tree a {
