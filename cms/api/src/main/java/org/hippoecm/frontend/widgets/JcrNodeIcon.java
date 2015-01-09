@@ -42,6 +42,8 @@ public class JcrNodeIcon {
 
     private final static List<String> nodeTypes;
 
+    private static final Map<String, String> pathColors;
+
     static {
         nodeTypes = new ArrayList<>();
         nodeTypes.add("hippostd:publishable");
@@ -104,6 +106,17 @@ public class JcrNodeIcon {
         nodeNameIcons.put("editor:templateset", FontAwesomeIconType.file_text_o);
         nodeNameIcons.put("hipposysedit:prototypeset", FontAwesomeIconType.star_o);
         nodeNameIcons.put("hipposysedit:templatetype", FontAwesomeIconType.file_text);
+
+        pathColors = new HashMap<>();
+        pathColors.put("/hst:hst", "#673AB7");
+        pathColors.put("/hippo:configuration", "#009688");
+        pathColors.put("/content", "#4CAF50");
+        pathColors.put("/hippo:namespaces", "#FFA000");
+        pathColors.put("/formdata", "#9E9E9E");
+        pathColors.put("/webresources", "#00BCD4");
+        pathColors.put("/hippo:reports", "#795548");
+        pathColors.put("/hippo:log", "#607D8B");
+
     }
 
     public static IconType getIcon(Node jcrNode) {
@@ -124,6 +137,41 @@ public class JcrNodeIcon {
             return getVirtualNodeIconType();
         }
         return getDefaultIconType();
+    }
+
+    public static String getIconColor(final Node jcrNode) {
+        try {
+            final String path = jcrNode.getPath();
+
+            if(path.startsWith("/content") && jcrNode.hasProperty("hippostd:state")) {
+                final String state = jcrNode.getProperty("hippostd:state").getString();
+                switch (state) {
+                    case "published":
+                        return "#4CAF50";
+                    case "unpublished":
+                        return "#3F51B5";
+                    case "draft":
+                        return "#795548";
+                }
+            }
+
+            if(JcrNodeIcon.isNodeType(jcrNode, "hippofacnav:facetnavigation")) {
+                return "#00BCD4";
+            }
+
+            if(isVirtual(jcrNode)) {
+                return "#FF9800";
+            }
+
+            for (Map.Entry<String, String> pathColor : pathColors.entrySet()) {
+                if (path.startsWith(pathColor.getKey())) {
+                    return pathColor.getValue();
+                }
+            }
+        } catch (RepositoryException e) {
+            // ignore, use default color
+        }
+        return "#90CAF9";
     }
 
     private static String getNodeName(final Node jcrNode) {

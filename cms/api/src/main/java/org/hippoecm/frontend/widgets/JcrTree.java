@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
@@ -67,21 +64,7 @@ public abstract class JcrTree extends Tree {
      */
     private static final ResourceReference VIRTUAL_ITEM = new PackageResourceReference(JcrTree.class, "icons/item-virtual.gif");
 
-    private static final Map<String, String> pathColors;
-
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
-
-    static {
-        pathColors = new HashMap<>();
-        pathColors.put("/hst:hst", "#673AB7");
-        pathColors.put("/hippo:configuration", "#009688");
-        pathColors.put("/content", "#4CAF50");
-        pathColors.put("/hippo:namespaces", "#FFA000");
-        pathColors.put("/formdata", "#9E9E9E");
-        pathColors.put("/webresources", "#00BCD4");
-        pathColors.put("/hippo:reports", "#795548");
-        pathColors.put("/hippo:log", "#607D8B");
-    }
 
     public JcrTree(String id, TreeModel treeModel) {
         super(id, treeModel);
@@ -133,7 +116,7 @@ public abstract class JcrTree extends Tree {
             return new Icon(id, JcrNodeIcon.getDefaultIconType());
         }
         Icon icon = new Icon(id, JcrNodeIcon.getIcon(jcrNode));
-        icon.add(new AttributeAppender("style", "color:" + getIconColor(jcrNode) + ";"));
+        icon.add(new AttributeAppender("style", "color:" + JcrNodeIcon.getIconColor(jcrNode) + ";"));
 
         final String tooltip = getTooltip(jcrNode);
         if(StringUtils.isNotBlank(tooltip)) {
@@ -151,41 +134,6 @@ public abstract class JcrTree extends Tree {
             // ignore
         }
         return null;
-    }
-
-    private String getIconColor(final Node jcrNode) {
-        try {
-            final String path = jcrNode.getPath();
-
-            if(path.startsWith("/content") && jcrNode.hasProperty("hippostd:state")) {
-                final String state = jcrNode.getProperty("hippostd:state").getString();
-                switch (state) {
-                    case "published":
-                        return "#4CAF50";
-                    case "unpublished":
-                        return "#3F51B5";
-                    case "draft":
-                        return "#795548";
-                }
-            }
-
-            if(JcrNodeIcon.isNodeType(jcrNode, "hippofacnav:facetnavigation")) {
-                return "#00BCD4";
-            }
-
-            if(isVirtual(jcrNode)) {
-                return "#FF9800";
-            }
-
-            for (Map.Entry<String, String> pathColor : pathColors.entrySet()) {
-                if (path.startsWith(pathColor.getKey())) {
-                    return pathColor.getValue();
-                }
-            }
-        } catch (RepositoryException e) {
-            // ignore, use default color
-        }
-        return "#90CAF9";
     }
 
     /**
