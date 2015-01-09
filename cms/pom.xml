@@ -502,6 +502,7 @@
                 <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
+                <exclude>console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/**/*</exclude>
                 <!-- code templates -->
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy</exclude>
                 <!-- files in which apache-rat does not recognize the license header -->
