@@ -1081,13 +1081,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         try {
-            // try property first
-            PropertyId pId = hierMgr.resolvePropertyPath(absPath);
-            if (pId != null) {
-                return pId.getParentId();
+            ItemId itemId = hierMgr.resolvePath(absPath);
+            if (itemId != null) {
+                if (itemId instanceof PropertyId) {
+                    return ((PropertyId) itemId).getParentId();
+                }
+                return (NodeId) itemId;
             }
-
-            return hierMgr.resolveNodePath(absPath);
         } catch (RepositoryException e) {
             // fall through and try zombie hierMgr
             if (log.isDebugEnabled()) {
@@ -1097,14 +1097,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         try {
             // try zombie parent, probably a property
-            PropertyId pId = zombieHierMgr.resolvePropertyPath(absPath);
-            if (pId != null) {
-                return pId.getParentId();
-
+            ItemId itemId = zombieHierMgr.resolvePath(absPath);
+            if (itemId instanceof PropertyId) {
+                return ((PropertyId) itemId).getParentId();
             }
-
-            // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
-            return zombieHierMgr.resolveNodePath(absPath);
+            return (NodeId) itemId;
         } catch (RepositoryException e) {
             // fall thru and throw a path not found exception
             if (log.isDebugEnabled()) {
