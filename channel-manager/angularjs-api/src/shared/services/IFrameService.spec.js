@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 describe('IFrame Service', function () {
     'use strict';
 
-    var iframeConfig, parentIFramePanel, $log, $window, iframeService, publisMock, subscribeMock;
+    var iframeConfig, parentIFramePanel, $log, $window, iframeService, publishMock, subscribeMock;
 
     beforeEach(module('hippo.channel'));
 
@@ -26,13 +26,13 @@ describe('IFrame Service', function () {
             testProperty: 'testValue'
         };
 
-        publisMock = jasmine.createSpy('publish');
+        publishMock = jasmine.createSpy('publish');
         subscribeMock = jasmine.createSpy('subscribe');
         parentIFramePanel = {
             initialConfig: {
                 iframeConfig: iframeConfig
             },
-            iframeToHost: {publish: publisMock},
+            iframeToHost: {publish: publishMock},
             hostToIFrame: {subscribe: subscribeMock}
         };
 
@@ -71,7 +71,7 @@ describe('IFrame Service', function () {
 
     it('should call the parent IFramePanel.iFrameToHost.publish', function() {
         iframeService.publish('test');
-        expect(publisMock).toHaveBeenCalledWith('test');
+        expect(publishMock).toHaveBeenCalledWith('test');
     });
 
     it('should call the parent IFramePanel.hostToIFrame.subscribe', function() {
