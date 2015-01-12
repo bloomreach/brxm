@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,12 +29,18 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * {@link HstComponentWindow} <b>after</b> all {@link HstComponentWindow}s for the current {@link HstRequestContext}
  * have been created by {@link HstComponentWindowFactory#create(HstContainerConfig, HstRequestContext,
  * HstComponentConfiguration, HstComponentFactory, HstComponentWindow)} </p>
- * <p/>
- * When you want a <code>window</code> to be invisible (doBeforeRender and render skipped, but still processed as window
- * in an AggregationValve) you typically implement this interface and in {@link #doFilter(HstRequestContext,
- * HstComponentConfiguration, HstComponentWindow)} return the <code>window</code> after invoking {@link
- * HstComponentWindow#setVisible(boolean)} with argument <code>true</code>, thus HstComponentWindow#setVisible(true)
- * <p/>
+ * <p/> When you want a <code>window</code> to
+ * be invisible (doBeforeRender and render skipped, but still processed as window in an AggregationValve) you typically
+ * implement this interface and in {@link #doFilter(HstRequestContext, HstComponentConfiguration, HstComponentWindow)}
+ * return the <code>window</code> after invoking {@link HstComponentWindow#setVisible(boolean)} with argument
+ * <code>true</code>, thus HstComponentWindow#setVisible(true) <p/>
+ * <p> Note that a when setting this {@link
+ * org.hippoecm.hst.core.container.HstComponentWindowFilter} on the {@link org.hippoecm.hst.core.request.HstRequestContext}
+ * through {@link org.hippoecm.hst.core.internal.HstMutableRequestContext#addComponentWindowFilter(HstComponentWindowFilter)},
+ * this only has effect if and only if the <code>addComponentWindowFilter</code> is invoked (in a {@link
+ * org.hippoecm.hst.core.container.Valve}) <strong>before</strong> the <code>ContextResolvingValve</code> is executed,
+ * as the <code>ContextResolvingValve</code> is in charge of creating the {@link org.hippoecm.hst.core.container.HstComponentWindow}
+ * instances. {@link } </p>
  */
 public interface HstComponentWindowFilter {
 
@@ -43,8 +49,8 @@ public interface HstComponentWindowFilter {
      * @param compConfig     the {@link HstComponentConfiguration} from which <code>window</code> is created
      * @param window         The {@link HstComponentWindow} to decorate
      * @return A {@link HstComponentWindow} instance which can be an enhanced or decorated version of the
-     *         <code>window</code>. If the <code>window</code> should be entirely disabled/skipped, <code>null</code>
-     *         should be returned
+     * <code>window</code>. If the <code>window</code> should be entirely disabled/skipped, <code>null</code> should be
+     * returned
      * @throws HstComponentException
      */
     HstComponentWindow doFilter(HstRequestContext requestContext,
