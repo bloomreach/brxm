@@ -155,13 +155,19 @@ module.exports = function (grunt) {
                     '<%= build.tmp %>/css/wicket.css'
                 ],
                 dest: '<%= build.skin %>/css/<%= build.file %>.css'
+            },
+            js: {
+                src: [
+                    '<%= build.bower %>/jquery-selectric/dist/jquery.selectric.js'
+                ],
+                dest: '<%= build.skin %>/js/<%= build.file %>.js'
             }
         },
 
         uglify: {
             dist: {
                 files: {
-                    '<%= build.skin %>/js/<%= build.file %>.min.js': ['<%= build.bower %>/jquery-selectric/dist/jquery.selectric.js']
+                    '<%= build.skin %>/js/<%= build.file %>.min.js': ['<%= concat.js.dest %>']
                 }
             }
         },
