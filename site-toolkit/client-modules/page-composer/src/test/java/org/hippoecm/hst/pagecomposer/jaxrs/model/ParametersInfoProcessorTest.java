@@ -30,7 +30,6 @@ import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -128,7 +127,6 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    @Ignore // Hudson doesn't load the NewstyleInterface resource bundle
     public void dropDownResourceBundleProcessing() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
