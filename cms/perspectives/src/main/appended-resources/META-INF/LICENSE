@@ -109,22 +109,22 @@ to the terms and conditions of the following licenses.
     Zope Public License	                                    2.0
 
 ------------------------------------------------------------------------------------------------------------------------
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/cobalt.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/eclipse.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/elegant.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/monokai.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/neat.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/css/css.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/groovy/groovy.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/htmlmixed/htmlmixed.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/javascript/javascript.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/xml/xml.js
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/cobalt.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/eclipse.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/elegant.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/monokai.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/neat.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/night.css
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/rubyblue.css
 
     Copyright (C) 2011 by Marijn Haverbeke <marijnh@gmail.com>
 
