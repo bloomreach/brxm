@@ -614,7 +614,7 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/the
        All copyrights (and warranties) are disclaimed.
 
 ------------------------------------------------------------------------------------------------------------------------
-/console/frontend/src/main/java/org/hippoecm/frontend/plugins/console
+/console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/fontawesome/*
 
     These packages use the Wicket Bootstrap theme from http://wb.agilecoders.de/demo-3.1.0/fontawesome. It uses the
     Creative Commons Attribution 3.0 Unported. http://creativecommons.org/licenses/by/3.0/
