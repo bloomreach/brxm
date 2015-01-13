@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -150,6 +151,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             try {
                 getGalleryProcessor().makeImage(node, is, mimetype, filename);
                 node.getSession().save();
+                onGalleryItemCreation(node);
                 newItems.add(node.getPath());
             } catch (Exception ex) {
                 remove(manager, node);
@@ -162,6 +164,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             throw new GalleryException(new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this, null).getString());
         }
     }
+
+    protected void onGalleryItemCreation(Node node) { }
 
     private void remove(final WorkflowManager manager, final HippoNode node) {
         try {
@@ -245,9 +249,13 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new Label("type", "default").setVisible(false);
         }
 
-        UploadDialog dialog = new UploadDialog(getPluginContext(), getPluginConfig());
+        UploadDialog dialog = newUploadDialog();
         dialog.add(typeComponent);
         return dialog;
+    }
+
+    protected UploadDialog newUploadDialog() {
+        return new UploadDialog(getPluginContext(), getPluginConfig());
     }
 
     protected StringCodec getLocalizeCodec() {

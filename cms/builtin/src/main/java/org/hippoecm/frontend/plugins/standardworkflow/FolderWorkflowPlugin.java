@@ -276,7 +276,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                         @Override
                         protected Dialog createRequestDialog() {
-                            return newAddDocumentDialog(
+                            return createAddDocumentDialog(
                                     addDocumentModel,
                                     category,
                                     prototypes.get(category),
@@ -312,7 +312,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 arguments.put("localName", localName);
 
                                 String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
-                                UserSession.get().getJcrSession().refresh(true);
+                                onWorkflowAdded(path);
                                 JcrNodeModel nodeModel = new JcrNodeModel(path);
                                 if (!nodeName.equals(localName)) {
                                     WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();
@@ -342,6 +342,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    protected void onWorkflowAdded(String path) { }
+
     private boolean isActionAvailable(final String action, final Map<String, Serializable> hints) {
         return hints.containsKey(action) && hints.get(action) instanceof Boolean && (Boolean) hints.get(action);
     }
@@ -364,9 +366,41 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 });
     }
 
-    protected Dialog newAddDocumentDialog(AddDocumentArguments addDocumentModel, String category, Set<String> prototypes, boolean translated, IWorkflowInvoker invoker) {
+    protected Dialog createAddDocumentDialog(AddDocumentArguments addDocumentModel, String category, Set<String> prototypes, boolean translated, IWorkflowInvoker invoker) {
 
-        AddDocumentDialog dialog = new AddDocumentDialog(
+        AddDocumentDialog dialog = newAddDocumentDialog(
+                addDocumentModel,
+                category,
+                prototypes,
+                translated,
+                invoker
+        );
+
+        dialog.getLanguageField().setVisible(!isLanguageKnown());
+
+        return dialog;
+    }
+
+    protected boolean isLanguageKnown() {
+        WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
+        try {
+            Node node = descriptorModel.getNode();
+            while (node != null && node.getDepth() > 0) {
+                if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                    return true;
+                }
+                node = node.getParent();
+            }
+        } catch (RepositoryException e) {
+            log.error("Could not determine whether ");
+        }
+        return false;
+    }
+
+    protected AddDocumentDialog newAddDocumentDialog(AddDocumentArguments addDocumentModel, String category,
+                                                        Set<String> prototypes, boolean translated,
+                                                        IWorkflowInvoker invoker) {
+        return new AddDocumentDialog(
                 addDocumentModel,
                 new StringResourceModel(category, this, null),
                 category,
@@ -380,24 +414,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     }
                 },
                 getLocaleProvider());
-
-        WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
-        try {
-            Node node = descriptorModel.getNode();
-            if (node != null) {
-                while (node.getDepth() > 0) {
-                    if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                        dialog.getLanguageField().setVisible(false);
-                        break;
-                    }
-                    node = node.getParent();
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Could not determine visibility of language field");
-        }
-
-        return dialog;
     }
 
     protected IDataProvider<StdWorkflow> createListDataProvider(List<StdWorkflow> list) {
