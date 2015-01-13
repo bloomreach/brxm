@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,11 +20,7 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
@@ -40,28 +36,21 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
-
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * use own styling
-     */
+     // Use own styling
     private static final ResourceReference TREE_STYLE = new CssResourceReference(JcrTree.class, "res/tree.css");
 
-    /**
-     * Reference to the icon of open tree folder
-     */
+    // Reference to the icon of open virtual folder
     private static final ResourceReference VIRTUAL_FOLDER_OPEN = new PackageResourceReference(JcrTree.class,
             "icons/folder-open-virtual.gif");
 
+    // Reference to the icon of closed virtual folder
     private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new PackageResourceReference(JcrTree.class,
             "icons/folder-closed-virtual.gif");
 
-    /**
-     * Reference to the icon of tree item (not a folder)
-     */
+    // Reference to the icon of tree item (not a folder)
     private static final ResourceReference VIRTUAL_ITEM = new PackageResourceReference(JcrTree.class, "icons/item-virtual.gif");
 
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
@@ -106,34 +95,28 @@ public abstract class JcrTree extends Tree {
         return result;
     }
 
-    protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
-        final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
-        if (nodeModel == null) {
-            return new Icon(id, JcrNodeIcon.getDefaultIconType());
-        }
-        Node jcrNode = nodeModel.getObject();
-        if (jcrNode == null) {
-            return new Icon(id, JcrNodeIcon.getDefaultIconType());
-        }
-        Icon icon = new Icon(id, JcrNodeIcon.getIcon(jcrNode));
-        icon.add(new AttributeAppender("style", "color:" + JcrNodeIcon.getIconColor(jcrNode) + ";"));
-
-        final String tooltip = getTooltip(jcrNode);
-        if(StringUtils.isNotBlank(tooltip)) {
-            icon.add(new AttributeAppender("title", tooltip));
-        }
-        return icon;
-    }
-
-    private String getTooltip(final Node jcrNode) {
-        try {
-            if (jcrNode.hasProperty("hippostd:state")) {
-                return jcrNode.getProperty("hippostd:state").getString();
+    /**
+     * Returns the resource reference for icon of specified tree node.
+     *
+     * @param node
+     *            The node
+     * @return The package resource reference
+     */
+    @Override
+    protected ResourceReference getNodeIcon(TreeNode node) {
+        if (node instanceof IJcrTreeNode && isVirtual((IJcrTreeNode) node)) {
+            if (node.isLeaf()) {
+                return getVirtualItem();
+            } else {
+                if (isNodeExpanded(node)) {
+                    return getVirtualFolderOpen();
+                } else {
+                    return getVirtualFolderClosed();
+                }
             }
-        } catch (RepositoryException e) {
-            // ignore
+        } else {
+            return super.getNodeIcon(node);
         }
-        return null;
     }
 
     /**
@@ -141,12 +124,21 @@ public abstract class JcrTree extends Tree {
      *
      * @return true if the node is virtual else false
      */
-    public boolean isVirtual(Node jcrNode) {
+    public boolean isVirtual(IJcrTreeNode node) {
+        IModel<Node> nodeModel = node.getNodeModel();
+        if (nodeModel == null) {
+            return false;
+        }
+        Node jcrNode = nodeModel.getObject();
+        if (jcrNode == null || !(jcrNode instanceof HippoNode)) {
+            return false;
+        }
         try {
             HippoNode hippoNode = (HippoNode) jcrNode;
             return hippoNode.isVirtual();
         } catch (RepositoryException e) {
-            log.info("Cannot determine whether node '{}' is virtual, assuming it's not", JcrUtils.getNodePathQuietly(jcrNode), e);
+            log.info("Cannot determine whether node '{}' is virtual, assuming it's not",
+                    JcrUtils.getNodePathQuietly(jcrNode), e);
             return false;
         }
     }

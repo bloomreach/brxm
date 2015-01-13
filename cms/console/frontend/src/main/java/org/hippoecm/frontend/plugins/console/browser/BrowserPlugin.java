@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,12 +18,16 @@ package org.hippoecm.frontend.plugins.console.browser;
 import java.util.Collection;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -33,6 +37,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -72,10 +77,18 @@ import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.util.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
 
 public class BrowserPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
+
+    public static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
 
     private static final JavaScriptResourceReference NAVIGATION_JS = new JavaScriptResourceReference(BrowserPlugin.class, "navigation.js");
 
@@ -196,6 +209,19 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         }
 
         @Override
+        public boolean isVirtual(final IJcrTreeNode jcrNode) {
+            try {
+                HippoNode hippoNode = (HippoNode) jcrNode;
+                return hippoNode.isVirtual();
+            } catch (RepositoryException e) {
+                log.info("Cannot determine whether node '{}' is virtual, assuming it's not",
+                        JcrUtils.getNodePathQuietly((Node) jcrNode), e);
+                return false;
+            }
+
+        }
+
+        @Override
         protected ITreeState newTreeState() {
             DefaultTreeState state = new DefaultTreeState();
             JcrTreeModel model = (JcrTreeModel) getModelObject();
@@ -242,6 +268,37 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
                 BrowserPlugin.this.onSelect(treeNodeModel, target);
             }
+        }
+
+        @Override
+        protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
+            final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
+            if (nodeModel == null) {
+                return new Icon(id, JcrNodeIcon.getDefaultIconType());
+            }
+            Node jcrNode = nodeModel.getObject();
+            if (jcrNode == null) {
+                return new Icon(id, JcrNodeIcon.getDefaultIconType());
+            }
+            Icon icon = new Icon(id, JcrNodeIcon.getIcon(jcrNode));
+            icon.add(new AttributeAppender("style", "color:" + JcrNodeIcon.getIconColor(jcrNode) + ";"));
+
+            final String tooltip = getTooltip(jcrNode);
+            if(StringUtils.isNotBlank(tooltip)) {
+                icon.add(new AttributeAppender("title", tooltip));
+            }
+            return icon;
+        }
+
+        private String getTooltip(final Node jcrNode) {
+            try {
+                if (jcrNode.hasProperty("hippostd:state")) {
+                    return jcrNode.getProperty("hippostd:state").getString();
+                }
+            } catch (RepositoryException e) {
+                // ignore
+            }
+            return null;
         }
 
         private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model) {

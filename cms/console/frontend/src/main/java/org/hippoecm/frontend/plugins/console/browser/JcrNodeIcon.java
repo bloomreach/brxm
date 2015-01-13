@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.widgets;
+package org.hippoecm.frontend.plugins.console.browser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,9 +31,6 @@ import org.slf4j.LoggerFactory;
 import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
 
-/**
- * @version $Id$
- */
 public class JcrNodeIcon {
 
     static final Logger log = LoggerFactory.getLogger(JcrNodeIcon.class);
