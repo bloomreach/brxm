@@ -126,10 +126,54 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
     padding-top: 2px;
     text-align: center;
 }
-
 .hippo-console-tree .wicket-tree span.icon.fa + span {
     position: relative;
     top: -1px;
+}
+
+.jcrnode-default {
+    color: #90CAF9;
+}
+
+.jcrnode-hst {
+    color: #673AB7;
+}
+
+.jcrnode-conf {
+    color: #009688;
+}
+.jcrnode-content {
+    color: #4CAF50;
+}
+.jcrnode-namespaces {
+    color: #FFA000;
+}
+.jcrnode-formdata {
+    color: #9E9E9E;
+}
+.jcrnode-webresources {
+    color: #00BCD4;
+}
+.jcrnode-reports {
+    color: #795548;
+}
+.jcrnode-log {
+    color: #607D8B;
+}
+.jcrnode-published {
+    color: #4CAF50;
+}
+.jcrnode-unpublished {
+    color: #3F51B5;
+}
+.jcrnode-draft {
+    color: #795548;
+}
+.jcrnode-facnav {
+    color: #00BCD4;
+}
+.jcrnode-virtual {
+    color: #FF9800;
 }
 
 .hippo-console-tree-add li.hippo-console-tree-sorter span,

@@ -35,11 +35,12 @@ public class JcrNodeIcon {
 
     static final Logger log = LoggerFactory.getLogger(JcrNodeIcon.class);
 
-    private final static Map<String, FontAwesomeIconType> nodeNameIcons;
+    private static final Map<String, FontAwesomeIconType> nodeNameIcons;
+    private static final List<String> nodeTypes;
+    private static final Map<String, String> pathCssNames;
+    private static final String JCRNODE_CSSNAME_PREFIX = "jcrnode-";
+    private static final String JCRNODE_CSSNAME_DEFAULT = "default";
 
-    private final static List<String> nodeTypes;
-
-    private static final Map<String, String> pathColors;
 
     static {
         nodeTypes = new ArrayList<>();
@@ -104,15 +105,15 @@ public class JcrNodeIcon {
         nodeNameIcons.put("hipposysedit:prototypeset", FontAwesomeIconType.star_o);
         nodeNameIcons.put("hipposysedit:templatetype", FontAwesomeIconType.file_text);
 
-        pathColors = new HashMap<>();
-        pathColors.put("/hst:hst", "#673AB7");
-        pathColors.put("/hippo:configuration", "#009688");
-        pathColors.put("/content", "#4CAF50");
-        pathColors.put("/hippo:namespaces", "#FFA000");
-        pathColors.put("/formdata", "#9E9E9E");
-        pathColors.put("/webresources", "#00BCD4");
-        pathColors.put("/hippo:reports", "#795548");
-        pathColors.put("/hippo:log", "#607D8B");
+        pathCssNames = new HashMap<>();
+        pathCssNames.put("/hst:hst", "hst");
+        pathCssNames.put("/hippo:configuration", "conf");
+        pathCssNames.put("/content", "content");
+        pathCssNames.put("/hippo:namespaces", "namespaces");
+        pathCssNames.put("/formdata", "formdata");
+        pathCssNames.put("/webresources", "webresources");
+        pathCssNames.put("/hippo:reports", "reports");
+        pathCssNames.put("/hippo:log", "log");
 
     }
 
@@ -136,39 +137,30 @@ public class JcrNodeIcon {
         return getDefaultIconType();
     }
 
-    public static String getIconColor(final Node jcrNode) {
+    public static String getIconColorCssClassname(final Node jcrNode) {
+        String cssClassName = JCRNODE_CSSNAME_DEFAULT;
         try {
             final String path = jcrNode.getPath();
 
-            if(path.startsWith("/content") && jcrNode.hasProperty("hippostd:state")) {
-                final String state = jcrNode.getProperty("hippostd:state").getString();
-                switch (state) {
-                    case "published":
-                        return "#4CAF50";
-                    case "unpublished":
-                        return "#3F51B5";
-                    case "draft":
-                        return "#795548";
-                }
+            if (path.startsWith("/content") && jcrNode.hasProperty("hippostd:state")) {
+                cssClassName = jcrNode.getProperty("hippostd:state").getString();
+            } else if (JcrNodeIcon.isNodeType(jcrNode, "hippofacnav:facetnavigation")) {
+                cssClassName = "facnav";
+            } else if (isVirtual(jcrNode)) {
+                cssClassName = "virtual";
             }
-
-            if(JcrNodeIcon.isNodeType(jcrNode, "hippofacnav:facetnavigation")) {
-                return "#00BCD4";
-            }
-
-            if(isVirtual(jcrNode)) {
-                return "#FF9800";
-            }
-
-            for (Map.Entry<String, String> pathColor : pathColors.entrySet()) {
-                if (path.startsWith(pathColor.getKey())) {
-                    return pathColor.getValue();
+            if(cssClassName.equals(JCRNODE_CSSNAME_DEFAULT)) {
+                for (Map.Entry<String, String> pathColor : pathCssNames.entrySet()) {
+                    if (path.startsWith(pathColor.getKey())) {
+                        cssClassName = pathColor.getValue();
+                        break;
+                    }
                 }
             }
         } catch (RepositoryException e) {
             // ignore, use default color
         }
-        return "#90CAF9";
+        return JCRNODE_CSSNAME_PREFIX + cssClassName;
     }
 
     private static String getNodeName(final Node jcrNode) {

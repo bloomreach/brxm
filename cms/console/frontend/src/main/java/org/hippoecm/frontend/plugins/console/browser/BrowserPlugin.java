@@ -82,6 +82,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.behavior.CssClassNameAppender;
 import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
 
 public class BrowserPlugin extends RenderPlugin<Node> {
@@ -281,7 +282,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 return new Icon(id, JcrNodeIcon.getDefaultIconType());
             }
             Icon icon = new Icon(id, JcrNodeIcon.getIcon(jcrNode));
-            icon.add(new AttributeAppender("style", "color:" + JcrNodeIcon.getIconColor(jcrNode) + ";"));
+            icon.add(new CssClassNameAppender(new Model<>(JcrNodeIcon.getIconColorCssClassname(jcrNode))));
 
             final String tooltip = getTooltip(jcrNode);
             if(StringUtils.isNotBlank(tooltip)) {
