@@ -78,9 +78,7 @@ class BroadcastThread extends Thread {
         private Long processEvents(final BroadcastJob job, final List<Node> logItems) {
             Long timeStamp = DEFAULT_TIMESTAMP;
             if (logItems.isEmpty()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No pending log items to process");
-                }
+                log.debug("No pending log items to process");
                 return DEFAULT_TIMESTAMP;
             }
             for (Node logItem : logItems) {
@@ -130,8 +128,10 @@ class BroadcastThread extends Thread {
 
     public void run() {
         while (keepRunning) {
+            log.debug("Polling");
             BroadcastJob job = broadcastService.getNextJob();
             if (job != null) {
+                log.debug("Found job: {}", job.getChannelName());
                 JobRunner runner = new JobRunner(job);
                 runner.run();
 

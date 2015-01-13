@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.logging.RepositoryLogger;
 import org.hippoecm.repository.util.NodeIterable;
@@ -34,9 +35,9 @@ import static org.junit.Assert.assertEquals;
 
 public class BroadcastModuleTest extends RepositoryTestCase {
 
-    static class Listener implements PersistedHippoEventListener {
+    private static class TestEventListener implements PersistedHippoEventListener {
 
-        List<HippoEvent> seenEvents = new LinkedList<>();
+        private List<HippoEvent> seenEvents = new LinkedList<>();
 
         @Override
         public String getEventCategory() {
@@ -63,11 +64,15 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        clearLog();
+    }
 
-        if (session.nodeExists("/hippo:log")) {
-            session.getNode("/hippo:log").remove();
+    private void clearLog() throws RepositoryException {
+        for (Node clusterLog : new NodeIterable(session.getNode("/hippo:log").getNodes())) {
+            for (Node nodeLog : new NodeIterable(clusterLog.getNodes())) {
+                nodeLog.remove();
+            }
         }
-        session.getRootNode().addNode("hippo:log", "hippolog:folder");
         session.save();
     }
 
@@ -81,8 +86,15 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testPollerRepeatedly() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            testPoller();
+        }
+    }
+
+    @Test
     public void testPoller() throws Exception {
-        Listener listener = new Listener();
+        TestEventListener listener = new TestEventListener();
 
         HippoWorkflowEvent in = new HippoWorkflowEvent();
         in.className("hoho");
@@ -95,9 +107,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         try {
             RepositoryLogger logger = new RepositoryLogger();
             logger.initialize(session);
-
             logger.logHippoEvent(in);
-
             logger.shutdown();
 
             waitForEvent(listener);
@@ -133,11 +143,11 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
     }
 
-    private void waitForEvent(final Listener listener) throws Exception {
+    private void waitForEvent(final TestEventListener listener) throws Exception {
         int n = 51;
         while (n-- > 0) {
             Thread.sleep(100);
-            if (listener.seenEvents.size() == 1) {
+            if (!listener.seenEvents.isEmpty()) {
                 Thread.sleep(100);
                 return;
             }
