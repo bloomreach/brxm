@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@ package org.hippoecm.hst.freemarker.jcr;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.util.WebResourceUtils;
 import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +29,6 @@ import org.slf4j.LoggerFactory;
 public class WebResourceTemplateLoader extends AbstractTemplateLoader {
 
     private static final Logger log = LoggerFactory.getLogger(WebResourceTemplateLoader.class);
-
-    private static final String DEFAULT_BUNDLE_NAME = "/site";
 
     public Object findTemplateSource(String templateSource) throws IOException {
         if (templateSource == null || !templateSource.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
@@ -46,18 +43,9 @@ public class WebResourceTemplateLoader extends AbstractTemplateLoader {
                     "HstRequestContext.", templateSource);
             throw new IllegalStateException(msg);
         }
-        final ResolvedMount resolvedMount = ctx.getResolvedMount();
-        if (resolvedMount == null) {
-            String msg = String.format("Cannot serve freemarker template from webresource '%s' when there is no " +
-                    "resolved mount available on the HstRequestContext.", templateSource);
-            throw new IllegalStateException(msg);
-        }
-        String bundleName = resolvedMount.getMount().getVirtualHost().getContextPath();
-        if (StringUtils.isEmpty(bundleName)) {
-            bundleName = DEFAULT_BUNDLE_NAME;
-        }
 
-        String absPath = WebResourcesService.JCR_ROOT_PATH + bundleName + webResourcePath;
+        final String bundleName = WebResourceUtils.getBundleName(ctx);
+        String absPath = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + webResourcePath;
         log.info("Trying to load freemarker template for webresource from '{}'", absPath);
         return getLoadingCache().get(absPath);
     }
