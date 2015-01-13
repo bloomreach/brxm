@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -36,14 +37,19 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.EmptyDataProvider;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.plugins.console.browser.JcrNodeIcon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
+import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
 
 class NodeEditor extends Form<Node> {
     private static final long serialVersionUID = 1L;
@@ -70,6 +76,19 @@ class NodeEditor extends Form<Node> {
         setOutputMarkupId(true);
 
         add(new ToggleHeader("toggle-header-0", "0", "General"));
+        Icon icon = new Icon("nodeIcon", new LoadableDetachableModel<IconType>() {
+            @Override
+            protected IconType load() {
+                return JcrNodeIcon.getIcon(getModel().getObject());
+            }
+        });
+        icon.add(new AttributeAppender("style", new LoadableDetachableModel<Object>() {
+            @Override
+            protected Object load() {
+                return "color:" + JcrNodeIcon.getIconColor(getModel().getObject()) + ";";
+            }
+        }));
+        add(icon);
         add(new Label("nodePath", new PropertyModel<String>(this, "nodePath")));
         add(new Label("name", new PropertyModel<String>(this, "name")));
         add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
@@ -278,7 +297,7 @@ class NodeEditor extends Form<Node> {
                 sorted = false;
             }
         }
-        
+
         @Override
         public Iterator<Property> iterator(final long first, final long count) {
             if (!sorted) {

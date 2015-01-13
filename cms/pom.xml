@@ -120,6 +120,7 @@
     <tika.version>1.3</tika.version>
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
+    <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
@@ -501,6 +502,7 @@
                 <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
+                <exclude>console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/**/*</exclude>
                 <!-- code templates -->
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterTemplate.groovy</exclude>
                 <!-- files in which apache-rat does not recognize the license header -->

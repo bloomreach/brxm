@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
@@ -40,17 +39,18 @@ import org.slf4j.LoggerFactory;
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
-    /** use own styling */
+     // Use own styling
     private static final ResourceReference TREE_STYLE = new CssResourceReference(JcrTree.class, "res/tree.css");
 
-    /** Reference to the icon of open tree folder */
+    // Reference to the icon of open virtual folder
     private static final ResourceReference VIRTUAL_FOLDER_OPEN = new PackageResourceReference(JcrTree.class,
             "icons/folder-open-virtual.gif");
 
+    // Reference to the icon of closed virtual folder
     private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new PackageResourceReference(JcrTree.class,
             "icons/folder-closed-virtual.gif");
 
-    /** Reference to the icon of tree item (not a folder) */
+    // Reference to the icon of tree item (not a folder)
     private static final ResourceReference VIRTUAL_ITEM = new PackageResourceReference(JcrTree.class, "icons/item-virtual.gif");
 
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
@@ -97,7 +97,7 @@ public abstract class JcrTree extends Tree {
 
     /**
      * Returns the resource reference for icon of specified tree node.
-     * 
+     *
      * @param node
      *            The node
      * @return The package resource reference
@@ -121,6 +121,7 @@ public abstract class JcrTree extends Tree {
 
     /**
      * Checks if the wrapped jcr node is a virtual node
+     *
      * @return true if the node is virtual else false
      */
     public boolean isVirtual(IJcrTreeNode node) {
@@ -136,14 +137,15 @@ public abstract class JcrTree extends Tree {
             HippoNode hippoNode = (HippoNode) jcrNode;
             return hippoNode.isVirtual();
         } catch (RepositoryException e) {
-            log.info("Cannot determine whether node '{}' is virtual, assuming it's not", JcrUtils.getNodePathQuietly(jcrNode), e);
+            log.info("Cannot determine whether node '{}' is virtual, assuming it's not",
+                    JcrUtils.getNodePathQuietly(jcrNode), e);
             return false;
         }
     }
 
     /**
      * Returns the resource reference of default closed tree folder.
-     * 
+     *
      * @return The package resource reference
      */
     protected ResourceReference getVirtualFolderClosed() {
@@ -152,16 +154,16 @@ public abstract class JcrTree extends Tree {
 
     /**
      * Returns the resource reference of default open tree folder.
-     * 
+     *
      * @return The package resource reference
      */
     protected ResourceReference getVirtualFolderOpen() {
         return VIRTUAL_FOLDER_OPEN;
-    };
+    }
 
     /**
      * Returns the resource reference of default tree item (not folder).
-     * 
+     *
      * @return The package resource reference
      */
     protected ResourceReference getVirtualItem() {

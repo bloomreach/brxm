@@ -1,12 +1,12 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ public class ConsoleHeaderItem extends HippoHeaderItem {
 
     protected static final ResourceReference CONSOLE_CSS = new CssResourceReference(ConsoleHeaderItem.class, "console.css");
     protected static final ResourceReference TREE_CSS = new CssResourceReference(ConsoleHeaderItem.class, "tree/tree.css");
+    protected static final ResourceReference FA_CSS = new CssResourceReference(RootPlugin.class, "font-awesome/css/font-awesome.css");
 
     private static final ConsoleHeaderItem INSTANCE = new ConsoleHeaderItem();
 
@@ -48,6 +49,7 @@ public class ConsoleHeaderItem extends HippoHeaderItem {
         CssHeaderItem.forReference(LEGACY_CSS).render(response);
         CssHeaderItem.forReference(CONSOLE_CSS).render(response);
         CssHeaderItem.forReference(TREE_CSS).render(response);
+        CssHeaderItem.forReference(FA_CSS).render(response);
 
         if (isBrowserInternetExplorer()) {
             CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);

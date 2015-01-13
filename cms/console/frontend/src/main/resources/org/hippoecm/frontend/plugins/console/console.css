@@ -1,12 +1,12 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,13 +67,18 @@
 .hippo-console .wicket-tree div.row-selected span {font-weight: normal}
 
 .hippo-tree .wicket-tree span.plus,
-.hippo-tree .wicket-tree span.minus {background-image: url("tree/tree-console-icons.png"); width: 14px;}
+.hippo-tree .wicket-tree span.minus {
+    background-image: url("tree/tree-console-icons.png");
+}
 
 .hippo-tree .wicket-tree span.junction,
 .hippo-tree .wicket-tree span.junction-last,
 .hippo-tree .wicket-tree span.corner,
 .hippo-tree .wicket-tree span.indent-line,
-.hippo-tree .wicket-tree span.indent-blank {background-image: url("tree/tree-console-icons.png"); width: 18px;}
+.hippo-tree .wicket-tree span.indent-blank {
+    background-image: url("tree/tree-console-icons.png");
+    width: 18px;
+}
 
 .hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
 .hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
@@ -105,6 +110,27 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
 .hippo-console-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
   background: transparent;
+}
+
+.hippo-console-tree .wicket-tree span.icon {
+    background: none;
+}
+
+.hippo-console-tree .wicket-tree span.icon.fa {
+    width: 18px;
+    min-height: 16px;
+    height: 16px;
+    font-size: 15px;
+    margin-top: 0;
+    margin-right: 3px;
+    margin-left: 0;
+    padding-top: 2px;
+    text-align: center;
+}
+
+.hippo-console-tree .wicket-tree span.icon.fa + span {
+    position: relative;
+    top: -1px;
 }
 
 .hippo-console-tree-add li.hippo-console-tree-sorter span,
@@ -176,6 +202,7 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-editor .editor-types-table .type-name {font-weight: bold;}
 .hippo-console-editor .editor-general-table {margin-bottom: 12px;}
 .hippo-console-editor .editor-general-table td {padding: 0 4px 4px 0; font-size: 14px;}
+.hippo-console-editor .editor-general-table td span.icon {font-size: 2.5em; margin: 0 5px 0 5px;}
 .hippo-console-editor .editor-general-table .general-name {font-weight: bold;}
 .hippo-console-editor .properties { margin-bottom: 16px; }
 .hippo-console-editor .properties-group { padding-left: 16px; }
@@ -276,13 +303,13 @@ body.hippo-root div.yui-log-container {
 }
 
 /* Node & Property dialog */
-.wicket-modal .node-dialog .hippo-root { 
+.wicket-modal .node-dialog .hippo-root {
     height: 168px;
     overflow: auto;
     padding: 15px 20px 0;
 }
 
-.wicket-modal .property-dialog .hippo-root { 
+.wicket-modal .property-dialog .hippo-root {
     height: 218px;
     padding: 15px 20px 0;
     overflow: auto;
@@ -346,7 +373,7 @@ body.hippo-root div.yui-log-container {
 }
 
 .property-dialog li .property-value {
-    padding-bottom: 2px;    
+    padding-bottom: 2px;
 }
 
 .property-dialog .property-value-add {

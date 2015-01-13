@@ -1,5 +1,5 @@
 /*
-* Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+* Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 package org.hippoecm.frontend.plugins.richtext.model;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.jcr.Node;
@@ -24,6 +25,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.easymock.EasyMock;
+import org.hamcrest.CoreMatchers;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
@@ -36,6 +38,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.easymock.EasyMock.eq;
@@ -45,6 +48,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -418,17 +422,26 @@ public class ChildFacetUuidsModelTest {
         NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have two facet child nodes", 2, documentNode.getNodes().getSize());
 
-        Node child1 = children.nextNode();
-        assertEquals(document1.getIdentifier(), child1.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
+        Node child1 = children.nextNode();
         Node child2 = children.nextNode();
-        assertEquals(document2.getIdentifier(), child2.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+        assertThat(
+                Arrays.asList(
+                        child1.getProperty(HippoNodeType.HIPPO_DOCBASE).getString(),
+                        child2.getProperty(HippoNodeType.HIPPO_DOCBASE).getString()
+                ),
+                JUnitMatchers.hasItems(
+                        CoreMatchers.equalTo(document1.getIdentifier()),
+                        CoreMatchers.equalTo(document2.getIdentifier())
+                )
+        );
 
         assertFalse("Children should have different names", child1.getName().equals(child2.getName()));
 
-        assertEquals("<a href=\"" + child1.getName() + "\">document one</a>" +
-                        " and <a href=\"" + child2.getName() + "\">document two</a>",
-                textModel.getObject());
+        assertThat(textModel.getObject(), CoreMatchers.allOf(
+                JUnitMatchers.containsString("<a href=\"" + child1.getName() + "\">"),
+                JUnitMatchers.containsString("<a href=\"" + child2.getName() + "\">")
+        ));
     }
 
     @Test
@@ -541,9 +554,30 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
-    public void htmlEntitiesStaysTheSame() {
-        model.setObject("&gt;&lt;&amp;&acute;");
-        assertEquals("&gt;&lt;&amp;&acute;", model.getObject());
+    public void htmlEntitiesArePreserved() {
+        testPreserved("&gt;&lt;&amp;&quot;&acute;");
+    }
+
+    @Test
+    public void htmlCommentsArePreserved() {
+        testPreserved("<!-- comment -->");
+    }
+
+    @Test
+    public void utfCharactersArePreserved() {
+        testPreserved("łФ௵سლ");
+    }
+
+    @Test
+    public void codeBlockIsPreserved() {
+        testPreserved("<pre class=\"sh_xml\">&lt;hst:defineObjects/&gt;\n" +
+                "&lt;c:set var=&quot;isPreview&quot; value=&quot;${hstRequest.requestContext.preview}&quot;/&gt;\n" +
+                "</pre>\n");
+    }
+
+    private void testPreserved(String html) {
+        model.setObject(html);
+        assertEquals(html, model.getObject());
     }
 
     private class PrefixingImageUrlProvider implements IImageURLProvider {
