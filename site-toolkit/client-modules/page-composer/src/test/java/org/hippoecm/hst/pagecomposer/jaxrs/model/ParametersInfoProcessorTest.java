@@ -128,7 +128,6 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    @Ignore // Hudson doesn't load the NewstyleInterface resource bundle
     public void dropDownResourceBundleProcessing() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
@@ -487,6 +486,7 @@ public class ParametersInfoProcessorTest {
                 value = {"d3"}
             )
     })
+    static interface FieldGroupInheritedInterfaceD {
     static interface FieldGroupInheritedInterfaceD {
         @Parameter(name = "d1")
         String getD1();
