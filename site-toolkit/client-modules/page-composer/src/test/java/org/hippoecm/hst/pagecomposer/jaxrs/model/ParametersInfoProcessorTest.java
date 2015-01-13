@@ -485,7 +485,7 @@ public class ParametersInfoProcessorTest {
                 value = {"d3"}
             )
     })
-    static interface FieldGroupInheritedInterfaceD {
+
     static interface FieldGroupInheritedInterfaceD {
         @Parameter(name = "d1")
         String getD1();
