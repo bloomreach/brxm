@@ -65,12 +65,14 @@ if (!YAHOO.hippo.TreeHelper) {
                         overId: null
                     };
 
-                    // Notify the context menu the tree is scrolling so it can reposition the context menu
-                    sectionCenter = Dom.getAncestorByClassName(tree, 'section-center');
-                    if (exists(sectionCenter)) {
-                        YAHOO.util.Event.on(sectionCenter, 'scroll', function () {
-                            Hippo.ContextMenu.redraw();
-                        });
+                    if (cfg.workflowEnabled) {
+                        // Notify the context menu the tree is scrolling so it can reposition the context menu
+                        sectionCenter = Dom.getAncestorByClassName(tree, 'section-center');
+                        if (exists(sectionCenter)) {
+                            YAHOO.util.Event.on(sectionCenter, 'scroll', function () {
+                                Hippo.ContextMenu.redraw();
+                            });
+                        }
                     }
                 }
             },
@@ -93,6 +95,8 @@ if (!YAHOO.hippo.TreeHelper) {
                     }
                 }
                 helper.wicketTree = byClass('wicket-tree', 'div', tree);
+
+                YAHOO.hippo.HippoAjax.registerDestroyFunction(tree, this.cleanup, this, id);
             },
 
             render : function(id) {
@@ -254,7 +258,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 this.render(id);
             },
 
-            getLayoutMax : function(id, el, helper) {
+            getLayoutMax: function(id, el, helper) {
                 var target;
                 if (helper.cfg.bindToLayoutUnit && exists(helper.layoutUnit)) {
                     return helper.layoutUnit.getSizes().body.w;
@@ -263,6 +267,15 @@ if (!YAHOO.hippo.TreeHelper) {
                     return parseInt(Dom.getStyle(target, 'width'), 10);
                 }
                 return null;
+            },
+
+            cleanup: function(id) {
+                var tree = Dom.get(id);
+                YAHOO.hippo.LayoutManager.unregisterResizeListener(tree, this);
+
+                if (YAHOO.env.ua.ie > 0) {
+                    YAHOO.hippo.LayoutManager.unregisterRenderListener(tree, this);
+                }
             }
         };
 
