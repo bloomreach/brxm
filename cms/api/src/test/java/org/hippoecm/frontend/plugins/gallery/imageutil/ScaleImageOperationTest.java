@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -81,7 +82,7 @@ public class ScaleImageOperationTest {
     }
 
     @Test
-    public void useOriginalDataWhenNoBoundingBoxIsGiven() throws GalleryException, IOException {
+    public void scaleToOriginalDimensionsWhenNoBoundingBoxIsGiven() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
         ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
@@ -92,11 +93,11 @@ public class ScaleImageOperationTest {
         scaleOp = new ScaleImageOperation(0, 0, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
         InputStream original = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertTrue("Original image data should be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
+        assertFalse("Original image data should not be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
     }
 
     @Test
-    public void useOriginalDataWhenBoundingBoxMatchesOriginalDimensions() throws GalleryException, IOException {
+    public void scaleToOriginalDimensionsWhenBoundingBoxMatchesOriginalDimensions() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
         ScaleImageOperation scaleOp = new ScaleImageOperation(380, 428, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
@@ -107,11 +108,11 @@ public class ScaleImageOperationTest {
         scaleOp = new ScaleImageOperation(380, 428, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
         InputStream original = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertTrue("Original image data should be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
+        assertFalse("Original image data should not be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
     }
 
     @Test
-    public void useOriginalDataWhenScalingUpAndUpscalingIsDisabled() throws GalleryException, IOException {
+    public void scaleToOriginalDimensionsWhenScalingUpAndUpscalingIsDisabled() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
         ScaleImageOperation scaleOp = new ScaleImageOperation(500, 500, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
@@ -122,7 +123,7 @@ public class ScaleImageOperationTest {
         scaleOp = new ScaleImageOperation(500, 500, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
         InputStream original = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertTrue("Original image data should be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
+        assertFalse("Original image data should not be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
     }
 
     @Test
