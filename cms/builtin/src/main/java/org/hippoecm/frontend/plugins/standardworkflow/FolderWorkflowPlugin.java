@@ -370,6 +370,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         AddDocumentDialog dialog = newAddDocumentDialog(
                 addDocumentModel,
+                new StringResourceModel(category, this, null),
                 category,
                 prototypes,
                 translated,
@@ -392,17 +393,17 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 node = node.getParent();
             }
         } catch (RepositoryException e) {
-            log.error("Could not determine whether ");
+            log.error("Could not determine whether language is known");
         }
         return false;
     }
 
-    protected AddDocumentDialog newAddDocumentDialog(AddDocumentArguments addDocumentModel, String category,
-                                                        Set<String> prototypes, boolean translated,
-                                                        IWorkflowInvoker invoker) {
+    protected AddDocumentDialog newAddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> titleModel,
+                                                     String category, Set<String> prototypes, boolean translated,
+                                                     IWorkflowInvoker invoker) {
         return new AddDocumentDialog(
                 addDocumentModel,
-                new StringResourceModel(category, this, null),
+                titleModel,
                 category,
                 prototypes,
                 translated,
