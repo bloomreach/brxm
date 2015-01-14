@@ -36,7 +36,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -58,38 +57,21 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     private class Section implements IDetachable {
         private static final long serialVersionUID = 1L;
 
-        String extension;
-        String header;
-        IModel<String> focusModel;
-        boolean focused;
-        boolean selected;
-        AbstractRenderService.ExtensionPoint extPt;
+        private final String extension;
+        private final String header;
+        private boolean focused;
+        private boolean selected;
+        private final AbstractRenderService.ExtensionPoint extPt;
 
         Section(String extension, String header) {
             this.extension = extension;
             this.header = header;
             this.focused = false;
             this.extPt = children.get(extension);
-            this.focusModel = new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected String load() {
-                    if (focused) {
-                        if (selected) {
-                            return "select focus";
-                        } else {
-                            return "focus";
-                        }
-                    } else {
-                        return "unfocus";
-                    }
-                }
-            };
         }
 
         boolean hasChildren() {
-            return extPt.getChildren().size() > 0;
+            return !extPt.getChildren().isEmpty();
         }
 
         @SuppressWarnings("unchecked")
@@ -129,7 +111,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         for (int i = 0; i < extensions.size(); i++) {
             String extension = extensions.get(i);
             String header = extension;
-            if (headers.size() > 0 && i < headers.size()) {
+            if (!headers.isEmpty() && i < headers.size()) {
                 header = headers.get(i);
             }
             allSections.add(new Section(extension, header));
@@ -172,13 +154,13 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         select = new DropDownChoice<>("select", selectModel, sections,
                 new IChoiceRenderer<Section>() {
                     @Override
-                    public Object getDisplayValue(final Section object) {
-                        return new StringResourceModel(object.header, SectionTreePlugin.this, null).getObject();
+                    public Object getDisplayValue(final Section section) {
+                        return new StringResourceModel(section.header, SectionTreePlugin.this, null).getObject();
                     }
 
                     @Override
-                    public String getIdValue(final Section object, final int index) {
-                        return object.extension;
+                    public String getIdValue(final Section section, final int index) {
+                        return section.extension;
                     }
                 }
         );
@@ -195,27 +177,36 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     @Override
     public void onBeforeRender() {
+        final List<Section> sectionList = sections.getObject();
+
         if (findSectionForInitialFocus) {
             Section section = findFocus();
             if (section != null) {
-                if (section.getRenderer() != null) {
-                    section.getRenderer().focus(null);
+                focusRenderer(section);
+            } else {
+                if (!sectionList.isEmpty()) {
+                    section = sectionList.get(0);
+                    select.getModel().setObject(section);
+                    focusSection(section);
                 }
-            } else if (sections.getObject().size() > 0) {
-                section = sections.getObject().get(0);
-                select.getModel().setObject(section);
-                focusSection(section);
             }
             findSectionForInitialFocus = false;
         }
 
-        for (Section section : sections.getObject()) {
+        for (Section section : sectionList) {
             for (IRenderService service : section.getChildren()) {
                 Component component = service.getComponent();
                 component.setVisible(section.focused);
             }
         }
         super.onBeforeRender();
+    }
+
+    private void focusRenderer(final Section section) {
+        final IRenderService renderer = section.getRenderer();
+        if (renderer != null) {
+            renderer.focus(null);
+        }
     }
 
     @Override
@@ -246,8 +237,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     protected void onModelChanged() {
         super.onModelChanged();
         Section section = findFocus();
-        if (section != null && section.getRenderer() != null) {
-            section.getRenderer().focus(null);
+        if (section != null) {
+            focusRenderer(section);
         }
     }
 
