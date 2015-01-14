@@ -251,6 +251,17 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <!-- connections to maven central are by default over https since maven 3.2.3;
+         we override it here only so that earlier maven versions also use a secure connection
+     -->
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -279,6 +290,20 @@
       <releases>
         <enabled>false</enabled>
       </releases>
+    </pluginRepository>
+    <!-- connections to maven central are by default over https since maven 3.2.3;
+         we override it here only so that earlier maven versions also use a secure connection
+     -->
+    <pluginRepository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
     </pluginRepository>
   </pluginRepositories>
 
