@@ -213,7 +213,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         if (closestName != null) {
             IBrowserSection section = sections.getSection(closestName);
             section.select(document);
-            sections.setActiveSection(closestName);
+            sections.setActiveSectionByName(closestName);
         }
         IModel<Node> version = null;
         try {

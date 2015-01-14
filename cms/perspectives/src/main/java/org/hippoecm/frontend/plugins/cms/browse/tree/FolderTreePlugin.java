@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,11 +29,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
@@ -78,8 +76,6 @@ public class FolderTreePlugin extends RenderPlugin {
     public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         
-        add(new AttributeAppender("class", Model.of("section-center"), " "));
-
         String startingPath = config.getString("path", DEFAULT_START_PATH);
         try {
             Session session = getSession().getJcrSession();

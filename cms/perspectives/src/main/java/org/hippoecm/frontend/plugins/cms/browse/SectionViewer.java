@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -137,14 +137,14 @@ public class SectionViewer extends Panel implements ICardView {
         select = new DropDownChoice<>("select", selectModel, sectionNamesModel, 
             new IChoiceRenderer<String>() {
                 @Override
-                public Object getDisplayValue(final String object) {
-                    final IBrowserSection section = sections.getSection(object);
+                public Object getDisplayValue(final String sectionId) {
+                    final IBrowserSection section = sections.getSection(sectionId);
                     return section.getTitle().getObject();
                 }
     
                 @Override
-                public String getIdValue(final String object, final int index) {
-                    return object;
+                public String getIdValue(final String sectionId, final int index) {
+                    return sectionId;
                 }
             }
         );
@@ -192,12 +192,12 @@ public class SectionViewer extends Panel implements ICardView {
     }
 
     public void onSelect(String extension) {
-        sections.setActiveSection(extension);
+        sections.setActiveSectionByName(extension);
     }
 
     public void select(String sectionName) {
         if (sectionName != null) {
-            sections.setActiveSection(sectionName);
+            sections.setActiveSectionByName(sectionName);
 
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
@@ -256,8 +256,8 @@ public class SectionViewer extends Panel implements ICardView {
         }
 
         @Override
-        public void setObject(final String object) {
-            sections.setActiveSection(object);
+        public void setObject(final String sectionName) {
+            sections.setActiveSectionByName(sectionName);
         }
 
         @Override

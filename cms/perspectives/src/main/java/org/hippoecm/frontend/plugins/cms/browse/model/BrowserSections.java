@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -88,8 +88,8 @@ public class BrowserSections implements IClusterable {
         return null;
     }
 
-    public void setActiveSection(final String name) {
-        if (active != name) {
+    public void setActiveSectionByName(final String name) {
+        if (!active.equals(name)) {
             this.active = name;
             notifyListeners();
         }
