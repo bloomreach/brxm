@@ -119,11 +119,11 @@ public class TemplateLoadingCache {
                 }
             } else {
                 log.warn("No jcr node or property found at '{}'. Cannot return freemarker template.", absPath);
-                return RepositorySource.repositorySourceNotFound;
+                return RepositorySource.notFound(absPath);
             }
         } catch (RepositoryException e) {
             log.warn("RepositoryException while fetching freemarker template from repository", e);
-            return RepositorySource.repositorySourceNotFound;
+            return RepositorySource.notFound(absPath);
         } finally {
             if (session != null) {
                 session.logout();
@@ -142,13 +142,13 @@ public class TemplateLoadingCache {
         if (!FREEMARKER_TMPL_BINARY_MIMETYPE.equals(mimeType)) {
             log.warn("Expected freemarker binary at '{}' with mimetype '{}' but was '{}'. Cannot return " +
                     "ftl for wrong mimetype", absPath, mimeType, FREEMARKER_TMPL_BINARY_MIMETYPE);
-            return RepositorySource.repositorySourceNotFound;
+            return RepositorySource.notFound(absPath);
         }
         final Binary ftl = JcrUtils.getBinaryProperty(content, JcrConstants.JCR_DATA, null);
         if (ftl == null) {
             log.warn("Expected freemarker binary at '{}' but binary was null. Cannot return " +
                     "ftl for wrong mimetype", absPath);
-            return RepositorySource.repositorySourceNotFound;
+            return RepositorySource.notFound(absPath);
         }
 
         final InputStream stream = ftl.getStream();
@@ -158,21 +158,21 @@ public class TemplateLoadingCache {
                 return createRepositorySource(template, absPath);
             } catch (IOException e) {
                 log.warn("Exception while reading freemarker binary from '{}'", absPath, e);
-                return RepositorySource.repositorySourceNotFound;
+                return RepositorySource.notFound(absPath);
             }
         } finally {
             IOUtils.closeQuietly(stream);
         }
     }
 
-    private RepositorySource createRepositorySource(String template, String logInfoPath) {
+    private RepositorySource createRepositorySource(String template, String absJcrPath) {
         if (template == null) {
             if(template == null) {
-                log.debug("Template source '{}' not found in the repository. ", logInfoPath);
+                log.debug("Template source '{}' not found in the repository. ", absJcrPath);
             }
-            return RepositorySource.repositorySourceNotFound;
+            return RepositorySource.notFound(absJcrPath);
         }
-        return new RepositorySource(template);
+        return RepositorySource.found(absJcrPath, template);
     }
 
 }

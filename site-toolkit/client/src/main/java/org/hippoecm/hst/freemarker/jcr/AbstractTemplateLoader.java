@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,21 +36,31 @@ public abstract class AbstractTemplateLoader implements TemplateLoader {
     }
 
     public long getLastModified(Object templateSource) {
-        validateTemplateSourceObject(templateSource);
+        try {
+            validateTemplateSourceObject(templateSource);
+        } catch (IOException e) {
+            throw new IllegalStateException(e.toString(), e);
+        }
         return ((RepositorySource)templateSource).getPlaceHolderLastModified();
     }
 
 
     public Reader getReader(Object templateSource, String encoding) throws IOException {
         validateTemplateSourceObject(templateSource);
-        return new StringReader(((RepositorySource)templateSource).getTemplate());
+        final RepositorySource repoSource = (RepositorySource) templateSource;
+        if (!repoSource.isFound()) {
+            String msg = String.format("Repository templateSource '%s' not found",
+                    repoSource.getAbsJcrPath());
+            throw new IOException(msg);
+        }
+        return new StringReader(repoSource.getTemplate());
     }
 
-    private void validateTemplateSourceObject(final Object templateSource) {
+    private void validateTemplateSourceObject(final Object templateSource) throws IOException {
         if (!(templateSource instanceof RepositorySource)) {
             String msg = String.format("templateSource should be of type '%s' but was of type '%s'",
                     RepositorySource.class.getName(), templateSource.getClass().getName());
-            throw new IllegalStateException(msg);
+            throw new IOException(msg);
         }
     }
 
