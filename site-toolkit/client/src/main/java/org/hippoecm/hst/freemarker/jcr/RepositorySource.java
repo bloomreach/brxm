@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,37 @@
 package org.hippoecm.hst.freemarker.jcr;
 
 public class RepositorySource {
-    
-    public final static RepositorySource repositorySourceNotFound = new RepositorySource();
-    private static final int NOTFOUND_HASHCODE = 1231; // completely arbitrary
 
-  
-    private String template;
-    private long placeHolderLastModified;
-    private boolean notFound = false;
-    
-    private RepositorySource(){
-        this.notFound = true;
+    private final String template;
+    private final  String absJcrPath;
+    private final long placeHolderLastModified;
+    private final boolean found;
+
+    public static final RepositorySource notFound(final String absJcrPath) {
+        return new RepositorySource(absJcrPath);
     }
-    
-    public RepositorySource(String template){
+
+    public static final RepositorySource found(final String absJcrPath, final String template) {
+        return new RepositorySource(absJcrPath, template);
+    }
+
+    private RepositorySource(final String absJcrPath){
+        this.absJcrPath = absJcrPath;
+        template = null;
+        found = false;
+        placeHolderLastModified = System.currentTimeMillis();
+    }
+
+    private RepositorySource(final String absJcrPath, final String template){
+        this.absJcrPath = absJcrPath;
         this.template = template;
+        found = true;
         this.placeHolderLastModified = System.currentTimeMillis();
         
+    }
+
+    public String getAbsJcrPath() {
+        return absJcrPath;
     }
 
     public String getTemplate() {
@@ -43,31 +57,52 @@ public class RepositorySource {
         return placeHolderLastModified;
     }
 
+    public boolean isFound() {
+        return found;
+    }
+
     @Override
-    public boolean equals(Object anObject) {
-        if(this == anObject) {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if(anObject instanceof RepositorySource) {
-            RepositorySource otherSource = (RepositorySource)anObject;
-            if(notFound && otherSource.notFound) {
-                return true;
-            }
-            if(this.template == null || otherSource.template == null) {
-                return false;
-            }
-            return this.template.equals(otherSource.template) && this.placeHolderLastModified == otherSource.placeHolderLastModified;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        
-        return false;
-    }
-    
-    @Override 
-    public int hashCode(){
-        if(notFound) {
-            return NOTFOUND_HASHCODE;
+
+        final RepositorySource that = (RepositorySource) o;
+
+        if (found != that.found) {
+            return false;
         }
-        return this.template.hashCode() ^  (int)this.placeHolderLastModified ;
+        if (placeHolderLastModified != that.placeHolderLastModified) {
+            return false;
+        }
+        if (absJcrPath != null ? !absJcrPath.equals(that.absJcrPath) : that.absJcrPath != null) {
+            return false;
+        }
+        if (template != null ? !template.equals(that.template) : that.template != null) {
+            return false;
+        }
+
+        return true;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int result = template != null ? template.hashCode() : 0;
+        result = 31 * result + (absJcrPath != null ? absJcrPath.hashCode() : 0);
+        result = 31 * result + (int) (placeHolderLastModified ^ (placeHolderLastModified >>> 32));
+        result = 31 * result + (found ? 1 : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "RepositorySource{" +
+                " absJcrPath='" + absJcrPath + '\'' +
+                ", placeHolderLastModified=" + placeHolderLastModified +
+                ", found=" + found +
+                '}';
+    }
 }
