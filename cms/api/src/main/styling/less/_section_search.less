@@ -17,7 +17,7 @@
 .section-search-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 8px;
+  padding: 8px 8px 4px 8px;
 
   > input {
     width: 100%;
@@ -37,6 +37,14 @@
     position: relative;
     right: 24px;
     top: 3px;
+
+    svg {
+      fill: @search-input-reset-color;
+    }
+
+    &:hover svg {
+      fill: @search-input-reset-hover-color;
+    }
   }
 }
 
@@ -49,6 +57,7 @@
     float: left;
     border-radius: 4px;
     padding: 4px;
+    margin-top: 4px;
     font-size: 11px;
 
     &:not(:last-child) {
