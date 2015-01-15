@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 public class SelectionResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(SelectionResource.class);
+    public static final String MULTISELECT_PLUGIN_CLASS = "org.onehippo.forge.selection.frontend.plugin.DynamicMultiSelectPlugin";
 
     @POST
     @Path("/addfield")
@@ -170,13 +171,14 @@ public class SelectionResource extends BaseResource {
         final NodeIterator editorFields = editorTemplate.getNodes();
         while (editorFields.hasNext()) {
             final Node editorField = editorFields.nextNode();
-            if (editorField.hasNode("valuelist.options")) {
+            if (editorField.hasNode("cluster.options") && editorField.getNode("cluster.options").hasProperty("source") &&
+                    editorField.hasProperty("plugin.class") && MULTISELECT_PLUGIN_CLASS.equals(editorField.getProperty("plugin.class").getString())) {
                 final SelectionFieldRestful field = new SelectionFieldRestful();
                 field.setType("multiple");
                 field.setNameSpace(nameSpace);
                 field.setDocumentName(documentName);
                 field.setName(editorField.getProperty("caption").getString());
-                field.setValueList(editorField.getNode("valuelist.options").getProperty("source").getString());
+                field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                 fields.add(field);
             }
         }

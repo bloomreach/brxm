@@ -34,7 +34,7 @@
   <sv:property sv:name="wicket.id" sv:type="String">
     <sv:value>{{fieldPosition}}</sv:value>
   </sv:property>
-  <sv:node sv:name="valuelist.options">
+  <sv:node sv:name="cluster.options">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
