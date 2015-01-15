@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
+import org.hippoecm.frontend.plugins.standards.image.JcrImage;
+import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 
@@ -126,6 +128,14 @@ public class HippoIcon extends Panel {
         return new ResourceIcon(id, model, -1, -1);
     }
 
+    public static HippoIcon fromStream(final String id, final IModel<JcrResourceStream> model, final int width, final int height) {
+        return new StreamIcon(id, model, width, height);
+    }
+
+    public static HippoIcon fromStream(final String id, final IModel<JcrResourceStream> model) {
+        return fromStream(id, model, -1, -1);
+    }
+
     /**
      * Renders a copy of the given icon, with a different Wicket ID.
      * @param icon the icon to render
@@ -147,7 +157,7 @@ public class HippoIcon extends Panel {
 
         private SvgIcon(final String id, final IModel<Icon> model, final boolean inline) {
             super(id, model);
-            
+
             this.inline = inline;
             setRenderBodyOnly(true);
 
@@ -174,7 +184,7 @@ public class HippoIcon extends Panel {
         private SvgIcon(final String newId, final SvgIcon original) {
             this(newId, original.getIcon(), original.inline);
         }
-        
+
         private Icon getIcon() {
             return (Icon) getDefaultModelObject();
         }
@@ -233,9 +243,19 @@ public class HippoIcon extends Panel {
 
             super.onBeforeRender();
         }
-        
+
         private ResourceReference getReference() {
             return (ResourceReference) getDefaultModelObject();
+        }
+    }
+
+    private static class StreamIcon extends HippoIcon {
+
+        private StreamIcon(final String id, final IModel<JcrResourceStream> model, final int width, final int height) {
+            super(id, model);
+            setRenderBodyOnly(true);
+
+            add(new JcrImage("streamIcon", model.getObject(), width, height));
         }
     }
 
