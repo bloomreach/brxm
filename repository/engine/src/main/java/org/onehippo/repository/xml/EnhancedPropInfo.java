@@ -68,7 +68,6 @@ public class EnhancedPropInfo extends PropInfo {
 
     private static Logger log = LoggerFactory.getLogger(EnhancedPropInfo.class);
 
-
     private final NamePathResolver resolver;
     private final Name name;
     private final int type;

@@ -17,9 +17,15 @@ package org.onehippo.repository.xml;
 
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.spi.Name;
 
-class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.COMBINE;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.INSERT;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.OVERLAY;
+import static org.onehippo.repository.xml.EnhancedSystemViewConstants.SKIP;
+
+class EnhancedNodeInfo extends NodeInfo {
 
     private String mergeBehavior;
     private NodeImpl originItem;
@@ -35,19 +41,19 @@ class EnhancedNodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
     }
 
     boolean mergeSkip() {
-        return EnhancedSystemViewConstants.SKIP.equalsIgnoreCase(mergeBehavior);
+        return SKIP.equalsIgnoreCase(mergeBehavior);
     }
 
     boolean mergeOverlay() {
-        return EnhancedSystemViewConstants.OVERLAY.equalsIgnoreCase(mergeBehavior);
+        return OVERLAY.equalsIgnoreCase(mergeBehavior);
     }
 
     boolean mergeCombine() {
-        return EnhancedSystemViewConstants.COMBINE.equalsIgnoreCase(mergeBehavior);
+        return COMBINE.equalsIgnoreCase(mergeBehavior);
     }
 
     String mergeInsertBefore() {
-        if (EnhancedSystemViewConstants.INSERT.equalsIgnoreCase(mergeBehavior)) {
+        if (INSERT.equalsIgnoreCase(mergeBehavior)) {
             return (location != null ? location : "");
         } else {
             return null;
