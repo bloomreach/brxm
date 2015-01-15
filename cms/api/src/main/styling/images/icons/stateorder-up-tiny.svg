@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,12 +19,11 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
 <g>
-	<path fill="#0086F8" d="M7.999,16c-4.416,0-8-3.584-8-8c0-4.417,3.584-8,8-8C12.416,0,16,3.583,16,8C16,12.416,12.416,16,7.999,16z
-		"/>
+	<path fill="#0086F8" d="M7.478,1.078c4.118,0,7.445,3.387,7.445,7.505c0,4.12-3.327,7.417-7.445,7.417
+		c-4.163,0-7.462-3.225-7.462-7.461C0.016,4.42,3.357,1.078,7.478,1.078z"/>
 </g>
 <g>
-	<path fill="#FFFFFF" d="M7.752,5.102c0.14-0.141,0.362-0.141,0.502,0l4.145,4.138c0.14,0.14,0.14,0.368,0,0.508l-0.928,0.922
-		c-0.14,0.14-0.362,0.14-0.502,0L8.003,7.703l-2.966,2.966c-0.14,0.14-0.362,0.14-0.502,0L3.607,9.747
-		c-0.14-0.14-0.14-0.368,0-0.508L7.752,5.102z"/>
+	<path fill="none" stroke="#FFFFFF" stroke-miterlimit="10" d="M3.279,10.737l3.916-3.955c0.124-0.125,0.322-0.125,0.447,0
+		l3.955,3.955 M7.403,8.503"/>
 </g>
 </svg>

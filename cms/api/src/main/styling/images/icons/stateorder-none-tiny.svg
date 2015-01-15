@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,13 +19,8 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
 <g>
-	<path fill="#BCBCBC" d="M7.999,16c-4.416,0-8-3.584-8-8c0-4.417,3.584-8,8-8C12.416,0,16,3.583,16,8C16,12.416,12.416,16,7.999,16z
-		"/>
+	<path fill="#BCBCBC" d="M7.46,16c-4.118,0-7.461-3.343-7.461-7.461c0-4.12,3.343-7.461,7.461-7.461c4.12,0,7.462,3.342,7.462,7.461
+		C14.922,12.657,11.58,16,7.46,16z"/>
 </g>
-<g>
-	<path fill="#FFFFFF" d="M12.796,5.358l-0.563-0.583c-0.125-0.125-0.291-0.197-0.469-0.197c-0.176,0-0.344,0.072-0.469,0.197
-		L7.031,9L4.689,6.661C4.564,6.535,4.397,6.463,4.22,6.463c-0.178,0-0.344,0.072-0.468,0.198l-0.594,0.63
-		C3.034,7.416,2.971,7.594,2.971,7.77c0,0.178,0.063,0.345,0.188,0.469l3.404,3.215c0.125,0.124,0.302,0.197,0.468,0.197
-		c0.178,0,0.355-0.073,0.48-0.197l5.286-5.146c0.123-0.126,0.186-0.292,0.186-0.469C12.981,5.66,12.919,5.483,12.796,5.358z"/>
-</g>
+<polygon fill="#FFFFFF" points="11.291,5.161 10.42,4.67 6.658,11.343 4.287,8.003 3.472,8.582 6.734,13.203 "/>
 </svg>

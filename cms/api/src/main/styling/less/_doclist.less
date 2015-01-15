@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
   // keep the styling that affect width in sync in the thead and tbody to ensure correctly aligned table headers
   > thead > tr > th,
   > tbody > tr > td {
-    padding: @doclist-padding;
+    padding: @doclist-padding-top-bottom @doclist-padding-left-right;
 
     // border between columns
     border-left: 1px solid transparent;
@@ -44,6 +44,7 @@
     // column types
     &.doclisting-icon {
       .fixed-width(32px);
+      padding: @doclist-padding-icon;
       + .doclisting-name {
         border-left: 0;
         padding-left: 0;
@@ -87,13 +88,15 @@
       padding-bottom: 0;
 
       .hippo-translation-doclisting > ul {
-        display: block;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
         list-style-type: none;
       }
       .hippo-translation-doclisting > ul > li {
-        display: inline;
-        padding-right: 4px;
-        white-space: nowrap;
+        display: block;
+        padding-right: 8px;
+        height: 16px;
       }
     }
     &.doclisting-size {
@@ -119,10 +122,8 @@
       height: @doclist-head-height;
 
       > th {
-        height: @doclist-head-height - (2 * @doclist-padding);
         font-size: @font-size-large;
-        padding-top: @doclist-padding - 1;
-        padding-bottom: @doclist-padding + 1;
+        line-height: @line-height-computed;
         border-color: @doclist-head-border-color;
         &:hover {
           color: @aqua;
@@ -265,17 +266,22 @@
         .paging-container {
           border-top: 1px solid @doclist-row-separator-color;
           width: 100%;
-          height: @doclist-foot-height - 1;
+          height: @doclist-foot-height;
           display: flex;
           justify-content: center;
           align-items: center;
 
           .paging-navigator {
             font-size: @font-size-small;
+            height: @doclist-paging-button-size;
 
             em, a {
+              display: inline-block;
+              width: @doclist-paging-button-size - 2;
+              height: @doclist-paging-button-size - 2;
+              line-height: @doclist-paging-button-size - 2;
+              text-align: center;
               border: 1px solid transparent;
-              padding: 2px 5px;
             }
 
             a {
@@ -299,7 +305,7 @@
           font-size: @font-size-tiny;
           height: @font-size-base;
           padding-top: (@doclist-foot-height - @font-size-base) / 2;
-          padding-right: @doclist-padding;
+          padding-right: @doclist-padding-left-right;
         }
       }
     }

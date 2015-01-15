@@ -29,7 +29,7 @@
 // Global functional colors
 @white_legacy:                      #fefefe;
 @red-alert:                         #da1c5c;
-@text-gray:                         #33424b;
+@text-gray:                         #231f20;
 
 // Typography
 @font-family-sans-serif:            "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -42,7 +42,7 @@
 // even number of px.
 @font-size-svg-fix:                 12px;
 @font-size-base:                    13px;
-@font-size-large:                   ceil((@font-size-base * 1.10)); // ~16px
+@font-size-large:                   ceil((@font-size-base * 1.10)); // ~15px
 @font-size-small:                   ceil((@font-size-base * 0.85)); // ~12px
 @font-size-tiny:                    ceil((@font-size-base * 0.75)); // ~10px
 
@@ -112,12 +112,14 @@
 @sections-top-bgcolor:              #ebebeb;
 
 // Document listing
-@doclist-head-bgcolor:              @mercury;
-@doclist-head-border-color:         #d7d9db;
-@doclist-head-color:                @cool-shale;
+@doclist-head-bgcolor:              #d8d8d8;
+@doclist-head-border-color:         #b8b8b8;
+@doclist-head-color:                @text-gray;
 @doclist-head-sorted-color:         @aqua;
-@doclist-head-height:               40px;
-@doclist-padding:                   8px;
+@doclist-head-height:               41px;
+@doclist-padding-left-right:        8px;
+@doclist-padding-top-bottom:        12px;
+@doclist-padding-icon:              12px;
 @doclist-row-separator-color:       @mercury;
 @doclist-row-selected-bgcolor:      @aqua;
 @doclist-row-selected-color:        @white;
@@ -126,12 +128,14 @@
 @doclist-paging-button-fill:        @marble;
 @doclist-paging-button-hover-color: @white;
 @doclist-paging-button-hover-fill:  @aqua;
+@doclist-paging-button-size:        25px;
 
 // Tree
 @tree-caret-color:                  @cool-shale;
 @tree-junction-color:               #1c1c1c;
-@tree-folder-color:                 #858585;
+@tree-folder-color:                 #9e9e9e;
 @tree-hover-color:                  @aqua;
+@tree-text-color:                   @text-gray;
 
 // Editor
 @editor-bgcolor:                    #f2f2f2;
