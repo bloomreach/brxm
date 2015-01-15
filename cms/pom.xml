@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -517,7 +517,17 @@
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!-- JQuery File Upload -->
-                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/*.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/canvas-to-blob.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-image.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-process.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-ui.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-validate.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.iframe-transport.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.ui.widget.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image-meta.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/tmpl.js</exclude>
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/css/*.css</exclude>
               </excludes>
             </configuration>
