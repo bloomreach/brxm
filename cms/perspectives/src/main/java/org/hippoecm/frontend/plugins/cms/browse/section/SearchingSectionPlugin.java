@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,19 +24,19 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.HTML5Attributes;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -52,11 +52,12 @@ import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.Documen
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,13 +67,14 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
-    private static final CssResourceReference SEARCH_SKIN = new CssResourceReference(SearchingSectionPlugin.class, "search.css");
 
     private final class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
         private static final long serialVersionUID = 1L;
 
         private SubmittingTextField(String id, IModel<String> model) {
             super(id, model);
+
+            add(new HTML5Attributes());
 
             add(new OnEnterAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
@@ -147,12 +149,12 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private String query;
     private transient boolean redrawSearch = false;
 
-    private Form container;
+    private final WebMarkupContainer sectionTop;
 
     public SearchingSectionPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        this.rootPath = config.getString("model.folder.root", "/");
+        rootPath = config.getString("model.folder.root", "/");
         scopeModel = new JcrNodeModel(rootPath);
 
         collection = new DocumentCollection();
@@ -169,7 +171,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         });
 
-        container = new Form("container") {
+        final Form form = new Form("form") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -182,10 +184,11 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             protected void onSubmit() {
             }
         };
-        container.setOutputMarkupId(true);
+        form.setOutputMarkupId(true);
 
-        TextField<String> tx = new SubmittingTextField("searchBox", new PropertyModel<String>(this, "query"));
-        container.add(tx);
+        TextField<String> tx = new SubmittingTextField("searchBox", PropertyModel.of(this, "query"));
+        tx.setLabel(Model.of(getString("placeholder")));
+        form.add(tx);
 
         final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
             private static final long serialVersionUID = 1L;
@@ -200,8 +203,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        browseLink.add(new SearchIcon(collection));
-        container.add(browseLink);
+        browseLink.add(createSearchIcon("search-icon", collection));
+        form.add(browseLink);
 
         WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
             private static final long serialVersionUID = 1L;
@@ -239,9 +242,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return new NodeTranslator(scopeModel).getNodeName().getObject();
             }
 
-        }));
+        }).setRenderBodyOnly(true));
         scopeContainer.add(scopeLink);
-        container.add(scopeContainer);
+        form.add(scopeContainer);
 
         WebMarkupContainer allContainer = new WebMarkupContainer("all-container") {
             private static final long serialVersionUID = 1L;
@@ -272,9 +275,18 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         };
         allContainer.add(new CssClassAppender(new SearchScopeModel(allLink)));
         allContainer.add(allLink);
-        container.add(allContainer);
+        form.add(allContainer);
 
-        add(container);
+        sectionTop = new WebMarkupContainer("section-top");
+        sectionTop.setOutputMarkupId(true);
+        sectionTop.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT ? "search-result" : "";
+            }
+        }, " "));
+        sectionTop.add(form);
+        add(sectionTop);
     }
 
     void redrawSearch() {
@@ -317,17 +329,10 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     public void render(PluginRequestTarget target) {
         if (target != null) {
             if (redrawSearch && isVisibleInHierarchy()) {
-                target.add(container);
+                target.add(sectionTop);
             }
         }
         super.render(target);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        response.render(CssHeaderItem.forReference(SEARCH_SKIN));
     }
 
     public void onFolderChange(IModel<Node> model) {
@@ -420,38 +425,15 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     public ResourceReference getIcon(IconSize type) {
         return null;
     }
-    
-    private static class SearchIcon extends CachingImage {
-        private static final long serialVersionUID = 1L;
 
-        public SearchIcon(DocumentCollection collection) {
-            super("search-icon", new SearchIconModel(collection));
-        }
-
-        @Override
-        protected void onDetach() {
-            setDefaultModel(getDefaultModel());
-            super.onDetach();
-        }
-
-    }
-
-    private static class SearchIconModel extends LoadableDetachableModel<String> {
-        private static final long serialVersionUID = 1L;
-        private final DocumentCollection collection;
-
-        public SearchIconModel(DocumentCollection collection) {
-            this.collection = collection;
-        }
-
-        @Override
-        protected String load() {
-            if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
-                return "cancel.png";
-            } else {
-                return "magnify.png";
+    private Component createSearchIcon(final String id, final DocumentCollection collection) {
+        IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
+            @Override
+            protected Icon load() {
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.CLOSE_TINY : Icon.SEARCH_TINY;
             }
-        }
+        };
+        return HippoIcon.fromSprite(id, iconModel);
     }
 
     private static class SearchScopeModel extends LoadableDetachableModel<String> {

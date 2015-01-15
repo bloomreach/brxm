@@ -13,36 +13,28 @@
     * See the License for the specific language governing permissions and
     * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
+<html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-browser-search section-top">
-      <form wicket:id="container">
-        <table class="hippo-search-section">
-          <tr>
-            <td class="hippo-search-section-input">
+    <div class="section-top" wicket:id="section-top">
+      <form wicket:id="form">
+          <div class="section-search-input">
               <input type="text" wicket:id="searchBox" />
-            </td>
-            <td class="hippo-search-section-toggle">
-              <a wicket:id="toggle"><img wicket:id="search-icon" /></a>
-            </td>
-          </tr>
-        </table>
-        <table class="hippo-search-scope-container">
-          <tr>
-            <td>
-              <ul class="hippo-search-scope-container-ul">
-                <li wicket:id="scope-container">
-                  <span class="hippo-search-scope-right" />
-                  <a class="hippo-search-scope" wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
-                </li>
-                <li wicket:id="all-container">
-                  <span class="hippo-search-scope-right" />
-                  <a class="hippo-search-scope" wicket:id="all"><wicket:message key="all-label">all</wicket:message></a>
-                </li>
-              </ul>
-            </td>
-          </tr>
-        </table>
+              <a wicket:id="toggle">
+                  <span wicket:id="search-icon" />
+              </a>
+          </div>
+          <div class="section-search-scopes">
+              <div wicket:id="scope-container">
+                  <a class="hippo-search-scope" wicket:id="scope">
+                      <span wicket:id="scope-label">scope</span>
+                  </a>
+              </div>
+              <div wicket:id="all-container">
+                  <a class="hippo-search-scope" wicket:id="all">
+                      <wicket:message key="all-label">all</wicket:message>
+                  </a>
+              </div>
+          </div>
       </form>
     </div>
     <div wicket:id="extension.tree" class="section-center">tree here</div>

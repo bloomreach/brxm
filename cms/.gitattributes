@@ -1120,6 +1120,7 @@ api/src/main/styling/less/_perspectives_switcher.less -text
 api/src/main/styling/less/_picker_section_viewer.less -text
 api/src/main/styling/less/_revision_history.less -text
 api/src/main/styling/less/_scaffolding.less -text
+api/src/main/styling/less/_section_search.less -text
 api/src/main/styling/less/_section_viewer.less -text
 api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
@@ -2405,12 +2406,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_fr.properties svneol=native#text/plain
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_nl.properties svneol=native#text/plain
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/active-back.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/active-right.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/cancel.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/magnify.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/search-back.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/section/search.css svneol=native#text/plain
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/browse/tree/yui/js/treehelper/treehelper.js -text svneol=unset#text/plain
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.css -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.js -text

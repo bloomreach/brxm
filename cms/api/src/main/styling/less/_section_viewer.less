@@ -18,25 +18,26 @@
   height: 100%;
   min-height: 100%;
   max-height: 100%;
-  
+
   .section-selection {
-    background-color: #d8d8d8;
+    background-color: @section-selection-bgcolor;
     height: unit(@sections-select-height, px);
     display: flex;
 
     .section-selection-form {
-      width: ~"calc(100% - 16px)";
-      margin: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
     }
   }
-  
+
   .section-view {
     height: ~"calc(100% - @{sections-select-height}px)";
 
-    &.unselected { 
+    &.unselected {
       display: none;
     }
-    
+
     &.selected {
       > div {
         display: flex;
@@ -59,9 +60,8 @@
       .section-center {
         flex: auto;
         overflow: auto;
-        // IE10 needs a max height to draw scrollbars
-        @vertical-pixels-occupied: @sections-top-height + @sections-bottom-height + 1;
-        max-height: ~"calc(100% - @{vertical-pixels-occupied}px)";
+        // IE10 scrollbars
+        -ms-flex-preferred-size: 0;
       }
 
       .section-center:only-child {
@@ -73,7 +73,7 @@
         height: unit(@sections-bottom-height, px);
         border-top: 1px solid @sections-border-color;
         white-space: nowrap;
-        
+
         .add-root-folder {
           margin: 8px;
           border: 1px solid @sections-border-color;
@@ -84,7 +84,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          
+          box-sizing: border-box;
+
           &:hover {
             background-color: #f3f3f3;
           }

@@ -181,7 +181,7 @@ body.hippo-root #doc3 {
 }
 */
 
-/* Not used afaics 
+/* Not used afaics
  .hippo-header-home {
   background: url("images/hippologo.png") no-repeat;
   text-indent: -9999px;
@@ -384,10 +384,6 @@ body.hippo-root #doc3 {
   background-repeat: no-repeat;
   padding-right: 18px;
   text-decoration: underline;
-}
-
-.hippo-browser-search {
-  margin: 3px;
 }
 
 /* Default Table lists *//*
@@ -771,8 +767,7 @@ table.hippo-window-form {
   width: 300px;
 }
 
-.hippo-window-form td.hippo-window-navigator,
-.hippo-window-form table.hippo-search-section td {
+.hippo-window-form td.hippo-window-navigator{
   padding: 0;
 }
 
