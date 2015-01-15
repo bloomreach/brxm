@@ -681,18 +681,18 @@
 }
 
 /* channel icon panel overview switch buttons */
-.channel-manager .x-toolbar-right .x-btn-noicon .x-btn-text {
+.channel-manager-toolbar .x-toolbar-right .x-btn-noicon .x-btn-text {
     padding-top: 3px;
     line-height: 34px;
     border-bottom: 3px solid transparent;
 }
 
-.channel-manager .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
+.channel-manager-toolbar .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
     color: #0086F8;
     border-bottom: 3px solid #0086F8;
 }
 
-.channel-manager .x-toolbar-right .xtb-spacer {
+.channel-manager-toolbar .x-toolbar-right .xtb-spacer {
     width: 16px;
 }
 
