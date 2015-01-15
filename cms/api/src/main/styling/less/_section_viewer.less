@@ -60,7 +60,7 @@
         flex: auto;
         overflow: auto;
         // IE10 needs a max height to draw scrollbars
-        @vertical-pixels-occupied: @sections-top-height + @sections-bottom-height; 
+        @vertical-pixels-occupied: @sections-top-height + @sections-bottom-height + 1;
         max-height: ~"calc(100% - @{vertical-pixels-occupied}px)";
       }
 
