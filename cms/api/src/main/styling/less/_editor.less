@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,5 +20,18 @@
 
 .hippo-editor {
   background: @editor-bgcolor;
+
+  .hippo-editor-top,
+  .hippo-editor-body {
+    border-left: 8px solid;
+  }
+
+  .hippo-editor-top {
+    border-left-color: @editor-top-border-color;
+  }
+
+  .hippo-editor-body {
+    border-left-color: @editor-body-border-color;
+  }
 }
 

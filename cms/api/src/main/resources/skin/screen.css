@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1091,76 +1091,6 @@ body .hippo-picker-properties div.text-input input {
   position: absolute;
   right: 15px;
   bottom: 15px;
-}
-
-/* Form elements */
-/* ================================================ */
-.hippo-select-file {
-}
-
-/* Navigator */
-/* ================================================ */
-.hippo-browser-documents-small .hippo-perspective-title {
-  color: white;
-  padding: 2px;
-  padding-left: 4px;
-  float: left;
-  padding-top: 5px;
-}
-
-/*
-.hippo-browser-documents-small {
-  background: transparent;
-}
-*/
-
-.hippo-browser-documents-small .hippo-browser-documents-small-folders h3 {
-  background: transparent url(images/filelistHeaderback.png) repeat-x;
-  font-weight: normal;
-  padding: 2px;
-  padding-left: 6px;
-  padding-bottom: 5px;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-small-files {
-  border-left: 1px solid #afafaf;
-  border-right: 1px solid #afafaf;
-  background: white;
-}
-
-/*
-.hippo-browser-documents-small .hippo-browser-documents-small-folders {
-  background: #f4f4f4;
-  border-left: 0;
-  border-bottom: 0;
-  border-top: 0;
-}
-*/
-/*
-.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details {
-  clear: both;
-}
-*/
-
-.hippo-browser-documents-small .hippo-browser-documents-small-files {
-  /*background: url("images/document-list-back.png") repeat-x top left #fcfcfc;*/
-    background-color: #fcfcfc;
-}
-
-/* toolbar requires some tweaks here */
-.hippo-browser-documents-small .hippo-browser-documents-workflow select {
-  width: 180px;
-  padding: 1px;
-  margin: 2px;
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-workflow select option {
-  color: #666666;
-  background: white;
-  padding: 1px;
 }
 
 /* Tree moved to _tree.less */
