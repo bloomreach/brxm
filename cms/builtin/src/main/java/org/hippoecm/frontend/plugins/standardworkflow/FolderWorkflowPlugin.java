@@ -366,22 +366,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 });
     }
 
-    protected Dialog createAddDocumentDialog(AddDocumentArguments addDocumentModel, String category, Set<String> prototypes, boolean translated, IWorkflowInvoker invoker) {
-
-        AddDocumentDialog dialog = newAddDocumentDialog(
-                addDocumentModel,
-                new StringResourceModel(category, this, null),
-                category,
-                prototypes,
-                translated,
-                invoker
-        );
-
-        dialog.getLanguageField().setVisible(!isLanguageKnown());
-
-        return dialog;
-    }
-
     protected boolean isLanguageKnown() {
         WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
         try {
@@ -398,15 +382,15 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         return false;
     }
 
-    protected AddDocumentDialog newAddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> titleModel,
+    protected AddDocumentDialog createAddDocumentDialog(AddDocumentArguments addDocumentModel,
                                                      String category, Set<String> prototypes, boolean translated,
                                                      IWorkflowInvoker invoker) {
         return new AddDocumentDialog(
                 addDocumentModel,
-                titleModel,
+                new StringResourceModel(category, this, null),
                 category,
                 prototypes,
-                translated,
+                translated && !isLanguageKnown(),
                 invoker,
                 new LoadableDetachableModel<StringCodec>() {
                     @Override
