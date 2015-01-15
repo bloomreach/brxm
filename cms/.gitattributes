@@ -2439,7 +2439,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspec
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_nl.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-32.png -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/dev-perspective.css -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-128.png -text svneol=unset#image/png
