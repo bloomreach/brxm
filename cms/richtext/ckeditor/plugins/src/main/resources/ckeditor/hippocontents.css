@@ -129,6 +129,16 @@
   margin-bottom: 0.3em;
 }
 
+.cke_wysiwyg_div.cke_editable h1:first-child,
+.cke_wysiwyg_div.cke_editable h2:first-child,
+.cke_wysiwyg_div.cke_editable h3:first-child,
+.cke_wysiwyg_div.cke_editable h4:first-child,
+.cke_wysiwyg_div.cke_editable h5:first-child,
+.cke_wysiwyg_div.cke_editable h6:first-child,
+.cke_wysiwyg_div.cke_editable p {
+    margin-top: 0;
+}
+
 .cke_wysiwyg_div.cke_editable h1,
 .cke_panel_container .cke_panel_listItem h1 {
     font-size: 2em;
