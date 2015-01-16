@@ -176,7 +176,7 @@ public class TextSearchBuilder implements IClusterable {
                     if (c == '\'') {
                         // According to JCR 1.0 (JSR-170), section 6.6.4.9, the apostrophe(') and quotation mark (")
                         // are escaped by the two adjacent marks, i.e. ('') and ("").
-                        tb.append("\'");
+                        tb.append('\'');
                     }
                     if (c == MINUS_SIGN) {
                         // we do not allowe minus sign followed by a space or ignored char
