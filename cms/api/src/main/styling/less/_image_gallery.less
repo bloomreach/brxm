@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-.image-gallery .toggle-button .gallery-mode-active {
+.image-gallery {
 
-  box-sizing: border-box;
-  border-bottom: 2px solid @aqua;
+  // move the 'Name' header above the icon column
+  .hippo-list-documents th.doclisting-name span {
+    margin-left: -45px;
+  }
 
-  .hi {
-    fill: @aqua;
+  .toggle-button .gallery-mode-active {
+    box-sizing: border-box;
+    border-bottom: 2px solid @aqua;
+
+    .hi {
+      fill: @aqua;
+    }
   }
 }
