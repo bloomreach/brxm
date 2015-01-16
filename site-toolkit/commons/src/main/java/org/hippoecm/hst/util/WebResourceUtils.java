@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.util;
 
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.cms7.services.webresources.WebResourcesService;
 
 public class WebResourceUtils {
 
@@ -30,4 +33,32 @@ public class WebResourceUtils {
         }
         return bundleName;
     }
+
+    public static String webResourcePathToJcrPath(final String templateSource) {
+        String webResourcePath = "/" + PathUtils.normalizePath(templateSource.substring(
+                ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length()));
+        final String bundleName = getBundleName();
+        return WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + webResourcePath;
+    }
+
+    public static String jcrPathToWebResourcePath(final String variantJcrPath) {
+        final String bundleName = getBundleName();
+        final String requiredPrefix = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + "/";
+        if (!variantJcrPath.startsWith(requiredPrefix)) {
+            String msg = String.format("Cannot translate '%s' to web resouce path because '%s' does not start" +
+                    " with '%s'", variantJcrPath, variantJcrPath, requiredPrefix);
+            throw new IllegalArgumentException(msg);
+        }
+        return ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL + "/" + variantJcrPath.substring(requiredPrefix.length());
+    }
+
+    private static String getBundleName() {
+        final HstRequestContext ctx = RequestContextProvider.get();
+        if (ctx == null) {
+            String msg = String.format("Cannot serve freemarker template from webresource because there is no HstRequestContext.");
+            throw new IllegalStateException(msg);
+        }
+        return getBundleName(ctx);
+    }
+
 }

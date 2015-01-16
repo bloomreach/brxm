@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class HstComponentParameters {
     public HstComponentParameters(final Node node, final ContainerItemHelper containerItemHelper) throws RepositoryException {
         this.node = node;
         this.containerItemHelper = containerItemHelper;
-        prefixedParameters = new HashMap<String, Map<String, String>>();
+        prefixedParameters = new HashMap<>();
         initialize();
     }
 
@@ -150,7 +150,7 @@ public class HstComponentParameters {
         final String prefixOrDefault = prefixOrDefault(prefix);
         Map<String, String> parameters = prefixedParameters.get(prefixOrDefault);
         if (parameters == null) {
-            parameters = new HashMap<String, String>();
+            parameters = new HashMap<>();
             prefixedParameters.put(prefixOrDefault, parameters);
         }
         parameters.put(name, value);
