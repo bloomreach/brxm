@@ -119,6 +119,17 @@
 }
 
 .cke_wysiwyg_div.cke_editable h1,
+.cke_wysiwyg_div.cke_editable h2,
+.cke_wysiwyg_div.cke_editable h3,
+.cke_wysiwyg_div.cke_editable h4,
+.cke_wysiwyg_div.cke_editable h5,
+.cke_wysiwyg_div.cke_editable h6,
+.cke_wysiwyg_div.cke_editable p {
+  margin-top: 0.7em;
+  margin-bottom: 0.3em;
+}
+
+.cke_wysiwyg_div.cke_editable h1,
 .cke_panel_container .cke_panel_listItem h1 {
     font-size: 2em;
 }
