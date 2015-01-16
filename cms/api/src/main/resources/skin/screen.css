@@ -1627,32 +1627,6 @@ body.hippo-root div.yui-log-container {
   height: 150px;
 }
 
-/* Toggle button class is used in multiple plugin, to avoid clashes define it here *//*
-
-.toggle-button {
-  float: right; */
-/*margin-bottom: 3px;*//*
-
-  padding-top: 2px;
-  padding-right: 2px;
-  position: static;
-  padding-bottom: 3px;
-}
-
-.toggle-button > a > img {
-  vertical-align: bottom;
-}
-*/
-
-.hippo-picker .hippo-picker-list-details .toggle-button {
-  padding-top: 1px;
-  padding-right: 1px;
-}
-
-.hippo-picker .hippo-picker-list-details .toggle-button > a > img {
-  height: 15px;
-}
-
 .password-expiration-label {
 	color: red;
 	font-size: 14px;
