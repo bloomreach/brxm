@@ -28,6 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -49,6 +50,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
@@ -56,6 +58,8 @@ import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
+import org.hippoecm.frontend.skin.DocumentListColumn;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.LabelWithTitle;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -71,8 +75,6 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     final static Logger log = LoggerFactory.getLogger(ImageGalleryPlugin.class);
 
     private static final String IMAGE_GALLERY_CSS = "ImageGalleryPlugin.css";
-    private static final String TOGGLE_LIST_IMG = "toggle_list.png";
-    private static final String TOGGLE_THUMBNAIL_IMG = "toggle_thumb.png";
 
     private static final String IMAGE_FOLDER_TYPE = "hippogallery:stdImageGallery";
     private static final int DEFAULT_THUMBNAIL_SIZE = 60;
@@ -86,13 +88,11 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     private Mode mode = THUMBNAILS;
 
     private WebMarkupContainer galleryList;
-    private AjaxLink<String> toggleLink;
-    private Image toggleImage;
 
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
 
-        this.setClassName("hippo-gallery-images");
+        this.setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
 
         add(galleryList = new WebMarkupContainer("gallery-list"));
         galleryList.setOutputMarkupId(true);
@@ -107,36 +107,17 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                 "}"));
         galleryList.add(new WidgetBehavior(settings));
 
-        addButton(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
+        addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_TINY));
+        addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS_TINY));
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                mode = mode == LIST ? THUMBNAILS : LIST;
-                redraw();
-
-            }
-        });
-        toggleLink.setOutputMarkupId(true);
-
-        toggleImage = new CachingImage("toggleimg", TOGGLE_LIST_IMG);
-        toggleImage.setOutputMarkupId(true);
-        toggleLink.add(toggleImage);
+        add(new AttributeAppender("class", Model.of("image-gallery"), " "));
     }
 
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (mode == LIST) {
-            this.dataTable.setVisible(true);
-            this.galleryList.setVisible(false);
-            toggleImage = new CachingImage("toggleimg", TOGGLE_LIST_IMG);
-        } else {
-            this.dataTable.setVisible(false);
-            this.galleryList.setVisible(true);
-            toggleImage = new CachingImage("toggleimg", TOGGLE_THUMBNAIL_IMG);
-        }
-
-        toggleLink.replace(toggleImage);
+        this.dataTable.setVisible(mode == LIST);
+        this.galleryList.setVisible(mode == THUMBNAILS);
     }
 
     @Override
@@ -176,18 +157,18 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
             thumbnailSize = getPluginConfig().getAsInteger("gallery.thumbnail.size", DEFAULT_THUMBNAIL_SIZE);
             String thumbWidth = "width: " + thumbnailSize + "px;";
             String thumbHeight = "height: " + thumbnailSize + "px;";
-            thumbnailStyle = new AttributeAppender("style", true, new Model<String>(thumbWidth + thumbHeight), " ");
+            thumbnailStyle = new AttributeAppender("style", Model.of(thumbWidth + thumbHeight), " ");
 
             int itemSize= thumbnailSize + DEFAULT_THUMBNAIL_OFFSET;
             String itemWidth = "width: " + itemSize + "px;";
             String itemHeight = "height: " + itemSize + "px;";
-            itemWidthStyle = new AttributeAppender("style", true, new Model<String>(itemWidth), " ");
-            itemHeightStyle = new AttributeAppender("style", true, new Model<String>(itemHeight), " ");
+            itemWidthStyle = new AttributeAppender("style", Model.of(itemWidth), " ");
+            itemHeightStyle = new AttributeAppender("style", Model.of(itemHeight), " ");
         }
 
         @Override
         protected Iterator<IModel<Node>> getItemModels() {
-            ArrayList<IModel<Node>> nodeModels = new ArrayList<IModel<Node>>();
+            ArrayList<IModel<Node>> nodeModels = new ArrayList<>();
 
             IDataProvider<Node> dataProvider = ImageGalleryPlugin.this.dataTable.getDataProvider();
             if (dataProvider != null) {
@@ -220,7 +201,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                         }
                     }
                 } catch (RepositoryException e) {
-                    log.error(e.getMessage());
+                    log.error("Cannot fetch image models", e);
                 }
             }
             return nodeModels.iterator();
@@ -228,7 +209,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
         @Override
         protected void populateItem(final org.apache.wicket.markup.repeater.Item<Node> listItem) {
-            listItem.add(new AttributeAppender("class", true, new Model<String>("selected"), " ") {
+            listItem.add(new AttributeAppender("class", Model.of("selected"), " ") {
                 @Override
                 public boolean isEnabled(Component component) {
                     IModel<Node> selectedModel = getSelectedModel();
@@ -323,6 +304,34 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
             target.focusComponent(listItem);
 
             previousSelected = listItem;
+        }
+    }
+
+    private class GalleryModeButton extends AjaxLink<String> {
+
+        private final Mode activatedMode;
+
+        public GalleryModeButton(final String id, final Mode activatedMode, final Icon icon) {
+            super(id);
+
+            this.activatedMode = activatedMode;
+            setOutputMarkupId(true);
+
+            add(HippoIcon.fromSprite("icon", icon));
+        }
+
+        @Override
+        protected void onComponentTag(final ComponentTag tag) {
+            if (mode == activatedMode) {
+                tag.put("class", "gallery-mode-active");
+            }
+            super.onComponentTag(tag);
+        }
+
+        @Override
+        public void onClick(final AjaxRequestTarget target) {
+            mode = activatedMode;
+            redraw();
         }
     }
 

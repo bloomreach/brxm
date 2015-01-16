@@ -1113,6 +1113,7 @@ api/src/main/styling/less/_hippo_dev_extensions.less -text
 api/src/main/styling/less/_hippo_logo.less -text
 api/src/main/styling/less/_hippo_menu.less -text
 api/src/main/styling/less/_icons.less -text
+api/src/main/styling/less/_image_gallery.less -text
 api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_navigator.less -text
@@ -2033,7 +2034,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/Tra
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/Translations_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/compare/MimeTypeComparator.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/compare/SizeComparator.java -text svneol=unset#text/plain
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/ImageGalleryIconModifier.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/MimeTypeAttributeModifier.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-audio-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-binary-16.png -text svneol=unset#image/png

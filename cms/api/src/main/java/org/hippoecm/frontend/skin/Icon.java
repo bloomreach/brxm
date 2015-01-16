@@ -48,12 +48,14 @@ public enum Icon {
     FOLDER_TINY,
     FOLDER_SMALL,
     FOLDER_OPEN_TINY,
+    LIST_TINY,
     SAVE_TINY,
     SAVE_CLOSE_TINY,
     SEARCH_TINY,
     STATE_CHANGED_SMALL,
     STATE_LIVE_SMALL,
-    STATE_NEW_SMALL;
+    STATE_NEW_SMALL,
+    THUMBNAILS_TINY;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 

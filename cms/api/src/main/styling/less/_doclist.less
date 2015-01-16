@@ -81,6 +81,9 @@
     }
     &.doclisting-lastmodified-by {
       .fixed-width(120px);
+      &:last-child {
+        .fixed-width(200px);
+      }
     }
     &.doclisting-translations {
       .fixed-width(120px);
@@ -108,6 +111,12 @@
         word-wrap: none;
         text-overflow: ellipsis;
       }
+    }
+    &.doclisting-width {
+      .fixed-width(75px);
+    }
+    &.doclisting-height {
+      .fixed-width(75px);
     }
   }
 
@@ -314,7 +323,7 @@
 
 // expand/collapse
 .toggle-button {
-  display: block;
+  display: flex;
   position: absolute;
   top: 0;
   right: 0;
@@ -325,9 +334,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: @doclist-head-height;
+    box-sizing: border-box;
+    width: 16px;
+    margin: 0 7px;
     height: @doclist-head-height;
     cursor: pointer;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+
+    &:last-child {
+      margin-right: 15px;
+    }
 
     &:hover .hi {
       fill: @aqua;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,9 @@ public enum DocumentListColumn {
     LAST_MODIFIED_BY("doclisting-lastmodified-by"),
     TRANSLATIONS("doclisting-translations"),
     SIZE("doclisting-size"),
-    MIME_TYPE("doclisting-mimetype");
+    MIME_TYPE("doclisting-mimetype"),
+    WIDTH("doclisting-width"),
+    HEIGHT("doclisting-height");
 
     public static final String DOCUMENT_LIST_CSS_CLASS = "hippo-list-documents";
 
