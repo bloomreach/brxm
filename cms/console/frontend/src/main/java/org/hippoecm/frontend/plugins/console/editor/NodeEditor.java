@@ -28,7 +28,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.behavior.CssClassNameAppender;
 import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
 import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
 
@@ -82,10 +82,10 @@ class NodeEditor extends Form<Node> {
                 return JcrNodeIcon.getIcon(getModel().getObject());
             }
         });
-        icon.add(new AttributeAppender("style", new LoadableDetachableModel<Object>() {
+        icon.add(new CssClassNameAppender(new LoadableDetachableModel<String>() {
             @Override
-            protected Object load() {
-                return "color:" + JcrNodeIcon.getIconColor(getModel().getObject()) + ";";
+            protected String load() {
+                return JcrNodeIcon.getIconColorCssClassname(getModel().getObject());
             }
         }));
         add(icon);

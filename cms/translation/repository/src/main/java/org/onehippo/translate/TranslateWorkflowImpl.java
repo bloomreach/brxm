@@ -181,7 +181,9 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
     private Iterable<TranslatedProperty> getPropertiesToTranslate(Collection<String> fields) throws RepositoryException {
         List<TranslatedProperty> result = new ArrayList<>();
         for (String field : fields) {
-            result.add(new TranslatedProperty(subject.getProperty(field)));
+            if (subject.hasProperty(field)) {
+                result.add(new TranslatedProperty(subject.getProperty(field)));
+            }
         }
         return result;
     }

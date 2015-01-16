@@ -126,7 +126,7 @@
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.4.6-h1-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.4.6-h1</hippo.ckeditor.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
@@ -517,7 +517,17 @@
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!-- JQuery File Upload -->
-                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/*.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/canvas-to-blob.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-image.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-process.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-ui.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-validate.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.iframe-transport.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.ui.widget.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image-meta.js</exclude>
+                <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/tmpl.js</exclude>
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/css/*.css</exclude>
                 <!--  files without license header  -->
                 <exclude>api/.bowerrc</exclude>
