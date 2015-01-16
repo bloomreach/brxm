@@ -84,6 +84,10 @@
         },
 
         openPicker: function() {
+            if (this.disabled) {
+                console.log('Picker is disabled');
+                return;
+            }
             Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
                     this.getValue(),
                     this.pickerConfig,
