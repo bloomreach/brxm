@@ -2304,8 +2304,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/g
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-48.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/images/hippo-panels-headerback.png -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator_de.properties -text

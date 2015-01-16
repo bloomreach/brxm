@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,14 +255,6 @@ div.hippo-controlpanel-actions-top {
 .hippo-controlpanel-table-default {
 }
 
-.hippo-controlpanel-help-permissionsdiagram {
-    background: url("images/hippo-controlpanel-help-permissions-en.png") no-repeat;
-    width: 580px;
-    height: 190px;
-    background-position: bottom center;
-    margin-bottom: 15px;
-}
-
 .groovy-basic-shell {
     background-color: white;
     height: 320px;
@@ -316,7 +308,7 @@ div.hippo-controlpanel-actions-top {
     border-color: #AFAFAF;
     border-width: 1px;
     padding: 10px;
-    height: 800px;
+    height: 830px;
 }
 
 .updater-tree .node-link {
@@ -385,4 +377,8 @@ div.hippo-controlpanel-actions-top {
 .updater-registry-editor-visible {
     height: 500px !important;
     visibility: visible;
+}
+
+.updater-details pre {
+    overflow: hidden;
 }
