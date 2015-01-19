@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,15 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -67,24 +68,17 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String DEFAULT_SERVICE_ID = IRestProxyService.class.getName();
 
     private static final long serialVersionUID = 1L;
-    private static final JacksonJaxbJsonProvider defaultJJJProvider;
+    private static final JacksonJaxbJsonProvider defaultJJJProvider = new JacksonJaxbJsonProvider() {{
+        setMapper(new ObjectMapper() {{
+            enableDefaultTypingAsProperty(DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
+            registerModule(new SimpleModule("CmsRestJacksonJsonModule", Version.unknownVersion()) {{
+                addDeserializer(Annotation.class, new AnnotationJsonDeserializer());
+            }});
+        }});
+    }};
 
     private final String restUri;
     private final String contextPath;
-
-    static {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enableDefaultTyping();
-        objectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
-        // Version here used for Jackson JSON purposes and has nothing to do with Hippo CMS Engine version
-        // Just using unknown version as it is of no use to us
-        SimpleModule cmsRestJacksonJsonModule = new SimpleModule("CmsRestJacksonJsonModule", Version.unknownVersion());
-        cmsRestJacksonJsonModule.addDeserializer(Annotation.class, new AnnotationJsonDeserializer());
-        objectMapper.registerModule(cmsRestJacksonJsonModule);
-        defaultJJJProvider = new JacksonJaxbJsonProvider();
-        defaultJJJProvider.setMapper(objectMapper);
-    }
-
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
