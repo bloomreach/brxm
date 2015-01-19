@@ -126,9 +126,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-restyling-2.27.xx</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-restyling-2.27.xx</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-restyling-2.27.xx</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</url>
   </scm>
 
   <build>
