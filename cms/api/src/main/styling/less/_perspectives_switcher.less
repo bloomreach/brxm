@@ -1,0 +1,84 @@
+/*
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* TabsPlugin perspective switcher (left buttons) */
+/* ================================================ */
+
+.tabbed-panel-layout-left {
+  background-color: @main-menu-bgcolor;
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
+  top: 0;
+  left: 0;
+  padding-top: 6px;
+
+  li {
+    margin-bottom: 4px;
+
+    > div {
+      padding: 5px 0;
+
+      &:hover svg {
+        fill: @main-menu-hover-icon-color;
+      }
+
+      a {
+        color: @main-menu-text-color;
+
+        img, svg {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        svg {
+          fill: @main-menu-icon-color;
+        }
+
+        span {
+          display: inline-block;
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .selected div {
+    background-color: @main-menu-selected-bgcolor;
+    a {
+      color: @main-menu-selected-text-color;
+
+      svg {
+        fill: @main-menu-selected-icon-color;
+      }
+    }
+  }
+}
+
+.hippo-perspectives-toolbar {
+  position: absolute;
+  left: 0;
+  bottom: @hippo-logo-height + 4px;
+  width: @main-menu-width;
+
+  .hippo-current-user-name {
+    color: @main-menu-current-user-color;
+    padding: 4px 4px 0 4px;
+  }
+
+}

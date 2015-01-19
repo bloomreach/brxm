@@ -47,6 +47,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttribute
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,10 +192,10 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
         column = new ListColumn(new StringResourceModel("doclisting-name", this, null), null);
         column.setAttributeModifier(new DocumentAttributeModifier());
-        column.setCssClass("doclisting-name");
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("doclisting-state", this, null), null);
+        column = new ListColumn(new StringResourceModel(DocumentListColumn.STATE.getCssClass(), this, null), null);
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new StateIconAttributeModifier());
         columns.add(column);

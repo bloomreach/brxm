@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -27,7 +28,8 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -50,6 +52,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.ListViewService;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
@@ -64,9 +67,6 @@ public class RootPlugin extends TabsPlugin {
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
-
-    @SuppressWarnings("unused")
-    private String username;
 
     private AbstractView<IRenderService> view;
     private List<IRenderService> services;
@@ -102,10 +102,7 @@ public class RootPlugin extends TabsPlugin {
             add(new Pinger("pinger"));
         }
 
-        String userID = getSession().getJcrSession().getUserID();
-        username = new User(userID).getDisplayName();
-
-        add(new Label("username", new PropertyModel(this, "username")));
+        add(new Label("currentUserName", Model.of(getCurrentUserName())));
 
         services = new LinkedList<IRenderService>();
 
@@ -174,7 +171,12 @@ public class RootPlugin extends TabsPlugin {
         extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());
         add(extWidgetRegistry);
 
-        addExtensionPoint("top");
+        if (config.containsKey("top")) {
+            log.warn("Usage of property 'top' on the RootPlugin is deprecated. The documents tabs is now configured " +
+                    "as an extension. Add a value to property wicket.extensions named 'extension.tabs.documents' and " +
+                    "add a property named 'extension.tabs.documents' with the value of the document tabs service, " +
+                    "by default it's 'service.browse.tabscontainer'.");
+        }
 
         TabbedPanel tabbedPanel = getTabbedPanel();
         tabbedPanel.setIconType(IconSize.SMALL);
@@ -183,20 +185,33 @@ public class RootPlugin extends TabsPlugin {
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
 
-        PageLayoutSettings plSettings = new PageLayoutSettings();
-        plSettings.setHeaderHeight(25);
-        // TODO: update settings from config
-        add(new PageLayoutBehavior(plSettings));
+        final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
+        add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
+    }
+
+    private String getCurrentUserName() {
+        final String userID = getSession().getJcrSession().getUserID();
+        return new User(userID).getDisplayName();
+    }
+
+    private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
+        final IPluginConfig pageLayoutConfig = config.getPluginConfig("layout.page");
+        if (pageLayoutConfig != null) {
+            return new PageLayoutSettings(pageLayoutConfig);
+        } else {
+            log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
+            PageLayoutSettings settings = new PageLayoutSettings();
+            settings.setFooterHeight(28);
+            return settings;
+        }
     }
 
     @Override
     public void render(PluginRequestTarget target) {
         if (!rendered) {
             WebAppSettings settings = new WebAppSettings();
-            settings.setLoadCssFonts(true);
             settings.setLoadCssGrids(true);
-            settings.setLoadCssReset(true);
             getPage().add(new WebAppBehavior(settings));
             rendered = true;
         }
@@ -210,11 +225,17 @@ public class RootPlugin extends TabsPlugin {
     }
 
     @Override
+    public void onComponentTag(final ComponentTag tag) {
+        final Response response = RequestCycle.get().getResponse();
+        response.write(Icon.getIconSprite());
+    }
+
+    @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(ExtResourcesHeaderItem.get());
         response.render(CmsHeaderItem.get());
+        response.render(ExtResourcesHeaderItem.get());
     }
 
     protected String getItemId() {

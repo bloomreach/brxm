@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,19 +19,22 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.tree.icon.AbstractJcrTreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,11 +75,11 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
     public void stop() {
     }
 
-    public ResourceReference getNodeIcon(TreeNode treeNode, ITreeState state) {
+    @Override
+    public Component getNodeIcon(final String id, final TreeNode treeNode, final ITreeState state) {
         if (locales == null) {
             return null;
         }
-
         if (treeNode instanceof IJcrTreeNode) {
             IJcrTreeNode jcrTreeNode = (IJcrTreeNode) treeNode;
             if (!isVirtual(jcrTreeNode)) {
@@ -84,24 +87,11 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
                 if (node != null) {
                     try {
                         if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                            String locale = node.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                            TreeNode parentTreeNode = treeNode.getParent();
-                            if (parentTreeNode instanceof IJcrTreeNode) {
-                                Node parentNode = ((IJcrTreeNode) parentTreeNode).getNodeModel().getObject();
-                                if (parentNode != null && parentNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                                    String parentLocale = parentNode.getProperty(HippoTranslationNodeType.LOCALE)
-                                            .getString();
-                                    if (!locale.equals(parentLocale)) {
-                                        return getIcon(treeNode, state, locale);
-                                    } else {
-                                        return null;
-                                    }
-                                }
-                            }
-                            return getIcon(treeNode, state, locale);
+                            return getTranslatedNodeIcon(id, treeNode, state, node);
                         }
                     } catch (RepositoryException e) {
-                        log.error("Could not determine translation icon for " + jcrTreeNode.getNodeModel());
+                        log.warn("Could not determine translation icon for node '{}'",
+                                JcrUtils.getNodePathQuietly(node), e);
                     }
                 }
             }
@@ -109,13 +99,35 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
         return null;
     }
 
-    private ResourceReference getIcon(TreeNode treeNode, ITreeState state, String locale) {
-        HippoLocale hippoLocale = locales.getLocale(locale);
-        if (state.isNodeExpanded(treeNode)) {
-            return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN);
-        } else {
-            return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER);
+    private Component getTranslatedNodeIcon(final String id, final TreeNode treeNode, final ITreeState state, final Node node) throws RepositoryException {
+        final String locale = node.getProperty(HippoTranslationNodeType.LOCALE).getString();
+        final TreeNode parentTreeNode = treeNode.getParent();
+        if (parentTreeNode instanceof IJcrTreeNode) {
+            final Node parentNode = ((IJcrTreeNode) parentTreeNode).getNodeModel().getObject();
+            if (parentNode != null && parentNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                final String parentLocale = parentNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                if (!locale.equals(parentLocale)) {
+                    return getTranslatedNodeIcon(id, treeNode, state, locale);
+                } else {
+                    return null;
+                }
+            }
         }
+        return getTranslatedNodeIcon(id, treeNode, state, locale);
+    }
+
+    private HippoIconStack getTranslatedNodeIcon(final String id, final TreeNode treeNode, final ITreeState state, final String locale) {
+        final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.TINY);
+        final HippoLocale hippoLocale = locales.getLocale(locale);
+
+        if (state.isNodeExpanded(treeNode)) {
+            nodeIcon.addFromSprite(Icon.FOLDER_OPEN_TINY);
+            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN));
+        } else {
+            nodeIcon.addFromSprite(Icon.FOLDER_TINY);
+            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER));
+        }
+        return nodeIcon;
     }
 
 }

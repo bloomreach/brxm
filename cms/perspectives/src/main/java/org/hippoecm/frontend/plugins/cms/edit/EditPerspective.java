@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,13 +31,10 @@ import javax.jcr.ValueFormatException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
@@ -68,7 +65,6 @@ public class EditPerspective extends Perspective {
     static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private static final long serialVersionUID = 1L;
-    private static final CssResourceReference PERSPECTIVE_SKIN = new CssResourceReference(EditPerspective.class, "edit-perspective.css");
 
     private String topHeight;
     private WireframeSettings wfSettings;
@@ -135,13 +131,6 @@ public class EditPerspective extends Perspective {
         UnitSettings topSettings = wfSettings.getUnit("top");
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(wfSettings));
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        response.render(CssHeaderItem.forReference(PERSPECTIVE_SKIN));
     }
 
     @Override

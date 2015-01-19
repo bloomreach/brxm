@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -40,9 +41,15 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
 
+    public static final String IMAGE_EXTENSION = "svg";
+    public static final String FALLBACK_IMAGE_EXTENSION = "png";
+
     private IModel<String> title = new Model<String>("title");
 
     private boolean rendered;
+
+    private String imageExtension;
+    private String fallbackImageExtension;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -50,10 +57,19 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         if (config.getString(TITLE) != null) {
             title = new StringResourceModel(config.getString(TITLE), this, null);
         }
+
+        imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
+        fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
+    }
+
+    public String getTitleCssClass() {
+        // return a stable CSS class name to be able to identify a perspective's link in automated tests
+        return "hippo-perspective-" + getClass().getSimpleName().toLowerCase();
     }
 
     // ITitleDecorator
 
+    @Override
     public IModel<String> getTitle() {
         return title;
     }
@@ -64,8 +80,52 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         tag.append("class", "perspective", " ");
     }
 
+    @Override
     public ResourceReference getIcon(IconSize size) {
-        return new PackageResourceReference(Perspective.class, "perspective-" + size.getSize() + ".png");
+        // try (name)-(size).svg
+        String image = toImageName(getClass().getSimpleName(), size, imageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // try (name).svg
+        image = toImageName(getClass().getSimpleName(), null, imageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // try (name)-(size).png
+        image = toImageName(getClass().getSimpleName(), size, fallbackImageExtension);
+        if (PackageResource.exists(getClass(), image, null, null, null)) {
+            return new PackageResourceReference(getClass(), image);
+        }
+
+        // use built-in picture
+        image = toImageName(Perspective.class.getSimpleName(), size, fallbackImageExtension);
+        if (PackageResource.exists(Perspective.class, image, null, null, null)) {
+            return new PackageResourceReference(Perspective.class, image);
+        }
+
+        return null;
+    }
+
+    protected String toImageName(final String camelCaseString, final IconSize size, final String extension) {
+        StringBuilder name = new StringBuilder(camelCaseString.length());
+        name.append(Character.toLowerCase(camelCaseString.charAt(0)));
+        for (int i = 1; i < camelCaseString.length(); i++) {
+            char c = camelCaseString.charAt(i);
+            if (Character.isUpperCase(c)) {
+                name.append('-').append(Character.toLowerCase(c));
+            } else {
+                name.append(c);
+            }
+        }
+        if (size != null) {
+            name.append('-').append(size.getSize());    
+        }
+        name.append('.').append(extension);
+
+        return name.toString();
     }
 
     protected void setTitle(String title) {

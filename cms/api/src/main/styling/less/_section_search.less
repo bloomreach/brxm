@@ -1,0 +1,76 @@
+/*
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.section-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 8px 4px 8px;
+
+  > input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid @search-input-border-color;
+    border-radius: 4px;
+    height: 25px;
+    padding-left: 4px;
+    padding-right: 22px;
+  }
+
+  > a {
+    //ie10: 'make clickable' workaround
+    display: inline-block;
+    .empty-gif-background();
+
+    position: relative;
+    right: 24px;
+    top: 3px;
+
+    svg {
+      fill: @search-input-reset-color;
+    }
+
+    &:hover svg {
+      fill: @search-input-reset-hover-color;
+    }
+  }
+}
+
+.section-search-scopes {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 8px;
+
+  > div {
+    float: left;
+    border-radius: 4px;
+    padding: 4px;
+    margin-top: 4px;
+    font-size: 11px;
+
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+
+  .hippo-search-active-scope {
+    background-color: @search-scope-active-bgcolor;
+  }
+}
+
+.section-viewer .section-view.selected .section-top.search-result {
+  min-height: unit(@sections-top-search-result-height, px);
+  height: unit(@sections-top-search-result-height, px);
+}

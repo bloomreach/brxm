@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ import org.hippoecm.frontend.translation.LocaleImageService;
 import org.hippoecm.frontend.translation.TranslationResources;
 import org.hippoecm.repository.api.StringCodec;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -46,7 +44,6 @@ public class DocumentTranslationView extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(DocumentTranslationView.class);
     private static final PackageResourceReference EMPTY_PNG = new PackageResourceReference(DocumentTranslationView.class, "empty.png");
     private static final PackageResourceReference FOLDER_PNG = new PackageResourceReference(DocumentTranslationView.class, "folder.png");
     private static final PackageResourceReference DOCUMENT_PNG = new PackageResourceReference(DocumentTranslationView.class, "doc.png");

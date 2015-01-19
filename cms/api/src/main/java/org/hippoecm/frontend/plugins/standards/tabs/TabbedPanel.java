@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -48,18 +47,18 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.ICardView;
+import org.hippoecm.frontend.skin.Icon;
 
 public class TabbedPanel extends WebMarkupContainer {
 
@@ -128,7 +127,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private CardView cardView;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
-        super(id, new Model<Integer>(-1));
+        super(id, new Model<>(-1));
 
         if (tabs == null) {
             throw new IllegalArgumentException("argument [tabs] cannot be null");
@@ -241,7 +240,7 @@ public class TabbedPanel extends WebMarkupContainer {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 //Create a copy so we won't run into ConcurrentModificationException
-                List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+                List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
                 for (TabsPlugin.Tab currentTab : tabsCopy) {
                     plugin.onCloseUnmodified(currentTab, target);
                 }
@@ -259,7 +258,7 @@ public class TabbedPanel extends WebMarkupContainer {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                String cssClass = (String) tag.getAttribute("class");
+                String cssClass = tag.getAttribute("class");
                 if (cssClass == null) {
                     cssClass = " ";
                 }
@@ -278,21 +277,28 @@ public class TabbedPanel extends WebMarkupContainer {
 
     // used by superclass to add title to the container
     protected WebMarkupContainer getTitleMarkupContainer(final int index) {
-        WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(index));
+        WebMarkupContainer container = new WebMarkupContainer("container", new Model<>(index));
         final TabsPlugin.Tab tab = getTabs().get(index);
-        final IModel<TabsPlugin.Tab> tabModel = new Model<TabsPlugin.Tab>(tab);
+        final IModel<TabsPlugin.Tab> tabModel = new Model<>(tab);
+        
         if (tab.isEditorTab()) {
-            container.add(new CloseLink<TabsPlugin.Tab>("close", tabModel, tab.getForm()) {
+            CloseLink closeLink = new CloseLink<TabsPlugin.Tab>("close", tabModel, tab.getForm()) {
 
                 @Override
                 protected void onClick(AjaxRequestTarget target) {
                     plugin.onClose(tab, target);
                 }
 
-            });
+            };
+            container.add(closeLink);
+            closeLink.add(HippoIcon.fromSprite("close-icon", Icon.CLOSE_TINY));
         } else {
-            container.add(new Label("close").setVisible(false));
+            EmptyPanel hidden = new EmptyPanel("close");
+            hidden.setVisible(false);
+            hidden.add(HippoIcon.fromSprite("close-icon", Icon.EMPTY_TINY));
+            container.add(hidden);
         }
+
         WebMarkupContainer link = new AjaxLink<TabsPlugin.Tab>("link", tabModel) {
             private static final long serialVersionUID = 1L;
 
@@ -302,18 +308,11 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         };
 
-        ResourceReference iconResource = tab.getIcon(iconType);
-        Component image;
-        if (iconResource == null) {
-            image = new EmptyPanel("icon");
-            image.setVisible(false);
-        } else {
-            image = new CachingImage("icon", iconResource);
+        Component icon = tab.getIcon("icon", iconType);
+        if (icon == null) {
+            icon = new EmptyPanel("icon").setRenderBodyOnly(true);
         }
-        IModel<String> sizeModel = new Model<String>(Integer.valueOf(iconType.getSize()).toString());
-        image.add(new AttributeModifier("width", true, sizeModel));
-        image.add(new AttributeModifier("height", true, sizeModel));
-        link.add(image);
+        link.add(icon);
 
         link.add(new Label("title", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
@@ -322,12 +321,7 @@ public class TabbedPanel extends WebMarkupContainer {
             protected String load() {
                 IModel<String> titleModel = tabModel.getObject().getTitle();
                 if (titleModel != null) {
-                    String title = titleModel.getObject();
-                    if (title.length() > maxTabLength) {
-                        // leave space for two .. then add them
-                        title = title.substring(0, maxTabLength - 2) + "..";
-                    }
-                    return title;
+                    return titleModel.getObject();
                 }
                 return "title";
             }
@@ -345,6 +339,11 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
         }, ""));
+
+        final String titleCssClass = tabModel.getObject().getTitleCssClass();
+        if (titleCssClass != null) {
+            link.add(new AttributeAppender("class", Model.of(titleCssClass), " "));
+        }
         container.add(link);
 
         return container;
@@ -461,8 +460,8 @@ public class TabbedPanel extends WebMarkupContainer {
     private static class CardView extends AbstractRepeater implements ICardView {
 
         private final List<TabsPlugin.Tab> tabs;
-        private Set<TabsPlugin.Tab> added = new HashSet<TabsPlugin.Tab>();
-        private Set<TabsPlugin.Tab> removed = new HashSet<TabsPlugin.Tab>();
+        private Set<TabsPlugin.Tab> added = new HashSet<>();
+        private Set<TabsPlugin.Tab> removed = new HashSet<>();
         private TabsPlugin.Tab selected;
         private int counter = 0;
         private boolean populated = false;
@@ -519,7 +518,7 @@ public class TabbedPanel extends WebMarkupContainer {
         }
 
         protected ListItem<TabsPlugin.Tab> newItem(TabsPlugin.Tab tabbie) {
-            return new ListItem<TabsPlugin.Tab>(counter++, new Model<TabsPlugin.Tab>(tabbie)) {
+            return new ListItem<TabsPlugin.Tab>(counter++, new Model<>(tabbie)) {
                 {
                     add(new AttributeAppender("style", new LoadableDetachableModel<Object>() {
                         @Override

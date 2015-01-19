@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,19 +22,16 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchResult> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(SearchViewPlugin.class);
-
     public SearchViewPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("hippo-list-search");
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -174,8 +174,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                     || document.isNodeType(NT_PUBLISHABLESUMMARY))) {
                 cssClass = StateIconAttributeModifier.PREFIX
                         + (isHistoric ? "prev-" : "")
-                        + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString()
-                        + StateIconAttributeModifier.SUFFIX;
+                        + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
                 IModel<String> stateModel = new JcrPropertyValueModel<>(new JcrPropertyModel(document
                         .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
                 summary = new TypeTranslator(new JcrNodeTypeModel(

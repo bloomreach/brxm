@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
     layout: 'form',
     padding: 8,
     border: false,
+    cls: 'hippo-folder-translations',
 
     constructor: function(config) {
         var hasSiblings, self;

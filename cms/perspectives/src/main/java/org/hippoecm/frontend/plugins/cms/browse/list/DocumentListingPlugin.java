@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,13 +20,9 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
@@ -39,6 +35,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAt
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,19 +44,10 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
 
     static final Logger log = LoggerFactory.getLogger(DocumentListingPlugin.class);
 
-    private static final ResourceReference LISTING_SKIN = new CssResourceReference(DocumentListingPlugin.class, "DocumentListingPlugin.css");
-
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        setClassName("hippo-list-documents");
-        getSettings().setAutoWidthClassName("doclisting-name");
-    }
-
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(LISTING_SKIN));
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
     }
 
     @Override
@@ -80,14 +68,14 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
             column.setComparator(new TypeComparator());
             column.setRenderer(new EmptyRenderer<Node>());
             column.setAttributeModifier(new DocumentTypeIconAttributeModifier());
-            column.setCssClass("doclisting-icon");
+            column.setCssClass(DocumentListColumn.ICON.getCssClass());
             columns.add(column);
 
             //Name
             column = new ListColumn<Node>(new ResourceModel("doclisting-name"), "name");
             column.setComparator(new NameComparator());
             column.setAttributeModifier(new DocumentAttributeModifier());
-            column.setCssClass("doclisting-name");
+            column.setCssClass(DocumentListColumn.NAME.getCssClass());
             columns.add(column);
 
             return columns;
@@ -100,7 +88,7 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
             ListColumn<Node> column = new ListColumn<Node>(new ResourceModel("doclisting-type"), "type");
             column.setComparator(new TypeComparator());
             column.setRenderer(new TypeRenderer());
-            column.setCssClass("doclisting-type");
+            column.setCssClass(DocumentListColumn.TYPE.getCssClass());
             columns.add(column);
 
             return columns;

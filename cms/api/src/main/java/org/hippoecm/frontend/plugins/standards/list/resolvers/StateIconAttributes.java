@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -31,14 +32,15 @@ import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Standard attributes of a hippostd:publishable document.  Figures out what css classes
- * should be used to represent the state.  Can be used with handles, documents and (document)
+ * Standard attributes of a hippostd:publishable document. Figures out what CSS classes, summary
+ * and icon should be used to represent the state. Can be used with handles, documents and (document)
  * versions.
  */
 public class StateIconAttributes implements IObservable, IDetachable {
@@ -53,6 +55,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private transient String cssClass;
     private transient String summary;
+    private transient Icon icon;
 
     public StateIconAttributes(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
@@ -69,11 +72,17 @@ public class StateIconAttributes implements IObservable, IDetachable {
         return cssClass;
     }
 
+    public Icon getIcon() {
+        load();
+        return icon;
+    }
+
     public void detach() {
         loaded = false;
 
         summary = null;
         cssClass = null;
+        icon = null;
 
         nodeModel.detach();
         observable.detach();
@@ -83,57 +92,77 @@ public class StateIconAttributes implements IObservable, IDetachable {
         if (!loaded) {
             observable.setTarget(null);
             try {
-                Node node = nodeModel.getNode();
+                final Node node = nodeModel.getNode();
                 if (node != null) {
-                    Node document = null;
-                    NodeType primaryType = null;
-                    boolean isHistoric = false;
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        NodeIterator docs = node.getNodes(node.getName());
-                        while (docs.hasNext()) {
-                            document = docs.nextNode();
-                            primaryType = document.getPrimaryNodeType();
-                            if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                                String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                                if ("unpublished".equals(state)) {
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        document = node;
-                        primaryType = document.getPrimaryNodeType();
-                    } else if (node.isNodeType("nt:version")) {
-                        isHistoric = true;
-                        Node frozen = node.getNode("jcr:frozenNode");
-                        String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
-                        NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
-                        primaryType = ntMgr.getNodeType(primary);
-                        if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            document = frozen;
-                        }
-                    }
-                    if (document != null) {
-                        if (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
-                                || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
-                            cssClass = StateIconAttributeModifier.PREFIX
-                                    + (isHistoric ? "prev-" : "")
-                                    + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString()
-                                    + StateIconAttributeModifier.SUFFIX;
-                            IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
-                                    .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
-                            summary = (String) new TypeTranslator(new JcrNodeTypeModel(
-                                    HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
-                                    HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
-
-                            observable.setTarget(new JcrNodeModel(document));
-                        }
-                    }
+                    loadAttributes(node);
                 }
             } catch (RepositoryException ex) {
                 log.error("Unable to obtain state properties", ex);
             }
             loaded = true;
+        }
+    }
+
+    private void loadAttributes(final Node node) throws RepositoryException {
+        Node document = null;
+        NodeType primaryType = null;
+        boolean isHistoric = false;
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            NodeIterator docs = node.getNodes(node.getName());
+            while (docs.hasNext()) {
+                document = docs.nextNode();
+                primaryType = document.getPrimaryNodeType();
+                if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                    String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                    if ("unpublished".equals(state)) {
+                        break;
+                    }
+                }
+            }
+        } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            document = node;
+            primaryType = document.getPrimaryNodeType();
+        } else if (node.isNodeType("nt:version")) {
+            isHistoric = true;
+            Node frozen = node.getNode("jcr:frozenNode");
+            String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
+            NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
+            primaryType = ntMgr.getNodeType(primary);
+            if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                document = frozen;
+            }
+        }
+        if (document != null) {
+            if (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
+                    || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
+
+                final String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
+                cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
+
+                IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
+                        .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
+                summary = (String) new TypeTranslator(new JcrNodeTypeModel(
+                        HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
+                        HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
+
+                icon = getStateIcon(state);
+
+                observable.setTarget(new JcrNodeModel(document));
+            }
+        }
+    }
+
+    private Icon getStateIcon(final String state) {
+        switch(state) {
+            case "new":
+                return Icon.STATE_NEW_SMALL;
+            case "live":
+                return Icon.STATE_LIVE_SMALL;
+            case "changed":
+                return Icon.STATE_CHANGED_SMALL;
+            default:
+                log.info("No icon available for document state '{}'", state);
+                return null;
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
@@ -25,45 +27,30 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class ContextMenuTree extends DefaultAbstractTree {
-
     private static final long serialVersionUID = 1L;
+    
+    public static final Logger log = LoggerFactory.getLogger(ContextMenuTree.class);
 
-    /**
-     * use own styling
-     */
-    private static final ResourceReference TREE_STYLE = new CssResourceReference(JcrTree.class, "res/tree.css");
-
-    /**
-     * Reference to the icon for context menus
-     */
-    private static final ResourceReference MENU = new PackageResourceReference(ContextMenuTree.class, "res/menu.gif");
-
-    /**
-     * Reference to the javascript that adds hover behavior to the tree's div
-     */
-    private static final ResourceReference IE6_HOVER_FIX = new PackageResourceReference(ContextMenuTree.class,
-            "res/ie6_hover_fix.js");
+    private boolean dirty;
 
     public ContextMenuTree(String id, TreeModel model) {
         super(id, model);
@@ -74,30 +61,62 @@ public class ContextMenuTree extends DefaultAbstractTree {
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
         treeState.expandNode(model.getRoot());
+        
+        model.addTreeModelListener(new ContextMenuTreeListener());
+
+        treeState.addTreeStateListener(new ITreeStateListener() {
+            @Override
+            public void allNodesCollapsed() {
+                dirty = true;
+                collapseAllContextMenus();
+            }
+
+            @Override
+            public void allNodesExpanded() {
+                dirty = true;
+                collapseAllContextMenus();
+            }
+
+            @Override
+            public void nodeCollapsed(final Object node) {
+                dirty = true;
+                collapseAllContextMenus();
+            }
+
+            @Override
+            public void nodeExpanded(final Object node) {
+                dirty = true;
+                collapseAllContextMenus();
+            }
+
+            @Override
+            public void nodeSelected(final Object node) {
+                dirty = true;
+                collapseAllContextMenus();
+            }
+
+            @Override
+            public void nodeUnselected(final Object node) {
+                dirty = true;
+                collapseAllContextMenus();
+            }
+        });
+    }
+
+    private void collapseAllContextMenus() {
+        IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+        if (menuManager != null) {
+            menuManager.collapseAllContextMenus();
+        }
     }
 
     @Override
     protected ResourceReference getCSS() {
-        return TREE_STYLE;
-    }
-
-    protected ResourceReference getMenuIcon(TreeNode node) {
-        return MENU;
+        return null;
     }
 
     protected Component newMenuIcon(MarkupContainer parent, String id, final TreeNode node) {
-        return new WebMarkupContainer(id) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("style", "background-image: url('" + RequestCycle.get().urlFor(
-                        new ResourceReferenceRequestHandler(
-                                getMenuIcon(node))) + "')");
-            }
-        };
-
+        return HippoIcon.inline(id, Icon.CONTEXT_MENU_TINY);
     }
 
     protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
@@ -120,7 +139,16 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 if (menuManager != null) {
                     menuManager.showContextMenu(this);
                     onContextLinkClicked(content, target);
+                    dirty = true;
                 }
+            }
+
+            @Override
+            public void collapse(final AjaxRequestTarget target) {
+                // mouseLeave is never triggered when opening the context menu. Because of this the tree has to be 
+                // marked dirty so that the mouse listeners on the current item are reset 
+                dirty = true;
+                super.collapse(target);
             }
         };
         setOutputMarkupId(true);
@@ -131,6 +159,21 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
+    }
+
+    /**
+     * @deprecated node icons should be created in {@link #newNodeIcon(MarkupContainer, String, TreeNode)}.
+     */
+    @Override
+    @Deprecated
+    protected final ResourceReference getNodeIcon(TreeNode node) {
+        return super.getNodeIcon(node);
+    }
+
+    @Override
+    protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
+        ResourceReference nodeIcon = super.getNodeIcon(node);
+        return HippoIcon.fromResource(id, nodeIcon);
     }
 
     @Override
@@ -200,34 +243,13 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     @Override
-    public void onTargetRespond(AjaxRequestTarget target) {
+    public final void onTargetRespond(final AjaxRequestTarget target) {
         super.onTargetRespond(target);
-        WebClientInfo info = getWebSession().getClientInfo();
-        if (info != null) {
-            String userAgent = info.getUserAgent().toLowerCase();
-            if (userAgent.indexOf("msie 6") > -1) {
-                target
-                        .getHeaderResponse()
-                        .render(OnDomReadyHeaderItem.forScript(
-                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');"));
-            }
-        }
+        onTargetRespond(target, dirty);
+        dirty = false;
     }
 
-    @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        super.renderHead(container);
-        WebClientInfo info = getWebSession().getClientInfo();
-        if (info != null) {
-            String userAgent = info.getUserAgent().toLowerCase();
-            if (userAgent.indexOf("msie 6") > -1) {
-                container.getHeaderResponse().render(JavaScriptHeaderItem.forReference(IE6_HOVER_FIX));
-                container
-                        .getHeaderResponse()
-                        .render(OnDomReadyHeaderItem.forScript(
-                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');"));
-            }
-        }
+    protected void onTargetRespond(final AjaxRequestTarget target, final boolean dirty) {
     }
 
     public static abstract class ContextLink extends AjaxLink<Void> implements IContextMenu {
@@ -248,6 +270,28 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 target.add(parent);
             }
         }
+    }
+    
+    public class ContextMenuTreeListener implements TreeModelListener, IClusterable {
 
+        @Override
+        public void treeNodesChanged(final TreeModelEvent e) {
+            dirty = true;
+        }
+
+        @Override
+        public void treeNodesInserted(final TreeModelEvent e) {
+            dirty = true;
+        }
+
+        @Override
+        public void treeNodesRemoved(final TreeModelEvent e) {
+            dirty = true;
+        }
+
+        @Override
+        public void treeStructureChanged(final TreeModelEvent e) {
+            dirty = true;
+        }
     }
 }

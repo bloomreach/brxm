@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,32 +27,25 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
-import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 
 public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
     private static final long serialVersionUID = 1L;
 
-    private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
-
+    private final ExpandCollapseLink toggleLink;
     private WebMarkupContainer buttons;
     private DataTableBehavior behavior;
-    private DataTableSettings settings;
 
     private boolean isExpanded = false;
     private String className = null;
@@ -67,25 +60,18 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
             @Override
             public boolean isVisible() {
                 return true;
-//                return link.isVisible();
             }
 
             @Override
             public boolean isEnabled() {
                 return true;
-//                return link.isEnabled();
             }
         });
 
-        ExpandCollapseLink link = new ExpandCollapseLink("toggleFullscreen");
-        ResourceReference toggleFullscreenImage = new PackageResourceReference(ExpandCollapseListingPlugin.class,
-                TOGGLE_FULLSCREEN_IMG);
-        link.add(new CachingImage("toggleFullscreenImage", toggleFullscreenImage));
-
-        addButton(link);
+        toggleLink = new ExpandCollapseLink("toggleLink", isExpanded);
+        addButton(toggleLink);
 
         updateDatatable = true;
-        settings = new DataTableSettings();
     }
 
     protected void addButton(Component c) {
@@ -104,6 +90,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     public void collapse() {
         if (isExpanded) {
             isExpanded = false;
+            toggleLink.setExpanded(false);
             onModelChanged();
         }
     }
@@ -115,6 +102,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     public void expand() {
         if (!isExpanded) {
             isExpanded = true;
+            toggleLink.setExpanded(true);
             onModelChanged();
         }
     }
@@ -150,15 +138,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     }
 
     protected DataTableBehavior getBehavior() {
-        return new DataTableBehavior(settings);
-    }
-
-    public void setSettings(DataTableSettings settings) {
-        this.settings = settings;
-    }
-
-    public DataTableSettings getSettings() {
-        return settings;
+        return new DataTableBehavior();
     }
 
     @Override

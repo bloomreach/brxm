@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,14 +23,7 @@ import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 public class DataTableBehavior extends WidgetBehavior {
     private static final long serialVersionUID = 1L;
 
-
     public DataTableBehavior() {
-        this(new DataTableSettings());
-    }
-
-    public DataTableBehavior(DataTableSettings settings) {
-        super(settings);
-
         getTemplate().setInstance("YAHOO.hippo.DataTable");
     }
 

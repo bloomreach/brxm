@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,33 +18,35 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.util.MappingException;
-import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,36 +57,37 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     private class Section implements IDetachable {
         private static final long serialVersionUID = 1L;
 
-        String extension;
-        IModel<String> focusModel;
-        boolean focussed;
-        boolean selected;
-        AbstractRenderService.ExtensionPoint extPt;
+        private final String extension;
+        private final String header;
+        private boolean focused;
+        private boolean selected;
+        private final AbstractRenderService.ExtensionPoint extPt;
 
-        Section(String extension) {
+        Section(String extension, String header) {
             this.extension = extension;
-            this.focussed = false;
+            this.header = header;
+            this.focused = false;
             this.extPt = children.get(extension);
-            this.focusModel = new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
+        }
 
-                @Override
-                protected String load() {
-                    if (focussed) {
-                        if (selected) {
-                            return "select focus";
-                        } else {
-                            return "focus";
-                        }
-                    } else {
-                        return "unfocus";
-                    }
-                }
-            };
+        boolean hasChildren() {
+            return !extPt.getChildren().isEmpty();
+        }
+
+        @SuppressWarnings("unchecked")
+        List<IRenderService> getChildren() {
+            return extPt.getChildren();
+        }
+
+        public IRenderService getRenderer() {
+            if (hasChildren()) {
+                return (IRenderService) extPt.getChildren().get(0);
+            }
+            return null;
         }
 
         public void detach() {
-            for (IRenderService service : (List<IRenderService>) extPt.getChildren()) {
+            for (IRenderService service : getChildren()) {
                 service.getComponent().detach();
             }
         }
@@ -92,44 +95,34 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     static final Logger log = LoggerFactory.getLogger(SectionTreePlugin.class);
 
-    List<Section> sections;
-    boolean toggleBehaviour = false;
-    boolean findSectionForInitialFocus = false;
-
-    AccordionManagerBehavior accordionManager;
+    final DropDownChoice<Section> select;
+    final IModel<List<Section>> sections;
+    boolean findSectionForInitialFocus = true;
 
     public SectionTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        AccordionConfiguration accordionConfig = new AccordionConfiguration();
-        if (config.containsKey("yui.config.accordion")) {
-            try {
-                PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
-            } catch (MappingException e) {
-                log.warn(e.getMessage());
-            }
-        }
-        add(accordionManager = new AccordionManagerBehavior(accordionConfig));
+        setOutputMarkupId(true);
+        add(new AttributeAppender("class", Model.of("section-viewer"), " "));
 
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
-        String[] behaviours = config.getStringArray("behaviours");
-        if (behaviours != null) {
-            for (int i = 0; i < behaviours.length; i++) {
-                if ("toggle".equals(behaviours[i])) {
-                    toggleBehaviour = true;
-                }
+        final List<String> extensions = Arrays.asList(config.getStringArray(RenderService.EXTENSIONS_ID));
+        final List<Section> allSections = new ArrayList<>(extensions.size());
+        for (int i = 0; i < extensions.size(); i++) {
+            String extension = extensions.get(i);
+            String header = extension;
+            if (!headers.isEmpty() && i < headers.size()) {
+                header = headers.get(i);
             }
+            allSections.add(new Section(extension, header));
         }
 
-        List<String> extensions = Arrays.asList(config.getStringArray(RenderService.EXTENSIONS_ID));
-        sections = new ArrayList<Section>(extensions.size());
-        for (String extension : extensions) {
-            sections.add(new Section(extension));
-        }
-
-        if (!toggleBehaviour) {
-            findSectionForInitialFocus = true;
-        }
+        sections = new AbstractReadOnlyModel<List<Section>>() {
+            @Override
+            public List<Section> getObject() {
+                return allSections.stream().filter(Section::hasChildren).collect(Collectors.toList());
+            }
+        };
 
         add(new ListView<Section>("list", sections) {
             private static final long serialVersionUID = 1L;
@@ -137,90 +130,99 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             @Override
             protected void populateItem(ListItem<Section> item) {
                 final Section section = item.getModelObject();
-                AjaxLink<Void> link = new AjaxLink<Void>("link") {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        if (section.extPt.getChildren().size() > 0) {
-                            IRenderService renderer = (IRenderService) section.extPt.getChildren().get(0);
-                            IModelReference modelService = context.getService(context.getReference(renderer)
-                                    .getServiceId(), IModelReference.class);
-                            if (modelService != null) {
-                                IModel sectionModel = modelService.getModel();
-                                SectionTreePlugin.this.setDefaultModel(sectionModel);
-                            } else {
-                                focusSection(section, true);
-                            }
-                            SectionTreePlugin.this.redraw();
-                        }
-                    }
-                };
-                link.add(new AttributeModifier("class", true, section.focusModel));
-                item.add(link);
-
-                String label = section.extension;
-                if (sections.indexOf(section) < headers.size()) {
-                    label = headers.get(sections.indexOf(section));
-                }
-                link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
-
-                if (section.extPt.getChildren().size() > 0) {
-                    Component c = ((IRenderService)section.extPt.getChildren().get(0)).getComponent();
+                if (section.hasChildren()) {
+                    Component c = section.getRenderer().getComponent();
                     item.add(c);
                 } else {
                     item.add(new EmptyPanel("id"));
-                    link.setVisible(false);
-                    item.setVisible(false);
                 }
+
+                item.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+                    @Override
+                    public String getObject() {
+                        return section.focused ? "selected" : "unselected";
+                    }
+                }, " "));
+
             }
         });
+
+        final Form form = new Form("selection-form");
+        add(form);
+
+        final IModel<Section> selectModel = new Model<>(null);
+        select = new DropDownChoice<>("select", selectModel, sections,
+                new IChoiceRenderer<Section>() {
+                    @Override
+                    public Object getDisplayValue(final Section section) {
+                        return new StringResourceModel(section.header, SectionTreePlugin.this, null).getObject();
+                    }
+
+                    @Override
+                    public String getIdValue(final Section section, final int index) {
+                        return section.extension;
+                    }
+                }
+        );
+        select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                Section section = selectModel.getObject();
+                focusSection(section);
+                SectionTreePlugin.this.redraw();
+            }
+        });
+        form.add(select);
     }
 
     @Override
     public void onBeforeRender() {
+        final List<Section> sectionList = sections.getObject();
+
         if (findSectionForInitialFocus) {
-            IRenderService renderer = findFocus();
-            if (renderer != null) {
-                renderer.focus(null);
+            Section section = findFocus();
+            if (section != null) {
+                focusRenderer(section);
             } else {
-                focusSection(sections.get(0), false);
+                if (!sectionList.isEmpty()) {
+                    section = sectionList.get(0);
+                    select.getModel().setObject(section);
+                    focusSection(section);
+                }
             }
             findSectionForInitialFocus = false;
         }
-        if (sections != null) {
-            for (Section section : sections) {
-                for (IRenderService service : (List<IRenderService>) section.extPt.getChildren()) {
-                    Component component = service.getComponent();
-                    component.setVisible(section.focussed);
-                }
+
+        for (Section section : sectionList) {
+            for (IRenderService service : section.getChildren()) {
+                Component component = service.getComponent();
+                component.setVisible(section.focused);
             }
         }
         super.onBeforeRender();
     }
 
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        for (Section section : sections) {
-            final List sectionChildren = section.extPt.getChildren();
-            if (sectionChildren.size() > 0) {
-                final Component component = ((IRenderService) sectionChildren.get(0)).getComponent();
-                if (component.isVisible()) {
-                    accordionManager.activate(component);
-                    break;
-                }
-            }
+    private void focusRenderer(final Section section) {
+        final IRenderService renderer = section.getRenderer();
+        if (renderer != null) {
+            renderer.focus(null);
         }
+    }
+
+    @Override
+    public void renderHead(final HtmlHeaderContainer container) {
+        super.renderHead(container);
+
+        final IHeaderResponse response = container.getHeaderResponse();
+        response.render(OnDomReadyHeaderItem.forScript(String.format("jQuery('#%s').selectric();", select.getMarkupId())));
     }
 
     @Override
     public void focus(IRenderService child) {
         if (child != null) {
-            for (Section section : sections) {
+            for (Section section : sections.getObject()) {
                 if (section.extPt.getChildren().contains(child)) {
-                    if (focusSection(section, false)) {
+                    if (updateStates(section)) {
                         redraw();
                     }
                     break;
@@ -234,31 +236,31 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        IRenderService renderer = findFocus();
-        if (renderer != null) {
-            renderer.focus(null);
+        Section section = findFocus();
+        if (section != null) {
+            focusRenderer(section);
         }
     }
 
     @Override
     protected void onDetach() {
-        for (Section section : sections) {
+        for (Section section : sections.getObject()) {
             section.detach();
         }
         super.onDetach();
     }
 
-    private IRenderService findFocus() {
+    private Section findFocus() {
         JcrNodeModel model = (JcrNodeModel) getDefaultModel();
         if (model == null || model.getItemModel() == null || model.getItemModel().getPath() == null) {
             return null;
         }
 
         int matchLength = 0;
-        IRenderService renderer = null;
-        for (Section section : sections) {
-            if (section.extPt.getChildren().size() > 0) {
-                IRenderService renderService = (IRenderService) section.extPt.getChildren().get(0);
+        Section focusedSection = null;
+        for (Section section : sections.getObject()) {
+            if (section.hasChildren()) {
+                IRenderService renderService = section.getRenderer();
                 IModelReference modelService = getPluginContext().getService(
                         getPluginContext().getReference(renderService).getServiceId(), IModelReference.class);
                 if (modelService != null) {
@@ -269,7 +271,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                             if (model.getItemModel().getPath().startsWith(sectionRoot.getItemModel().getPath())) {
                                 if (sectionRoot.getItemModel().getPath().length() > matchLength) {
                                     matchLength = sectionRoot.getItemModel().getPath().length();
-                                    renderer = renderService;
+                                    focusedSection = section;
                                 }
                             }
                         }
@@ -277,43 +279,39 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 }
             }
         }
-        return renderer;
+        return focusedSection;
     }
 
-    private boolean focusSection(Section section, boolean toggle) {
-        boolean dirty = false;
-        if (toggleBehaviour) {
-            if (toggle) {
-                section.focussed = !section.focussed;
-                dirty = true;
-            } else {
-                if (!section.focussed) {
-                    section.focussed = true;
-                    dirty = true;
-                }
-            }
-        } else {
-            for (Section curSection : sections) {
-                if (curSection == section) {
-                    if (!curSection.focussed) {
-                        curSection.focussed = true;
-                        dirty = true;
-                    }
-                } else {
-                    if (curSection.focussed) {
-                        curSection.focussed = false;
-                        dirty = true;
-                    }
-                }
+    private void focusSection(final Section section) {
+        if (section.hasChildren()) {
+            IRenderService renderer = section.getRenderer();
+            IModelReference modelService = getPluginContext().getService(getPluginContext().getReference(renderer)
+                    .getServiceId(), IModelReference.class);
+            if (modelService != null) {
+                IModel sectionModel = modelService.getModel();
+                SectionTreePlugin.this.setDefaultModel(sectionModel);
             }
         }
-        for (Section curSection : sections) {
+        updateStates(section);
+    }
+
+    private boolean updateStates(Section section) {
+        boolean dirty = false;
+        for (Section curSection : sections.getObject()) {
             if (curSection == section) {
+                if (!curSection.focused) {
+                    curSection.focused = true;
+                    dirty = true;
+                }
                 if (!curSection.selected) {
                     curSection.selected = true;
                     dirty = true;
                 }
             } else {
+                if (curSection.focused) {
+                    curSection.focused = false;
+                    dirty = true;
+                }
                 if (curSection.selected) {
                     curSection.selected = false;
                     dirty = true;

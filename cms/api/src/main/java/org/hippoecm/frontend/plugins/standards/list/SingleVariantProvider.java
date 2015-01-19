@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,7 @@ public class SingleVariantProvider extends LoadableDetachableModel<List<Node>> {
                         if (canonicalNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                             Node parentNode = canonicalNode.getParent();
                             if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                if (parentNode.isNodeType("mix:referenceable")) {
+                                if (parentNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                                     if (primaryNodes.containsKey(parentNode.getUUID())) {
                                         Node currentNode = primaryNodes.get(parentNode.getUUID());
                                         if (subNode.getIndex() < currentNode.getIndex()) {

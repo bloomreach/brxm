@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,48 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Defaults */
-* {
-  margin: 0;
-  padding: 0;
-}
-
-/* Normalizes font-size for headers */
-h1, h2, h3, h4, h5, h6 {
-  font-size: 100%;
-}
-
-/* Removes list-style from lists, lists are more often used without a list style */
-ol, ul {
-  list-style: none;
-}
-
-/* no underlined links by default */
-a {
-  text-decoration: none
-}
-
-/* Normalizes font-style and font-weight to normal */
-address, caption, cite, code, dfn, th, var {
-  font-style: normal;
-  font-weight: normal;
-}
-
-/* Default tables don't have borders */
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-/* Removes border from fieldset and img */
-fieldset, img {
-  border: 0;
-}
-
-/* Left-aligns text in caption and th */
-caption, th {
-  text-align: left;
-}
 
 /* ======================================== */
 
@@ -72,18 +30,6 @@ body.hippo-root #doc3 {
 
 .wicket-modal {
   text-align: left
-}
-
-#wicketAjaxDebugWindow {
-  text-align: left;
-}
-
-.hippo-window #wicketDebugLink {
-  display: none;
-}
-
-.hippo-window #wicketDebugLink {
-  display: none;
 }
 
 /* Hippo Global CSS tools */
@@ -124,10 +70,6 @@ body.hippo-root #doc3 {
 
 /* Auke's hippo skin global css */
 /* ================================================ */
-.hippo-root {
-  background: url("images/headerBack.png") repeat-x top left;
-  background-attachment: scroll
-}
 
 /* remove the background in dialog windows */
 .hippo-window {
@@ -135,29 +77,26 @@ body.hippo-root #doc3 {
 }
 
 /* Global font setting */
-
+/*
 .hippo-root,
 .hippo-root table tr td,
 .hippo-root table tr th {
   font-family: tahoma, arial, sans-serif, helvetica;
   font-size: 11px;
 }
+*/
 
 /* default Link colour */
+/*
 .hippo-root a {
   color: #333333;
 }
+*/
 
 .wicket-modal a {
   color: #000066;
 }
 
-/* default buttons */
-.hippo-root button, .hippo-root input[type="button"], .hippo-root input[type="submit"] {
-  font-size: 12px;
-  padding: 4px;
-  margin: 2px;
-}
 
 /* highlights */
 .hippo-global-highlight li,
@@ -197,18 +136,20 @@ body.hippo-root #doc3 {
 .hippo-modal-feedback ul li.feedbackPanelERROR {
   background-image: url("images/icons/dialog-error-32.png");
   background-repeat: no-repeat;
-  background-position: 0px center;
+  background-position: 0 center;
 
 }
 
 .hippo-modal-feedback ul li.feedbackPanelINFO {
     background-image: url("images/icons/dialog-information-32.png");
     background-repeat: no-repeat;
-    background-position: 0px center;
+    background-position: 0 center;
 }
 
 /* Wicket Ajaxloader */
 /* ================================================ */
+/* Moved to _ajax_loader.less */
+/*
 .hippo-root .wicket-ajax-indicator {
   position: absolute;
   top: 0;
@@ -227,17 +168,21 @@ body.hippo-root #doc3 {
   background: transparent;
   top: auto;
 }
+*/
 
-.hippo-window
+/*.hippo-window*/
 
 /* Header */
 /* ================================================ */
+/* TODO: Can be removed, maybe for modal?
 .hippo-header {
   height: 25px;
   background: url("images/headerBack.png") repeat-x top left;
 }
+*/
 
-.hippo-header-home {
+/* Not used afaics
+ .hippo-header-home {
   background: url("images/hippologo.png") no-repeat;
   text-indent: -9999px;
   width: 29px;
@@ -245,15 +190,20 @@ body.hippo-root #doc3 {
   margin-left: 5px;
   display: block;
 }
+*/
 
-.hippo-logout-username {
+/*
+.hippo-menu-username {
   position: absolute;
   left: 40px;
   top: 5px;
   color: white;
   font-weight: bold;
 }
+*/
 
+/* replaced by hippo-menu */
+/*
 .hippo-header-items-right {
   position: absolute;
   right: 0;
@@ -276,9 +226,11 @@ body.hippo-root #doc3 {
 .hippo-header-items-right span span a {
     color: #ffffff;
 }
+*/
 
 /* AutoExport states */
 /* ================= */
+/* Copied to _home_menu.less
 .auto-export-state-disabled {
     color: #ff3f4b;
 }
@@ -286,9 +238,11 @@ body.hippo-root #doc3 {
 .auto-export-state-enabled {
     color: #7fff1d;
 }
+*/
 
 /* TabsPlugin perspective switcher (left buttons) */
 /* ================================================ */
+/*
 .tabbed-panel-layout-left {
   background: url("images/tabs-vertical-back.png") repeat-y
 }
@@ -317,9 +271,11 @@ body.hippo-root #doc3 {
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a span {
   display: none;
 }
+*/
 
 /* TabsPlugin Document switcher */
 /* ================================================ */
+/* Moved to _tabs.less
 .hippo-tabs-documents-top .tab-row {
 }
 
@@ -410,6 +366,7 @@ body.hippo-root #doc3 {
   margin-right: 3px;
   vertical-align: -4px;
 }
+*/
 
 /* Logout */
 /* ================================================ */
@@ -429,12 +386,11 @@ body.hippo-root #doc3 {
   text-decoration: underline;
 }
 
-.hippo-browser-search {
-  margin: 3px;
-}
+/* Default Table lists *//*
 
-/* Default Table lists */
-/* ================================================ */
+*/
+/* ================================================ *//*
+
 .hippo-list-details {
   border-collapse: collapse;
   width: 100%;
@@ -444,11 +400,15 @@ body.hippo-root #doc3 {
   width: 100%;
 }
 
-/* Apply scrollbars to modern browsers */
+*/
+/* Apply scrollbars to modern browsers *//*
+
+*/
 /* table.hippo-list-details > tbody {
   overflow-x: hidden;
   overflow-y: auto;
-} */
+} *//*
+
 
 .hippo-list-details tr td.icon-16 {
   height: 16px;
@@ -528,7 +488,9 @@ body.hippo-root #doc3 {
   margin-top: 0;
 }
 
-/* images */
+*/
+/* images *//*
+
 .hippo-list-details td.icon-48 {
   background: url("images/hippo-gallery-folder.png") no-repeat 4px center;
 }
@@ -555,8 +517,12 @@ body.hippo-root #doc3 {
   width: auto
 }
 
-/* Wicket Table Paging */
-/* ================================================ */
+*/
+/* Wicket Table Paging *//*
+
+*/
+/* ================================================ *//*
+
 .hippo-list-paging {
   position: absolute;
   bottom: 0;
@@ -608,6 +574,7 @@ body.hippo-root #doc3 {
   font-style: normal
 }
 
+*/
 /* Dashboard */
 /* ================================================ */
 .hippo-perspective-dashboard .hippo-perspective-dashboard-panel {
@@ -711,261 +678,6 @@ body.hippo-root #doc3 {
   padding-left: 0;
 }
 
-/* Toolbar */
-/* ================================================ */
-.hippo-toolbar {
-  padding: 0;
-  margin-left: 0;
-}
-
-.hippo-toolbar .hippo-toolbar-section {
-  display: block;
-  float: left;
-  color: #666666;
-  padding-top: 0;
-  margin-right: 2px;
-}
-
-.hippo-toolbar .hippo-toolbar-section li {
-  margin-right: 1px;
-  float: left;
-}
-
-.hippo-toolbar .hippo-toolbar-section select {
-  float: right;
-  background: #32629b;
-  color: white;
-  margin: 0;
-  border: 1px solid white;
-}
-
-.hippo-toolbar .hippo-toolbar-section select option {
-  background: white;
-  color: #666666;
-}
-
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-locked {
-  height: 16px;
-  width: 16px;
-  margin-right: 0;
-}
-
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption {
-  margin-right: 2px;
-}
-
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption span,
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-status span {
-  padding-left: 5px;
-  color: black
-}
-
-body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single {
-  background: transparent;
-}
-
-body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single:hover {
-  border: 1px solid #000000;
-}
-
-.hippo-toolbar-section a.menu-action {
-  padding-top: 0;
-  height: 18px;
-}
-
-/* Dropdown menu */
-/* ================================================ */
-.hippo-toolbar-menu-item {
-  background: #f3f3f3 url("images/dropdownmenuback.png") repeat-y top left;
-  padding: 1px;
-  border: 1px solid #afafaf;
-  position: absolute;
-  top: 3px;
-  left: 0;
-  width: 156px;
-}
-
-/* Split the dropdown in columns if there are many languages */
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
-    overflow:hidden;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
-    width:320px;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
-    width:480px;
-
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li,
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
-    float:left;
-    clear: none;
-    display:inline;
-    margin-right: 0;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item li {
-    width:50%;
-}
-
-.hippo-toolbar .hippo-toolbar-section div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item li {
-    width:33.333%;
-}
-
-/* override from wicket styles */
-.hippo-toolbar-section-button {
-  padding-right: 20px;
-  display: block;
-  height: 16px;
-  padding-left: 4px;
-  padding-top: 2px;
-  border: 1px solid #BDBDBD;
-  background: url("images/hippo-toolbar-menu-item.png") no-repeat right -21px;
-  cursor: pointer;
-  clear: left;
-}
-
-.hippo-toolbar a.hippo-toolbar-section-button .menu-action-icon,
-.hippo-toolbar a.hippo-toolbar-section-button .menu-action-text {
-  padding-top: 0;
-}
-
-.hippo-toolbar-section-button:hover {
-  border: 1px solid #000000;
-  color: black;
-  background-color: #FFF6E0;
-}
-
-/* background: url("images/hippo-toolbar-menu-item.png") no-repeat top right;  */
-
-.hippo-toolbar-menu-item-button {
-  display: block;
-  float: none;
-  border: 1px solid transparent;
-  padding: 2px;
-  width: 150px;
-}
-
-/* enabled menu item */
-a.hippo-toolbar-menu-item-button {
-  color: #333;
-}
-
-/* disabled menu item */
-span.hippo-toolbar-menu-item-button {
-  color: #999;
-}
-
-/* override the default text-decoration: underline */
-.hippo-root a.hippo-toolbar-menu-item-button:hover {
-  background: #fff6e0;
-  border: 1px solid #afafaf;
-  text-decoration: none
-}
-
-.hippo-toolbar-menu-item li {
-  display: block;
-  clear: left;
-  margin-right: 0;
-  padding-top: 1px;
-  padding-bottom: 1px;
-}
-
-/* This is the context-menu header */
-.hippo-toolbar-menu-item li span.header-item {
-  display: block;
-  padding: 2px;
-}
-
-.hippo-toolbar-menu-item li span.header-item {
-  padding-left: 30px;
-}
-
-.hippo-toolbar-menu-item-button-icon {
-  display: block;
-   float: left;
-  margin-right: 11px;
-}
-
-.hippo-toolbar-section li.icon-16 {
-  padding-left: 0;
-  background-position: 3px 4px;
-}
-
-.hippo-toolbar-section span.icon-16 {
-  display: block;
-  height: 16px;
-  width: 16px
-}
-
-.hippo-toolbar .hippo-toolbar-section li.menu-label-item {
-  white-space: nowrap;
-  padding-left: 4px;
-  padding-right: 0;
-}
-
-.hippo-toolbar-section li.icon-16 div {
-  position: relative
-}
-
-.menu-action {
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 4px;
-  background-image: none;
-  border: 1px solid #BDBDBD;
-  display: block;
-  cursor: pointer;
-  min-width: 100px;
-  height: 14px;
-}
-
-.menu-action:hover {
-  border: 1px solid #000000;
-  background-color: #fff6e0;
-}
-
-.menu-action.disabled:hover {
-  border: 1px solid #e3e3e3;
-  background-color: transparent;
-}
-
-.menu-action-text {
-  display: block;
-  float: left;
-  height: 18px;
-  margin-left: 4px;
-  padding-top: 2px;
-}
-
-.menu-action-icon {
-  display: block;
-  float: left;
-  height: 18px;
-  padding-top: 1px;
-  width: 16px;
-}
-
-.menu-label {
-  padding-left: 4px;
-  padding-right: 8px;
-  padding-top: 3px;
-  background-image: none;
-  border: 0 solid #e3e3e3;
-  display: block;
-  min-width: 100px;
-  height: 17px;
-  white-space: nowrap;
-}
-
-.menu-spacer {
-  width: 80px;
-}
-
 /* Default feedback */
 /* ================================================ */
 .hippo-feedback ul {
@@ -1055,8 +767,7 @@ table.hippo-window-form {
   width: 300px;
 }
 
-.hippo-window-form td.hippo-window-navigator,
-.hippo-window-form table.hippo-search-section td {
+.hippo-window-form td.hippo-window-navigator{
   padding: 0;
 }
 
@@ -1198,17 +909,13 @@ table.hippo-window-form {
   border-right: 1px solid #afafaf;
 }
 
-.hippo-picker-tree .hippo-tree {
-  width: 193px;
-}
-
 .hippo-picker-list-details {
   height: 331px;
   margin-left: 0;
-  background: #ffffff url('images/silverBack3.png') repeat-x;
+  background: #fff;
   width: auto;
   position: relative;
-  overflow: auto
+  overflow: hidden;
 }
 
 .hippo-picker-properties {
@@ -1219,9 +926,8 @@ table.hippo-window-form {
   border-top: 1px solid #afafaf;
 }
 
-.hippo-picker .hippo-list-details .hippo-list-paging td {
-  width: 630px;
-  text-align: right;
+.hippo-picker .hippo-list-details {
+  width: 647px;
 }
 
 .hippo-picker .hippo-window-form td input {
@@ -1239,14 +945,17 @@ table.hippo-window-form {
   padding-left: 2px;
 }
 
+/*
 .hippo-picker-list-details tr.hippo-list-paging td div {
   margin-bottom: 2px;
   margin-top: 10px;
   width: 100%;
 }
+*/
 
 .hippo-picker-navigation-buttons {
-  background: url("images/hippo-picker-navigation-back.png") repeat-x;
+  height: 20px;
+  float: left;
 }
 
 .hippo-window-form td div.hippo-picker-navigation-buttons input, .hippo-picker-navigation-buttons input {
@@ -1330,7 +1039,7 @@ body .hippo-picker-properties div.text-input input {
   padding: 4px;
   line-height: 16px;
   background: url("images/hippo-window-input-back.png") no-repeat;
-  width: 535px
+  width: 515px
 }
 
 /* Referring documents */
@@ -1379,176 +1088,7 @@ body .hippo-picker-properties div.text-input input {
   bottom: 15px;
 }
 
-/* Form elements */
-/* ================================================ */
-.hippo-select-file {
-}
-
-/* Navigator */
-/* ================================================ */
-.hippo-browser-documents-small .hippo-perspective-title {
-  color: white;
-  padding: 2px;
-  padding-left: 4px;
-  float: left;
-  padding-top: 5px;
-}
-
-.hippo-browser-documents-small {
-  background: transparent
-}
-
-.hippo-browser-documents-small .hippo-browser-docum
-ents-small-folders h3 {
-  background: transparent url(images/filelistHeaderback.png) repeat-x;
-  font-weight: normal;
-  padding: 2px;
-  padding-left: 6px;
-  padding-bottom: 5px;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-small-files {
-  border-left: 1px solid #afafaf;
-  border-right: 1px solid #afafaf;
-  background: white;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-small-folders {
-  background: #f4f4f4;
-  border-left: 1px solid #afafaf;
-  border-bottom: 0;
-  border-top: 0;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details {
-  clear: both;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-small-files {
-  background: url("images/document-list-back.png") repeat-x top left #fcfcfc;
-}
-
-/* toolbar requires some tweaks here */
-.hippo-browser-documents-small .hippo-browser-documents-workflow select {
-  width: 180px;
-  padding: 1px;
-  margin: 2px;
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-}
-
-.hippo-browser-documents-small .hippo-browser-documents-workflow select option {
-  color: #666666;
-  background: white;
-  padding: 1px;
-}
-
-/* Tree Plugin */
-
-/* overriding standard wicket tree styling */
-/*
-.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
-*/
-
-/* remove margins */
-.hippo-tree div.wicket-tree {
-  margin: 0;
-  border: none;
-  width: auto;
-}
-
-/* make sure the first folder level in the tree doens't have a left padding */
-.hippo-tree div.wicket-tree div.a_ {
-  padding-left: 0;
-}
-
-.hippo-tree div.wicket-tree div.a_ div.a_ {
-  padding-left: 1em
-}
-
-/* make the rows expand so it will activate the scrolling of the .hippotree div */
-.hippo-tree div.wicket-tree,
-.hippo-tree div.wicket-tree div.row,
-.hippo-tree div.wicket-tree div.row-selected {
-  overflow: visible;
-  white-space: nowrap
-}
-
-.hippo-console-tree .hippo-tree div.wicket-tree {
-  width: auto;
-}
-
-/* set row height to a little higher for better clickability */
-.hippo-tree div.wicket-tree div.row,
-.hippo-tree div.wicket-tree div.row-selected {
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown,
-.hippo-tree div.wicket-tree div.row-selected .hippo-tree-dropdown {
-  visibility: hidden;
-  float: right;
-}
-
-.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {
-  background: transparent;
-}
-
-.hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
-.hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
-  background: url("images/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
-}
-
-.hippo-tree div.wicket-tree div.row-selected {
-  background-image: url("images/controls/folder-background-selected.png");
-}
-
-.hippo-tree div.wicket-tree div.row a,
-.hippo-tree div.wicket-tree div.row-selected a {
-  font-weight: normal;
-  color: black;
-}
-
-/* IE6 workaround */
-.hippo-tree div.wicket-tree div.context-hover .hippo-tree-dropdown-icon-container {
-  background-image: url("images/controls/folder-workflow-icon.png");
-  background-repeat: no-repeat;
-  background-position: -1px -2px;
-}
-
-.hippo-tree div.wicket-tree div.context-hover-selected .hippo-tree-dropdown-icon-container {
-  background-image: url("images/controls/folder-workflow-icon.png");
-  background-repeat: no-repeat;
-  background-position: -1px -2px;
-
-}
-
-.hippo-tree .wicket-tree span.plus,
-.hippo-tree .wicket-tree span.minus {
-  background-image: url("images/tree-icons.png");
-  width: 14px;
-}
-
-.hippo-tree .wicket-tree span.junction,
-.hippo-tree .wicket-tree span.junction-last,
-.hippo-tree .wicket-tree span.corner,
-.hippo-tree .wicket-tree span.indent-line,
-.hippo-tree .wicket-tree span.indent-blank {
-  background-image: none;
-  width: 14px;
-}
-
-.hippo-tree .icon-16 {
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  display: block;
-  float: left;
-  margin-right: 5px;
-  margin-left: 3px;
-}
+/* Tree moved to _tree.less */
 
 /* mimetypes icons */
 table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
@@ -1558,112 +1098,6 @@ table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/
 /* mimetypes icons for virtual trees */
 table tr.selected span.document-virtual-16, .document-virtual-16{background-image:url("images/icons/document-16.png")}
 table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("images/icons/folder-virtual-16.gif")}
-
-/* Accordion */
-.hippo-accordion-unit {
-  background: #f4f4f4;
-}
-
-/* change the tree if he's inside an accordion */
-.hippo-accordion-unit .hippo-tree .wicket-tree {
-/*min-height: 100px;*/
-  margin-bottom: 0;
-  padding-left: 0;
-  padding-top: 0;
-}
-
-.hippo-accordion-unit h2 {
-  background-image: url("images/accordion-unit-back2.png");
-  background-repeat: repeat-x
-}
-
-.hippo-accordion-unit h2 a {
-  background-image: url("images/accordion-unit-back.png");
-  background-repeat: no-repeat;
-  color: #666666;
-  display: block;
-  height: 14px;
-  width: 100%;
-  padding: 5px;
-  padding-left: 0;
-  padding-right: 0;
-  border-bottom: 1px solid #afafaf;
-  font-weight: bold;
-}
-
-.hippo-accordion-unit h2 a span {
-  padding-left: 20px;
-}
-
-.hippo-accordion-unit h2 a {
-  background-position: 0 0;
-}
-
-.hippo-accordion-unit h2 a:hover {
-  background-position: 0 -96px;
-}
-
-.hippo-accordion-unit h2 a:active {
-  background-position: 0 -120px;
-}
-
-.hippo-accordion-unit h2 a.focus {
-  background-position: 0 -24px;
-}
-
-.hippo-accordion-unit h2 a.focus:hover {
-  background-position: 0 -48px;
-}
-
-.hippo-accordion-unit h2 a.focus:active {
-  background-position: 0 -72px;
-}
-
-/* Show add-root button in tree*/
-.hippo-accordion-unit-add {
-  display: block;
-  background-image: url("images/list-add-16.png");
-  background-repeat: no-repeat;
-  background-position: 0 6px;
-  text-align: left;
-  padding-left: 21px;
-  padding-top: 6px;
-  margin-left: 5px;
-  height: 20px;
-  color: #333;
-}
-
-/* But hide it in pickers */
-.wicket-modal .hippo-accordion-unit-add {
-  display: none;
-}
-
-/* Hide the context-menu-left-click-icon as well */
-.wicket-modal .hippo-tree-dropdown-icon-container {
-  display: none;
-}
-
-/* Hippo tree addition */
-
-.hippo-tree-dropdown-icon-container {
-  display: none;
-  position: absolute;
-  left: -100px;
-  top: -100px;
-}
-
-.container-selected {
-  display: block;
-  background-color: #F4F4F4;
-  width: 20px;
-  height: 20px;
-}
-
-.hippo-tree-dropdown-icon {
-  display: block;
-  width: 18px;
-  height: 18px;
-}
 
 /* Editor Plugin */
 /* ================================================ */
@@ -1771,6 +1205,7 @@ div.wicket-modal div.wicket-tree {
   background-position: 8px 8px;
 }
 
+/*
 .state-changed-16 {
   background-image: url("images/icons/state-changed-16.png")
 }
@@ -1794,6 +1229,7 @@ div.wicket-modal div.wicket-tree {
 .state-prev-live-16 {
   background-image: url("images/icons/state-prev-live-16.png")
 }
+*/
 
 .arrow-sort-down-16 {
   background-image: url("images/icons/arrow-sort-down-16.png")
@@ -2050,48 +1486,10 @@ table.hippo-defaultcontent td {
   position: absolute;
 }
 
-.navigator-center-body table.hippo-list-documents,
-.navigator-center-body table.hippo-gallery-images,
-.navigator-center-body table.hippo-gallery-assets,
-.navigator-center-body table.asset-gallery-plugin,
-.navigator-center-body table.hippo-typeslist,
-.hippo-dialog-picker table.hippo-list-documents,
-.hippo-dialog-picker table.hippo-gallery-images,
-.hippo-dialog-picker table.hippo-gallery-assets,
-.hippo-dialog-picker table.asset-gallery-plugin {
-  border-collapse: inherit;
-  background-color: #fff;
-}
-
 table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
   display: table-row-group;
   overflow-y: hidden;
   height: 100%;
-}
-
-.hippo-accordion-unit-center {
-  -ms-overflow: auto;
-  overflow: auto;
-}
-
-.hippo-accordion-unit-top {
-  background-color: #ebebeb;
-  height: 44px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.hippo-accordion-unit-bottom {
-  background-color: #ebebeb;
-  cursor: pointer;
-  height: 26px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  white-space: nowrap;
 }
 
 .hippo-revision-help {
@@ -2229,34 +1627,13 @@ body.hippo-root div.yui-log-container {
   height: 150px;
 }
 
-/* Toggle button class is used in multiple plugin, to avoid clashes define it here */
-.toggle-button {
-  float: right; /*margin-bottom: 3px;*/
-  padding-top: 2px;
-  padding-right: 2px;
-  position: static;
-  padding-bottom: 3px;
-}
-
-.toggle-button > a > img {
-  vertical-align: bottom;
-}
-
-.hippo-picker .hippo-picker-list-details .toggle-button {
-  padding-top: 1px;
-  padding-right: 1px;
-}
-
-.hippo-picker .hippo-picker-list-details .toggle-button > a > img {
-  height: 15px;
-}
-
 .password-expiration-label {
 	color: red;
 	font-size: 14px;
 	font-weight: bold;
 }
 
+/*
 .hippo-referring-documents-list th.doclisting-name {
     width: 100%;
 }
@@ -2270,3 +1647,4 @@ body.hippo-root div.yui-log-container {
 .hippo-referring-documents-list .hippo-list-paging .paging-label {
     margin-top: 0;
 }
+*/

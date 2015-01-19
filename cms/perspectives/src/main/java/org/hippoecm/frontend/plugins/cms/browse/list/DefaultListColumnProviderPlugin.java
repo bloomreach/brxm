@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,24 +15,26 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentIconAndStateRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
-
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.List;
+import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public final class DefaultListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
@@ -43,48 +45,45 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
 
     @Override
     public List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+        final List<ListColumn<Node>> columns = new ArrayList<>();
+        columns.add(createIconAndStateColumn());
+        columns.add(createNameColumn());
+        return columns;
+    }
 
-        //Type Icon
-        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
-        column.setComparator(new TypeComparator());
-        String iconRenderer = getPluginConfig().getString("documentTypeIconRenderer");
-        if ("cssIconRenderer".equals(iconRenderer)) {
-            column.setRenderer(new EmptyRenderer<Node>());
-            column.setAttributeModifier(new DocumentTypeIconAttributeModifier());
-        } else if ("resourceIconRenderer".equals(iconRenderer)) {
-            column.setRenderer(new IconRenderer());
-            column.setAttributeModifier(new IconAttributeModifier());
-        } else {
-            column.setRenderer(new IconRenderer());
-            column.setAttributeModifier(new IconAttributeModifier());
-        }
-        column.setCssClass("doclisting-icon");
-        columns.add(column);
+    private ListColumn<Node> createIconAndStateColumn() {
+        final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
+        final ListColumn<Node> column = new ListColumn<>(iconHeader, "icon");
+        column.setComparator(new StateComparator());
+        column.setRenderer(new DocumentIconAndStateRenderer());
+        column.setAttributeModifier(new StateIconAttributeModifier());
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
+        return column;
+    }
 
-        //Name
-        column = new ListColumn<Node>(new ClassResourceModel("doclisting-name", DocumentListingPlugin.class), "name");
+    private ListColumn<Node> createNameColumn() {
+        final ClassResourceModel nameHeader = new ClassResourceModel("doclisting-name", DocumentListingPlugin.class);
+        final ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
         column.setComparator(new NameComparator());
         column.setAttributeModifier(new DocumentAttributeModifier());
-        column.setCssClass("doclisting-name");
-        columns.add(column);
-
-        return columns;
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        return column;
     }
 
     @Override
     public List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = getColumns();
+        final List<ListColumn<Node>> columns = getColumns();
+        columns.add(createTypeColumn());
+        return columns;
+    }
 
-        //Type
-        ListColumn<Node> column = new ListColumn<Node>(
-                new ClassResourceModel("doclisting-type", DocumentListingPlugin.class), "type");
+    private ListColumn<Node> createTypeColumn() {
+        final ClassResourceModel typeHeader = new ClassResourceModel("doclisting-type", DocumentListingPlugin.class);
+        ListColumn<Node> column = new ListColumn<>(typeHeader, "type");
         column.setComparator(new TypeComparator());
         column.setRenderer(new TypeRenderer());
-        column.setCssClass("doclisting-type");
-        columns.add(column);
-
-        return columns;
+        column.setCssClass(DocumentListColumn.TYPE.getCssClass());
+        return column;
     }
 
 }

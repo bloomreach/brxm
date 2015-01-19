@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -57,7 +56,6 @@ import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.util.MaxLengthNodeNameFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,16 +75,16 @@ public class FolderTreePlugin extends RenderPlugin {
 
     public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
+        
         String startingPath = config.getString("path", DEFAULT_START_PATH);
         try {
             Session session = getSession().getJcrSession();
             if (!session.itemExists(startingPath)) {
-                log.warn("The configured path '"+startingPath+"' does not exist, using '"+DEFAULT_START_PATH+"' instead.");
+                log.warn("The configured path '{}' does not exist, using '{}' instead.", startingPath, DEFAULT_START_PATH);
                 startingPath = DEFAULT_START_PATH;
             }
         } catch (RepositoryException exception) {
-            log.warn("The configured path '"+startingPath+"' does not exist, using '"+DEFAULT_START_PATH+"' instead.");
+            log.warn("The configured path '{}' does not exist, using '{}' instead.", startingPath, DEFAULT_START_PATH);
             startingPath = DEFAULT_START_PATH;
         }
         rootModel = new JcrNodeModel(startingPath);
@@ -180,11 +178,9 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             @Override
-            public void onTargetRespond(final AjaxRequestTarget target) {
-                super.onTargetRespond(target);
-                target.appendJavaScript(treeHelperBehavior.getRenderString());
-                if (workflowEnabled) {
-                    target.appendJavaScript(treeHelperBehavior.getUpdateString());
+            public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
+                if (dirty) {
+                    target.appendJavaScript(treeHelperBehavior.getRenderString());
                 }
             }
 
@@ -233,23 +229,22 @@ public class FolderTreePlugin extends RenderPlugin {
         return new ITreeNodeIconProvider() {
             private static final long serialVersionUID = 1L;
 
-            public ResourceReference getNodeIcon(TreeNode treeNode, ITreeState state) {
+            public Component getNodeIcon(final String id, final TreeNode treeNode, final ITreeState state) {
                 for (ITreeNodeIconProvider provider : providers) {
-                    ResourceReference icon = provider.getNodeIcon(treeNode, state);
+                    final Component icon = provider.getNodeIcon(id, treeNode, state);
                     if (icon != null) {
                         return icon;
                     }
                 }
-                throw new RuntimeException("No icon could be found for tree node");
+                return null;
             }
-
         };
     }
 
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (target != null && isActive()) {
+        if (target != null && isActive() && isVisible()) {
             tree.updateTree();
         }
     }
@@ -277,27 +272,6 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             treeState.selectNode(treePath.getLastPathComponent(), true);
-        }
-    }
-
-    public class FormattedTreeNodeTranslator extends MaxLengthNodeNameFormatter implements ITreeNodeTranslator {
-        private static final long serialVersionUID = 1L;
-
-        public FormattedTreeNodeTranslator(IPluginConfig config) {
-            super(config.getInt("nodename.max.length", -1), config.getString("nodename.splitter", ".."), config.getInt(
-                    "nodename.indent.length", 3));
-        }
-
-        public String getTitleName(TreeNode treeNode) {
-            return getName(((IJcrTreeNode) treeNode).getNodeModel());
-        }
-
-        public String getName(TreeNode treeNode, int indent) {
-            return parse(getTitleName(treeNode), indent);
-        }
-
-        public boolean hasTitle(TreeNode treeNode, int level) {
-            return isTooLong(getTitleName(treeNode), level);
         }
     }
 

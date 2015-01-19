@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(YuiTreeNamespace.NS, "treehelper");
-        context.addOnDomLoad(new AbstractReadOnlyModel() {
+        context.addOnDomLoad(new AbstractReadOnlyModel<String>() {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public Object getObject() {
-                return getInitString();
+            public String getObject() {
+                return getInitString() + getRenderString();
             }
         });
     }
@@ -50,10 +50,6 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
         return "YAHOO.hippo.TreeHelper.render('" + getWicketId() + "');";
     }
 
-    public String getUpdateString() {
-        return "YAHOO.hippo.TreeHelper.updateMouseListeners('" + getWicketId() + "');";
-    }
-    
     protected abstract String getWicketId();
 
 }

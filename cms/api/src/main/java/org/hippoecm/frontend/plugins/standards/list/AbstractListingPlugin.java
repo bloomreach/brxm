@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -74,13 +74,6 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         }
 
         add(new EmptyPanel("table"));
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        response.render(CssHeaderItem.forReference(BrowserStyle.getStyleSheet()));
     }
 
     protected IModel<Node> getSelectedModel() {

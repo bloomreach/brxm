@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="36px"
+	 height="28px" viewBox="0 0 36 28" enable-background="new 0 0 36 28" xml:space="preserve">
+<g id="Vector_lines" display="none">
+	<g display="inline">
+		<g>
+			<g>
+				<path d="M20.663,1.033c0.496,0,1.299,0.352,1.65,0.722l5.623,5.965c0.517,0.545,0.727,0.925,0.727,1.312v17
+					c0,0.316-0.478,0.938-0.678,1H9.078c-0.183,0-0.415-0.25-0.415-0.531V1.486c0-0.25,0.175-0.453,0.391-0.453H20.663
+					 M20.663,0.033H9.054c-0.768,0-1.391,0.646-1.391,1.453v25.016c0,0.807,0.646,1.531,1.415,1.531h18.907
+					c0.766,0,1.678-1.193,1.678-2v-17c0-0.809-0.466-1.436-1-2l-5.622-5.964C22.504,0.504,21.433,0.033,20.663,0.033L20.663,0.033z"
+					/>
+			</g>
+		</g>
+	</g>
+	<g display="inline">
+		<g>
+			<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M21.247,1.034v7.491l7.508,0.016"/>
+		</g>
+	</g>
+	<g display="inline">
+		<g>
+			<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M11.746,18.532l13.917,0.016"/>
+		</g>
+	</g>
+	<g display="inline">
+		<g>
+			<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M11.746,22.532l13.917,0.016"/>
+		</g>
+	</g>
+	<g display="inline">
+		<g>
+			<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M11.746,14.532l13.917,0.016"/>
+		</g>
+	</g>
+</g>
+<g id="Outlines">
+	<g>
+		<g>
+			<path d="M20,1c0.496,0,1.299,0.352,1.65,0.722l5.623,5.965C27.79,8.232,28,8.613,28,9v17c0,0.316-0.478,0.938-0.678,1H8.415
+				C8.232,27,8,26.75,8,26.469V1.453C8,1.203,8.175,1,8.391,1H20 M19.622,0H8.391C7.623,0,7,0.646,7,1.453v25.016
+				C7,27.275,7.646,28,8.415,28h18.907C28.088,28,29,26.807,29,26V9.422c0-0.809-0.466-1.436-1-2l-6-6.386
+				C21.463,0.471,20.392,0,19.622,0L19.622,0z"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<polygon points="28.091,9 20,8.991 20,1.001 21,1.001 21,8 28.093,8 			"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<rect x="11" y="18" width="14" height="1"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<rect x="11.001" y="22" width="14" height="1"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<rect x="11.001" y="14" width="14" height="1"/>
+		</g>
+	</g>
+</g>
+</svg>

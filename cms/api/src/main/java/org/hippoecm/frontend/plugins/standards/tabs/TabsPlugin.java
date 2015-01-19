@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -52,6 +53,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
@@ -222,10 +224,6 @@ public class TabsPlugin extends RenderPlugin {
 
     public boolean hasOpenTabs() {
         return !this.tabs.isEmpty();
-    }
-
-    Panel getEmptyPanel() {
-        return emptyPanel;
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
@@ -521,11 +519,23 @@ public class TabsPlugin extends RenderPlugin {
             return null;
         }
 
-        public ResourceReference getIcon(IconSize type) {
-            if (decorator != null) {
-                return decorator.getIcon(type);
+        public String getTitleCssClass() {
+            if (decorator instanceof Perspective) {
+                return ((Perspective)decorator).getTitleCssClass();
             }
             return null;
+        }
+
+        @Deprecated
+        // Use public Component getIcon(String id, IconSize size) instead
+        public ResourceReference getIcon(IconSize size) {
+            log.warn("This method is deprecated in favor of public Component getIcon(String id, IconSize size)");
+            return decorator != null ? decorator.getIcon(size) : null;
+        }
+
+        public Component getIcon(String id, IconSize size) {
+            ResourceReference reference = decorator != null ? decorator.getIcon(size) : null;
+            return reference != null ? HippoIcon.fromResource(id, reference, size) : null;
         }
 
         public Panel getPanel(String panelId) {

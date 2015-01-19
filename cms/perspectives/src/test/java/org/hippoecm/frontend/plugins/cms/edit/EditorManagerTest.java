@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.collections.MiniMap;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.impl.DefaultEditorFactoryPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -71,10 +71,12 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 throw new RuntimeException("failed to determine node name", ex);
             }
         }
-
+        
+        @Override
         public ResourceReference getIcon(IconSize type) {
             return null;
         }
+
     }
 
     private List<IRenderService> getPreviews() {

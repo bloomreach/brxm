@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.hippoecm.frontend.plugins.cms.browse.section;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -138,7 +138,8 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
     public IModel<String> getTitle() {
         return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
     }
-
+    
+    @Override
     public ResourceReference getIcon(IconSize type) {
         return null;
     }

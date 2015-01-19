@@ -23,11 +23,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -35,9 +34,11 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
@@ -52,7 +53,7 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PreviewWorkflowPlugin.class);
 
-    @SuppressWarnings("unused") // used by a PropertyModel
+    @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
     private String inUseBy = StringUtils.EMPTY;
 
     private StdWorkflow infoAction;
@@ -73,7 +74,7 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected IModel getTitle() {
                 return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-                        new PropertyModel<String>(PreviewWorkflowPlugin.this, "stateSummary"));
+                        new PropertyModel<>(PreviewWorkflowPlugin.this, "stateSummary"));
             }
 
             @Override
@@ -107,12 +108,8 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/edit-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/edit-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.EDIT_TINY);
             }
 
             @Override

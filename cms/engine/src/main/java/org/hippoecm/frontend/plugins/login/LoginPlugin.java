@@ -93,6 +93,7 @@ public class LoginPlugin extends RenderPlugin {
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
+        container.getHeaderResponse().render(LoginHeaderItem.get());
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("document.forms.signInForm.username.focus();"));
     }
 

@@ -1,0 +1,193 @@
+/*
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.hippo-tree {
+  min-width: 100%;
+
+  width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+  width: -moz-max-content;    /* Firefox/Gecko */
+  width: -webkit-max-content;
+
+  .wicket-tree {
+    padding: 0 0 4px 0;
+    white-space: nowrap;
+
+    // Set to relative to allow highlight-widget to go under
+    position: relative;
+    z-index: 2;
+
+    // Make the rows expand so it will activate the scrolling of the .hippotree div
+    .row,
+    .row-selected {
+      white-space: nowrap;
+      // set row height to a little higher for better clickability
+      height: 1.8em;
+      padding: 0 4px 0 8px;
+      clear: both;
+      font-size: @font-size-svg-fix;
+
+      .a_ {
+        height: 1.8em;
+
+        svg {
+          // IE and Firefox will both trigger mouse-leave events on a <div/> when hovering over a nested SVG image,
+          // even though the mouse-pointer does not leave the parent <div/>.
+          pointer-events: none;
+        }
+
+        a:first-of-type:focus {
+          outline: 0;
+          background-color: transparent;
+        }
+      }
+
+      .hippo-tree-junction-link {
+        display: inline-block;
+      }
+
+      .hippo-tree-node-link {
+        display: inline-block;
+        text-decoration: none;
+        color: @tree-text-color;
+
+        // Folder icon
+        .hi-folder {
+          position: relative;
+          top: 3px;
+          left: 0;
+          fill: @tree-folder-color;
+          width: 15px;
+          height: 15px;
+        }
+
+        // Text label
+        svg + span {
+          padding-left: 1px;
+          padding-right: 4px;
+          position: relative;
+          top: 1px;
+        }
+
+        // Legacy icon
+        span.icon {
+          background-repeat: no-repeat;
+          background-position: 0 2px;
+        }
+
+        // Legacy text label
+        span + span {
+          display: inline-block;
+          padding-left: 1px;
+          padding-top: 4px;
+        }
+      }
+
+      .hippo-tree-dropdown-icon-container {
+        background: transparent;
+        position: absolute;
+        display: none;
+      }
+
+      .hippo-tree-dropdown-icon-container.container-selected {
+        display: block;
+      }
+    }
+
+    // Tree item hover highlight
+    .row .hippo-tree-node-link:hover {
+      color: @tree-hover-color;
+
+      svg {
+        fill: @tree-hover-color
+      }
+    }
+
+    // Selected tree item
+    .row-selected {
+      font-weight: 600;
+
+      // Text label
+      .hippo-tree-node-link span {
+        color: @white;
+      }
+
+      // white SVGs when node is selected
+      .hippo-tree-node-link svg.hi-folder,
+      svg.hi {
+        fill: @white;
+      }
+
+      .hippo-tree-dropdown-icon-container .hi-context-menu {
+        .hi-shape-bg {
+          fill: @aqua;
+        }
+        .hi-shape-circle,
+        .hi-shape-arrow {
+          fill: #fff;
+        }
+      }
+    }
+
+    .indent-line,   // tree whitespace
+    .indent-blank,  // tree whitespace
+    .icon {         // legacy icon
+      float: left;
+      width: 18px;
+      height: 1.5em;
+      min-height: 18px;
+    }
+
+    // Junction icons
+    .junction,
+    .junction-last,
+    .corner {
+
+      .hi {
+        position: relative;
+        fill: @tree-junction-color;
+      }
+
+      .hi-bullet {
+        top: 1px;
+        width: 9px;
+        height: 9px;
+      }
+
+      .hi-caret {
+        width: 9px;
+        height: 9px;
+      }
+
+      .hi-caret-down {
+        top: 1px;
+      }
+    }
+  }
+
+  // Blue highlight widget
+  .hippo-tree-highlight-widget {
+    border-radius: 4px;
+    background-color: @aqua;
+    position: relative;
+    z-index: 1;
+    height: 22px;
+    width: auto;
+    // The following top-margin is a workaround so the parent element does not claim 22 extra pixels on the bottom which
+    // in turn results in a scrollbar even though it is not (yet) needed.
+    margin: -22px 4px 0;
+  }
+}
+

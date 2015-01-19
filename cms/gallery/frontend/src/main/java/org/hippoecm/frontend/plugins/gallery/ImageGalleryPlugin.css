@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 .gallery-wrapper {
     margin-left: auto;
     margin-right: auto;
-}
-
-.hippo-gallery-images .hippo-list-details {
-    margin-top: 10px;
 }
 
 ul.gallery-list li a {
@@ -54,7 +50,7 @@ ul.gallery-list li.selected {
     background-color: #FFE29A;
 }
 
-.folder-icon, ul.gallery-list li div img {
+ul.gallery-list li div img {
     vertical-align: middle;
     padding: 5px;
     border: 1px solid #eee;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,314 +53,174 @@ table#translations-break-link {
     overflow-y: scroll;
 }
 
+.hippo-folder-translations .hi-folder {
+    fill: #858585;
+}
+
+.hippo-folder-translations .hippo-translated-folder-without-flag > .hi-folder {
+    top: 3px;
+}
+
+.hippo-translation-country {
+    background: no-repeat 100% 100%;
+}
+
 /**
  * Below this line file has been generated with the generate_countries.sh script.
  **/
-
-.x-tree-node-expanded img.hippo-translation-country {
-  background-image: url(icons/folder_open/folder-open-16.png);
+.hippo-translation-country-ae {
+  background-image: url(icons/flags/flag-11x9_ae.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country {
-  background-image: url(icons/folder_closed/folder-closed-16.png);
+.hippo-translation-country-ar {
+  background-image: url(icons/flags/flag-11x9_ar.png);
 }
-
-.x-tree-node-expanded img.hippo-translation-country-ae {
-  background-image: url(icons/folder_open/folder-open-16_ae.png);
+.hippo-translation-country-at {
+  background-image: url(icons/flags/flag-11x9_at.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ae {
-  background-image: url(icons/folder_closed/folder-closed-16_ae.png);
+.hippo-translation-country-au {
+  background-image: url(icons/flags/flag-11x9_au.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-ar {
-  background-image: url(icons/folder_open/folder-open-16_ar.png);
+.hippo-translation-country-be {
+  background-image: url(icons/flags/flag-11x9_be.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ar {
-  background-image: url(icons/folder_closed/folder-closed-16_ar.png);
+.hippo-translation-country-bg {
+  background-image: url(icons/flags/flag-11x9_bg.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-at {
-  background-image: url(icons/folder_open/folder-open-16_at.png);
+.hippo-translation-country-br {
+  background-image: url(icons/flags/flag-11x9_br.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-at {
-  background-image: url(icons/folder_closed/folder-closed-16_at.png);
+.hippo-translation-country-ca {
+  background-image: url(icons/flags/flag-11x9_ca.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-au {
-  background-image: url(icons/folder_open/folder-open-16_au.png);
+.hippo-translation-country-ch {
+  background-image: url(icons/flags/flag-11x9_ch.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-au {
-  background-image: url(icons/folder_closed/folder-closed-16_au.png);
+.hippo-translation-country-cn {
+  background-image: url(icons/flags/flag-11x9_cn.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-be {
-  background-image: url(icons/folder_open/folder-open-16_be.png);
+.hippo-translation-country-cy {
+  background-image: url(icons/flags/flag-11x9_cy.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-be {
-  background-image: url(icons/folder_closed/folder-closed-16_be.png);
+.hippo-translation-country-cz {
+  background-image: url(icons/flags/flag-11x9_cz.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-bg {
-  background-image: url(icons/folder_open/folder-open-16_bg.png);
+.hippo-translation-country-de {
+  background-image: url(icons/flags/flag-11x9_de.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-bg {
-  background-image: url(icons/folder_closed/folder-closed-16_bg.png);
+.hippo-translation-country-dk {
+  background-image: url(icons/flags/flag-11x9_dk.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-br {
-  background-image: url(icons/folder_open/folder-open-16_br.png);
+.hippo-translation-country-ee {
+  background-image: url(icons/flags/flag-11x9_ee.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-br {
-  background-image: url(icons/folder_closed/folder-closed-16_br.png);
+.hippo-translation-country-error {
+  background-image: url(icons/flags/flag-11x9_error.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-ca {
-  background-image: url(icons/folder_open/folder-open-16_ca.png);
+.hippo-translation-country-es {
+  background-image: url(icons/flags/flag-11x9_es.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ca {
-  background-image: url(icons/folder_closed/folder-closed-16_ca.png);
+.hippo-translation-country-fi {
+  background-image: url(icons/flags/flag-11x9_fi.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-ch {
-  background-image: url(icons/folder_open/folder-open-16_ch.png);
+.hippo-translation-country-fr {
+  background-image: url(icons/flags/flag-11x9_fr.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ch {
-  background-image: url(icons/folder_closed/folder-closed-16_ch.png);
+.hippo-translation-country-gb {
+  background-image: url(icons/flags/flag-11x9_gb.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-cn {
-  background-image: url(icons/folder_open/folder-open-16_cn.png);
+.hippo-translation-country-gr {
+  background-image: url(icons/flags/flag-11x9_gr.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-cn {
-  background-image: url(icons/folder_closed/folder-closed-16_cn.png);
+.hippo-translation-country-hu {
+  background-image: url(icons/flags/flag-11x9_hu.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-cy {
-  background-image: url(icons/folder_open/folder-open-16_cy.png);
+.hippo-translation-country-id {
+  background-image: url(icons/flags/flag-11x9_id.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-cy {
-  background-image: url(icons/folder_closed/folder-closed-16_cy.png);
+.hippo-translation-country-ie {
+  background-image: url(icons/flags/flag-11x9_ie.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-cz {
-  background-image: url(icons/folder_open/folder-open-16_cz.png);
+.hippo-translation-country-in {
+  background-image: url(icons/flags/flag-11x9_in.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-cz {
-  background-image: url(icons/folder_closed/folder-closed-16_cz.png);
+.hippo-translation-country-ir {
+  background-image: url(icons/flags/flag-11x9_ir.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-de {
-  background-image: url(icons/folder_open/folder-open-16_de.png);
+.hippo-translation-country-it {
+  background-image: url(icons/flags/flag-11x9_it.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-de {
-  background-image: url(icons/folder_closed/folder-closed-16_de.png);
+.hippo-translation-country-jp {
+  background-image: url(icons/flags/flag-11x9_jp.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-dk {
-  background-image: url(icons/folder_open/folder-open-16_dk.png);
+.hippo-translation-country-kr {
+  background-image: url(icons/flags/flag-11x9_kr.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-dk {
-  background-image: url(icons/folder_closed/folder-closed-16_dk.png);
+.hippo-translation-country-lt {
+  background-image: url(icons/flags/flag-11x9_lt.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-ee {
-  background-image: url(icons/folder_open/folder-open-16_ee.png);
+.hippo-translation-country-lu {
+  background-image: url(icons/flags/flag-11x9_lu.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ee {
-  background-image: url(icons/folder_closed/folder-closed-16_ee.png);
+.hippo-translation-country-lv {
+  background-image: url(icons/flags/flag-11x9_lv.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-es {
-  background-image: url(icons/folder_open/folder-open-16_es.png);
+.hippo-translation-country-mt {
+  background-image: url(icons/flags/flag-11x9_mt.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-es {
-  background-image: url(icons/folder_closed/folder-closed-16_es.png);
+.hippo-translation-country-mx {
+  background-image: url(icons/flags/flag-11x9_mx.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-fi {
-  background-image: url(icons/folder_open/folder-open-16_fi.png);
+.hippo-translation-country-nl {
+  background-image: url(icons/flags/flag-11x9_nl.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-fi {
-  background-image: url(icons/folder_closed/folder-closed-16_fi.png);
+.hippo-translation-country-no {
+  background-image: url(icons/flags/flag-11x9_no.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-fr {
-  background-image: url(icons/folder_open/folder-open-16_fr.png);
+.hippo-translation-country-nz {
+  background-image: url(icons/flags/flag-11x9_nz.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-fr {
-  background-image: url(icons/folder_closed/folder-closed-16_fr.png);
+.hippo-translation-country-pk {
+  background-image: url(icons/flags/flag-11x9_pk.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-gr {
-  background-image: url(icons/folder_open/folder-open-16_gr.png);
+.hippo-translation-country-pl {
+  background-image: url(icons/flags/flag-11x9_pl.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-gr {
-  background-image: url(icons/folder_closed/folder-closed-16_gr.png);
+.hippo-translation-country-pt {
+  background-image: url(icons/flags/flag-11x9_pt.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-hu {
-  background-image: url(icons/folder_open/folder-open-16_hu.png);
+.hippo-translation-country-ro {
+  background-image: url(icons/flags/flag-11x9_ro.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-hu {
-  background-image: url(icons/folder_closed/folder-closed-16_hu.png);
+.hippo-translation-country-ru {
+  background-image: url(icons/flags/flag-11x9_ru.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-id {
-  background-image: url(icons/folder_open/folder-open-16_id.png);
+.hippo-translation-country-sa {
+  background-image: url(icons/flags/flag-11x9_sa.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-id {
-  background-image: url(icons/folder_closed/folder-closed-16_id.png);
+.hippo-translation-country-se {
+  background-image: url(icons/flags/flag-11x9_se.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-ie {
-  background-image: url(icons/folder_open/folder-open-16_ie.png);
+.hippo-translation-country-sg {
+  background-image: url(icons/flags/flag-11x9_sg.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ie {
-  background-image: url(icons/folder_closed/folder-closed-16_ie.png);
+.hippo-translation-country-si {
+  background-image: url(icons/flags/flag-11x9_si.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-in {
-  background-image: url(icons/folder_open/folder-open-16_in.png);
+.hippo-translation-country-sk {
+  background-image: url(icons/flags/flag-11x9_sk.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-in {
-  background-image: url(icons/folder_closed/folder-closed-16_in.png);
+.hippo-translation-country-tr {
+  background-image: url(icons/flags/flag-11x9_tr.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-ir {
-  background-image: url(icons/folder_open/folder-open-16_ir.png);
+.hippo-translation-country-ua {
+  background-image: url(icons/flags/flag-11x9_ua.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-ir {
-  background-image: url(icons/folder_closed/folder-closed-16_ir.png);
+.hippo-translation-country-uk {
+  background-image: url(icons/flags/flag-11x9_uk.png);
 }
-.x-tree-node-expanded img.hippo-translation-country-it {
-  background-image: url(icons/folder_open/folder-open-16_it.png);
+.hippo-translation-country-us {
+  background-image: url(icons/flags/flag-11x9_us.png);
 }
-.x-tree-node-collapsed img.hippo-translation-country-it {
-  background-image: url(icons/folder_closed/folder-closed-16_it.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-jp {
-  background-image: url(icons/folder_open/folder-open-16_jp.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-jp {
-  background-image: url(icons/folder_closed/folder-closed-16_jp.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-kr {
-  background-image: url(icons/folder_open/folder-open-16_kr.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-kr {
-  background-image: url(icons/folder_closed/folder-closed-16_kr.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-lt {
-  background-image: url(icons/folder_open/folder-open-16_lt.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-lt {
-  background-image: url(icons/folder_closed/folder-closed-16_lt.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-lu {
-  background-image: url(icons/folder_open/folder-open-16_lu.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-lu {
-  background-image: url(icons/folder_closed/folder-closed-16_lu.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-lv {
-  background-image: url(icons/folder_open/folder-open-16_lv.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-lv {
-  background-image: url(icons/folder_closed/folder-closed-16_lv.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-mt {
-  background-image: url(icons/folder_open/folder-open-16_mt.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-mt {
-  background-image: url(icons/folder_closed/folder-closed-16_mt.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-mx {
-  background-image: url(icons/folder_open/folder-open-16_mx.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-mx {
-  background-image: url(icons/folder_closed/folder-closed-16_mx.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-nl {
-  background-image: url(icons/folder_open/folder-open-16_nl.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-nl {
-  background-image: url(icons/folder_closed/folder-closed-16_nl.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-no {
-  background-image: url(icons/folder_open/folder-open-16_no.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-no {
-  background-image: url(icons/folder_closed/folder-closed-16_no.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-nz {
-  background-image: url(icons/folder_open/folder-open-16_nz.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-nz {
-  background-image: url(icons/folder_closed/folder-closed-16_nz.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-pk {
-  background-image: url(icons/folder_open/folder-open-16_pk.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-pk {
-  background-image: url(icons/folder_closed/folder-closed-16_pk.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-pl {
-  background-image: url(icons/folder_open/folder-open-16_pl.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-pl {
-  background-image: url(icons/folder_closed/folder-closed-16_pl.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-pt {
-  background-image: url(icons/folder_open/folder-open-16_pt.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-pt {
-  background-image: url(icons/folder_closed/folder-closed-16_pt.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-ro {
-  background-image: url(icons/folder_open/folder-open-16_ro.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-ro {
-  background-image: url(icons/folder_closed/folder-closed-16_ro.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-ru {
-  background-image: url(icons/folder_open/folder-open-16_ru.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-ru {
-  background-image: url(icons/folder_closed/folder-closed-16_ru.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-sa {
-  background-image: url(icons/folder_open/folder-open-16_sa.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-sa {
-  background-image: url(icons/folder_closed/folder-closed-16_sa.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-se {
-  background-image: url(icons/folder_open/folder-open-16_se.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-se {
-  background-image: url(icons/folder_closed/folder-closed-16_se.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-sg {
-  background-image: url(icons/folder_open/folder-open-16_sg.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-sg {
-  background-image: url(icons/folder_closed/folder-closed-16_sg.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-si {
-  background-image: url(icons/folder_open/folder-open-16_si.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-si {
-  background-image: url(icons/folder_closed/folder-closed-16_si.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-sk {
-  background-image: url(icons/folder_open/folder-open-16_sk.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-sk {
-  background-image: url(icons/folder_closed/folder-closed-16_sk.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-tr {
-  background-image: url(icons/folder_open/folder-open-16_tr.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-tr {
-  background-image: url(icons/folder_closed/folder-closed-16_tr.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-ua {
-  background-image: url(icons/folder_open/folder-open-16_ua.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-ua {
-  background-image: url(icons/folder_closed/folder-closed-16_ua.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-uk {
-  background-image: url(icons/folder_open/folder-open-16_uk.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-uk {
-  background-image: url(icons/folder_closed/folder-closed-16_uk.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-us {
-  background-image: url(icons/folder_open/folder-open-16_us.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-us {
-  background-image: url(icons/folder_closed/folder-closed-16_us.png);
-}
-.x-tree-node-expanded img.hippo-translation-country-za {
-  background-image: url(icons/folder_open/folder-open-16_za.png);
-}
-.x-tree-node-collapsed img.hippo-translation-country-za {
-  background-image: url(icons/folder_closed/folder-closed-16_za.png);
+.hippo-translation-country-za {
+  background-image: url(icons/flags/flag-11x9_za.png);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,10 @@ package org.hippoecm.frontend;
 import java.util.Arrays;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.Url;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.request.resource.UrlResourceReference;
-import org.hippoecm.frontend.util.WebApplicationHelper;
 
-public class CmsHeaderItem extends HeaderItem {
-
-    private static final ResourceReference SCREEN_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/screen.css")).setContextRelative(true);
-    private static final ResourceReference SCREEN_IE_CSS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("skin/screen_ie.css")).setContextRelative(true);
-    private static final ResourceReference FUTURE_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/future.js");
-    private static final ResourceReference GLOBAL_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/global.js");
-    private static final ResourceReference IE_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/ie.js");
+public class CmsHeaderItem extends HippoHeaderItem {
 
     private static final CmsHeaderItem INSTANCE = new CmsHeaderItem();
 
@@ -42,7 +29,8 @@ public class CmsHeaderItem extends HeaderItem {
         return INSTANCE;
     }
 
-    private CmsHeaderItem() {}
+    private CmsHeaderItem() {
+    }
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -57,21 +45,10 @@ public class CmsHeaderItem extends HeaderItem {
             CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
         }
 
-        JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
+        CssHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_CSS : THEME_CSS).render(response);
+
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
-
-
-        if (isBrowserInternetExplorer() && getBrowserVersion() < 10) {
-            JavaScriptReferenceHeaderItem.forReference(IE_JS).render(response);
-        }
+        JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_JS : THEME_JS).render(response);
     }
-
-    private boolean isBrowserInternetExplorer() {
-        return WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
-    }
-
-    private int getBrowserVersion() {
-        return WebSession.get().getClientInfo().getProperties().getBrowserVersionMajor();
-    }
-
 }

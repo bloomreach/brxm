@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,25 +17,30 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class CmsJcrTree extends ContextMenuTree {
-    static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
+
     private static final long serialVersionUID = 1L;
 
     public static interface ITreeNodeTranslator extends IClusterable {
@@ -90,14 +95,11 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     }
 
     @Override
-    protected ResourceReference getNodeIcon(TreeNode node) {
+    protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
         if (treeNodeIconService != null) {
-            ResourceReference icon = treeNodeIconService.getNodeIcon(node, getTreeState());
-            if (icon != null) {
-                return icon;
-            }
+            return new NodeIconContainer(id, node);
         }
-        return super.getNodeIcon(node);
+        return super.newNodeIcon(parent, id, node);
     }
 
     @Override
@@ -106,10 +108,66 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     }
 
     @Override
-    protected void decorateNodeLink(MarkupContainer nodeLink, TreeNode node, int level) {
+    protected void decorateNodeLink(MarkupContainer nodeLink, final TreeNode node, int level) {
         if (treeNodeTranslator.hasTitle(node, level)) {
             IModel<String> titleModel = new Model<String>(treeNodeTranslator.getTitleName(node));
             nodeLink.add(new AttributeAppender("title", true, titleModel, " "));
+        }
+
+        nodeLink.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                // Embed node state for testing
+                return getTreeState().isNodeExpanded(node) ? "hippo-tree-node-expanded" : "hippo-tree-node-collapsed";
+            }
+        }, " "));
+    }
+
+    protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
+                                               final TreeNode node)
+    {
+        return (MarkupContainer)new WebMarkupContainer(id)
+        {
+            private static final long serialVersionUID = 1L;
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void onComponentTag(final ComponentTag tag)
+            {
+                super.onComponentTag(tag);
+
+                final Icon icon = node.isLeaf() ? Icon.BULLET_LARGE : 
+                        isNodeExpanded(node) ? Icon.CARET_DOWN_TINY : Icon.CARET_RIGHT_TINY;
+                final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
+  
+                final Response response = RequestCycle.get().getResponse();
+                response.write("<span class=\"" + cssClassOuter + "\">");
+                response.write(icon.getSpriteReference());
+                response.write("</span>");
+            }
+        }.setRenderBodyOnly(true);
+    }
+
+    private boolean isNodeLast(TreeNode node) {
+        TreeNode parent = node.getParent();
+        return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
+    }
+
+    private class NodeIconContainer extends Panel {
+
+        private final TreeNode node;
+
+        private NodeIconContainer(final String id, final TreeNode node) {
+            super(id);
+            this.node = node;
+        }
+
+        @Override
+        protected void onBeforeRender() {
+            addOrReplace(treeNodeIconService.getNodeIcon("icon", this.node, getTreeState()));
+            super.onBeforeRender();
         }
     }
 

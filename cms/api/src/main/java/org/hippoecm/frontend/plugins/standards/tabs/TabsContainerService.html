@@ -1,35 +1,37 @@
 <!--
-  ~ Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
   -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
     <div wicket:id="tabs-container">
-        <ul style="background: none;">
+        <ul>
             <li wicket:id="tabs">
-              <div wicket:id="container" style="white-space:nowrap;">
-                <a class="hippo-tabs-documents-tab" href="#" wicket:id="link">
+              <div wicket:id="container">
+                <a class="hippo-tabs-documents-tab" wicket:id="link">
                     <img wicket:id="icon"/><span wicket:id="title">[[tab title]]</span>
                 </a>
-                <a href="#" wicket:id="close" class="hippo-tabs-documents-close">X</a>
+                <a wicket:id="close" class="hippo-tabs-documents-close">
+                    <span wicket:id="close-icon"></span>
+                </a>
               </div>
               <div wicket:id="contextMenu" class="hippo-tree-dropdown">
-                    <ul class="hippo-toolbar-menu-item">
+                    <ul class="hippo-toolbar-menu-item hippo-tabs-documents-menu">
                         <li>
                             <span class="menu-item">
                                 <a class="hippo-toolbar-menu-item-button" wicket:id="editor-close">
-                                    <span class="hippo-toolbar-menu-item-button-label" style="padding-left:30px;">
+                                    <span class="hippo-toolbar-menu-item-button-label">
                                             <wicket:message key="close"/>
                                     </span>
                                 </a>
@@ -38,7 +40,7 @@
                         <li>
                             <span class="menu-item">
                                 <a class="hippo-toolbar-menu-item-button" wicket:id="editor-close-others">
-                                    <span class="hippo-toolbar-menu-item-button-label" style="padding-left:30px;">
+                                    <span class="hippo-toolbar-menu-item-button-label">
                                              <wicket:message key="close-others"/>
                                     </span>
                                 </a>
@@ -47,7 +49,7 @@
                         <li>
                             <span class="menu-item">
                                 <a class="hippo-toolbar-menu-item-button" wicket:id="editor-close-all">
-                                    <span class="hippo-toolbar-menu-item-button-label" style="padding-left:30px;">
+                                    <span class="hippo-toolbar-menu-item-button-label">
                                               <wicket:message key="close-all"/>
                                     </span>
                                 </a>
@@ -56,7 +58,7 @@
                         <li>
                             <span class="menu-item">
                                 <a class="hippo-toolbar-menu-item-button" wicket:id="editor-close-unmodified">
-                                    <span class="hippo-toolbar-menu-item-button-label" style="padding-left:30px;">
+                                    <span class="hippo-toolbar-menu-item-button-label">
                                               <wicket:message key="close-unmodified"/>
                                     </span>
                                 </a>

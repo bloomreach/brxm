@@ -48,8 +48,6 @@ public class TranslationRenderer extends AbstractNodeRenderer {
 
     private static final long serialVersionUID = 1L;
 
-    private static final CssResourceReference TRANSLATION_RENDERER_CSS = new CssResourceReference(TranslationRenderer.class, "style.css");
-
     private ILocaleProvider provider;
 
     public TranslationRenderer(ILocaleProvider provider) {
@@ -103,11 +101,5 @@ public class TranslationRenderer extends AbstractNodeRenderer {
             });
         }
 
-        @Override
-        public void renderHead(final IHeaderResponse response) {
-            super.renderHead(response);
-
-            response.render(CssHeaderItem.forReference(TRANSLATION_RENDERER_CSS));
-        }
     }
 }

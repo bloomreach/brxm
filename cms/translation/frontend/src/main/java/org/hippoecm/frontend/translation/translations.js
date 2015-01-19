@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
     },
 
     renderPath: function(path) {
-        var text, locale, i, len, countryClass, candidate;
+        var text, locale, i, len, iconClass, countryClass, candidate;
 
         text = '<div style="float: left;">';
         locale = null;
@@ -42,19 +42,20 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
                 text += ' / ';
             }
 
-            countryClass = 'hippo-translation-country';
+            iconClass = 'hippo-translated-folder-without-flag';
+            countryClass = '';
             if ((locale === null || locale === undefined) && path[i].lang !== undefined) {
                 candidate = this.locales[path[i].lang];
                 if (candidate !== null && candidate !== undefined) {
                     locale = candidate;
+                    iconClass = 'hippo-translated-folder-with-flag';
                     countryClass = 'hippo-translation-country-' + locale.country;
                 }
             }
 
-            text += '<span class="x-tree-node-expanded">'
-                    + '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" '
-                    + 'style="width: 16px; height: 16px; background-repeat: no-repeat;" '
-                    + 'class="' + countryClass + '" />'
+            text += '<span class="hi-stack hi-tiny ' + iconClass + '">'
+                    + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder-tiny"></use></svg>'
+                    + '<span class="hi hi-tiny hippo-translation-country ' + countryClass + '"></span>'
                     + '</span> ';
             text += path[i].name;
         }

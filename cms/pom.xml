@@ -122,7 +122,7 @@
     <sanselan.version>0.97-incubator</sanselan.version>
     <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
 
-    <yui.sources.version>1.01.11</yui.sources.version>
+    <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
@@ -140,9 +140,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/cms-restyling</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/cms-restyling</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/cms-restyling</url>
   </scm>
 
   <build>
@@ -464,7 +464,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- forked from Apache Wicket sources -->
-                <exclude>api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css</exclude>
+                <exclude>console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree.css</exclude>
                 <!-- forked from Apache Tomcat sources -->
                 <exclude>engine/src/main/java/org/hippoecm/frontend/custom/ServerCookie.java</exclude>
                 <!-- external contributions -->
@@ -482,29 +482,29 @@
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriteParam.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/cobalt.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/eclipse.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/elegant.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/monokai.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/neat.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css</exclude>
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/css/css.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/groovy/groovy.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/javascript/javascript.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/mode/xml/xml.js</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/cobalt.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/eclipse.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/elegant.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/monokai.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/neat.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/night.css</exclude>
+                <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/rubyblue.css</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
                 <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
-                <exclude>console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/font-awesome/**/*</exclude>
+                <exclude>console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/**/*</exclude>
                 <!-- code templates -->
-                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy</exclude>
+                <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterTemplate.groovy</exclude>
                 <!-- files in which apache-rat does not recognize the license header -->
                 <exclude>tools/eclipse/createlinks.bat</exclude>
                 <!-- files in which no comments are possible -->
@@ -529,6 +529,11 @@
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image-meta.js</exclude>
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/tmpl.js</exclude>
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/css/*.css</exclude>
+                <!--  files without license header  -->
+                <exclude>api/.bowerrc</exclude>
+                <exclude>api/.csslintrc</exclude>
+                <exclude>api/README.md</exclude>
+                <exclude>upgrade_notes.txt</exclude>
               </excludes>
             </configuration>
           </plugin>

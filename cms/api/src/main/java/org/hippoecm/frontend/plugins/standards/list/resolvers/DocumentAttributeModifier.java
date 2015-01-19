@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,51 +18,87 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(DocumentAttributeModifier.class);
 
-    static final Logger log = LoggerFactory.getLogger(DocumentAttributeModifier.class);
+    private static final String FOLDER_CSS_CLASS = "hippo-folder";
+    private static final String DOCUMENT_CSS_CLASS = "hippo-document";
+
+    public static final AttributeAppender FOLDER_CLASS_APPENDER = new AttributeAppender("class", Model.of(FOLDER_CSS_CLASS), " ");
+    public static final AttributeAppender DOCUMENT_CLASS_APPENDER = new AttributeAppender("class", Model.of(DOCUMENT_CSS_CLASS), " ");
 
     @Override
     public AttributeModifier[] getCellAttributeModifiers(IModel<Node> model) {
-        if (model.getObject() == null) {
-            return new AttributeModifier[] { null };
+        final Node node = model.getObject();
+
+        if (node != null) {
+            return new AttributeModifier[] {
+                    createTitleModifierOrNull(node),
+                    createClassModifierOrNull(node)
+            };
         }
-        return super.getCellAttributeModifiers(model);
+        return null;
     }
 
-    @Override
-    public AttributeModifier getCellAttributeModifier(Node node) {
-        IModel<String> documentType = null;
+    private AttributeModifier createTitleModifierOrNull(final Node node) {
+        final NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(node));
+        final IModel<String> nodeName = Model.of(nodeTranslator.getNodeName());
+        return new AttributeAppender("title", nodeName, " ");
+    }
+
+    private AttributeModifier createClassModifierOrNull(final Node node) {
+        final NodeType primaryType = getPrimaryTypeOfDocument(node);
+        if (primaryType != null) {
+            if (isFolder(primaryType)) {
+                return FOLDER_CLASS_APPENDER;
+            } else if (isDocument(primaryType)) {
+                return DOCUMENT_CLASS_APPENDER;
+            }
+        }
+        return null;
+    }
+
+    private NodeType getPrimaryTypeOfDocument(final Node handleOrDocument) {
         try {
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                //isFolder = false;
-                NodeIterator nodeIt = node.getNodes();
+            if (handleOrDocument.isNodeType(HippoNodeType.NT_HANDLE)) {
+                NodeIterator nodeIt = handleOrDocument.getNodes();
                 while (nodeIt.hasNext()) {
                     Node childNode = nodeIt.nextNode();
                     if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        documentType = new TypeTranslator(new JcrNodeTypeModel(childNode.getPrimaryNodeType())).getTypeName();
-                        break;
+                        return childNode.getPrimaryNodeType();
                     }
                 }
             } else {
-                documentType = new TypeTranslator(new JcrNodeTypeModel(node.getPrimaryNodeType())).getTypeName();
+                return handleOrDocument.getPrimaryNodeType();
             }
-        } catch (RepositoryException ex) {
-            log.error("Unable to determine type of document", ex);
+        } catch (RepositoryException e) {
+            log.warn("Unable to determine type of node '{}'", JcrUtils.getNodePathQuietly(handleOrDocument), e);
         }
-        return new AttributeAppender("title", documentType, " ");
+        return null;
+    }
+
+    private boolean isFolder(NodeType primaryType) {
+        return primaryType.isNodeType(HippoStdNodeType.NT_FOLDER) || primaryType.isNodeType(HippoStdNodeType.NT_DIRECTORY);
+    }
+
+    private boolean isDocument(NodeType primaryType) {
+        return primaryType.isNodeType(HippoNodeType.NT_DOCUMENT);
     }
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,8 +23,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>CMS Perspectives</name>
-  <description>Hippo CMS Browse perspective</description>
-  <groupId>org.onehippo.cms7</groupId>
+  <description>Hippo CMS Perspectives</description>
   <artifactId>hippo-cms-perspectives</artifactId>
   <packaging>jar</packaging>
 
@@ -41,6 +40,11 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-workflow-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -103,12 +107,20 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.properties</include>
-          <include>**/*.js</include>
           <include>**/*.groovy</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.css</include>
+          <include>**/*.js</include>
+          <include>**/*.jpg</include>
+          <include>**/*.gif</include>
+          <include>**/*.png</include>
+          <include>**/*.properties</include>
+          <include>**/*.svg</include>
         </includes>
       </resource>
     </resources>
@@ -152,13 +164,13 @@
           <assumeABrowser>true</assumeABrowser>
           <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
           <excludes>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/xml/xml.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/javascript/javascript.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/css/css.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/mode/groovy/groovy.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/mode/xml/xml.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/mode/javascript/javascript.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/mode/css/css.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
           </excludes>
           <predefinedVars>
             Hippo,
@@ -168,7 +180,7 @@
             YAHOO,
             jQuery
           </predefinedVars>
-          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
         </configuration>
       </plugin>
    </plugins>

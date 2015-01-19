@@ -49,8 +49,9 @@ public class FolderTreeNode extends JcrTreeNode {
 
     @Override
     public IJcrTreeNode getChild(String name) throws RepositoryException {
-        if (getChainedModel().getObject().hasNode(name)) {
-            JcrNodeModel childModel = new JcrNodeModel(getChainedModel().getObject().getNode(name));
+        final Node chainedModelObject = getChainedModel().getObject();
+        if (chainedModelObject.hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
             return new FolderTreeNode(childModel, this);
         }
         return null;
@@ -69,7 +70,7 @@ public class FolderTreeNode extends JcrTreeNode {
 
     @Override
     public boolean isLeaf() {
-        return false;
+        return getChildCount() == 0;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class FolderTreeNode extends JcrTreeNode {
                     return 0;
                 }
             } catch (RepositoryException e) {
-                log.warn("Unable to get child count: " + e.getMessage());
+                log.warn("Unable to get child count", e);
             }
         }
         return super.getChildCount();

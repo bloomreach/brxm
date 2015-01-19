@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 
 public final class BrowserStyle {
 
@@ -32,29 +33,50 @@ public final class BrowserStyle {
     private BrowserStyle() {
     }
 
-    public static ResourceReference getStyleSheet() {
-        return new CssResourceReference(BrowserStyle.class, "res/style.css");
+    public static ResourceReference getIconOrNull(String name, IconSize size) {
+        final Session session = Session.get();
+        final String customPngPath = getPackageResourcePath(name, size, ".png");
+        if (customResourceExists(customPngPath, session)) {
+            return createResourceReference(customPngPath, session);
+        }
+        final String customSvgPath = getPackageResourcePath(name, size, ".svg");
+        if (customResourceExists(customSvgPath, session)) {
+            return createResourceReference(customSvgPath, session);
+        }
+        return null;
     }
 
-    public static ResourceReference getIcon(String customName, String defaultName, IconSize size) {
-        Session session = Session.get();
-        String customResourceKey = "res/" + customName + "-" + size.getSize() + ".png" + session.getLocale() + session.getStyle();
+    private static boolean customResourceExists(final String packageResourcePath, final Session session) {
+        final String customResourceKey = packageResourcePath + session.getLocale() + session.getStyle();
         if (!customPackageResourceExists.containsKey(customResourceKey)) {
-            Boolean resourceExists = PackageResource.exists(BrowserStyle.class, "res/" + customName + "-" + size.getSize() + ".png", session
-                    .getLocale(), session.getStyle(), null);
+            Boolean resourceExists = PackageResource.exists(BrowserStyle.class, packageResourcePath,
+                    session.getLocale(), session.getStyle(), null);
             customPackageResourceExists.put(customResourceKey, resourceExists);
-        }
-        if (customPackageResourceExists.get(customResourceKey)) {
-            return getIcon(customName, size);
+            return resourceExists;
         } else {
-            return getIcon(defaultName, size);
+            return customPackageResourceExists.get(customResourceKey).booleanValue();
         }
     }
 
+    private static ResourceReference createResourceReference(final String path, final Session session) {
+        return new PackageResourceReference(BrowserStyle.class, path, session.getLocale(), session.getStyle(), null);
+    }
+
+    private static String getPackageResourcePath(final String name, final IconSize size, final String extension) {
+        return "res/" + name + "-" + size.getSize() + extension;
+    }
+
+    /**
+     * @param name name part of the icon file
+     * @param size size of the icon
+     * @return reference to the icon
+     * @deprecated use an {@link Icon} value instead.
+     */
+    @Deprecated
     public static ResourceReference getIcon(String name, IconSize size) {
-        Session session = Session.get();
-        return new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png", session
-                .getLocale(), session.getStyle(), null);
+        final Session session = Session.get();
+        final String resourcePath = getPackageResourcePath(name, size, ".png");
+        return createResourceReference(resourcePath, session);
     }
 
 }

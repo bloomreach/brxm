@@ -1,0 +1,145 @@
+/*
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* TabsPlugin Document switcher */
+/* ================================================ */
+
+@tab-width: @document-tab-width;
+@tab-height: @document-tab-height;
+@tab-padding-left: 8;
+
+.hippo-tabs-documents {
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  flex: 1 1 auto;
+
+  ul {
+    display: flex;
+    flex-direction: row-reverse;
+
+    > li {
+      flex: 1;
+      height: unit(@footer-height, px);
+      display: flex;
+      align-items: stretch;
+      max-width: unit(@tab-width, px);
+      min-width: 0;
+      border-right: 1px solid @document-tab-border-color;
+
+      > div {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+
+        .hippo-tabs-documents-tab {
+          flex: 1;
+          display: flex;
+          align-items: center;
+
+          min-width: 0;
+          padding-left: unit(@tab-padding-left, px);
+
+          color: @document-tab-title-color;
+          text-decoration: none;
+          white-space: nowrap;
+          user-select: none;
+
+          span {
+            min-width: 0;
+            display: inline-block;
+            line-height: @line-height-computed;
+            .truncate();
+
+            // enforce ellipsis in IE10
+            max-width: 90%;
+          }
+
+          img {
+            flex: none;
+            min-width: 0;
+            margin-right: 6px;
+          }
+        }
+
+        .hippo-tabs-documents-close {
+          flex: none;
+          text-decoration: none;
+          width: 16px;
+          height: 16px;
+          margin-left: 2px;
+          margin-right: 8px;
+
+          svg {
+            fill: @document-tab-close-color;
+          }
+        }
+      }
+
+      &:hover {
+        background-color: @document-tab-hover-bgcolor;
+        cursor: pointer;
+
+        .hippo-tabs-documents-close svg {
+          fill: @document-tab-hover-close-color
+        }
+        .hippo-tabs-documents-close:hover svg {
+          fill: @document-tab-close-hover-color;
+        }
+      }
+
+      &:first-child {
+        border-right: 0;
+      }
+
+      &:last-child {
+        border-left: 1px solid @document-tab-border-color;
+      }
+    }
+  }
+}
+
+// highlight selected tab when there's no active breadcrumb of another perspective
+// or there's no breadcrumb of another perspective at all
+:not(.hippo-breadcrumb-active) + .hippo-tabs-documents,
+.hippo-tabs-documents:first-child {
+  .selected:hover,
+  .selected {
+    border-right-color: @document-tab-selected-bgcolor;
+    background-color: @document-tab-selected-bgcolor;
+  }
+
+  .selected:last-child {
+    border-left-color: @footer-bgcolor;
+  }
+
+  .selected + li {
+    border-right-color: @footer-bgcolor;
+  }
+}
+
+.hippo-toolbar-menu-item.hippo-tabs-documents-menu {
+  min-width: 124px;
+
+  li {
+    cursor: pointer;
+    
+    .hippo-toolbar-menu-item-button-label {
+      top: 0;
+    }
+  }
+}

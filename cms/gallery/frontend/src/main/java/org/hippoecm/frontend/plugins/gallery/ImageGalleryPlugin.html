@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
     <div class="toggle-button" wicket:id="buttons">
-        <a wicket:id="toggle">
-            <img wicket:id="toggleimg"/>
+        <a wicket:id="listButton">
+            <img wicket:id="icon"/>
         </a>
-        <a wicket:id="toggleFullscreen">
-            <img wicket:id="toggleFullscreenImage"/>
+        <a wicket:id="thumbnailsButton">
+            <img wicket:id="icon"/>
         </a>
+        <a wicket:id="toggleLink"></a>
     </div>
-    <div class="hippo-list-details" cellspacing="0" wicket:id="table" width="100%">[table]</div>
+    <table class="hippo-list-details" wicket:id="table">[table]</table>
     <div class="gallery-wrapper" style="clear:both;">
         <ul wicket:id="gallery-list" class="gallery-list">
-
             <li wicket:id="gallery-item" class="gallery-item">
                 <a wicket:id="itemLink">
                     <div wicket:id="thumbnail" class="img-wrapper"></div>
@@ -34,7 +34,6 @@
                     <br/><span wicket:id="title" class="title">Image Title</span>
                 </a>
             </li>
-
         </ul>
     </div>
 </wicket:panel>

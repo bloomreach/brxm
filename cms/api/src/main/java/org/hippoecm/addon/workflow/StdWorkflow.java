@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -27,7 +28,7 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.MappingException;
@@ -44,7 +45,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
 
     private IModel<String> name;
-    private ResourceReference iconModel;
+    private ResourceReference iconReference;
     private IPluginContext pluginContext;
 
     /**
@@ -73,8 +74,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
      *    The WorkflowDescriptorModel is available in workflow plugin constructor..
      */
     @Deprecated
-    public StdWorkflow(String id, StringResourceModel name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
-        this(id, name, iconModel, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
+    public StdWorkflow(String id, StringResourceModel name, ResourceReference iconReference, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name, iconReference, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
     }
 
     /**
@@ -83,8 +84,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
      *    The WorkflowDescriptorModel is available in workflow plugin constructor..
      */
     @Deprecated
-    public StdWorkflow(String id, String name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
-        this(id, Model.of(name), iconModel, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
+    public StdWorkflow(String id, String name, ResourceReference iconReference, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, Model.of(name), iconReference, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
     }
 
     public StdWorkflow(String id, String name) {
@@ -99,18 +100,18 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         this(id, name, null, null, model);
     }
 
-    public StdWorkflow(String id, IModel<String> name, ResourceReference iconModel, WorkflowDescriptorModel model) {
-        this(id, name, iconModel, null, model);
+    public StdWorkflow(String id, IModel<String> name, ResourceReference iconReference, WorkflowDescriptorModel model) {
+        this(id, name, iconReference, null, model);
     }
 
     public StdWorkflow(String id, IModel<String> name, IPluginContext pluginContext, WorkflowDescriptorModel model) {
         this(id, name, null, pluginContext, model);
     }
 
-    public StdWorkflow(String id, IModel<String> name, ResourceReference iconModel, IPluginContext pluginContext, WorkflowDescriptorModel model) {
+    public StdWorkflow(String id, IModel<String> name, ResourceReference iconReference, IPluginContext pluginContext, WorkflowDescriptorModel model) {
         super(id, model);
 
-        this.iconModel = iconModel;
+        this.iconReference = iconReference;
         this.pluginContext = pluginContext;
 
         this.name = name;
@@ -128,12 +129,17 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         add(new ActionDisplay("icon") {
             @Override
             protected void initialize() {
-                add(new CachingImage("icon", new LoadableDetachableModel<ResourceReference>() {
-                    @Override
-                    protected ResourceReference load() {
-                        return getIcon();
-                    }
-                }));
+
+                Component icon = getIcon("icon");
+                if (icon == null) {
+                    icon = HippoIcon.fromResourceModel("icon", new LoadableDetachableModel<ResourceReference>() {
+                        @Override
+                        protected ResourceReference load() {
+                            return getIcon();
+                        }
+                    });
+                }
+                add(icon);
             }
         });
 
@@ -160,12 +166,20 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         return getTitle();
     }
 
+    /**
+     * @deprecated This method is deprecated in favor of {@link StdWorkflow#getIcon(String id)} which gives the
+     * developer the freedom to return a component like a {@link HippoIcon} if desired.
+     */
+    @Deprecated
     protected ResourceReference getIcon() {
-        if (iconModel != null) {
-            return iconModel;
-        } else {
-            return new PackageResourceReference(StdWorkflow.class, "workflow-16.png");
+        return new PackageResourceReference(StdWorkflow.class, "workflow-16.png");
+    }
+
+    protected Component getIcon(final String id) {
+        if (iconReference != null) {
+            return HippoIcon.fromResource(id, iconReference);
         }
+        return null;
     }
 
     protected Dialog createRequestDialog() {

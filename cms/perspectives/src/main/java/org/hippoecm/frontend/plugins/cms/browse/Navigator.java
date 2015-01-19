@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -29,11 +28,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.service.BrowseService;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.util.MappingException;
-import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +41,8 @@ public class Navigator extends RenderPlugin {
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
 
-    private BrowseService browseService;
     private DocumentCollectionView docView;
-    private BrowserSectionAccordion accordion;
+    private SectionViewer sectionViewer;
 
     private boolean clusterStarted;
 
@@ -57,7 +51,7 @@ public class Navigator extends RenderPlugin {
 
         // pretend that cluster has already been started to prevent it's creation in the BrowseService constructor
         clusterStarted = true;
-        browseService = new BrowseService(context, config,
+        final BrowseService browseService = new BrowseService(context, config,
                 new JcrNodeModel(config.getString("model.default.path", "/"))) {
             private static final long serialVersionUID = 1L;
 
@@ -88,32 +82,8 @@ public class Navigator extends RenderPlugin {
         add(docView);
 
         final BrowserSections sections = browseService.getSections();
-        AccordionConfiguration accordionConfig = new AccordionConfiguration();
-        if (config.containsKey("yui.config.accordion")) {
-            try {
-                PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
-            } catch (MappingException e) {
-                log.warn(e.getMessage());
-            }
-        }
-        accordion = new BrowserSectionAccordion("sections", sections, new AccordionManagerBehavior(accordionConfig),
-                this) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onSelect(String name) {
-                sections.setActiveSection(name);
-            }
-        };
-        sections.addListener(new IChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onChange() {
-                accordion.select(sections.getActiveSection());
-            }
-
-        });
-        add(accordion);
+        sectionViewer = new SectionViewer("sections", sections, this);
+        add(sectionViewer);
     }
 
     @Override
@@ -123,7 +93,7 @@ public class Navigator extends RenderPlugin {
         }
         super.render(target);
         docView.render(target);
-        accordion.render(target);
+        sectionViewer.render(target);
     }
 
     private void startCluster() {

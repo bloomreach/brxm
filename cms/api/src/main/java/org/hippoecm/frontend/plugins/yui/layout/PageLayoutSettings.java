@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.io.Serializable;
+
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 
 
 public class PageLayoutSettings implements Serializable {
@@ -44,6 +48,17 @@ public class PageLayoutSettings implements Serializable {
     private boolean footerResize;
     private boolean leftResize;
     private boolean rightResize;
+
+    public PageLayoutSettings() {
+    }
+
+    public PageLayoutSettings(final IPluginConfig config) {
+        try {
+            PluginConfigMapper.populate(this, config);
+        } catch (MappingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void setRootId(YuiId rootId) {
         this.rootId = rootId;

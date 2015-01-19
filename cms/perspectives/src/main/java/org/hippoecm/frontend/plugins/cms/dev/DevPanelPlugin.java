@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,13 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPlugin;
 
+/**
+ * @deprecated The Developer perspective has been removed from the default CMS configuration.
+ * It's contents has been moved to the Admin perspective. Let your plugin extend
+ * {@link org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin} instead
+ * to make it part of the Admin perspective too.
+ */
+@Deprecated
 public abstract class DevPanelPlugin extends PanelPlugin {
 
     public static final String DEV_PANEL_SERVICE_ID = "dev.panel";

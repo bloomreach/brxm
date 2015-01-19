@@ -1,0 +1,100 @@
+/*
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.section-viewer {
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+
+  .section-selection {
+    background-color: @section-selection-bgcolor;
+    height: unit(@sections-select-height, px);
+    display: flex;
+
+    .section-selection-form {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+    }
+  }
+
+  .section-view {
+    height: ~"calc(100% - @{sections-select-height}px)";
+
+    &.unselected {
+      display: none;
+    }
+
+    &.selected {
+      > div {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .section-top {
+        min-height: unit(@sections-top-height, px);
+        height: unit(@sections-top-height, px);
+
+        background-color: @sections-top-bgcolor;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        white-space: nowrap;
+        text-align: center;
+      }
+
+      .section-center {
+        flex: auto;
+        overflow: auto;
+        // IE10 scrollbars
+        -ms-flex-preferred-size: 0;
+      }
+
+      .section-center:only-child {
+        padding-top: 4px;
+        max-height: 100%;
+      }
+
+      .section-bottom {
+        min-height: unit(@sections-bottom-height, px);
+        height: unit(@sections-bottom-height, px);
+        border-top: 1px solid @sections-border-color;
+        white-space: nowrap;
+
+        .add-root-folder {
+          margin: 8px;
+          border: 1px solid @sections-border-color;
+          cursor: pointer;
+          border-radius: 4px;
+          height: 25px;
+          line-height: 23px;
+          font-size: 12px;
+          display: block;
+          text-align: center;
+          box-sizing: border-box;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding: 0 4px;
+
+          &:hover {
+            background-color: @add-root-folder-hover-color;
+          }
+        }
+      }
+    }
+  }
+}

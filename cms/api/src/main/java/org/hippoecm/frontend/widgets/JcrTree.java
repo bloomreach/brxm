@@ -66,7 +66,7 @@ public abstract class JcrTree extends Tree {
 
     @Override
     protected ResourceReference getCSS() {
-        return TREE_STYLE;
+        return null;
     }
 
     @Override

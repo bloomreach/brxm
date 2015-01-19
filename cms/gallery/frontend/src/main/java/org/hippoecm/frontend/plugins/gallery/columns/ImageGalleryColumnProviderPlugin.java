@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
@@ -41,105 +39,110 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
+import org.hippoecm.frontend.skin.DocumentListColumn;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
-    public static final CssResourceReference CSS_RESOURCE_REFERENCE = new CssResourceReference(ImageGalleryColumnProviderPlugin.class, "ImageGalleryStyle.css");
 
+    private static final String GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
+    private static final String GALLERY_THUMBNAIL_BOX_SIZE = "gallery.thumbnail.box.size";
 
-    private String primaryItemName;
+    private final String primaryItemName;
 
     public ImageGalleryColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        primaryItemName = config.getString("primaryItemName", "hippogallery:original");
-    }
-
-    @Override
-    public IHeaderContributor getHeaderContributor() {
-        return new IHeaderContributor() {
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                response.render(CssHeaderItem.forReference(CSS_RESOURCE_REFERENCE));
-            }
-        };
+        primaryItemName = config.getString("primaryItemName", HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
     }
 
     public List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-
-        //image icon
-        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), null);
-        column.setRenderer(new ImageIconRenderer());
-        column.setAttributeModifier(new IconAttributeModifier());
-        column.setCssClass("image-gallery-icon");
-        columns.add(column);
-
-        //node name
-        column = new ListColumn<Node>(new ClassResourceModel("gallery-name", Translations.class), "name");
-        column.setComparator(new NameComparator());
-        column.setCssClass("gallery-name");
-        columns.add(column);
-
+        final List<ListColumn<Node>> columns = new ArrayList<>();
+        columns.add(createIconColumn());
+        columns.add(createNameColumn());
         return columns;
     }
 
-    /**
-     * We have to be careful with adding another column here; the current implementation allows for only one column that
-     * can contain really long values which will be clipped so the UI doesn't break. To allow for more columns that
-     * behave like this, while keeping performance acceptable we will have to go for a *real* widget.
-     */
+    private ListColumn<Node> createIconColumn() {
+        final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
+        final int thumbnailSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_SIZE);
+        final int thumbnailBoxSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_BOX_SIZE);
+        column.setRenderer(new ImageIconRenderer(thumbnailSize, thumbnailBoxSize));
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createNameColumn() {
+        final ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("gallery-name", Translations.class), "name");
+        column.setComparator(new NameComparator());
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        return column;
+    }
+
     public List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = getColumns();
-
-        //width
-        ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("gallery-width", Translations.class), "width");
-        column.setRenderer(new StringPropertyRenderer("hippogallery:width", primaryItemName) {
-            @Override
-            protected String getValue(Property p) throws RepositoryException {
-                return super.getValue(p) + "px";
-            }
-        });
-        column.setComparator(new LongPropertyComparator("hippogallery:width", primaryItemName));
-        column.setCssClass("gallery-width");
-        columns.add(column);
-
-        //height
-        column = new ListColumn<Node>(new ClassResourceModel("gallery-height", Translations.class), "height");
-        column.setRenderer(new StringPropertyRenderer("hippogallery:height", primaryItemName) {
-            @Override
-            protected String getValue(Property p) throws RepositoryException {
-                return super.getValue(p) + "px";
-            }
-        });
-        column.setComparator(new LongPropertyComparator("hippogallery:height", primaryItemName));
-        column.setCssClass("gallery-height");
-        columns.add(column);
-
-        //Mimetype
-        column = new ListColumn<Node>(new ClassResourceModel("gallery-mimetype", Translations.class), "mimetype");
-        column.setRenderer(new StringPropertyRenderer("jcr:mimeType", primaryItemName));
-        column.setComparator(new MimeTypeComparator("jcr:mimeType", primaryItemName));
-        column.setCssClass("gallery-mimetype");
-        columns.add(column);
-
-        //filesize
-        column = new ListColumn<Node>(new ClassResourceModel("gallery-size", Translations.class), "size");
-        column.setRenderer(new SizeRenderer("jcr:data", primaryItemName));
-        column.setComparator(new SizeComparator("jcr:data", primaryItemName));
-        column.setCssClass("gallery-size");
-        columns.add(column);
-
-        //Last modified date
-        column = new ListColumn<Node>(new ClassResourceModel("gallery-lastmodified", Translations.class),
-                "lastmodified");
-        column.setRenderer(new DatePropertyRenderer("jcr:lastModified", primaryItemName));
-        column.setComparator(new CalendarComparator("jcr:lastModified", primaryItemName));
-        column.setCssClass("gallery-lastmodified");
-        columns.add(column);
-
+        final List<ListColumn<Node>> columns = getColumns();
+        columns.add(createWidthColumn());
+        columns.add(createHeightColumn());
+        columns.add(createMimeTypeColumn());
+        columns.add(createSizeColumn());
+        columns.add(createLastModifiedColumn());
         return columns;
+    }
+
+    private ListColumn<Node> createWidthColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("gallery-width", Translations.class);
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "width");
+        column.setRenderer(new ImageDimensionRenderer(HippoGalleryNodeType.IMAGE_WIDTH, primaryItemName));
+        column.setComparator(new LongPropertyComparator(HippoGalleryNodeType.IMAGE_WIDTH, primaryItemName));
+        column.setCssClass(DocumentListColumn.WIDTH.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createHeightColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("gallery-height", Translations.class);
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "height");
+        column.setRenderer(new ImageDimensionRenderer(HippoGalleryNodeType.IMAGE_HEIGHT, primaryItemName));
+        column.setComparator(new LongPropertyComparator(HippoGalleryNodeType.IMAGE_HEIGHT, primaryItemName));
+        column.setCssClass(DocumentListColumn.HEIGHT.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createMimeTypeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("gallery-mimetype", Translations.class);
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "mimetype");
+        column.setRenderer(new StringPropertyRenderer(JcrConstants.JCR_MIMETYPE, primaryItemName));
+        column.setComparator(new MimeTypeComparator(JcrConstants.JCR_MIMETYPE, primaryItemName));
+        column.setCssClass(DocumentListColumn.MIME_TYPE.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createSizeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("gallery-size", Translations.class);
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "size");
+        column.setRenderer(new SizeRenderer(JcrConstants.JCR_DATA, primaryItemName));
+        column.setComparator(new SizeComparator(JcrConstants.JCR_DATA, primaryItemName));
+        column.setCssClass(DocumentListColumn.SIZE.getCssClass());
+        return column;
+    }
+
+    private ListColumn<Node> createLastModifiedColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("gallery-lastmodified", Translations.class);
+        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "lastmodified");
+        column.setRenderer(new DatePropertyRenderer(JcrConstants.JCR_LASTMODIFIED, primaryItemName));
+        column.setComparator(new CalendarComparator(JcrConstants.JCR_LASTMODIFIED, primaryItemName));
+        column.setCssClass(DocumentListColumn.LAST_MODIFIED_BY.getCssClass());
+        return column;
+    }
+
+    private static class ImageDimensionRenderer extends StringPropertyRenderer {
+
+        public ImageDimensionRenderer(final String propertyName, final String relPath) {
+            super(propertyName, relPath);
+        }
+
+        @Override
+        protected String getValue(Property p) throws RepositoryException {
+            return super.getValue(p) + "px";
+        }
     }
 
 }

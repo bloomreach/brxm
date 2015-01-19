@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.standards.tree.icon;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 
 /**
@@ -27,11 +27,11 @@ import org.apache.wicket.util.io.IClusterable;
 public interface ITreeNodeIconProvider extends IClusterable {
 
     /**
-     * Retrieve a 16px icon to represent the tree node.
+     * @return a component that represents a tree node.
      * Implementations should return null when no representation can be
-     * found.  Clients should have a fall-back mechanism, e.g. by
-     * traversing a list of services until an icon is found.
+     * found. Clients should have a fall-back mechanism, e.g. by
+     * traversing a list of services until a component is found.
      */
-    ResourceReference getNodeIcon(TreeNode treeNode, ITreeState state);
+    Component getNodeIcon(String id, TreeNode treeNode, ITreeState state);
 
 }

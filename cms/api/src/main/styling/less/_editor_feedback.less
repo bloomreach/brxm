@@ -1,0 +1,85 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.hippo-editor-feedback {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  float: left;
+  clear: left;
+  overflow-y: auto;
+  
+  &.hippo-hidden {
+    height: 0;
+  }
+  
+  &.shown {
+    height: 49px;
+  }
+
+  ul {
+    margin: 0;
+    padding: 15px 8px 14px 0;
+    border: none;
+    background-color: white;
+
+    li {
+      display: list-item;
+      height: 20px;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .feedbackPanelERROR .feedbackPanelERROR {
+    padding: 15px 10px 16px 33px;
+    font-size: 14px;
+    background: url("@{images_legacy}/warning.png") no-repeat 13px center !important;
+    color: #ff1500;
+  }
+}
+
+/*
+.hippo-editor-feedback.hippo-hidden {
+  height: 0;
+}
+.hippo-editor-feedback.hippo-shown {
+  height: 49px;
+}
+
+.hippo-editor-feedback ul {
+  margin: 0;
+  padding: 15px 8px 14px 0;
+  border: none;
+  background-color: white;
+}
+
+.hippo-editor-feedback li {
+  display: list-item;
+  height: 20px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.hippo-editor-feedback .feedbackPanelERROR .feedbackPanelERROR {
+  padding: 15px 10px 16px 33px;
+  font-size: 14px;
+  background: url("images/warning.png") no-repeat 13px center !important;
+  color: #ff1500;
+}
+*/

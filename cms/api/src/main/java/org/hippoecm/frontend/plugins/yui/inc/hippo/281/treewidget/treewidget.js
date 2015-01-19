@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ if (!YAHOO.hippo.TreeWidget) {
                     }
 
                     regionTree = Dom.getRegion(ar[0]);
-                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
+                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'section-center'));
                     if (regionTree.height > regionUnitCenter.height) {
                         //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
                         isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());

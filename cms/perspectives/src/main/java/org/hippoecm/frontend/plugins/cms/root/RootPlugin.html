@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -20,21 +20,6 @@
     </wicket:head>
     <wicket:panel>
       <div class="hippo-root-cms" id="doc3">
-        <div id="hd">
-          <div class="headerplugin">
-            <div class="hippo-header">
-              <a class="hippo-header-home">Hippo CMS 7</a>
-              <div wicket:id="top" class="hippo-tabs-documents hippo-tabs-documents-top">tabs container here please</div>
-              <div class="hippo-header-logout">
-                <span class="hippo-logout-username" wicket:id="username">[ user ]</span>
-                <ul class="hippo-header-items-right">
-                  <li class="hippo-header-item" wicket:id="view"><span wicket:id="item" /></li>
-                  <li class="hippo-header-item" wicket:id="extension.logout" />
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
         <div id="bd">
           <div id="yui-main">
             <div class="yui-b">
@@ -47,7 +32,8 @@
                           <div wicket:id="container">
                             <a href="#" wicket:id="close" class="hippo-tabs-tab-close">X</a>
                             <a href="#" wicket:id="link">
-                              <img wicket:id="icon" /><span wicket:id="title">[[tab title]]</span>
+                              <span wicket:id="icon">[icon]</span>
+                              <span wicket:id="title" class="font-size-tiny">[tab title]</span>
                             </a>
                           </div>
                         </li>
@@ -66,7 +52,27 @@
             </div>
           </div>
         </div>
-      </div>  
-      <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
+        <div id="ft" class="hippo-footer">
+          <div wicket:id="extension.tabs.documents" class="hippo-tabs-documents font-size-small">tabs container here please</div>
+        </div>
+      </div>
+
+      <div class="hippo-perspectives-toolbar font-size-tiny">
+        <div class="hippo-developer-extensions">
+          <ul class="hippo-menu-items">
+            <li class="hippo-menu-item" wicket:id="view">
+              <div wicket:id="item" />
+            </li>
+          </ul>
+        </div>
+        <div class="hippo-current-user-name">
+          <span wicket:id="currentUserName"></span>
+        </div>
+      </div>
+
+      <div class="hippo-logo">
+      </div>
+
+      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>
