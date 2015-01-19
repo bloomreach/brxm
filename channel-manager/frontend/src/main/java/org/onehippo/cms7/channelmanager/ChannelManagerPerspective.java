@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.channelmanager;
 
 import java.util.LinkedList;
@@ -28,8 +27,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -39,7 +36,6 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.frontend.service.IconSize;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
@@ -75,24 +71,15 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
             final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
             context.registerService(this, channelManagerServiceId);
         } else {
-            final Fragment dimmedRootPanelFragment= new Fragment("channel-root", "dimmed-root-fragment", this);
-            dimmedRootPanelFragment.add(new ErrorMessagePanel("dimmed-root-panel-div", new ResourceModel("site.is.down.message")));
-            add(dimmedRootPanelFragment);
+            final Fragment errorFragment= new Fragment("channel-root", "error-fragment", this);
+            errorFragment.add(new ErrorMessagePanel("error-panel", new ResourceModel("site.is.down.message")));
+            add(errorFragment);
         }
     }
 
     @Override
     public IModel<String> getTitle() {
         return new StringResourceModel("perspective-title", this, new Model<String>("Channel Manager"));
-    }
-
-    @Override
-    public ResourceReference getIcon(IconSize type) {
-        if (siteIsUp) {
-            return new PackageResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
-        } else {
-            return new PackageResourceReference(ChannelManagerPerspective.class, "channel-manager-dimmed-" + type.getSize() + ".png");
-        }
     }
 
     @Override

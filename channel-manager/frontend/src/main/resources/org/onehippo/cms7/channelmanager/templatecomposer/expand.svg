@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g>
+	<g>
+		<path fill="#4C4C4C" d="M7.82,9.43l-2.594,2.594l1.125,1.125C6.445,13.242,6.5,13.367,6.5,13.5C6.5,13.773,6.273,14,6,14H2.5
+			C2.227,14,2,13.773,2,13.5V10c0-0.273,0.227-0.5,0.5-0.5c0.133,0,0.258,0.055,0.352,0.148l1.125,1.125L6.57,8.18
+			c0.047-0.047,0.117-0.078,0.18-0.078S6.883,8.133,6.93,8.18L7.82,9.07c0.047,0.047,0.078,0.117,0.078,0.18S7.867,9.383,7.82,9.43z
+			 M14,6c0,0.273-0.227,0.5-0.5,0.5c-0.133,0-0.258-0.055-0.352-0.148l-1.125-1.125L9.43,7.82C9.383,7.867,9.312,7.898,9.25,7.898
+			S9.117,7.867,9.07,7.82L8.18,6.93C8.133,6.883,8.102,6.812,8.102,6.75S8.133,6.617,8.18,6.57l2.594-2.594L9.648,2.852
+			C9.555,2.758,9.5,2.633,9.5,2.5C9.5,2.227,9.727,2,10,2h3.5C13.773,2,14,2.227,14,2.5V6z"/>
+	</g>
+</g>
+</svg>

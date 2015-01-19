@@ -35,15 +35,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.js</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -54,7 +45,7 @@
             Ext,
             Hippo
           </predefinedVars>
-          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
         </configuration>
       </plugin>
       <plugin>

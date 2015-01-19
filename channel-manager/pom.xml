@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -126,9 +126,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-restyling-2.27.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-restyling-2.27.xx</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-restyling-2.27.xx</url>
   </scm>
 
   <build>
@@ -185,9 +185,9 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- 3rd-party licenses -->
-                <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
-                <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
-                <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
 
                 <!-- ignore frontend dependencies pulled in by npm -->
                 <exclude>frontend/node_modules/**/*</exclude>

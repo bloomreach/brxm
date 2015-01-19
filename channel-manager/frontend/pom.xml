@@ -158,14 +158,14 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
-          <include>**/*.css</include>
-          <include>**/*.gif</include>
           <include>**/*.html</include>
-          <include>**/*.jpg</include>
-          <include>**/*.js</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
-          <include>**/*.txt</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
         </includes>
       </resource>
     </resources>
@@ -188,7 +188,7 @@
             YAHOO,
             window
           </predefinedVars>
-          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
           <tolerateEval>true</tolerateEval>
         </configuration>
       </plugin>
