@@ -84,15 +84,13 @@
         },
 
         openPicker: function() {
-            if (this.disabled) {
-                console.log('Picker is disabled');
-                return;
-            }
-            Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
+            if (!this.disabled) {
+                Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
                     this.getValue(),
                     this.pickerConfig,
                     Ext.createDelegate(this.picked, this)
-            );
+                );
+            }
         },
 
         picked: function(value) {
