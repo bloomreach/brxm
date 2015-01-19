@@ -27,10 +27,11 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 
 public class ResponseToChannelExceptionMapper implements ResponseExceptionMapper<ChannelException>, Serializable {
@@ -102,7 +103,7 @@ public class ResponseToChannelExceptionMapper implements ResponseExceptionMapper
 
         if (error != null && error.isObject()) {
             final JsonNode message = error.get("message");
-            parsedInfo[0] = (message != null) ? message.getTextValue() : "";
+            parsedInfo[0] = (message != null) ? message.asText() : "";
             final JsonNode parameters = error.get("parameters");
             parsedInfo[1] = parseParameters(parameters);
         } else {
@@ -117,14 +118,14 @@ public class ResponseToChannelExceptionMapper implements ResponseExceptionMapper
             return new String[0];
         }
 
-        final Iterator<JsonNode> paramsNodes = parameters.getElements();
+        final Iterator<JsonNode> paramsNodes = parameters.elements();
         List<String> parsedParams = new ArrayList<String>(parameters.size());
 
         while(paramsNodes.hasNext()) {
-            parsedParams.add(paramsNodes.next().getTextValue());
+            parsedParams.add(paramsNodes.next().asText());
         }
 
-        return parsedParams.toArray(new String[0]);
+        return parsedParams.toArray(new String[parsedParams.size()]);
     }
 
 }
