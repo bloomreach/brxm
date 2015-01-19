@@ -26,8 +26,15 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 public class ImageIconRenderer extends IconRenderer {
+
+    private final double ratio;
+
+    public ImageIconRenderer(final int thumbnailSize, final int boxSize) {
+        ratio = thumbnailSize / (double) boxSize;
+    }
 
     @Override
     protected HippoIcon getIcon(String id, Node node) throws RepositoryException {
@@ -40,8 +47,21 @@ public class ImageIconRenderer extends IconRenderer {
                 if (primaryItem.isNode()) {
                     final Node imageNode = (Node) primaryItem;
                     if (imageNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                        int iconWidth = -1, iconHeight = -1;
+
+                        if (imageNode.hasProperty(HippoGalleryNodeType.IMAGE_WIDTH)) {
+                            int storedWidth = (int) imageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong();
+                            iconWidth = (int) (storedWidth / ratio);
+
+                        }
+
+                        if (imageNode.hasProperty(HippoGalleryNodeType.IMAGE_HEIGHT)) {
+                            int storedHeight = (int) imageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong();
+                            iconHeight = (int) (storedHeight / ratio);
+                        }
+
                         final JcrResourceStream stream = new JcrResourceStream(new JcrNodeModel(imageNode));
-                        return HippoIcon.fromStream(id, Model.of(stream));
+                        return HippoIcon.fromStream(id, Model.of(stream), iconWidth, iconHeight);
                     }
                 }
             }

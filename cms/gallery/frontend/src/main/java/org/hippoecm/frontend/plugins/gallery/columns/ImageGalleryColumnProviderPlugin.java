@@ -39,14 +39,16 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
 
-    private String primaryItemName;
+    private static final String GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
+    private static final String GALLERY_THUMBNAIL_BOX_SIZE = "gallery.thumbnail.box.size";
+
+    private final String primaryItemName;
 
     public ImageGalleryColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -62,7 +64,9 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private ListColumn<Node> createIconColumn() {
         final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
-        column.setRenderer(new ImageIconRenderer());
+        final int thumbnailSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_SIZE);
+        final int thumbnailBoxSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_BOX_SIZE);
+        column.setRenderer(new ImageIconRenderer(thumbnailSize, thumbnailBoxSize));
         column.setCssClass(DocumentListColumn.ICON.getCssClass());
         return column;
     }

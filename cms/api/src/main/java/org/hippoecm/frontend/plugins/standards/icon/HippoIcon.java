@@ -128,10 +128,26 @@ public class HippoIcon extends Panel {
         return new ResourceIcon(id, model, -1, -1);
     }
 
+    /**
+     * Renders and icon/image from a JcrResourceStream which is referenced by an {@link IModel}. Delegates rendering
+     * to the {@link JcrImage} which simply outputs an {@code <img />} element.
+     * @param id the Wicket id of the icon
+     * @param model the model containing the icon stream
+     * @param width the width of the icon in pixels
+     * @param height the height of the icon in pixels
+     * @return the icon component
+     */
     public static HippoIcon fromStream(final String id, final IModel<JcrResourceStream> model, final int width, final int height) {
         return new StreamIcon(id, model, width, height);
     }
 
+    /**
+     * Renders and icon/image from a JcrResourceStream which is referenced by an {@link IModel}. Delegates rendering
+     * to the {@link JcrImage} which simply outputs an {@code <img />} element.
+     * @param id the Wicket id of the icon
+     * @param model the model containing the icon stream
+     * @return the icon component
+     */
     public static HippoIcon fromStream(final String id, final IModel<JcrResourceStream> model) {
         return fromStream(id, model, -1, -1);
     }
