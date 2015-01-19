@@ -23,12 +23,18 @@
     margin-left: -45px;
   }
 
-  .toggle-button .gallery-mode-active {
-    box-sizing: border-box;
-    border-bottom: 2px solid @aqua;
+  .toggle-button a {
 
-    .hi {
-      fill: @aqua;
+    // prevent outline on clicked toggle buttons in Firefox
+    outline: 0;
+
+    &.gallery-mode-active {
+      box-sizing: border-box;
+      border-bottom: 2px solid @aqua;
+
+      .hi {
+        fill: @aqua;
+      }
     }
   }
 }
