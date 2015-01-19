@@ -18,7 +18,7 @@
   "import": 2,
   "important": false,
   "known-properties": false,
-  "outline-none": false,
+  "outline-none": 2,
   "overqualified-elements": 2,
   "qualified-headings": 2,
   "regex-selectors": false,
