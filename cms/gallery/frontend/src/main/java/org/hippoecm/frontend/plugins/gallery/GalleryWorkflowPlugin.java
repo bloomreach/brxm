@@ -95,9 +95,9 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
         }
 
         @Override
-        protected void onFinished(){
-            super.onFinished();
+        public void onClose() {
             afterUploadItems();
+            super.onClose();
         }
     };
     public String type;
