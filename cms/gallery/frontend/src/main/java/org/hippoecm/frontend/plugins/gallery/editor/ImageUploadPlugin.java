@@ -109,7 +109,6 @@ public class ImageUploadPlugin extends RenderPlugin {
         try {
             ImageBinary image = new ImageBinary(node, upload.getInputStream(), fileName, mimeType);
             processor.initGalleryResource(node, image.getStream(), image.getMimeType(), image.getFileName(), Calendar.getInstance());
-            processor.validateResource(node, image.getFileName());
         } catch (IOException | GalleryException | RepositoryException e) {
             error(e);
             log.error(e.getMessage());

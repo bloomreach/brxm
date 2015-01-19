@@ -297,7 +297,6 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
                     ResourceHelper.handlePdfAndSetHippoTextProperty(primaryChild,dataInputStream);
                 }
             }
-            validateResource(primaryChild, fileName);
             for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
                 if (childDef.getDefaultPrimaryType() != null
                         && childDef.getDefaultPrimaryType().isNodeType("hippo:resource")) {
@@ -334,6 +333,11 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
     }
 
+    /**
+     * @deprecated As version 2.28.00, the resource validation is moved to
+     * {@link org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService}
+     */
+    @Deprecated
     @Override
     public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException {
         try {

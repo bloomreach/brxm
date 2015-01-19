@@ -52,6 +52,11 @@ public class ResourceHelper {
 
     public static final String MIME_TYPE_PDF            = "application/pdf";
 
+    public static final String MIME_TYPE_SVG            = "image/svg+xml";
+    public static final String MIME_TYPE_XML            = "text/xml";
+
+    public static final String MIMETYPE_IMAGE_PREFIX    = "image/";
+
     static final Logger log = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
@@ -90,44 +95,58 @@ public class ResourceHelper {
     }
 
     public static void validateResource(Node resource, String filename) throws ResourceException, RepositoryException {
-        try {
-            String mimeType = (resource.hasProperty(JcrConstants.JCR_MIMETYPE) ?
-                    resource.getProperty(JcrConstants.JCR_MIMETYPE).getString() : "");
-            mimeType = sanitizeMimeType(mimeType);
+        String mimeType = (resource.hasProperty(JcrConstants.JCR_MIMETYPE) ?
+                resource.getProperty(JcrConstants.JCR_MIMETYPE).getString() : "");
+        validateMimeType(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream(),
+                         mimeType);
+    }
 
-            if (mimeType.startsWith("image/")) {
+    /**
+     * Validate if the given data <code>inputStream</code> has the expected mime type identified by <code>mimeType</code>.
+     * Exception will throw if the MimeType is invalid
+     *
+     * @param inputStream
+     * @param mimeType
+     * @throws ResourceException
+     */
+    public static void validateMimeType(final InputStream inputStream, final String mimeType) throws ResourceException {
+        try {
+            String sanitizeMimeType = sanitizeMimeType(mimeType);
+            if (isSvgMimeType(sanitizeMimeType)) {
+                // ignore SVG images and text/xml mime types
+                return;
+            }
+            if (isImageMimeType(sanitizeMimeType)) {
                 ImageInfo imageInfo = new ImageInfo();
-                imageInfo.setInput(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream());
+                imageInfo.setInput(inputStream);
                 if (imageInfo.check()) {
                     String imageInfoMimeType = imageInfo.getMimeType();
                     if (imageInfoMimeType == null) {
                         throw new ResourceException("impermissible image type content");
                     } else {
                         imageInfoMimeType = sanitizeMimeType(imageInfoMimeType);
-                        if (!imageInfoMimeType.equals(mimeType)) {
+                        if (!imageInfoMimeType.equals(sanitizeMimeType)) {
                             throw new ResourceException("mismatch image mime type");
                         }
                     }
                 } else {
                     throw new ResourceException("impermissible image type content");
                 }
-            } else if (mimeType.equals(MIME_TYPE_PDF)) {
+            } else if (sanitizeMimeType.equals(MIME_TYPE_PDF)) {
                 String line;
-                line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream()))
-                        .readLine().toUpperCase();
+                line = new BufferedReader(new InputStreamReader(inputStream)).readLine().toUpperCase();
                 if (!line.startsWith("%PDF-")) {
                     throw new ResourceException("impermissible pdf type content");
                 }
             } else if (mimeType.equals("application/postscript")) {
                 String line;
-                line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream()))
-                        .readLine().toUpperCase();
+                line = new BufferedReader(new InputStreamReader(inputStream)).readLine().toUpperCase();
                 if (!line.startsWith("%!")) {
                     throw new ResourceException("impermissible postscript type content");
                 }
             } else {
                 // This method can be overridden to allow more such checks on content type.  if such an override
-                // wants to be really strict and not allow unknown content, the following thrown exception is to be included
+                // wants to be really strict and not allow unknown content, the following thrown exception inputStream to be included
                 // throw new ValueFormatException("impermissible unrecognized type content");
             }
         } catch (IOException ex) {
@@ -273,4 +292,23 @@ public class ResourceHelper {
         return node.getSession().getValueFactory();
     }
 
+    /**
+     * Checks whether the given MIME type indicates an image.
+     *
+     * @param mimeType the MIME type to check
+     * @return true if the given MIME type indicates an image, false otherwise.
+     */
+    public static boolean isImageMimeType(String mimeType) {
+        return mimeType.startsWith(MIMETYPE_IMAGE_PREFIX);
+    }
+
+    public static boolean isSvgMimeType(final String mimeType) {
+        // Uploaded SVG images are stored in a file on disk. For some SVG files the MIME type
+        // is then incorrectly read as 'text/xml'. We assume those files are OK too.
+        return MIME_TYPE_SVG.equals(mimeType) || MIME_TYPE_XML.equals(mimeType);
+    }
+
+    public static boolean isPdfMimeType(final String mimeType){
+        return MIME_TYPE_PDF.equalsIgnoreCase(mimeType);
+    }
 }

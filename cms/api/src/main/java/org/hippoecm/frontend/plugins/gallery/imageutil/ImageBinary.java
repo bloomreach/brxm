@@ -73,9 +73,9 @@ public class ImageBinary implements Binary {
 
         this.fileName = fileName;
 
-        if (ImageUploadValidationService.isSvgMimeType(mimeType)) {
+        if (ResourceHelper.isSvgMimeType(mimeType)) {
             // Sanselan does not recognize SVG files, so do not auto-detect the MIME type and color model
-            this.mimeType = ImageUploadValidationService.getSvgMimeType();
+            this.mimeType = ResourceHelper.MIME_TYPE_SVG;
             this.colorModel = ColorModel.UNKNOWN;
         } else {
             final ImageInfo info = createImageInfo();

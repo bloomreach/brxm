@@ -45,8 +45,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
-import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -124,7 +124,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
     @Override
     public void execute(final InputStream data, final String mimeType) throws GalleryException {
-        if (ImageUploadValidationService.isSvgMimeType(mimeType)) {
+        if (ResourceHelper.isSvgMimeType(mimeType)) {
             try {
                 processSvg(data);
             } catch (IOException e) {

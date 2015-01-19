@@ -38,6 +38,7 @@ public class NullGalleryProcessor extends DefaultGalleryProcessor {
         // do nothing
     }
 
+    @Deprecated
     @Override
     public void validateResource(final Node node, final String fileName) throws GalleryException, RepositoryException {
         // skip validation, means any type of file can be uploaded

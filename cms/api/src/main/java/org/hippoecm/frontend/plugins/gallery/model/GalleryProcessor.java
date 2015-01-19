@@ -30,6 +30,12 @@ public interface GalleryProcessor extends IClusterable {
     public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
             RepositoryException;
 
+    /**
+     * @deprecated As version 2.28.00, the resource validation is moved to
+     * {@link org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService}
+     *
+     */
+    @Deprecated
     public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException;
 
     public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
