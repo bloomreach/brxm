@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -30,7 +33,9 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.mock.MockBinary;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -146,11 +151,70 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
         assertEquals("barValue",barProp.getValue());
     }
 
+    @Test
+    public void existing_template_variants_no_i18n_bundles() throws RepositoryException {
+        // add variants
+        final MockNode mainFolder = layoutFileNode.getParent();
+        final MockNode layoutFolder = mainFolder.addNode("layout", "nt:folder");
+        layoutFolder.addNode("layout-variant1.ftl","nt:file").addNode("jcr:content", "nt:resource");
+        layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
+
+        Locale[] locales = new Locale[]{null, Locale.FRENCH, Locale.FRANCE};
+
+        for (Locale locale : locales) {
+            List<ContainerItemComponentPropertyRepresentation> properties =
+                    getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper);
+            String[] expectedDisplayValues = {
+                    "layout.ftl",
+                    "layout-variant1.ftl",
+                    "layout-variant2.ftl"};
+
+            final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
+            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+        }
+    }
 
     @Test
-    public void existing_template_variants_with_i18n_resource_bundle() throws RepositoryException {
-        // TODO i18n support!
-        // TODO test also with locale support
+    public void existing_template_variants_with_i18n_resource_bundle() throws RepositoryException, IOException {
+
+        // add variants
+        final MockNode mainFolder = layoutFileNode.getParent();
+        final MockNode layoutFolder = mainFolder.addNode("layout", "nt:folder");
+        layoutFolder.addNode("layout-variant1.ftl","nt:file").addNode("jcr:content", "nt:resource");
+        layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
+
+        for (String locale : new String[]{"", "_fr", "_fr_FR"}) {
+            final Node propertiesNode = mainFolder.addNode(String.format("layout%s.properties", locale), JcrConstants.NT_FILE);
+            final Node content = propertiesNode.addNode("jcr:content", JcrConstants.NT_RESOURCE);
+            final InputStream i18nProperties = ParametersInfoProcessorSwitchTemplateTest.class.getClassLoader()
+                    .getResourceAsStream(String.format("org/hippoecm/hst/pagecomposer/jaxrs/model/layout%s.properties", locale));
+            MockBinary binary = new MockBinary(i18nProperties);
+            content.setProperty(JcrConstants.JCR_DATA, binary);
+        }
+
+        Locale[] locales = new Locale[]{null, new Locale(""), Locale.FRENCH, Locale.FRANCE};
+
+        for (Locale locale : locales) {
+            List<ContainerItemComponentPropertyRepresentation> properties =
+                    getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper);
+
+            String[] expectedDisplayValues = {
+                    "Layout",
+                    "Layout Variant 1",
+                    "Layout Variant 2" };
+
+            if (locale == Locale.FRENCH || locale == Locale.FRANCE) {
+                for (int i = 0; i < 3; i++) {
+                    expectedDisplayValues[i] = expectedDisplayValues[i] + " ("+locale.toString()+")";
+                }
+            }
+
+            final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
+            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+        }
+
     }
 
     @Test
@@ -271,7 +335,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
             if (i == 1) {
                 // add variants folder only this run
                 final MockNode mainFolder = layoutFileNode.getParent();
-                final MockNode layoutFolder = mainFolder.addNode("layout", "nt:folder");
+                mainFolder.addNode("layout", "nt:folder");
                 // no variants added
             }
 
@@ -303,6 +367,57 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
             assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
         }
     }
+
+
+    @Test
+    public void template_variant_configured_does_not_exist_but_still_in_i18n_resource_bundle() throws RepositoryException, IOException {
+        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
+                new String[]{"bar", TEMPLATE_PARAM_NAME});
+        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
+                new String[]{"barValue", "webresource:/ftl/main/layout/non-existing.ftl"});
+
+        final MockNode mainFolder = layoutFileNode.getParent();
+        for (String locale : new String[]{"", "_fr", "_fr_FR"}) {
+            final Node propertiesNode = mainFolder.addNode(String.format("layout%s.properties", locale), JcrConstants.NT_FILE);
+            final Node content = propertiesNode.addNode("jcr:content", JcrConstants.NT_RESOURCE);
+            final InputStream i18nProperties = ParametersInfoProcessorSwitchTemplateTest.class.getClassLoader()
+                    .getResourceAsStream(String.format("org/hippoecm/hst/pagecomposer/jaxrs/model/layout%s.properties", locale));
+            MockBinary binary = new MockBinary(i18nProperties);
+            content.setProperty(JcrConstants.JCR_DATA, binary);
+        }
+
+        Locale[] locales = new Locale[]{null, new Locale(""), Locale.FRENCH, Locale.FRANCE};
+
+        for (Locale locale : locales) {
+            List<ContainerItemComponentPropertyRepresentation> properties =
+                    getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper);
+
+            final String[] expectedDisplayValues;
+
+
+            if (locale == Locale.FRENCH) {
+                final String[] values  = {
+                        "Missing template 'Non Existing (fr)'",
+                        "Layout (fr)"};
+                expectedDisplayValues = values;
+            } else if (locale == Locale.FRANCE) {
+                final String[] values  = {
+                        "Missing template 'Non Existing (fr_FR)'",
+                        "Layout (fr_FR)"};
+                expectedDisplayValues = values;
+            } else {
+                final String[] values  = {
+                        "Missing template 'Non Existing'",
+                        "Layout"};
+                expectedDisplayValues = values;
+            }
+            final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
+            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+        }
+
+    }
+
 
     @Test
     public void multi_prefix_template_variant_configured_and_exists() throws RepositoryException {

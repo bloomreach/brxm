@@ -48,7 +48,7 @@ public class ParametersInfoProcessorPopulatedPropertiesTest {
     public void setup() throws RepositoryException {
         mockHstComponentConfiguration = new MockHstComponentConfiguration("pages/newsList");
 
-        containerItemNode = new MockNode("item");
+        containerItemNode = MockNode.root().addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
 
         final Map<String, HstComponentConfiguration> compConfigMocks = new HashMap<>();
         compConfigMocks.put(containerItemNode.getIdentifier(), mockHstComponentConfiguration);
@@ -73,9 +73,16 @@ public class ParametersInfoProcessorPopulatedPropertiesTest {
         assertEquals("Bar", prop.getLabel());
         assertTrue(prop.getValue().length() == 0);
 
-        List<ContainerItemComponentPropertyRepresentation> propertiesNl = getProperties(parameterInfo, new Locale("nl"), null);
-        final ContainerItemComponentPropertyRepresentation propNl = propertiesNl.get(0);
-        assertEquals("Bar (NL)", propNl.getLabel());
+        {
+            List<ContainerItemComponentPropertyRepresentation> propertiesFr = getProperties(parameterInfo, Locale.FRENCH, null);
+            final ContainerItemComponentPropertyRepresentation propFr = propertiesFr.get(0);
+            assertEquals("Bar (fr)", propFr.getLabel());
+        }
+        {
+            List<ContainerItemComponentPropertyRepresentation> propertiesFrFR = getProperties(parameterInfo, Locale.FRANCE, null);
+            final ContainerItemComponentPropertyRepresentation propFrFR = propertiesFrFR.get(0);
+            assertEquals("Bar (fr_FR)", propFrFR.getLabel());
+        }
     }
 
     @Test

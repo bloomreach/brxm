@@ -48,6 +48,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.hippoecm.hst.util.WebResourceUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
@@ -128,7 +129,6 @@ public class ParametersInfoProcessor {
                 if (session.nodeExists(freeMarkerVariantsFolderPath)) {
                     log.debug("For freemarker '{}' there is a variants folder available. Checking variants.", templateFreeMarkerPath);
 
-
                     // check available variants
                     final Node mainTemplateFolder = session.getNode(freeMarkerVariantsFolderPath);
                     for (Node variant : new NodeIterable(mainTemplateFolder.getNodes())) {
@@ -164,13 +164,13 @@ public class ParametersInfoProcessor {
                 if (variantWebResourcePaths.size() > 1 || templateParamWebResource == TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING) {
                     // add switch template property representation and populate the values
                     final ResourceBundle switchTemplateResourceBundle = getResourceBundle(ParametersInfoProcessor.class, locale);
-                    final ResourceBundle variantsResourceBundle = null;
+                    final ResourceBundle variantsResourceBundle = loadTemplateVariantsResourceBundle(session, freeMarkerVariantsFolderPath, locale);
                     final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty =
                             createSwitchTemplateComponentPropertyRepresentation(switchTemplateResourceBundle,
                                     webResourceTemplateFreeMarkerPath, variantWebResourcePaths, variantsResourceBundle);
                     switchTemplateComponentProperty.setValue(templateParamValue);
                     if (templateParamWebResource == TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING) {
-                        addMissingTemplateValueAndLabel(templateParamValue, switchTemplateResourceBundle, switchTemplateComponentProperty);
+                        addMissingTemplateValueAndLabel(templateParamValue, switchTemplateResourceBundle, switchTemplateComponentProperty, variantsResourceBundle);
                     }
                     // insert the switch template on top of all the properties:
                     properties.add(0, switchTemplateComponentProperty);
@@ -318,6 +318,33 @@ public class ParametersInfoProcessor {
         return orderedByFieldGroupProperties;
     }
 
+    /**
+     * @return {@link ResourceBundle} and <code>null</code> when there is no jcr node at
+     * <code>freeMarkerVariantsFolderPath + ".properties"</code>
+     */
+    private static ResourceBundle loadTemplateVariantsResourceBundle(final Session session,
+                                                                     final String freeMarkerVariantsFolderPath,
+                                                                     final Locale locale) throws RepositoryException {
+        final String baseJcrAbsFilePath = freeMarkerVariantsFolderPath + ".properties";
+        try {
+            if (!session.nodeExists(baseJcrAbsFilePath)) {
+                log.debug("No i18n resource bundles present for '{}'. Return null.", baseJcrAbsFilePath);
+                return null;
+            }
+            return ResourceBundleUtils.getBundle(session, baseJcrAbsFilePath, locale);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Can not load repository based resource bundle for '{}' and locale '{}'", baseJcrAbsFilePath,
+                        locale, e);
+            } else {
+                log.warn("Can not load repository based resource bundle for '{}' and locale '{}' : {}", baseJcrAbsFilePath,
+                        locale, e.toString());
+            }
+        }
+
+        return null;
+    }
+
     private static String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {
         for (ResourceBundle bundle : bundles) {
             if (bundle.containsKey(key)) {
@@ -359,13 +386,23 @@ public class ParametersInfoProcessor {
     }
 
     private static void addMissingTemplateValueAndLabel(final String templateParamValue, final ResourceBundle switchTemplateResourceBundle,
-                                                 final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty) {
+                                                        final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty,
+                                                        final ResourceBundle variantsResourceBundle) {
         final String[] dropDownListValues = switchTemplateComponentProperty.getDropDownListValues();
         final String[] dropDownListDisplayValues = switchTemplateComponentProperty.getDropDownListDisplayValues();
         if (!StringUtils.isEmpty(templateParamValue)) {
+
             final String templateFileName = StringUtils.substringAfterLast(templateParamValue, "/");
-            String displayValue = String.format(switchTemplateResourceBundle.getString(MISSING_TEMPLATE_I18N_KEY),
-                    templateFileName);
+
+            final String i18nTemplateFileName ;
+            if (variantsResourceBundle != null && variantsResourceBundle.containsKey(templateFileName)) {
+                i18nTemplateFileName = variantsResourceBundle.getString(templateFileName);
+            } else {
+                i18nTemplateFileName = templateFileName;
+            }
+
+            final String displayValue = String.format(switchTemplateResourceBundle.getString(MISSING_TEMPLATE_I18N_KEY),
+                    i18nTemplateFileName);
             final String[] augmentedDropDownListValues = new String[dropDownListValues.length + 1];
             final String[] augmentedDropDownListDisplayValues = new String[dropDownListValues.length + 1];
             augmentedDropDownListValues[0] = templateParamValue;
@@ -375,6 +412,7 @@ public class ParametersInfoProcessor {
             System.arraycopy(dropDownListDisplayValues, 0, augmentedDropDownListDisplayValues, 1, dropDownListDisplayValues.length);
             switchTemplateComponentProperty.setDropDownListValues(augmentedDropDownListValues);
             switchTemplateComponentProperty.setDropDownListDisplayValues(augmentedDropDownListDisplayValues);
+
         }
     }
 
