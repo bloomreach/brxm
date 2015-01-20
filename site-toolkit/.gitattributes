@@ -344,10 +344,10 @@ client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/ja
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessor_nl.properties -text
 client-modules/page-composer/src/site/site.xml -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/AbstractPageComposerTest.java -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarI.java -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarI.properties -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarI_fr.properties -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarI_fr_FR.properties -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters.properties -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters_fr.properties -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters_fr_FR.properties -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/NewstyleSubInterface.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/NewstyleSubInterface.properties -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/NewstyleSubInterface_nl.properties -text

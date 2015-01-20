@@ -17,7 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import org.hippoecm.hst.core.parameters.Parameter;
 
-public interface BarI {
+public interface BarParameters {
     @Parameter(name = "bar")
     String getBar();
 }

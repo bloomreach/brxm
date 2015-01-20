@@ -60,7 +60,7 @@ public class ParametersInfoProcessorPopulatedPropertiesTest {
         };
     }
 
-    @ParametersInfo(type = BarI.class)
+    @ParametersInfo(type = BarParameters.class)
     static class Bar {
     }
 
