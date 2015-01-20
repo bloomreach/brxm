@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.events;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -37,7 +34,8 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
     private static class TestEventListener implements PersistedHippoEventListener {
 
-        private List<HippoEvent> seenEvents = new LinkedList<>();
+        private volatile int seen = 0;
+        private volatile HippoEvent event;
 
         @Override
         public String getEventCategory() {
@@ -56,9 +54,14 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
         @Override
         public void onHippoEvent(final HippoEvent event) {
-            seenEvents.add(event);
+            this.event = event;
+            seen++;
         }
 
+        private void clear() {
+            seen = 0;
+            event = null;
+        }
     }
 
     @Override
@@ -105,9 +108,9 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
             waitForEvent(listener);
 
-            assertEquals(1, listener.seenEvents.size());
+            assertEquals(1, listener.seen);
 
-            HippoWorkflowEvent out = new HippoWorkflowEvent(listener.seenEvents.get(0));
+            HippoWorkflowEvent out = new HippoWorkflowEvent(listener.event);
             assertEquals(in.className(), out.className());
             assertEquals(in.action(), out.action());
             assertEquals(in.subjectPath(), out.subjectPath());
@@ -122,14 +125,14 @@ public class BroadcastModuleTest extends RepositoryTestCase {
             // new event
             HippoWorkflowEvent newEvent = new HippoWorkflowEvent(in);
             newEvent.timestamp(System.currentTimeMillis());
-            listener.seenEvents.clear();
+            listener.clear();
             logger.initialize(session);
             logger.logHippoEvent(newEvent);
             logger.shutdown();
 
             waitForEvent(listener);
 
-            assertEquals(1, listener.seenEvents.size());
+            assertEquals(1, listener.seen);
         } finally {
             HippoServiceRegistry.unregisterService(listener, PersistedHippoEventsService.class);
         }
@@ -140,7 +143,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         int n = 51;
         while (n-- > 0) {
             Thread.sleep(100);
-            if (!listener.seenEvents.isEmpty()) {
+            if (listener.event != null) {
                 Thread.sleep(100);
                 return;
             }

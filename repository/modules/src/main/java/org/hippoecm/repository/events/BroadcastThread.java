@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyValueGetterImpl;
 import org.hippoecm.repository.util.ValueGetter;
@@ -82,14 +83,13 @@ class BroadcastThread extends Thread {
                 return DEFAULT_TIMESTAMP;
             }
             for (Node logItem : logItems) {
-                String path = "<unknown>";
                 try {
-                    path = logItem.getPath();
+                    log.debug("Publishing event {} to channel {}", JcrUtils.getNodePathQuietly(logItem), job.getChannelName());
                     final HippoEvent event = createEvent(logItem);
                     job.publish(event);
                     timeStamp = event.timestamp();
                 } catch (RepositoryException | RuntimeException re) {
-                    log.warn("Unable to process logItem at " + path, re);
+                    log.warn("Unable to process logItem at {}", JcrUtils.getNodePathQuietly(logItem), re);
                 }
             }
             return timeStamp;
