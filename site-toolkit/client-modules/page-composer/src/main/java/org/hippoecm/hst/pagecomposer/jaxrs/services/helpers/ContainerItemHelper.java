@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,57 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ContainerItemHelper extends AbstractHelper {
 
+    private static final Logger log = LoggerFactory.getLogger(ContainerItemHelper.class);
+
+    /**
+     * @throws ClientException in case no <code>HstComponentConfiguration</code> can be found for <code>itemId</code>
+     * in <code>pageComposerContextService.getEditingPreviewSite()</code>
+     */
     @SuppressWarnings("unchecked")
     @Override
     public HstComponentConfiguration getConfigObject(final String itemId) {
-        throw new UnsupportedOperationException("not supported");
+        final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
+        return getHstComponentConfiguration(editingPreviewSite.getComponentsConfiguration(), itemId);
+    }
+
+    /**
+     * @throws ClientException if not found
+     */
+    private HstComponentConfiguration getHstComponentConfiguration(final HstComponentsConfiguration componentsConfiguration,
+                                                                   final String itemId) {
+
+        for (HstComponentConfiguration hcc : componentsConfiguration.getComponentConfigurations().values()){
+            HstComponentConfiguration found = getHstComponentConfiguration(hcc, itemId);
+            if (found != null) {
+                return found;
+            }
+        }
+        final String message = String.format("HstComponentConfiguration item with id '%s' is not part of currently edited preview site.", itemId);
+        throw new ClientException(message, ClientError.ITEM_NOT_IN_PREVIEW);
+
+    }
+
+    private HstComponentConfiguration getHstComponentConfiguration(final HstComponentConfiguration hcc, final String itemId) {
+        if (hcc.getCanonicalIdentifier().equals(itemId)) {
+            return hcc;
+        }
+        for (HstComponentConfiguration child : hcc.getChildren().values()) {
+            HstComponentConfiguration found = getHstComponentConfiguration(child, itemId);
+            if (found != null) {
+                log.debug("Found '{}' for '{}'", found, itemId);
+                return found;
+            }
+        }
+        return null;
     }
 
     /**

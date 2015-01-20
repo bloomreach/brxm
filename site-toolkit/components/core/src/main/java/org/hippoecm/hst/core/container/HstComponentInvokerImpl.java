@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.servlet.ServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResourceResponseImpl;
@@ -32,6 +33,7 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl.TemplateParameterInfo;
 import static org.hippoecm.hst.core.container.ContainerConstants.DISPATCH_URI_PROTOCOL;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
@@ -174,7 +176,32 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath();
 
         if (StringUtils.isBlank(dispatchUrl)) {
-            dispatchUrl = window.getRenderPath();
+
+            String templateParameter = null;
+            try {
+                // we need get the template parameter via the ParameterInfoProxy as the HstParameterInfoProxyFactory
+                // can be customized in sub modules, for example for personalization or experiments features
+                final TemplateParameterInfo parameterInfoProxy = hstRequest.getRequestContext().getParameterInfoProxyFactory()
+                        .createParameterInfoProxy(
+                                HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAMETER_INFO_HOLDER.getParametersInfo(),
+                                window.getComponent().getComponentConfiguration(),
+                                hstRequest,
+                                (parameterValue, returnType) -> parameterValue);
+
+                templateParameter = parameterInfoProxy.getTemplateParameter();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception while trying to fetch param '{}'", HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAM_NAME, e);
+                } else {
+                    log.warn("Exception while trying to fetch param '{}' : {}", HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAM_NAME, e.toString());
+                }
+            }
+
+            if (StringUtils.isNotBlank(templateParameter)) {
+                dispatchUrl = templateParameter;
+            } else {
+                dispatchUrl = window.getRenderPath();
+            }
         }
 
         if (dispatchUrl == null) {

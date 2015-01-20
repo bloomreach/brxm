@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.junit.Before;
@@ -51,7 +50,6 @@ public class ContainerItemComponentResourceTest {
     @Before
     public void setUp() throws Exception {
         containerItemComponentResource = new ContainerItemComponentResource();
-        containerItemComponentResource.setProcessor(new ParametersInfoProcessor());
 
         helper = new ContainerItemHelper();
         final PageComposerContextService pageComposerContextService = new PageComposerContextService();

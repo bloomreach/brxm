@@ -17,12 +17,8 @@ package org.hippoecm.hst.freemarker.jcr;
 
 import java.io.IOException;
 
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.WebResourceUtils;
-import org.onehippo.cms7.services.webresources.WebResourcesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,19 +30,9 @@ public class WebResourceTemplateLoader extends AbstractTemplateLoader {
         if (templateSource == null || !templateSource.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
             return null;
         }
-
-        String webResourcePath = "/" + PathUtils.normalizePath(templateSource.substring(
-                ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length()));
-        final HstRequestContext ctx = RequestContextProvider.get();
-        if (ctx == null) {
-            String msg = String.format("Cannot serve freemarker template from webresource '%s' when there is no " +
-                    "HstRequestContext.", templateSource);
-            throw new IllegalStateException(msg);
-        }
-
-        final String bundleName = WebResourceUtils.getBundleName(ctx);
-        String absPath = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + webResourcePath;
+        String absPath = WebResourceUtils.webResourcePathToJcrPath(templateSource);
         log.info("Trying to load freemarker template for webresource from '{}'", absPath);
         return getLoadingCache().get(absPath);
     }
+
 }

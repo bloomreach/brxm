@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,11 +49,12 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent".
@@ -67,12 +68,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
-    private ParametersInfoProcessor processor;
     private ContainerItemHelper containerItemHelper;
-
-    public void setProcessor(final ParametersInfoProcessor processor) {
-        this.processor = processor;
-    }
 
     public void setContainerItemHelper(final ContainerItemHelper containerItemHelper) {
         this.containerItemHelper = containerItemHelper;
@@ -210,7 +206,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
         List<ContainerItemComponentPropertyRepresentation> properties= new ArrayList<>();
 
-        HstComponentParameters componentParameters = new HstComponentParameters(node, containerItemHelper);
 
         //Get the properties via annotation on the component class
         String componentClassName = null;
@@ -226,15 +221,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 if (requestContext != null) {
                     contentPath = getPageComposerContextService().getEditingMount().getContentPath();
                 }
-                properties = processor.getProperties(parametersInfo, locale, contentPath);
-            }
-            if (componentParameters.hasPrefix(prefix)) {
-                for (ContainerItemComponentPropertyRepresentation prop : properties) {
-                    String value = componentParameters.getValue(prefix, prop.getName());
-                    if (value != null && !value.isEmpty()) {
-                        prop.setValue(value);
-                    }
-                }
+                properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node, containerItemHelper);
             }
         }
 
@@ -242,7 +229,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         representation.setProperties(properties);
         return representation;
     }
-
 
     /**
      * Saves parameters for the given variant.

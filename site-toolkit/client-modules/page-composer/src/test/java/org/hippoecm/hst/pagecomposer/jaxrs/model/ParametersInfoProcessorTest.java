@@ -34,6 +34,7 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getProperties;
 
 public class ParametersInfoProcessorTest {
 
@@ -45,14 +46,12 @@ public class ParametersInfoProcessorTest {
     static class NewstyleSubContainer {
     }
 
-    ParametersInfoProcessor processor = new ParametersInfoProcessor();
-
     @Test
     public void additionalAnnotationBasedProcessing() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
         assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -131,7 +130,7 @@ public class ParametersInfoProcessorTest {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
         assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -163,7 +162,7 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
 
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
         assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -234,7 +233,7 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleSubContainer.class.getAnnotation(ParametersInfo.class);
 
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
 
         // NewstyleSubContainer has 2 properties and NewstyleContainer which is extends has 16 properties, BUT
         // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 16 + 1
@@ -303,7 +302,7 @@ public class ParametersInfoProcessorTest {
     public void testInvalidReturnTypeAnnotationCombination() {
         ParametersInfo parameterInfo = InvalidReturnTypeAnnotationCombination.class.getAnnotation(ParametersInfo.class);
         // the getProperties below are expected to log some warnings
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals(2, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -327,7 +326,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void fieldGroupListGroupsParameters() {
         ParametersInfo parameterInfo = FieldGroupComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 3, properties.size());
         assertNameAndGroupLabel(properties.get(0), "three", "Group1");
         assertNameAndGroupLabel(properties.get(1), "one", "Group1");
@@ -347,7 +346,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void emptyFieldGroupListIncludesAllParameters() {
         ParametersInfo parameterInfo = EmptyFieldGroupListComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "one", null);
     }
@@ -370,7 +369,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void fieldGroupWithoutTitleUsesEmptyTitle() {
         ParametersInfo parameterInfo = FieldGroupWithoutTitleComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 2, properties.size());
         assertNameAndGroupLabel(properties.get(0), "two", "");
         assertNameAndGroupLabel(properties.get(1), "one", "");
@@ -394,7 +393,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void fieldGroupWithUntranslatedTitleUsesKeyAsTitle() {
         ParametersInfo parameterInfo = FieldGroupWithUntranslatedTitleComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "parameter", "group");
     }
@@ -414,7 +413,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void unknownFieldGroupParameterIsIgnored() {
         ParametersInfo parameterInfo = FieldGroupWithUnknownParameterComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "parameter", null);
     }
@@ -439,7 +438,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void duplicateFieldGroupParameterBelongsToFirstGroup() {
         ParametersInfo parameterInfo = FieldGroupWithDuplicateParameterComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "parameter", "group1");
     }
@@ -468,7 +467,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void fieldGroupWithSubsetOfParametersIncludesAllOtherParametersInSeparateLastGroup() {
         ParametersInfo parameterInfo = FieldGroupWithSubsetOfParametersComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 3, properties.size());
         assertNameAndGroupLabel(properties.get(0), "one", "group");
         assertNameAndGroupLabel(properties.get(1), "two", "group");
@@ -558,7 +557,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void fieldGroupsAreInherited() {
         ParametersInfo parameterInfo = FieldGroupInheritedComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 12, properties.size());
         assertNameAndGroupLabel(properties.get(0), "a1", "group-a1-c2-b3-d1");
         assertNameAndGroupLabel(properties.get(1), "c2", "group-a1-c2-b3-d1");
@@ -602,7 +601,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void inheritedFieldGroupsAreMerged() {
         ParametersInfo parameterInfo = InheritedFieldGroupsAreMergedComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 12, properties.size());
         assertNameAndGroupLabel(properties.get(0), "a1", "group-b1-d2");
         assertNameAndGroupLabel(properties.get(1), "b1", "group-b1-d2");
@@ -644,7 +643,7 @@ public class ParametersInfoProcessorTest {
     @Test
     public void inheritedEmptyFieldGroupsAreMerged() {
         ParametersInfo parameterInfo = InheritedEmptyFieldGroupsAreMergedComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
         assertEquals("number of properties", 12, properties.size());
         assertNameAndGroupLabel(properties.get(0), "b1", "group-b1-d2");
         assertNameAndGroupLabel(properties.get(1), "d2", "group-b1-d2");

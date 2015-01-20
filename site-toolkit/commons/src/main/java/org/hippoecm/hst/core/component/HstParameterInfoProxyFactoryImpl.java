@@ -35,6 +35,21 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
 
     private static final Logger log = LoggerFactory.getLogger(HstParameterInfoProxyFactoryImpl.class);
 
+    public final static String TEMPLATE_PARAM_NAME = "org.hippoecm.hst.core.component.template";
+    public final static TemplateParameterInfoHolder TEMPLATE_PARAMETER_INFO_HOLDER = new TemplateParameterInfoHolder();
+
+    @ParametersInfo(type = TemplateParameterInfo.class)
+    public static class TemplateParameterInfoHolder {
+        public ParametersInfo getParametersInfo() {
+            return this.getClass().getAnnotation(ParametersInfo.class);
+        }
+    }
+
+    public interface TemplateParameterInfo {
+        @Parameter(name = TEMPLATE_PARAM_NAME)
+        public String getTemplateParameter();
+    }
+
     @Override
     public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
             final HstRequest request, final HstParameterValueConverter converter) {
@@ -161,7 +176,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             }
         }
 
-        private String getParameterValue (final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+        private String getParameterValue(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
             String prefixedParameterName = getPrefixedParameterName(parameterName, config, req);
             String parameterValue = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
             if (parameterValue == null && !parameterName.equals(prefixedParameterName)) {
