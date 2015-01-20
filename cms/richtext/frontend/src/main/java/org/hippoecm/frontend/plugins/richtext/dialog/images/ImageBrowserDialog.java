@@ -312,7 +312,10 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         // backward compatibility start
         if (stringArray.length == 1) {
             final String values = pluginConfig.getString(key);
-            stringArray = values.split(",");
+            if (values.contains(",")) {
+                log.warn("update document types, replace comma separated values in property %s with multiple property values", key);
+                stringArray = values.split(",");
+            }
         }
         // backward compatibility end
         for (String value : stringArray) {
