@@ -86,13 +86,6 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testPollerRepeatedly() throws Exception {
-        for (int i = 0; i < 100; i++) {
-            testPoller();
-        }
-    }
-
-    @Test
     public void testPoller() throws Exception {
         TestEventListener listener = new TestEventListener();
 
