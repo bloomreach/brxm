@@ -155,7 +155,7 @@ public class ResourceBundleUtils {
 
                 List<Locale> lookupLocales = localeLookupList(locale);
                 for (Locale loc : lookupLocales) {
-                    if (loc.toString().length() == 0) {
+                    if (loc.toString().isEmpty()) {
                         continue;
                     }
                     try {
@@ -209,7 +209,7 @@ public class ResourceBundleUtils {
      * @return list of locales with most specific locale first
      */
     public static List<Locale> localeLookupList(final Locale locale) {
-        List list = new ArrayList(4);
+        List list = new ArrayList(3);
         if (locale != null) {
             list.add(locale);
             if (locale.getVariant().length() > 0) {
