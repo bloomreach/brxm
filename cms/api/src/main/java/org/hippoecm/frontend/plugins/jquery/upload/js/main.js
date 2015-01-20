@@ -36,9 +36,9 @@ jqueryFileUploadImpl = {
         }).bind('fileuploaddone', function (e, data) {
             // this event is fired after each file uploading is sent
             var widget = $('#${componentMarkupId}').fileupload("instance"),
-                filesList = widget.options.filesContainer,
-                isError = false,
-                numberOfSentFiles = Math.min(filesList.children().length, widget.options.maxNumberOfFiles);
+                    filesList = widget.options.filesContainer,
+                    isError = false,
+                    numberOfSentFiles = Math.min(filesList.children().length, widget.options.maxNumberOfFiles);
 
             if (data.result.files && data.result.files.length) {
                 jqueryFileUploadImpl.numberOfCompletedFiles += data.result.files.length;
@@ -47,19 +47,21 @@ jqueryFileUploadImpl = {
             }
             console.log('Complete %s/%s', jqueryFileUploadImpl.numberOfCompletedFiles, numberOfSentFiles);
             $.each(data.result.files, function (idx, file) {
-               if (file.error) {
-                   console.error('uploading error: %s', file.error);
-                   isError = true;
-               }
+                if (file.error) {
+                    console.error('uploading error: %s', file.error);
+                    isError = true;
+                }
             });
 
             if (!jqueryFileUploadImpl.hasError && isError) {
                 jqueryFileUploadImpl.hasError = true;
             }
-            if (jqueryFileUploadImpl.numberOfCompletedFiles >= numberOfSentFiles
-                && !jqueryFileUploadImpl.hasError) {
-                // close the dialog if no error has found
-                Wicket.Window.get().close();
+            if (jqueryFileUploadImpl.numberOfCompletedFiles >= numberOfSentFiles) {
+                if (jqueryFileUploadImpl.hasError) {
+                    $('#${componentMarkupId} .files').prepend($('#${componentMarkupId} .files .error').parents('tr'));
+                } else {
+                    Wicket.Window.get().close();
+                }
             }
         });
     },
