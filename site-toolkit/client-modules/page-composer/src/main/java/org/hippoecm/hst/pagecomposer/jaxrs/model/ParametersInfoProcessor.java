@@ -121,7 +121,7 @@ public class ParametersInfoProcessor {
                 }
                 final String freeMarkerVariantsFolderPath = templateFreeMarkerPath.substring(0, templateFreeMarkerPath.length() - 4);
 
-                List<String> variantWebResourcePaths = new ArrayList<>();
+                final List<String> variantWebResourcePaths = new ArrayList<>();
                 // add the main template
                 final String webResourceTemplateFreeMarkerPath = WebResourceUtils.jcrPathToWebResourcePath(templateFreeMarkerPath);
                 variantWebResourcePaths.add(webResourceTemplateFreeMarkerPath);
@@ -187,11 +187,12 @@ public class ParametersInfoProcessor {
     }
 
     private static boolean hasWebResourceFreeMarkerTemplate(final HstComponentConfiguration componentConfiguration) {
-        if (componentConfiguration.getRenderPath() == null) {
+        final String renderPath = componentConfiguration.getRenderPath();
+        if (renderPath == null) {
             return false;
         }
-        return componentConfiguration.getRenderPath().startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL) &&
-                componentConfiguration.getRenderPath().endsWith(".ftl");
+        return renderPath.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL) &&
+                renderPath.endsWith(".ftl");
     }
 
     private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
@@ -334,10 +335,10 @@ public class ParametersInfoProcessor {
             return ResourceBundleUtils.getBundle(session, baseJcrAbsFilePath, locale);
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Can not load repository based resource bundle for '{}' and locale '{}'", baseJcrAbsFilePath,
+                log.warn("Cannot load repository based resource bundle for '{}' and locale '{}'", baseJcrAbsFilePath,
                         locale, e);
             } else {
-                log.warn("Can not load repository based resource bundle for '{}' and locale '{}' : {}", baseJcrAbsFilePath,
+                log.warn("Cannot load repository based resource bundle for '{}' and locale '{}' : {}", baseJcrAbsFilePath,
                         locale, e.toString());
             }
         }
