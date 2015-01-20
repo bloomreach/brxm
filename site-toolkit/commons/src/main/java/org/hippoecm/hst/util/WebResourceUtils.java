@@ -35,7 +35,7 @@ public class WebResourceUtils {
     }
 
     public static String webResourcePathToJcrPath(final String templateSource) {
-        String webResourcePath = "/" + PathUtils.normalizePath(templateSource.substring(
+        final String webResourcePath = "/" + PathUtils.normalizePath(templateSource.substring(
                 ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length()));
         final String bundleName = getBundleName();
         return WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + webResourcePath;
@@ -45,7 +45,7 @@ public class WebResourceUtils {
         final String bundleName = getBundleName();
         final String requiredPrefix = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + "/";
         if (!variantJcrPath.startsWith(requiredPrefix)) {
-            String msg = String.format("Cannot translate '%s' to web resouce path because '%s' does not start" +
+            final String msg = String.format("Cannot translate '%s' to web resouce path because '%s' does not start" +
                     " with '%s'", variantJcrPath, variantJcrPath, requiredPrefix);
             throw new IllegalArgumentException(msg);
         }
@@ -55,8 +55,7 @@ public class WebResourceUtils {
     private static String getBundleName() {
         final HstRequestContext ctx = RequestContextProvider.get();
         if (ctx == null) {
-            String msg = String.format("Cannot serve freemarker template from webresource because there is no HstRequestContext.");
-            throw new IllegalStateException(msg);
+            throw new IllegalStateException("Cannot serve freemarker template from web resource because there is no HstRequestContext.");
         }
         return getBundleName(ctx);
     }

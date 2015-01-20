@@ -114,7 +114,7 @@ public class ResourceBundleUtils {
     }
 
     /**
-     * @param session the jcr sessio to build the resource bundles with
+     * @param session the jcr session to build the resource bundles with
      * @param baseJcrAbsFilePath  the absolute jcr path to the base resource bundle, which must be a path starting with
      *                            a <code>/</code> and ending with <code>.properties</code> and most point to a jcr node
      *                            of type <code>nt:file</code>
@@ -128,7 +128,7 @@ public class ResourceBundleUtils {
     public static ResourceBundle getBundle(final Session session, final String baseJcrAbsFilePath, final Locale locale) {
 
         try {
-            if (baseJcrAbsFilePath == null || !baseJcrAbsFilePath.startsWith("/") || !baseJcrAbsFilePath.endsWith(".properties")) {
+            if (baseJcrAbsFilePath == null || !baseJcrAbsFilePath.startsWith("/") || !baseJcrAbsFilePath.endsWith(PROPERTIES_SUFFIX)) {
                 throw new IllegalArgumentException("baseJcrAbsFilePath is not allowed to be null, must " +
                         "start with a '/' and must end with .properties.");
             }
