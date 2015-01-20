@@ -315,7 +315,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
         final ContainerItemComponentPropertyRepresentation switchTemplatePropNL = propertiesNL.get(0);
         String[] expectedDisplayValuesNL = {
-                "Ontbrekend template 'non-existing.ftl'",
+                "Ontbrekende template 'non-existing.ftl'",
                 "layout.ftl",
                 "layout-variant1.ftl",
                 "layout-variant2.ftl"};
