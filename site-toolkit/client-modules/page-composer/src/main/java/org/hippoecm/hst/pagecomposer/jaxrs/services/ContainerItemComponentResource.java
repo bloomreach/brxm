@@ -47,6 +47,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
@@ -69,9 +70,14 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
     private ContainerItemHelper containerItemHelper;
+    private List<PropertyRepresentationFactory> propertyPresentationFactories;
 
     public void setContainerItemHelper(final ContainerItemHelper containerItemHelper) {
         this.containerItemHelper = containerItemHelper;
+    }
+
+    public void setPropertyPresentationFactories(List<PropertyRepresentationFactory> propertyPresentationFactories) {
+        this.propertyPresentationFactories = propertyPresentationFactories;
     }
 
     /**
@@ -221,7 +227,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 if (requestContext != null) {
                     contentPath = getPageComposerContextService().getEditingMount().getContentPath();
                 }
-                properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node, containerItemHelper);
+                properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node,
+                        containerItemHelper, propertyPresentationFactories);
             }
         }
 
@@ -494,4 +501,5 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
         return Collections.emptyMap();
     }
+
 }

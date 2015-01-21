@@ -92,7 +92,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
         List<ContainerItemComponentPropertyRepresentation> properties =
                 getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
 
         // because *no* template variants present, no 'switchTemplate' ContainerItemComponentPropertyRepresentation
         // is avaible
@@ -115,7 +115,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
         List<ContainerItemComponentPropertyRepresentation> properties =
                 getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
 
         // because there are variants for templates available, there must be added a
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation
@@ -164,7 +164,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
         for (Locale locale : locales) {
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper);
+                            containerItemNode, helper, propertyPresentationFactories);
             String[] expectedDisplayValues = {
                     "layout.ftl",
                     "layout-variant1.ftl",
@@ -198,7 +198,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
         for (Locale locale : locales) {
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper);
+                            containerItemNode, helper, propertyPresentationFactories);
 
             String[] expectedDisplayValues = {
                     "Layout",
@@ -227,7 +227,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
         List<ContainerItemComponentPropertyRepresentation> properties =
                 getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
         // because *no* template variants that end with .ftl are present, no 'switchTemplate' ContainerItemComponentPropertyRepresentation
         // is avaible
         assertEquals(1, properties.size());
@@ -236,7 +236,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
         List<ContainerItemComponentPropertyRepresentation> propertiesNew =
                 getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
 
         assertEquals(2, propertiesNew.size());
     }
@@ -258,7 +258,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
         List<ContainerItemComponentPropertyRepresentation> properties =
                 getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
 
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
         final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
@@ -283,7 +283,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
         List<ContainerItemComponentPropertyRepresentation> properties =
                 getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
 
 
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
@@ -311,7 +311,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
         // and for NL
         List<ContainerItemComponentPropertyRepresentation> propertiesNL =
                 getPopulatedProperties(parameterInfo, new Locale("nl"), null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper);
+                        containerItemNode, helper, propertyPresentationFactories);
 
         final ContainerItemComponentPropertyRepresentation switchTemplatePropNL = propertiesNL.get(0);
         String[] expectedDisplayValuesNL = {
@@ -341,7 +341,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
 
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper);
+                            containerItemNode, helper, propertyPresentationFactories);
 
             // even though there are no variant ftl templates, we still have the switchTemplateProp because there is a
             // value for TEMPLATE_PARAM_NAME param. If in this case we would not add a switchTemplateProp, then from the
@@ -391,7 +391,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
         for (Locale locale : locales) {
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper);
+                            containerItemNode, helper, propertyPresentationFactories);
 
             final String[] expectedDisplayValues;
 
@@ -455,7 +455,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
             String prefix = null;
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper);
+                            containerItemNode, helper, propertyPresentationFactories);
 
             // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
@@ -468,7 +468,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends ParametersInfoPro
             String prefix = null;
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, null, null, "some-prefix",
-                            containerItemNode, helper);
+                            containerItemNode, helper, propertyPresentationFactories);
 
             // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
