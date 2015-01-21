@@ -233,7 +233,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         return (IModel<Node>) getDefaultModel();
     }
 
-    private static IPluginConfig createNodePickerSettings(final String clusterName, final String lastVisitedKey, final String lastVisitedNodeTypes) {
+    private static IPluginConfig createNodePickerSettings(final String clusterName, final String lastVisitedKey, final String... lastVisitedNodeTypes) {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("cluster.name", clusterName);
         config.put(NodePickerControllerSettings.LAST_VISITED_KEY, lastVisitedKey);

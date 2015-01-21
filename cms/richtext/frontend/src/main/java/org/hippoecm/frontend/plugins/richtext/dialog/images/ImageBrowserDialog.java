@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -306,21 +307,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         if (!pluginConfig.containsKey(key)) {
             return null;
         }
-        // starting version 7.10 values are stored in multiple property
         String[] stringArray = pluginConfig.getStringArray(key);
-        // before 7.10 values were stored as comma separated string
-        // backward compatibility start
-        if (stringArray.length == 1) {
-            final String values = pluginConfig.getString(key);
-            if (values.contains(",")) {
-                log.warn("update document types, replace comma separated values in property %s with multiple property values", key);
-                stringArray = values.split(",");
-            }
-        }
-        // backward compatibility end
-        for (String value : stringArray) {
-            result.add(value.trim());
-        }
+        Collections.addAll(result, stringArray);
         return result;
     }
 
