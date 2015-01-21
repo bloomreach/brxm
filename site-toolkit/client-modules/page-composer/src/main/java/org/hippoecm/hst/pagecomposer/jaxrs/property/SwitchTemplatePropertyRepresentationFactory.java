@@ -127,7 +127,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
                 if (variantWebResourcePaths.size() > 1 || templateParamWebResource == TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING) {
                     // add switch template property representation and populate the values
-                    final ResourceBundle switchTemplateResourceBundle = ParametersInfoProcessor.getResourceBundle(ParametersInfoProcessor.class, locale);
+                    final ResourceBundle switchTemplateResourceBundle = ParametersInfoProcessor.getResourceBundle(SwitchTemplatePropertyRepresentationFactory.class, locale);
                     final ResourceBundle variantsResourceBundle = loadTemplateVariantsResourceBundle(session, freeMarkerVariantsFolderPath, locale);
                     final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty =
                             createSwitchTemplateComponentPropertyRepresentation(switchTemplateResourceBundle,
@@ -187,8 +187,8 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         return null;
     }
 
-    private static ContainerItemComponentPropertyRepresentation
-    createSwitchTemplateComponentPropertyRepresentation(final ResourceBundle switchTemplateResourceBundle,
+    private static ContainerItemComponentPropertyRepresentation createSwitchTemplateComponentPropertyRepresentation(
+                                                        final ResourceBundle switchTemplateResourceBundle,
                                                         final String defaultTemplatePath,
                                                         final List<String> variantWebResourcePaths,
                                                         final ResourceBundle variantsResourceBundle) {

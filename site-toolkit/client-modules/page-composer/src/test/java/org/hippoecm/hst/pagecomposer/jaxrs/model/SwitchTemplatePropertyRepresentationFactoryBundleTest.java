@@ -18,21 +18,22 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ParametersInfoProcessorResourceBundleTest {
+public class SwitchTemplatePropertyRepresentationFactoryBundleTest {
 
     @Test
     public void get_parameter_info_default_resource_bundle() {
-        final ResourceBundle resourceBundle = ParametersInfoProcessor.getResourceBundle(ParametersInfoProcessor.class, null);
+        final ResourceBundle resourceBundle = ParametersInfoProcessor.getResourceBundle(SwitchTemplatePropertyRepresentationFactory.class, null);
         assertEquals("Choose a template", resourceBundle.getString("choose.template"));
     }
 
     @Test
     public void get_parameter_info_dutch_resource_bundle() {
-        final ResourceBundle resourceBundle = ParametersInfoProcessor.getResourceBundle(ParametersInfoProcessor.class, new Locale("nl"));
+        final ResourceBundle resourceBundle = ParametersInfoProcessor.getResourceBundle(SwitchTemplatePropertyRepresentationFactory.class, new Locale("nl"));
         assertEquals("Kies een template", resourceBundle.getString("choose.template"));
     }
 
