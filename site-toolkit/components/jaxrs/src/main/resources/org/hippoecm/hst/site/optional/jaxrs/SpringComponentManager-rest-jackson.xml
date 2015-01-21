@@ -18,19 +18,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
   
-  <bean id="jaxrsRestJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+  <bean id="jaxrsRestJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+     <property name="annotationIntrospector" ref="jaxrsRestJacksonJaxbIntrospector"/>
+  </bean>
 
   <bean id="jaxrsRestJacksonJaxbIntrospector" class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector" />
-
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="jaxrsRestJacksonObjectMapper"/>
-    <property name="targetMethod" value="setAnnotationIntrospector"/>
-    <property name="arguments">
-      <list>
-        <ref bean="jaxrsRestJacksonJaxbIntrospector" />
-      </list>
-    </property>
-  </bean>
 
   <bean id="jaxrsRestJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
     <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />
