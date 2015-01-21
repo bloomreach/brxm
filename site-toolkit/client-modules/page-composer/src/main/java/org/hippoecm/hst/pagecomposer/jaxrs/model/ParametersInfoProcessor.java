@@ -77,14 +77,8 @@ public class ParametersInfoProcessor {
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parametersInfo, locale, contentPath);
 
         HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
-        if (componentParameters.hasPrefix(prefix)) {
-            for (ContainerItemComponentPropertyRepresentation prop : properties) {
-                String value = componentParameters.getValue(prefix, prop.getName());
-                if (value != null && !value.isEmpty()) {
-                    prop.setValue(value);
-                }
-            }
-        }
+
+        setValueForProperties(properties, prefix, componentParameters);
 
         if (propertyPresentationFactories != null) {
             int index = 0;
@@ -107,6 +101,23 @@ public class ParametersInfoProcessor {
         }
 
         return properties;
+    }
+
+    public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
+                                             final String prefix,
+                                             final HstComponentParameters componentParameters) {
+        for (ContainerItemComponentPropertyRepresentation prop : properties) {
+            setValueForProperty(prop, prefix, componentParameters);
+        }
+    }
+
+    public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
+                                           final String prefix,
+                                           final HstComponentParameters componentParameters) {
+        String value = componentParameters.getValue(prefix, property.getName());
+        if (value != null && !value.isEmpty()) {
+            property.setValue(value);
+        }
     }
 
 
