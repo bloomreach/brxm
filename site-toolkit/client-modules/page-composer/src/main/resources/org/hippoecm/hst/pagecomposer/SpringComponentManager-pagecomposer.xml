@@ -48,7 +48,7 @@
     <property name="pagesHelper" ref="pagesHelper"/>
   </bean>
 
-  <bean id="propertyPresentationFactories" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="pageComposerPropertyPresentationFactories" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <bean class="org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory"/>
@@ -60,7 +60,7 @@
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
     <property name="containerItemHelper" ref="containerItemHelper"/>
-    <property name="propertyPresentationFactories" ref="propertyPresentationFactories"/>
+    <property name="propertyPresentationFactories" ref="pageComposerPropertyPresentationFactories"/>
   </bean>
 
   <!--
