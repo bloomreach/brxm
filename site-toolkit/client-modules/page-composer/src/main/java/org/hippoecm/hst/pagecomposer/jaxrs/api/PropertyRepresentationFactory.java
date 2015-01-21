@@ -28,7 +28,8 @@ public interface PropertyRepresentationFactory {
 
     /**
      * @return a <code>ContainerItemComponentPropertyRepresentation</code> instance or <code>null</code> if no
-     * {@link ContainerItemComponentPropertyRepresentation} could be created
+     * {@link ContainerItemComponentPropertyRepresentation} needs to be added (because for example already
+     * representation for parameter exists)
      * @throws {@link java.lang.RuntimeException} in case some unexpected exception occurs
      */
     ContainerItemComponentPropertyRepresentation createProperty(
