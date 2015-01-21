@@ -45,7 +45,7 @@ public class WebResourceUtils {
         final String bundleName = getBundleName();
         final String requiredPrefix = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + "/";
         if (!variantJcrPath.startsWith(requiredPrefix)) {
-            final String msg = String.format("Cannot translate '%s' to web resouce path because '%s' does not start" +
+            final String msg = String.format("Cannot translate '%s' to web resource path because '%s' does not start" +
                     " with '%s'", variantJcrPath, variantJcrPath, requiredPrefix);
             throw new IllegalArgumentException(msg);
         }
