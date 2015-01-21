@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Node;
@@ -27,6 +28,15 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 public interface PropertyRepresentationFactory {
 
     /**
+     *
+     * @param parametersInfo
+     * @param locale
+     * @param contentPath
+     * @param prefix
+     * @param containerItemNode
+     * @param containerItemHelper
+     * @param componentParameters
+     * @param properties the already existing {@link ContainerItemComponentPropertyRepresentation}s
      * @return a <code>ContainerItemComponentPropertyRepresentation</code> instance or <code>null</code> if no
      * {@link ContainerItemComponentPropertyRepresentation} needs to be added (because for example already
      * representation for parameter exists)
@@ -39,5 +49,6 @@ public interface PropertyRepresentationFactory {
             final String prefix,
             final Node containerItemNode,
             final ContainerItemHelper containerItemHelper,
-            final HstComponentParameters componentParameters);
+            final HstComponentParameters componentParameters,
+            final List<ContainerItemComponentPropertyRepresentation> properties);
 }

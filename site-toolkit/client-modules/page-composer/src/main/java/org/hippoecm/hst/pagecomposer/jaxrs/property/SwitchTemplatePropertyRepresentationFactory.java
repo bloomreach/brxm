@@ -63,7 +63,8 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                                                                        final String prefix,
                                                                        final Node containerItemNode,
                                                                        final ContainerItemHelper containerItemHelper,
-                                                                       final HstComponentParameters componentParameters) {
+                                                                       final HstComponentParameters componentParameters,
+                                                                       final List<ContainerItemComponentPropertyRepresentation> properties) {
         String containerItemPath = null;
         try {
             containerItemPath = containerItemNode.getPath();

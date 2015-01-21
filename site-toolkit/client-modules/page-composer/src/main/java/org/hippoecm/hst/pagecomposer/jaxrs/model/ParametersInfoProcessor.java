@@ -91,7 +91,7 @@ public class ParametersInfoProcessor {
             for (PropertyRepresentationFactory factory : propertyPresentationFactories) {
                 try {
                     final ContainerItemComponentPropertyRepresentation property = factory.createProperty(parametersInfo, locale,
-                            contentPath, prefix, containerItemNode, containerItemHelper, componentParameters);
+                            contentPath, prefix, containerItemNode, containerItemHelper, componentParameters, properties);
                     if (property != null) {
                         properties.add(index, property);
                         index++;
