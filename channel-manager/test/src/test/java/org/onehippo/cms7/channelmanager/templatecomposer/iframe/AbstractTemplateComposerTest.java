@@ -15,24 +15,31 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.javascript.host.Node;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
 import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
+
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
-import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerGlobalBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.wicketstuff.js.ext.ExtBundle;
 
-import java.io.IOException;
-import java.util.*;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.javascript.host.Node;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import com.google.gson.Gson;
 
 abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTest {
 
@@ -75,8 +82,8 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
         injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
-        injectJavascript(TemplateComposerApiHeaderItem.class, "MessageBus.js");
-        injectJavascript(TemplateComposerApiHeaderItem.class, "IFramePanel.js");
+        injectJavascript(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS);
+        injectJavascript(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL);
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();

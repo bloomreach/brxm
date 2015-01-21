@@ -34,10 +34,7 @@ public class TemplateComposerApiHeaderItem extends HeaderItem {
             "PropertiesEditor.js",
             "PlainPropertiesEditor.js",
             "VariantAdder.js",
-            "PlainVariantAdder.js",
-            "MessageBus.js",
-            "IFramePanel.js",
-            "IFrameWindow.js"
+            "PlainVariantAdder.js"
     };
     private static final JavaScriptResourceReference[] JAVASCRIPT_REFERENCES;
 

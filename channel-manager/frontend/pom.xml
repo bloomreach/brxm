@@ -40,8 +40,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
     </dependency>
 
     <dependency>
@@ -167,14 +167,14 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
-          <include>**/*.css</include>
-          <include>**/*.gif</include>
           <include>**/*.html</include>
-          <include>**/*.jpg</include>
-          <include>**/*.js</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
-          <include>**/*.txt</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
         </includes>
       </resource>
     </resources>
@@ -197,7 +197,7 @@
             YAHOO,
             window
           </predefinedVars>
-          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
           <tolerateEval>true</tolerateEval>
         </configuration>
       </plugin>
@@ -232,6 +232,9 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitGridPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconToolbarWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ManageChangesWindow.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/MessageBus.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IFramePanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IFrameWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageSettingsWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PagesWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/EditMenuWindow.js</include>

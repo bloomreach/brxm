@@ -35,15 +35,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.js</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -52,10 +43,9 @@
           <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
           <predefinedVars>
             Ext,
-            Hippo,
-            window
+            Hippo
           </predefinedVars>
-          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
         </configuration>
       </plugin>
       <plugin>
@@ -71,9 +61,6 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PlainPropertiesEditor.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/VariantAdder.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PlainVariantAdder.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/MessageBus.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/IFramePanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/IFrameWindow.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/template-composer-api-all.js</output>
             </aggregation>

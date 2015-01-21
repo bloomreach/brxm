@@ -1,0 +1,891 @@
+/*
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Channel manager specific font */
+.channel-manager button,
+.channel-manager input {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 14px !important;
+}
+
+#hippo-channelmanager-breadcrumb button,
+.channel-manager .channel-group-handle,
+.channel-manager .channel-name {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 13px !important;
+}
+
+.page-editor-panel > .x-panel-bwrap > .x-panel-body {
+    border-bottom: 2px solid #565B65;
+}
+
+/* toolbar */
+.x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
+    background: #E0E0E0 none;
+    padding: 0 8px;
+    border-bottom: none;
+}
+
+#hippo-channelmanager-breadcrumb.x-toolbar {
+    background: transparent;
+    border-bottom: none;
+}
+
+/* do not gray out 'disabled' breadcrumb items */
+#hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled {
+    opacity: 1;
+}
+#hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled * {
+    color: #333 !important;
+}
+
+/* highlight the breadcrumb when it becomes active */
+#hippo-channelmanager-breadcrumb.x-toolbar.hippo-breadcrumb-active {
+    background: #f3f3f3;
+}
+
+#pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
+    border-bottom: 2px solid #565B65;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
+    margin: 0 4px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.channel-manager .x-btn-text:hover {
+    color: #0086f8;
+}
+
+.channel-manager .x-toolbar .x-btn-text-icon .x-btn-text {
+    padding-left: 22px;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tr,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tc,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-ml,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-mr,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-mc,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bl,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-br,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bc {
+    background-position: 500px 500px;
+}
+
+.channel-manager .channel-manager-toolbar .x-btn-mc {
+    border: none;
+    background: none;
+    text-align: left;
+}
+
+.channel-manager .channel-manager-toolbar .toolbarMenuIcon .x-btn-mc {
+    background: none;
+    border: 0;
+}
+
+/* breadcrumb */
+#hippo-channelmanager-breadcrumb {
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    padding: 0;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left {
+    width: auto;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-text {
+    height: 40px;
+    margin: 0 5px;
+    padding-left: 25px;
+    background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left {
+    padding: 0 10px;
+    width: auto;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left .x-toolbar-cell:first-child .x-btn-text {
+    background: none;
+    padding-left: 0;
+    margin-left: 2px;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-over .x-btn-mc {
+    background-image: none;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-over .x-btn-text {
+    color: #0086f8;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item {
+    opacity: 1;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item .x-btn-text {
+    font-weight: bold;
+    padding-left: 8px;
+    color: #666666;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over td {
+    background-image: none;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over button {
+    color: #666666;
+    text-decoration: underline;
+}
+
+/* notification window */
+.channel-manager .x-notification .x-window-tl,
+.x-notification .x-window-tc,
+.x-notification .x-window-tr,
+.channel-manager .x-notification .x-window-ml,
+.x-notification .x-window-mc,
+.x-notification .x-window-mr,
+.channel-manager .x-notification .x-window-bl,
+.x-notification .x-window-bc,
+.x-notification .x-window-br {
+    background-image: none;
+}
+
+.x-notification {
+    margin-top: 3px;
+}
+
+.channel-manager .x-notification .x-window-header {
+    padding: 0 0 1px 0
+}
+
+.channel-manager .x-notification .x-window-body {
+    padding: 10px 12px;
+    border: 1px solid #CCC7B0;
+    background-color: #FFFADA;
+}
+
+/* channel properties window */
+.channel-manager .hide-channel-properties {
+    display: none
+}
+
+.channel-manager .channel-properties {
+    display: block;
+    position: relative;
+    width: 300px;
+}
+
+.channel-manager .channel-properties .fieldgroup {
+    border-bottom: 16px solid #fff;
+}
+
+.channel-manager .channel-properties .fieldgrouptitle {
+    font-weight: bold;
+    border-bottom: 13px solid #fff;
+}
+
+.channel-manager .channel-properties tr > td.key {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    padding: 0 10px 11px 0;
+}
+
+.channel-manager .channel-properties tr > td.value {
+    padding: 0 0 11px 0;
+    vertical-align: middle;
+}
+
+.channel-manager .channel-properties tr > td.help {
+    padding: 0 0 10px 11px;
+    vertical-align: middle;
+}
+
+.channel-manager .channel-properties .help-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+}
+
+.channel-manager .channel-properties .help-icon > a {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url(icon-i.png) no-repeat center;
+    position: relative;
+}
+
+.channel-manager .channel-properties .help-icon > a span {
+    display: none;
+}
+
+.channel-manager .channel-properties .help-icon > a:hover {
+    background: url(icon-i-hover.png) no-repeat center;
+    cursor: default;
+}
+
+.channel-manager .channel-properties .help-icon > a:hover span {
+    display: block;
+    position: absolute;
+    top: 2em;
+    right: 0;
+    white-space: pre;
+    border: 1px solid #ffa41c;
+    background-color: #fff8d4;
+    color: #000;
+    padding: 4px;
+    z-index: 10000;
+}
+
+.channel-manager .channel-properties input {
+    width: 180px;
+}
+
+.channel-manager .channel-properties select {
+    width: 186px;
+    max-width: 186px;
+}
+
+.channel-manager .channel-properties .channel-preview-name {
+    display: inline-block;
+    margin-right: 6px;
+    max-width: 124px;
+}
+
+.channel-manager .channel-properties .channel-preview-image {
+    display: inline-block;
+    margin-right: 6px;
+    max-width: 124px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.channel-manager .channel-properties .channel-widget-buttons {
+    position: absolute;
+    right: 24px;
+}
+
+.channel-manager .channel-properties .channel-remove-button {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+}
+
+.channel-manager .channel-properties .channel-remove-button > a {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: url(icon-close-gray-small.png) no-repeat center;
+}
+
+.channel-manager .channel-properties .channel-remove-button > a:hover {
+    background: url(icon-close-red-small.png) no-repeat center;
+}
+
+.channel-manager .channel-properties a.channel-select-button,
+.channel-manager .channel-properties .channel-select-button > a {
+    display: inline-block;
+    background-color: #f2f2f2;
+    border: 1px solid #999;
+    padding: 2px;
+}
+
+.channel-manager .channel-properties a.channel-select-button:hover,
+.channel-manager .channel-properties .channel-select-button > a:hover {
+    background-color: #fff6e0
+}
+
+.channel-manager .channel-properties-window .x-window-body {
+    overflow: auto
+}
+
+.channel-manager .x-window-footer {
+    padding-right: 0;
+}
+
+.channel-manager .x-window-footer .x-toolbar-cell {
+    padding-right: 0;
+}
+
+.channel-manager .x-btn-small .add-channel,
+.channel-manager .x-btn-small .add-components {
+    background-image: url("add.svg");
+}
+
+.channel-manager .x-btn-small .add-channel:hover,
+.channel-manager .x-btn-small .add-components:hover {
+    background-image: url("add-blue.svg");
+}
+
+.channel-manager .x-btn-small .edit-channel {
+    background-image: url("templatecomposer/button-edit.svg");
+}
+
+.channel-manager .x-btn-small .edit-channel {
+    background-image: url("templatecomposer/button-edit.svg");
+}
+
+.channel-manager .x-btn-small .edit-channel:hover {
+    background-image: url("templatecomposer/button-edit-blue.svg");
+}
+
+.channel-manager .x-btn-small .btn-pages {
+    background-image: url("templatecomposer/button-pages.svg");
+}
+
+.channel-manager .x-btn-small .btn-pages:hover {
+    background-image: url("templatecomposer/button-pages-blue.svg");
+}
+
+.channel-manager .x-btn-small .publish-channel {
+    background-image: url("templatecomposer/button-publish.svg");
+}
+
+.channel-manager .x-btn-small .publish-channel:hover {
+    background-image: url("templatecomposer/button-publish-blue.svg");
+}
+
+.channel-manager .x-btn-small .save-close-channel {
+    background-image: url("templatecomposer/button-save-close.svg");
+}
+
+.channel-manager .x-btn-small .save-close-channel:hover {
+    background-image: url("templatecomposer/button-save-close-blue.svg");
+}
+
+.channel-manager .x-btn-small .save-channel {
+    background-image: url("templatecomposer/button-save.svg");
+}
+
+.channel-manager .x-btn-small .save-channel:hover {
+    background-image: url("templatecomposer/button-save-blue.svg");
+}
+
+.channel-manager .x-btn-small .discard-channel {
+    background-image: url("templatecomposer/button-discard.svg");
+}
+
+.channel-manager .x-btn-small .discard-channel:hover {
+    background-image: url("templatecomposer/button-discard-blue.svg");
+}
+
+.channel-manager .x-btn-small .remove-lock {
+    background-image: url("templatecomposer/button-remove-lock.svg");
+}
+
+.channel-manager .x-btn-small .remove-lock:hover {
+   background-image: url("templatecomposer/button-remove-lock-blue.svg");
+}
+
+.channel-manager .x-btn-small .page-settings,
+.channel-manager .x-btn-small .channel-settings {
+    background-image: url("templatecomposer/gear.svg");
+}
+
+.channel-manager .x-btn-small .page-settings:hover,
+.channel-manager .x-btn-small .channel-settings:hover {
+    background-image: url("templatecomposer/gear-blue.svg");
+}
+
+.channel-manager .x-btn-small .channel-gear {
+    background-image: url("templatecomposer/button-url-navigation.svg");
+}
+
+.channel-manager .x-btn-small .channel-gear:hover {
+    background-image: url("templatecomposer/button-url-navigation-blue.svg");
+}
+
+.channel-manager .x-btn-small .expand {
+    background-image: url("templatecomposer/expand.svg");
+}
+
+.channel-manager .x-btn-small .expand:hover {
+    background-image: url("templatecomposer/expand-blue.svg");
+}
+
+.channel-manager .x-btn-small .collapse {
+    background-image: url("templatecomposer/collapse.svg");
+}
+
+.channel-manager .x-btn-small .collapse:hover {
+    background-image: url("templatecomposer/collapse-blue.svg");
+}
+
+/* toolkit window */
+.channel-manager .icon-toolbar-window .x-window-tl,
+.icon-toolbar-window .x-window-tc,
+.icon-toolbar-window .x-window-tr,
+.channel-manager .icon-toolbar-window .x-window-ml,
+.icon-toolbar-window .x-window-mc,
+.icon-toolbar-window .x-window-mr,
+.channel-manager .icon-toolbar-window .x-window-bl,
+.icon-toolbar-window .x-window-bc,
+.icon-toolbar-window .x-window-br {
+    background-image: none;
+}
+
+.channel-manager .icon-toolbar-window .x-window-header {
+    padding: 0;
+}
+
+.channel-manager .icon-toolbar-window .x-panel {
+    background: #F6F6F6;
+}
+
+.channel-manager .x-window .x-window-ml,
+.channel-manager .x-window .x-window-mr {
+    padding: 0;
+}
+
+.channel-manager .icon-toolbar-window .x-window-body {
+    border-bottom: 1px solid #565B65;
+}
+
+/* template composer icon toolbar-grid */
+.channel-manager .toolbar-window {
+    overflow: hidden;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    background: #f6f6f6;
+}
+
+.channel-manager .toolbar-window li {
+    list-style-type: none;
+}
+
+.channel-manager .toolbar {
+    float: left;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+    background: #f6f6f6;
+}
+
+.channel-manager .toolbar .toolbar-item {
+    display: inline-block;
+    vertical-align: top;
+    width: 128px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.channel-manager .toolbar .item {
+    cursor: default;
+    margin: 8px auto;
+    padding: 0;
+}
+
+.channel-manager .toolbar .icon {
+    text-align: center;
+    height: 36px;
+}
+
+.channel-manager .toolbar .name {
+    text-align: center;
+    word-spacing: 128px;
+    display: block;
+    white-space: normal;
+}
+
+.channel-manager .toolbar-window .scroll-arrow {
+    z-index: 100;
+    cursor: pointer;
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    text-align: center;
+}
+
+.channel-manager .toolbar-window .scroll-left {
+    left: 0;
+    background: url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat center center transparent;
+}
+
+.channel-manager .toolbar-window .scroll-right {
+    right: 0;
+    background: url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat center center transparent;
+}
+
+.channel-manager .toolbar-window .scroll-left:hover {
+    background: url(templatecomposer/component-toolbar-arrow-left-hover.svg) no-repeat center center transparent;
+}
+
+.channel-manager .toolbar-window .scroll-right:hover {
+    background: url(templatecomposer/component-toolbar-arrow-right-hover.svg) no-repeat center center transparent;
+}
+
+.channel-manager .x-grid3-cell-inner a {
+    color: #3764a0;
+}
+
+.channel-manager .x-grid3-cell-inner a:hover {
+    text-decoration: underline;
+}
+
+.channel-manager .x-grid3-col-url {
+    position: relative;
+}
+
+.channel-manager .x-grid3-col-url a.show-live {
+    display: inline;
+}
+
+.channel-manager .x-grid3-col-url a.show-preview {
+    display: inline;
+    padding: 0 0 0 7px;
+    position: absolute;
+    right: 5px;
+    background-color: #fff;
+}
+
+.channel-manager .component-properties .default-value {
+    opacity: 0.6;
+}
+
+.channel-manager .component-properties .field-group-title {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.channel-manager .component-properties .first-field-group-title {
+    margin: 0 0 5px;
+}
+
+.channel-manager-mask.ext-el-mask {
+    background: url(loading.gif) no-repeat center;
+    -moz-opacity: 1;
+    opacity: 1;
+    filter: none;
+}
+
+#pageEditorIFrame .ext-el-mask {
+    background: url(loading.gif) no-repeat center;
+    -moz-opacity: 0.9;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+
+.channel-manager .channel-group.even,
+.channel-manager .channel-group-handle.collapsed.even,
+.channel-manager .channel-group-handle.expanded.even {
+    background-color: #f3f3f3;
+}
+
+.channel-manager .channel-group.odd,
+.channel-manager .channel-group-handle.collapsed.odd,
+.channel-manager .channel-group-handle.expanded.odd {
+    background-color: #fff;
+}
+
+.channel-manager ul.channel-group {
+    position: relative;
+    display: block;
+    height: auto;
+    float: left;
+    width: 100%;
+}
+
+.channel-manager ul.channel-group li img {
+    margin-bottom: 1px;
+}
+
+.channel-manager ul.channel-group li {
+    float: left;
+    margin: 32px 0 32px 48px;
+    text-align: center;
+    line-height: 1.25em;
+    color: #333;
+    height: 113px;
+    width: 112px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.channel-manager ul.channel-group li.x-view-selected {
+    background-color: rgba(100, 100, 100, .15);
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-top: 1px solid rgba(0, 0, 0, .15);
+}
+
+.channel-manager .channel span {
+    color: #000;
+    padding-left: 4px;
+}
+
+.channel-manager .channel img {
+    margin-bottom: 5px;
+}
+
+.channel-manager .channel-group-handle {
+    cursor: pointer;
+    padding-left: 23px;
+    height: 17px;
+    clear: both;
+}
+
+.channel-manager .channel-group-handle.expanded {
+    background: url(channels/triangle-expanded.svg) no-repeat;
+    padding-top: 3px;
+    height: 17px;
+    display: block;
+}
+
+.channel-manager .channel-group-handle.collapsed {
+    background: url(channels/triangle-collapsed.svg) no-repeat;
+    padding-top: 3px;
+    height: 17px;
+    display: block;
+}
+
+.channel-manager .regionIcon {
+    display: inline;
+    vertical-align: middle;
+}
+
+#typeOverviewPanel {
+    padding-top: 5px;
+    padding-left: 5px;
+}
+
+#regionOverviewPanel {
+    padding-top: 5px;
+    padding-left: 5px;
+}
+
+/* channel icon panel overview switch buttons */
+.channel-manager-toolbar .x-toolbar-right .x-btn-noicon .x-btn-text {
+    padding-top: 3px;
+    line-height: 34px;
+    border-bottom: 3px solid transparent;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
+    color: #0086F8;
+    border-bottom: 3px solid #0086F8;
+}
+
+.channel-manager-toolbar .x-toolbar-right .xtb-spacer {
+    width: 16px;
+}
+
+.channel-manager .x-btn-small .icon-view {
+    padding-top: 3px;
+    background-image: url("channels/icon-view.svg");
+    border-bottom: 3px solid transparent;
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .icon-view,
+.channel-manager .x-btn-small .icon-view:hover {
+    background-image: url("channels/icon-view-active.svg");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .icon-view {
+    border-bottom: 3px solid #0086F8;
+}
+
+.channel-manager .x-btn-small .list-view {
+    padding-top: 3px;
+    background-image: url("channels/list-view.svg");
+    border-bottom: 3px solid transparent;
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .list-view,
+.channel-manager .x-btn-small .list-view:hover {
+    background-image: url("channels/list-view-active.svg");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .list-view {
+    border-bottom: 3px solid #0086F8;
+}
+
+.channel-manager-toolbar .x-btn-tl,
+.channel-manager-toolbar .x-btn-tc,
+.channel-manager-toolbar .x-btn-tr,
+.channel-manager-toolbar .x-btn-ml,
+.channel-manager-toolbar .x-btn-mr,
+.channel-manager-toolbar .x-btn-bl,
+.channel-manager-toolbar .x-btn-bc,
+.channel-manager-toolbar .x-btn-br,
+#hippo-channelmanager-breadcrumb .x-btn-tl,
+#hippo-channelmanager-breadcrumb .x-btn-tc,
+#hippo-channelmanager-breadcrumb .x-btn-tr,
+#hippo-channelmanager-breadcrumb .x-btn-ml,
+#hippo-channelmanager-breadcrumb .x-btn-mr,
+#hippo-channelmanager-breadcrumb .x-btn-bl,
+#hippo-channelmanager-breadcrumb .x-btn-bc,
+#hippo-channelmanager-breadcrumb .x-btn-br {
+    display: none;
+}
+
+.channel-manager-toolbar .x-btn-mc {
+    background: none;
+    border: none;
+}
+
+.channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-variants-label,
+.channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-alter-ego-button .x-btn-text {
+    font-size: 11px !important;
+    padding: 0;
+    position: relative;
+    top: 1px;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
+    width: 26px;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
+    width: 24px;
+}
+
+#channelIconPanel .x-toolbar {
+    padding-left: 5px;
+}
+
+#channelOverview .x-toolbar .x-toolbar-right {
+    padding-bottom: 1px;
+}
+
+.x-combo-list-item {
+    text-align: left;
+}
+
+.channel-manager #channel-grid-panel {
+    overflow: auto;
+}
+
+.channel-manager-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item {
+    overflow: hidden;
+}
+
+.ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item .x-form-element {
+    padding-left: 0;
+}
+
+#x-form-el-contentRoot .x-form-field-wrap {
+    display: inline;
+}
+
+#x-form-el-contentRoot .x-form-text {
+    width: 425px !important;
+}
+
+.channel-manager-window-manage-changes {
+    text-align: left;
+}
+
+.channel-manager-window-manage-changes .x-grid3-td-checker,
+.channel-manager-window-manage-changes .x-grid3-row-selected .x-grid3-td-checker {
+    background-image: none;
+}
+
+.channel-manager-window-manage-changes td.x-grid3-hd-over .x-grid3-hd-inner {
+    background: inherit;
+}
+
+.channel-manager-window-manage-changes .x-btn-small .publish-changes {
+    background-image: url("templatecomposer/button-publish.svg");
+}
+
+.channel-manager-window-manage-changes .x-btn-small .publish-changes:hover {
+    background-image: url("templatecomposer/button-publish-blue.svg");
+}
+
+.channel-manager-window-manage-changes .x-btn-small .discard-changes {
+    background-image: url("templatecomposer/button-discard.svg");
+}
+
+.channel-manager-window-manage-changes .x-btn-small .discard-changes:hover {
+    background-image: url("templatecomposer/button-discard-blue.svg");
+}
+
+/* Dropdowns */
+.channel-manager .x-toolbar .xtb-text {
+    padding: 0;
+}
+
+.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap {
+    margin: 8px;
+}
+
+.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-text {
+    height: 24px !important;
+    padding: 0 12px;
+    line-height: 24px;
+    border: none;
+    background: #ffffff;
+    border-radius: 3px 0 0 3px;
+}
+
+.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-trigger {
+    height: 24px;
+    width: 23px;
+    border: none;
+    border-radius: 0 3px 3px 0;
+    background: url('templatecomposer/trigger.svg') no-repeat center center #bbbec0;
+}
+
+.x-combo-list {
+    border-radius: 3px;
+    border: none !important;
+    border-top: 1px solid transparent !important;
+    box-shadow: 0 0 0 0 #000000,
+                10px 10px 30px -15px #000000,
+                0 10px 30px -15px #000000,
+                -10px 10px 30px -15px #000000;
+}
+
+.x-combo-list .x-combo-list-item {
+    padding: 4px;
+    border: none;
+}
+
+.x-combo-list .x-combo-list-item.x-combo-selected {
+    color: #ffffff;
+    border: none !important;
+    background-color: #444954;
+}
+
+.x-shadow,
+.x-ie-shadow {
+    display: none !important;
+}

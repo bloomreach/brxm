@@ -33,6 +33,7 @@ public class CmsEditContentTest extends AbstractTemplateComposerTest {
     @Before
     public void startPage() throws Exception {
         setUp("cmseditlink.html");
+        initializeIFrameHead();
         initializeTemplateComposer(false, true);
     }
 
