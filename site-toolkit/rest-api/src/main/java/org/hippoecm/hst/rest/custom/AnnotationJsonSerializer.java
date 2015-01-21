@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,15 +21,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.ser.std.SerializerBase;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
 
 /**
  * Java {@link Annotation}(s) custom JSON serializer
  */
-public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
+public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
 
     private String typeFieldName;
 
@@ -64,6 +67,11 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
         this.typeFieldName = typeFieldName;
     }
 
+    @Override
+    public void serializeWithType(final Annotation value, final JsonGenerator jgen, final SerializerProvider provider, final TypeSerializer typeSer) throws IOException, JsonProcessingException {
+        serialize(value, jgen, provider);
+    }
+
     /**
      * Serialize a Java {@link Annotation}
      */
@@ -78,12 +86,8 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
                     if (isValidAnnotationMethod(method)) {
                         try {
                             serializeAnnotationAttribute(method, value, jgen);
-                        } catch (IllegalArgumentException iarge) {
+                        } catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException iarge) {
                             throw new JsonGenerationException(iarge.fillInStackTrace());
-                        } catch (IllegalAccessException iacce) {
-                            throw new JsonGenerationException(iacce.fillInStackTrace());
-                        } catch (InvocationTargetException ite) {
-                            throw new JsonGenerationException(ite.fillInStackTrace());
                         }
                     }
                 }
@@ -124,23 +128,23 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         if (method.getReturnType() == byte.class || method.getReturnType() == Byte.class) {
-            jgen.writeNumberField(method.getName(), (Byte) method.invoke(value, new Object[] {}));
+            jgen.writeNumberField(method.getName(), (Byte) method.invoke(value));
         } else if (method.getReturnType() == short.class || method.getReturnType() == Short.class) {
-            jgen.writeNumberField(method.getName(), (Short) method.invoke(value, new Object[] {}));
+            jgen.writeNumberField(method.getName(), (Short) method.invoke(value));
         } else if (method.getReturnType() == int.class || method.getReturnType() == Integer.class) {
-            jgen.writeNumberField(method.getName(), (Integer) method.invoke(value, new Object[] {}));
+            jgen.writeNumberField(method.getName(), (Integer) method.invoke(value));
         } else if (method.getReturnType() == long.class || method.getReturnType() == Long.class) {
-            jgen.writeNumberField(method.getName(), (Long) method.invoke(value, new Object[] {}));
+            jgen.writeNumberField(method.getName(), (Long) method.invoke(value));
         } else if (method.getReturnType() == float.class || method.getReturnType() == Float.class) {
-            jgen.writeNumberField(method.getName(), (Float) method.invoke(value, new Object[] {}));
+            jgen.writeNumberField(method.getName(), (Float) method.invoke(value));
         } else if (method.getReturnType() == double.class || method.getReturnType() == Double.class) {
-            jgen.writeNumberField(method.getName(), (Double) method.invoke(value, new Object[] {}));
+            jgen.writeNumberField(method.getName(), (Double) method.invoke(value));
         } else if (method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class) {
-            jgen.writeBooleanField(method.getName(), (Boolean) method.invoke(value, new Object[] {}));
+            jgen.writeBooleanField(method.getName(), (Boolean) method.invoke(value));
         } else if (method.getReturnType() == char.class || method.getReturnType() == Character.class) {
-            jgen.writeStringField(method.getName(), String.valueOf((Character) method.invoke(value, new Object[] {})));
+            jgen.writeStringField(method.getName(), String.valueOf(method.invoke(value)));
         } else if (method.getReturnType() == String.class) {
-            jgen.writeStringField(method.getName(), (String) method.invoke(value, new Object[] {}));
+            jgen.writeStringField(method.getName(), (String) method.invoke(value));
         } else if (method.getReturnType() == byte[].class) {
             serializeBytePrimitiveArray(method, value, jgen);
         } else if (method.getReturnType() == Byte[].class) {
@@ -187,7 +191,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        byte[] bytes = (byte[]) method.invoke(value, new Object[] {});
+        byte[] bytes = (byte[]) method.invoke(value);
         if (bytes != null) {
             for (byte aByte : bytes) {
                 jgen.writeNumber(aByte);
@@ -201,7 +205,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Byte[] bytes = (Byte[]) method.invoke(value, new Object[] {});
+        Byte[] bytes = (Byte[]) method.invoke(value);
         if (bytes != null) {
             for (byte aByte : bytes) {
                 jgen.writeNumber(aByte);
@@ -215,7 +219,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        short[] shorts = (short[]) method.invoke(value, new Object[] {});
+        short[] shorts = (short[]) method.invoke(value);
         if (shorts != null) {
             for (short aShort : shorts) {
                 jgen.writeNumber(aShort);
@@ -229,7 +233,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Short[] shorts = (Short[]) method.invoke(value, new Object[] {});
+        Short[] shorts = (Short[]) method.invoke(value);
         if (shorts != null) {
             for (short aShort : shorts) {
                 jgen.writeNumber(aShort);
@@ -243,7 +247,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        int[] integers = (int[]) method.invoke(value, new Object[] {});
+        int[] integers = (int[]) method.invoke(value);
         if (integers != null) {
             for (int anInteger : integers) {
                 jgen.writeNumber(anInteger);
@@ -257,7 +261,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Integer[] integers = (Integer[]) method.invoke(value, new Object[] {});
+        Integer[] integers = (Integer[]) method.invoke(value);
         if (integers != null) {
             for (int anInteger : integers) {
                 jgen.writeNumber(anInteger);
@@ -271,7 +275,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        long[] longs = (long[]) method.invoke(value, new Object[] {});
+        long[] longs = (long[]) method.invoke(value);
         if (longs != null) {
             for (long aLong : longs) {
                 jgen.writeNumber(aLong);
@@ -285,7 +289,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Long[] longs = (Long[]) method.invoke(value, new Object[] {});
+        Long[] longs = (Long[]) method.invoke(value);
         if (longs != null) {
             for (long aLong : longs) {
                 jgen.writeNumber(aLong);
@@ -299,7 +303,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        float[] floats = (float[]) method.invoke(value, new Object[] {});
+        float[] floats = (float[]) method.invoke(value);
         if (floats != null) {
             for (float aFloat : floats) {
                 jgen.writeNumber(aFloat);
@@ -313,7 +317,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Float[] floats = (Float[]) method.invoke(value, new Object[] {});
+        Float[] floats = (Float[]) method.invoke(value);
         if (floats != null) {
             for (float aFloat : floats) {
                 jgen.writeNumber(aFloat);
@@ -327,7 +331,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        double[] doubles = (double[]) method.invoke(value, new Object[] {});
+        double[] doubles = (double[]) method.invoke(value);
         if (doubles != null) {
             for (double aDouble : doubles) {
                 jgen.writeNumber(aDouble);
@@ -341,7 +345,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Double[] doubles = (Double[]) method.invoke(value, new Object[] {});
+        Double[] doubles = (Double[]) method.invoke(value);
         if (doubles != null) {
             for (double aDouble : doubles) {
                 jgen.writeNumber(aDouble);
@@ -355,7 +359,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        boolean[] booleans = (boolean[]) method.invoke(value, new Object[] {});
+        boolean[] booleans = (boolean[]) method.invoke(value);
         if (booleans != null) {
             for (boolean booleanValue : booleans) {
                 jgen.writeBoolean(booleanValue);
@@ -369,7 +373,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        Boolean[] booleans = (Boolean[]) method.invoke(value, new Object[] {});
+        Boolean[] booleans = (Boolean[]) method.invoke(value);
         if (booleans != null) {
             for (boolean booleanValue : booleans) {
                 jgen.writeBoolean(booleanValue);
@@ -383,7 +387,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        char[] chars = (char[]) method.invoke(value, new Object[] {});
+        char[] chars = (char[]) method.invoke(value);
         if (chars != null) {
             for (char aChar : chars) {
                 jgen.writeString(String.valueOf(aChar));
@@ -397,7 +401,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
         
         jgen.writeArrayFieldStart(method.getName());
-        Character[] chars = (Character[]) method.invoke(value, new Object[] {});
+        Character[] chars = (Character[]) method.invoke(value);
         if (chars != null) {
             for (char aChar : chars) {
                 jgen.writeString(String.valueOf(aChar));
@@ -411,7 +415,7 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
             InvocationTargetException {
 
         jgen.writeArrayFieldStart(method.getName());
-        String[] strings = (String[]) method.invoke(value, new Object[] {});
+        String[] strings = (String[]) method.invoke(value);
         if (strings != null) {
             for (String string : strings) {
                 jgen.writeString(string);

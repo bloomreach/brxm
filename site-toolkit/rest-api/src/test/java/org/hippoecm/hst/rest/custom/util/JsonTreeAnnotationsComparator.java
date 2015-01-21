@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.util.Annotations;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.HstValueType;
@@ -49,7 +49,7 @@ public final class JsonTreeAnnotationsComparator {
 
         assertTrue("Expected array of objects! But I got: '" + getNodeType(expected) + "'", expected.isArray());
 
-        final Iterator<JsonNode> objects = expected.getElements();
+        final Iterator<JsonNode> objects = expected.elements();
         while (objects.hasNext()) {
             final JsonNode object = objects.next();
             // Assert that that the current JSON node is an object node
@@ -61,7 +61,7 @@ public final class JsonTreeAnnotationsComparator {
 
             // Assert that there is an HST property definition with that has the name and structure of the current
             // JSON node
-            assertEquivalent(object, getHstPropertyDefinition(nameFieldNode.getTextValue(), actual));
+            assertEquivalent(object, getHstPropertyDefinition(nameFieldNode.textValue(), actual));
         }
     }
 
@@ -80,7 +80,7 @@ public final class JsonTreeAnnotationsComparator {
                 (nameField != null && nameField.isTextual()));
 
         assertTrue("Expected an object JSON node with a non-empty textual 'name' field!",
-                (nameField.getTextValue() != null && !nameField.getTextValue().isEmpty()));
+                (nameField.textValue() != null && !nameField.textValue().isEmpty()));
 
         // Asset that the object has the type meta data added by the custom JSON serializer
         final JsonNode classTypeField = expected.get("@class");
@@ -90,12 +90,12 @@ public final class JsonTreeAnnotationsComparator {
 
         // Assert that the '@class' field's value is not null or empty
         assertTrue("Expected an object with a non-empty textual '@class' field",
-                (classTypeField.getTextValue() != null && !classTypeField.getTextValue().isEmpty()));
+                (classTypeField.textValue() != null && !classTypeField.textValue().isEmpty()));
 
         // Assert that the class type of the HST property definition is the same as the value of the '@class' field
-        assertTrue("Hst property definition class type mis-match: expected '" + classTypeField.getTextValue()
+        assertTrue("Hst property definition class type mis-match: expected '" + classTypeField.textValue()
                 + "', atcual: '" + actual.getClass().getName() + "'",
-                actual.getClass().getName().equals(classTypeField.getTextValue()));
+                actual.getClass().getName().equals(classTypeField.textValue()));
 
         // Assert that the expected JSON node has a field of name 'required' and it has the same value as of the
         // 'isRequired' attribute of the actual HST property definition
@@ -103,9 +103,9 @@ public final class JsonTreeAnnotationsComparator {
         assertTrue("Expected an object with a boolean 'required' field",
                 (requiredField != null && requiredField.isBoolean()));
 
-        assertTrue("Expected an hst property with 'required' equals '" + requiredField.getBooleanValue()
+        assertTrue("Expected an hst property with 'required' equals '" + requiredField.booleanValue()
                 + "', actual is '" + actual.isRequired() + "'",
-                Boolean.valueOf(actual.isRequired()).equals(requiredField.getBooleanValue()));
+                Boolean.valueOf(actual.isRequired()).equals(requiredField.booleanValue()));
 
         // Assert that the expected JSON node has a textual 'defaultValue' field which might have an empty value
         final JsonNode defaultValueField = expected.get("defaultValue");
@@ -119,21 +119,21 @@ public final class JsonTreeAnnotationsComparator {
                 (valueTypeField != null && valueTypeField.isTextual()));
 
         assertTrue("Expected an object with a textual non-empty 'valueType' field with serialized value of '"
-                + valueTypeField.getTextValue() + "', but I got : '" + actual.getValueType() + "'", actual
-                .getValueType().name().equals(valueTypeField.getTextValue()));
+                + valueTypeField.textValue() + "', but I got : '" + actual.getValueType() + "'", actual
+                .getValueType().name().equals(valueTypeField.textValue()));
 
         // Assert that that serialized value of 'valueType' is a valid HstValue enumeration value
         boolean isHstValueType = true;
 
         try {
-            HstValueType.valueOf(valueTypeField.getTextValue());
+            HstValueType.valueOf(valueTypeField.textValue());
         } catch (Throwable thrble) {
             isHstValueType = false;
         }
 
         assertTrue(
                 "Expected an object with a textual non-empty 'valueType' field with a valid HstValueType value but got: '"
-                        + valueTypeField.getTextValue() + "'", isHstValueType);
+                        + valueTypeField.textValue() + "'", isHstValueType);
 
         // Assert that the JSON node has a valid 'annotations' field and that it is equivalent in value and structure
         // with the annotations of the HST property definition
@@ -177,12 +177,12 @@ public final class JsonTreeAnnotationsComparator {
                 listClassNameNode.isTextual());
 
         // Assert that the class name text value is not an empty string value
-        assertTrue("Expected a non-empty string value!", !listClassNameNode.getTextValue().isEmpty());
+        assertTrue("Expected a non-empty string value!", !listClassNameNode.textValue().isEmpty());
         // Assert that the concrete class which implementing actual is the same as the class name serialized in expected
         assertTrue(
                 "Expected a class of type '" + actual.getClass().getName() + "', but got '"
-                        + listClassNameNode.getTextValue() + "'",
-                actual.getClass().getName().equals(listClassNameNode.getTextValue()));
+                        + listClassNameNode.textValue() + "'",
+                actual.getClass().getName().equals(listClassNameNode.textValue()));
 
         // Assert that annotationsArrayNode is an array JSON node and that it has the same number of
         // elements as in actual for each annotation in actual assert that it has the correct JSON serialization
@@ -194,7 +194,7 @@ public final class JsonTreeAnnotationsComparator {
 
         // Assert that for each annotation in actual there is an equivalent JSON node in annotationsArrayNode
         final List<Annotation> equivalentFoundAnnotations = new ArrayList<Annotation>(actual.size());
-        final Iterator<JsonNode> annotationNodes = annotationsArryNode.getElements();
+        final Iterator<JsonNode> annotationNodes = annotationsArryNode.elements();
 
         while (annotationNodes.hasNext()) {
             boolean foundAnEquivalentAnnotation = false;
@@ -216,9 +216,9 @@ public final class JsonTreeAnnotationsComparator {
                             + "' field", annotationClassNameNode.isTextual());
 
                     assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode
-                            .getTextValue().isEmpty());
+                            .textValue().isEmpty());
 
-                    if (annotation.annotationType().getName().equals(annotationClassNameNode.getTextValue())) {
+                    if (annotation.annotationType().getName().equals(annotationClassNameNode.textValue())) {
                         assertEquivalent(annotationNode, annotation);
                         foundAnEquivalentAnnotation = true;
                         equivalentFoundAnnotations.add(annotation);
@@ -256,16 +256,16 @@ public final class JsonTreeAnnotationsComparator {
         assertTrue("Expected a textual '@class' field but got '" + getNodeType(annotationClassNameNode) + "' field",
                 annotationClassNameNode.isTextual());
 
-        assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode.getTextValue()
+        assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode.textValue()
                 .isEmpty());
 
         assertTrue("Expected a text value of '" + actual.getClass().getName() + "', but got '"
-                + annotationClassNameNode.getTextValue() + "'",
-                actual.annotationType().getName().equals(annotationClassNameNode.getTextValue()));
+                + annotationClassNameNode.textValue() + "'",
+                actual.annotationType().getName().equals(annotationClassNameNode.textValue()));
 
         // Assert that for each field defined for expected object JSON node has an equivalent attribute/property
         // defined on actual annotation
-        final Iterator<Entry<String, JsonNode>> jsonFieldNodes = expected.getFields();
+        final Iterator<Entry<String, JsonNode>> jsonFieldNodes = expected.fields();
         while (jsonFieldNodes.hasNext()) {
             Method annotationAttribute;
             final Entry<String, JsonNode> jsonFieldNode = jsonFieldNodes.next();
@@ -298,51 +298,51 @@ public final class JsonTreeAnnotationsComparator {
         // Assert that values are equivalent in structure, type and value
         if (actualType == byte.class || actualType == Byte.class) {
             assertTrue("Expected an integral valued JSON node but got " + getNodeType(expected), expected.isInt());
-            assertEquals("Expected " + expected.getNumberValue().byteValue() + " but got " + (Byte) actualValue,
-                    Byte.valueOf(expected.getNumberValue().byteValue()), (Byte) actualValue);
+            assertEquals("Expected " + expected.numberValue().byteValue() + " but got " + (Byte) actualValue,
+                    Byte.valueOf(expected.numberValue().byteValue()), (Byte) actualValue);
 
         } else if (actualType == short.class || actualType == Short.class) {
             assertTrue("Expected an integral valued JSON node but got " + getNodeType(expected), expected.isInt());
-            assertEquals("Exepcted " + expected.getNumberValue().shortValue() + " but got " + (Short) actualValue,
-                    Short.valueOf(expected.getNumberValue().shortValue()), (Short) actualValue);
+            assertEquals("Exepcted " + expected.numberValue().shortValue() + " but got " + (Short) actualValue,
+                    Short.valueOf(expected.numberValue().shortValue()), (Short) actualValue);
 
         } else if (actualType == int.class || actualType == Integer.class) {
             assertTrue("Expected an integral valued JSON node but got " + getNodeType(expected), expected.isInt());
-            assertEquals("Expected " + expected.getNumberValue().intValue() + " but got " + (Integer) actualValue,
-                    Integer.valueOf(expected.getNumberValue().intValue()), (Integer) actualValue);
+            assertEquals("Expected " + expected.numberValue().intValue() + " but got " + (Integer) actualValue,
+                    Integer.valueOf(expected.numberValue().intValue()), (Integer) actualValue);
 
         } else if (actualType == long.class || actualType == Long.class) {
             // Notice the oring with the expected.isInt, reason is Jackson when writing numerical integer values
             // according to the values it writes some long values as int(s)
             assertTrue("Expected a long valued JSON node but got " + getNodeType(expected), expected.isLong() || expected.isInt());
-            assertEquals("Expected " + expected.getNumberValue().longValue() + " but got " + (Long) actualValue,
-                    Long.valueOf(expected.getNumberValue().longValue()), (Long) actualValue);
+            assertEquals("Expected " + expected.numberValue().longValue() + " but got " + (Long) actualValue,
+                    Long.valueOf(expected.numberValue().longValue()), (Long) actualValue);
 
         } else if (actualType == float.class || actualType == Float.class) {
             assertTrue("Expected a float valued JSON node but got " + getNodeType(expected),
                     expected.isFloatingPointNumber());
-            assertEquals("Expected " + expected.getNumberValue().floatValue() + " but got " + (Float) actualValue,
-                    Float.valueOf(expected.getNumberValue().floatValue()), (Float) actualValue);
+            assertEquals("Expected " + expected.numberValue().floatValue() + " but got " + (Float) actualValue,
+                    Float.valueOf(expected.numberValue().floatValue()), (Float) actualValue);
 
         } else if (actualType == double.class || actualType == Double.class) {
             assertTrue("Expected a float valued JSON node but got " + getNodeType(expected), expected.isDouble());
-            assertEquals("Expected " + expected.getNumberValue().doubleValue() + " but got " + (Double) actualValue,
-                    Double.valueOf(expected.getNumberValue().doubleValue()), (Double) actualValue);
+            assertEquals("Expected " + expected.numberValue().doubleValue() + " but got " + (Double) actualValue,
+                    Double.valueOf(expected.numberValue().doubleValue()), (Double) actualValue);
 
         } else if (actualType == boolean.class || actualType == Boolean.class) {
             assertTrue("Expected a boolean valued JSON node but got " + getNodeType(expected), expected.isBoolean());
-            assertEquals("Expected " + expected.getBooleanValue() + " but got " + (Boolean) actualValue,
-                    Boolean.valueOf(expected.getBooleanValue()), (Boolean) actualValue);
+            assertEquals("Expected " + expected.booleanValue() + " but got " + (Boolean) actualValue,
+                    Boolean.valueOf(expected.booleanValue()), (Boolean) actualValue);
 
         } else if (actualType == char.class || actualType == Character.class) {
             assertTrue("Expected a textua valued JSON node but got " + getNodeType(expected), expected.isTextual());
-            assertEquals("Expected '" + expected.getTextValue() + "' but got '" + (Character) actualValue + "'",
-                    Character.valueOf(expected.getTextValue().charAt(0)), (Character) actualValue);
+            assertEquals("Expected '" + expected.textValue() + "' but got '" + (Character) actualValue + "'",
+                    Character.valueOf(expected.textValue().charAt(0)), (Character) actualValue);
 
         } else if (actualType == String.class) {
             assertTrue("Expected a textua valued JSON node but got " + getNodeType(expected), expected.isTextual());
-            assertEquals("Expected '" + expected.getTextValue() + " but got " + (String) actualValue,
-                    expected.getTextValue(), (String) actualValue);
+            assertEquals("Expected '" + expected.textValue() + " but got " + (String) actualValue,
+                    expected.textValue(), (String) actualValue);
 
         } else if (actualType == byte[].class) {
             assertEquivalent(expected, (byte[]) actualValue);
@@ -390,13 +390,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getNumberValue().byteValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.numberValue().byteValue()) >= 0);
         }
     }
 
@@ -406,13 +406,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Byte.valueOf(elementJsonNode.getNumberValue().byteValue())) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Byte.valueOf(elementJsonNode.numberValue().byteValue())) >= 0);
         }
     }
 
@@ -422,13 +422,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getNumberValue().shortValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.numberValue().shortValue()) >= 0);
         }
     }
 
@@ -438,13 +438,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Short.valueOf(elementJsonNode.getNumberValue().shortValue())) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Short.valueOf(elementJsonNode.numberValue().shortValue())) >= 0);
         }
     }
 
@@ -454,13 +454,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getNumberValue().intValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.numberValue().intValue()) >= 0);
         }
     }
 
@@ -470,13 +470,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Integer.valueOf(elementJsonNode.getNumberValue().intValue())) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Integer.valueOf(elementJsonNode.numberValue().intValue())) >= 0);
         }
     }
 
@@ -486,15 +486,15 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             // Notice the oring with the expected.isInt, reason is Jackson when writing numerical integer values
             // according to the values it writes some long values as int(s)
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isLong() || elementJsonNode.isInt());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getNumberValue().longValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.numberValue().longValue()) >= 0);
         }
     }
 
@@ -504,13 +504,13 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode), elementJsonNode.isLong());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Long.valueOf(elementJsonNode.getNumberValue().longValue())) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Long.valueOf(elementJsonNode.numberValue().longValue())) >= 0);
         }
     }
 
@@ -520,14 +520,14 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isFloatingPointNumber());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getNumberValue().floatValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.numberValue().floatValue()) >= 0);
         }
     }
 
@@ -537,14 +537,14 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isFloatingPointNumber());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Float.valueOf(elementJsonNode.getNumberValue().floatValue())) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Float.valueOf(elementJsonNode.numberValue().floatValue())) >= 0);
         }
     }
 
@@ -554,14 +554,14 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isDouble());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getNumberValue().doubleValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.numberValue().doubleValue()) >= 0);
         }
     }
 
@@ -571,14 +571,14 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isDouble());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Double.valueOf(elementJsonNode.getNumberValue().doubleValue())) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Double.valueOf(elementJsonNode.numberValue().doubleValue())) >= 0);
         }
     }
 
@@ -600,14 +600,14 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isTextual());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, elementJsonNode.getTextValue().toCharArray()[0]) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, elementJsonNode.textValue().toCharArray()[0]) >= 0);
         }
     }
 
@@ -617,15 +617,15 @@ public final class JsonTreeAnnotationsComparator {
         applyCommonArrayAssertions(expected, actual, actual.length);
 
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isTextual());
 
             assertTrue(
-                    "Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(actual, Character.valueOf(elementJsonNode.getTextValue().toCharArray()[0])) >= 0);
+                    "Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(actual, Character.valueOf(elementJsonNode.textValue().toCharArray()[0])) >= 0);
         }
     }
 
@@ -638,14 +638,14 @@ public final class JsonTreeAnnotationsComparator {
         String[] sortedActual = Arrays.copyOf(actual, actual.length);
         Arrays.sort(sortedActual);
         // Assert that for each array JSON node element there is an equivalent value in actual
-        final Iterator<JsonNode> elementJsonNodes = expected.getElements();
+        final Iterator<JsonNode> elementJsonNodes = expected.elements();
         while (elementJsonNodes.hasNext()) {
             final JsonNode elementJsonNode = elementJsonNodes.next();
             assertTrue("Expected a textual JSON node but got " + getNodeType(elementJsonNode),
                     elementJsonNode.isTextual());
 
-            assertTrue("Could not find an equivalent value of '" + expected.getTextValue() + "'",
-                    Arrays.binarySearch(sortedActual, elementJsonNode.getTextValue()) >= 0);
+            assertTrue("Could not find an equivalent value of '" + expected.textValue() + "'",
+                    Arrays.binarySearch(sortedActual, elementJsonNode.textValue()) >= 0);
         }
     }
 
@@ -757,7 +757,7 @@ public final class JsonTreeAnnotationsComparator {
             assertTrue("Expected a JSON boolean node but got a '" + getNodeType(booleanJsonNode) + "' node!",
                     booleanJsonNode.isBoolean());
 
-            returnValue[index] = booleanJsonNode.getBooleanValue();
+            returnValue[index] = booleanJsonNode.booleanValue();
         }
 
         return returnValue;
@@ -778,7 +778,7 @@ public final class JsonTreeAnnotationsComparator {
             assertTrue("Expected a JSON boolean node but got a '" + getNodeType(booleanJsonNode) + "' node!",
                     booleanJsonNode.isBoolean());
 
-            returnValue[index] = booleanJsonNode.getBooleanValue();
+            returnValue[index] = booleanJsonNode.booleanValue();
         }
 
         return returnValue;

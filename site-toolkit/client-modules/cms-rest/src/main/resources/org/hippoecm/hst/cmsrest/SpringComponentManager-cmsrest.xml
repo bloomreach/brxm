@@ -23,11 +23,13 @@
     <property name="typeFieldName" value="@class" />
   </bean>
 
-  <bean id="cmsRestJacksonJsonModuleVersion" class="org.codehaus.jackson.util.VersionUtil" factory-method="parseVersion">
+  <bean id="cmsRestJacksonJsonModuleVersion" class="com.fasterxml.jackson.core.util.VersionUtil" factory-method="parseVersion">
     <constructor-arg value="${project.version}" />
+    <constructor-arg value="${project.groupId}" />
+    <constructor-arg value="${project.artifactId}" />
   </bean>
 
-  <bean id="cmsRestJacksonJsonModule" class="org.codehaus.jackson.map.module.SimpleModule">
+  <bean id="cmsRestJacksonJsonModule" class="com.fasterxml.jackson.databind.module.SimpleModule">
     <constructor-arg value="CmsRestJacksonJsonModule" />
     <constructor-arg>
       <ref bean="cmsRestJacksonJsonModuleVersion" />
@@ -42,13 +44,13 @@
     </property>
   </bean>
 
-  <bean id="cmsRestJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+  <bean id="cmsRestJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
     <property name="mapper" ref="cmsRestJacksonObjectMapper" />
   </bean>
 
   <bean id="channelExceptionMapper" class="org.hippoecm.hst.cmsrest.providers.exception.mappers.ChannelExceptionMapper" />
 
-  <bean id="cmsRestJacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+  <bean id="cmsRestJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 
   <!-- Enable Jackson JSON ObjectMapper default typing -->
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -61,7 +63,7 @@
     <property name="targetMethod" value="enableDefaultTypingAsProperty" />
     <property name="arguments">
         <list>
-            <value type="org.codehaus.jackson.map.ObjectMapper.DefaultTyping">OBJECT_AND_NON_CONCRETE</value>
+            <value type="com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping">OBJECT_AND_NON_CONCRETE</value>
             <value>@class</value>
         </list>
     </property>

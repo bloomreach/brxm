@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,8 @@ public class ChannelExceptionMapper implements ExceptionMapper<ChannelException>
     private static final String APPLICATION_EXCEPTION_MEDIA_TYPE = "application/x-exception";
     private static final String EXCEPTION_CLASS_MEDIA_TYPE_PARAMETER = "class=" + ChannelException.class.getName();
     private static final String EXCEPTION_TYPE_MEDIA_TYPE_PARAMETER = "type=";
+
+    private static final JsonFactory jsonFactory = new JsonFactory();
 
     /**
      * Map a {@link ChannelException} to a proper JAX-RS {@link Response}
@@ -57,7 +60,7 @@ public class ChannelExceptionMapper implements ExceptionMapper<ChannelException>
     protected String buildJsonString(ChannelException exception) {
         try {
             StringWriter jsonObjectWriter = new StringWriter();
-            JsonGenerator jsonGenerator = new JsonFactory().createJsonGenerator(jsonObjectWriter);
+            JsonGenerator jsonGenerator = jsonFactory.createGenerator(jsonObjectWriter);
 
             jsonGenerator.writeStartObject();
             jsonGenerator.writeObjectFieldStart("error");
