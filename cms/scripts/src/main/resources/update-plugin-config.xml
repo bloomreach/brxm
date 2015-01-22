@@ -28,66 +28,66 @@
     <sv:value>true</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:parameters" sv:type="String">
-    <sv:value>{ "names" : ["nodetypes", "linkpicker.nodetypes", "imagepicker.nodetypes", "included.image.variants", "excluded.image.variants", "last.visited.nodetypes" ] }</sv:value>
+    <sv:value>{ "names" : [ "nodetypes", "linkpicker.nodetypes", "imagepicker.nodetypes", "included.image.variants", "excluded.image.variants", "last.visited.nodetypes" ] }</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:query" sv:type="String">
     <sv:value>//element(cluster.options,frontend:pluginconfig)</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
-import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
-&#xd;
-import javax.jcr.Node&#xd;
-import javax.jcr.PropertyType&#xd;
-import javax.jcr.Session&#xd;
-&#xd;
-class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
-&#xd;
-  def names = []&#xd;
-&#xd;
-  void initialize(Session session) {&#xd;
-    names = parametersMap.get("names", [])&#xd;
-  }&#xd;
-&#xd;
-  boolean doUpdate(Node node) {&#xd;
-    log.debug "Checking node ${node.path}"&#xd;
-&#xd;
-    def updated = false&#xd;
-    for (name in names) {&#xd;
-      if (node.hasProperty(name)) {&#xd;
-        updated |= updateProperty(node, name)&#xd;
-      }&#xd;
-    }&#xd;
-&#xd;
-    return updated&#xd;
-  }&#xd;
-&#xd;
-  boolean updateProperty(Node node, String name) {&#xd;
-    def property = node.getProperty(name)&#xd;
-    if (property.type != PropertyType.STRING) {&#xd;
-      log.debug "Wrong type of property ${name}, expected String"&#xd;
-      return false&#xd;
-    }&#xd;
-    if (property.multiple) {&#xd;
-      return false&#xd;
-    }&#xd;
-&#xd;
-    def value = property.string&#xd;
-    property.remove()&#xd;
-    def values = [] as String[]&#xd;
-    if (value != null) {&#xd;
-      values = value.split(",").collect({it.trim()}) as String[]&#xd;
-    }&#xd;
-    node.setProperty(name, values)&#xd;
-    log.debug "Converted property ${name} from ${value} to ${values}"&#xd;
-&#xd;
-    return true&#xd;
-  }&#xd;
-&#xd;
-  boolean undoUpdate(Node node) {&#xd;
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
-  }&#xd;
-&#xd;
+    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater
+import org.onehippo.repository.update.BaseNodeUpdateVisitor
+
+import javax.jcr.Node
+import javax.jcr.PropertyType
+import javax.jcr.Session
+
+class UpdaterTemplate extends BaseNodeUpdateVisitor {
+
+  def names = []
+
+  void initialize(Session session) {
+    names = parametersMap.get("names", [])
+  }
+
+  boolean doUpdate(Node node) {
+    log.debug "Checking node ${node.path}"
+
+    def updated = false
+    for (name in names) {
+      if (node.hasProperty(name)) {
+        updated |= updateProperty(node, name)
+      }
+    }
+
+    return updated
+  }
+
+  boolean updateProperty(Node node, String name) {
+    def property = node.getProperty(name)
+    if (property.type != PropertyType.STRING) {
+      log.debug "Wrong type of property ${name}, expected String"
+      return false
+    }
+    if (property.multiple) {
+      return false
+    }
+
+    def value = property.string
+    property.remove()
+    def values = [] as String[]
+    if (value != null) {
+      values = value.split(",").collect({it.trim()}) as String[]
+    }
+    node.setProperty(name, values)
+    log.debug "Converted property ${name} from ${value} to ${values}"
+
+    return true
+  }
+
+  boolean undoUpdate(Node node) {
+    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+  }
+
 }</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:throttle" sv:type="Long">
