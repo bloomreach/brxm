@@ -40,36 +40,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ParametersInfoProcessorPopulatedPropertiesTest {
-
-    protected MockNode containerItemNode;
-    protected MockHstComponentConfiguration mockHstComponentConfiguration;
-    protected ContainerItemHelper helper;
-    protected ParametersInfo parameterInfo = Bar.class.getAnnotation(ParametersInfo.class);
-    protected List<PropertyRepresentationFactory> propertyPresentationFactories= new ArrayList<>();
-    {
-        propertyPresentationFactories.add(new SwitchTemplatePropertyRepresentationFactory());
-    }
-
-    @Before
-    public void setup() throws RepositoryException {
-        mockHstComponentConfiguration = new MockHstComponentConfiguration("pages/newsList");
-
-        containerItemNode = MockNode.root().addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-
-        final Map<String, HstComponentConfiguration> compConfigMocks = new HashMap<>();
-        compConfigMocks.put(containerItemNode.getIdentifier(), mockHstComponentConfiguration);
-        helper = new ContainerItemHelper() {
-            @Override
-            public HstComponentConfiguration getConfigObject(final String itemId) {
-                return compConfigMocks.get(itemId);
-            }
-        };
-    }
-
-    @ParametersInfo(type = BarParameters.class)
-    static class Bar {
-    }
+public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTestParametersInfoProcessor {
 
     @Test
     public void get_unpopulated_properties() {

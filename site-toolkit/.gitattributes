@@ -346,6 +346,7 @@ client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/ja
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactory_nl.properties -text
 client-modules/page-composer/src/site/site.xml -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/AbstractPageComposerTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/AbstractTestParametersInfoProcessor.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters.properties -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/BarParameters_fr.properties -text
