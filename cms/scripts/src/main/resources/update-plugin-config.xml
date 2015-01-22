@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node sv:name="UpdatePluginConfig" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:updaterinfo</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
+    <sv:value>100</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:description" sv:type="String">
+    <sv:value>Updates frontend:pluginconfig nodes and converts some comma separated string properties to multi value string properties.</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:parameters" sv:type="String">
+    <sv:value>{ "names" : ["nodetypes", "linkpicker.nodetypes", "imagepicker.nodetypes", "included.image.variants", "excluded.image.variants", "last.visited.nodetypes" ] }</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:query" sv:type="String">
+    <sv:value>//element(cluster.options,frontend:pluginconfig)</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:script" sv:type="String">
+    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
+import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
+&#xd;
+import javax.jcr.Node&#xd;
+import javax.jcr.PropertyType&#xd;
+import javax.jcr.Session&#xd;
+&#xd;
+class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
+&#xd;
+  def names = []&#xd;
+&#xd;
+  void initialize(Session session) {&#xd;
+    names = parametersMap.get("names", [])&#xd;
+  }&#xd;
+&#xd;
+  boolean doUpdate(Node node) {&#xd;
+    log.debug "Checking node ${node.path}"&#xd;
+&#xd;
+    def updated = false&#xd;
+    for (name in names) {&#xd;
+      if (node.hasProperty(name)) {&#xd;
+        updated |= updateProperty(node, name)&#xd;
+      }&#xd;
+    }&#xd;
+&#xd;
+    return updated&#xd;
+  }&#xd;
+&#xd;
+  boolean updateProperty(Node node, String name) {&#xd;
+    def property = node.getProperty(name)&#xd;
+    if (property.type != PropertyType.STRING) {&#xd;
+      log.debug "Wrong type of property ${name}, expected String"&#xd;
+      return false&#xd;
+    }&#xd;
+    if (property.multiple) {&#xd;
+      return false&#xd;
+    }&#xd;
+&#xd;
+    def value = property.string&#xd;
+    property.remove()&#xd;
+    def values = [] as String[]&#xd;
+    if (value != null) {&#xd;
+      values = value.split(",").collect({it.trim()}) as String[]&#xd;
+    }&#xd;
+    node.setProperty(name, values)&#xd;
+    log.debug "Converted property ${name} from ${value} to ${values}"&#xd;
+&#xd;
+    return true&#xd;
+  }&#xd;
+&#xd;
+  boolean undoUpdate(Node node) {&#xd;
+    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
+  }&#xd;
+&#xd;
+}</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:throttle" sv:type="Long">
+    <sv:value>1000</sv:value>
+  </sv:property>
+</sv:node>
