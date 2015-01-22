@@ -21,7 +21,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+//import org.springframework.web.servlet.mvc.SimpleFormController;
 
 /**
  * An example form controller extending SimpleFormController.
@@ -33,7 +33,8 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
  * 
  * @version $Id: ContactFormController.java 18406 2009-06-05 11:07:25Z wko $
  */
-public class ContactFormController extends SimpleFormController {
+//public class ContactFormController extends SimpleFormController {
+public class ContactFormController {
     
     private static Logger log = LoggerFactory.getLogger(ContactFormController.class);
 
@@ -65,19 +66,20 @@ public class ContactFormController extends SimpleFormController {
         }
     }
     
-    @Override
+//    @Override
     protected void doSubmitAction(Object command) throws Exception {
         if (redirectOnSuccess) {
-            super.doSubmitAction(command);
+//            super.doSubmitAction(command);
         } else {
             sendContactMessage((ContactMessageBean) command);
         }
     }
 
-    @Override
+//    @Override
     protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
         if (!redirectOnSuccess) {
-            return super.onSubmit(command, errors);
+//            return super.onSubmit(command, errors);
+            return null;
         } else {
             sendContactMessage((ContactMessageBean) command);
             return new ModelAndView(new SiteMapItemRedirectView("thankyou", true));
