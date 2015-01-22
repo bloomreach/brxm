@@ -63,12 +63,14 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
      */
     public void activate(IContextMenu active) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        for (IContextMenu menu : getMenus(false)) {
-            if (menu != active) {
-                menu.collapse(target);
+        if (target != null) {
+            for (IContextMenu menu : getMenus(false)) {
+                if (menu != active) {
+                    menu.collapse(target);
+                }
             }
+            show(target);
         }
-        show(target);
     }
 
     /**
