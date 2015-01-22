@@ -412,6 +412,7 @@ client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/RepositoryTempl
 client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/WebResourcesTemplateEventListener.java -text
 client/src/main/java/org/hippoecm/hst/linking/HstLinkProcessorTemplate.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/BinariesServlet.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/servlet/BinaryPageFactory.java -text
 client/src/main/java/org/hippoecm/hst/servlet/HstFreemarkerServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/HstPingServlet.java -text
 client/src/main/java/org/hippoecm/hst/tag/BaseHstURLTag.java svneol=native#text/plain
@@ -453,6 +454,8 @@ client/src/test/java/org/hippoecm/hst/component/support/bean/TestBaseHstComponen
 client/src/test/java/org/hippoecm/hst/component/support/forms/TestFormMap.java -text
 client/src/test/java/org/hippoecm/hst/component/support/spring/util/TestMetadataReaderClasspathResourceScanner.java -text
 client/src/test/java/org/hippoecm/hst/freemarker/DelegatingTemplateLoaderTest.java -text
+client/src/test/java/org/hippoecm/hst/servlet/AbstractTestBinariesServlet.java svneol=native#text/plain
+client/src/test/java/org/hippoecm/hst/servlet/BinariesServletCustomPageFactoryTest.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/servlet/BinariesServletTest.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/servlet/HstFreemarkerServletTest.java -text
 client/src/test/java/org/hippoecm/hst/tag/TestBaseHstURLTag.java -text

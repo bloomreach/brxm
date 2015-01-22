@@ -43,6 +43,7 @@ public class BinaryPage implements Serializable {
     private long nextValidityCheckTimeStamp = -1L;
     private long creationTime;
     private long length;
+    private boolean cacheable = true;
     private byte[] data = ArrayUtils.EMPTY_BYTE_ARRAY;
 
     /** 
@@ -182,6 +183,10 @@ public class BinaryPage implements Serializable {
         }
     }
 
+    public boolean isCacheable() {
+        return cacheable;
+    }
+
     /**
      * Set the HTTP status. The status is not checked for validity.
      * @param status
@@ -231,6 +236,10 @@ public class BinaryPage implements Serializable {
         this.length = length;
     }
 
+    public void setCacheable(final boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+
     /**
      * Set the creation time to the current time.
      */
@@ -249,27 +258,44 @@ public class BinaryPage implements Serializable {
         sb.append(" etag=").append(getETag());
         sb.append(" lastmodified=").append(getLastModified());
         sb.append(" size=").append(getLength());
+        sb.append(" cacheable=").append(cacheable);
         return sb.toString();
     }
 
     @Override
-    public int hashCode() {
-        return (int) (getResourcePath().hashCode() * 17L + getLength() * 13L + getLastModified());
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final BinaryPage that = (BinaryPage) o;
+
+        if (cacheable != that.cacheable) {
+            return false;
+        }
+        if (lastModified != that.lastModified) {
+            return false;
+        }
+        if (length != that.length) {
+            return false;
+        }
+        if (path != null ? !path.equals(that.path) : that.path != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof BinaryPage)) {
-            return false;
-        }
-        BinaryPage that = (BinaryPage) obj;
-        if (this.getLastModified() == that.getLastModified() && this.getLength() == that.getLength()
-                && this.getResourcePath().equals(that.getResourcePath())) {
-            return true;
-        }
-        return false;
+    public int hashCode() {
+        int result = path != null ? path.hashCode() : 0;
+        result = 31 * result + (int) (lastModified ^ (lastModified >>> 32));
+        result = 31 * result + (int) (length ^ (length >>> 32));
+        result = 31 * result + (cacheable ? 1 : 0);
+        return result;
     }
+
 }

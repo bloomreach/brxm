@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,22 @@
  */
 package org.hippoecm.hst.servlet;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-
 import javax.servlet.ServletConfig;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 /**
  * Tests {@link org.hippoecm.hst.servlet.BinariesServlet}. Since the tested class is originally written by Hippo,
  * only the added logic is tested. The original logic is left untested.
  */
-public class BinariesServletTest {
+public class BinariesServletTest extends AbstractTestBinariesServlet {
 
     private BinariesServlet binariesServlet;
 
@@ -90,20 +90,7 @@ public class BinariesServletTest {
      */
     @Test
     public void testInit_noParams() throws Exception {
-        ServletConfig servletConfig = createMock(ServletConfig.class);
-
-        expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(null);
-        expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(null);
-        expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(null);
-        expect(servletConfig.getInitParameter("binaryResourceNodeType")).andReturn(null);
-        expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
-        expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
-        expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
-        expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
-
-        expect(servletConfig.getInitParameter("set-expires-headers")).andReturn(null);
-        expect(servletConfig.getInitParameter("set-content-length-header")).andReturn(null);
-        expect(servletConfig.getInitParameter("forceContentDispositionRequestParamName")).andReturn(null);
+        ServletConfig servletConfig = getNoParamServletConfigMock();
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);

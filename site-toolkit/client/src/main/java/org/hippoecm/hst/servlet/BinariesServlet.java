@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -200,6 +200,22 @@ public class BinariesServlet extends HttpServlet {
     
     private String binariesCacheComponentName;
 
+    private BinaryPageFactory binaryPageFactory;
+
+    private class DefaultBinaryPageFactory implements BinaryPageFactory {
+
+        @Override
+        public BinaryPage createBinaryPage(final String resourcePath, final Session session) throws RepositoryException{
+            final BinaryPage binaryPage = new BinaryPage(resourcePath);
+            initBinaryPageValues(session, binaryPage);
+            return binaryPage;
+        }
+    }
+
+    protected BinaryPageFactory createBinaryPageFactory() {
+        return new DefaultBinaryPageFactory();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -210,6 +226,7 @@ public class BinariesServlet extends HttpServlet {
         initContentDispostion();
         initExpires();
         initSetContentLengthHeader();
+        binaryPageFactory = createBinaryPageFactory();
     }
 
     @Override
@@ -235,10 +252,14 @@ public class BinariesServlet extends HttpServlet {
             response.sendError(page.getStatus());
             return;
         }
-        
+
+        writeResponse(request, response, page);
+    }
+
+    protected void writeResponse(final HttpServletRequest request, final HttpServletResponse response, final BinaryPage page) throws IOException {
         response.setStatus(page.getStatus());
         boolean setExpiresNeeded = setExpires;
-        
+
         if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes) ||
                 (request.getParameter(forceContentDispositionRequestParamName) != null &&
                         Boolean.parseBoolean(request.getParameter(forceContentDispositionRequestParamName)))) {
@@ -270,8 +291,6 @@ public class BinariesServlet extends HttpServlet {
         if (setContentLength) {
             HeaderUtils.setContentLengthHeader(response, page);
         }
-
-
 
         response.setContentType(page.getMimeType());
         response.setHeader("ETag", page.getETag());
@@ -351,7 +370,7 @@ public class BinariesServlet extends HttpServlet {
     protected BinaryPage getValidatedPageFromCache(HttpServletRequest request, BinaryPage page) {
         if (HeaderUtils.isForcedCheck(request) || binariesCache.mustCheckValidity(page)) {
             long lastModified = getLastModifiedFromResource(request, page.getResourcePath());
-            if (binariesCache.isPageStale(page, lastModified)) {
+            if (binariesCache.isPageStale(page, lastModified) || isPageStale(request, page)) {
                 binariesCache.removePage(page);
                 page = getBinaryPage(request, page.getResourcePath());
                 binariesCache.putPage(page);
@@ -362,12 +381,23 @@ public class BinariesServlet extends HttpServlet {
         return page;
     }
 
+    /**
+     * Hook for subclasses to check whether a previously cached page should be recreated. The default implementation
+     * in this {@link BinariesServlet} returns false
+     *
+     * @param request      current HTTP request
+     * @param page         current cached binary page
+     * @return             true if the page should be recreated, false otherwise
+     */
+    protected boolean isPageStale(HttpServletRequest request, BinaryPage page) {
+        return false;
+    }
+
     protected long getLastModifiedFromResource(HttpServletRequest request, String resourcePath) {
         Session session = null;
         try {
             session = SessionUtils.getBinariesSession(request);
-            Node resourceNode = ResourceUtils.lookUpResource(session, resourcePath, prefix2ResourceContainer,
-                    allResourceContainers);
+            Node resourceNode = getResourceNode(session, resourcePath);
             return ResourceUtils.getLastModifiedDate(resourceNode, binaryLastModifiedPropName);
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
@@ -381,24 +411,41 @@ public class BinariesServlet extends HttpServlet {
         return -1L;
     }
 
+    /**
+     * Retrieve the JCR node representing a resource
+     *
+     * @param session      the jcr session to fetch the resource with
+     * @param resourcePath path of resource
+     * @return             resource node if found, or <code>null</code> if cannot be found or a
+     * {@link javax.jcr.RepositoryException} happened.
+     */
+    protected Node getResourceNode(Session session, String resourcePath) {
+        Node resourceNode = ResourceUtils.lookUpResource(session, resourcePath, prefix2ResourceContainer, allResourceContainers);
+        if (resourceNode == null) {
+            log.info("Could not resolving jcr node for binaries request for '{}' : ", resourcePath);
+        }
+        return resourceNode;
+    }
+
     protected BinaryPage getBinaryPage(HttpServletRequest request, String resourcePath) {
-        BinaryPage page = new BinaryPage(resourcePath);
         Session session = null;
         try {
             session = SessionUtils.getBinariesSession(request);
-            initBinaryPageValues(session, page);
+            final BinaryPage page = binaryPageFactory.createBinaryPage(resourcePath, session);
             log.info("Page loaded: {}", page);
+            return page;
         } catch (RepositoryException e) {
-            page.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            BinaryPage errorPage = new BinaryPage(resourcePath);
+            errorPage.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             if (log.isDebugEnabled()) {
                 log.warn("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : " + e, e);
             } else {
                 log.warn("Repository exception while resolving binaries request '{}'. {}", request.getRequestURI(), e);
             }
+            return errorPage;
         } finally {
             SessionUtils.releaseSession(request, session);
         }
-        return page;
     }
 
     protected void initBinaryPageValues(Session session, BinaryPage page) throws RepositoryException {
@@ -407,8 +454,7 @@ public class BinariesServlet extends HttpServlet {
             return;
         }
 
-        Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
-                allResourceContainers);
+        Node resourceNode = getResourceNode(session, page.getResourcePath());
         if (resourceNode == null) {
             page.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -438,12 +484,20 @@ public class BinariesServlet extends HttpServlet {
         page.setFileName(ResourceUtils.getFileName(resourceNode, contentDispositionFilenamePropertyNames));
         page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
 
-        if (binariesCache.isBinaryDataCacheable(page)) {
-            storeResourceOnBinaryPage(page, resourceNode);
-        }
+        storeResourceOnBinaryPage(page, resourceNode);
     }
 
+    /**
+     * Stores the binary content of <code>resourceNode</code> on the <code>page</code> unless the <code>page</code>
+     * is marked to be uncacheable.
+     */
     protected void storeResourceOnBinaryPage(BinaryPage page, Node resourceNode) {
+        if (!page.isCacheable()) {
+            return;
+        }
+        if (!binariesCache.isBinaryDataCacheable(page)) {
+            return;
+        }
         try {
             InputStream input = resourceNode.getProperty(binaryDataPropName).getBinary().getStream();
             page.loadDataFromStream(input);
