@@ -2517,7 +2517,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/im
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.properties -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_de.properties -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_fr.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_it.properties -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_nl.properties -text svneol=unset#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImagePickerBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/RichTextEditorImageService.java svneol=native#text/plain
