@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,6 +31,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +45,7 @@ import static org.easymock.EasyMock.replay;
 import static org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAM_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -132,19 +135,22 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         assertEquals("Choose a template", switchTemplateProp.getGroupLabel());
         assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
 
-        String[] expectedValues = {
-                "webresource:/ftl/main/layout.ftl",
-                "webresource:/ftl/main/layout/layout-variant1.ftl",
-                "webresource:/ftl/main/layout/layout-variant2.ftl"};
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(
+                new String[] {
+                        "layout.ftl",
+                        "layout-variant1.ftl",
+                        "layout-variant2.ftl"},
+                new String[]{
+                        "webresource:/ftl/main/layout.ftl",
+                        "webresource:/ftl/main/layout/layout-variant1.ftl",
+                        "webresource:/ftl/main/layout/layout-variant2.ftl"});
 
-        assertTrue(Arrays.equals(expectedValues, switchTemplateProp.getDropDownListValues()));
+        String[] expectedValues = sortedMap.values().toArray(new String[0]);
+        String[] expectedDisplayValues = sortedMap.keySet().toArray(new String[0]);
 
-        String[] expectedDisplayValues = {
-                "layout.ftl",
-                "layout-variant1.ftl",
-                "layout-variant2.ftl"};
+        assertArrayEquals(expectedValues, switchTemplateProp.getDropDownListValues());
 
-        assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+        assertArrayEquals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
 
         final ContainerItemComponentPropertyRepresentation barProp = properties.get(1);
         assertEquals("bar", barProp.getName());
@@ -165,13 +171,14 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
             List<ContainerItemComponentPropertyRepresentation> properties =
                     getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
                             containerItemNode, helper, propertyPresentationFactories);
-            String[] expectedDisplayValues = {
-                    "layout.ftl",
+
+            String[] expectedSortedDisplayValues = {
                     "layout-variant1.ftl",
-                    "layout-variant2.ftl"};
+                    "layout-variant2.ftl",
+                    "layout.ftl"};
 
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
-            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+            assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
         }
     }
 
@@ -200,19 +207,19 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
                     getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
                             containerItemNode, helper, propertyPresentationFactories);
 
-            String[] expectedDisplayValues = {
+            String[] expectedSortedDisplayValues = {
                     "Layout",
                     "Layout Variant 1",
                     "Layout Variant 2" };
 
             if (locale == Locale.FRENCH || locale == Locale.FRANCE) {
                 for (int i = 0; i < 3; i++) {
-                    expectedDisplayValues[i] = expectedDisplayValues[i] + " ("+locale.toString()+")";
+                    expectedSortedDisplayValues[i] = expectedSortedDisplayValues[i] + " ("+locale.toString()+")";
                 }
             }
 
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
-            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+            assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
         }
 
     }
@@ -292,21 +299,21 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         assertEquals("webresource:/ftl/main/layout/non-existing.ftl", switchTemplateProp.getValue());
         assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
 
-        String[] expectedValues = {
+        String[] expectedSortedValues = {
                 "webresource:/ftl/main/layout/non-existing.ftl",
-                "webresource:/ftl/main/layout.ftl",
                 "webresource:/ftl/main/layout/layout-variant1.ftl",
-                "webresource:/ftl/main/layout/layout-variant2.ftl"};
+                "webresource:/ftl/main/layout/layout-variant2.ftl",
+                "webresource:/ftl/main/layout.ftl"};
 
-        assertTrue(Arrays.equals(expectedValues, switchTemplateProp.getDropDownListValues()));
+        assertArrayEquals(expectedSortedValues, switchTemplateProp.getDropDownListValues());
 
-        String[] expectedDisplayValues = {
+        String[] expectedSortedDisplayValues = {
                 "Missing template 'non-existing.ftl'",
-                "layout.ftl",
                 "layout-variant1.ftl",
-                "layout-variant2.ftl"};
+                "layout-variant2.ftl",
+                "layout.ftl"};
 
-        assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+        assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
 
         // and for NL
         List<ContainerItemComponentPropertyRepresentation> propertiesNL =
@@ -316,10 +323,10 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         final ContainerItemComponentPropertyRepresentation switchTemplatePropNL = propertiesNL.get(0);
         String[] expectedDisplayValuesNL = {
                 "Ontbrekende template 'non-existing.ftl'",
-                "layout.ftl",
                 "layout-variant1.ftl",
-                "layout-variant2.ftl"};
-        assertTrue(Arrays.equals(expectedDisplayValuesNL, switchTemplatePropNL.getDropDownListDisplayValues()));
+                "layout-variant2.ftl",
+                "layout.ftl"};
+        assertArrayEquals(expectedDisplayValuesNL, switchTemplatePropNL.getDropDownListDisplayValues());
     }
 
     @Test
@@ -358,13 +365,13 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
                     "webresource:/ftl/main/layout/non-existing.ftl",
                     "webresource:/ftl/main/layout.ftl"};
 
-            assertTrue(Arrays.equals(expectedValues, switchTemplateProp.getDropDownListValues()));
+            assertArrayEquals(expectedValues, switchTemplateProp.getDropDownListValues());
 
-            String[] expectedDisplayValues = {
+            String[] expectedSortedDisplayValues = {
                     "Missing template 'non-existing.ftl'",
                     "layout.ftl"};
 
-            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+            assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
         }
     }
 
@@ -393,27 +400,27 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
                     getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
                             containerItemNode, helper, propertyPresentationFactories);
 
-            final String[] expectedDisplayValues;
+            final String[] expectedSortedDisplayValues;
 
 
             if (locale == Locale.FRENCH) {
                 final String[] values  = {
                         "Missing template 'Non Existing (fr)'",
                         "Layout (fr)"};
-                expectedDisplayValues = values;
+                expectedSortedDisplayValues = values;
             } else if (locale == Locale.FRANCE) {
                 final String[] values  = {
                         "Missing template 'Non Existing (fr_FR)'",
                         "Layout (fr_FR)"};
-                expectedDisplayValues = values;
+                expectedSortedDisplayValues = values;
             } else {
                 final String[] values  = {
                         "Missing template 'Non Existing'",
                         "Layout"};
-                expectedDisplayValues = values;
+                expectedSortedDisplayValues = values;
             }
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
-            assertTrue(Arrays.equals(expectedDisplayValues, switchTemplateProp.getDropDownListDisplayValues()));
+            assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
         }
 
     }

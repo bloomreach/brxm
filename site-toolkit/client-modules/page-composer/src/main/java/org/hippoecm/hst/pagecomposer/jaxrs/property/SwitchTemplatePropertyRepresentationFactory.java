@@ -16,9 +16,12 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.property;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -133,11 +136,14 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                             createSwitchTemplateComponentPropertyRepresentation(switchTemplateResourceBundle,
                                     webResourceTemplateFreeMarkerPath, variantWebResourcePaths, variantsResourceBundle);
                     switchTemplateComponentProperty.setValue(templateParamValue);
+
+                    // the addMissingTemplateValueAndLabel is added *after* sorting since always most be on top
+                    sortDropDownByDisplayValue(switchTemplateComponentProperty);
+
                     if (templateParamWebResource == TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING) {
                         addMissingTemplateValueAndLabel(templateParamValue, switchTemplateResourceBundle, switchTemplateComponentProperty, variantsResourceBundle);
                     }
-                    // insert the switch template on top of all the properties:
-                    //properties.add(0, switchTemplateComponentProperty);
+
                     return switchTemplateComponentProperty;
                 }
             }
@@ -212,9 +218,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                 displayValues[i] = variantName;
             }
         }
-
         prop.setDropDownListDisplayValues(displayValues);
-
         return prop;
     }
 
@@ -248,4 +252,38 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
         }
     }
+
+    public static void sortDropDownByDisplayValue(final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty) {
+        try {
+            Map<String, String> sortedMap = asKeySortedMap(switchTemplateComponentProperty.getDropDownListDisplayValues(),
+                    switchTemplateComponentProperty.getDropDownListValues());
+
+            switchTemplateComponentProperty.setDropDownListValues(sortedMap.values().toArray(new String[0]));
+            switchTemplateComponentProperty.setDropDownListDisplayValues(sortedMap.keySet().toArray(new String[0]));
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not sort map:", e.toString());
+        }
+    }
+
+    /**
+     *
+     * @param keys array of keys to sort on and which must be of equal length as <code>values</code>
+     * @param values arrays of values which must be of equal length as <code>keys</code>
+     * @return A {@link java.util.Map} of the <code>keys</code> and <code>values</code> sorted on <code>keys</code>
+     * @throws java.lang.IllegalArgumentException if <code>keys</code> length is not equal to <code>values</code> length
+     */
+    public static Map<String,String> asKeySortedMap(String[] keys, String[] values) {
+        if (keys.length != values.length) {
+            log.warn("Cannot return sorted map on keys when keys and values when arrays are of unequal length. Cannot sort '{}' and '{}'",
+                    Arrays.toString(keys), Arrays.toString(values));
+            throw new IllegalArgumentException("Unequal arrays");
+        }
+
+        Map<String,String> sortedMap = new TreeMap<>();
+        for (int i = 0; i < keys.length; i++) {
+            sortedMap.put(keys[i], values[i]);
+        }
+        return sortedMap;
+    }
+
 }
