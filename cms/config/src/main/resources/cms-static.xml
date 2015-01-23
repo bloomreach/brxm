@@ -442,7 +442,7 @@
             <sv:value>en</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Configuration</sv:value>
+            <sv:value>Document Types</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -453,7 +453,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Configuratie</sv:value>
+            <sv:value>Documenttypes</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -464,18 +464,7 @@
             <sv:value>fr</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Configuration</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>it</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Configurazione</sv:value>
+            <sv:value>Document types</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -486,7 +475,7 @@
             <sv:value>de</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Konfiguration</sv:value>
+            <sv:value>Documenttypen</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
