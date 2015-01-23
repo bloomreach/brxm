@@ -532,7 +532,7 @@
       <sv:value>hst:pages/formpage</sv:value>
     </sv:property>
   </sv:node>
-
+<!--
   <sv:node sv:name="contact-spring">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -606,7 +606,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
+-->
   <!-- Example how to use sitemap item handlers -->
   <sv:node sv:name="dummy">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -623,6 +623,7 @@
   </sv:node>
 
   <!-- External Spring MVC Integration Example -->
+<!--
   <sv:node sv:name="springapp">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -647,7 +648,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-
+-->
   <!-- Example plain (non-content-mapped) RESTful sitemap item configuration -->
   <sv:node sv:name="topproducts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

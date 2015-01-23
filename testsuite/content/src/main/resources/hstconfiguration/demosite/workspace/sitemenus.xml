@@ -239,7 +239,7 @@
         <sv:value>form</sv:value>
       </sv:property>
     </sv:node>
-
+<!--
     <sv:node sv:name="Contact-Spring">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -272,7 +272,7 @@
         <sv:value>contact-springmvc</sv:value>
       </sv:property>
     </sv:node>
-
+-->
     <sv:node sv:name="Algebra">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -282,6 +282,7 @@
       </sv:property>
     </sv:node>
 
+<!--
     <sv:node sv:name="Spring Web MVC Integration Example">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -290,7 +291,7 @@
         <sv:value>springapp/news</sv:value>
       </sv:property>
     </sv:node>
-
+-->
   </sv:node>
 
 </sv:node>
