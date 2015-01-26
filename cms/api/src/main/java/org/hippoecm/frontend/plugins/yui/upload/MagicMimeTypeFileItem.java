@@ -43,7 +43,7 @@ public class MagicMimeTypeFileItem implements FileItem {
      */
     private String resolveMimeType(FileItem fileItem) {
         try (InputStream in = fileItem.getInputStream()) {
-            return tika.detect(in);
+            return tika.detect(in, fileItem.getName());
         } catch (IOException e) {
             log.warn("Tika failed to detect mime-type, falling back on browser provided mime-type", e);
         }
