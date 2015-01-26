@@ -29,12 +29,6 @@ public final class PageEditorBundle {
 
     public static final String MANAGE_CHANGES_WINDOW = "ManageChangesWindow.js";
 
-    public static final String MESSAGE_BUS = "MessageBus.js";
-
-    public static final String IFRAME_PANEL = "IFramePanel.js";
-
-    public static final String IFRAME_WINDOW = "IFrameWindow.js";
-
     public static final String PAGE_SETTINGS_WINDOW = "PageSettingsWindow.js";
 
     public static final String PAGES_WINDOW = "PagesWindow.js";

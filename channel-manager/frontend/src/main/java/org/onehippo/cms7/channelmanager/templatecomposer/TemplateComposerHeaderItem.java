@@ -46,9 +46,6 @@ public class TemplateComposerHeaderItem extends HeaderItem {
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_GRID_PANEL));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ICON_TOOLBAR_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MANAGE_CHANGES_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_SETTINGS_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGES_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.EDIT_MENU_WINDOW));
