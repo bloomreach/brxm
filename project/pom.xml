@@ -196,7 +196,7 @@
     <repository>
       <id>hippo-maven2</id>
       <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -269,7 +269,7 @@
     <pluginRepository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
