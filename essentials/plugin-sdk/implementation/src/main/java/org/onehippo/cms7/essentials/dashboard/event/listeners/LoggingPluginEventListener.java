@@ -20,7 +20,6 @@ package org.onehippo.cms7.essentials.dashboard.event.listeners;
 import javax.inject.Singleton;
 
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
-import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,11 +31,10 @@ import com.google.common.eventbus.Subscribe;
  */
 @Component
 @Singleton
-public class LoggingPluginEventListener implements PluginEventListener<LogEvent> {
+public class LoggingPluginEventListener {
 
     private static Logger log = LoggerFactory.getLogger(LoggingPluginEventListener.class);
 
-    @Override
     @Subscribe
     public void onPluginEvent(final LogEvent event) {
         log.info("@PLUGIN EVENT:  {}", event.getMessage());

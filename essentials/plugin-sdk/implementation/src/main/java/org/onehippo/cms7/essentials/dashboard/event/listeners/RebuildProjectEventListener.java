@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Singleton;
 
-import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.springframework.stereotype.Component;
 
@@ -34,12 +33,11 @@ import com.google.common.eventbus.Subscribe;
  */
 @Component
 @Singleton
-public class RebuildProjectEventListener implements PluginEventListener<RebuildEvent> {
+public class RebuildProjectEventListener {
 
     public static final int MAX_ITEMS = 25;
     private final List<RebuildEvent> events = new CopyOnWriteArrayList<>();
 
-    @Override
     @Subscribe
     public void onPluginEvent(final RebuildEvent event) {
         if (events.size() == MAX_ITEMS) {

@@ -24,7 +24,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.inject.Singleton;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.Subscribe;
@@ -34,12 +33,11 @@ import com.google.common.eventbus.Subscribe;
  */
 @Component
 @Singleton
-public class MemoryPluginEventListener implements PluginEventListener<DisplayEvent> {
+public class MemoryPluginEventListener {
 
     public static final int MAX_ITEMS = 1000;
     private final List<DisplayEvent> events = new CopyOnWriteArrayList<>();
 
-    @Override
     @Subscribe
     public void onPluginEvent(final DisplayEvent event) {
         if (events.size() == MAX_ITEMS) {

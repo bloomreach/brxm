@@ -782,7 +782,6 @@ plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Plugi
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginContext.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayLocation.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
-plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instruction.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionExecutor.java -text
 plugin-sdk/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionParser.java -text
