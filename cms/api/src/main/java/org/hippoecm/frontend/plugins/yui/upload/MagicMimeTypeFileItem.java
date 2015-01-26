@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,94 +15,43 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 
-import org.apache.wicket.util.upload.DiskFileItem;
+import org.apache.tika.Tika;
 import org.apache.wicket.util.upload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-
 public class MagicMimeTypeFileItem implements FileItem {
 
     private static final Logger log = LoggerFactory.getLogger(MagicMimeTypeFileItem.class);
+    private static final Tika tika = new Tika();
 
     private FileItem delegate;
     private String contentType;
-    private static final String MAGIC_MIME_DETECTOR = "eu.medsea.mimeutil.detector.MagicMimeMimeDetector";
-    private static final String EXTENSIONS_MIME_DETECTOR = "eu.medsea.mimeutil.detector.ExtensionMimeDetector";
 
     public MagicMimeTypeFileItem(FileItem delegate) {
         this.delegate = delegate;
-
-        if(MimeUtil.getMimeDetector(MAGIC_MIME_DETECTOR) == null) {
-            MimeUtil.registerMimeDetector(MAGIC_MIME_DETECTOR);
-        }
-        if(MimeUtil.getMimeDetector(EXTENSIONS_MIME_DETECTOR) == null) {
-            MimeUtil.registerMimeDetector(EXTENSIONS_MIME_DETECTOR);
-        }
     }
 
     /**
-     * Microsoft and OpenOffice files aren't correctly detected based on Magic bytes, so fall back on extension
-     * detection for these mimetypes. Also, do a second detection run based on extension for
-     * mimetype=application/octet-stream
-     *
-     * .odt, .ods and .odp are detected as application/zip
-     * .xsl and .ppt are detected as application/msword
-     *
-     * @param fileItem
      * @return The best matching mimetype for this fileItem
      */
     private String resolveMimeType(FileItem fileItem) {
-        Collection<?> mimeTypes = null;
-        if(fileItem instanceof DiskFileItem && !fileItem.isInMemory()) {
-            mimeTypes = MimeUtil.getMimeTypes(((DiskFileItem)fileItem).getStoreLocation());
-        } else {
-            InputStream inputStream = null;
-            try {
-                inputStream = fileItem.getInputStream();
-                mimeTypes = MimeUtil.getMimeTypes(new BufferedInputStream(inputStream));
-            } catch (IOException e) {
-                log.warn("IOException prevented retrieval of mimetype; using default", e);
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException e) {
-                    log.warn("Could not close inputstream after retrieving mimetype", e);
-                }
-            }
-        }
-        if (mimeTypes != null && mimeTypes.size() == 1) {
-            MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-            if (mimeType.getMediaType().equals("application")) {
-                if(mimeType.getSubType().equals("msword") || mimeType.getSubType().equals("zip") || mimeType.getSubType().equals("octet-stream")) {
-                    Collection<?> extensionBasedMimeTypes = MimeUtil.getMimeTypes(fileItem.getName());
-                    if(extensionBasedMimeTypes != null && extensionBasedMimeTypes.size() > 0) {
-                        mimeTypes = extensionBasedMimeTypes;
-                    }
-                }
-            }
-        }
-        if(mimeTypes != null && mimeTypes.size() > 0) {
-            MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-            return mimeType.toString();
+        try (InputStream in = fileItem.getInputStream()) {
+            return tika.detect(in);
+        } catch (IOException e) {
+            log.warn("Tika failed to detect mime-type, falling back on browser provided mime-type", e);
         }
         return fileItem.getContentType();
     }
 
     public String getContentType() {
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = resolveMimeType(delegate);
         }
         return contentType;
