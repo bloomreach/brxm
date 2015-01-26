@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.property;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,11 +53,23 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     private final static  String SWITCH_TEMPLATE_I18N_KEY = "switch.template";
     private final static String CHOOSE_TEMPLATE_I18N_KEY = "choose.template";
     private final static String MISSING_TEMPLATE_I18N_KEY = "missing.template";
+    private static final String FTL_SUFFIX = ".ftl";
+    private static final FreeMarkerDisplayNameComparator FREE_MARKER_DISPLAY_NAME_COMPARATOR = new FreeMarkerDisplayNameComparator();
 
     private enum TemplateParamWebResource {
         NOT_CONFIGURED,
         CONFIGURED_AND_EXISTS,
         CONFIGURED_BUT_NON_EXISTING
+    }
+
+    public static class FreeMarkerDisplayNameComparator implements Comparator<String> {
+        @Override
+        public int compare(final String key1, final String key2) {
+            // no null check, if key1 or key2 is null, just NPE
+            final String compare1 = StringUtils.substringBeforeLast(key1, FTL_SUFFIX);
+            final String compare2 = StringUtils.substringBeforeLast(key2, FTL_SUFFIX);
+            return compare1.compareTo(compare2);
+        }
     }
 
     @Override
@@ -99,7 +112,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                     // check available variants
                     final Node mainTemplateFolder = session.getNode(freeMarkerVariantsFolderPath);
                     for (Node variant : new NodeIterable(mainTemplateFolder.getNodes())) {
-                        if (variant.getPath().endsWith(".ftl")) {
+                        if (variant.getPath().endsWith(FTL_SUFFIX)) {
                             log.debug("Found variant '{}' for '{}'", variant.getPath(), templateFreeMarkerPath);
                             final String variantJcrPath = variant.getPath();
                             final String variantWebResourcePath = WebResourceUtils.jcrPathToWebResourcePath(variantJcrPath);
@@ -258,8 +271,8 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
             Map<String, String> sortedMap = asKeySortedMap(switchTemplateComponentProperty.getDropDownListDisplayValues(),
                     switchTemplateComponentProperty.getDropDownListValues());
 
-            switchTemplateComponentProperty.setDropDownListValues(sortedMap.values().toArray(new String[0]));
-            switchTemplateComponentProperty.setDropDownListDisplayValues(sortedMap.keySet().toArray(new String[0]));
+            switchTemplateComponentProperty.setDropDownListValues(sortedMap.values().toArray(new String[sortedMap.size()]));
+            switchTemplateComponentProperty.setDropDownListDisplayValues(sortedMap.keySet().toArray(new String[sortedMap.size()]));
         } catch (IllegalArgumentException e) {
             log.warn("Could not sort map:", e.toString());
         }
@@ -274,12 +287,12 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
      */
     public static Map<String,String> asKeySortedMap(String[] keys, String[] values) {
         if (keys.length != values.length) {
-            log.warn("Cannot return sorted map on keys when keys and values when arrays are of unequal length. Cannot sort '{}' and '{}'",
-                    Arrays.toString(keys), Arrays.toString(values));
-            throw new IllegalArgumentException("Unequal arrays");
+            final String msg = String.format("Cannot return sorted map on keys when keys and values when arrays are of unequal length. " +
+                    "Cannot sort '%s' and '%s'", Arrays.toString(keys), Arrays.toString(values));
+            throw new IllegalArgumentException(msg);
         }
 
-        Map<String,String> sortedMap = new TreeMap<>();
+        Map<String,String> sortedMap = new TreeMap<>(FREE_MARKER_DISPLAY_NAME_COMPARATOR);
         for (int i = 0; i < keys.length; i++) {
             sortedMap.put(keys[i], values[i]);
         }

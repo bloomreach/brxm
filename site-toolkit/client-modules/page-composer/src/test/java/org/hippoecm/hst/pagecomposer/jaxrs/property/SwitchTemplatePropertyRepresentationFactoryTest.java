@@ -27,11 +27,39 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
 
     @Test
     public void test_asKeySortedMap() {
-        final String[] keys = new String[]{"a", "z", "1"};
+        final String[] unSortedKeys = new String[]{"a", "z", "1"};
         final String[] values = new String[]{"12", "y", "x"};
-        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(keys, values);
-        Arrays.sort(keys);
-        assertArrayEquals(keys, sortedMap.keySet().toArray(new String[0]));
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unSortedKeys, values);
+        final String[] sortedKeys = unSortedKeys.clone();
+        Arrays.sort(sortedKeys);
+        assertArrayEquals(sortedKeys, sortedMap.keySet().toArray(new String[0]));
+    }
+
+    /**
+     * Plain alphabetical ordering of for example ftl template file names layout.ftl, layout-variant1.ftl and
+     * layout-variant2.ftl results in
+     * <ol>
+     *     <li>layout-variant1.ftl</li>
+     *     <li>layout-variant2.ftl</li>
+     *     <li>layout.ftl</li>
+     * </ol>
+     * however, desired is (like linux FS / intellij)
+     *
+     * <ol>
+     *     <li>layout.ftl</li>
+     *     <li>layout-variant1.ftl</li>
+     *     <li>layout-variant2.ftl</li>
+     * </ol>
+     */
+    @Test
+    public void test_asKeySortedMap_with_ftl_extensions() {
+        final String[] unsortedKeys = new String[]{"layout-variant2.ftl", "layout-variant1.ftl", "layout.ftl"};
+        final String[] values = new String[]{"12", "y", "x"};
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values);
+
+        final String[] expectedArray = new String[]{"layout.ftl", "layout-variant1.ftl","layout-variant2.ftl"};
+
+        assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -40,6 +68,8 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
         final String[] values = new String[]{"12", "y"};
         SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(keys, values);
     }
+
+    //FREE_MARKER_DISPLAY_NAME_COMPARATOR
 
     @Test
     public void test_PropertyRepresentationSorted() {

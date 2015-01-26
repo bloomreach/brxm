@@ -173,9 +173,9 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
                             containerItemNode, helper, propertyPresentationFactories);
 
             String[] expectedSortedDisplayValues = {
+                    "layout.ftl",
                     "layout-variant1.ftl",
-                    "layout-variant2.ftl",
-                    "layout.ftl"};
+                    "layout-variant2.ftl"};
 
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
             assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
@@ -301,17 +301,18 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
         String[] expectedSortedValues = {
                 "webresource:/ftl/main/layout/non-existing.ftl",
+                "webresource:/ftl/main/layout.ftl",
                 "webresource:/ftl/main/layout/layout-variant1.ftl",
                 "webresource:/ftl/main/layout/layout-variant2.ftl",
-                "webresource:/ftl/main/layout.ftl"};
+                };
 
         assertArrayEquals(expectedSortedValues, switchTemplateProp.getDropDownListValues());
 
         String[] expectedSortedDisplayValues = {
                 "Missing template 'non-existing.ftl'",
+                "layout.ftl",
                 "layout-variant1.ftl",
-                "layout-variant2.ftl",
-                "layout.ftl"};
+                "layout-variant2.ftl"};
 
         assertArrayEquals(expectedSortedDisplayValues, switchTemplateProp.getDropDownListDisplayValues());
 
@@ -323,9 +324,9 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         final ContainerItemComponentPropertyRepresentation switchTemplatePropNL = propertiesNL.get(0);
         String[] expectedDisplayValuesNL = {
                 "Ontbrekende template 'non-existing.ftl'",
+                "layout.ftl",
                 "layout-variant1.ftl",
-                "layout-variant2.ftl",
-                "layout.ftl"};
+                "layout-variant2.ftl"};
         assertArrayEquals(expectedDisplayValuesNL, switchTemplatePropNL.getDropDownListDisplayValues());
     }
 
