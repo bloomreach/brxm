@@ -35,7 +35,7 @@
     <repository>
       <id>hippo</id>
       <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2/</url>
+      <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
