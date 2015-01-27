@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.webresources.WebResourceException;
-import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.cms7.services.webfiles.WebFileException;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.bootstrap.util.BootstrapConstants;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.testutils.ZipTestUtil;
@@ -69,8 +69,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
-
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEB_FILE_BUNDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -80,7 +79,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
     private Node test;
     private Node item;
-    private WebResourcesService webResourcesService;
+    private WebFilesService webFilesService;
     private InitializationProcessor processor;
     private LoggerRecordingWrapper loggingRecorder;
     private Logger bootstrapLogger = BootstrapConstants.log;
@@ -91,11 +90,11 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         test = session.getRootNode().addNode("test");
         item = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testitem", "hipposys:initializeitem");
         item.setProperty(HIPPO_STATUS, "pending");
-        session.getRootNode().addNode("webresources");
+        session.getRootNode().addNode("webfiles");
         session.save();
 
-        webResourcesService = EasyMock.createMock(WebResourcesService.class);
-        HippoServiceRegistry.registerService(webResourcesService, WebResourcesService.class);
+        webFilesService = EasyMock.createMock(WebFilesService.class);
+        HippoServiceRegistry.registerService(webFilesService, WebFilesService.class);
         if (bootstrapLogger.isInfoEnabled()) {
             loggingRecorder = new LoggerRecordingWrapper(bootstrapLogger);
         } else {
@@ -109,9 +108,9 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:initialize/testitem");
         removeNode("/hippo:configuration/hippo:initialize/upstream");
-        removeNode("/webresources");
+        removeNode("/webfiles");
 
-        HippoServiceRegistry.unregisterService(webResourcesService, WebResourcesService.class);
+        HippoServiceRegistry.unregisterService(webFilesService, WebFilesService.class);
         BootstrapConstants.log = bootstrapLogger;
         super.tearDown();
     }
@@ -299,8 +298,8 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testWebResourceBundleInitializationFromJar() throws Exception {
-        item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "resources");
+    public void testWebFileBundleInitializationFromJar() throws Exception {
+        item.setProperty(HIPPO_WEB_FILE_BUNDLE, "resources");
         item.setProperty(HIPPO_EXTENSIONSOURCE, getClass().getResource("/hippo.jar").toString() + "!/hippoecm-extension.xml");
         session.save();
 
@@ -308,15 +307,15 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertEquals("There should be one post-startup task", 1, tasks.size());
 
         // test the post-startup task
-        final PostStartupTask importWebResources = tasks.get(0);
+        final PostStartupTask importWebFiles = tasks.get(0);
 
         Capture<ZipFile> capturedZip = new Capture();
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)));
         expectLastCall();
 
-        replay(webResourcesService);
-        importWebResources.execute();
-        verify(webResourcesService);
+        replay(webFilesService);
+        importWebFiles.execute();
+        verify(webFilesService);
 
         ZipFile zip = capturedZip.getValue();
         assertEquals(5, zip.size());
@@ -335,22 +334,22 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         final List<PostStartupTask> reloadTasks = process();
         assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
-        final PostStartupTask reimportWebresources = reloadTasks.get(0);
+        final PostStartupTask reimportWebFiles = reloadTasks.get(0);
 
-        EasyMock.reset(webResourcesService);
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), anyObject(ZipFile.class));
+        EasyMock.reset(webFilesService);
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(ZipFile.class));
         expectLastCall();
 
-        replay(webResourcesService);
-        reimportWebresources.execute();
-        verify(webResourcesService);
+        replay(webFilesService);
+        reimportWebFiles.execute();
+        verify(webFilesService);
     }
 
     @Test
-    public void testWebResourceBundleInitializationFromDirectory() throws Exception {
+    public void testWebFileBundleInitializationFromDirectory() throws Exception {
         final URL testBundleUrl = getClass().getResource("/hippoecm-extension.xml");
 
-        item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "webresourcebundle");
+        item.setProperty(HIPPO_WEB_FILE_BUNDLE, "webfilebundle");
         item.setProperty(HIPPO_EXTENSIONSOURCE, testBundleUrl.toString());
         session.save();
 
@@ -358,15 +357,15 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertEquals("There should be one post-startup task", 1, tasks.size());
 
         // test the post-startup task
-        final PostStartupTask importWebResources = tasks.get(0);
+        final PostStartupTask importWebFiles = tasks.get(0);
 
-        final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "webresourcebundle");
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir));
+        final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "webfilebundle");
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
         expectLastCall();
 
-        replay(webResourcesService);
-        importWebResources.execute();
-        verify(webResourcesService);
+        replay(webFilesService);
+        importWebFiles.execute();
+        verify(webFilesService);
 
         // test reload
         item.setProperty(HIPPO_RELOADONSTARTUP, true);
@@ -375,22 +374,22 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         final List<PostStartupTask> reloadTasks = process();
         assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
-        final PostStartupTask reimportWebresources = reloadTasks.get(0);
+        final PostStartupTask reimportWebFiles = reloadTasks.get(0);
 
-        EasyMock.reset(webResourcesService);
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir));
+        EasyMock.reset(webFilesService);
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
         expectLastCall();
 
-        replay(webResourcesService);
-        reimportWebresources.execute();
-        verify(webResourcesService);
+        replay(webFilesService);
+        reimportWebFiles.execute();
+        verify(webFilesService);
     }
 
     @Test
-    public void testMissingWebResourceBundleInitializationLogsError() throws Exception {
+    public void testMissingWebFileBundleInitializationLogsError() throws Exception {
         final URL testBundleUrl = getClass().getResource("/hippoecm-extension.xml");
 
-        item.setProperty(HIPPO_WEBRESOURCEBUNDLE, "noSuchDirectory");
+        item.setProperty(HIPPO_WEB_FILE_BUNDLE, "noSuchDirectory");
         item.setProperty(HIPPO_EXTENSIONSOURCE, testBundleUrl.toString());
         session.save();
 
@@ -398,15 +397,15 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertEquals("There should be one post-startup task", 1, tasks.size());
 
         // test the post-startup task
-        final PostStartupTask importWebResources = tasks.get(0);
+        final PostStartupTask importWebFiles = tasks.get(0);
 
         final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "noSuchDirectory");
-        webResourcesService.importJcrWebResourceBundle(anyObject(Session.class), eq(testBundleDir));
-        expectLastCall().andThrow(new WebResourceException("simulate a web resource exception during import"));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
+        expectLastCall().andThrow(new WebFileException("simulate a web resource exception during import"));
 
-        replay(webResourcesService);
-        importWebResources.execute();
-        verify(webResourcesService);
+        replay(webFilesService);
+        importWebFiles.execute();
+        verify(webFilesService);
 
         assertEquals("expected an error message to be logged", 1, loggingRecorder.getErrorMessages().size());
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import org.onehippo.repository.bootstrap.instructions.ContentResourceInstruction
 import org.onehippo.repository.bootstrap.instructions.NamespaceInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesResourceInstruction;
-import org.onehippo.repository.bootstrap.instructions.WebResourceBundleInstruction;
+import org.onehippo.repository.bootstrap.instructions.WebFileBundleInstruction;
 import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 
 import static org.apache.commons.lang.StringUtils.trim;
@@ -70,7 +70,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TIMESTAMP;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_UPSTREAMITEMS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEBRESOURCEBUNDLE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEB_FILE_BUNDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEITEM;
 import static org.onehippo.repository.bootstrap.InitializationProcessor.INITIALIZATION_FOLDER;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.ERROR_MESSAGE_RELOAD_DISABLED;
@@ -94,7 +94,7 @@ public class InitializeItem {
             HIPPO_CONTENT,
             HIPPO_CONTENTPROPSET,
             HIPPO_CONTENTPROPADD,
-            HIPPO_WEBRESOURCEBUNDLE
+            HIPPO_WEB_FILE_BUNDLE
     };
 
     private static final String[] INIT_ITEM_PROPERTIES = {
@@ -111,7 +111,7 @@ public class InitializeItem {
             HIPPO_CONTENTPROPADD,
             HIPPO_RELOADONSTARTUP,
             HIPPO_VERSION,
-            HIPPO_WEBRESOURCEBUNDLE
+            HIPPO_WEB_FILE_BUNDLE
     };
 
     private Node itemNode;
@@ -317,8 +317,8 @@ public class InitializeItem {
         return trim(JcrUtils.getStringProperty(itemNode, HIPPO_CONTENTPROPDELETE, null));
     }
 
-    public String getWebResourceBundle() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_WEBRESOURCEBUNDLE).getString());
+    public String getWebFileBundle() throws RepositoryException {
+        return trim(itemNode.getProperty(HIPPO_WEB_FILE_BUNDLE).getString());
     }
 
     public Property getContentPropSetProperty() throws RepositoryException {
@@ -519,7 +519,7 @@ public class InitializeItem {
             case HIPPO_CONTENT : return new ContentFromNodeInstruction(this, itemNode.getSession());
             case HIPPO_CONTENTPROPSET : return new ContentPropSetInstruction(this, itemNode.getSession());
             case HIPPO_CONTENTPROPADD : return new ContentPropAddInstruction(this, itemNode.getSession());
-            case HIPPO_WEBRESOURCEBUNDLE : return new WebResourceBundleInstruction(this, itemNode.getSession());
+            case HIPPO_WEB_FILE_BUNDLE : return new WebFileBundleInstruction(this, itemNode.getSession());
         }
         throw new IllegalStateException("Unknown initialize instruction: " + property.getName());
     }

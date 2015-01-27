@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -393,7 +393,7 @@ public interface HippoNodeType {
 
     public static final String HIPPO_VALUES = "hippo:values";
 
-    public static final String HIPPO_WEBRESOURCEBUNDLE = "hippo:webresourcebundle";
+    public static final String HIPPO_WEB_FILE_BUNDLE = "hippo:webfilebundle";
 
     public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
 
