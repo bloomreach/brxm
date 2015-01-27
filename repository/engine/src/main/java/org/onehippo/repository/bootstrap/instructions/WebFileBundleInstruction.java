@@ -51,7 +51,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
     @Override
     public PostStartupTask execute() throws RepositoryException {
         if (!session.nodeExists(WebFilesService.JCR_ROOT_PATH)) {
-            log.error("Failed to initialize item {}: web resources root {} is missing", item.getName(), WebFilesService.JCR_ROOT_PATH);
+            log.error("Failed to initialize item {}: web file root {} is missing", item.getName(), WebFilesService.JCR_ROOT_PATH);
             return null;
         }
 
@@ -76,7 +76,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
             }
             return importTask;
         } catch (URISyntaxException |IOException e) {
-            log.error("Error initializing web resource bundle {} at {}", bundlePath, WebFilesService.JCR_ROOT_PATH, e);
+            log.error("Error initializing web file bundle {} at {}", bundlePath, WebFilesService.JCR_ROOT_PATH, e);
             return null;
         }
 
@@ -110,7 +110,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         public void execute() {
             final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
             if (service == null) {
-                log.error("Failed to import web resource bundle '{}' from '{}': missing service for '{}'",
+                log.error("Failed to import web file bundle '{}' from '{}': missing service for '{}'",
                         bundleZipFile.getSubPath(), bundleZipFile.getName(), WebFilesService.class.getName());
                 return;
             }
@@ -118,7 +118,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
                 service.importJcrWebFileBundle(session, bundleZipFile);
                 session.save();
             } catch (IOException | RepositoryException | WebFileException e) {
-                log.error("Failed to import web resource bundle '{}' from '{}'", bundleZipFile.getSubPath(),
+                log.error("Failed to import web file bundle '{}' from '{}'", bundleZipFile.getSubPath(),
                         bundleZipFile.getName(), e);
             }
         }
@@ -138,7 +138,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         public void execute() {
             final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
             if (service == null) {
-                log.error("Failed to import web resource bundle from '{}': missing service for '{}'",
+                log.error("Failed to import web file bundle from '{}': missing service for '{}'",
                         bundleDir, WebFilesService.class.getName());
                 return;
             }
@@ -146,7 +146,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
                 service.importJcrWebFileBundle(session, bundleDir);
                 session.save();
             } catch (IOException | RepositoryException | WebFileException e) {
-                log.error("Failed to import web resource bundle from '{}'", bundleDir, e);
+                log.error("Failed to import web file bundle from '{}'", bundleDir, e);
             }
         }
     }

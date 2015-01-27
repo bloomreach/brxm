@@ -333,7 +333,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         session.save();
 
         final List<PostStartupTask> reloadTasks = process();
-        assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
+        assertEquals("There should be one post-startup task after reloading a web file bundle", 1, reloadTasks.size());
         final PostStartupTask reimportWebFiles = reloadTasks.get(0);
 
         EasyMock.reset(webFilesService);
@@ -373,7 +373,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         session.save();
 
         final List<PostStartupTask> reloadTasks = process();
-        assertEquals("There should be one post-startup task after reloading a web resource bundle", 1, reloadTasks.size());
+        assertEquals("There should be one post-startup task after reloading a web file bundle", 1, reloadTasks.size());
         final PostStartupTask reimportWebFiles = reloadTasks.get(0);
 
         EasyMock.reset(webFilesService);
@@ -401,7 +401,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
 
         final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "noSuchDirectory");
         webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
-        expectLastCall().andThrow(new WebFileException("simulate a web resource exception during import"));
+        expectLastCall().andThrow(new WebFileException("simulate a web file exception during import"));
 
         replay(webFilesService);
         importWebFiles.execute();
