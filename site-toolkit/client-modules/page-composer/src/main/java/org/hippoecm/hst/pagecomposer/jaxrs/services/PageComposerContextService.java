@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -44,12 +45,16 @@ public class PageComposerContextService {
     }
 
     public Node getRequestConfigNode(final String expectedNodeType) throws RepositoryException {
-        String id = getRequestConfigIdentifier();
-        if(id == null) {
+        final String id = getRequestConfigIdentifier();
+        return getRequestConfigNodeById(id, expectedNodeType, getRequestContext().getSession());
+    }
+
+    public Node getRequestConfigNodeById(final String id, final String expectedNodeType, final Session session) throws RepositoryException {
+        if (id == null) {
             log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
         }
         try {
-            Node configNode = getRequestContext().getSession().getNodeByIdentifier(id);
+            Node configNode = session.getNodeByIdentifier(id);
             if (configNode.isNodeType(expectedNodeType)) {
                 return configNode;
             } else {
@@ -58,13 +63,13 @@ public class PageComposerContextService {
             }
         } catch (ItemNotFoundException e) {
             log.warn("Cannot find requestConfigNode because session for user '{}' most likely has no read-access for '{}'",
-                    getRequestContext().getSession().getUserID(), id);
+                    session.getUserID(), id);
             throw e;
         }
     }
 
     public String getRenderingMountId() {
-        final String renderingMountId = (String)getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
+        final String renderingMountId = (String) getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
             throw new IllegalStateException("Cound not find rendering mount id on request session.");
         }
@@ -96,7 +101,7 @@ public class PageComposerContextService {
 
     public String getEditingPreviewChannelPath() {
         final Mount previewMount = getEditingMount();
-        return  previewMount.getChannelPath();
+        return previewMount.getChannelPath();
     }
 
 
@@ -122,7 +127,8 @@ public class PageComposerContextService {
     }
 
     /**
-     * @return the preview {@link org.hippoecm.hst.configuration.channel.Channel} and <code>null</code> if there is no preview channel available
+     * @return the preview {@link org.hippoecm.hst.configuration.channel.Channel} and <code>null</code> if there is no
+     * preview channel available
      */
     public Channel getEditingPreviewChannel() {
         return getEditingMount().getChannel();

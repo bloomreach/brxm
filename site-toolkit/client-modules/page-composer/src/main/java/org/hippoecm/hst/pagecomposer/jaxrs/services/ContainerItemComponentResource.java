@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -58,19 +59,20 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 
 /**
- * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent".
- * This is specified using the @Path annotation.
- *
+ * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using
+ * the @Path annotation.
+ * <p>
  * The resources handler operates on variants and their parameters.
  */
 @Path("/hst:containeritemcomponent/")
 public class ContainerItemComponentResource extends AbstractConfigResource {
-    
+
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
     private ContainerItemHelper containerItemHelper;
     private List<PropertyRepresentationFactory> propertyPresentationFactories;
+    private ContainerItemComponentService containerItemComponentService;
 
     public void setContainerItemHelper(final ContainerItemHelper containerItemHelper) {
         this.containerItemHelper = containerItemHelper;
@@ -78,6 +80,10 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
 
     public void setPropertyPresentationFactories(List<PropertyRepresentationFactory> propertyPresentationFactories) {
         this.propertyPresentationFactories = propertyPresentationFactories;
+    }
+
+    public void setContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
+        this.containerItemComponentService = containerItemComponentService;
     }
 
     /**
@@ -137,7 +143,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * Removes all variants that are not provided.
      *
      * @param containerItem the container item node
-     * @param variants the variants to keep
+     * @param variants      the variants to keep
      * @return a list of variants that have been removed
      * @throws RepositoryException when some repository exception happened
      */
@@ -167,7 +173,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     /**
      * Returns all parameters of a specific variant. The names of the parameters will be in the given locale.
      *
-     * @param variant the variant
+     * @param variant      the variant
      * @param localeString the desired locale of the parameter names
      * @return the values and translated names of the parameters of the given variant.
      */
@@ -190,7 +196,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
         return null;
     }
-    
+
     ContainerItemComponentRepresentation doGetParameters(final Node node,
                                                          final Locale locale,
                                                          final String prefix) throws RepositoryException, ClassNotFoundException {
@@ -201,16 +207,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     /**
      * Constructs a component node wrapper
      *
-     * @param node JcrNode for a component.
+     * @param node   JcrNode for a component.
      * @param locale the locale to get localized names, can be null
-     * @param prefix  the parameter prefix
+     * @param prefix the parameter prefix
      * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
     private ContainerItemComponentRepresentation represent(final Node node,
                                                            final Locale locale,
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
-        List<ContainerItemComponentPropertyRepresentation> properties= new ArrayList<>();
+        List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<>();
 
 
         //Get the properties via annotation on the component class
@@ -241,7 +247,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * Saves parameters for the given variant.
      *
      * @param variant the variant to store parameters for
-     * @param params the parameters to store
+     * @param params  the parameters to store
      * @return whether saving the parameters went successfully or not.
      */
     @POST
@@ -269,39 +275,31 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     /**
-     * Locks the component
+     * Returns an OK response if the container item was successfully locked or an error response otherwise.
      *
-     * @return whether the component was locked
+     * @return An OK response if the component was successfully locked
      */
     @POST
     @Path("/lock")
     @Produces(MediaType.APPLICATION_JSON)
     public Response lock(final @HeaderParam("versionStamp") long versionStamp) {
-        try {
-            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            componentParameters.lock(versionStamp);
+        return tryExecute(() -> {
+            final String containerItemId = getPageComposerContextService().getRequestConfigIdentifier();
+            final Session session = RequestContextProvider.get().getSession();
+            containerItemComponentService.lock(containerItemId, versionStamp, session);
             log.info("Component locked successfully.");
             return ok("Component locked successfully.");
-        } catch (IllegalStateException e) {
-            log.warn("Could not lock component", e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.warn("Could not lock component", e);
-            return error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.warn("Could not lock component", e);
-            throw new WebApplicationException(e);
-        }
+        }, hstRequestContext -> {
+        });
     }
 
     /**
-     * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the
-     * old variant to the new one.
+     * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the old
+     * variant to the new one.
      *
      * @param oldVariant the old variant to remove
      * @param newVariant the new variant to store parameters for
-     * @param params the parameters to store
+     * @param params     the parameters to store
      * @return whether saving the parameters went successfully or not.
      */
     @POST
@@ -344,7 +342,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
             // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
             // has been replaced by a request header.
-            if(!"FORCE_CLIENT_HOST".equals(parameterName)) {
+            if (!"FORCE_CLIENT_HOST".equals(parameterName)) {
                 String parameterValue = parameters.getFirst(parameterName);
                 componentParameters.setValue(prefix, parameterName, parameterValue);
             }
@@ -354,19 +352,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     /**
-     * <p>
-     * Creates new variant with all values from the 'default' variant. Note that <b>only</b> the values of 'default'
-     * variant are copied that are actually represented by a {@link Parameter} annotation
-     * in the corresponding HST component {@link ParametersInfo} interface. If the 'default' does not have a
-     * parametervalue configured, then the default value if present from {@link Parameter} for that parametername is used.
-     * </p>
-     * <p>
-     * If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
-     * we return {@link AbstractConfigResource#created(String)}
-     * </p>
+     * <p> Creates new variant with all values from the 'default' variant. Note that <b>only</b> the values of 'default'
+     * variant are copied that are actually represented by a {@link Parameter} annotation in the corresponding HST
+     * component {@link ParametersInfo} interface. If the 'default' does not have a parametervalue configured, then the
+     * default value if present from {@link Parameter} for that parametername is used. </p> <p> If the variant already
+     * exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created, we return {@link
+     * AbstractConfigResource#created(String)} </p>
+     *
      * @param variant the variant to create
-     * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
-     * we return {@link AbstractConfigResource#created(String)}
+     * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}.
+     * If created, we return {@link AbstractConfigResource#created(String)}
      */
     @POST
     @Path("/{variant}/default")
@@ -400,10 +395,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured
      * as 'default' parameter.
      *
-     * @param containerItem the node of the current container item
+     * @param containerItem       the node of the current container item
      * @param componentParameters the component parameters of the current container item
-     * @param variantId the id of the variant to create
-     *
+     * @param variantId           the id of the variant to create
      * @throws RepositoryException when something went wrong in the repository
      */
     void doCreateVariant(final Node containerItem,
@@ -412,7 +406,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                          final long versionStamp) throws RepositoryException, IllegalStateException {
         Map<String, String> annotatedParameters = getAnnotatedDefaultValues(containerItem);
 
-        for(String parameterName : annotatedParameters.keySet()) {
+        for (String parameterName : annotatedParameters.keySet()) {
             String value = componentParameters.hasDefaultParameter(parameterName) ? componentParameters.getDefaultValue(parameterName) : annotatedParameters.get(parameterName);
             componentParameters.setValue(variantId, parameterName, value);
         }
@@ -435,7 +429,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             log.info("Variant '{}' deleted successfully", variant);
             return ok("Variant '" + variant + "' deleted successfully");
         } catch (IllegalStateException e) {
-            log.warn("Could not delete variant '{}'", variant,  e);
+            log.warn("Could not delete variant '{}'", variant, e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
             log.warn("Could not delete variant '{}'", variant, e);
@@ -450,7 +444,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * Deletes all parameters of a variant.
      *
      * @param componentParameters the component parameters of the current container item
-     * @param variantId the variant to remove
+     * @param variantId           the variant to remove
      * @throws IllegalArgumentException when the variant is the 'default' variant
      * @throws RepositoryException
      */
@@ -466,6 +460,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     /**
      * Returns the {@link Map} of annotated parameter name as key and annotated default value as value. Parameters with
      * empty default value are also represented in the returned map.
+     *
      * @param node the current container item node
      * @return the Map of all {@link Parameter} names and their default value
      */
