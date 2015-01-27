@@ -74,7 +74,7 @@ public class JcrNodeIcon {
         nodeNameIcons.put("hst:virtualhost", FontAwesomeIconType.arrow_circle_right);
         nodeNameIcons.put("hippogallery:stdAssetGallery", FontAwesomeIconType.paperclip);
         nodeNameIcons.put("hippogallery:stdImageGallery", FontAwesomeIconType.picture_o);
-        nodeNameIcons.put("webresources:webresources", FontAwesomeIconType.suitcase);
+        nodeNameIcons.put("webfiles:webfiles", FontAwesomeIconType.suitcase);
         nodeNameIcons.put("hst:containeritemcomponent", FontAwesomeIconType.puzzle_piece);
         nodeNameIcons.put("hst:containeritempackage", FontAwesomeIconType.dropbox);
         nodeNameIcons.put("hst:containercomponent", FontAwesomeIconType.columns);
@@ -111,7 +111,7 @@ public class JcrNodeIcon {
         pathCssNames.put("/content", "content");
         pathCssNames.put("/hippo:namespaces", "namespaces");
         pathCssNames.put("/formdata", "formdata");
-        pathCssNames.put("/webresources", "webresources");
+        pathCssNames.put("/webfiles", "webfiles");
         pathCssNames.put("/hippo:reports", "reports");
         pathCssNames.put("/hippo:log", "log");
 

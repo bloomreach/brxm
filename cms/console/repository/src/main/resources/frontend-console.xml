@@ -296,7 +296,7 @@
         <sv:value>/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:request</sv:value>
         <sv:value>/hippo:configuration/hippo:update/hippo:queue</sv:value>
         <sv:value>/hippo:configuration/hippo:udpate/hippo:history</sv:value>
-        <sv:value>/webresources</sv:value>
+        <sv:value>/webfiles</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="applypatch">
