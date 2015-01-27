@@ -22,9 +22,9 @@ limitations under the License. -->
     <version>1.07.00-SNAPSHOT</version>
   </parent>
 
-  <name>My Hippo Project Bootstrap Web Resources</name>
-  <description>My Hippo Project Bootstrap Web Resources</description>
-  <artifactId>hippo-intranet-bootstrap-webresources</artifactId>
+  <name>My Hippo Project Bootstrap Web Files</name>
+  <description>My Hippo Project Bootstrap Web Files</description>
+  <artifactId>hippo-intranet-bootstrap-webfiles</artifactId>
 
   <build>
     <plugins>

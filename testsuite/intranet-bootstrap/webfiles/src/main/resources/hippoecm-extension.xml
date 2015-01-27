@@ -4,11 +4,11 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="intranet-webresources-bundle">
+  <sv:node sv:name="intranet-webfiles-bundle">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:webresourcebundle" sv:type="String">
+    <sv:property sv:name="hippo:webfilebundle" sv:type="String">
       <sv:value>intranet</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
@@ -16,7 +16,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="intranet-configuration-modules-webresources-watchedmodules">
+  <sv:node sv:name="intranet-configuration-modules-webfiles-watchedmodules">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -24,10 +24,10 @@
       <sv:value>30000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:modules/webresources/hippo:moduleconfig/watchedModules</sv:value>
+      <sv:value>/hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig/watchedModules</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>intranet-bootstrap/webresources</sv:value>
+      <sv:value>intranet-bootstrap/webfiles</sv:value>
     </sv:property>
   </sv:node>
 

@@ -94,12 +94,12 @@ limitations under the License. -->
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="intranet-webresources">
+  <sv:node sv:name="intranet-webfiles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>security/webresources.xml</sv:value>
+      <sv:value>security/webfiles.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:domains</sv:value>

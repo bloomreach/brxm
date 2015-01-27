@@ -20,7 +20,7 @@
     <meta charset="utf-8"/>
     <@hst.headContributions categoryExcludes="scripts" xhtml=true/>
 
-    <@hst.webresource var="link" path="/css/style.css"/>
+    <@hst.webfile var="link" path="/css/style.css"/>
     <link rel="stylesheet" href="${link}" type="text/css"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>

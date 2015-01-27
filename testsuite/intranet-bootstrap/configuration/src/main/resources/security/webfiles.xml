@@ -13,7 +13,7 @@ distributed under the License is distributed on an "AS IS"
 BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<sv:node sv:name="webresources" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="webfiles" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:domain</sv:value>
   </sv:property>
@@ -30,11 +30,11 @@ limitations under the License. -->
       <sv:value>readonly</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="webresources-domain">
+  <sv:node sv:name="webfiles-domain">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
-    <sv:node sv:name="read-webresources-and-descendants">
+    <sv:node sv:name="read-webfiles-and-descendants">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:facetrule</sv:value>
       </sv:property>
@@ -51,7 +51,7 @@ limitations under the License. -->
         <sv:value>Reference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>/webresources</sv:value>
+        <sv:value>/webfiles</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

@@ -30,7 +30,7 @@ limitations under the License. -->
   <modules>
     <module>configuration</module>
     <module>content</module>
-    <module>webresources</module>
+    <module>webfiles</module>
   </modules>
 
 </project>

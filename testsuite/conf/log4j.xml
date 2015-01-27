@@ -248,7 +248,7 @@
     <level value="info"/>
     <appender-ref ref="messages"/>
   </logger>
-  <logger name="org.onehippo.cms7.services.webresources.watch.WebResourcesWatcher" additivity="false">
+  <logger name="org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher" additivity="false">
     <level value="info"/>
     <appender-ref ref="messages"/>
   </logger>
