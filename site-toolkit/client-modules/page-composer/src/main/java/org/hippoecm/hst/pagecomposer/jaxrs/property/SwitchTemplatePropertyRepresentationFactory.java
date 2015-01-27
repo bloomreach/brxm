@@ -65,10 +65,41 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     public static class FreeMarkerDisplayNameComparator implements Comparator<String> {
         @Override
         public int compare(final String key1, final String key2) {
+
             // no null check, if key1 or key2 is null, just NPE
-            final String compare1 = StringUtils.substringBeforeLast(key1, FTL_SUFFIX);
-            final String compare2 = StringUtils.substringBeforeLast(key2, FTL_SUFFIX);
-            return compare1.compareTo(compare2);
+
+            final String compare1;
+            final boolean key1HasFtlSuffix;
+            if (key1.endsWith(FTL_SUFFIX)) {
+                compare1 = key1.substring(0, key1.length() - FTL_SUFFIX.length());
+                key1HasFtlSuffix = true;
+            } else {
+                compare1 = key1;
+                key1HasFtlSuffix = false;
+            }
+            final String compare2;
+            final boolean key2HasFtlSuffix;
+            if (key2.endsWith(FTL_SUFFIX)) {
+                compare2 = key2.substring(0, key2.length() -  FTL_SUFFIX.length());
+                key2HasFtlSuffix = true;
+            } else {
+                compare2 = key2;
+                key2HasFtlSuffix = false;
+            }
+
+            int compare = compare1.compareTo(compare2);
+            if (compare != 0) {
+                return compare;
+            }
+
+            if (key1HasFtlSuffix && key2HasFtlSuffix) {
+                return 0;
+            }
+
+            if (key1HasFtlSuffix) {
+                return 1;
+            }
+            return -1;
         }
     }
 

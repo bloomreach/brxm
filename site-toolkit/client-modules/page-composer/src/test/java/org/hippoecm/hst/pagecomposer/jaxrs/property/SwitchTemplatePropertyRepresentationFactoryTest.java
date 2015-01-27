@@ -62,6 +62,17 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
         assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
     }
 
+    @Test
+    public void test_asKeySortedMap_with_same_name_before_extension() {
+        final String[] unsortedKeys = new String[]{"layout.ftl", "layout", "layout.properties"};
+        final String[] values = new String[]{"12", "y", "x"};
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values);
+
+        final String[] expectedArray = new String[]{"layout", "layout.ftl", "layout.properties"};
+
+        assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void test_asKeySortedMap_incorrect_length() {
         final String[] keys = new String[]{"a", "z", "1"};
