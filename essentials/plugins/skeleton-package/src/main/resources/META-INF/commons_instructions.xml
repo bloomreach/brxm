@@ -80,6 +80,7 @@
   <instructionSet>
     <!-- always overwrite 404 page-->
     <file action="copy" overwrite="true" source="instructions/jsp/ErrorPage404.jsp" target="{{jspRoot}}/errorpages/ErrorPage404.jsp"/>
+    <xml action="copy" overwrite="true" source="instructions/xml/hst/suffixexclusions.xml" target="/hst:hst"/>
     <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="instructions/xml/hst/workspace/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>

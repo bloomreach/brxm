@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport"
+         sv:name="hst:hosts" h:merge="combine">
+  <sv:property sv:name="hst:suffixexclusions" sv:type="String" sv:multiple="true" h:merge="append">
+    <sv:value>.woff</sv:value>
+    <sv:value>.tff</sv:value>
+    <sv:value>.eot</sv:value>
+    <sv:value>.svg</sv:value>
+  </sv:property>
+</sv:node>
