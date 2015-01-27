@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms7.services.webresources;
+package org.onehippo.cms7.services.webfiles;
 
-/**
- * TODO: write Javadoc
- */
-public class WebResourceException extends RuntimeException {
+public class WebFileNotFoundException extends WebFileException {
 
-    public WebResourceException() {
+    public WebFileNotFoundException() {
         super();
     }
 
-    public WebResourceException(final String message) {
+    public WebFileNotFoundException(final String message) {
         super(message);
     }
 
-    public WebResourceException(final String message, final Throwable cause) {
+    public WebFileNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public WebResourceException(final Throwable cause) {
+    public WebFileNotFoundException(final Throwable cause) {
         super(cause);
     }
 }

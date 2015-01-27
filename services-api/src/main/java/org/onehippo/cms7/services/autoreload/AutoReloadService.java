@@ -16,16 +16,8 @@
 
 package org.onehippo.cms7.services.autoreload;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipFile;
-
-import javax.jcr.Session;
-
 import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.cms7.services.WhiteboardService;
-import org.onehippo.cms7.services.webresources.WebResourceBundle;
-import org.onehippo.cms7.services.webresources.WebResourceException;
 
 /**
  * Automatically reloads the current page in connected browsers. If auto-reload is disabled, nothing happens when
