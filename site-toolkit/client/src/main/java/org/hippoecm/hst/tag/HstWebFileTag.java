@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.tag;
-
-import static org.hippoecm.hst.utils.TagUtils.createPathInfoWithoutRequestContext;
-import static org.hippoecm.hst.utils.TagUtils.getQueryString;
-import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
 import java.io.UnsupportedEncodingException;
 
@@ -38,24 +34,28 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.hst.util.WebResourceUtils;
+import org.hippoecm.hst.util.WebFileUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.webresources.WebResourceBundle;
-import org.onehippo.cms7.services.webresources.WebResourceException;
-import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.cms7.services.webfiles.WebFileBundle;
+import org.onehippo.cms7.services.webfiles.WebFileException;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.utils.TagUtils.createPathInfoWithoutRequestContext;
+import static org.hippoecm.hst.utils.TagUtils.getQueryString;
+import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
 /**
  * Abstract supporting class for Hst Link tags
  */
 
-public class HstWebResourceTag extends ParamContainerTag {
+public class HstWebFileTag extends ParamContainerTag {
 
-    private final static Logger log = LoggerFactory.getLogger(HstWebResourceTag.class);
+    private final static Logger log = LoggerFactory.getLogger(HstWebFileTag.class);
 
-    private final static String WEB_RESOURCES_SITEMAP_ITEM_ID = "WEB-RESOURCES-ID";
-    private final static String WEB_RESOURCE_NAMED_PIPELINE_NAME = "WebResourcePipeline";
+    private final static String WEB_FILES_SITEMAP_ITEM_ID = "WEB-FILES-ID";
+    private final static String WEB_FILE_NAMED_PIPELINE_NAME = "WebFilePipeline";
 
     private static final long serialVersionUID = 1L;
 
@@ -92,48 +92,48 @@ public class HstWebResourceTag extends ParamContainerTag {
             HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
             HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
 
-            final String webResourcePath = PathUtils.normalizePath(path);
+            final String webFilePath = PathUtils.normalizePath(path);
 
             final HstSite hstSite;
             if (reqContext == null ||
                     (hstSite = reqContext.getResolvedMount().getMount().getHstSite()) == null ||
                     hstSite.getSiteMap() == null ) {
                 log.debug("Although there is no HstRequestContext/HstSite/Sitemap for request, a link for path='{}' is created " +
-                        "similar to how the c:url tag would do it", webResourcePath);
-                String pathInfo = createPathInfoWithoutRequestContext(webResourcePath, parametersMap, removedParametersList, servletRequest);
+                        "similar to how the c:url tag would do it", webFilePath);
+                String pathInfo = createPathInfoWithoutRequestContext(webFilePath, parametersMap, removedParametersList, servletRequest);
                 writeOrSetVar(pathInfo, var, pageContext, scope);
                 return EVAL_PAGE;
             }
 
-            final HstSiteMapItem webResourceSiteMapItem = hstSite.getSiteMap().getSiteMapItemByRefId(WEB_RESOURCES_SITEMAP_ITEM_ID);
+            final HstSiteMapItem webFileSiteMapItem = hstSite.getSiteMap().getSiteMapItemByRefId(WEB_FILES_SITEMAP_ITEM_ID);
 
-            if (webResourceSiteMapItem == null ||
-                    !WEB_RESOURCE_NAMED_PIPELINE_NAME.equals(webResourceSiteMapItem.getNamedPipeline())){
-                log.warn("Cannot create webresource link for site '{}' because it does not have a sitemap " +
+            if (webFileSiteMapItem == null ||
+                    !WEB_FILE_NAMED_PIPELINE_NAME.equals(webFileSiteMapItem.getNamedPipeline())){
+                log.warn("Cannot create web file link for site '{}' because it does not have a sitemap " +
                                 "that contains a sitemap item with properties '{} = {}' and '{} = {}'",
-                        hstSite.getConfigurationPath(), HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID, WEB_RESOURCES_SITEMAP_ITEM_ID,
-                        HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE, WEB_RESOURCE_NAMED_PIPELINE_NAME);
+                        hstSite.getConfigurationPath(), HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID, WEB_FILES_SITEMAP_ITEM_ID,
+                        HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE, WEB_FILE_NAMED_PIPELINE_NAME);
                 return EVAL_PAGE;
             }
 
-            // check whether no wildcards presents in webResourceSiteMapItem or ancestor
-            HstSiteMapItem current = webResourceSiteMapItem;
-            StringBuilder webResourcesPrefix = new StringBuilder("/");
+            // check whether no wildcards presents in webFileSiteMapItem or ancestor
+            HstSiteMapItem current = webFileSiteMapItem;
+            StringBuilder webFilesPrefix = new StringBuilder("/");
             while (current != null) {
                 if (current.containsAny() || current.containsWildCard() ||
                         current.isAny() || current.isWildCard()) {
-                    log.warn("Cannot create webresource link for site '{}' because the sitemap item " +
-                                    "for the webresources '{}' contains wildcards (or one of its parents).",
-                            hstSite.getConfigurationPath(), webResourceSiteMapItem.getQualifiedId());
+                    log.warn("Cannot create web file link for site '{}' because the sitemap item " +
+                                    "for the web file '{}' contains wildcards (or one of its parents).",
+                            hstSite.getConfigurationPath(), webFileSiteMapItem.getQualifiedId());
                     return EVAL_PAGE;
                 }
-                webResourcesPrefix.insert(0, current.getValue()).insert(0, "/");
+                webFilesPrefix.insert(0, current.getValue()).insert(0, "/");
                 current = current.getParentItem();
             }
 
-            WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
+            WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
             if (service == null) {
-                log.error("Missing service for '{}'. Cannot create webresource url.", WebResourcesService.class.getName());
+                log.error("Missing service for '{}'. Cannot create web file url.", WebFilesService.class.getName());
                 return EVAL_PAGE;
             }
 
@@ -141,15 +141,15 @@ public class HstWebResourceTag extends ParamContainerTag {
             try {
                 final Session session = reqContext.getSession();
 
-                final String bundleName = WebResourceUtils.getBundleName(reqContext);
+                final String bundleName = WebFileUtils.getBundleName(reqContext);
                 try {
-                    final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
-                    webResourcesPrefix.append(webResourceBundle.getAntiCacheValue());
-                } catch (WebResourceException e) {
+                    final WebFileBundle webFileBundle = service.getJcrWebFileBundle(session, bundleName);
+                    webFilesPrefix.append(webFileBundle.getAntiCacheValue());
+                } catch (WebFileException e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Cannot find webresource bundle '{}'", bundleName, e);
+                        log.warn("Cannot find web file bundle '{}'", bundleName, e);
                     } else {
-                        log.info("Cannot find webresource bundle '{}' : {}", bundleName, e.toString());
+                        log.info("Cannot find web file bundle '{}' : {}", bundleName, e.toString());
                     }
                     return EVAL_PAGE;
                 }
@@ -158,8 +158,8 @@ public class HstWebResourceTag extends ParamContainerTag {
                 return EVAL_PAGE;
             }
 
-            final String fullWebResourcePath = webResourcesPrefix.append("/").append(webResourcePath).toString();
-            HstLink link = reqContext.getHstLinkCreator().create(fullWebResourcePath, resolvedMount.getMount(), true);
+            final String fullWebFilePath = webFilesPrefix.append("/").append(webFilePath).toString();
+            HstLink link = reqContext.getHstLinkCreator().create(fullWebFilePath, resolvedMount.getMount(), true);
             String urlString = link.toUrlForm(reqContext, fullyQualified);
 
             try {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -70,15 +70,15 @@
     <property name="statisticsEnabled" value="${pageCache.statistics.enabled}"/>
   </bean>
 
-  <bean id="webResourceCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+  <bean id="webFileCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
-        <property name="cacheName" value="hstWebResourceCache" />
-        <property name="maxElementsInMemory" value="${webResourceCache.maxSize}"/>
-        <property name="timeToLive" value="${webResourceCache.timeToLiveSeconds}" />
+        <property name="cacheName" value="hstWebFileCache" />
+        <property name="maxElementsInMemory" value="${webFileCache.maxSize}"/>
+        <property name="timeToLive" value="${webFileCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
-    <property name="statisticsEnabled" value="${webResourceCache.statistics.enabled}"/>
+    <property name="statisticsEnabled" value="${webFileCache.statistics.enabled}"/>
   </bean>
 
 

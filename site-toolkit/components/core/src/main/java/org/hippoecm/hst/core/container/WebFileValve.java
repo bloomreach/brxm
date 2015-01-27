@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,28 +27,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.cache.webresources.CacheableWebResource;
+import org.hippoecm.hst.cache.webfiles.CacheableWebFile;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.WebResourceUtils;
+import org.hippoecm.hst.util.WebFileUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.webresources.Binary;
-import org.onehippo.cms7.services.webresources.WebResource;
-import org.onehippo.cms7.services.webresources.WebResourceBundle;
-import org.onehippo.cms7.services.webresources.WebResourceException;
-import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.cms7.services.webfiles.Binary;
+import org.onehippo.cms7.services.webfiles.WebFile;
+import org.onehippo.cms7.services.webfiles.WebFileBundle;
+import org.onehippo.cms7.services.webfiles.WebFileException;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebResourceValve extends AbstractBaseOrderableValve {
+public class WebFileValve extends AbstractBaseOrderableValve {
 
-    private static final Logger log = LoggerFactory.getLogger(WebResourceValve.class);
+    private static final Logger log = LoggerFactory.getLogger(WebFileValve.class);
     private static final long ONE_YEAR_SECONDS = TimeUnit.SECONDS.convert(365L, TimeUnit.DAYS);
     private static final long ONE_YEAR_MILLISECONDS = TimeUnit.MILLISECONDS.convert(ONE_YEAR_SECONDS, TimeUnit.SECONDS);
 
-    private HstCache webResourceCache;
+    private HstCache webFileCache;
 
-    public void setWebResourceCache(final HstCache webResourceCache) {
-        this.webResourceCache = webResourceCache;
+    public void setWebFileCache(final HstCache webFileCache) {
+        this.webFileCache = webFileCache;
     }
 
     @Override
@@ -57,10 +57,10 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         final HttpServletResponse response = context.getServletResponse();
 
         try {
-            final WebResource webResource = getWebResource(requestContext);
-            setHeaders(response, webResource);
-            writeWebResource(response, webResource);
-        } catch (WebResourceException e) {
+            final WebFile webFile = getWebFile(requestContext);
+            setHeaders(response, webFile);
+            writeWebFile(response, webFile);
+        } catch (WebFileException e) {
             final HttpServletRequest request = context.getServletRequest();
             if (log.isDebugEnabled()) {
                 log.info("Cannot serve binary '{}'", request.getPathInfo(), e);
@@ -76,44 +76,44 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         context.invokeNext();
     }
 
-    private WebResource getWebResource(final HstRequestContext requestContext) throws RepositoryException, ContainerException, IOException, WebResourceException {
-        final WebResourcesService service = getWebResourcesService();
+    private WebFile getWebFile(final HstRequestContext requestContext) throws RepositoryException, ContainerException, IOException, WebFileException {
+        final WebFilesService service = getWebFilesService();
 
         final Session session = requestContext.getSession();
-        final String bundleName = WebResourceUtils.getBundleName(requestContext);
-        log.debug("Trying to get web resource bundle '{}' with session user '{}'", bundleName, session.getUserID());
-        final WebResourceBundle webResourceBundle = service.getJcrWebResourceBundle(session, bundleName);
+        final String bundleName = WebFileUtils.getBundleName(requestContext);
+        log.debug("Trying to get web file bundle '{}' with session user '{}'", bundleName, session.getUserID());
+        final WebFileBundle webFileBundle = service.getJcrWebFileBundle(session, bundleName);
 
         final String contentPath = "/" + requestContext.getResolvedSiteMapItem().getRelativeContentPath();
         final String version = getVersion(requestContext, contentPath);
         final String cacheKey = createCacheKey(bundleName, contentPath, version);
 
-        final CacheElement cacheElement = webResourceCache.get(cacheKey);
+        final CacheElement cacheElement = webFileCache.get(cacheKey);
 
         if (cacheElement == null) {
-            return cacheWebResource(webResourceBundle, contentPath, version, cacheKey);
+            return cacheWebFile(webFileBundle, contentPath, version, cacheKey);
         } else {
-            return (CacheableWebResource) cacheElement.getContent();
+            return (CacheableWebFile) cacheElement.getContent();
         }
     }
 
-    private WebResourcesService getWebResourcesService() throws ContainerException {
-        WebResourcesService service = HippoServiceRegistry.getService(WebResourcesService.class);
+    private WebFilesService getWebFilesService() throws ContainerException {
+        WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
         if (service == null) {
-            log.error("Missing service for '{}'. Cannot serve webresource.", WebResourcesService.class.getName());
-            throw new ContainerException("Missing service for '" + WebResourcesService.class.getName() + "'. Cannot serve webresource.");
+            log.error("Missing service for '{}'. Cannot serve web file.", WebFilesService.class.getName());
+            throw new ContainerException("Missing service for '" + WebFilesService.class.getName() + "'. Cannot serve web file.");
         }
         return service;
     }
 
-    private String getVersion(final HstRequestContext requestContext, final String contentPath) throws WebResourceException {
+    private String getVersion(final HstRequestContext requestContext, final String contentPath) throws WebFileException {
         final String version = requestContext.getResolvedSiteMapItem().getParameter("version");
         if (version == null) {
-            String msg = String.format("Cannot serve web resource '%s' for mount '%s' because sitemap item" +
+            String msg = String.format("Cannot serve web file '%s' for mount '%s' because sitemap item" +
                             "'%s' does not contain version param.", contentPath,
                     requestContext.getResolvedMount().getMount(),
                     requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getQualifiedId());
-            throw new WebResourceException(msg);
+            throw new WebFileException(msg);
         }
         return version;
     }
@@ -124,24 +124,24 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
         return cacheKeyBuilder.toString();
     }
 
-    private WebResource cacheWebResource(final WebResourceBundle webResourceBundle, final String contentPath, final String version, final String cacheKey) throws IOException {
+    private WebFile cacheWebFile(final WebFileBundle webFileBundle, final String contentPath, final String version, final String cacheKey) throws IOException {
         try {
-            final WebResource webResource = getWebResourceFromBundle(webResourceBundle, contentPath, version);
-            final CacheableWebResource cacheableWebResource = new CacheableWebResource(webResource);
-            final CacheElement element = webResourceCache.createElement(cacheKey, cacheableWebResource);
-            webResourceCache.put(element);
-            return cacheableWebResource;
+            final WebFile webFile = getWebFileFromBundle(webFileBundle, contentPath, version);
+            final CacheableWebFile cacheableWebFile = new CacheableWebFile(webFile);
+            final CacheElement element = webFileCache.createElement(cacheKey, cacheableWebFile);
+            webFileCache.put(element);
+            return cacheableWebFile;
         } catch (Exception e) {
             clearBlockingLock(cacheKey);
             throw e;
         }
     }
 
-    private WebResource getWebResourceFromBundle(final WebResourceBundle webResourceBundle, final String contentPath, final String version) throws IOException {
-        if (version.equals(webResourceBundle.getAntiCacheValue())) {
-            return webResourceBundle.get(contentPath);
+    private WebFile getWebFileFromBundle(final WebFileBundle webFileBundle, final String contentPath, final String version) throws IOException {
+        if (version.equals(webFileBundle.getAntiCacheValue())) {
+            return webFileBundle.get(contentPath);
         } else {
-            return webResourceBundle.get(contentPath, version);
+            return webFileBundle.get(contentPath, version);
         }
     }
 
@@ -151,21 +151,21 @@ public class WebResourceValve extends AbstractBaseOrderableValve {
      */
     private void clearBlockingLock(final String cacheKey) {
         log.debug("Clear lock for {}", cacheKey);
-        final CacheElement element = webResourceCache.createElement(cacheKey, null);
-        webResourceCache.put(element);
+        final CacheElement element = webFileCache.createElement(cacheKey, null);
+        webFileCache.put(element);
     }
 
-    private static void setHeaders(final HttpServletResponse response, final WebResource webResource) throws RepositoryException {
+    private static void setHeaders(final HttpServletResponse response, final WebFile webFile) throws RepositoryException {
         // no need for ETag since expires 1 year
-        response.setHeader("Content-Length", Long.toString(webResource.getBinary().getSize()));
-        response.setContentType(webResource.getMimeType());
+        response.setHeader("Content-Length", Long.toString(webFile.getBinary().getSize()));
+        response.setContentType(webFile.getMimeType());
         // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
         response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
         response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);
     }
 
-    private static void writeWebResource(final HttpServletResponse response, final WebResource webResource) throws IOException {
-        final Binary binary = webResource.getBinary();
+    private static void writeWebFile(final HttpServletResponse response, final WebFile webFile) throws IOException {
+        final Binary binary = webFile.getBinary();
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             IOUtils.copy(binary.getStream(), outputStream);
             outputStream.flush();

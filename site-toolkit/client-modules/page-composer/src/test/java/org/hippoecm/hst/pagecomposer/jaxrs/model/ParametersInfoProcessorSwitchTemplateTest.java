@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
     public void setup() throws RepositoryException {
         super.setup();
 
-        mockHstComponentConfiguration.setRenderPath(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL + "/ftl/main/layout.ftl");
+        mockHstComponentConfiguration.setRenderPath(ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL + "/ftl/main/layout.ftl");
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue"});
 
@@ -74,11 +73,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         ModifiableRequestContextProvider.set(hstRequestContext);
 
         //   create:
-        //  /webresources/site/ftl/main/layout.ftl
+        //  /webfiles/site/ftl/main/layout.ftl
 
         final MockNode rootNode = containerItemNode.getSession().getRootNode();
-        layoutFileNode = rootNode.addNode("webresources", "webresources:webresources")
-                .addNode("site", "webresources:bundle")
+        layoutFileNode = rootNode.addNode("webfiles", "webfiles:webfiles")
+                .addNode("site", "webfiles:bundle")
                 .addNode("ftl", "nt:folder")
                 .addNode("main", "nt:folder")
                 .addNode("layout.ftl", "nt:file");
@@ -133,7 +132,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
         assertEquals("Template", switchTemplateProp.getLabel());
         assertEquals("Choose a template", switchTemplateProp.getGroupLabel());
-        assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
+        assertEquals("webfile:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
 
         final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(
                 new String[] {
@@ -141,9 +140,9 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
                         "layout-variant1.ftl",
                         "layout-variant2.ftl"},
                 new String[]{
-                        "webresource:/ftl/main/layout.ftl",
-                        "webresource:/ftl/main/layout/layout-variant1.ftl",
-                        "webresource:/ftl/main/layout/layout-variant2.ftl"});
+                        "webfile:/ftl/main/layout.ftl",
+                        "webfile:/ftl/main/layout/layout-variant1.ftl",
+                        "webfile:/ftl/main/layout/layout-variant2.ftl"});
 
         String[] expectedValues = sortedMap.values().toArray(new String[0]);
         String[] expectedDisplayValues = sortedMap.keySet().toArray(new String[0]);
@@ -251,11 +250,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
     @Test
     public void template_variant_configured_and_exists() throws RepositoryException {
 
-        // set parameter for template to point to webresource:/ftl/main/layout/layout-variant1.ftl
+        // set parameter for template to point to webfile:/ftl/main/layout/layout-variant1.ftl
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[]{"bar", TEMPLATE_PARAM_NAME});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
-                new String[]{"barValue", "webresource:/ftl/main/layout/layout-variant1.ftl"});
+                new String[]{"barValue", "webfile:/ftl/main/layout/layout-variant1.ftl"});
 
         // add variants
         final MockNode mainFolder = layoutFileNode.getParent();
@@ -270,17 +269,17 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
         final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
         assertEquals(TEMPLATE_PARAM_NAME, switchTemplateProp.getName());
-        assertEquals("webresource:/ftl/main/layout/layout-variant1.ftl", switchTemplateProp.getValue());
-        assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
+        assertEquals("webfile:/ftl/main/layout/layout-variant1.ftl", switchTemplateProp.getValue());
+        assertEquals("webfile:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
     }
 
     @Test
     public void template_variant_configured_does_not_exist_gets_added_as_first_to_dropdown() throws RepositoryException {
-        // set parameter for template to point to webresource:/ftl/main/layout/layout-variant1.ftl
+        // set parameter for template to point to webfile:/ftl/main/layout/layout-variant1.ftl
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[]{"bar", TEMPLATE_PARAM_NAME});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
-                new String[]{"barValue", "webresource:/ftl/main/layout/non-existing.ftl"});
+                new String[]{"barValue", "webfile:/ftl/main/layout/non-existing.ftl"});
 
         // add variants
         final MockNode mainFolder = layoutFileNode.getParent();
@@ -296,14 +295,14 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
         final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
         assertEquals(TEMPLATE_PARAM_NAME, switchTemplateProp.getName());
-        assertEquals("webresource:/ftl/main/layout/non-existing.ftl", switchTemplateProp.getValue());
-        assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
+        assertEquals("webfile:/ftl/main/layout/non-existing.ftl", switchTemplateProp.getValue());
+        assertEquals("webfile:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
 
         String[] expectedSortedValues = {
-                "webresource:/ftl/main/layout/non-existing.ftl",
-                "webresource:/ftl/main/layout.ftl",
-                "webresource:/ftl/main/layout/layout-variant1.ftl",
-                "webresource:/ftl/main/layout/layout-variant2.ftl",
+                "webfile:/ftl/main/layout/non-existing.ftl",
+                "webfile:/ftl/main/layout.ftl",
+                "webfile:/ftl/main/layout/layout-variant1.ftl",
+                "webfile:/ftl/main/layout/layout-variant2.ftl",
                 };
 
         assertArrayEquals(expectedSortedValues, switchTemplateProp.getDropDownListValues());
@@ -332,11 +331,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
     @Test
     public void template_variant_configured_but_no_variants_present_any_more_still_results_in_switch_template_property() throws RepositoryException {
-        // set parameter for template to point to webresource:/ftl/main/layout/layout-variant1.ftl
+        // set parameter for template to point to webfile:/ftl/main/layout/layout-variant1.ftl
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[]{"bar", TEMPLATE_PARAM_NAME});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
-                new String[]{"barValue", "webresource:/ftl/main/layout/non-existing.ftl"});
+                new String[]{"barValue", "webfile:/ftl/main/layout/non-existing.ftl"});
 
 
         for (int i = 0; i < 2; i++) {
@@ -359,12 +358,12 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
 
             assertEquals(TEMPLATE_PARAM_NAME, switchTemplateProp.getName());
-            assertEquals("webresource:/ftl/main/layout/non-existing.ftl", switchTemplateProp.getValue());
-            assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
+            assertEquals("webfile:/ftl/main/layout/non-existing.ftl", switchTemplateProp.getValue());
+            assertEquals("webfile:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
 
             String[] expectedValues = {
-                    "webresource:/ftl/main/layout/non-existing.ftl",
-                    "webresource:/ftl/main/layout.ftl"};
+                    "webfile:/ftl/main/layout/non-existing.ftl",
+                    "webfile:/ftl/main/layout.ftl"};
 
             assertArrayEquals(expectedValues, switchTemplateProp.getDropDownListValues());
 
@@ -382,7 +381,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[]{"bar", TEMPLATE_PARAM_NAME});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
-                new String[]{"barValue", "webresource:/ftl/main/layout/non-existing.ftl"});
+                new String[]{"barValue", "webfile:/ftl/main/layout/non-existing.ftl"});
 
         final MockNode mainFolder = layoutFileNode.getParent();
         for (String locale : new String[]{"", "_fr", "_fr_FR"}) {
@@ -430,7 +429,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
     @Test
     public void multi_prefix_template_variant_configured_and_exists() throws RepositoryException {
 
-        // set parameter for template to point to webresource:/ftl/main/layout/layout-variant1.ftl
+        // set parameter for template to point to webfile:/ftl/main/layout/layout-variant1.ftl
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[]{
                         "bar",
@@ -440,9 +439,9 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
                 new String[]{
                         "barValue",
-                        "webresource:/ftl/main/layout/layout-variant1.ftl",
+                        "webfile:/ftl/main/layout/layout-variant1.ftl",
                         "barrrrrValue",
-                        "webresource:/ftl/main/layout/layout-variant2.ftl"
+                        "webfile:/ftl/main/layout/layout-variant2.ftl"
                  });
         containerItemNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES,
                 new String[]{
@@ -468,8 +467,8 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
             // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
             assertEquals(TEMPLATE_PARAM_NAME, switchTemplateProp.getName());
-            assertEquals("webresource:/ftl/main/layout/layout-variant1.ftl", switchTemplateProp.getValue());
-            assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
+            assertEquals("webfile:/ftl/main/layout/layout-variant1.ftl", switchTemplateProp.getValue());
+            assertEquals("webfile:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
         }
         {
             // "some-prefix"
@@ -481,8 +480,8 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
             // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
             assertEquals(TEMPLATE_PARAM_NAME, switchTemplateProp.getName());
-            assertEquals("webresource:/ftl/main/layout/layout-variant2.ftl", switchTemplateProp.getValue());
-            assertEquals("webresource:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
+            assertEquals("webfile:/ftl/main/layout/layout-variant2.ftl", switchTemplateProp.getValue());
+            assertEquals("webfile:/ftl/main/layout.ftl", switchTemplateProp.getDefaultValue());
         }
     }
 

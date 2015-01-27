@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hippoecm.hst.util.WebResourceUtils.getBundleName;
+import static org.hippoecm.hst.util.WebFileUtils.getBundleName;
 import static org.junit.Assert.assertThat;
 
-public class WebResourceUtilsTest {
+public class WebFileUtilsTest {
 
     private HstRequestContext context;
     private ResolvedMount resolvedMount;
@@ -49,7 +49,7 @@ public class WebResourceUtilsTest {
 
     @Test
     public void testGetBundleName_returns_default_when_mount_has_no_contextpath() {
-        assertThat(getBundleName(context), is(WebResourceUtils.DEFAULT_BUNDLE_NAME));
+        assertThat(getBundleName(context), is(WebFileUtils.DEFAULT_BUNDLE_NAME));
     }
 
     @Test

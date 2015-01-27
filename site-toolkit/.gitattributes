@@ -407,10 +407,10 @@ client/src/main/java/org/hippoecm/hst/freemarker/jcr/AbstractTemplateLoader.java
 client/src/main/java/org/hippoecm/hst/freemarker/jcr/JcrTemplateLoader.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/freemarker/jcr/RepositorySource.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/freemarker/jcr/TemplateLoadingCache.java -text
-client/src/main/java/org/hippoecm/hst/freemarker/jcr/WebResourceTemplateLoader.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/WebFileTemplateLoader.java -text
 client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/HstConfigurationTemplateEventListener.java -text
 client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/RepositoryTemplateEventListener.java -text
-client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/WebResourcesTemplateEventListener.java -text
+client/src/main/java/org/hippoecm/hst/freemarker/jcr/observation/WebFilesTemplateEventListener.java -text
 client/src/main/java/org/hippoecm/hst/linking/HstLinkProcessorTemplate.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/BinariesServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/BinaryPageFactory.java -text
@@ -433,7 +433,7 @@ client/src/main/java/org/hippoecm/hst/tag/HstLinkTag.java svneol=native#text/pla
 client/src/main/java/org/hippoecm/hst/tag/HstRenderURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstResourceURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstTagSupport.java -text svneol=unset#text/plain
-client/src/main/java/org/hippoecm/hst/tag/HstWebResourceTag.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/tag/HstWebFileTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/MessagesReplaceTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/NamespaceTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamContainerTag.java -text svneol=unset#text/plain
@@ -522,7 +522,7 @@ commons/src/main/java/org/hippoecm/hst/util/PathUtils.java svneol=native#text/pl
 commons/src/main/java/org/hippoecm/hst/util/PropertyDefinitionUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/ServletConfigUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/TaskLogFormatter.java -text
-commons/src/main/java/org/hippoecm/hst/util/WebResourceUtils.java -text
+commons/src/main/java/org/hippoecm/hst/util/WebFileUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/WrapperElementUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/XmlUtils.java -text
 commons/src/site/site.xml -text
@@ -655,7 +655,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/SSIAsynchronousCom
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/WebResourceValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/WebFileValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositorySessionsRefreshEventListener.java -text

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.freemarker.DelegatingTemplateLoader;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
 import org.hippoecm.hst.freemarker.jcr.JcrTemplateLoader;
-import org.hippoecm.hst.freemarker.jcr.WebResourceTemplateLoader;
+import org.hippoecm.hst.freemarker.jcr.WebFileTemplateLoader;
 import org.hippoecm.hst.proxy.ProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL;
 
 public class HstFreemarkerServlet extends FreemarkerServlet {
 
@@ -154,7 +154,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     /**
      * Special dispatch info is included when the request contains the attribute {@link
-     * ContainerConstants#DISPATCH_URI_PROTOCOL}. For example this value is 'classpath:' or 'jcr:' or 'webresource:' to
+     * ContainerConstants#DISPATCH_URI_PROTOCOL}. For example this value is 'classpath:' or 'jcr:' or 'webfile:' to
      * load a template from a classpath or repository
      */
     @Override
@@ -254,12 +254,12 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         final String[] prefixExclusions = {
                 FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL,
                 FREEMARKER_JCR_TEMPLATE_PROTOCOL,
-                FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL};
+                FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL};
         final TemplateLoader[] loaders = {
                 new DelegatingTemplateLoader(super.createTemplateLoader(templatePath), null, prefixExclusions),
                 new HstClassTemplateLoader(getClass()),
                 new JcrTemplateLoader(),
-                new WebResourceTemplateLoader()};
+                new WebFileTemplateLoader()};
         return new MultiTemplateLoader(loaders);
     }
 }

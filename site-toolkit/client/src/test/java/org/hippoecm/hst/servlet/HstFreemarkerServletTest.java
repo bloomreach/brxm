@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class HstFreemarkerServletTest {
     private static Logger log = LoggerFactory.getLogger(HstFreemarkerServletTest.class);
 
     final String basePath = "/";
-    final String normalWebResourcePath = "a/b/c/vbox.ftl";
+    final String normalWebAppResourcePath = "a/b/c/vbox.ftl";
     final String normalWebResourceRealPath = "/home/dev/tomcat/webapps/site/a/b/c/vbox.ftl";
     final String classpathResourcePath = "classpath:/org/hippoecm/hst/pagecomposer/builtin/components/vbox.ftl";
     final String exceptionMessageOnWindows = "The filename, directory name, or volume label syntax is incorrect";
@@ -49,7 +49,7 @@ public class HstFreemarkerServletTest {
     @Before
     public void before() throws Exception {
         ServletContext servletContext = EasyMock.createNiceMock(ServletContext.class);
-        EasyMock.expect(servletContext.getRealPath(basePath + normalWebResourcePath)).andReturn(normalWebResourceRealPath).anyTimes();
+        EasyMock.expect(servletContext.getRealPath(basePath + normalWebAppResourcePath)).andReturn(normalWebResourceRealPath).anyTimes();
         EasyMock.expect(servletContext.getRealPath(basePath + classpathResourcePath)).andThrow(new RuntimeException(exceptionMessageOnWindows)).anyTimes();
         EasyMock.replay(servletContext);
 
@@ -72,7 +72,7 @@ public class HstFreemarkerServletTest {
         assertTrue(templateLoader instanceof MultiTemplateLoader);
 
         try {
-            templateLoader.findTemplateSource(normalWebResourcePath);
+            templateLoader.findTemplateSource(normalWebAppResourcePath);
         } catch (Exception e) {
             log.warn("Unexpected Exception.", e);
             fail("Unexpected Exception.");

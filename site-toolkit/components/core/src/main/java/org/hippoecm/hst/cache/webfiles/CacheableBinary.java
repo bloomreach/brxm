@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.cache.webresources;
+package org.hippoecm.hst.cache.webfiles;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,10 +22,10 @@ import java.io.Serializable;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.onehippo.cms7.services.webresources.Binary;
+import org.onehippo.cms7.services.webfiles.Binary;
 
 /**
- * Serialzable web resource binary that is stored in-memory and hence can be cached.
+ * Serializable web file binary that is stored in-memory and hence can be cached.
  */
 public class CacheableBinary implements Binary, Serializable {
 

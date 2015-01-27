@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -183,9 +183,9 @@
   </bean>
 
 
-  <bean id="webResourceValve" parent="abstractValve" class="org.hippoecm.hst.core.container.WebResourceValve">
-    <property name="valveName" value="webResourceValve" />
-    <property name="webResourceCache" ref="webResourceCache"/>
+  <bean id="webFileValve" parent="abstractValve" class="org.hippoecm.hst.core.container.WebFileValve">
+    <property name="valveName" value="webFileValve" />
+    <property name="webFileCache" ref="webFileCache"/>
   </bean>
 
   <!-- Pipelines -->
@@ -255,7 +255,7 @@
           </bean>
         </entry>
 
-        <entry key="WebResourcePipeline">
+        <entry key="WebFilePipeline">
           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
             <property name="initializationValves">
               <list>
@@ -264,7 +264,7 @@
             </property>
             <property name="processingValves">
               <list>
-                <ref bean="webResourceValve" />
+                <ref bean="webFileValve" />
               </list>
             </property>
             <property name="cleanupValves">

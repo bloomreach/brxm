@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public interface HstLink {
      *     When {@link #isContainerResource()} returns <code>false</code>, the resulting URL <b>WILL</b> include the
      *     {@link Mount#getMountPath()} after the webapp relative part (context path).
      * </p>
-     * @return <code>true</code> when the HstLink represents a container resource, like a repository binary, a web resource
+     * @return <code>true</code> when the HstLink represents a container resource, like a repository binary, a web file
      * or a static css file served by the container.
      */
     boolean isContainerResource();

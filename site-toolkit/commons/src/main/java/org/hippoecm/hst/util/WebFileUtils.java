@@ -18,9 +18,9 @@ package org.hippoecm.hst.util;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 
-public class WebResourceUtils {
+public class WebFileUtils {
 
     public static final String DEFAULT_BUNDLE_NAME = "site";
 
@@ -34,28 +34,28 @@ public class WebResourceUtils {
         return bundleName;
     }
 
-    public static String webResourcePathToJcrPath(final String templateSource) {
-        final String webResourcePath = "/" + PathUtils.normalizePath(templateSource.substring(
-                ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length()));
+    public static String webFilePathToJcrPath(final String templateSource) {
+        final String webFilePath = "/" + PathUtils.normalizePath(templateSource.substring(
+                ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL.length()));
         final String bundleName = getBundleName();
-        return WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + webResourcePath;
+        return WebFilesService.JCR_ROOT_PATH + "/" + bundleName + webFilePath;
     }
 
-    public static String jcrPathToWebResourcePath(final String variantJcrPath) {
+    public static String jcrPathToWebFilePath(final String variantJcrPath) {
         final String bundleName = getBundleName();
-        final String requiredPrefix = WebResourcesService.JCR_ROOT_PATH + "/" + bundleName + "/";
+        final String requiredPrefix = WebFilesService.JCR_ROOT_PATH + "/" + bundleName + "/";
         if (!variantJcrPath.startsWith(requiredPrefix)) {
-            final String msg = String.format("Cannot translate '%s' to web resource path because '%s' does not start" +
+            final String msg = String.format("Cannot translate '%s' to web file path because '%s' does not start" +
                     " with '%s'", variantJcrPath, variantJcrPath, requiredPrefix);
             throw new IllegalArgumentException(msg);
         }
-        return ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL + "/" + variantJcrPath.substring(requiredPrefix.length());
+        return ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL + "/" + variantJcrPath.substring(requiredPrefix.length());
     }
 
     private static String getBundleName() {
         final HstRequestContext ctx = RequestContextProvider.get();
         if (ctx == null) {
-            throw new IllegalStateException("Cannot serve freemarker template from web resource because there is no HstRequestContext.");
+            throw new IllegalStateException("Cannot serve freemarker template from web file because there is no HstRequestContext.");
         }
         return getBundleName(ctx);
     }

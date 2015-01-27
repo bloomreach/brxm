@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class DelegatingTemplateLoaderTest {
                 new DelegatingTemplateLoader(new WebappTemplateLoader(servletContext, basePath), null,
                         new String [] {ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL,
                                 ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL,
-                                ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL});
+                                ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL});
 
         try {
             templateLoader.findTemplateSource(normalWebResourcePath);
@@ -82,12 +82,12 @@ public class DelegatingTemplateLoaderTest {
 
         final String classpathResourcePath = "classpath:/org/hippoecm/hst/pagecomposer/builtin/components/vbox.ftl";
         final String jcrResourcePath = "jcr:/org/hippoecm/hst/pagecomposer/builtin/components/vbox.ftl";
-        final String webResourceResourcePath = "webresource:/components/vbox.ftl";
-        final String unsupportedResourcePath = "unsupported:/components/vbox.ftl";
+        final String webFileResourcePath = "webfile:/components/vbox.ftl";
+        final String unsupportedFilePath = "unsupported:/components/vbox.ftl";
 
         final TemplateLoader delegatee = EasyMock.createNiceMock(TemplateLoader.class);
 
-        expect(delegatee.findTemplateSource(eq(unsupportedResourcePath))).andThrow(new IOException());
+        expect(delegatee.findTemplateSource(eq(unsupportedFilePath))).andThrow(new IOException());
 
         replay(delegatee);
 
@@ -95,7 +95,7 @@ public class DelegatingTemplateLoaderTest {
                 new DelegatingTemplateLoader(delegatee, null,
                         new String [] {ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL,
                                 ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL,
-                                ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL});
+                                ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL});
 
         try {
             assertNull(templateLoader.findTemplateSource(classpathResourcePath));
@@ -109,14 +109,14 @@ public class DelegatingTemplateLoaderTest {
         }
 
         try {
-            assertNull(templateLoader.findTemplateSource(webResourceResourcePath));
+            assertNull(templateLoader.findTemplateSource(webFileResourcePath));
         } catch (Exception e) {
-            fail(String.format("Unexpected Exception because '%s' should be supported", webResourceResourcePath));
+            fail(String.format("Unexpected Exception because '%s' should be supported", webFileResourcePath));
         }
 
         try {
-            templateLoader.findTemplateSource(unsupportedResourcePath);
-            fail(String.format("Expected an exception for unsupported resource path '%s'.", unsupportedResourcePath));
+            templateLoader.findTemplateSource(unsupportedFilePath);
+            fail(String.format("Expected an exception for unsupported resource path '%s'.", unsupportedFilePath));
         } catch (Exception e) {
 
         }

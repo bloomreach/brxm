@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.cache.webresources;
+package org.hippoecm.hst.cache.webfiles;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
 
-import org.onehippo.cms7.services.webresources.Binary;
-import org.onehippo.cms7.services.webresources.WebResource;
+import org.onehippo.cms7.services.webfiles.Binary;
+import org.onehippo.cms7.services.webfiles.WebFile;
+
 
 /**
- * Serializable web resource that is stored in memory and can be cached.
+ * Serializable web file that is stored in memory and can be cached.
  */
-public class CacheableWebResource implements WebResource, Serializable {
+public class CacheableWebFile implements WebFile, Serializable {
 
     private final String path;
     private final String name;
@@ -34,7 +35,7 @@ public class CacheableWebResource implements WebResource, Serializable {
     private final String mimeType;
     private final Binary binary;
 
-    public CacheableWebResource(final WebResource resource) throws IOException {
+    public CacheableWebFile(final WebFile resource) throws IOException {
         path = resource.getPath();
         name = resource.getName();
         encoding = resource.getEncoding();

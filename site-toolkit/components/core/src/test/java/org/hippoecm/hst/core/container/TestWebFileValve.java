@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import javax.jcr.Session;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.cache.webresources.CacheableWebResource;
+import org.hippoecm.hst.cache.webfiles.CacheableWebFile;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
@@ -41,11 +41,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.webresources.Binary;
-import org.onehippo.cms7.services.webresources.WebResource;
-import org.onehippo.cms7.services.webresources.WebResourceBundle;
-import org.onehippo.cms7.services.webresources.WebResourceException;
-import org.onehippo.cms7.services.webresources.WebResourcesService;
+import org.onehippo.cms7.services.webfiles.Binary;
+import org.onehippo.cms7.services.webfiles.WebFile;
+import org.onehippo.cms7.services.webfiles.WebFileBundle;
+import org.onehippo.cms7.services.webfiles.WebFileException;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.easymock.EasyMock.anyObject;
@@ -58,18 +58,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestWebResourceValve {
+public class TestWebFileValve {
 
     public static final String STYLE_CSS_CONTENTS = "/* example css */";
     private MockHstRequest request;
     private MockHstRequestContext requestContext;
     private MockHstResponse response;
     private MockValveContext valveContext;
-    private WebResourceValve valve;
+    private WebFileValve valve;
     private HstCache cache;
-    private WebResourcesService webResourcesService;
-    private WebResourceBundle webResourceBundle;
-    private WebResource webResource;
+    private WebFilesService webFilesService;
+    private WebFileBundle webFileBundle;
+    private WebFile webFile;
 
     @Before
     public void setUp() throws Exception {
@@ -84,20 +84,20 @@ public class TestWebResourceValve {
 
         response = new MockHstResponse();
         valveContext = new MockValveContext(request, response);
-        valve = new WebResourceValve();
+        valve = new WebFileValve();
 
         cache = EasyMock.createNiceMock(HstCache.class);
-        valve.setWebResourceCache(cache);
+        valve.setWebFileCache(cache);
 
-        webResourcesService = EasyMock.createMock(WebResourcesService.class);
-        webResourceBundle = EasyMock.createMock(WebResourceBundle.class);
-        webResource = EasyMock.createMock(WebResource.class);
-        expect(webResourcesService.getJcrWebResourceBundle(eq(session), eq("site"))).andReturn(webResourceBundle);
-        HippoServiceRegistry.registerService(webResourcesService, WebResourcesService.class);
+        webFilesService = EasyMock.createMock(WebFilesService.class);
+        webFileBundle = EasyMock.createMock(WebFileBundle.class);
+        webFile = EasyMock.createMock(WebFile.class);
+        expect(webFilesService.getJcrWebFileBundle(eq(session), eq("site"))).andReturn(webFileBundle);
+        HippoServiceRegistry.registerService(webFilesService, WebFilesService.class);
     }
 
     private void replayMocks() {
-        replay(cache, webResourcesService, webResourceBundle, webResource);
+        replay(cache, webFilesService, webFileBundle, webFile);
     }
 
     private static void mockContextPath(final String contextPath, final MockHstRequestContext requestContext) throws RepositoryException {
@@ -116,8 +116,8 @@ public class TestWebResourceValve {
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
     }
 
-    private static WebResource styleCss() {
-        final WebResource styleCss = EasyMock.createMock(WebResource.class);
+    private static WebFile styleCss() {
+        final WebFile styleCss = EasyMock.createMock(WebFile.class);
         expect(styleCss.getPath()).andReturn("/css/style.css");
         expect(styleCss.getName()).andReturn("style.css");
         expect(styleCss.getMimeType()).andReturn("text/css");
@@ -137,13 +137,13 @@ public class TestWebResourceValve {
 
     @After
     public void tearDown() throws Exception {
-        HippoServiceRegistry.unregisterService(webResourcesService, WebResourcesService.class);
+        HippoServiceRegistry.unregisterService(webFilesService, WebFilesService.class);
     }
 
     @Test
     public void uncached_web_resource_from_workspace_is_cached() throws ContainerException, UnsupportedEncodingException {
-        expect(webResourceBundle.getAntiCacheValue()).andReturn("bundleVersion");
-        expect(webResourceBundle.get("/css/style.css")).andReturn(styleCss());
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion");
+        expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
         expect(cache.createElement(anyObject(), anyObject())).andReturn(EasyMock.createMock(CacheElement.class));
         replayMocks();
 
@@ -156,8 +156,8 @@ public class TestWebResourceValve {
 
     @Test
     public void uncached_web_resource_from_history_is_cached() throws ContainerException, UnsupportedEncodingException {
-        expect(webResourceBundle.getAntiCacheValue()).andReturn("antiCacheValueThatIsNotEqualToTheBundleVersion");
-        expect(webResourceBundle.get("/css/style.css", "bundleVersion")).andReturn(styleCss());
+        expect(webFileBundle.getAntiCacheValue()).andReturn("antiCacheValueThatIsNotEqualToTheBundleVersion");
+        expect(webFileBundle.get("/css/style.css", "bundleVersion")).andReturn(styleCss());
         expect(cache.createElement(anyObject(), anyObject())).andReturn(EasyMock.createMock(CacheElement.class));
         replayMocks();
 
@@ -171,7 +171,7 @@ public class TestWebResourceValve {
     @Test
     public void cached_web_resource_is_served_from_cache() throws ContainerException, IOException {
         final CacheElement cacheElement = EasyMock.createMock(CacheElement.class);
-        expect(cacheElement.getContent()).andReturn(new CacheableWebResource(styleCss()));
+        expect(cacheElement.getContent()).andReturn(new CacheableWebFile(styleCss()));
         replay(cacheElement);
 
         expect(cache.get(anyObject())).andReturn(cacheElement);
@@ -186,8 +186,8 @@ public class TestWebResourceValve {
 
     @Test
     public void error_while_caching_clears_lock_and_stops_valve_invocation() throws UnsupportedEncodingException {
-        expect(webResourceBundle.getAntiCacheValue()).andReturn("bundleVersion");
-        expect(webResourceBundle.get("/css/style.css")).andReturn(styleCss());
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion");
+        expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
         expect(cache.createElement(anyObject(), anyObject())).andThrow(new RuntimeException("simulate error while caching"));
         expect(cache.createElement(anyObject(), eq(null))).andReturn(null);
         replayMocks();
@@ -205,8 +205,8 @@ public class TestWebResourceValve {
 
     @Test
     public void unknown_web_resource_clears_lock_and_sets_not_found_status() throws UnsupportedEncodingException, ContainerException {
-        expect(webResourceBundle.getAntiCacheValue()).andReturn("bundleVersion");
-        expect(webResourceBundle.get("/css/style.css")).andThrow(new WebResourceException("simulate unknown web resource"));
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion");
+        expect(webFileBundle.get("/css/style.css")).andThrow(new WebFileException("simulate unknown web file"));
         expect(cache.createElement(anyObject(), eq(null))).andReturn(null);
         replayMocks();
 
@@ -219,7 +219,7 @@ public class TestWebResourceValve {
     }
 
     private void assertStyleCssIsWritten() throws UnsupportedEncodingException {
-        final WebResource styleCss = styleCss();
+        final WebFile styleCss = styleCss();
 
         final Map<String, List<Object>> headers = response.getHeaders();
         assertEquals("Content-Length header", String.valueOf(styleCss.getBinary().getSize()), headers.get("Content-Length").get(0));
@@ -227,7 +227,7 @@ public class TestWebResourceValve {
         assertTrue("Expires in the future", ((Date) headers.get("Expires").get(0)).after(Calendar.getInstance().getTime()));
         assertEquals("Cache-Control header", "max-age=31536000", headers.get("Cache-Control").get(0));
 
-        assertEquals("written web resource", STYLE_CSS_CONTENTS, response.getContentAsString());
+        assertEquals("written web file", STYLE_CSS_CONTENTS, response.getContentAsString());
     }
 
 }

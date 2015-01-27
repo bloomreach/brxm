@@ -18,20 +18,20 @@ package org.hippoecm.hst.freemarker.jcr;
 import java.io.IOException;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.util.WebResourceUtils;
+import org.hippoecm.hst.util.WebFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebResourceTemplateLoader extends AbstractTemplateLoader {
+public class WebFileTemplateLoader extends AbstractTemplateLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(WebResourceTemplateLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(WebFileTemplateLoader.class);
 
     public Object findTemplateSource(String templateSource) throws IOException {
-        if (templateSource == null || !templateSource.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
+        if (templateSource == null || !templateSource.startsWith(ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL)) {
             return null;
         }
-        String absPath = WebResourceUtils.webResourcePathToJcrPath(templateSource);
-        log.info("Trying to load freemarker template for webresource from '{}'", absPath);
+        String absPath = WebFileUtils.webFilePathToJcrPath(templateSource);
+        log.info("Trying to load freemarker template for web file from '{}'", absPath);
         return getLoadingCache().get(absPath);
     }
 

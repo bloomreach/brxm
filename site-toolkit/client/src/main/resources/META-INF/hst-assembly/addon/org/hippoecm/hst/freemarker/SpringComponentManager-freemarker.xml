@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@
     </property>
   </bean>
 
-  <!-- Changes in the webresources templates must trigger reload. -->
+  <!-- Changes in the web files templates must trigger reload. -->
   <bean id="webResouresTemplateEventListener" class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
     <property name="nodeAddedEnabled" value="true"/>
     <property name="nodeRemovedEnabled" value="true"/>
@@ -59,7 +59,7 @@
     <property name="propertyChangedEnabled" value="true"/>
     <property name="propertyRemovedEnabled" value="true"/>
     <property name="absolutePath">
-      <util:constant static-field="org.onehippo.cms7.services.webresources.WebResourcesService.JCR_ROOT_PATH"/>
+      <util:constant static-field="org.onehippo.cms7.services.webfiles.WebFilesService.JCR_ROOT_PATH"/>
     </property>
     <property name="deep" value="true"/>
     <property name="uuids">
@@ -70,7 +70,7 @@
     </property>
     <property name="noLocal" value="false"/>
     <property name="eventListener">
-      <bean parent="repositoryTemplateEventListener" class="org.hippoecm.hst.freemarker.jcr.observation.WebResourcesTemplateEventListener"/>
+      <bean parent="repositoryTemplateEventListener" class="org.hippoecm.hst.freemarker.jcr.observation.WebFilesTemplateEventListener"/>
     </property>
   </bean>
 

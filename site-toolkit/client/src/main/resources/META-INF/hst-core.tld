@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!--
-  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -448,15 +448,15 @@
   </tag>
 
   <tag>
-    <description>This tag creates links to webresources. If you do not
+    <description>This tag creates links to web files. If you do not
       specify the 'var' attribute, the output is directly written. Otherwise, the value is stored in the var attribute.
-      A webresource tag can only create links if there is a sitemap item that contains hst:refId = 'WEB-RESOURCES-SITEMAP-ITEM'
-      and hst:namedPipeline = 'WebResourcePipeline', and the sitemap item is not allowed to have wildcards in its path (thus
+      A webfile tag can only create links if there is a sitemap item that contains hst:refId = 'WEB-FILES-ID'
+      and hst:namedPipeline = 'WebFilePipeline', and the sitemap item is not allowed to have wildcards in its path (thus
       in its own name or one of its ancestors)
     </description>
-    <name>webresource</name>
-    <tag-class>org.hippoecm.hst.tag.HstWebResourceTag</tag-class>
-    <tei-class>org.hippoecm.hst.tag.HstWebResourceTag$TEI</tei-class>
+    <name>webfile</name>
+    <tag-class>org.hippoecm.hst.tag.HstWebFileTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstWebFileTag$TEI</tei-class>
     <body-content>JSP</body-content>
     <attribute>
       <description>The variable name of the link tag</description>
@@ -466,7 +466,7 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
-      <description>A webresource path, starting with a / and relative to the webresources root</description>
+      <description>A web file path, starting with a / and relative to the web files root for the current webapp</description>
       <name>path</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -492,7 +492,7 @@
       <type>java.lang.Boolean</type>
     </attribute>
     <example><![CDATA[
-         <hst:webresource var="html4shiv" path="/js/html5shiv.js"/>
+         <hst:webfile var="html4shiv" path="/js/html5shiv.js"/>
      ]]></example>
   </tag>
 

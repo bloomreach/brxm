@@ -37,7 +37,7 @@ import static org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl.T
 import static org.hippoecm.hst.core.container.ContainerConstants.DISPATCH_URI_PROTOCOL;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL;
 
 /**
  * HstComponentInvokerImpl
@@ -377,9 +377,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if (dispatchUrl.startsWith(FREEMARKER_JCR_TEMPLATE_PROTOCOL)) {
                     servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_JCR_TEMPLATE_PROTOCOL);
                     dispatchUrl = dispatchUrl.substring(FREEMARKER_JCR_TEMPLATE_PROTOCOL.length());
-                } else if (dispatchUrl.startsWith(FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL)) {
-                    servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL);
-                    dispatchUrl = dispatchUrl.substring(FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL.length());
+                } else if (dispatchUrl.startsWith(FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL)) {
+                    servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL);
+                    dispatchUrl = dispatchUrl.substring(FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL.length());
                 } else if (dispatchUrl.startsWith(FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL)) {
                     servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL);
                     dispatchUrl = dispatchUrl.substring(FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL.length());

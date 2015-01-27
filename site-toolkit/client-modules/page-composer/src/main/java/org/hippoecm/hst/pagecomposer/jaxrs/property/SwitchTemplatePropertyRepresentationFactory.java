@@ -39,7 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
-import org.hippoecm.hst.util.WebResourceUtils;
+import org.hippoecm.hst.util.WebFileUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     private static final String FTL_SUFFIX = ".ftl";
     private static final FreeMarkerDisplayNameComparator FREE_MARKER_DISPLAY_NAME_COMPARATOR = new FreeMarkerDisplayNameComparator();
 
-    private enum TemplateParamWebResource {
+    private enum TemplateParamWebFile {
         NOT_CONFIGURED,
         CONFIGURED_AND_EXISTS,
         CONFIGURED_BUT_NON_EXISTING
@@ -85,13 +85,13 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         try {
             containerItemPath = containerItemNode.getPath();
             final HstComponentConfiguration componentConfiguration = containerItemHelper.getConfigObject(containerItemNode.getIdentifier());
-            if (hasWebResourceFreeMarkerTemplate(componentConfiguration)) {
+            if (hasWebFileFreeMarkerTemplate(componentConfiguration)) {
                 // if there are multiple templates available, we inject a switchTemplateComponentPropertyRepresentation
                 // containing the possible values.
 
-                // READ I18N files from REPOSITORY and NOT from filesystem because of future 'hot web resource replacing'
+                // READ I18N files from REPOSITORY and NOT from filesystem because of future 'hot web file replacing'
 
-                final String templateFreeMarkerPath = WebResourceUtils.webResourcePathToJcrPath(componentConfiguration.getRenderPath());
+                final String templateFreeMarkerPath = WebFileUtils.webFilePathToJcrPath(componentConfiguration.getRenderPath());
 
                 final Session session = containerItemNode.getSession();
                 if (!session.nodeExists(templateFreeMarkerPath)) {
@@ -101,10 +101,10 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                 }
                 final String freeMarkerVariantsFolderPath = templateFreeMarkerPath.substring(0, templateFreeMarkerPath.length() - 4);
 
-                final List<String> variantWebResourcePaths = new ArrayList<>();
+                final List<String> variantWebFilePaths = new ArrayList<>();
                 // add the main template
-                final String webResourceTemplateFreeMarkerPath = WebResourceUtils.jcrPathToWebResourcePath(templateFreeMarkerPath);
-                variantWebResourcePaths.add(webResourceTemplateFreeMarkerPath);
+                final String webFileTemplateFreeMarkerPath = WebFileUtils.jcrPathToWebFilePath(templateFreeMarkerPath);
+                variantWebFilePaths.add(webFileTemplateFreeMarkerPath);
 
                 if (session.nodeExists(freeMarkerVariantsFolderPath)) {
                     log.debug("For freemarker '{}' there is a variants folder available. Checking variants.", templateFreeMarkerPath);
@@ -115,8 +115,8 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                         if (variant.getPath().endsWith(FTL_SUFFIX)) {
                             log.debug("Found variant '{}' for '{}'", variant.getPath(), templateFreeMarkerPath);
                             final String variantJcrPath = variant.getPath();
-                            final String variantWebResourcePath = WebResourceUtils.jcrPathToWebResourcePath(variantJcrPath);
-                            variantWebResourcePaths.add(variantWebResourcePath);
+                            final String variantWebFilePath = WebFileUtils.jcrPathToWebFilePath(variantJcrPath);
+                            variantWebFilePaths.add(variantWebFilePath);
                         } else {
                             log.debug("Found node '{}' below '{}' but it does not end with .ftl and is thus not a variant",
                                     variant.getPath(), freeMarkerVariantsFolderPath);
@@ -124,36 +124,36 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                     }
                 }
 
-                final TemplateParamWebResource templateParamWebResource;
+                final TemplateParamWebFile templateParamWebFile;
                 String templateParamValue = null;
                 if (componentParameters.hasPrefix(prefix)) {
                     templateParamValue = componentParameters.getValue(prefix, TEMPLATE_PARAM_NAME);
-                    if (variantWebResourcePaths.contains(templateParamValue)) {
-                        templateParamWebResource = TemplateParamWebResource.CONFIGURED_AND_EXISTS;
+                    if (variantWebFilePaths.contains(templateParamValue)) {
+                        templateParamWebFile = TemplateParamWebFile.CONFIGURED_AND_EXISTS;
                     } else if (StringUtils.isNotEmpty(templateParamValue)) {
-                        log.info("There exists a param '{}' pointing to a non existing web resource '{}'. Setting " +
+                        log.info("There exists a param '{}' pointing to a non existing web file '{}'. Setting " +
                                 "value for '{}' to null", TEMPLATE_PARAM_NAME, templateParamValue, TEMPLATE_PARAM_NAME);
-                        templateParamWebResource = TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING;
+                        templateParamWebFile = TemplateParamWebFile.CONFIGURED_BUT_NON_EXISTING;
                     } else {
-                        templateParamWebResource = TemplateParamWebResource.NOT_CONFIGURED;
+                        templateParamWebFile = TemplateParamWebFile.NOT_CONFIGURED;
                     }
                 } else {
-                    templateParamWebResource = TemplateParamWebResource.NOT_CONFIGURED;
+                    templateParamWebFile = TemplateParamWebFile.NOT_CONFIGURED;
                 }
 
-                if (variantWebResourcePaths.size() > 1 || templateParamWebResource == TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING) {
+                if (variantWebFilePaths.size() > 1 || templateParamWebFile == TemplateParamWebFile.CONFIGURED_BUT_NON_EXISTING) {
                     // add switch template property representation and populate the values
                     final ResourceBundle switchTemplateResourceBundle = ParametersInfoProcessor.getResourceBundle(SwitchTemplatePropertyRepresentationFactory.class, locale);
                     final ResourceBundle variantsResourceBundle = loadTemplateVariantsResourceBundle(session, freeMarkerVariantsFolderPath, locale);
                     final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty =
                             createSwitchTemplateComponentPropertyRepresentation(switchTemplateResourceBundle,
-                                    webResourceTemplateFreeMarkerPath, variantWebResourcePaths, variantsResourceBundle);
+                                    webFileTemplateFreeMarkerPath, variantWebFilePaths, variantsResourceBundle);
                     switchTemplateComponentProperty.setValue(templateParamValue);
 
                     // the addMissingTemplateValueAndLabel is added *after* sorting since always most be on top
                     sortDropDownByDisplayValue(switchTemplateComponentProperty);
 
-                    if (templateParamWebResource == TemplateParamWebResource.CONFIGURED_BUT_NON_EXISTING) {
+                    if (templateParamWebFile == TemplateParamWebFile.CONFIGURED_BUT_NON_EXISTING) {
                         addMissingTemplateValueAndLabel(templateParamValue, switchTemplateResourceBundle, switchTemplateComponentProperty, variantsResourceBundle);
                     }
 
@@ -170,12 +170,12 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         return null;
     }
 
-    private static boolean hasWebResourceFreeMarkerTemplate(final HstComponentConfiguration componentConfiguration) {
+    private static boolean hasWebFileFreeMarkerTemplate(final HstComponentConfiguration componentConfiguration) {
         final String renderPath = componentConfiguration.getRenderPath();
         if (renderPath == null) {
             return false;
         }
-        return renderPath.startsWith(ContainerConstants.FREEMARKER_WEBRESOURCE_TEMPLATE_PROTOCOL) &&
+        return renderPath.startsWith(ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL) &&
                 renderPath.endsWith(".ftl");
     }
 
@@ -209,7 +209,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     private static ContainerItemComponentPropertyRepresentation createSwitchTemplateComponentPropertyRepresentation(
                                                         final ResourceBundle switchTemplateResourceBundle,
                                                         final String defaultTemplatePath,
-                                                        final List<String> variantWebResourcePaths,
+                                                        final List<String> variantWebFilePaths,
                                                         final ResourceBundle variantsResourceBundle) {
 
         final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
@@ -219,7 +219,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         prop.setType(ParameterType.VALUE_FROM_LIST);
         prop.setGroupLabel(switchTemplateResourceBundle.getString(CHOOSE_TEMPLATE_I18N_KEY));
 
-        final String[] dropDownValues = variantWebResourcePaths.toArray(new String[variantWebResourcePaths.size()]);
+        final String[] dropDownValues = variantWebFilePaths.toArray(new String[variantWebFilePaths.size()]);
         prop.setDropDownListValues(dropDownValues);
 
         String[] displayValues = new String[dropDownValues.length];
