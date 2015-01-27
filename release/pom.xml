@@ -54,7 +54,7 @@
     <hippo.services.autoreload.version>1.05.00-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>1.05.00-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>1.05.00-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.webresources.version>1.05.00-SNAPSHOT</hippo.services.webresources.version>
+    <hippo.services.webfiles.version>1.05.00-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.utilities.version>1.04.00-SNAPSHOT</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
@@ -139,8 +139,8 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-services-webresources</artifactId>
-        <version>${hippo.services.webresources.version}</version>
+        <artifactId>hippo-services-webfiles</artifactId>
+        <version>${hippo.services.webfiles.version}</version>
       </dependency>
 
       <!-- All Hippo Repository artifacts -->
