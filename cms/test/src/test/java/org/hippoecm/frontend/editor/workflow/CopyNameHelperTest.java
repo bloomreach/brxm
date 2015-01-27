@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory.UriEncoding;
+import org.junit.Test;
+
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.StringCodecFactory.UriEncoding;
-import org.junit.Test;
 
 public class CopyNameHelperTest {
     
@@ -35,7 +38,7 @@ public class CopyNameHelperTest {
         expect(folder.hasNode("bla-kopietje")).andReturn(false);
         replay(folder);
 
-        CopyNameHelper helper = new CopyNameHelper(new UriEncoding(), "kopietje");
+        CopyNameHelper helper = new CopyNameHelper(newStringCodecModel(new UriEncoding()), "kopietje");
         assertEquals("bla (kopietje)", helper.getCopyName("bla", folder));
         verify();
     }
@@ -47,7 +50,7 @@ public class CopyNameHelperTest {
         expect(folder.hasNode("bla-kopietje-2")).andReturn(false);
         replay(folder);
 
-        CopyNameHelper helper = new CopyNameHelper(new UriEncoding(), "kopietje");
+        CopyNameHelper helper = new CopyNameHelper(newStringCodecModel(new UriEncoding()), "kopietje");
         String newName = helper.getCopyName("bla", folder);
         verify();
         assertEquals("bla (kopietje 2)", newName); 
@@ -61,9 +64,19 @@ public class CopyNameHelperTest {
         expect(folder.hasNode("bla-kopietje-3")).andReturn(false);
         replay(folder);
 
-        CopyNameHelper helper = new CopyNameHelper(new UriEncoding(), "kopietje");
+        CopyNameHelper helper = new CopyNameHelper(newStringCodecModel(new UriEncoding()), "kopietje");
         String newName = helper.getCopyName("bla", folder);
         verify();
         assertEquals("bla (kopietje 3)", newName); 
     }
+
+    private IModel<StringCodec> newStringCodecModel(final StringCodec codec) {
+        return new AbstractReadOnlyModel<StringCodec>() {
+            @Override
+            public StringCodec getObject() {
+                return codec;
+            }
+        };
+    }
+
 }

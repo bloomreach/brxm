@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.util.TreeSet;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -54,7 +53,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
@@ -68,12 +66,12 @@ import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.frontend.translation.components.document.FolderTranslation;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
@@ -325,9 +323,9 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 if (autoTranslateContent) {
                     Workflow translateWorkflow = manager.getWorkflow("translate", translatedVariant);
                     if (translateWorkflow instanceof TranslateWorkflow) {
-                        Set<String> plainTextFields = new TreeSet<String>();
-                        Set<String> richTextFields = new TreeSet<String>();
-                        Set<String> allTextFields = new TreeSet<String>();
+                        Set<String> plainTextFields = new TreeSet<>();
+                        Set<String> richTextFields = new TreeSet<>();
+                        Set<String> allTextFields = new TreeSet<>();
                         String primaryNodeTypeName = session.getNodeByIdentifier(
                                 translatedVariant.getIdentity()).getPrimaryNodeType().getName();
                         collectFields(null, primaryNodeTypeName, plainTextFields, richTextFields);
@@ -649,10 +647,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
     }
 
     public boolean hasLocale(String locale) {
-        if (translationProvider != null) {
-            return translationProvider.contains(locale);
-        }
-        return false;
+        return translationProvider != null && translationProvider.contains(locale);
     }
 
     @SuppressWarnings("unchecked")
@@ -700,10 +695,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
     }
 
     protected StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
-                                                                         ISettingsService.class);
-        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-        return stringCodecFactory.getStringCodec("encoding.display");
+        return CodecUtils.getDisplayNameCodec(getPluginContext());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,31 +37,30 @@ import org.hippoecm.repository.api.StringCodec;
 public class NameUriField extends WebMarkupContainer {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private String url;
+    @SuppressWarnings("unused")
+    private String name;
+
     private final Component urlComponent;
+    private final Component nameComponent;
+
+    private final PropertyModel<String> urlModel;
+    private final PropertyModel<String> nameModel;
+    private final IModel<StringCodec> codecModel;
 
     private boolean urlModified = false;
-
-    private PropertyModel<String> urlModel;
-    private PropertyModel<String> nameModel;
-
-    private String name;
-    private String url;
-    
-    private Component nameComponent;
-
-    private final IModel<StringCodec> codecModel;
 
     public NameUriField(String id, IModel<StringCodec> codecModel) {
         super(id);
         this.codecModel = codecModel;
 
-        nameModel = new PropertyModel<String>(this, "name");
-        urlModel = new PropertyModel<String>(this, "url");
+        urlModel = PropertyModel.of(this, "url");
+        nameModel = PropertyModel.of(this, "name");
 
-        nameComponent = createNameComponent(nameModel);
-        add(nameComponent);
+        add(urlComponent = createUriComponent(urlModel));
+        add(nameComponent = createNameComponent(nameModel));
 
-        add(urlComponent = createUriComponent(nameModel, urlModel));
         add(createUrlAction());
     }
 
@@ -74,12 +73,12 @@ public class NameUriField extends WebMarkupContainer {
         super.onBeforeRender();
     }
 
-    private StringCodec getNodeNameCodec() {
-        return codecModel.getObject();
+    private String encode(final IModel<String> text) {
+        return codecModel.getObject().encode(text.getObject());
     }
     
     private Component createNameComponent(final PropertyModel<String> nameModel) {
-        final FormComponent nameComponent = new TextField<String>("name", new IModel<String>() {
+        final FormComponent nameComponent = new TextField<>("name", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
             public String getObject() {
@@ -89,7 +88,7 @@ public class NameUriField extends WebMarkupContainer {
             public void setObject(String object) {
                 nameModel.setObject(object);
                 if (!urlModified) {
-                    urlModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+                    urlModel.setObject(encode(nameModel));
                 }
             }
 
@@ -117,7 +116,7 @@ public class NameUriField extends WebMarkupContainer {
         return nameComponent;
     }
 
-    private Component createUriComponent(final PropertyModel<String> nameModel, final PropertyModel<String> urlModel) {
+    private Component createUriComponent(final PropertyModel<String> urlModel) {
         FormComponent urlComponent = new TextField<String>("url", urlModel) {
             @Override
             public boolean isEnabled() {
@@ -141,8 +140,7 @@ public class NameUriField extends WebMarkupContainer {
             public void onClick(AjaxRequestTarget target) {
                 urlModified = !urlModified;
                 if (!urlModified) {
-                    urlModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
-                            nameModel.getObject()));
+                    urlModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : encode(nameModel));
                 } else {
                     target.focusComponent(urlComponent);
                 }
@@ -164,5 +162,16 @@ public class NameUriField extends WebMarkupContainer {
 
     public String getUrl() {
         return url;
+    }
+
+    public void encodeUri() {
+        if (!urlModified) {
+            final String name = Strings.isEmpty(nameModel.getObject()) ? "" : encode(nameModel);
+            urlModel.setObject(name);
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                target.add(urlComponent);
+            }
+        }
     }
 }

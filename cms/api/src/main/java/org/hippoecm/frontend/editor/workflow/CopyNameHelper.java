@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,17 +21,23 @@ import java.util.regex.Pattern;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.repository.api.StringCodec;
 
 public class CopyNameHelper {
 
     private final Pattern firstcopy;
     private final Pattern othercopies;
-    private final StringCodec codec;
+    private final IModel<StringCodec> codecModel;
     private final String copyOf;
 
     public CopyNameHelper(StringCodec codec, String copyOf) {
-        this.codec = codec;
+        this(createModel(codec), copyOf);
+    }
+
+    public CopyNameHelper(IModel<StringCodec> codecModel, String copyOf) {
+        this.codecModel = codecModel;
         this.copyOf = copyOf;
         this.firstcopy = Pattern.compile(".* \\(" + copyOf + "\\)$");
         this.othercopies = Pattern.compile(".* \\(" + copyOf + " ([0-9]*?)\\)$");
@@ -61,7 +67,7 @@ public class CopyNameHelper {
                 } else {
                     name = base + " (" + copyOf + " " + (number) + ")";
                 }
-                nodeName = codec.encode(name);
+                nodeName = codecModel.getObject().encode(name);
                 number++;
             } while (folder.hasNode(nodeName));
         } else {
@@ -69,4 +75,14 @@ public class CopyNameHelper {
         }
         return name;
     }
+
+    private static IModel<StringCodec> createModel(final StringCodec codec) {
+        return new AbstractReadOnlyModel<StringCodec>() {
+            @Override
+            public StringCodec getObject() {
+                return codec;
+            }
+        };
+    }
+
 }

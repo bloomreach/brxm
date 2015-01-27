@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,27 +34,25 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
-import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameMessage;
-import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 
 public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
         private IModel<String> title;
-        private TextField nameComponent;
-        private TextField uriComponent;
+        private IModel<StringCodec> codec;
+        private TextField<String> nameComponent;
+        private TextField<String> uriComponent;
         private boolean uriModified;
-        private IPluginContext context;
 
-        public RenameDocumentDialog(StdWorkflow action, IModel<String> title, IPluginContext context) {
+        public RenameDocumentDialog(StdWorkflow action, IModel<String> title, IModel<StringCodec> codecModel) {
             super(null, action);
 
             this.title = title;
-            this.context = context;
+            this.codec = codecModel;
 
             final PropertyModel<String> nameModel = new PropertyModel<>(action, "targetName");
             final PropertyModel<String> uriModel = new PropertyModel<>(action, "uriName");
@@ -72,7 +70,21 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+                        String encoded = codec.getObject().encode(nameModel.getObject());
+                        uriModel.setObject(encoded);
+                        target.add(uriComponent);
+                    }
+                }
+
+                @Override
+                protected void onError(final AjaxRequestTarget target, final RuntimeException e) {
+                    super.onError(target, e);
+
+                    //if we get past the super call, RunTimeException e is null and we are dealing with
+                    //either a validation or a conversion error, so we can/should update the URI component if needed
+                    String rawInput = nameComponent.getInput();
+                    if (!uriModified && Strings.isEmpty(rawInput)) {
+                        uriModel.setObject("");
                         target.add(uriComponent);
                     }
                 }
@@ -107,8 +119,9 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
                 public void onClick(AjaxRequestTarget target) {
                     uriModified = !uriModified;
                     if (!uriModified) {
-                        uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
-                                nameModel.getObject()));
+                        String uri = Strings.isEmpty(nameModel.getObject()) ? ""
+                                : codec.getObject().encode(nameModel.getObject());
+                        uriModel.setObject(uri);
                     } else {
                         target.focusComponent(uriComponent);
                     }
@@ -130,13 +143,6 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
             }
         }
 
-        protected StringCodec getNodeNameCodec() {
-            ISettingsService settingsService = context.getService(ISettingsService.SERVICE_ID,
-                    ISettingsService.class);
-            StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-            return stringCodecFactory.getStringCodec("encoding.node");
-        }
-
         @Override
         public IModel<String> getTitle() {
             return title;
@@ -144,6 +150,6 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
     }

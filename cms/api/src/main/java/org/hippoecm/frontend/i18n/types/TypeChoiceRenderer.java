@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 
-public class TypeChoiceRenderer implements IChoiceRenderer {
+public class TypeChoiceRenderer implements IChoiceRenderer<String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,8 +30,8 @@ public class TypeChoiceRenderer implements IChoiceRenderer {
         this.component = component;
     }
 
-    public Object getDisplayValue(Object object) {
-        String type = (String) object;
+    @Override
+    public Object getDisplayValue(final String type) {
         JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(type);
         if (nodeTypeModel.getObject() != null) {
             return new TypeTranslator(nodeTypeModel).getTypeName().getObject();
@@ -40,7 +40,8 @@ public class TypeChoiceRenderer implements IChoiceRenderer {
         }
     }
 
-    public String getIdValue(Object object, int index) {
-        return object.toString();
+    @Override
+    public String getIdValue(final String type, final int index) {
+        return type;
     }
 }

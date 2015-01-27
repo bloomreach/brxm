@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,15 +50,14 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.JQueryFileUploadDialog;
 import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -99,7 +98,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             afterUploadItems();
             super.onClose();
         }
-    };
+    }
     public String type;
     private List<String> newItems;
 
@@ -121,18 +120,20 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
     private void createGalleryItem(FileUpload upload) throws GalleryException {
         try (InputStream is = upload.getInputStream()) {
-            String filename = upload.getClientFileName();
-            String mimetype = upload.getContentType();
+            String fileName = upload.getClientFileName();
+            String mimeType = upload.getContentType();
 
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             HippoNode node;
             try {
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                         .getDefaultModel();
+
                 GalleryWorkflow workflow = (GalleryWorkflow) manager
                         .getWorkflow(workflowDescriptorModel.getObject());
-                String nodeName = getNodeNameCodec().encode(filename);
-                String localName = getLocalizeCodec().encode(filename);
+
+                String nodeName = getNodeNameCodec(workflowDescriptorModel.getNode()).encode(fileName);
+                String localName = getLocalizeCodec().encode(fileName);
                 Document document = workflow.createGalleryItem(nodeName, type);
                 node = (HippoNode) UserSession.get().getJcrSession()
                         .getNodeByIdentifier(document.getIdentity());
@@ -149,14 +150,14 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             }
 
             try {
-                getGalleryProcessor().makeImage(node, is, mimetype, filename);
+                getGalleryProcessor().makeImage(node, is, mimeType, fileName);
                 node.getSession().save();
                 onGalleryItemCreation(node);
                 newItems.add(node.getPath());
             } catch (Exception ex) {
                 remove(manager, node);
                 final StringResourceModel messageModel = new StringResourceModel("upload-failed-named-label",
-                        GalleryWorkflowPlugin.this, null, null, filename);
+                        GalleryWorkflowPlugin.this, null, null, fileName);
                 throw new GalleryException(messageModel.getString(), ex);
             }
         } catch (IOException ex) {
@@ -202,7 +203,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     }
 
     protected IDataProvider<StdWorkflow> createListDataProvider() {
-        List<StdWorkflow> list = new LinkedList<StdWorkflow>();
+        List<StdWorkflow> list = new LinkedList<>();
         list.add(0, new WorkflowAction("add", new StringResourceModel(getPluginConfig()
                 .getString("option.label", "add"), this, null, "Add")) {
             private static final long serialVersionUID = 1L;
@@ -259,17 +260,11 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     }
 
     protected StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
-                ISettingsService.class);
-        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-        return stringCodecFactory.getStringCodec("encoding.display");
+        return CodecUtils.getDisplayNameCodec(getPluginContext());
     }
 
-    protected StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
-                ISettingsService.class);
-        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-        return stringCodecFactory.getStringCodec("encoding.node");
+    protected StringCodec getNodeNameCodec(final Node node) {
+        return CodecUtils.getNodeNameCodec(getPluginContext(), node);
     }
 
     protected ILocaleProvider getLocaleProvider() {

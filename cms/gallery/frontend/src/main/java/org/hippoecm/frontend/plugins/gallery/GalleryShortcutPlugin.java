@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,7 +27,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.upload.UploadDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class GalleryShortcutPlugin extends RenderPlugin {
+public class GalleryShortcutPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
     public GalleryShortcutPlugin(IPluginContext context, IPluginConfig config) {
@@ -39,7 +41,7 @@ public class GalleryShortcutPlugin extends RenderPlugin {
                 IDialogService dialogService = getDialogService();
                 UploadDialog dialog = new UploadDialog(GalleryShortcutPlugin.this.getPluginContext(),
                                                        GalleryShortcutPlugin.this.getPluginConfig(),
-                                                       GalleryShortcutPlugin.this.getDefaultModel());
+                                                       GalleryShortcutPlugin.this.getModel());
                 dialogService.show(dialog);
             }
         };

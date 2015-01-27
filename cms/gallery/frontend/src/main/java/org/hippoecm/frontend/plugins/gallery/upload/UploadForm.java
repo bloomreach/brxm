@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -49,11 +48,11 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class UploadForm extends Form {
+class UploadForm extends Form<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(UploadForm.class);
+    private static final Logger log = LoggerFactory.getLogger(UploadForm.class);
 
     private final UploadDialog uploadDialog;
     private final FileUploadField uploadField;
@@ -83,17 +82,13 @@ class UploadForm extends Form {
                 } else {
                     galleryTypes = workflow.getGalleryTypes();
                 }
-            } catch (MappingException ex) {
-                log.error(ex.getMessage(), ex);
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage(), ex);
-            } catch (RemoteException ex) {
+            } catch (RemoteException | RepositoryException ex) {
                 log.error(ex.getMessage(), ex);
             }
             if (galleryTypes != null && galleryTypes.size() > 1) {
                 DropDownChoice folderChoice;
                 type = galleryTypes.get(0);
-                add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
+                add(folderChoice = new DropDownChoice<>("type", new PropertyModel<>(this, "type"), galleryTypes,
                         new TypeChoiceRenderer(this)));
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
@@ -144,22 +139,16 @@ class UploadForm extends Form {
                     Node galleryNode = uploadDialog.getGalleryNode();
                     GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
                             .getWorkflowCategory(), galleryNode);
-                    String nodeName = uploadDialog.getNodeNameCodec().encode(filename);
+                    String nodeName = uploadDialog.getNodeNameCodec(galleryNode).encode(filename);
                     String localName = uploadDialog.getLocalizeCodec().encode(filename);
                     Document document = workflow.createGalleryItem(nodeName, type);
-                    node = (HippoNode) UserSession.get().getJcrSession().getNodeByUUID(
+                    node = (HippoNode) UserSession.get().getJcrSession().getNodeByIdentifier(
                             document.getIdentity());
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                     if (!node.getLocalizedName().equals(localName)) {
                         defaultWorkflow.localizeName(localName);
                     }
-                } catch (WorkflowException ex) {
-                    log.error(ex.getMessage());
-                    error(ex);
-                } catch (MappingException ex) {
-                    log.error(ex.getMessage());
-                    error(ex);
-                } catch (RepositoryException ex) {
+                } catch (WorkflowException | RepositoryException ex) {
                     log.error(ex.getMessage());
                     error(ex);
                 }
@@ -179,11 +168,7 @@ class UploadForm extends Form {
                         try {
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                             defaultWorkflow.delete();
-                        } catch (WorkflowException e) {
-                            log.error(e.getMessage());
-                        } catch (MappingException e) {
-                            log.error(e.getMessage());
-                        } catch (RepositoryException e) {
+                        } catch (WorkflowException | RepositoryException e) {
                             log.error(e.getMessage());
                         }
                         try {

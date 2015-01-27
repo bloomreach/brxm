@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
 import org.hippoecm.frontend.translation.components.document.FolderTranslation;
+import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -41,7 +42,7 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
 
     public DocumentTranslationDialog(ISettingsService settings,
             IWorkflowInvoker action, IModel<String> title, List<FolderTranslation> folders, IModel<Boolean> autoTranslateContent,
-            String sourceLanguage, String targetLanguage,
+            String sourceLanguage, final String targetLanguage,
             ILocaleProvider provider) {
         super(null, action);
         this.settingsService = settings;
@@ -55,7 +56,7 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
                     @Override
                     protected StringCodec load() {
                         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-                        return stringCodecFactory.getStringCodec("encoding.node");
+                        return stringCodecFactory.getStringCodec(CodecUtils.ENCODING_NODE, targetLanguage);
                     }
                 }, provider);
         dtv.setFrame(false);
@@ -67,7 +68,7 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
         }
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return title;
     }
 

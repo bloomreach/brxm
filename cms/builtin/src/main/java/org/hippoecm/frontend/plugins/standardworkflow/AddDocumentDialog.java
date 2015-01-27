@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
@@ -47,23 +48,26 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
 
 public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArguments> {
-    private IModel title;
+
+    private IModel<String> title;
     private TextField nameComponent;
     private TextField uriComponent;
     private boolean uriModified = false;
     private LanguageField languageField;
     private final IModel<StringCodec> nodeNameCodecModel;
 
-    public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel title, String category, Set<String> prototypes, boolean translated, final IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider) {
+    public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
+                             Set<String> prototypes, boolean translated, final IWorkflowInvoker invoker,
+                             IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider) {
         super(Model.of(addDocumentModel), invoker);
         this.title = title;
         this.nodeNameCodecModel = nodeNameCodec;
 
-        final PropertyModel<String> nameModel = new PropertyModel<String>(addDocumentModel, "targetName");
-        final PropertyModel<String> uriModel = new PropertyModel<String>(addDocumentModel, "uriName");
-        final PropertyModel<String> prototypeModel = new PropertyModel<String>(addDocumentModel, "prototype");
+        final PropertyModel<String> nameModel = new PropertyModel<>(addDocumentModel, "targetName");
+        final PropertyModel<String> uriModel = new PropertyModel<>(addDocumentModel, "uriName");
+        final PropertyModel<String> prototypeModel = new PropertyModel<>(addDocumentModel, "prototype");
 
-        nameComponent = new TextField<String>("name", new IModel<String>() {
+        nameComponent = new TextField<>("name", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
             public String getObject() {
@@ -102,14 +106,14 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
         setFocus(nameComponent);
         add(nameComponent);
 
-        final Label typelabel;
-        add(typelabel = new Label("typelabel", new StringResourceModel("document-type", this, null)));
+        final Label typeLabel;
+        add(typeLabel = new Label("typelabel", new StringResourceModel("document-type", this, null)));
 
         if (prototypes.size() > 1) {
-            final List<String> prototypesList = new LinkedList<String>(prototypes);
+            final List<String> prototypesList = new LinkedList<>(prototypes);
             final DropDownChoice<String> folderChoice;
             SortedTypeChoiceRenderer typeChoiceRenderer = new SortedTypeChoiceRenderer(this, prototypesList);
-            add(folderChoice = new DropDownChoice<String>("prototype", prototypeModel, typeChoiceRenderer, typeChoiceRenderer));
+            add(folderChoice = new DropDownChoice<>("prototype", prototypeModel, typeChoiceRenderer, typeChoiceRenderer));
             folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
@@ -119,19 +123,16 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
             folderChoice.setLabel(new StringResourceModel("document-type", this, null));
+
             // while not a prototype chosen, disable ok button
-            Component notypes;
-            add(notypes = new EmptyPanel("notypes"));
-            notypes.setVisible(false);
+            add(new EmptyPanel("notypes").setVisible(false));
         } else if (prototypes.size() == 1) {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
             prototypeModel.setObject(prototypes.iterator().next());
-            Component notypes;
-            add(notypes = new EmptyPanel("notypes"));
-            notypes.setVisible(false);
-            typelabel.setVisible(false);
+            add(new EmptyPanel("notypes").setVisible(false));
+            typeLabel.setVisible(false);
         } else {
             // if the folderWorkflowPlugin.templates.get(category).size() = 0 you cannot add this
             // category currently.
@@ -142,7 +143,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
             add(new Label("notypes", "There are no types available for : [" + category
                     + "] First create document types please."));
             nameComponent.setVisible(false);
-            typelabel.setVisible(false);
+            typeLabel.setVisible(false);
         }
 
         add(uriComponent = new TextField<String>("uriinput", uriModel) {
@@ -184,7 +185,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
         }));
         add(uriAction);
 
-        languageField = new LanguageField("language", new PropertyModel<String>(addDocumentModel, "language"), localeProvider);
+        languageField = new LanguageField("language", new PropertyModel<>(addDocumentModel, "language"), localeProvider);
         if (!translated) {
             languageField.setVisible(false);
         }
@@ -192,13 +193,13 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
     }
 
     @Override
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return title;
     }
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return DialogConstants.MEDIUM;
     }
 
     public LanguageField getLanguageField() {

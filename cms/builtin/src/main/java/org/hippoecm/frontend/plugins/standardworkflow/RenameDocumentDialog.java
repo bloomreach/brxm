@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,31 +34,33 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
 
 public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentArguments> {
-    private IModel title;
+
+    private IModel<String> title;
     private TextField nameComponent;
     private TextField uriComponent;
     private boolean uriModified;
     private final IModel<StringCodec> nodeNameCodecModel;
 
-    public RenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IModel title, IWorkflowInvoker invoker,
-            IModel<StringCodec> nodeNameCodec) {
+    public RenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IModel<String> title,
+                                IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec) {
         super(Model.of(renameDocumentModel), invoker);
         this.title = title;
         this.nodeNameCodecModel = nodeNameCodec;
 
-        final PropertyModel<String> nameModel = new PropertyModel<String>(renameDocumentModel, "targetName");
-        final PropertyModel<String> uriModel = new PropertyModel<String>(renameDocumentModel, "uriName");
+        final PropertyModel<String> nameModel = new PropertyModel<>(renameDocumentModel, "targetName");
+        final PropertyModel<String> uriModel = new PropertyModel<>(renameDocumentModel, "uriName");
 
         String s1 = nameModel.getObject();
         String s2 = uriModel.getObject();
         uriModified = !s1.equals(s2);
 
-        nameComponent = new TextField<String>("name", nameModel);
+        nameComponent = new TextField<>("name", nameModel);
         nameComponent.setRequired(true);
         nameComponent.setLabel(new StringResourceModel("name-label", this, null));
         nameComponent.add(new OnChangeAjaxBehavior() {
@@ -126,17 +128,17 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
         final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentModel.getLocalizedNames());
         if (message.shouldShow()) {
             warn(message.forFolder());
-        };
+        }
     }
 
     @Override
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return title;
     }
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return DialogConstants.MEDIUM;
     }
 
     protected StringCodec getNodeNameCodec() {

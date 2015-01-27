@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * Registers a {@link ScalingGalleryProcessor} and initializes the {@link ScalingParameters} for each scaled image.
+ * Registers a {@link ScalingGalleryProcessor} and initializes the {@link org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters} for each scaled image.
  * Configuration of the scaling parameters of each image is done in a child node of type frontend:plugconfig with
  * a name equal to the node name of the image. Each node can contain integer properties for the width and height, and
  * a boolean property for the upscaling setting. It is also possible to configured the scaling strategy to use in
@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * bounding box should be scaled up or not. By default, the width and height of a the bounding box are 0, and
  * upscaling is disabled. The default optimization strategy is 'quality'.</p>
  *
- * @see {@link ScalingParameters}
+ * @see {@link org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters}
  * @see {@link ScalingGalleryProcessor}
  */
 public class ScalingGalleryProcessorPlugin extends Plugin {
@@ -82,7 +82,7 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
     protected static final String DEFAULT_OPTIMIZE = "quality";
     protected static final double DEFAULT_COMPRESSION = 1.0;
 
-    private static final Map<String, ImageUtils.ScalingStrategy> SCALING_STRATEGY_MAP = new LinkedHashMap<String, ImageUtils.ScalingStrategy>();
+    private static final Map<String, ImageUtils.ScalingStrategy> SCALING_STRATEGY_MAP = new LinkedHashMap<>();
     static {
         SCALING_STRATEGY_MAP.put("auto", ImageUtils.ScalingStrategy.AUTO);
         SCALING_STRATEGY_MAP.put("speed", ImageUtils.ScalingStrategy.SPEED);
@@ -116,7 +116,7 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
                 ImageUtils.ScalingStrategy strategy = SCALING_STRATEGY_MAP.get(strategyName);
                 if (strategy == null) {
                     log.warn("Image variant '{}' specifies an unknown scaling optimization strategy '{}'. Possible values are {}. Falling back to '{}' instead.",
-                            new Object[]{nodeName, strategyName, SCALING_STRATEGY_MAP.keySet(), DEFAULT_OPTIMIZE});
+                            nodeName, strategyName, SCALING_STRATEGY_MAP.keySet(), DEFAULT_OPTIMIZE);
                     strategy = SCALING_STRATEGY_MAP.get(DEFAULT_OPTIMIZE);
                 }
                 
