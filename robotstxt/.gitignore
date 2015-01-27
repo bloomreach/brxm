@@ -1,0 +1,11 @@
+/.project
+/.settings
+hst/.classpath
+hst/.project
+hst/.settings
+hst/target
+repository/.classpath
+repository/.project
+repository/.settings
+repository/target
+/target
