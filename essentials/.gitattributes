@@ -1412,10 +1412,9 @@ plugins/sitemap/src/main/resources/META-INF/resources/feature/sitemapPlugin/site
 plugins/sitemap/src/main/resources/META-INF/sitemap_instructions.xml -text
 plugins/sitemap/src/main/resources/META-INF/web-fragment.xml -text
 plugins/skeleton-package/pom.xml -text
+plugins/skeleton-package/src/main/appended-resources/META-INF/LICENSE -text
 plugins/skeleton-package/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsInstructionPackage.java -text
 plugins/skeleton-package/src/main/resources/META-INF/commons_instructions.xml -text
-plugins/skeleton-package/src/main/resources/instructions/bootstrap/css/bootstrap-theme.css -text
-plugins/skeleton-package/src/main/resources/instructions/bootstrap/css/bootstrap-theme.min.css -text
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/css/bootstrap.css -text
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/css/bootstrap.min.css -text
 plugins/skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.eot -text

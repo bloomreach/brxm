@@ -282,6 +282,9 @@
                 <exclude>**/*.woff</exclude>
                 <exclude>**/*.ttf</exclude>
                 <exclude>jar-dependencies.txt</exclude>
+                <exclude>plugins/skeleton-package/src/main/resources/instructions/bootstrap/**</exclude>
+                <exclude>plugins/skeleton-package/src/main/resources/instructions/js/bootstrap*.js</exclude>
+                <exclude>plugins/skeleton-package/src/main/resources/instructions/js/jquery*.js</exclude>
               </excludes>
             </configuration>
           </plugin>

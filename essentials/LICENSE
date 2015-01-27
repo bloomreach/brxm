@@ -197,8 +197,8 @@ Hippo Essentials plugins dashboard includes and bundles the following sub-compon
 licensed under the Apache License, Version 2.0. Your use of the code for these sub-components is subject to the terms
 and conditions of the Apache License, Version 2.0, as specified in the license text above:
 
-plugin-dashboard/src/main/webapp/components/ExplorerCanvas/**
-plugin-dashboard/src/main/webapp/docs/**
+dashboard/src/main/webapp/components/ExplorerCanvas/**
+dashboard/src/main/webapp/docs/**
 
 
 For both the above listed sub-components or other bundled sub-components also additional or separate copyright notices
@@ -206,10 +206,10 @@ and license terms may apply. Your use of the code for these sub-components is al
 as described below:
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/angular/*
-plugin-dashboard/src/main/webapp/components/angular-mocks/*
-plugin-dashboard/src/main/webapp/js/lib/angular-animate*
-plugin-dashboard/src/main/webapp/js/lib/angular-route*
+dashboard/src/main/webapp/components/angular/*
+dashboard/src/main/webapp/components/angular-mocks/*
+dashboard/src/main/webapp/js/lib/angular-animate*
+dashboard/src/main/webapp/js/lib/angular-route*
 
     The MIT License
 
@@ -234,7 +234,7 @@ plugin-dashboard/src/main/webapp/js/lib/angular-route*
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/angular-bootstrap/*
+dashboard/src/main/webapp/components/angular-bootstrap/*
 
     The MIT License
     Copyright (c) 2012-2014 the AngularUI Team, https://github.com/organizations/angular-ui/teams/291112
@@ -258,7 +258,7 @@ plugin-dashboard/src/main/webapp/components/angular-bootstrap/*
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/angular-ui-tree/**
+dashboard/src/main/webapp/components/angular-ui-tree/**
 
     The MIT License (MIT)
 
@@ -282,7 +282,9 @@ plugin-dashboard/src/main/webapp/components/angular-ui-tree/**
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/bootstrap/**
+dashboard/src/main/webapp/components/bootstrap/**
+plugins/skeleton-package/src/main/resources/instructions/bootstrap/*
+plugins/skeleton-package/src/main/resources/instructions/js/bootstrap.min.js
 
     The MIT License (MIT)
 
@@ -307,10 +309,10 @@ plugin-dashboard/src/main/webapp/components/bootstrap/**
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/bootstrap-chosen/*
-plugin-dashboard/src/main/webapp/components/font-awesome/css/*
-plugin-dashboard/src/main/webapp/components/font-awesome/less/*
-plugin-dashboard/src/main/webapp/components/font-awesome/scss/*
+dashboard/src/main/webapp/components/bootstrap-chosen/*
+dashboard/src/main/webapp/components/font-awesome/css/*
+dashboard/src/main/webapp/components/font-awesome/less/*
+dashboard/src/main/webapp/components/font-awesome/scss/*
 
     These components are distributed under the MIT license, without specifying a
     copyright:
@@ -336,7 +338,7 @@ plugin-dashboard/src/main/webapp/components/font-awesome/scss/*
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/chosen/**
+dashboard/src/main/webapp/components/chosen/**
 
     Chosen
 
@@ -364,7 +366,7 @@ plugin-dashboard/src/main/webapp/components/chosen/**
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/es5-shim/*
+dashboard/src/main/webapp/components/es5-shim/*
 
     The MIT License (MIT)
 
@@ -389,7 +391,7 @@ plugin-dashboard/src/main/webapp/components/es5-shim/*
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/fastclick/**
+dashboard/src/main/webapp/components/fastclick/**
 
     Copyright (C) 2012 The Financial Times Ltd.
 
@@ -412,7 +414,7 @@ plugin-dashboard/src/main/webapp/components/fastclick/**
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/flot/**
+dashboard/src/main/webapp/components/flot/**
 
     Copyright (c) 2007-2013 IOLA and Ole Laursen
 
@@ -438,13 +440,13 @@ plugin-dashboard/src/main/webapp/components/flot/**
     OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/font-awesome/fonts/*
+dashboard/src/main/webapp/components/font-awesome/fonts/*
 
     Licensed under the SIL OFL 1.1 License, without specific license text provided.
     For general information about the SIL OFL License: http://scripts.sil.org/OFL
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/jasmine-jquery/**
+dashboard/src/main/webapp/components/jasmine-jquery/**
 
     Copyright (c) 2010-2014 Wojciech Zawistowski, Travis Jeffery
 
@@ -468,7 +470,7 @@ plugin-dashboard/src/main/webapp/components/jasmine-jquery/**
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/jquery/**
+dashboard/src/main/webapp/components/jquery/**
 
     Copyright 2013 jQuery Foundation and other contributors
     http://jquery.com/
@@ -493,7 +495,7 @@ plugin-dashboard/src/main/webapp/components/jquery/**
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/respond/**
+dashboard/src/main/webapp/components/respond/**
 
     Copyright (c) 2012 Scott Jehl
 
@@ -519,7 +521,7 @@ plugin-dashboard/src/main/webapp/components/respond/**
     OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/components/underscore/**
+dashboard/src/main/webapp/components/underscore/**
 
     Copyright (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative
     Reporters & Editors
@@ -546,7 +548,7 @@ plugin-dashboard/src/main/webapp/components/underscore/**
     OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js
+dashboard/src/main/webapp/js/lib/angular-ui-router.js
 
     The MIT License
 
@@ -570,13 +572,43 @@ plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 
-
 ------------------------------------------------------------------------------------------------------------------------
-plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls*
+dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls*
 
     The MIT License
 
     Copyright (c) 2012-2014 the AngularUI Team, https://github.com/organizations/angular-ui/teams/291112
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+------------------------------------------------------------------------------------------------------------------------
+plugins/skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js
+
+    jQuery is released under the MIT License.
+
+    "Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors"
+
+    This version of jQuery includes Sizzle.js, which is also released under the MIT License.
+
+    "Copyright 2013 jQuery Foundation, Inc. and other contributors"
+
+    The content of the MIT License is:
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
