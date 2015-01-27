@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,19 +34,15 @@ public class StringCodecFactory {
      * @param codecs a map of codecs to bind to their symbolic names.  The map becomes immutable.
      */
     public StringCodecFactory(Map<String, StringCodec> codecs) {
-        this.codecs = new HashMap<String, StringCodec>(codecs); // create a private immutable copy of the mapping
+        // create a private immutable copy of the mapping
+        this.codecs = new HashMap<>(codecs.size());
+        // force all keys to lowercase
+        for (Map.Entry<String, StringCodec> entry : codecs.entrySet()) {
+            String key = entry.getKey();
+            if (key != null) {
+                key = key.toLowerCase();
     }
-
-    /**
-     * Requests which encoder to use for the givn symbolic name.
-     * @param encoding the symbolic name of the encoder that is requested
-     * @return the stringcodec to use, which might be a fall-back encoder or null if non was defined.
-     */
-    public StringCodec getStringCodec(String encoding) {
-        if (codecs.containsKey(encoding)) {
-            return codecs.get(encoding);
-        } else {
-            return codecs.get(null);
+            this.codecs.put(key, entry.getValue());
         }
     }
 
@@ -56,6 +52,50 @@ public class StringCodecFactory {
      */
     public StringCodec getStringCodec() {
         return codecs.get(null);
+    }
+
+    /**
+     * Requests which encoder to use for the given symbolic name.
+     * @param encoding the symbolic name of the encoder that is requested
+     * @return the {@link StringCodec} to use, which might be a fall-back encoder or null if non was defined.
+     */
+    public StringCodec getStringCodec(String encoding) {
+        return getStringCodec(encoding, null);
+    }
+
+    /**
+     * Requests which encoder to use for the given symbolic name and locale. If a locale is defined as
+     * <code>language_country</code>, e.g. <code>en_GB</code>, it will first try <code>language_country</code> and then
+     * <code>language</code>.
+     *
+     * @param encoding the symbolic name of the encoder that is requested
+     * @param locale the locale for the requested codec
+     * @return the {@link StringCodec} to use, which might be a fall-back encoder or null if non was defined.
+     */
+    public StringCodec getStringCodec(String encoding, String locale) {
+
+        if (encoding != null) {
+            encoding  = encoding.toLowerCase();
+        }
+
+        if (locale != null) {
+            locale = locale.toLowerCase();
+            if (codecs.containsKey(encoding + "." + locale)) {
+                return  codecs.get(encoding + "." + locale);
+            }
+            else if(locale.indexOf('_') > 0) { // Check language only but skip locales like _GB
+                locale = locale.substring(0, locale.indexOf('_'));
+                if (codecs.containsKey(encoding + "." + locale)) {
+                    return  codecs.get(encoding + "." + locale);
+                }
+            }
+        }
+
+        if (codecs.containsKey(encoding)) {
+            return codecs.get(encoding);
+        } else {
+            return codecs.get(null);
+        }
     }
 
     /**
@@ -630,14 +670,14 @@ public class StringCodecFactory {
         }
 
         /**
-         * @see #encode(String)
+         * @see StringCodec#encode(String)
          */
         public static String encodeLocalName(String name) {
             return encodeColon(encodeImpl(name));
         }
 
         /**
-         * @see #decode(String)
+         * @see StringCodec#decode(String)
          */
         public static String decodeLocalName(String name) {
             return decodeImpl(name);
