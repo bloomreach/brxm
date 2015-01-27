@@ -84,8 +84,8 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services-webresources</artifactId>
-      <version>${hippo.services.webresources.version}</version>
+      <artifactId>hippo-services-webfiles</artifactId>
+      <version>${hippo.services.webfiles.version}</version>
       <scope>runtime</scope>
     </dependency>
 

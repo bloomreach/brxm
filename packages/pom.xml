@@ -44,7 +44,7 @@
     <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
-    <hippo.services.webresources.version>1.05.00-SNAPSHOT</hippo.services.webresources.version>
+    <hippo.services.webfiles.version>1.05.00-SNAPSHOT</hippo.services.webfiles.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 
