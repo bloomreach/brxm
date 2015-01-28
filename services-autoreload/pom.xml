@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -48,9 +48,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webresources/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webresources/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webresources/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</url>
   </scm>
 
   <repositories>
