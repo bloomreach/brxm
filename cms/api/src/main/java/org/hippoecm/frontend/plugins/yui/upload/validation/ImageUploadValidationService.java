@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
             @Override
             public void validate(FileUpload upload) {
                 // SVG files do not have a fixed size so they are always OK
-                if (!ResourceHelper.isSvgMimeType(upload.getContentType())) {
+                if (!MimeTypeHelper.isSvgMimeType(upload.getContentType())) {
                     validateSizes(upload);
                 }
             }

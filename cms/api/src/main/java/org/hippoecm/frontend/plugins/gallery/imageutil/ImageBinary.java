@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
-import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,14 +73,14 @@ public class ImageBinary implements Binary {
 
         this.fileName = fileName;
 
-        if (ResourceHelper.isSvgMimeType(mimeType)) {
+        if (MimeTypeHelper.isSvgMimeType(mimeType)) {
             // Sanselan does not recognize SVG files, so do not auto-detect the MIME type and color model
-            this.mimeType = ResourceHelper.MIME_TYPE_SVG;
+            this.mimeType = MimeTypeHelper.MIME_TYPE_SVG;
             this.colorModel = ColorModel.UNKNOWN;
         } else {
             final ImageInfo info = createImageInfo();
 
-            this.mimeType = ResourceHelper.sanitizeMimeType(Strings.isEmpty(mimeType) ? info.getMimeType() : mimeType);
+            this.mimeType = MimeTypeHelper.sanitizeMimeType(Strings.isEmpty(mimeType) ? info.getMimeType() : mimeType);
             try {
                 colorModel = parseColorModel(info);
             } catch (RepositoryException e) {
@@ -134,7 +134,7 @@ public class ImageBinary implements Binary {
      * @param info Sanselan image metadata
      */
     private ColorModel parseColorModel(final ImageInfo info) throws RepositoryException {
-        if (ResourceHelper.MIME_TYPE_JPEG.equals(mimeType)) {
+        if (MimeTypeHelper.isJpegMimeType(mimeType)) {
             switch(info.getColorType()) {
                 case ImageInfo.COLOR_TYPE_RGB:
                     return ColorModel.RGB;

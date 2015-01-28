@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.InputStream;
 
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -142,16 +142,16 @@ public class ImageMetaDataTest {
     public void testObscureMimeTypes() throws Exception {
         ImageMetaData meta;
 
-        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_CITRIX_GIF, TEST_RGB_GIF);
+        meta = new ImageMetaData(MimeTypeHelper.MIME_TYPE_CITRIX_GIF, TEST_RGB_GIF);
         assertEquals(GIF_MIME_TYPE, meta.getMimeType());
 
-        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_CITRIX_JPEG, TEST_RGB_JPG);
+        meta = new ImageMetaData(MimeTypeHelper.MIME_TYPE_CITRIX_JPEG, TEST_RGB_JPG);
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
 
-        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_PJPEG, TEST_RGB_JPG);
+        meta = new ImageMetaData(MimeTypeHelper.MIME_TYPE_PJPEG, TEST_RGB_JPG);
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
 
-        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_X_PNG, TEST_RGB_PNG);
+        meta = new ImageMetaData(MimeTypeHelper.MIME_TYPE_X_PNG, TEST_RGB_PNG);
         assertEquals(PNG_MIME_TYPE, meta.getMimeType());
 
     }

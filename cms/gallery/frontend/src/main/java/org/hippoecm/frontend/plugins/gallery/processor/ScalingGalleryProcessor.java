@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
@@ -89,7 +90,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
         int width = 0;
         int height = 0;
 
-        if (ResourceHelper.isImageMimeType(mimeType)) {
+        if (MimeTypeHelper.isImageMimeType(mimeType)) {
             final String nodeName = node.getName();
             final ScalingParameters p = scalingParametersMap.get(nodeName);
             if (p != null) {

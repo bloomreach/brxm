@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.editor.type.PlainJcrTypeStore;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
+import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -144,7 +144,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
             RepositoryException {
         try {
             ResourceHelper.validateResource(node, fileName);
-        } catch (ResourceException e) {
+        } catch (InvalidMimeTypeException e) {
             throw new GalleryException("Invalid resource: " + fileName, e);
         }
     }

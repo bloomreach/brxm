@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.imgscalr.Scalr;
 
 /**
@@ -102,11 +102,11 @@ public class ImageUtils {
      * @param mimeType the MIME type to fix
      *
      * @return the fixed MIME type
-     * @deprecated Use ResourceHelper.sanitizeMimeType instead
+     * @deprecated Use MimeTypeHelper.sanitizeMimeType instead
      */
     @Deprecated
     public static String fixMimeType(String mimeType) {
-        return ResourceHelper.sanitizeMimeType(mimeType);
+        return MimeTypeHelper.sanitizeMimeType(mimeType);
     }
 
     /**
@@ -117,7 +117,7 @@ public class ImageUtils {
      * for the given MIME type.
      */
     public static ImageReader getImageReader(String aMimeType) {
-        String mimeType = ResourceHelper.sanitizeMimeType(aMimeType);
+        String mimeType = MimeTypeHelper.sanitizeMimeType(aMimeType);
         Iterator<ImageReader> readers = ImageIO.getImageReadersByMIMEType(mimeType);
         if (readers == null || !readers.hasNext()) {
             return null;
@@ -133,7 +133,7 @@ public class ImageUtils {
      * for the given MIME type.
      */
     public static ImageWriter getImageWriter(String aMimeType) {
-        String mimeType = ResourceHelper.sanitizeMimeType(aMimeType);
+        String mimeType = MimeTypeHelper.sanitizeMimeType(aMimeType);
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mimeType);
         if (writers == null || !writers.hasNext()) {
             return null;

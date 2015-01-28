@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Calendar;
 
 import javax.jcr.Binary;
@@ -40,118 +37,23 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceHelper {
 
-    public static final String MIME_TYPE_JPEG           = "image/jpeg";
-    public static final String MIME_TYPE_PJPEG          = "image/pjpeg";
-    public static final String MIME_TYPE_CITRIX_JPEG    = "image/x-citrix-pjpeg";
-
-    public static final String MIME_TYPE_GIF            = "image/gif";
-    public static final String MIME_TYPE_CITRIX_GIF     = "image/x-citrix-gif";
-
-    public static final String MIME_TYPE_PNG            = "image/png";
-    public static final String MIME_TYPE_X_PNG          = "image/x-png";
-
-    public static final String MIME_TYPE_PDF            = "application/pdf";
-
-    public static final String MIME_TYPE_SVG            = "image/svg+xml";
-    public static final String MIME_TYPE_XML            = "text/xml";
-
-    public static final String MIMETYPE_IMAGE_PREFIX    = "image/";
-
     static final Logger log = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
     }
 
     /**
-     * Mimetypes can be a tricky thing as browsers and/or environments tend to alter them without good reason. This
-     * method will try to fix any of the quirks concerning mimetypes that are found out there.
-     *
-     * @param mimeType  The mimetype that needs to be sanitized.
-     * @return A standard compliant mimetype in lowercase
+     * @deprecated As version 2.28.00, use {@link MimeTypeHelper#validateMimeType(java.io.InputStream, String)} instead
+     * @param resource
+     * @throws ResourceException
+     * @throws RepositoryException
      */
-    public static String sanitizeMimeType(final String mimeType) {
-        // IE uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
-        // doesn't have an ImageReader. Simply replacing the MIME type with image/jpeg solves this.
-        // For more info see http://www.iana.org/assignments/media-types/image/ and
-        // http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
-        if (MIME_TYPE_PJPEG.equalsIgnoreCase(mimeType)) {
-            return MIME_TYPE_JPEG;
-        }
-
-        // Citrix environments change the mimetype of jpeg and gif files.
-        if (MIME_TYPE_CITRIX_JPEG.equalsIgnoreCase(mimeType)) {
-            return MIME_TYPE_JPEG;
-        } else if (MIME_TYPE_CITRIX_GIF.equalsIgnoreCase(mimeType)) {
-            return MIME_TYPE_GIF;
-        }
-
-        // Before it was accepted as a standard mimetype, PNG images where marked as image/x-png which is still the
-        // case for IE8
-        if (MIME_TYPE_X_PNG.equalsIgnoreCase(mimeType)) {
-            return MIME_TYPE_PNG;
-        }
-
-        return mimeType.toLowerCase();
-    }
-
-    public static void validateResource(Node resource, String filename) throws ResourceException, RepositoryException {
+    @Deprecated
+    public static void validateResource(Node resource, String filename) throws RepositoryException, InvalidMimeTypeException {
         String mimeType = (resource.hasProperty(JcrConstants.JCR_MIMETYPE) ?
                 resource.getProperty(JcrConstants.JCR_MIMETYPE).getString() : "");
-        validateMimeType(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream(),
-                         mimeType);
-    }
-
-    /**
-     * Validate if the given data <code>inputStream</code> has the expected mime type identified by <code>mimeType</code>.
-     * Exception will throw if the MimeType is invalid
-     *
-     * @param inputStream
-     * @param mimeType
-     * @throws ResourceException
-     */
-    public static void validateMimeType(final InputStream inputStream, final String mimeType) throws ResourceException {
-        try {
-            String sanitizeMimeType = sanitizeMimeType(mimeType);
-            if (isSvgMimeType(sanitizeMimeType)) {
-                // ignore SVG images and text/xml mime types
-                return;
-            }
-            if (isImageMimeType(sanitizeMimeType)) {
-                ImageInfo imageInfo = new ImageInfo();
-                imageInfo.setInput(inputStream);
-                if (imageInfo.check()) {
-                    String imageInfoMimeType = imageInfo.getMimeType();
-                    if (imageInfoMimeType == null) {
-                        throw new ResourceException("impermissible image type content");
-                    } else {
-                        imageInfoMimeType = sanitizeMimeType(imageInfoMimeType);
-                        if (!imageInfoMimeType.equals(sanitizeMimeType)) {
-                            throw new ResourceException("mismatch image mime type");
-                        }
-                    }
-                } else {
-                    throw new ResourceException("impermissible image type content");
-                }
-            } else if (sanitizeMimeType.equals(MIME_TYPE_PDF)) {
-                String line;
-                line = new BufferedReader(new InputStreamReader(inputStream)).readLine().toUpperCase();
-                if (!line.startsWith("%PDF-")) {
-                    throw new ResourceException("impermissible pdf type content");
-                }
-            } else if (mimeType.equals("application/postscript")) {
-                String line;
-                line = new BufferedReader(new InputStreamReader(inputStream)).readLine().toUpperCase();
-                if (!line.startsWith("%!")) {
-                    throw new ResourceException("impermissible postscript type content");
-                }
-            } else {
-                // This method can be overridden to allow more such checks on content type.  if such an override
-                // wants to be really strict and not allow unknown content, the following thrown exception inputStream to be included
-                // throw new ValueFormatException("impermissible unrecognized type content");
-            }
-        } catch (IOException ex) {
-            throw new ResourceException("impermissible unknown type content");
-        }
+        MimeTypeHelper.validateMimeType(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream(),
+                mimeType);
     }
 
     /**
@@ -290,25 +192,5 @@ public class ResourceHelper {
      */
     public static ValueFactory getValueFactory(Node node) throws RepositoryException {
         return node.getSession().getValueFactory();
-    }
-
-    /**
-     * Checks whether the given MIME type indicates an image.
-     *
-     * @param mimeType the MIME type to check
-     * @return true if the given MIME type indicates an image, false otherwise.
-     */
-    public static boolean isImageMimeType(String mimeType) {
-        return mimeType.startsWith(MIMETYPE_IMAGE_PREFIX);
-    }
-
-    public static boolean isSvgMimeType(final String mimeType) {
-        // Uploaded SVG images are stored in a file on disk. For some SVG files the MIME type
-        // is then incorrectly read as 'text/xml'. We assume those files are OK too.
-        return MIME_TYPE_SVG.equals(mimeType) || MIME_TYPE_XML.equals(mimeType);
-    }
-
-    public static boolean isPdfMimeType(final String mimeType){
-        return MIME_TYPE_PDF.equalsIgnoreCase(mimeType);
     }
 }

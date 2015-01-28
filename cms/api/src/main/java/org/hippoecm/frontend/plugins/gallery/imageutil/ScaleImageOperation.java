@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +124,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
     @Override
     public void execute(final InputStream data, final String mimeType) throws GalleryException {
-        if (ResourceHelper.isSvgMimeType(mimeType)) {
+        if (MimeTypeHelper.isSvgMimeType(mimeType)) {
             try {
                 processSvg(data);
             } catch (IOException e) {

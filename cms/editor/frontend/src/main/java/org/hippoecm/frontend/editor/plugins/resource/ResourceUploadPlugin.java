@@ -105,7 +105,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
         try {
             ResourceHelper.setDefaultResourceProperties(node, mimeType, upload.getInputStream(), fileName);
 
-            if (ResourceHelper.isPdfMimeType(mimeType)) {
+            if (MimeTypeHelper.isPdfMimeType(mimeType)) {
                 InputStream inputStream = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                 ResourceHelper.handlePdfAndSetHippoTextProperty(node, inputStream);
             }

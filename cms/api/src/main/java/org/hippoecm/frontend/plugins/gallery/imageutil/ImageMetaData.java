@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public class ImageMetaData implements IClusterable {
     private String fileName;
 
     public ImageMetaData(String mimeType, String fileName) {
-        this.mimeType = ResourceHelper.sanitizeMimeType(mimeType);
+        this.mimeType = MimeTypeHelper.sanitizeMimeType(mimeType);
         this.fileName = fileName;
     }
 
@@ -121,7 +121,7 @@ public class ImageMetaData implements IClusterable {
     }
 
     public boolean isJpeg() {
-        return ResourceHelper.MIME_TYPE_JPEG.equals(mimeType);
+        return MimeTypeHelper.isJpegMimeType(mimeType);
     }
 
     public ColorModel getColorModel() {
