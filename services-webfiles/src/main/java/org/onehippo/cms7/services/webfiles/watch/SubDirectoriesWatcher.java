@@ -36,12 +36,7 @@ class SubDirectoriesWatcher implements FileSystemListener {
 
     private static final Logger log = LoggerFactory.getLogger(SubDirectoriesWatcher.class);
 
-    private static final DirectoryStream.Filter<Path> DIRECTORY_FILTER = new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(final Path path) throws IOException {
-            return Files.isDirectory(path);
-        }
-    };
+    private static final DirectoryStream.Filter<Path> DIRECTORY_FILTER = path -> Files.isDirectory(path);
 
     private final Path rootDirectory;
     private final PathChangesListener listener;
@@ -76,6 +71,7 @@ class SubDirectoriesWatcher implements FileSystemListener {
         createdPaths.clear();
         modifiedPaths.clear();
         deletedPaths.clear();
+        notifyStart();
     }
 
     @Override
@@ -132,8 +128,10 @@ class SubDirectoriesWatcher implements FileSystemListener {
         removeSubPaths(modifiedPaths);
 
         if (!modifiedPaths.isEmpty()) {
-            callListener(modifiedPaths);
+            notifyPathsChanged(modifiedPaths);
         }
+
+        notifyStop();
     }
 
     private static void removeSubPaths(final SortedSet<Path> sortedPaths) {
@@ -149,24 +147,53 @@ class SubDirectoriesWatcher implements FileSystemListener {
         }
     }
 
-    private void callListener(final Set<Path> changedPaths) {
+    private void notifyStart() {
+        log.debug("Start change");
+        try {
+            listener.onStart();
+        } catch (RuntimeException e) {
+            log.warn("Exception by listener '{}' when change started", listener, e);
+        }
+    }
+
+    private void notifyPathsChanged(final Set<Path> changedPaths) {
         log.debug("Paths changed: {}", changedPaths);
         try {
             listener.onPathsChanged(rootDirectory, changedPaths);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Exception by listener '{}' while processing paths {}", listener, changedPaths, e);
+        }
+    }
+
+    private void notifyStop() {
+        log.debug("Stop change");
+        try {
+            listener.onStop();
+        } catch (RuntimeException e) {
+            log.warn("Exception by listener '{}' when change stopped", listener, e);
         }
     }
 
     static interface PathChangesListener {
 
         /**
-         * Called when a directory in one of the watched subdirectories changes.
+         * Called when one or more directories in one of the watched subdirectories start changing.
+         */
+        void onStart();
+
+        /**
+         * Called when one of more directories in one of the watched subdirectories have changed.
+         *
          * @param watchedRootDir the (absolute) root directory of the watcher
          * @param changedPaths the (absolute) paths that changed. Each path is either the path of a created or
          *                     modified entry, or the containing directory of a deleted entry.
          */
         void onPathsChanged(final Path watchedRootDir, final Set<Path> changedPaths);
+
+        /**
+         * Called when one or more directories in one of the watched subdirectories have stopped changing.
+         */
+        void onStop();
 
     }
 

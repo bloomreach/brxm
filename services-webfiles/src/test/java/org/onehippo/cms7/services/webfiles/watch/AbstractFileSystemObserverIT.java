@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import org.apache.commons.io.FileUtils;
@@ -35,7 +34,24 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.awaitQuietly;
+import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.forceTouch;
 
+/**
+ * Tests a file system observer implementation. Each file system observer is assumed
+ * to process file system changes in a single background thread. The test ensures that
+ * file system modifications by the test never interleave with this background thread
+ * by synchronizing via cyclic barriers for two parties (one for the testing thread,
+ * and one for the background thread of the file system observer). These barriers ensure
+ * the following thread interleaving:
+ *
+ * 1. [fs observer] start observing
+ * 2. [test] modify file system
+ * --> both threads await startRecording
+ * 3. [fs observer] process changes, which are recorded in the changes listener of the test
+ * --> both threads await stopRecording
+ * 4. [test] verify recorded changes
+ */
 public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     protected GlobFileNameMatcher fileNameMatcher;
@@ -68,7 +84,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     public void create_file() throws IOException, InterruptedException {
         observeTestBundle();
         final File newFile = new File(jsDir, "new.js");
-        FileTestUtils.forceTouch(newFile);
+        forceTouch(newFile);
         changesListener.awaitChanges();
         changesListener.assertCreated(newFile);
     }
@@ -76,7 +92,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     @Test(timeout = 5000)
     public void modify_file() throws IOException, InterruptedException {
         observeTestBundle();
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(scriptJs);
     }
@@ -84,8 +100,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     @Test(timeout = 5000)
     public void modify_two_files() throws IOException, InterruptedException {
         observeTestBundle();
-        FileTestUtils.forceTouch(styleCss);
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(styleCss);
+        forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(styleCss, scriptJs);
     }
@@ -94,16 +110,16 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     public void modify_file_multiple_times() throws IOException, InterruptedException {
         observeTestBundle();
 
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(scriptJs);
 
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(scriptJs);
 
-        FileTestUtils.forceTouch(scriptJs);
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(scriptJs);
+        forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(scriptJs);
     }
@@ -159,7 +175,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(newDirRenamed);
 
         final File newFileinRenamedDir = new File(newDirRenamed, "newFile.js");
-        FileTestUtils.forceTouch(newFileinRenamedDir);
+        forceTouch(newFileinRenamedDir);
         changesListener.awaitChanges();
         changesListener.assertCreated(newFileinRenamedDir);
     }
@@ -200,7 +216,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(newDir);
 
         File newFile = new File(newDir, "newFile.css");
-        FileTestUtils.forceTouch(newFile);
+        forceTouch(newFile);
         changesListener.awaitChanges();
         changesListener.assertCreated(newFile);
     }
@@ -315,7 +331,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         FileUtils.forceMkdir(svnDir);
 
         File file = new File(svnDir, "test.css");
-        FileTestUtils.forceTouch(file);
+        forceTouch(file);
 
         changesListener.awaitChanges();
         changesListener.assertNoChangesFor(svnDir, file);
@@ -338,11 +354,11 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         fileSystemObserver.registerDirectory(secondBundleDir.toPath(), secondBundleListener);
 
         // modify test bundle
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(scriptJs);
 
         // modify second bundle
         File fileInSecondBundle = new File(secondBundleDir, "file.js");
-        FileTestUtils.forceTouch(fileInSecondBundle);
+        forceTouch(fileInSecondBundle);
 
         // wait until both listeners recorded changes
         changesListener.awaitStartRecordingChanges();
@@ -361,27 +377,16 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
         fileSystemObserver.shutdown();
 
-        FileTestUtils.forceTouch(scriptJs);
+        forceTouch(scriptJs);
         Thread.sleep(1000);
         changesListener.assertNoChanges();
-    }
-
-    private static void awaitQuietly(final CyclicBarrier barrier) {
-        if (barrier != null) {
-            try {
-                barrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                fail("Awaiting barrier failed: " + e.toString());
-            }
-        }
     }
 
     private static class ChangesListener implements FileSystemListener {
 
         private volatile CyclicBarrier startRecording = new CyclicBarrier(2);
         private volatile CyclicBarrier stopRecording = new CyclicBarrier(2);
-        
-        private boolean recordingChanges = false;
+        private volatile boolean recordingChanges = false;
         private List<String> recordedErrors = Collections.synchronizedList(new ArrayList<>());
         private final List<Path> created = Collections.synchronizedList(new ArrayList<>());
         private final List<Path> modified = Collections.synchronizedList(new ArrayList<>());

@@ -150,6 +150,12 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
         return null;
     }
 
+
+    @Override
+    public void onStart() {
+        // nothing to do, but needed for thread synchronization in tests
+    }
+
     @Override
     public void onPathsChanged(final Path watchedRootDir, final Set<Path> changedPaths) {
         final long startTime = System.currentTimeMillis();
@@ -172,6 +178,11 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
         }
         final long endTime = System.currentTimeMillis();
         log.info("Replacing web files took {} ms", endTime - startTime);
+    }
+
+    @Override
+    public void onStop() {
+        // nothing to do, but needed for thread synchronization in tests
     }
 
     private String getBundleSubDir(final Path relChangedDir) {

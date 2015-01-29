@@ -49,7 +49,6 @@ public class AbstractWatcherIT {
                 + File.separator + watchedModule
                 + File.separator + WebFilesWatcher.WEB_FILES_LOCATION_IN_MODULE;
         webFilesDirectory = new File(webFilesDirectoryPath);
-        webFilesDirectory.deleteOnExit();
         FileUtils.forceMkdir(webFilesDirectory);
         webFilesDirectory.deleteOnExit();
 
@@ -59,7 +58,6 @@ public class AbstractWatcherIT {
         System.setProperty(WebFilesWatcher.PROJECT_BASEDIR_PROPERTY, projectBaseDir.toString());
 
         testBundleDir = new File(webFilesDirectory, "testbundle");
-        assertTrue(testBundleDir.mkdir());
 
         final File testBundleFixture = FileUtils.toFile(getClass().getResource("/testbundle"));
         assertNotNull(testBundleFixture);

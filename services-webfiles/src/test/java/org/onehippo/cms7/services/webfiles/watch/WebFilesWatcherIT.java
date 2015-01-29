@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jcr.RepositoryException;
@@ -37,6 +38,8 @@ import org.onehippo.cms7.services.webfiles.LogRecorder;
 import org.onehippo.cms7.services.webfiles.WebFileEvent;
 import org.onehippo.cms7.services.webfiles.WebFileException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
@@ -50,10 +53,27 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.awaitQuietly;
 
+/**
+ * Tests {@link org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher}, which is assumed
+ * to watch file system changes in a single background thread. The test ensures that
+ * file system modifications by the test never interleave with this background thread
+ * by synchronizing via cyclic barriers for two parties (one for the testing thread,
+ * and one for the background thread of the file system observer). These barriers ensure
+ * the following thread interleaving:
+ *
+ * 1. [watcher] start watching
+ * 2. [test] modify file system
+ * --> both threads await startFileSystemChanges
+ * 3. [watcher] process changes, which may trigger imports in the web files service
+ * --> both threads await stopRecording
+ * 4. [test] verify imports in the web file service
+ */
 public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     private static final long WATCH_DELAY_MILLIS = 500;
+    private static final Logger log = LoggerFactory.getLogger(WebFilesWatcherIT.class);
 
     private static LogRecorder logRecorder;
 
@@ -62,7 +82,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
     private WebFilesWatcher watcher;
     private HippoEventBus eventBus;
     private AutoReloadService autoReload;
-    private Capture<WebFileEvent> event;
+    private CyclicBarrier startFileSystemChanges;
+    private CyclicBarrier stopFileSystemChanges;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -77,6 +98,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         session = createNiceMock(Session.class);
         eventBus = createNiceMock(HippoEventBus.class);
         autoReload = createMock(AutoReloadService.class);
+        startFileSystemChanges = new CyclicBarrier(2);
+        stopFileSystemChanges = new CyclicBarrier(2);
     }
 
     private void createWatcher(final String includedFiles, final String... excludedDirectories) {
@@ -86,19 +109,18 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         config.excludeDirs(excludedDirectories);
         config.useWatchServiceOnOsNames(WebFilesWatcherConfig.DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES);
         config.setWatchDelayMillis(WATCH_DELAY_MILLIS);
-        watcher = new WebFilesWatcher(config, webFilesService, session, eventBus, autoReload);
-    }
 
-    private void expectEventBusActivity() {
-        event = new Capture<>();
-        eventBus.post(capture(event));
-        expectLastCall();
-    }
+        watcher = new WebFilesWatcher(config, webFilesService, session, eventBus, autoReload) {
+            @Override
+            public void onStart() {
+                awaitQuietly(startFileSystemChanges);
+            }
 
-    private void waitForEventBusActivity() throws InterruptedException {
-        while (!event.hasCaptured()) {
-            Thread.sleep(100);
-        }
+            @Override
+            public void onStop() {
+                awaitQuietly(stopFileSystemChanges);
+            }
+        };
     }
 
     private void replayWebFilesService() {
@@ -206,12 +228,11 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         assertTrue(newCss.createNewFile());
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
@@ -226,12 +247,11 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         FileUtils.forceMkdir(newDir);
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
@@ -258,12 +278,11 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         FileUtils.touch(styleCss);
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
@@ -293,12 +312,11 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         FileUtils.forceDelete(styleCss);
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
@@ -313,13 +331,12 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         final File newCss = new File(cssDir, "new.css");
         FileUtils.moveFile(styleCss, newCss);
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
@@ -336,12 +353,11 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         FileUtils.deleteDirectory(cssSubDir);
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
@@ -354,19 +370,26 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         autoReload.broadcastPageReload();
         expectLastCall();
 
-        expectEventBusActivity();
         replayWebFilesService();
 
         createWatcher("*");
         FileUtils.deleteDirectory(cssDir);
-        waitForEventBusActivity();
+        waitForFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
     private void waitForFileSystemChanges() throws InterruptedException {
-        Thread.sleep((long) (WATCH_DELAY_MILLIS * 1.5));
+        log.debug("Wait until file system changes start...");
+        awaitQuietly(startFileSystemChanges);
+        log.debug("Wait until file system changes stop...");
+        awaitQuietly(stopFileSystemChanges);
+        log.debug("Waiting done");
+    }
+
+    private void waitForNoFileSystemChanges() throws InterruptedException {
+        Thread.sleep(2000);
     }
 
     @Test
@@ -423,7 +446,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         watcher.shutdown();
 
         FileUtils.touch(styleCss);
-        waitForFileSystemChanges();
+        waitForNoFileSystemChanges();
 
         verifyWebFilesService();
         assertEquals("nothing should have been imported after the watcher has been shut down", 0, counter.get());
@@ -443,7 +466,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
         final File newDir = new File(testBundleDir, "newDir");
         FileUtils.forceMkdir(newDir);
-        waitForFileSystemChanges();
+        waitForNoFileSystemChanges();
 
         verifyWebFilesService();
         logRecorder.assertNoWarningsOrErrorsLogged();

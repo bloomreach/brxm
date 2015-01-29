@@ -18,17 +18,21 @@ package org.onehippo.cms7.services.webfiles.watch;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileTestUtils {
+import static org.junit.Assert.fail;
 
-    private static final Logger log = LoggerFactory.getLogger(FileTestUtils.class);
+class WatchTestUtils {
 
-    private FileTestUtils() {
+    private static final Logger log = LoggerFactory.getLogger(WatchTestUtils.class);
+
+    private WatchTestUtils() {
     }
 
     /**
@@ -36,7 +40,7 @@ public class FileTestUtils {
      * timestamp after each call. It also does not set the last modified time twice when creating a new file.
      * Note that while last modified time is set in milliseconds, most platforms actually round it down to seconds.
      */
-    public static void forceTouch(final File file) throws IOException {
+    static void forceTouch(final File file) throws IOException {
         if (!file.exists()) {
             OutputStream out = FileUtils.openOutputStream(file);
             IOUtils.closeQuietly(out);
@@ -51,6 +55,22 @@ public class FileTestUtils {
             boolean success = file.setLastModified(newModified);
             if (!success) {
                 throw new IOException("Unable to set the last modification time for " + file);
+            }
+        }
+    }
+
+    /**
+     * Awaits the given barrier, and fails the calling test if the waiting
+     * is interrupted or the barrier is broken. When the barrier is null
+     * this method returns immediately.
+     * @param barrier the barrier to await, or null if nothing should be done.
+     */
+    static void awaitQuietly(final CyclicBarrier barrier) {
+        if (barrier != null) {
+            try {
+                barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                fail("Awaiting barrier failed: " + e.toString());
             }
         }
     }
