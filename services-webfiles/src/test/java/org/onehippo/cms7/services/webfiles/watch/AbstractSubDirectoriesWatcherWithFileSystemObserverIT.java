@@ -211,7 +211,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     public void create_dir_and_file_in_one_go() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         File fooCss = new File(newDir, "foo.css");
-        assertTrue(fooCss.mkdirs());
+        assertTrue(newDir.mkdirs());
         assertTrue(fooCss.createNewFile());
         callbackTracker.awaitCallback();
 
@@ -222,7 +222,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     public void create_dir_and_file_and_delete_again() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         File fooCss = new File(newDir, "foo.css");
-        assertTrue(fooCss.mkdirs());
+        assertTrue(newDir.mkdirs());
         assertTrue(fooCss.createNewFile());
         callbackTracker.awaitCallback();
 
