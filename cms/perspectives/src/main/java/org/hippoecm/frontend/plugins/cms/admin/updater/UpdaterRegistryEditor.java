@@ -95,7 +95,7 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
 
     @Override
     protected boolean isScriptEditorReadOnly() {
-        return isUpdater();
+        return false;
     }
 
     @Override
