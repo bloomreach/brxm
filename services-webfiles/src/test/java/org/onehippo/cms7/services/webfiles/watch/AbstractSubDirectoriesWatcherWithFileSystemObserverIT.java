@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT extends AbstractWatcherIT {
@@ -121,18 +123,18 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     @Test(timeout = 5000)
     public void create_directory_rename_it_and_create_file_in_it() throws IOException, InterruptedException {
         final File newDir = new File(testBundleDir, "newDir");
-        newDir.mkdir();
+        assertTrue(newDir.mkdir());
         callbackTracker.awaitCallback();
 
         final File newDirRenamed = new File(testBundleDir, "newDirRenamed");
         FileUtils.moveDirectory(newDir, newDirRenamed);
         callbackTracker.awaitCallback();
 
-        final File newFileinRenamedDir = new File(newDirRenamed, "newFile.js");
-        FileTestUtils.forceTouch(newFileinRenamedDir);
+        final File newFileInRenamedDir = new File(newDirRenamed, "newFile.js");
+        FileTestUtils.forceTouch(newFileInRenamedDir);
         callbackTracker.awaitCallback();
 
-        callbackTracker.assertCallbacks(3, newDir.toPath(), testBundleDir.toPath(), newFileinRenamedDir.toPath());
+        callbackTracker.assertCallbacks(3, newDir.toPath(), testBundleDir.toPath(), newFileInRenamedDir.toPath());
     }
 
     @Test(timeout = 5000)
@@ -149,7 +151,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
 
     @Test(timeout = 5000)
     public void delete_file() throws IOException, InterruptedException {
-        scriptJs.delete();
+        assertTrue(scriptJs.delete());
         callbackTracker.awaitCallback();
 
         callbackTracker.assertCallbacks(1, jsDir.toPath());
@@ -174,7 +176,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     @Test(timeout = 5000)
     public void create_dir() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
-        newDir.mkdir();
+        assertTrue(newDir.mkdir());
         callbackTracker.awaitCallback();
 
         callbackTracker.assertCallbacks(1, newDir.toPath());
@@ -183,10 +185,10 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     @Test(timeout = 5000)
     public void create_dir_then_delete_it() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
-        newDir.mkdir();
+        assertTrue(newDir.mkdir());
         callbackTracker.awaitCallback();
 
-        newDir.delete();
+        assertTrue(newDir.delete());
         callbackTracker.awaitCallback();
 
         callbackTracker.assertCallbacks(2, newDir.toPath(), testBundleDir.toPath());
@@ -209,8 +211,8 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     public void create_dir_and_file_in_one_go() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         File fooCss = new File(newDir, "foo.css");
-        fooCss.mkdirs();
-        fooCss.createNewFile();
+        assertTrue(fooCss.mkdirs());
+        assertTrue(fooCss.createNewFile());
         callbackTracker.awaitCallback();
 
         callbackTracker.assertCallbacks(1, newDir.toPath());
@@ -220,8 +222,8 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     public void create_dir_and_file_and_delete_again() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         File fooCss = new File(newDir, "foo.css");
-        fooCss.mkdirs();
-        fooCss.createNewFile();
+        assertTrue(fooCss.mkdirs());
+        assertTrue(fooCss.createNewFile());
         callbackTracker.awaitCallback();
 
         FileUtils.deleteDirectory(newDir);
@@ -232,7 +234,10 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
 
     @Test(timeout = 5000)
     public void delete_all_sub_dirs() throws IOException, InterruptedException {
-        for (File file : testBundleDir.listFiles()) {
+        final File[] testBundleFiles = testBundleDir.listFiles();
+        assertNotNull(testBundleFiles);
+
+        for (File file : testBundleFiles) {
             if (file.isDirectory()) {
                 FileUtils.deleteDirectory(file);
             }
@@ -245,10 +250,12 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     @Test(timeout = 5000)
     public void delete_all_sub_dirs_with_pauses_result_in_separate_callbacks() throws IOException, InterruptedException {
         List<Path> expectedChangedPaths = new ArrayList<>();
-        for (File file : testBundleDir.listFiles()) {
+
+        final File[] testBundleFiles = testBundleDir.listFiles();
+        assertNotNull(testBundleFiles);
+
+        for (File file : testBundleFiles) {
             if (file.isDirectory()) {
-                // PER ITERATION WE EXPECT NOW THE testBundleDir to be notified,
-                // hence for directories we expect a double watched
                 FileUtils.deleteDirectory(file);
                 callbackTracker.awaitCallback();
                 expectedChangedPaths.add(testBundleDir.toPath());
@@ -256,12 +263,15 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         }
 
         // expect the same number of callbacks as subdirectories in the testbundle since after every delete, we wait for file system changes
-        callbackTracker.assertCallbacks(expectedChangedPaths.size(), expectedChangedPaths.toArray(new Path[0]));
+        callbackTracker.assertCallbacks(expectedChangedPaths.size(), expectedChangedPaths.toArray(new Path[expectedChangedPaths.size()]));
     }
 
     @Test(timeout = 5000)
     public void delete_all_sub_dirs_and_create_new_ones() throws IOException, InterruptedException {
-        for (File file : testBundleDir.listFiles()) {
+        final File[] testBundleFiles = testBundleDir.listFiles();
+        assertNotNull(testBundleFiles);
+
+        for (File file : testBundleFiles) {
             if (file.isDirectory()) {
                 FileUtils.deleteDirectory(file);
             }
@@ -273,10 +283,10 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         File newDir1 = new File(testBundleDir, "newDir1");
         File newDir2 = new File(testBundleDir, "newDir2");
 
-        newDir1.mkdir();
+        assertTrue(newDir1.mkdir());
         callbackTracker.awaitCallback();
 
-        newDir2.mkdir();
+        assertTrue(newDir2.mkdir());
         callbackTracker.awaitCallback();
 
         callbackTracker.assertCallbacks(3, testBundleDir.toPath(), newDir1.toPath(), newDir2.toPath());
@@ -286,12 +296,12 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     public void intellij_safe_write_generates_one_event_for_modified_file() throws IOException, InterruptedException {
         // mimic IntelliJ's safe write sequence: save to a temp file, delete the original and rename the temp file
         File bak = new File(styleCss.getPath() + "__jb_bak__");
-        bak.createNewFile();
+        assertTrue(bak.createNewFile());
         FileUtils.write(bak, "new contents");
         File old = new File(styleCss.getPath() + "__jb_old__");
         FileUtils.moveFile(styleCss, old);
         FileUtils.moveFile(bak, styleCss);
-        old.delete();
+        assertTrue(old.delete());
         callbackTracker.awaitCallback();
 
         callbackTracker.assertCallbacks(1, styleCss.toPath());
@@ -300,7 +310,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
     @Test
     public void excluded_file_is_ignored() throws IOException, InterruptedException {
         File tmpFile = new File(cssDir, "pdf-files-are-not-included.pdf");
-        tmpFile.createNewFile();
+        assertTrue(tmpFile.createNewFile());
         awaitNoChanges();
 
         callbackTracker.assertCallbacks(0);
