@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -101,7 +102,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_file() throws IOException, InterruptedException {
-        scriptJs.delete();
+        assertTrue(scriptJs.delete());
         changesListener.awaitChanges();
         changesListener.assertDeleted(scriptJs);
     }
@@ -132,7 +133,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     @Test(timeout = 5000)
     public void create_directory_rename_it_and_create_file_in_it() throws IOException, InterruptedException {
         final File newDir = new File(testBundleDir, "newDir");
-        newDir.mkdir();
+        assertTrue(newDir.mkdir());
         changesListener.awaitChanges();
         changesListener.assertCreated(newDir);
 
@@ -186,9 +187,9 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     @Test(timeout = 5000)
     public void create_dir_and_file_and_delete_again() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
-        newDir.mkdir();
+        assertTrue(newDir.mkdir());
         File fooCss = new File(newDir, "foo.css");
-        fooCss.createNewFile();
+        assertTrue(fooCss.createNewFile());
         changesListener.awaitChanges();
 
         FileUtils.deleteDirectory(newDir);
@@ -215,7 +216,10 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     public void delete_all_sub_dirs() throws IOException, InterruptedException {
         final List<File> deletedDirs = new ArrayList<>();
 
-        for (File file : testBundleDir.listFiles()) {
+        final File[] bundleFiles = testBundleDir.listFiles();
+        assertNotNull(bundleFiles);
+
+        for (File file : bundleFiles) {
             if (file.isDirectory()) {
                 FileUtils.deleteDirectory(file);
                 deletedDirs.add(file);
@@ -230,7 +234,10 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_all_sub_dirs_and_create_new_ones() throws IOException, InterruptedException {
-        for (File file : testBundleDir.listFiles()) {
+        final File[] bundleFiles = testBundleDir.listFiles();
+        assertNotNull(bundleFiles);
+
+        for (File file : bundleFiles) {
             if (file.isDirectory()) {
                 FileUtils.deleteDirectory(file);
             }
@@ -238,12 +245,12 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.awaitChanges();
 
         File newDir1 = new File(testBundleDir, "newDir1");
-        newDir1.mkdir();
+        assertTrue(newDir1.mkdir());
         changesListener.awaitChanges();
         changesListener.assertCreated(newDir1);
 
         File newDir2 = new File(testBundleDir, "newDir2");
-        newDir2.mkdir();
+        assertTrue(newDir2.mkdir());
         changesListener.awaitChanges();
         changesListener.assertCreated(newDir2);
     }
@@ -251,7 +258,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     @Test(timeout = 5000)
     public void excluded_file_is_ignored() throws IOException, InterruptedException {
         File tmpFile = new File(cssDir, "pdf-files-are-not-included.pdf");
-        tmpFile.createNewFile();
+        assertTrue(tmpFile.createNewFile());
         changesListener.awaitChanges();
         changesListener.assertNoChangesFor(tmpFile);
     }
@@ -333,8 +340,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     private static class ChangesListener implements FileSystemListener {
 
-        private CyclicBarrier startRecording = new CyclicBarrier(2);
-        private CyclicBarrier stopRecording = new CyclicBarrier(2);
+        private volatile CyclicBarrier startRecording = new CyclicBarrier(2);
+        private volatile CyclicBarrier stopRecording = new CyclicBarrier(2);
         
         private boolean recordingChanges = false;
         private List<String> recordedErrors = Collections.synchronizedList(new ArrayList<>());
@@ -342,24 +349,24 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         private final List<Path> modified = Collections.synchronizedList(new ArrayList<>());
         private final List<Path> deleted = Collections.synchronizedList(new ArrayList<>());
 
-        synchronized void awaitChanges() {
+        void awaitChanges() {
             awaitStartRecordingChanges();
             awaitStopRecordingChanges();
         }
 
-        synchronized void awaitStartRecordingChanges() {
+        void awaitStartRecordingChanges() {
             awaitQuietly(startRecording);
         }
 
-        synchronized void awaitStopRecordingChanges() {
+        void awaitStopRecordingChanges() {
             awaitQuietly(stopRecording);
         }
 
-        synchronized void removeStartBarrier() {
+        void removeStartBarrier() {
             startRecording = null;
         }
 
-        synchronized void removeStopBarrier() {
+        void removeStopBarrier() {
             stopRecording = null;
         }
 
