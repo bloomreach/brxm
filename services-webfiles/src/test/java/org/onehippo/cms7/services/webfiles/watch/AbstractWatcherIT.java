@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class AbstractWatcherIT {
@@ -58,9 +59,10 @@ public class AbstractWatcherIT {
         System.setProperty(WebFilesWatcher.PROJECT_BASEDIR_PROPERTY, projectBaseDir.toString());
 
         testBundleDir = new File(webFilesDirectory, "testbundle");
-        testBundleDir.mkdir();
+        assertTrue(testBundleDir.mkdir());
 
         final File testBundleFixture = FileUtils.toFile(getClass().getResource("/testbundle"));
+        assertNotNull(testBundleFixture);
         FileUtils.copyDirectory(testBundleFixture, testBundleDir);
 
         emptyDir = new File(testBundleDir, "empty");
