@@ -27,7 +27,6 @@ import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
 import org.easymock.Capture;
-import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -50,6 +49,7 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class WebFilesWatcherIT extends AbstractWatcherIT {
 
@@ -210,7 +210,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         replayWebFilesService();
 
         createWatcher("*");
-        newCss.createNewFile();
+        assertTrue(newCss.createNewFile());
         waitForEventBusActivity();
 
         verifyWebFilesService();
@@ -329,7 +329,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
     public void removing_subdirectory_imports_parent() throws IOException, InterruptedException {
         final File cssDir = styleCss.getParentFile();
         final File cssSubDir = new File(cssDir, "cssSubDir");
-        cssSubDir.mkdir();
+        assertTrue(cssSubDir.mkdir());
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq(cssDir.getName()), eq(cssDir));
         expectLastCall();
@@ -413,11 +413,9 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         final AtomicInteger counter = new AtomicInteger();
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), anyObject(String.class), anyObject(String.class), anyObject(File.class));
-        expectLastCall().andAnswer(new IAnswer() {
-            public Object answer() {
-                counter.incrementAndGet();
-                return null;
-            }
+        expectLastCall().andAnswer(() -> {
+            counter.incrementAndGet();
+            return null;
         }).anyTimes();
         replayWebFilesService();
 
