@@ -29,11 +29,6 @@
     <level value="error"/>
   </logger>
 
-  <!-- temporary: debug failing unit tests on Jenkins -->
-  <logger name="org.onehippo.cms7.services.webfiles.watch">
-    <level value="debug"/>
-  </logger>
-
   <root>
     <level value="error"/>
     <appender-ref ref="console"/>
