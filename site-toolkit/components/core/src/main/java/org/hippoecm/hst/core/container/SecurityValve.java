@@ -138,8 +138,17 @@ public class SecurityValve extends AbstractBaseOrderableValve {
             }
 
             try {
+                final String queryString = requestContext.getServletRequest().getQueryString();
+                String destinationURL = destinationLink.toUrlForm(requestContext, true);
+                if (queryString != null) {
+                    if (destinationURL.contains("?")) {
+                        destinationURL = destinationURL + "&" + queryString;
+                    } else {
+                        destinationURL = destinationURL + "?" + queryString;
+                    }
+                }
                 HttpSession httpSession = servletRequest.getSession(true);
-                httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, true));
+                httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationURL);
                 if(authenticationRequired) {
                     servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, (securityException != null ? securityException.getLocalizedMessage() : null));
                 } else {
