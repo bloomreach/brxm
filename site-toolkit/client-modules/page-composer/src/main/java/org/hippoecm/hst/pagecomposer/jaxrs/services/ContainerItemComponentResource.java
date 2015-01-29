@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -72,7 +71,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
 
     private ContainerItemHelper containerItemHelper;
     private List<PropertyRepresentationFactory> propertyPresentationFactories;
-    private ContainerItemComponentService containerItemComponentService;
 
     public void setContainerItemHelper(final ContainerItemHelper containerItemHelper) {
         this.containerItemHelper = containerItemHelper;
@@ -80,10 +78,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
 
     public void setPropertyPresentationFactories(List<PropertyRepresentationFactory> propertyPresentationFactories) {
         this.propertyPresentationFactories = propertyPresentationFactories;
-    }
-
-    public void setContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
-        this.containerItemComponentService = containerItemComponentService;
     }
 
     /**
@@ -272,25 +266,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             log.warn("Could not save parameters for variant '{}'", variant, e);
             throw new WebApplicationException(e);
         }
-    }
-
-    /**
-     * Returns an OK response if the container item was successfully locked or an error response otherwise.
-     *
-     * @return An OK response if the component was successfully locked
-     */
-    @POST
-    @Path("/lock")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response lock(final @HeaderParam("versionStamp") long versionStamp) {
-        return tryExecute(() -> {
-            final String containerItemId = getPageComposerContextService().getRequestConfigIdentifier();
-            final Session session = RequestContextProvider.get().getSession();
-            containerItemComponentService.lock(containerItemId, versionStamp, session);
-            log.info("Component locked successfully.");
-            return ok("Component locked successfully.");
-        }, hstRequestContext -> {
-        });
     }
 
     /**

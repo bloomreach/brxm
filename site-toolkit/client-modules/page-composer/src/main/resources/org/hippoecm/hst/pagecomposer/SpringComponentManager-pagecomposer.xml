@@ -56,16 +56,10 @@
     </property>
   </bean>
 
-
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
     <property name="containerItemHelper" ref="containerItemHelper"/>
     <property name="propertyPresentationFactories" ref="pageComposerPropertyPresentationFactories"/>
-    <property name="containerItemComponentService" ref="containerItemComponentService"/>
-  </bean>
-  <bean id="containerItemComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentService">
-    <constructor-arg ref="containerItemHelper"/>
-    <constructor-arg ref="pageComposerContextService"/>
   </bean>
 
   <!--

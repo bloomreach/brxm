@@ -16,8 +16,10 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -25,8 +27,12 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.ITEM_NOT_FOUND;
 
 public class ContainerItemHelper extends AbstractHelper {
 
@@ -49,7 +55,7 @@ public class ContainerItemHelper extends AbstractHelper {
     private HstComponentConfiguration getHstComponentConfiguration(final HstComponentsConfiguration componentsConfiguration,
                                                                    final String itemId) {
 
-        for (HstComponentConfiguration hcc : componentsConfiguration.getComponentConfigurations().values()){
+        for (HstComponentConfiguration hcc : componentsConfiguration.getComponentConfigurations().values()) {
             HstComponentConfiguration found = getHstComponentConfiguration(hcc, itemId);
             if (found != null) {
                 return found;
@@ -94,6 +100,25 @@ public class ContainerItemHelper extends AbstractHelper {
         lockHelper.acquireLock(container, versionStamp);
     }
 
+    /**
+     * Locks the container item identified by containerItemId with the given time stamp. Will throw a {@link
+     * ClientException} if the item cannot be found, is not a container item or is already locked.
+     *
+     * @param containerItemId the identifier of the container item to be locked
+     * @param versionStamp    timestamp used for the lock
+     * @param session         a user bound session
+     * @throws ClientException
+     * @throws RepositoryException
+     */
+    public void lock(String containerItemId, long versionStamp, Session session) throws RepositoryException, ClientException {
+        try {
+            final Node containerItem = pageComposerContextService.getRequestConfigNodeById(containerItemId, NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
+            new HstComponentParameters(containerItem, this).lock(versionStamp);
+            log.info("Component locked successfully.");
+        } catch (ItemNotFoundException e) {
+            throw new ClientException("container item with id " + containerItemId + " not found", ITEM_NOT_FOUND);
+        }
+    }
 
     /**
      * @return Returns the ancestor node (or itself) of type <code>hst:componentcontainer</code> for <code>configNode</code> and <code>null</code> if
