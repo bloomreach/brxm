@@ -50,10 +50,13 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         fileNameMatcher.includeFiles("*.js");
         changesListener = new ChangesListener();
         fileSystemObserver = createFileSystemObserver();
-        fileSystemObserver.registerDirectory(testBundleDir.toPath(), changesListener);
     }
 
     protected abstract FileSystemObserver createFileSystemObserver() throws Exception;
+
+    private void observeTestBundle() throws IOException {
+        fileSystemObserver.registerDirectory(testBundleDir.toPath(), changesListener);
+    }
 
     @After
     public void tearDown() throws InterruptedException {
@@ -63,6 +66,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void create_file() throws IOException, InterruptedException {
+        observeTestBundle();
         final File newFile = new File(jsDir, "new.js");
         FileTestUtils.forceTouch(newFile);
         changesListener.awaitChanges();
@@ -71,6 +75,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void modify_file() throws IOException, InterruptedException {
+        observeTestBundle();
         FileTestUtils.forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(scriptJs);
@@ -78,6 +83,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void modify_two_files() throws IOException, InterruptedException {
+        observeTestBundle();
         FileTestUtils.forceTouch(styleCss);
         FileTestUtils.forceTouch(scriptJs);
         changesListener.awaitChanges();
@@ -86,6 +92,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void modify_file_multiple_times() throws IOException, InterruptedException {
+        observeTestBundle();
+
         FileTestUtils.forceTouch(scriptJs);
         changesListener.awaitChanges();
         changesListener.assertModified(scriptJs);
@@ -102,6 +110,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_file() throws IOException, InterruptedException {
+        observeTestBundle();
         assertTrue(scriptJs.delete());
         changesListener.awaitChanges();
         changesListener.assertDeleted(scriptJs);
@@ -109,6 +118,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void rename_file() throws IOException, InterruptedException {
+        observeTestBundle();
+
         File fooJs = new File(jsDir, "foo.js");
         FileUtils.moveFile(scriptJs, fooJs);
         changesListener.awaitChanges();
@@ -119,6 +130,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void rename_file_and_revert() throws IOException, InterruptedException {
+        observeTestBundle();
+
         File fooJs = new File(jsDir, "foo.js");
         FileUtils.moveFile(scriptJs, fooJs);
         changesListener.awaitChanges();
@@ -132,6 +145,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void create_directory_rename_it_and_create_file_in_it() throws IOException, InterruptedException {
+        observeTestBundle();
+
         final File newDir = new File(testBundleDir, "newDir");
         assertTrue(newDir.mkdir());
         changesListener.awaitChanges();
@@ -151,6 +166,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void move_file_to_other_dir() throws IOException, InterruptedException {
+        observeTestBundle();
+
         File fooJsInCssDir = new File(cssDir, "foo.js");
         FileUtils.moveFile(scriptJs, fooJsInCssDir);
         changesListener.awaitChanges();
@@ -161,6 +178,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void create_dir_then_delete_it() throws IOException, InterruptedException {
+        observeTestBundle();
+
         File newDir = new File(testBundleDir, "newDir");
         FileUtils.forceMkdir(newDir);
         changesListener.awaitChanges();
@@ -173,6 +192,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void create_dir_then_file() throws IOException, InterruptedException {
+        observeTestBundle();
+
         File newDir = new File(testBundleDir, "newDir");
         FileUtils.forceMkdir(newDir);
         changesListener.awaitChanges();
@@ -186,6 +207,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void create_dir_and_file_and_delete_again() throws IOException, InterruptedException {
+        observeTestBundle();
+
         File newDir = new File(testBundleDir, "newDir");
         assertTrue(newDir.mkdir());
         File fooCss = new File(newDir, "foo.css");
@@ -200,6 +223,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_empty_dir() throws IOException, InterruptedException {
+        observeTestBundle();
         FileUtils.deleteDirectory(emptyDir);
         changesListener.awaitChanges();
         changesListener.assertDeleted(emptyDir);
@@ -207,6 +231,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_dir_with_file() throws IOException, InterruptedException {
+        observeTestBundle();
         FileUtils.deleteDirectory(jsDir);
         changesListener.awaitChanges();
         changesListener.assertDeleted(jsDir);
@@ -214,6 +239,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_all_sub_dirs() throws IOException, InterruptedException {
+        observeTestBundle();
+
         final List<File> deletedDirs = new ArrayList<>();
 
         final File[] bundleFiles = testBundleDir.listFiles();
@@ -234,6 +261,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void delete_all_sub_dirs_and_create_new_ones() throws IOException, InterruptedException {
+        observeTestBundle();
+
         final File[] bundleFiles = testBundleDir.listFiles();
         assertNotNull(bundleFiles);
 
@@ -257,6 +286,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test(timeout = 5000)
     public void excluded_file_is_ignored() throws IOException, InterruptedException {
+        observeTestBundle();
         File tmpFile = new File(cssDir, "pdf-files-are-not-included.pdf");
         assertTrue(tmpFile.createNewFile());
         changesListener.awaitChanges();
@@ -267,6 +297,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     public void excluded_dir_is_ignored() throws IOException, InterruptedException {
         fileNameMatcher.excludeDirectories(".git");
 
+        observeTestBundle();
+
         File excludedDir = new File(testBundleDir, ".git");
         FileUtils.forceMkdir(excludedDir);
         changesListener.awaitChanges();
@@ -276,6 +308,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
     @Test(timeout = 5000)
     public void included_file_in_excluded_dir_is_ignored() throws IOException, InterruptedException {
         fileNameMatcher.excludeDirectories(".svn");
+
+        observeTestBundle();
 
         File svnDir = new File(testBundleDir, ".svn");
         FileUtils.forceMkdir(svnDir);
@@ -294,11 +328,13 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
         ChangesListener secondBundleListener = new ChangesListener();
 
-        // only keep the start barrier of the first and the stop barrier of the second listener,
+        // first: only keep the start barrier of the first and the stop barrier of the second listener,
         // so both can be updated simultaneously
         changesListener.removeStopBarrier();
         secondBundleListener.removeStartBarrier();
 
+        // second: observe both bundles
+        observeTestBundle();
         fileSystemObserver.registerDirectory(secondBundleDir.toPath(), secondBundleListener);
 
         // modify test bundle
@@ -321,6 +357,8 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     @Test
     public void shutdown_ends_observation() throws InterruptedException, IOException {
+        observeTestBundle();
+
         fileSystemObserver.shutdown();
 
         FileTestUtils.forceTouch(scriptJs);
