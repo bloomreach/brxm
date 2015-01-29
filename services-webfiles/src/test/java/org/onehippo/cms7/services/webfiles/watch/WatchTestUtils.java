@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -70,6 +72,25 @@ class WatchTestUtils {
             try {
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
+                fail("Awaiting barrier failed: " + e.toString());
+            }
+        }
+    }
+
+    /**
+     * Awaits the given barrier, and fails the calling test if the waiting
+     * is interrupted, the barrier is broken, or after the given timeout.
+     * When the barrier is null this method returns immediately.
+     * @param barrier the barrier to await, or null if nothing should be done.
+     * @param timeout the time to wait before failing the calling test
+     * @param unit the unit of the timeout value
+     *
+     */
+    static void awaitQuietly(final CyclicBarrier barrier, final long timeout, final TimeUnit unit) {
+        if (barrier != null) {
+            try {
+                barrier.await(timeout, unit);
+            } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
                 fail("Awaiting barrier failed: " + e.toString());
             }
         }

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jcr.RepositoryException;
@@ -113,12 +114,12 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         watcher = new WebFilesWatcher(config, webFilesService, session, eventBus, autoReload) {
             @Override
             public void onStart() {
-                awaitQuietly(startFileSystemChanges);
+                awaitQuietly(startFileSystemChanges, 10, TimeUnit.SECONDS);
             }
 
             @Override
             public void onStop() {
-                awaitQuietly(stopFileSystemChanges);
+                awaitQuietly(stopFileSystemChanges, 10, TimeUnit.SECONDS);
             }
         };
     }

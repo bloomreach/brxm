@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -421,7 +422,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
         @Override
         public synchronized void fileSystemChangesStarted() {
-            awaitQuietly(startRecording);
+            awaitQuietly(startRecording, 10, TimeUnit.SECONDS);
             recordAssert(!recordingChanges, "Changes should not be recorded yet");
             recordingChanges = true;
         }
@@ -465,7 +466,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         public synchronized void fileSystemChangesStopped() {
             recordAssert(recordingChanges, "Changes should have been recorded");
             recordingChanges = false;
-            awaitQuietly(stopRecording);
+            awaitQuietly(stopRecording, 10, TimeUnit.SECONDS);
         }
 
         private void checkRecordedErrors() {

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -370,7 +371,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
 
         @Override
         public void onStart() {
-            awaitQuietly(startChanges);
+            awaitQuietly(startChanges, 10, TimeUnit.SECONDS);
         }
 
         @Override
@@ -382,7 +383,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
 
         @Override
         public void onStop() {
-            awaitQuietly(stopChanges);
+            awaitQuietly(stopChanges, 10, TimeUnit.SECONDS);
         }
 
         public synchronized void assertCallbacks(final int expectedCount, final Path... expectedChangedPaths) throws InterruptedException {
