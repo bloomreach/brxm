@@ -29,6 +29,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,6 +54,11 @@ public class ContainerItemHelperTest {
         helper = new ContainerItemHelper();
         helper.setLockHelper(lockHelper = mock(LockHelper.class));
         helper.setPageComposerContextService(service = mock(PageComposerContextService.class));
+    }
+
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.clear();
     }
 
     @Test
