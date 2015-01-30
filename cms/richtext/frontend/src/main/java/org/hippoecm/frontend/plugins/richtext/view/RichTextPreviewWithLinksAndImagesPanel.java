@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugins.richtext.view;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
-import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
+import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
@@ -37,17 +39,19 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
     public RichTextPreviewWithLinksAndImagesPanel(final String id,
                                                   final IModel<Node> nodeModel,
                                                   final IModel<String> htmlModel,
-                                                  final IBrowseService browser) {
+                                                  final IBrowseService browser,
+                                                  final IHtmlCleanerService cleaner) {
         super(id);
 
         final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(nodeModel, browser, true);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, previewLinksBehavior);
+        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, previewLinksBehavior, cleaner);
         addView(viewModel);
     }
 
-    private IModel<String> createViewModel(final IModel<Node> nodeModel, final IModel<String> htmlModel, final PreviewLinksBehavior previewLinksBehavior) {
+    private IModel<String> createViewModel(final IModel<Node> nodeModel, final IModel<String> htmlModel,
+                                           final PreviewLinksBehavior previewLinksBehavior, final IHtmlCleanerService cleaner) {
         final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(nodeModel);
         final IRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory(nodeModel);
         final IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory, nodeModel);
@@ -55,7 +59,9 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
         final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
         final BrowsableModel browsableModel = new BrowsableModel(stripScriptModel, previewLinksBehavior);
 
-        return new ChildFacetUuidsModel(browsableModel, nodeModel, linkFactory, urlProvider);
+        final UuidConverterBuilder converterBuilder = new UuidConverterBuilder(nodeModel, linkFactory, urlProvider);
+
+        return new RichTextModel(browsableModel, cleaner, converterBuilder);
     }
 
 }

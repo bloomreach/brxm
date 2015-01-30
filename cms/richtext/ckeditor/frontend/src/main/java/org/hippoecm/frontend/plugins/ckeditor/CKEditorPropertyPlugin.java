@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,9 +58,7 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
     @Override
     protected IModel<String> createEditModel() {
-        final RichTextModel model = new RichTextModel(getHtmlModel());
-        model.setCleaner(getHtmlCleanerOrNull());
-        return new LineEndingsModel(model);
+        return new LineEndingsModel(new RichTextModel(getHtmlModel(), getHtmlCleaner()));
     }
 
     @Override

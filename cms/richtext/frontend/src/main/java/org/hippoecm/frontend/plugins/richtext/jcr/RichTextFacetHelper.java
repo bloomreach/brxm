@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class RichTextFacetHelper {
     private RichTextFacetHelper() {
     }
 
-    static String createFacet(Node node, String uuid) throws RepositoryException {
+    public static String createFacet(Node node, String uuid) throws RepositoryException {
         final Session session = node.getSession();
         try {
             final Node target = session.getNodeByIdentifier(uuid);

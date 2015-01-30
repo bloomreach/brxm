@@ -1,66 +1,40 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.richtext.jcr;
+package org.hippoecm.frontend.plugins.richtext;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextException;
-import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextFacetHelper;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.htmlcleaner.CleanerProperties;
-import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.HtmlNode;
-import org.htmlcleaner.SimpleHtmlSerializer;
 import org.htmlcleaner.TagNode;
 import org.htmlcleaner.TagNodeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Model that replaces links and images in the String of the delegate model that refer to child facetselect nodes in the
- * node model to the UUIDs referred to by these facetselects.
- * <p/>
- * For links (HTML tag 'a'), the 'href' attribute can contain the name of a child node of type 'hippo:facetselect'. When
- * this model's object will remove the 'href' attribute of those links and add a 'data-uuid' attribute with the UUID
- * referred to by the facetselect (i.e. its hippo:docbase property). Setting links with a 'data-uuid' attribute in this
- * model's object will work the other way around: the 'data-uuid' attribute will be removed, and replaced by an 'href'
- * attribute that refers to a facet child node.
- * <p/>
- * For images (HTML tag 'img'), the 'src' attribute can also contain the name of a facetselect child node, together with
- * more information about the image after the first slash. Similar to links, this model will add 'data-uuid' and
- * 'data-type' attributes.
- * <p/>
- * All facetselect child nodes are managed by this model: new ones will be created when referred to, and unused ones
- * will be removed.
- */
-public class ChildFacetUuidsModel implements IModel<String> {
+public class UuidConverterBuilder implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final Logger log = LoggerFactory.getLogger(ChildFacetUuidsModel.class);
+    public static final Logger log = LoggerFactory.getLogger(UuidConverterBuilder.class);
 
     private static final String TAG_A = "a";
     private static final String TAG_IMG = "img";
@@ -73,60 +47,35 @@ public class ChildFacetUuidsModel implements IModel<String> {
     private static final String IMAGE_DOCUMENT = "{_document}";
     private static final String IMAGE_SEPARATOR = "/";
 
-    private static final HtmlCleaner cleaner = new HtmlCleaner();
-
-    static {
-        final CleanerProperties properties = cleaner.getProperties();
-        properties.setOmitXmlDeclaration(true);
-        properties.setOmitHtmlEnvelope(true);
-        properties.setTranslateSpecialEntities(false);
-        properties.setUseEmptyElementTags(true);
-    }
-
-    private final IModel<String> delegate;
     private final IModel<Node> nodeModel;
     private final IRichTextLinkFactory linkFactory;
     private final IImageURLProvider imageLinkProvider;
 
-    public ChildFacetUuidsModel(IModel<String> delegate, IModel<Node> nodeModel, IRichTextLinkFactory linkFactory, IImageURLProvider imageLinkProvider) {
-        this.delegate = delegate;
+    public UuidConverterBuilder(IModel<Node> nodeModel, IRichTextLinkFactory linkFactory, IImageURLProvider imageLinkProvider) {
         this.nodeModel = nodeModel;
         this.linkFactory = linkFactory;
         this.imageLinkProvider = imageLinkProvider;
     }
 
-    public String getObject() {
-        return convertForView(delegate.getObject());
-    }
-
-    private String convertForView(String text) {
-        if (text == null) {
-            return null;
-        }
-
-        final TagNode html = cleaner.clean(text);
-        html.traverse(new TagNodeVisitor() {
-            @Override
-            public boolean visit(TagNode parentNode, HtmlNode htmlNode) {
-                try {
-                    if (htmlNode instanceof TagNode) {
-                        final TagNode tag = (TagNode) htmlNode;
-                        if (StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
-                            convertLinkForView(tag);
-                        } else if (StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
-                            convertImageForView(tag);
-                        }
+    public TagNodeVisitor createRetrievalConverter() {
+        return (parentNode, htmlNode) -> {
+            try {
+                if (htmlNode instanceof TagNode) {
+                    final TagNode tag = (TagNode) htmlNode;
+                    if (StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
+                        convertLinkForRetrieval(tag);
+                    } else if (StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
+                        convertImageForRetrieval(tag);
                     }
-                } catch (RepositoryException | RichTextException e) {
-                    log.info(e.getMessage(), e);
                 }
-                return true;
+            } catch (RepositoryException | RichTextException e) {
+                log.info(e.getMessage(), e);
             }
-        });
-        return new SimpleHtmlSerializer(cleaner.getProperties()).getAsString(html);
+            return true;
+        };
     }
 
-    private void convertLinkForView(TagNode tag) throws RepositoryException, RichTextException {
+    private void convertLinkForRetrieval(TagNode tag) throws RepositoryException, RichTextException {
         final Map<String, String> attributes = tag.getAttributes();
         final String href = attributes.get(ATTRIBUTE_HREF);
 
@@ -147,7 +96,7 @@ public class ChildFacetUuidsModel implements IModel<String> {
         }
     }
 
-    private void convertImageForView(TagNode tag) throws RepositoryException {
+    private void convertImageForRetrieval(TagNode tag) throws RepositoryException {
         final Map<String, String> attributes = tag.getAttributes();
         final String src = attributes.get(ATTRIBUTE_SRC);
 
@@ -188,53 +137,25 @@ public class ChildFacetUuidsModel implements IModel<String> {
         }
     }
 
-    public void setObject(String text) {
-        delegate.setObject(convertForStorage(text));
-    }
-
-    private String convertForStorage(String text) {
-        final Set<String> uuids = new HashSet<>();
-        if (text == null) {
-            linkFactory.cleanup(uuids);
-            return null;
-        }
-
-        final TagNode html = cleaner.clean(text);
-
-        html.traverse(new TagNodeVisitor() {
-            @Override
-            public boolean visit(TagNode parentNode, HtmlNode htmlNode) {
+    public TagNodeVisitor createStorageConverter() {
+        return (parentNode, htmlNode) -> {
+            if (parentNode == null) {
+                linkFactory.cleanup(new HashSet<>());
+            }
+            try {
                 if (htmlNode instanceof TagNode) {
                     final TagNode tagNode = (TagNode) htmlNode;
-                    final String uuid = tagNode.getAttributes().get(ATTRIBUTE_DATA_UUID);
-                    if (StringUtils.isNotEmpty(uuid)) {
-                        uuids.add(uuid);
+                    if (StringUtils.equalsIgnoreCase(TAG_A, tagNode.getName())) {
+                        convertLinkForStorage(tagNode);
+                    } else if (StringUtils.equalsIgnoreCase(TAG_IMG, tagNode.getName())) {
+                        convertImageForStorage(tagNode);
                     }
                 }
-                return true;
+            } catch (RepositoryException | RichTextException e) {
+                log.info(e.getMessage(), e);
             }
-        });
-        linkFactory.cleanup(uuids);
-
-        html.traverse(new TagNodeVisitor() {
-            @Override
-            public boolean visit(TagNode parentNode, HtmlNode htmlNode) {
-                try {
-                    if (htmlNode instanceof TagNode) {
-                        final TagNode tagNode = (TagNode) htmlNode;
-                        if (StringUtils.equalsIgnoreCase(TAG_A, tagNode.getName())) {
-                            convertLinkForStorage(tagNode);
-                        } else if (StringUtils.equalsIgnoreCase(TAG_IMG, tagNode.getName())) {
-                            convertImageForStorage(tagNode);
-                        }
-                    }
-                } catch (RepositoryException | RichTextException e) {
-                    log.info(e.getMessage(), e);
-                }
-                return true;
-            }
-        });
-        return new SimpleHtmlSerializer(cleaner.getProperties()).getAsString(html);
+            return true;
+        };
     }
 
     private void convertLinkForStorage(TagNode tag) throws RepositoryException, RichTextException {
@@ -299,7 +220,6 @@ public class ChildFacetUuidsModel implements IModel<String> {
     }
 
     public void detach() {
-        delegate.detach();
         nodeModel.detach();
         linkFactory.detach();
     }

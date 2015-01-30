@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,11 @@ import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
-import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
@@ -116,7 +116,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
      */
     @Override
     protected Panel createViewPanel(final String id) {
-        return new RichTextPreviewWithLinksAndImagesPanel(id, getNodeModel(), getHtmlModel(), getBrowser());
+        return new RichTextPreviewWithLinksAndImagesPanel(id, getNodeModel(), getHtmlModel(), getBrowser(), getHtmlCleaner());
     }
 
     /**
@@ -170,15 +170,15 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     @Override
     protected IModel<String> createEditModel() {
         final IModel<String> htmlModel = getHtmlModel();
-        final RichTextModel richTextModel = new RichTextModel(htmlModel);
-        richTextModel.setCleaner(getHtmlCleanerOrNull());
 
         final IRichTextLinkFactory linkFactory = createLinkFactory();
         final IRichTextImageFactory imageFactory = createImageFactory();
         final IImageURLProvider urlProvider = createImageUrlProvider(imageFactory, linkFactory);
+        final UuidConverterBuilder converterBuilder = new UuidConverterBuilder(getNodeModel(), linkFactory, urlProvider);
 
-        final ChildFacetUuidsModel facetNodeNamesToUuidsModel = new ChildFacetUuidsModel(richTextModel, getNodeModel(), linkFactory, urlProvider);
-        return new LineEndingsModel(facetNodeNamesToUuidsModel);
+        final RichTextModel richTextModel = new RichTextModel(htmlModel, getHtmlCleaner(), converterBuilder);
+
+        return new LineEndingsModel(richTextModel);
     }
 
     protected IRichTextLinkFactory createLinkFactory() {
@@ -197,7 +197,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     protected Panel createComparePanel(final String id, final IModel<Node> baseModel, final IModel<Node> currentModel) {
         final JcrNodeModel baseNodeModel = (JcrNodeModel) baseModel;
         final JcrNodeModel currentNodeModel = (JcrNodeModel) currentModel;
-        return new RichTextDiffWithLinksAndImagesPanel(id, baseNodeModel, currentNodeModel, getBrowser());
+        return new RichTextDiffWithLinksAndImagesPanel(id, baseNodeModel, currentNodeModel, getBrowser(), getHtmlCleaner());
     }
 
     private IPluginConfig getChildPluginConfig(final String key, IPluginConfig defaultConfig) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,25 +15,30 @@
  */
 package org.hippoecm.frontend.plugins.richtext.htmlcleaner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Node;
 
-import org.apache.wicket.util.io.IClusterable;
 import org.easymock.EasyMock;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.htmlcleaner.HtmlNode;
+import org.htmlcleaner.TagNode;
+import org.htmlcleaner.TagNodeVisitor;
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
 
 import static junit.framework.Assert.assertEquals;
 import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertThat;
 
 public class HtmlCleanerPluginTest extends PluginTest {
 
@@ -126,8 +131,94 @@ public class HtmlCleanerPluginTest extends PluginTest {
         final IPluginConfig config = new JavaPluginConfig();
         config.put("service.id", "myHtmlCleaner");
 
-        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(context, config);
+        new HtmlCleanerPlugin(context, config);
 
         verify(context);
+    }
+
+    @Test
+    public void testFilteringByAbsentOption() throws Exception {
+        IPluginConfig pluginConfig = getPluginConfig();
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        String html = htmlCleanerPlugin.clean("<script>alert(\"xss\")</script>");
+        assertEquals("", html);
+    }
+
+    @Test
+    public void testFilteringBySetOption() throws Exception {
+        IPluginConfig pluginConfig = getPluginConfig();
+        pluginConfig.put("filter", true);
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        String html = htmlCleanerPlugin.clean("<script>alert(\"xss\")</script>");
+        assertEquals("", html);
+    }
+
+    @Test
+    public void testNoFilteringBySetOption() throws Exception {
+        IPluginConfig pluginConfig = getPluginConfig();
+        pluginConfig.put("filter", false);
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        String html = htmlCleanerPlugin.clean("<script>alert(\"xss\")</script>");
+        assertEquals("<script>alert(\"xss\")</script>", html);
+    }
+
+    @Test
+    public void testNoFilteringByCall() throws Exception {
+        IPluginConfig pluginConfig = getPluginConfig();
+        pluginConfig.put("filter", true);
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        String html = htmlCleanerPlugin.clean("<script>alert(\"xss\")</script>", false, null, null);
+        assertEquals("<script>alert(\"xss\")</script>", html);
+    }
+
+    @Test
+    public void testTraversingBeforeFiltering() throws Exception {
+        IPluginConfig pluginConfig = getPluginConfig();
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        TagNameCollector collector = new TagNameCollector();
+        String html = htmlCleanerPlugin.clean("<h1>Heading</h1><script>alert(\"xss\")</script>", true, collector, null);
+        assertEquals("<h1>Heading</h1>", html);
+        List<String> tags = collector.getTags();
+        assertEquals(2, tags.size());
+        assertThat(tags, JUnitMatchers.hasItems("h1", "script"));
+    }
+
+    @Test
+    public void testTraversingAfterFiltering() throws Exception {
+        IPluginConfig pluginConfig = getPluginConfig();
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        TagNameCollector collector = new TagNameCollector();
+        String html = htmlCleanerPlugin.clean("<h1>Heading</h1><script>alert(\"xss\")</script>", true, null, collector);
+        assertEquals("<h1>Heading</h1>", html);
+        List<String> tags = collector.getTags();
+        assertEquals(1, tags.size());
+        assertThat(tags, JUnitMatchers.hasItems("h1"));
+    }
+
+    private static class TagNameCollector implements TagNodeVisitor {
+
+        private List<String> tags = new ArrayList<>();
+
+        @Override
+        public boolean visit(TagNode parent, HtmlNode node) {
+            if (node instanceof TagNode) {
+                TagNode tagNode = (TagNode) node;
+                String name = tagNode.getName();
+                if (name != null) {
+                    tags.add(name);
+                }
+            }
+            return true;
+        }
+
+        public List<String> getTags() {
+            return tags;
+        }
     }
 }

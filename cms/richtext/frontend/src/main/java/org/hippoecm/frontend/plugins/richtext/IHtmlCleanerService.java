@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
+import java.io.IOException;
+
 import org.apache.wicket.util.io.IClusterable;
+import org.htmlcleaner.TagNodeVisitor;
 
 public interface IHtmlCleanerService extends IClusterable {
 
-    String clean(String value) throws Exception;
+    String clean(String value) throws IOException;
+
+    String clean(String value, boolean filter, TagNodeVisitor preFilterVisitor, TagNodeVisitor postFilterVisitor) throws IOException;
+
 }

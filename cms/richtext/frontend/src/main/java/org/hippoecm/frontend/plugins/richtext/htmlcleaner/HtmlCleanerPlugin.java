@@ -37,6 +37,7 @@ import org.htmlcleaner.PrettyHtmlSerializer;
 import org.htmlcleaner.Serializer;
 import org.htmlcleaner.SimpleHtmlSerializer;
 import org.htmlcleaner.TagNode;
+import org.htmlcleaner.TagNodeVisitor;
 
 
 public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
@@ -51,6 +52,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private static final String COMPACT = "compact";
     private static final String PRETTY = "pretty";
     private static final String OMIT_COMMENTS = "omitComments";
+    private static final String FILTER = "filter";
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
     private static final TextEscaper escaper = new TextEscaper();
 
@@ -58,23 +60,27 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private final String charset;
     private final String serializer;
     private final boolean omitComments;
-
+    private final boolean filter;
 
     public HtmlCleanerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         charset = config.getString(CHARSET, DEFAULT_CHARSET);
         serializer = config.getString(SERIALIZER, COMPACT);
         omitComments = config.getBoolean(OMIT_COMMENTS);
-        final IPluginConfig whitelistConfig = config.getPluginConfig(WHITELIST);
-        if (whitelistConfig != null) {
-            for (IPluginConfig elementConfig : whitelistConfig.getPluginConfigSet()) {
-                final Collection<String> attributes = elementConfig.containsKey(ATTRIBUTES) ?
-                        Arrays.asList(elementConfig.getStringArray(ATTRIBUTES)) : Collections.<String>emptyList();
-                final String configName = elementConfig.getName();
-                final int offset = configName.lastIndexOf('.');
-                final String elementName = offset != -1 ? configName.substring(offset + 1) : configName;
-                final Element element = new Element(elementName, attributes);
-                whitelist.put(element.name, element);
+        final Object filterOption = config.get(FILTER);
+        filter = filterOption instanceof Boolean ? ((Boolean) filterOption) : true;
+        if (filter) {
+            final IPluginConfig whitelistConfig = config.getPluginConfig(WHITELIST);
+            if (whitelistConfig != null) {
+                for (IPluginConfig elementConfig : whitelistConfig.getPluginConfigSet()) {
+                    final Collection<String> attributes = elementConfig.containsKey(ATTRIBUTES) ?
+                            Arrays.asList(elementConfig.getStringArray(ATTRIBUTES)) : Collections.<String>emptyList();
+                    final String configName = elementConfig.getName();
+                    final int offset = configName.lastIndexOf('.');
+                    final String elementName = offset != -1 ? configName.substring(offset + 1) : configName;
+                    final Element element = new Element(elementName, attributes);
+                    whitelist.put(element.name, element);
+                }
             }
         }
         if (context != null) {
@@ -84,16 +90,30 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     }
 
     @Override
-    public String clean(final String value) throws Exception {
-        HtmlCleaner cleaner = createCleaner();
+    public String clean(final String value) throws IOException {
+        return clean(value, true, null, null);
+    }
+
+    @Override
+    public String clean(String value, boolean filter, TagNodeVisitor preFilterVisitor, TagNodeVisitor postFilterVisitor) throws IOException {
+        if (value == null) {
+            value = "";
+        }
+        final HtmlCleaner cleaner = createCleaner();
         final TagNode node = cleaner.clean(value);
-        if (filter(node) == null) {
-            return "";
+        if (preFilterVisitor != null) {
+            node.traverse(preFilterVisitor);
+        }
+        if (filter && this.filter) {
+            filter(node);
+        }
+        if (postFilterVisitor != null) {
+            node.traverse(postFilterVisitor);
         }
         return serialize(node, cleaner.getProperties());
     }
 
-    private TagNode filter(final TagNode node) {
+    public TagNode filter(final TagNode node) {
         if (node.getName() != null) {
             if (!whitelist.containsKey(node.getName())) {
                 return null;
@@ -128,6 +148,9 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     }
 
     private String serialize(final TagNode html, final CleanerProperties properties) throws IOException {
+        if (html == null) {
+            return "";
+        }
         final Serializer serializer = createSerializer(properties);
         final StringWriter writer = new StringWriter();
         serializer.write(html, writer, charset);
@@ -146,9 +169,12 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
 
     private Serializer createSerializer(final CleanerProperties properties) {
         switch (serializer) {
-            case PRETTY : return new PrettyHtmlSerializer(properties);
-            case COMPACT : return new CompactHtmlSerializer(properties);
-            default : return new SimpleHtmlSerializer(properties);
+            case PRETTY:
+                return new PrettyHtmlSerializer(properties);
+            case COMPACT:
+                return new CompactHtmlSerializer(properties);
+            default:
+                return new SimpleHtmlSerializer(properties);
         }
     }
 
@@ -156,6 +182,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         private static final long serialVersionUID = 1L;
         private final String name;
         private final Collection<String> attributes;
+
         private Element(final String name, final Collection<String> attributes) {
             this.name = name;
             this.attributes = attributes;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,20 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.mock.MockHomePage;
 import org.apache.wicket.model.IModel;
+import org.easymock.EasyMock;
 import org.hippoecm.frontend.HippoTester;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
+import org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -38,8 +44,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class RichTextDiffWithLinksAndImagesPanelTest {
 
+    private static IHtmlCleanerService CLEANER;
+
     private MockNode root;
     private javax.jcr.Session session;
+
+    @BeforeClass
+    public static void staticSetUp() {
+        IPluginConfig cleanerConfig = EasyMock.createMock(IPluginConfig.class);
+        expect(cleanerConfig.getString(eq("charset"), eq("UTF-8"))).andReturn("UTF-8");
+        expect(cleanerConfig.getString(eq("serializer"), eq("compact"))).andReturn("compact");
+        expect(cleanerConfig.getBoolean(eq("omitComments"))).andReturn(false);
+        expect(cleanerConfig.get(eq("filter"))).andReturn(false);
+        EasyMock.replay(cleanerConfig);
+        CLEANER = new HtmlCleanerPlugin(null, cleanerConfig);
+    }
 
     @Before
     public void setUp() throws RepositoryException, NoSuchMethodException {
@@ -91,7 +110,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
     public void removedImageShowsChanges() throws RepositoryException {
         MockNode imageHandle = addImage(root, "image.jpg");
 
-        Node base = addHtmlNode(root, "base", "text<img src=\"image.jpg/{_document}/hippogallery:thumbnail\"/>");
+        Node base = addHtmlNode(root, "base", "text <img src=\"image.jpg/{_document}/hippogallery:thumbnail\"/>");
         addFacet(base, imageHandle);
 
         Node current = addHtmlNode(root, "current", "text");
@@ -99,6 +118,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         String diff = createDiff(base, current);
 
         assertEquals(htmlEncode("<html>text"
+                + "<span class=\"diff-html-removed\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"last-null\"> </span>"
                 + "<span class=\"diff-html-removed\" id=\"removed-null-0\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"last-null\">"
                 + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" data-uuid=\""+ imageHandle.getIdentifier() +"\" data-type=\"hippogallery:thumbnail\" changeType=\"diff-removed-image\">"
                 + "</span>\n"
@@ -126,7 +146,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
 
     private static String createDiff(Node base, Node current) {
         RichTextDiffWithLinksAndImagesPanel panel = new RichTextDiffWithLinksAndImagesPanel("id",
-                createNodeModel(base), createNodeModel(current), null);
+                createNodeModel(base), createNodeModel(current), null, CLEANER);
         return panel.get(RichTextDiffWithLinksAndImagesPanel.WICKET_ID_VIEW).getDefaultModelObjectAsString();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
-import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
+import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
@@ -55,13 +57,14 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
     public RichTextDiffWithLinksAndImagesPanel(final String id,
                                                final IModel<Node> baseNodeModel,
                                                final IModel<Node> currentNodeModel,
-                                               final IBrowseService browser) {
+                                               final IBrowseService browser,
+                                               final IHtmlCleanerService cleaner) {
         super(id);
 
         final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser, false);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior);
+        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior, cleaner);
         addView(viewModel);
     }
 
@@ -73,7 +76,8 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
 
     private static IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
                                                   final IModel<Node> currentNodeModel,
-                                                  final PreviewLinksBehavior previewLinksBehavior) {
+                                                  final PreviewLinksBehavior previewLinksBehavior,
+                                                  final IHtmlCleanerService cleaner) {
 
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
         final IRichTextLinkFactory baseLinkFactory = new JcrRichTextLinkFactory(baseNodeModel);
@@ -89,10 +93,16 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         final BrowsableModel baseBrowsableModel = new BrowsableModel(baseModel, previewLinksBehavior);
         final BrowsableModel currentBrowsableModel = new BrowsableModel(currentModel, previewLinksBehavior);
 
-        final IModel<String> decoratedBase = new ChildFacetUuidsModel(baseBrowsableModel, baseNodeModel, baseLinkFactory, baseDecorator);
-        final IModel<String> decoratedCurrent = new ChildFacetUuidsModel(currentBrowsableModel, currentNodeModel, currentLinkFactory, currentDecorator);
+        final UuidConverterBuilder baseConverterBuilder = new UuidConverterBuilder(baseNodeModel, baseLinkFactory, baseDecorator);
+        final UuidConverterBuilder currentConverterBuilder = new UuidConverterBuilder(currentNodeModel, currentLinkFactory, currentDecorator);
 
-        return new HtmlDiffModel(new StripScriptModel(decoratedBase), new StripScriptModel(decoratedCurrent));
+        final IModel<String> decoratedBase = new RichTextModel(baseBrowsableModel, cleaner, baseConverterBuilder);
+        final IModel<String> decoratedCurrent = new RichTextModel(currentBrowsableModel, cleaner, currentConverterBuilder);
+
+        final StripScriptModel scriptlessBase = new StripScriptModel(decoratedBase);
+        final StripScriptModel scriptlessCurrent = new StripScriptModel(decoratedCurrent);
+
+        return new HtmlDiffModel(scriptlessBase, scriptlessCurrent);
     }
 
     private static JcrPropertyValueModel getContentModelOrNull(IModel<Node> nodeModel) {

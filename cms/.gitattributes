@@ -2530,7 +2530,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/li
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/LinkPickerBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/RichTextEditorLinkService.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/HtmlCleanerPlugin.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/ChildFacetUuidsModel.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextImageFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/RichTextFacetHelper.java svneol=native#text/plain
@@ -2552,13 +2551,13 @@ richtext/frontend/src/site/site.xml svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/BrowsableModelTest.java -text
-richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/ChildFacetUuidsModelTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/view/RichTextDiffWithLinksAndImagesPanelTest.java -text
 richtext/frontend/src/test/resources/htmlcleaner-testconfig.xml -text
 richtext/frontend/src/test/resources/log4j-filters.txt -text
 richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 richtext/frontend/src/test/resources/richtexttest.cnd -text
+richtext/repository/src/main/resources/default-html-cleaner-service.xml -text
 richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
 richtext/repository/src/main/resources/html-cleaner-service.xml -text
 scripts/src/main/resources/hippoecm-extension.xml -text

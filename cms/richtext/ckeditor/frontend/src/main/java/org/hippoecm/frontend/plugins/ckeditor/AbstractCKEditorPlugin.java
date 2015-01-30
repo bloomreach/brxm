@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,14 +52,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
 
+    public static final String DEFAULT_HTML_CLEANER_SERVICE = "org.hippoecm.frontend.plugins.richtext.DefaultHtmlCleanerService";
+
     public static final String CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
     public static final String CONFIG_CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
     public static final String CONFIG_HTML_CLEANER_SERVICE_ID = "htmlcleaner.id";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
+
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
 
     private static final String WICKET_ID_PANEL = "panel";
-
     private static final Logger log = LoggerFactory.getLogger(AbstractCKEditorPlugin.class);
 
     public AbstractCKEditorPlugin(final IPluginContext context, final IPluginConfig config, final String defaultEditorConfigJson) {
@@ -213,15 +215,15 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
     protected abstract IModel<String> getHtmlModel();
 
     /**
-     * @return the HTML cleaner for the edited model, or null if the HTML should not be cleaned.
+     * @return the HTML cleaner for the edited model.
      */
-    protected IHtmlCleanerService getHtmlCleanerOrNull() {
+    protected IHtmlCleanerService getHtmlCleaner() {
         final IPluginConfig config = getPluginConfig();
-        final String serviceId = config.getString(CONFIG_HTML_CLEANER_SERVICE_ID, StringUtils.EMPTY);
+        String serviceId = config.getString(CONFIG_HTML_CLEANER_SERVICE_ID, StringUtils.EMPTY);
 
         if (StringUtils.isBlank(serviceId)) {
-            log.info("CKEditor plugin '{}' does not use a server-side HTML cleaner", config.getName());
-            return null;
+            log.info("CKEditor plugin '{}' does not have a server-side HTML cleaner configured, using default", config.getName());
+            serviceId = DEFAULT_HTML_CLEANER_SERVICE;
         }
 
         final IHtmlCleanerService service = getPluginContext().getService(serviceId, IHtmlCleanerService.class);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import org.apache.wicket.model.IModel;
+import org.htmlcleaner.TagNodeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,35 @@ public class RichTextModel implements IModel<String> {
 
     private IModel<String> valueModel;
     private IHtmlCleanerService cleaner;
+    private UuidConverterBuilder converterBuilder;
 
-    public RichTextModel(IModel<String> valueModel) {
+    public RichTextModel(IModel<String> valueModel, IHtmlCleanerService cleaner) {
         this.valueModel = valueModel;
+        this.cleaner = cleaner;
+    }
+
+    public RichTextModel(IModel<String> valueModel, IHtmlCleanerService cleaner, UuidConverterBuilder converterBuilder) {
+        this.valueModel = valueModel;
+        this.cleaner = cleaner;
+        this.converterBuilder = converterBuilder;
     }
 
     public String getObject() {
-        return valueModel.getObject();
+        try {
+            TagNodeVisitor converter = null;
+            if (converterBuilder != null) {
+                converter = converterBuilder.createRetrievalConverter();
+            }
+            return cleaner.clean(valueModel.getObject(), false,
+                    null, converter);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Value not retrieved because html cleaning failed", e);
+            } else {
+                log.warn("Value not retrieved because html cleaning failed : {}", e.toString());
+            }
+            return "";
+        }
     }
 
     public void setObject(String value) {
@@ -41,10 +64,14 @@ public class RichTextModel implements IModel<String> {
             log.debug("Cleaning value {}", value);
         }
         try {
-            final String cleanedValue = clean(value);
-            valueModel.setObject(cleanedValue);
+            TagNodeVisitor converter = null;
+            if (converterBuilder != null) {
+                converter = converterBuilder.createStorageConverter();
+            }
+            valueModel.setObject(cleaner.clean(value, true,
+                    converter, null));
         } catch (Exception e) {
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.warn("Value not set because html cleaning failed", e);
             } else {
                 log.warn("Value not set because html cleaning failed : {}", e.toString());
@@ -54,22 +81,9 @@ public class RichTextModel implements IModel<String> {
 
     public void detach() {
         valueModel.detach();
-    }
-
-    public void setCleaner(IHtmlCleanerService cleaner) {
-        this.cleaner = cleaner;
-    }
-
-    public IHtmlCleanerService getCleaner() {
-        return cleaner;
-    }
-
-    private String clean(final String value) throws Exception {
-        if (cleaner != null) {
-            return cleaner.clean(value);
-
+        if (converterBuilder != null) {
+            converterBuilder.detach();
         }
-        return value;
     }
 
 }
