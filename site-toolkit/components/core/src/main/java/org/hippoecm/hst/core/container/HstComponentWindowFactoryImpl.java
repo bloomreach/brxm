@@ -131,8 +131,8 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 
                 // now available filters of HstComponentWindow's can be done. It can only be done after all descendant windows have been created
                 // because otherwise a filter could not for example remove descendant windows
-                for (HstComponentWindowFilter creationfilter : requestContext.getComponentWindowFilters()) {
-                    childCompWindow = creationfilter.doFilter(requestContext, childCompConfig, childCompWindow);
+                for (HstComponentWindowFilter creationFilter : requestContext.getComponentWindowFilters()) {
+                    childCompWindow = creationFilter.doFilter(requestContext, childCompConfig, childCompWindow);
                     if (childCompWindow == null) {
                         // comp window is completely skipped/disabled
                         break;
