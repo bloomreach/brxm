@@ -55,6 +55,8 @@ import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.forceTouc
  */
 public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
+    private static final long TIMEOUT_MS = 5000;
+    
     protected GlobFileNameMatcher fileNameMatcher;
     private ChangesListener changesListener;
     private FileSystemObserver fileSystemObserver;
@@ -81,7 +83,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         super.tearDown();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_file() throws IOException, InterruptedException {
         observeTestBundle();
         final File newFile = new File(jsDir, "new.js");
@@ -90,7 +92,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(newFile);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void modify_file() throws IOException, InterruptedException {
         observeTestBundle();
         forceTouch(scriptJs);
@@ -98,7 +100,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertModified(scriptJs);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void modify_two_files() throws IOException, InterruptedException {
         observeTestBundle();
         forceTouch(styleCss);
@@ -107,7 +109,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertModified(styleCss, scriptJs);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void modify_file_multiple_times() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -125,7 +127,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertModified(scriptJs);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_file() throws IOException, InterruptedException {
         observeTestBundle();
         assertTrue(scriptJs.delete());
@@ -133,7 +135,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertDeleted(scriptJs);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void rename_file() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -145,7 +147,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(fooJs);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void rename_file_and_revert() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -160,7 +162,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(scriptJs);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_directory_rename_it_and_create_file_in_it() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -181,7 +183,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(newFileinRenamedDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void move_file_to_other_dir() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -193,7 +195,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(fooJsInCssDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_then_delete_it() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -207,7 +209,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertDeleted(newDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_then_file() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -222,7 +224,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(newFile);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_and_file_and_delete_again() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -238,7 +240,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertDeleted(newDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_empty_dir() throws IOException, InterruptedException {
         observeTestBundle();
         FileUtils.deleteDirectory(emptyDir);
@@ -246,7 +248,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertDeleted(emptyDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_dir_with_file() throws IOException, InterruptedException {
         observeTestBundle();
         FileUtils.deleteDirectory(jsDir);
@@ -254,7 +256,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertDeleted(jsDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_all_sub_dirs() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -276,7 +278,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         }
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_all_sub_dirs_and_create_new_ones() throws IOException, InterruptedException {
         observeTestBundle();
 
@@ -301,7 +303,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertCreated(newDir2);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void excluded_file_is_ignored() throws IOException, InterruptedException {
         observeTestBundle();
         File tmpFile = new File(cssDir, "pdf-files-are-not-included.pdf");
@@ -310,7 +312,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertNoChangesFor(tmpFile);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void excluded_dir_is_ignored() throws IOException, InterruptedException {
         fileNameMatcher.excludeDirectories(".git");
 
@@ -322,7 +324,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertNoChangesFor(excludedDir);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void included_file_in_excluded_dir_is_ignored() throws IOException, InterruptedException {
         fileNameMatcher.excludeDirectories(".svn");
 
@@ -338,7 +340,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertNoChangesFor(svnDir, file);
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void changes_in_separate_registered_directories_are_processed_by_separate_listeners() throws IOException, InterruptedException {
         File secondBundleDir = new File(webFilesDirectory, "secondbundle");
         assertTrue(secondBundleDir.mkdir());
@@ -422,7 +424,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
         @Override
         public synchronized void fileSystemChangesStarted() {
-            awaitQuietly(startRecording, 10, TimeUnit.SECONDS);
+            awaitQuietly(startRecording, TIMEOUT_MS, TimeUnit.MILLISECONDS);
             recordAssert(!recordingChanges, "Changes should not be recorded yet");
             recordingChanges = true;
         }
@@ -466,7 +468,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         public synchronized void fileSystemChangesStopped() {
             recordAssert(recordingChanges, "Changes should have been recorded");
             recordingChanges = false;
-            awaitQuietly(stopRecording, 10, TimeUnit.SECONDS);
+            awaitQuietly(stopRecording, TIMEOUT_MS, TimeUnit.MILLISECONDS);
         }
 
         private void checkRecordedErrors() {

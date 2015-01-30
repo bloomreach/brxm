@@ -58,6 +58,7 @@ import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.forceTouc
  */
 public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT extends AbstractWatcherIT {
 
+    private static final long TIMEOUT_MS = 5000;
     private static final Logger log = LoggerFactory.getLogger(AbstractSubDirectoriesWatcherWithFileSystemObserverIT.class);
 
     protected GlobFileNameMatcher fileNameMatcher;
@@ -84,14 +85,14 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         super.tearDown();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void single_file_modification() throws IOException, InterruptedException {
         forceTouch(scriptJs);
         callbackTracker.awaitChanges();
         callbackTracker.assertCallbacks(1, scriptJs.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void two_files_modification() throws IOException, InterruptedException {
         forceTouch(styleCss);
         callbackTracker.awaitChanges();
@@ -102,7 +103,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(2, styleCss.toPath(), scriptJs.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void single_file_multiple_modifications() throws IOException, InterruptedException {
         forceTouch(scriptJs);
         callbackTracker.awaitChanges();
@@ -116,7 +117,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(3, scriptJs.toPath(), scriptJs.toPath(), scriptJs.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void rename_file_and_revert() throws IOException, InterruptedException {
         File fooJs = new File(jsDir, "foo.js");
         FileUtils.moveFile(scriptJs, fooJs);
@@ -128,7 +129,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(2, jsDir.toPath(), jsDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void rename_file() throws IOException, InterruptedException {
         File fooJs = new File(jsDir, "foo.js");
         FileUtils.moveFile(scriptJs, fooJs);
@@ -137,7 +138,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, jsDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_directory_rename_it_and_create_file_in_it() throws IOException, InterruptedException {
         final File newDir = new File(testBundleDir, "newDir");
         assertTrue(newDir.mkdir());
@@ -154,7 +155,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(3, newDir.toPath(), testBundleDir.toPath(), newFileInRenamedDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void move_to_other_dir_results_in_1_listener_event_for_two_paths() throws IOException, InterruptedException {
         final File cssDir = styleCss.getParentFile();
         final File jsDir = scriptJs.getParentFile();
@@ -166,7 +167,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, fooJsInCssDir.toPath(), jsDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_file() throws IOException, InterruptedException {
         assertTrue(scriptJs.delete());
         callbackTracker.awaitChanges();
@@ -174,7 +175,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, jsDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_empty_dir() throws IOException, InterruptedException {
         FileUtils.deleteDirectory(emptyDir);
         callbackTracker.awaitChanges();
@@ -182,7 +183,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, testBundleDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_dir_with_file() throws IOException, InterruptedException {
         FileUtils.deleteDirectory(jsDir);
         callbackTracker.awaitChanges();
@@ -190,7 +191,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, testBundleDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         assertTrue(newDir.mkdir());
@@ -199,7 +200,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, newDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_then_delete_it() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         assertTrue(newDir.mkdir());
@@ -211,7 +212,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(2, newDir.toPath(), testBundleDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_then_file() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         FileUtils.forceMkdir(newDir);
@@ -224,7 +225,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(2, newDir.toPath(), newFile.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_and_file_in_one_go() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         File fooCss = new File(newDir, "foo.css");
@@ -235,7 +236,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, newDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void create_dir_and_file_and_delete_again() throws IOException, InterruptedException {
         File newDir = new File(testBundleDir, "newDir");
         File fooCss = new File(newDir, "foo.css");
@@ -249,7 +250,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(2, newDir.toPath(), newDir.getParentFile().toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_all_sub_dirs() throws IOException, InterruptedException {
         final File[] testBundleFiles = testBundleDir.listFiles();
         assertNotNull(testBundleFiles);
@@ -264,7 +265,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(1, testBundleDir.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_all_sub_dirs_with_pauses_result_in_separate_callbacks() throws IOException, InterruptedException {
         List<Path> expectedChangedPaths = new ArrayList<>();
 
@@ -283,7 +284,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(expectedChangedPaths.size(), expectedChangedPaths.toArray(new Path[expectedChangedPaths.size()]));
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void delete_all_sub_dirs_and_create_new_ones() throws IOException, InterruptedException {
         final File[] testBundleFiles = testBundleDir.listFiles();
         assertNotNull(testBundleFiles);
@@ -309,7 +310,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         callbackTracker.assertCallbacks(3, testBundleDir.toPath(), newDir1.toPath(), newDir2.toPath());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void intellij_safe_write_generates_one_event_for_modified_file() throws IOException, InterruptedException {
         // mimic IntelliJ's safe write sequence: save to a temp file, delete the original and rename the temp file
         File bak = new File(styleCss.getPath() + "__jb_bak__");
@@ -371,7 +372,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
 
         @Override
         public void onStart() {
-            awaitQuietly(startChanges, 10, TimeUnit.SECONDS);
+            awaitQuietly(startChanges, TIMEOUT_MS, TimeUnit.MILLISECONDS);
         }
 
         @Override
@@ -383,7 +384,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
 
         @Override
         public void onStop() {
-            awaitQuietly(stopChanges, 10, TimeUnit.SECONDS);
+            awaitQuietly(stopChanges, TIMEOUT_MS, TimeUnit.MILLISECONDS);
         }
 
         public synchronized void assertCallbacks(final int expectedCount, final Path... expectedChangedPaths) throws InterruptedException {

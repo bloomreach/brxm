@@ -73,7 +73,8 @@ import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.awaitQuie
  */
 public class WebFilesWatcherIT extends AbstractWatcherIT {
 
-    private static final long WATCH_DELAY_MILLIS = 500;
+    private static final long WATCH_DELAY_MS = 500;
+    private static final long TIMEOUT_MS = 5000;
     private static final Logger log = LoggerFactory.getLogger(WebFilesWatcherIT.class);
 
     private static LogRecorder logRecorder;
@@ -109,17 +110,17 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         config.includeFiles(includedFiles);
         config.excludeDirs(excludedDirectories);
         config.useWatchServiceOnOsNames(WebFilesWatcherConfig.DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES);
-        config.setWatchDelayMillis(WATCH_DELAY_MILLIS);
+        config.setWatchDelayMillis(WATCH_DELAY_MS);
 
         watcher = new WebFilesWatcher(config, webFilesService, session, eventBus, autoReload) {
             @Override
             public void onStart() {
-                awaitQuietly(startFileSystemChanges, 10, TimeUnit.SECONDS);
+                awaitQuietly(startFileSystemChanges, TIMEOUT_MS, TimeUnit.MILLISECONDS);
             }
 
             @Override
             public void onStop() {
-                awaitQuietly(stopFileSystemChanges, 10, TimeUnit.SECONDS);
+                awaitQuietly(stopFileSystemChanges, TIMEOUT_MS, TimeUnit.MILLISECONDS);
             }
         };
     }
@@ -219,7 +220,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         assertThat(event.getValue().getChangedPath(), is(styleCss.toPath()));
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void creating_file_imports_file() throws IOException, InterruptedException {
         final File cssDir = styleCss.getParentFile();
         final File newCss = new File(cssDir, "new.css");
@@ -239,7 +240,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void creating_directory_imports_directory() throws IOException, InterruptedException {
         final File newDir = new File(testBundleDir, "newDir");
 
@@ -272,7 +273,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void touching_file_imports_file() throws IOException, InterruptedException {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
@@ -304,7 +305,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void removing_file_imports_parent_directory() throws IOException, InterruptedException {
         final File cssDir = styleCss.getParentFile();
 
@@ -323,7 +324,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void renaming_file_imports_parent_directory() throws IOException, InterruptedException {
         final File cssDir = styleCss.getParentFile();
 
@@ -343,7 +344,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void removing_subdirectory_imports_parent() throws IOException, InterruptedException {
         final File cssDir = styleCss.getParentFile();
         final File cssSubDir = new File(cssDir, "cssSubDir");
@@ -364,7 +365,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         logRecorder.assertNoWarningsOrErrorsLogged();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = TIMEOUT_MS)
     public void removing_root_directory_imports_everything() throws IOException, InterruptedException {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq(""), eq(testBundleDir));
         expectLastCall();
