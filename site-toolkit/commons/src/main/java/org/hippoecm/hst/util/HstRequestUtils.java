@@ -45,6 +45,9 @@ public class HstRequestUtils {
 
     private static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
 
+    public static final String HTTP_METHOD_POST = "POST";
+
+
     private HstRequestUtils() {
 
     }
@@ -592,6 +595,15 @@ public class HstRequestUtils {
         }
 
         return tokens;
+    }
+
+    /**
+     * @return <code>true</code> if the request is a preview component rendering request from channel manager in cms
+     */
+    public static boolean isComponentRenderingPreviewRequest(final HstRequestContext requestContext) {
+        return requestContext.isCmsRequest()
+                && HTTP_METHOD_POST.equals(requestContext.getServletRequest().getMethod())
+                && requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace() != null;
     }
 
 }

@@ -19,6 +19,7 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -28,8 +29,12 @@ import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.util.HstRequestUtils.isComponentRenderingPreviewRequest;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
 
@@ -177,13 +182,25 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         }
 
         private String getParameterValue(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+            final HstRequestContext requestContext = req.getRequestContext();
+            if (isComponentRenderingPreviewRequest(requestContext)) {
+                // POST parameters in case of component rendering preview request are namespace less
+                Map<String, String []> namespaceLessParameters = request.getParameterMap("");
+                String [] paramValues = namespaceLessParameters.get(parameterName);
+                if (paramValues != null) {
+                    log.debug("For parameterName '{}' returning value '{}' as the parameter was part of the request body.",
+                            parameterName, paramValues[0]);
+                    return paramValues[0];
+                }
+            }
             String prefixedParameterName = getPrefixedParameterName(parameterName, config, req);
-            String parameterValue = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
+            String parameterValue = config.getParameter(prefixedParameterName, requestContext.getResolvedSiteMapItem());
             if (parameterValue == null && !parameterName.equals(prefixedParameterName)) {
                 // fallback semantics should be the same as fallback to annotated value:
                 // if prefixed value is null or empty then use the default value
-                parameterValue = config.getParameter(parameterName, req.getRequestContext().getResolvedSiteMapItem());
+                parameterValue = config.getParameter(parameterName, requestContext.getResolvedSiteMapItem());
             }
+            log.debug("For prefixedParameterName '{}'  returning value '{}'", prefixedParameterName, parameterValue);
             return parameterValue;
         }
 

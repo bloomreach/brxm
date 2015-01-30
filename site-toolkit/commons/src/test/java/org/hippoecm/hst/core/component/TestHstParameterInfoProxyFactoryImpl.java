@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.core.component;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,8 +28,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import com.sun.deploy.util.ParameterUtil;
 
 import org.easymock.EasyMock;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -45,8 +53,10 @@ public class TestHstParameterInfoProxyFactoryImpl {
     private HstComponent component;
     private HstRequestContext requestContext;
     private HstRequest request;
+    private ResolvedSiteMapItem resolvedSiteMapItem;
     private ComponentConfiguration componentConfig;
     private HstParameterValueConverter converter;
+    private Object[] mocks;
 
     private Map<String, Object> params = new HashMap<String, Object>();
     {
@@ -70,27 +80,26 @@ public class TestHstParameterInfoProxyFactoryImpl {
             }
         };
 
-        request = EasyMock.createNiceMock(HstRequest.class);
-        requestContext = EasyMock.createNiceMock(HstRequestContext.class);
-        EasyMock.expect(request.getRequestContext()).andReturn(requestContext).anyTimes();
-        ResolvedSiteMapItem resolvedSiteMapItem = EasyMock.createNiceMock(ResolvedSiteMapItem.class);
-        EasyMock.expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
-        componentConfig = EasyMock.createNiceMock(ComponentConfiguration.class);
+        request = createNiceMock(HstRequest.class);
+        requestContext = createNiceMock(HstRequestContext.class);
+        expect(request.getRequestContext()).andReturn(requestContext).anyTimes();
+        resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
+        componentConfig = createNiceMock(ComponentConfiguration.class);
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            EasyMock.expect(componentConfig.getParameter(name, resolvedSiteMapItem)).andReturn(value.toString()).anyTimes();
+            expect(componentConfig.getParameter(name, resolvedSiteMapItem)).andReturn(value.toString()).anyTimes();
         }
 
-        EasyMock.replay(componentConfig);
-        EasyMock.replay(request);
-        EasyMock.replay(requestContext);
-        EasyMock.replay(resolvedSiteMapItem);
+        mocks = new Object[]{componentConfig, request, requestContext, resolvedSiteMapItem};
     }
 
     @Test
     public void testToString() throws Exception {
+        replay(mocks);
+
         ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
 
         CombinedInfo combinedInfo1 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
@@ -122,10 +131,39 @@ public class TestHstParameterInfoProxyFactoryImpl {
 
     @Test
     public void testMultiInheritedParametersInfoType() throws Exception {
+        replay(mocks);
         ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
         CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
 
         assertEquals(params.get("queryOption"), combinedInfo.getQueryOption());
+        assertEquals(params.get("cellWidth"), combinedInfo.getCellWidth());
+        assertEquals(params.get("cellHeight"), combinedInfo.getCellHeight());
+        assertEquals(params.get("name"), combinedInfo.getName());
+    }
+
+    @Test
+    public void component_rendering_request_parameters_have_precedence() {
+
+        HttpServletRequest httpServletRequest = createNiceMock(HttpServletRequest.class);
+        expect(httpServletRequest.getMethod()).andReturn("POST").anyTimes();
+
+        HstContainerURL containerURL = createNiceMock(HstContainerURL.class);
+        expect(containerURL.getComponentRenderingWindowReferenceNamespace()).andReturn("r1_r2");
+
+        expect(requestContext.getServletRequest()).andReturn(httpServletRequest).anyTimes();
+        expect(requestContext.isCmsRequest()).andReturn(true).anyTimes();
+        expect(requestContext.getBaseURL()).andReturn(containerURL).anyTimes();
+
+        Map<String, String []> postParameters = new HashMap<>();
+        postParameters.put("queryOption", new String[]{"requestParameterQueryOptionValue"});
+        expect(request.getParameterMap(eq(""))).andReturn(postParameters).anyTimes();
+
+        replay(mocks);
+        replay(httpServletRequest, containerURL);
+        ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+        CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+
+        assertEquals("requestParameterQueryOptionValue", combinedInfo.getQueryOption());
         assertEquals(params.get("cellWidth"), combinedInfo.getCellWidth());
         assertEquals(params.get("cellHeight"), combinedInfo.getCellHeight());
         assertEquals(params.get("name"), combinedInfo.getName());
