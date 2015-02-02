@@ -83,7 +83,7 @@
     <maven.plugin.antrun.version>1.7</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.4</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.2</maven.plugin.buildnumber.version>
-    <maven.plugin.cargo.version>1.4.11</maven.plugin.cargo.version>
+    <maven.plugin.cargo.version>1.4.12</maven.plugin.cargo.version>
     <maven.plugin.changes.version>2.9</maven.plugin.changes.version>
     <maven.plugin.changelog.version>2.2</maven.plugin.changelog.version>
     <maven.plugin.clean.version>2.5</maven.plugin.clean.version>
