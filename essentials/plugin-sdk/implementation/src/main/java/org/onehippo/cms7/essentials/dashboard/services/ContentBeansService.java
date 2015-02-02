@@ -40,7 +40,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -174,14 +173,7 @@ public class ContentBeansService {
     }
 
 
-    private EssentialsGeneratedMethod extractMethod(final String methodName, final Iterable<EssentialsGeneratedMethod> generatedMethods) {
-        for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
-            if (generatedMethod.getMethodName().equals(methodName)) {
-                return generatedMethod;
-            }
-        }
-        return null;
-    }
+
 
     private void processMissing(final List<HippoContentBean> missingBeans) {
         for (HippoContentBean missingBean : missingBeans) {
@@ -295,8 +287,7 @@ public class ContentBeansService {
         final List<HippoContentProperty> properties = bean.getProperties();
         for (HippoContentProperty property : properties) {
             final String name = property.getName();
-            if (existing.contains(name)) {
-                log.debug("Property already exists {}", name);
+            if(!hasChange(name, existing, beanPath, property.isMultiple())){
                 continue;
             }
             final String type = property.getType();
@@ -368,8 +359,7 @@ public class ContentBeansService {
         final List<HippoContentChildNode> children = bean.getChildren();
         for (HippoContentChildNode child : children) {
             final String name = child.getName();
-            if (existing.contains(name)) {
-                log.debug("Node method already exists {}", name);
+            if (!hasChange(name, existing, beanPath, child.isMultiple())) {
                 continue;
             }
             final String type = child.getType();
@@ -521,8 +511,8 @@ public class ContentBeansService {
                         log.info("Found image type: {}", returnType);
                         updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
                     }
-                } else if (getParameterizedType(type) != null) {
-                    final String returnType = getParameterizedType(type);
+                } else if (JavaSourceUtils.getParameterizedType(type) != null) {
+                    final String returnType = JavaSourceUtils.getParameterizedType(type);
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
                         updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
@@ -532,25 +522,7 @@ public class ContentBeansService {
         }
     }
 
-    private String getParameterizedType(final Type type) {
-        if (!(type instanceof ParameterizedType)) {
-            return null;
-        }
-        final ParameterizedType parameterizedType = (ParameterizedType) type;
-        final Type myType = parameterizedType.getType();
-        @SuppressWarnings("rawtypes")
-        final List myArguments = parameterizedType.typeArguments();
-        if (myArguments != null && myArguments.size() == 1
-                && myType != null && myType.isSimpleType() && ((SimpleType) myType).getName().getFullyQualifiedName().equals("List")) {
-            final Object o = myArguments.get(0);
-            if (o instanceof SimpleType) {
-                final SimpleType paramClazz = (SimpleType) o;
-                return paramClazz.getName().getFullyQualifiedName();
 
-            }
-        }
-        return null;
-    }
 
 
     private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement) {
@@ -567,7 +539,7 @@ public class ContentBeansService {
                 if (type.isSimpleType()) {
                     final SimpleType simpleType = (SimpleType) type;
                     final String returnTypeName = simpleType.getName().getFullyQualifiedName();
-                    final EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
+                    final EssentialsGeneratedMethod method = JavaSourceUtils.extractMethod(methodName, generatedMethods);
                     if (method == null) {
                         return super.visit(node);
                     }
@@ -576,9 +548,9 @@ public class ContentBeansService {
                         deletedMethods.put(method.getMethodName(), method);
                         return super.visit(node);
                     }
-                } else if (getParameterizedType(type) != null) {
-                    final String returnTypeName = getParameterizedType(type);
-                    final EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
+                } else if (JavaSourceUtils.getParameterizedType(type) != null) {
+                    final String returnTypeName = JavaSourceUtils.getParameterizedType(type);
+                    final EssentialsGeneratedMethod method = JavaSourceUtils.extractMethod(methodName, generatedMethods);
                     if (method == null) {
                         return super.visit(node);
                     }
@@ -637,6 +609,28 @@ public class ContentBeansService {
         context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
 
         return path;
+    }
+
+    private boolean hasChange(final String name, final Collection<String> existing, final Path beanPath, final boolean multiple){
+        if (existing.contains(name)) {
+            log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
+            final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
+            final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
+            for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
+                final String internalName = generatedMethod.getInternalName();
+                if (name.equals(internalName)) {
+                    // check if single/multiple  changed:
+                    if (generatedMethod.isMultiType() != multiple) {
+                        log.info("Property changed (single/multiple): {}", internalName);
+                        return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
+                    }
+                    // TODO: check check if signature changed:
+                }
+            }
+            return false;
+
+        }
+        return true;
     }
 
 

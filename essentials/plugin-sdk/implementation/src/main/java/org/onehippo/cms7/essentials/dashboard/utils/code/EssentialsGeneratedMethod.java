@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.utils.code;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
@@ -31,7 +30,7 @@ public class EssentialsGeneratedMethod implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String methodName;
-    private String returnType;
+    private Type returnType;
     private String internalName;
     private boolean multiType;
     private MethodDeclaration methodDeclaration;
@@ -41,14 +40,19 @@ public class EssentialsGeneratedMethod implements Serializable {
         this.methodName = methodName;
         this.internalName = internalName;
         final Type type = methodDeclaration.getReturnType2();
-        if(type !=null && type.isParameterizedType()){
-            final ParameterizedType parameterizedType = (ParameterizedType) type;
-            final Type myType = parameterizedType.getType();
-            if (myType != null && myType.isSimpleType() && ((SimpleType) myType).getName().getFullyQualifiedName().equals("List")) {
+        this.returnType = type;
+        if (type != null) {
+            if (type.isParameterizedType()) {
+                final ParameterizedType parameterizedType = (ParameterizedType) type;
+                final Type myType = parameterizedType.getType();
+                if (myType != null && myType.isSimpleType() && ((SimpleType) myType).getName().getFullyQualifiedName().equals("List")) {
+                    this.multiType = true;
+                }
+            } else if (type.isArrayType()) {
                 this.multiType = true;
             }
-        }
 
+        }
     }
 
     public EssentialsGeneratedMethod() {
@@ -79,11 +83,11 @@ public class EssentialsGeneratedMethod implements Serializable {
         this.internalName = internalName;
     }
 
-    public String getReturnType() {
+    public Type getReturnType() {
         return returnType;
     }
 
-    public void setReturnType(final String returnType) {
+    public void setReturnType(final Type returnType) {
         this.returnType = returnType;
     }
 

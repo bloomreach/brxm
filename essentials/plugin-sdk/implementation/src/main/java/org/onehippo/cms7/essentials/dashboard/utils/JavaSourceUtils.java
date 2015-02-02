@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,94 @@ public final class JavaSourceUtils {
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
+    }
+
+    public static boolean deleteMethod(final EssentialsGeneratedMethod method, final Path path) {
+        final CompilationUnit deleteUnit = getCompilationUnit(path);
+        final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
+        final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
+        final Map<String, EssentialsGeneratedMethod> deletedMethods = new HashMap<>();
+        final String oldReturnType = getReturnType(method.getReturnType());
+
+        deleteUnit.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodDeclaration node) {
+                final String methodName = node.getName().getFullyQualifiedName();
+                final Type type = node.getReturnType2();
+                final String returnTypeName = getReturnType(type);
+                if (returnTypeName != null) {
+                    final EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
+                    if (method == null) {
+                        return super.visit(node);
+                    }
+                    if (returnTypeName.equals(oldReturnType)) {
+                        node.delete();
+                        deletedMethods.put(method.getMethodName(), method);
+                        return super.visit(node);
+                    }
+                }
+                return super.visit(node);
+            }
+        });
+
+        final int deletedSize = deletedMethods.size();
+        if (deletedSize > 0) {
+            // rewrite source:
+            final AST deleteAst = deleteUnit.getAST();
+            final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
+            GlobalUtils.writeToFile(deletedSource, path);
+        }
+        return deletedSize > 0;
+
+    }
+
+
+    public static EssentialsGeneratedMethod extractMethod(final String methodName, final Iterable<EssentialsGeneratedMethod> generatedMethods) {
+        for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
+            if (generatedMethod.getMethodName().equals(methodName)) {
+                return generatedMethod;
+            }
+        }
+        return null;
+    }
+
+    public static String getReturnType(final Type type) {
+        if (type == null) {
+            log.warn("Cannot extract return type from null type");
+            return null;
+        }
+        if (type.isSimpleType()) {
+            final SimpleType simpleType = (SimpleType) type;
+            return simpleType.getName().getFullyQualifiedName();
+
+        } else if (type.isArrayType()) {
+            ArrayType arrayType = (ArrayType) type;
+            return arrayType.toString();
+        } else if (JavaSourceUtils.getParameterizedType(type) != null) {
+            return JavaSourceUtils.getParameterizedType(type);
+        }
+        log.warn("Couldn't extract return type for: {}", type);
+        return null;
+    }
+
+    public static String getParameterizedType(final Type type) {
+        if (!(type instanceof ParameterizedType)) {
+            return null;
+        }
+        final ParameterizedType parameterizedType = (ParameterizedType) type;
+        final Type myType = parameterizedType.getType();
+        @SuppressWarnings("rawtypes")
+        final List myArguments = parameterizedType.typeArguments();
+        if (myArguments != null && myArguments.size() == 1
+                && myType != null && myType.isSimpleType() && ((SimpleType) myType).getName().getFullyQualifiedName().equals("List")) {
+            final Object o = myArguments.get(0);
+            if (o instanceof SimpleType) {
+                final SimpleType paramClazz = (SimpleType) o;
+                return paramClazz.getName().getFullyQualifiedName();
+
+            }
+        }
+        return null;
     }
 
     /**

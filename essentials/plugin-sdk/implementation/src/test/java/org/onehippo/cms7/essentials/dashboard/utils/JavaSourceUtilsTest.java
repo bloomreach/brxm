@@ -174,6 +174,7 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
 
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
