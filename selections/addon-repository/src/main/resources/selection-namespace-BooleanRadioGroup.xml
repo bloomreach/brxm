@@ -42,7 +42,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Radiogroup</sv:value>
+      <sv:value>Boolean Radio Group</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
