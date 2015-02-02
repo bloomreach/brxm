@@ -27,6 +27,9 @@
   <sv:property sv:name="charset" sv:type="String">
     <sv:value>UTF-8</sv:value>
   </sv:property>
+  <sv:property sv:name="filter" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
   <sv:property sv:name="serializer" sv:type="String">
     <sv:value>simple</sv:value>
   </sv:property>
