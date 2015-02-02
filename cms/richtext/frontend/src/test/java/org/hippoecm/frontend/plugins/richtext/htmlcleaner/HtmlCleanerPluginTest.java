@@ -97,7 +97,7 @@ public class HtmlCleanerPluginTest extends PluginTest {
 
         String html = htmlCleanerPlugin.clean("simple text <p>&nbsp;</p>");
         log.debug(html);
-        assertEquals("simple text \n<p>&nbsp;</p>", html);
+        assertEquals("simple text <p>&nbsp;</p>", html);
     }
 
     @Test
