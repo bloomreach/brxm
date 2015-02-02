@@ -387,9 +387,9 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     private static class ChangesListener implements FileSystemListener {
 
-        private volatile CyclicBarrier startRecording = new CyclicBarrier(2);
-        private volatile CyclicBarrier stopRecording = new CyclicBarrier(2);
-        private volatile boolean recordingChanges = false;
+        private CyclicBarrier startRecording = new CyclicBarrier(2);
+        private CyclicBarrier stopRecording = new CyclicBarrier(2);
+        private boolean recordingChanges = false;
         private List<String> recordedErrors = Collections.synchronizedList(new ArrayList<>());
         private final List<Path> created = Collections.synchronizedList(new ArrayList<>());
         private final List<Path> modified = Collections.synchronizedList(new ArrayList<>());
@@ -408,11 +408,11 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
             awaitQuietly(stopRecording);
         }
 
-        void removeStartBarrier() {
+        synchronized void removeStartBarrier() {
             startRecording = null;
         }
 
-        void removeStopBarrier() {
+        synchronized void removeStopBarrier() {
             stopRecording = null;
         }
 
