@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.InvalidConfigurationException;
+import net.sf.ehcache.config.PersistenceConfiguration;
 
 /**
  * HstCacheEhCacheImpl
@@ -32,11 +34,21 @@ import net.sf.ehcache.Element;
 public class HstCacheEhCacheImpl implements HstCache {
 
     private static final Logger log = LoggerFactory.getLogger(HstCacheEhCacheImpl.class);
-    private Ehcache ehcache;
+    private final Ehcache ehcache;
     private volatile int invalidationCounter;
 
-    public HstCacheEhCacheImpl(Ehcache ehcache) {
+    public HstCacheEhCacheImpl(final Ehcache ehcache) {
+        this(ehcache, new PersistenceConfiguration().strategy(PersistenceConfiguration.Strategy.NONE));
+    }
+
+    public HstCacheEhCacheImpl(final Ehcache ehcache, final PersistenceConfiguration persistenceConfiguration) {
         this.ehcache = ehcache;
+        try {
+            ehcache.getCacheConfiguration().addPersistence(persistenceConfiguration);
+        } catch (InvalidConfigurationException e) {
+            log.warn("Cannot add PersistenceConfiguration since deprecated 'overflowToDisk' or 'diskPersistent' is still " +
+                    "configured.");
+        }
     }
 
     public void setStatisticsEnabled(boolean statisticsEnabled) {
@@ -126,7 +138,7 @@ public class HstCacheEhCacheImpl implements HstCache {
     }
 
     public int getMaxSize() {
-        return ehcache.getCacheConfiguration().getMaxElementsInMemory()
+        return new Long(ehcache.getCacheConfiguration().getMaxEntriesLocalHeap()).intValue()
                 + ehcache.getCacheConfiguration().getMaxElementsOnDisk();
     }
 

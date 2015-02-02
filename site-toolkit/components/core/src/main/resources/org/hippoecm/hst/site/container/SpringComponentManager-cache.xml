@@ -30,18 +30,16 @@
   
   <bean id="abstractEhCacheBase" abstract="true">
     <property name="cacheManager" ref="ehCacheManager" />
-    <property name="maxElementsInMemory" value="256" />
+    <property name="maxEntriesLocalHeap" value="256" />
     <property name="maxElementsOnDisk" value="0" />
     <property name="eternal" value="false" />
-    <property name="overflowToDisk" value="false" />
     <!-- time to live in seconds. default 1 day -->
     <property name="timeToLive" value="86400" />
     <!-- time to idle in seconds. default 1 day -->
     <property name="timeToIdle" value="86400" />
-    <property name="diskPersistent" value="false" />
     <property name="diskExpiryThreadIntervalSeconds" value="120" />
   </bean>
-  
+
   <bean id="abstractEhCache" abstract="true" parent="abstractEhCacheBase" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
   </bean>
   
@@ -63,7 +61,7 @@
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="hstPageBlockingCache" />
-        <property name="maxElementsInMemory" value="${pageCache.maxSize}"/>
+        <property name="maxEntriesLocalHeap" value="${pageCache.maxSize}"/>
         <property name="timeToLive" value="${pageCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
@@ -74,7 +72,7 @@
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="hstWebFileCache" />
-        <property name="maxElementsInMemory" value="${webFileCache.maxSize}"/>
+        <property name="maxEntriesLocalHeap" value="${webFileCache.maxSize}"/>
         <property name="timeToLive" value="${webFileCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
