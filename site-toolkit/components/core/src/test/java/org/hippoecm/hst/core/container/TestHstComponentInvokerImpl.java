@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationHandler;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.easymock.Capture;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -39,7 +38,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
