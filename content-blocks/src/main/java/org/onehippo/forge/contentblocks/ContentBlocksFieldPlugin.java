@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -439,7 +439,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         // loop configured list and possibly prepend items with the document namespace
         final List<String> compoundList = new ArrayList<>();
 
-        if (configuredCompoundList != null) {
+        if (StringUtils.isNotBlank(configuredCompoundList)) {
 
             // split into list, removing commas and white spaces
             final List<String> list = Arrays.asList(configuredCompoundList.split("\\s*,\\s*"));
@@ -617,10 +617,18 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
             // check if the compounds are configured as list
             if (!compoundList.isEmpty()) {
+
+                final List<DropDownOption> options = getOptionsFromList();
+
+                // avoid first "Choose item" entry
+                if (options.size() > 0) {
+                    dropDownOptionModel.setItem(options.get(0));
+                }
+
                 dropDown = new DropDownChoice<>("itemsDropDown",
-                        new PropertyModel<DropDownOption>(dropDownOptionModel, "item"),
+                        new PropertyModel<>(dropDownOptionModel, "item"),
                         getOptionsFromList(),
-                        new ChoiceRenderer<DropDownOption>("label", "value"));
+                        new ChoiceRenderer<>("label", "value"));
                 dropDown.setRequired(true);
                 form.add(dropDown);
 
@@ -630,19 +638,30 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Selecting value '{}' from dropdown, compoundList={}",
-                                    dropDownOptionModel.getItem().getValue(), compoundList);
+                        if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Selecting value '{}' from dropdown, compoundList={}",
+                                        dropDownOptionModel.getItem().getValue(), compoundList);
+                            }
+                            addItem(dropDownOptionModel.getItem().getValue(), target);
+                        } else {
+                            log.debug("No value selected from dropdown, compoundList={}", compoundList);
                         }
-                        addItem(dropDownOptionModel.getItem().getValue(), target);
                     }
                 });
             }
             else if (providerCompoundType != null ) {
+                final List<DropDownOption> options = getOptionsFromProvider();
+
+                // avoid first "Choose item" entry
+                if (options.size() > 0) {
+                    dropDownOptionModel.setItem(options.get(0));
+                }
+
                 dropDown = new DropDownChoice<>("itemsDropDown",
-                        new PropertyModel<DropDownOption>(dropDownOptionModel, "item"),
-                        getOptionsFromProvider(),
-                        new ChoiceRenderer<DropDownOption>("label", "value"));
+                        new PropertyModel<>(dropDownOptionModel, "item"),
+                        options,
+                        new ChoiceRenderer<>("label", "value"));
                 dropDown.setRequired(true);
                 form.add(dropDown);
 
@@ -652,11 +671,15 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
                         if (log.isDebugEnabled()) {
                             log.debug("Selecting value '{}' from dropdown, providerCompoundType={}",
                                     dropDownOptionModel.getItem().getValue(), providerCompoundType);
                         }
                         addItem(dropDownOptionModel.getItem().getValue(), target);
+                        } else {
+                            log.debug("No value selected from dropdown, providerCompoundType={}", providerCompoundType);
+                        }
                     }
                 });
             }
