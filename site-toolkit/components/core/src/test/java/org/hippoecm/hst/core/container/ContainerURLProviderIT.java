@@ -19,8 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
@@ -33,7 +31,6 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,11 +163,11 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
         setResolvedMount(requestContext);
 
-        ((MockHttpServletRequest)request).setQueryString("param=value1_emptyns&r2:param1=value1_r2&r1:param1=value1_r1");
+        request.setQueryString("param=value1_emptyns&r2:param1=value1_r2&r1:param1=value1_r1");
         // when the queryString is parsed in HstRequestUtils, also the parameters need to be set
-        ((MockHttpServletRequest)request).setParameter("param", "value1_emptyns");
-        ((MockHttpServletRequest)request).setParameter("r1:param1", "value1_r1");
-        ((MockHttpServletRequest)request).setParameter("r2:param1", "value1_r2");
+        request.setParameter("param", "value1_emptyns");
+        request.setParameter("r1:param1", "value1_r1");
+        request.setParameter("r2:param1", "value1_r2");
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
@@ -406,11 +403,11 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
         setResolvedMount(requestContext);
 
-        ((MockHttpServletRequest)request).setQueryString("param=value1_emptyns&r2:param1=value1_r2&r1:param1=value1_r1");
+        request.setQueryString("param=value1_emptyns&r2:param1=value1_r2&r1:param1=value1_r1");
         // when the queryString is parsed in HstRequestUtils, also the parameters need to be set
-        ((MockHttpServletRequest)request).setParameter("param", "value1_emptyns");
-        ((MockHttpServletRequest)request).setParameter("r1:param1", "value1_r1");
-        ((MockHttpServletRequest)request).setParameter("r2:param1", "value1_r2");
+        request.setParameter("param", "value1_emptyns");
+        request.setParameter("r1:param1", "value1_r1");
+        request.setParameter("r2:param1", "value1_r2");
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
