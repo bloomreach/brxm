@@ -611,6 +611,7 @@ components/core/src/main/java/org/hippoecm/hst/core/component/HstResourceRespons
 components/core/src/main/java/org/hippoecm/hst/core/component/HstResponseImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/component/HstURLFactoryImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/component/HstURLImpl.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/container/AbstractAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AbstractBaseOrderableValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AbstractValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/ActionValve.java -text
@@ -786,6 +787,7 @@ components/core/src/test/java/org/hippoecm/hst/core/component/HstRequestIT.java 
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstComponentMetadataReader.java -text
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/AbstractPipelineTestCase.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/AsynchronousComponentWindowRendererIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/ContainerURLProviderIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/DefaultPipelineIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.java -text

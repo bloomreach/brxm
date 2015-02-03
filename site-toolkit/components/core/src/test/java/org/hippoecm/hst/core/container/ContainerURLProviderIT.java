@@ -84,17 +84,14 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testBasicContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
         // need to set the resolved mount on the requestContext
         setResolvedMount(requestContext);
 
-        // request.getServletPath() = ""
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
-
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
 
@@ -105,13 +102,10 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
-
-        // request.getServletPath() = ""
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
@@ -123,8 +117,8 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertTrue("The url is wrong.", url.toString().contains("r1:param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("r1:param2=value2"));
 
-        ((MockHttpServletRequest) request).setParameter("r1:param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("r1:param2", "value2");
+        request.setParameter("r1:param1", "value1");
+        request.setParameter("r1:param2", "value2");
 
         HstRequest hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
         assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
@@ -148,9 +142,9 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
 
-        ((MockHttpServletRequest) request).removeAllParameters();
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.removeAllParameters();
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         hstRequestRootWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
         hstRequestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
@@ -167,13 +161,11 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testRenderContainerURLParameterMerging() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
 
-        // request.getServletPath() = ""
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         ((MockHttpServletRequest)request).setQueryString("param=value1_emptyns&r2:param1=value1_r2&r1:param1=value1_r1");
         // when the queryString is parsed in HstRequestUtils, also the parameters need to be set
         ((MockHttpServletRequest)request).setParameter("param", "value1_emptyns");
@@ -210,10 +202,8 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testNamespacelessRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
-
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
 
         setResolvedMount(requestContext);
 
@@ -231,8 +221,8 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
 
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         HstRequest hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
         assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
@@ -256,9 +246,9 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
 
-        ((MockHttpServletRequest) request).removeAllParameters();
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.removeAllParameters();
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
         assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
@@ -276,13 +266,11 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testActionContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
-
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         setResolvedMount(requestContext);
 
@@ -295,7 +283,7 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         actionURL.setActionParameter("ap2", "two");
         String actionURLPathInfo = this.urlProvider.toURLString(actionURL, requestContext);
         actionURLPathInfo = actionURLPathInfo.substring("/site/content".length());
-        ((MockHttpServletRequest) request).setPathInfo(actionURLPathInfo);
+        request.setPathInfo(actionURLPathInfo);
 
         assertNotNull("action window reference namespace is null.", actionURL.getActionWindowReferenceNamespace());
         assertNull("resource window reference namespace is not null.", actionURL.getResourceWindowReferenceNamespace());
@@ -309,13 +297,11 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testResourceContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
-
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         setResolvedMount(requestContext);
 
@@ -327,7 +313,7 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         resourceURL.setResourceId("myresource001");
         String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL, requestContext);
         resourceURLPathInfo = resourceURLPathInfo.substring("/site/content".length());
-        ((MockHttpServletRequest) request).setPathInfo(resourceURLPathInfo);
+        request.setPathInfo(resourceURLPathInfo);
 
         assertNull("action window reference namespace is not null.", resourceURL.getActionWindowReferenceNamespace());
         assertNotNull("resource window reference namespace is null.", resourceURL.getResourceWindowReferenceNamespace());
@@ -337,12 +323,10 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testComponentRenderingContainerURL() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
-
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
 
@@ -367,14 +351,14 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertTrue("componentRenderingURLString is wrong: " + componentRenderingURLString, 
                 componentRenderingURLString.contains("&_hn:ref=" + componentRenderingURL.getComponentRenderingWindowReferenceNamespace()));
 
-        ((MockHttpServletRequest) request).setParameter("r1:param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("r1:param2", "value2");
+        request.setParameter("r1:param1", "value1");
+        request.setParameter("r1:param2", "value2");
 
         assertTrue("The url is wrong.", url.toString().contains("r1:param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("r1:param2=value2"));
 
-        ((MockHttpServletRequest) request).setParameter("r1:param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("r1:param2", "value2");
+        request.setParameter("r1:param1", "value1");
+        request.setParameter("r1:param2", "value2");
 
         HstRequest hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
         assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
@@ -398,9 +382,9 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
 
-        ((MockHttpServletRequest) request).removeAllParameters();
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        request.removeAllParameters();
+        request.setParameter("param1", "value1");
+        request.setParameter("param2", "value2");
 
         hstRequestRootWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
         hstRequestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
@@ -417,13 +401,11 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
 
     @Test
     public void testComponentRenderingContainerURLParameterMerging() throws UnsupportedEncodingException, ContainerException {
-        HttpServletRequest request = mockRequest();
+        MockHttpServletRequest request = mockRequest();
         HttpServletResponse response = mockResponse();
 
         setResolvedMount(requestContext);
 
-        // request.getServletPath() = ""
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         ((MockHttpServletRequest)request).setQueryString("param=value1_emptyns&r2:param1=value1_r2&r1:param1=value1_r1");
         // when the queryString is parsed in HstRequestUtils, also the parameters need to be set
         ((MockHttpServletRequest)request).setParameter("param", "value1_emptyns");
@@ -517,13 +499,13 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertEquals("r1", containerURL.getComponentRenderingWindowReferenceNamespace());
     }
 
-    private HttpServletResponse mockResponse() {
+    protected HttpServletResponse mockResponse() {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         response.setCharacterEncoding("UTF-8");
         return response;
     }
 
-    private HttpServletRequest mockRequest() {
+    protected MockHttpServletRequest mockRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest(new MockServletContext());
         request.setScheme("http");
         request.setServerName("preview.myproject.hippoecm.org");
@@ -532,6 +514,7 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         request.setContextPath("/site");
         request.setPathInfo("/news/2008/08");
         request.addHeader("Accept-Language", "da, en-gb, en");
+        request.setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         return request;
     }
 }

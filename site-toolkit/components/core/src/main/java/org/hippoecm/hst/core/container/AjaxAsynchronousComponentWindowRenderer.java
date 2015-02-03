@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  * Asynchronous component window rendering implementation leveraging AJAX technologies.
  * </P>
  */
-public class AjaxAsynchronousComponentWindowRenderer implements AsynchronousComponentWindowRenderer {
+public class AjaxAsynchronousComponentWindowRenderer extends AbstractAsynchronousComponentWindowRenderer {
 
     private static Logger log = LoggerFactory.getLogger(AjaxAsynchronousComponentWindowRenderer.class);
 
@@ -54,7 +54,7 @@ public class AjaxAsynchronousComponentWindowRenderer implements AsynchronousComp
 
     @Override
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
-        HstURL url = response.createComponentRenderingURL();
+        HstURL url = createAsyncComponentRenderingURL(request, response);
         Element hiddenDiv = response.createElement("div");
         hiddenDiv.setAttribute("id", url.toString());
         hiddenDiv.setAttribute("class", OBFUSCATED_ASYNC_VAR);

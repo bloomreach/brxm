@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,14 +30,12 @@ import org.w3c.dom.Element;
  * Asynchronous component window rendering implementation leveraging ESI technologies.
  * </P>
  */
-public class ESIAsynchronousComponentWindowRenderer implements AsynchronousComponentWindowRenderer {
-
-    private static Logger log = LoggerFactory.getLogger(ESIAsynchronousComponentWindowRenderer.class);
+public class ESIAsynchronousComponentWindowRenderer extends AbstractAsynchronousComponentWindowRenderer {
 
     @Override
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
         HstRequestContext requestContext = request.getRequestContext();
-        HstURL compUrl = response.createComponentRenderingURL();
+        HstURL compUrl = createAsyncComponentRenderingURL(request, response);
         String url = HstRequestUtils.getFullyQualifiedHstURL(requestContext, compUrl, false);
         Element esiElem = response.createElement("esi:include");
         esiElem.setAttribute("src", url);
