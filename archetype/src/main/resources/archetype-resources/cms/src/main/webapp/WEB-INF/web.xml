@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-    version="2.5" 
-    id="cms">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0"
+         id="cms">
 
   <!-- General configuration -->
   <display-name>${projectName} CMS</display-name>
@@ -21,8 +21,9 @@
   </context-param>
   <context-param>
     <description>The location of the repository configuration file. Unless the location
-    starts with file://, the location is retrieved from within the application package as
-    resource.</description>
+      starts with file://, the location is retrieved from within the application package as
+      resource.
+    </description>
     <param-name>repository-config</param-name>
     <param-value>repository.xml</param-value>
   </context-param>
@@ -99,7 +100,7 @@
     <filter-name>Console</filter-name>
     <url-pattern>/console/*</url-pattern>
   </filter-mapping>
-  
+
   <listener>
     <listener-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginListener</listener-class>
   </listener>
@@ -186,15 +187,15 @@
     <load-on-startup>4</load-on-startup>
   </servlet>
 
-  <servlet> 
-    <servlet-name>PingServlet</servlet-name> 
-    <servlet-class>org.hippoecm.repository.PingServlet</servlet-class> 
+  <servlet>
+    <servlet-name>PingServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
     <init-param>
       <param-name>repository-address</param-name>
       <param-value>vm://</param-value>
     </init-param>
-    <load-on-startup>5</load-on-startup> 
-  </servlet> 
+    <load-on-startup>5</load-on-startup>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>LoggingServlet</servlet-name>
@@ -206,9 +207,9 @@
     <url-pattern>/repository/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping> 
-    <servlet-name>PingServlet</servlet-name> 
-    <url-pattern>/ping/</url-pattern> 
+  <servlet-mapping>
+    <servlet-name>PingServlet</servlet-name>
+    <url-pattern>/ping/</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

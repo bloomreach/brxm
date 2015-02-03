@@ -47,18 +47,19 @@
       <version>${dollar}{project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-      <artifactId>gallerypicker</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>wicket</artifactId>
-          <groupId>org.apache.wicket</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>${groupId}</groupId>
+      <artifactId>${rootArtifactId}-bootstrap-webfiles</artifactId>
+      <version>${dollar}{project.version}</version>
+    </dependency>
+
+    <!--  Gallery picker dependency -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-gallerypicker</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>resource-bundle-editor-plugin</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
     </dependency>
   </dependencies>
   <build>

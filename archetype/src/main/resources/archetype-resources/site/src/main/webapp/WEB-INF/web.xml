@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-  version="2.5"
-  id="site">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0"
+         id="site">
+
 
   <display-name>${projectName} site</display-name>
   <description>${projectName} site</description>
@@ -82,16 +83,6 @@
   <filter>
     <filter-name>HstFilter</filter-name>
     <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>
-    <init-param>
-      <param-name>prefixExclusions</param-name>
-      <!-- on purpose /resources/ is not added here a prefix exclusion as resources should be catched
-      in general by suffixExclusions -->
-      <param-value>/ping/, /binaries/, /login/, /hst/pagecomposer/sources/</param-value>
-    </init-param>
-    <init-param>
-      <param-name>suffixExclusions</param-name>
-      <param-value>.jsp, .ftl, .FTL</param-value>
-    </init-param>
   </filter>
 
   <filter-mapping>
@@ -149,16 +140,28 @@
       <!-- Forces UTF-8 output encoding! -->
     </init-param>
     <!--
-      if in case of template exception rendering should short-circuit in case of errors, set template_exception_handler = debug
-      Default template_exception_handler is "ignore" which only logs errors and then continues rendering
+      'loggerLibrary' determines which logger library Freemarker uses to log errors.
+      Available options are 'auto', 'none', 'java', 'avalon', 'log4j', 'commons', and 'slf4j'.
+      The default is 'none', which will suppress all exceptions logged by Freemarker.
+      Note that the HstFreemarkerServlet will still log the Freemarker error in all re-thrown exceptions.
+      <init-param>
+        <param-name>loggerLibrary</param-name>
+        <param-value>none</param-value>
+      </init-param>
+    -->
+    <!--
+      'template_exception_handler' determines what Freemarker does when it encounters an error:
+      - "ignore" lets Freemarker log an exception and then continue rendering.
+      - "debug" lets Freemarker log a stack trace, stops rendering and and re-throws the exception.
+      - "rethrow" (the default) does not let Freemarker log a stack trace, stops rendering and re-throws the exception.
+      The Freemarker error message in re-thrown exceptions will also be logged by the HstFreemarkerServlet.
       <init-param>
         <param-name>template_exception_handler</param-name>
-        <param-value>debug</param-value>
+        <param-value>rethrow</param-value>
       </init-param>
     -->
     <load-on-startup>200</load-on-startup>
   </servlet>
-
   <servlet>
     <servlet-name>TemplateComposerResourceServlet</servlet-name>
     <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>

@@ -16,6 +16,7 @@
   <modules>
     <module>configuration</module>
     <module>content</module>
+    <module>webfiles</module>
   </modules>
 
 </project>
