@@ -16,10 +16,11 @@
 
 package org.onehippo.cms7.essentials.rest.client;
 
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.transport.http.HTTPConduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,17 +52,22 @@ public class RestClient {
     }
 
     public String getPluginList() {
-        final WebClient client = WebClient.create(baseResourceUri);
-        setTimeouts(client, connectionTimeout, receiveTimeout);
-        return client.accept(MediaType.WILDCARD).get(String.class);
+        final Client client = ClientBuilder.newBuilder().newClient();
+        final WebTarget target = client.target(baseResourceUri);
+        final Invocation.Builder builder = target.request();
+        return builder.get(String.class);
     }
 
 
     public String getJson() {
-        final WebClient client = WebClient.create(baseResourceUri);
+
+        final Client client = ClientBuilder.newBuilder().newClient();
+        final WebTarget target = client.target(baseResourceUri);
+        final Invocation.Builder builder = target.request();
+
         setTimeouts(client, connectionTimeout, receiveTimeout);
         try {
-            return client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+            return builder.get(String.class);
         } catch (Exception e) {
             log.error("Error requesting remote plugin descriptors for repository: " + baseResourceUri, e);
         }
@@ -69,13 +75,14 @@ public class RestClient {
     }
 
 
-    private void setTimeouts(final WebClient client, final long connectionTimeout, final long receiveTimeout) {
-        HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+    private void setTimeouts(final Client client, final long connectionTimeout, final long receiveTimeout) {
+        // TODO: figure out how to set timeout with new JAXRS API
+       /* HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
         if (receiveTimeout != 0) {
             conduit.getClient().setReceiveTimeout(receiveTimeout);
         }
         if (connectionTimeout != 0) {
             conduit.getClient().setConnectionTimeout(connectionTimeout);
-        }
+        }*/
     }
 }

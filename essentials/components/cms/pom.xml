@@ -18,13 +18,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <properties>
-    <servlet-api.version>2.5</servlet-api.version>
-    <quartz.version>1.8.5</quartz.version>
-    <hippo-utilities-repository.version>1.01.02</hippo-utilities-repository.version>
-    <jsoup.version>1.7.1</jsoup.version>
-    <commons-lang.version>2.6</commons-lang.version>
-  </properties>
+
 
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
@@ -37,7 +31,14 @@
   <artifactId>cms</artifactId>
   <groupId>org.onehippo.cms7.essentials.components</groupId>
 
+  <properties>
+    <quartz.version>1.8.5</quartz.version>
+    <hippo-utilities-repository.version>1.01.02</hippo-utilities-repository.version>
+    <jsoup.version>1.7.1</jsoup.version>
+    <commons-lang.version>2.6</commons-lang.version>
+  </properties>
   <dependencies>
+
     <dependency>
       <!-- jsoup HTML parser library @ http://jsoup.org/ -->
       <groupId>org.jsoup</groupId>
@@ -59,12 +60,6 @@
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

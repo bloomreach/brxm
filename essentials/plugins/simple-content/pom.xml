@@ -38,11 +38,6 @@
       <artifactId>implementation</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7.essentials.sdk</groupId>
       <artifactId>implementation</artifactId>
       <type>test-jar</type>

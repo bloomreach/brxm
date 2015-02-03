@@ -27,6 +27,9 @@ public class ProjectUtils {
 
     private static boolean initialized;
 
+    private ProjectUtils() {
+    }
+
     public static void persistSettings(final ProjectSettings settings) throws Exception {
         try (PluginConfigService configService = PluginContextFactory.getContext().getConfigService()) {
             configService.write(settings);

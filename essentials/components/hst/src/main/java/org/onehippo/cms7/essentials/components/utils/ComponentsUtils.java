@@ -233,13 +233,7 @@ public final class ComponentsUtils {
      */
     public String[] getPublicRequestParameters(final BaseHstComponent comp, final HstRequest request, final String paramName) {
 
-        String contextNamespaceReference = request.getRequestContext().getContextNamespace();
-
-        if (contextNamespaceReference == null) {
-            contextNamespaceReference = "";
-        }
-
-        final Map<String, String[]> namespaceLessParameters = request.getParameterMap(contextNamespaceReference);
+        final Map<String, String[]> namespaceLessParameters = request.getParameterMap("");
         return namespaceLessParameters.get(paramName);
     }
 

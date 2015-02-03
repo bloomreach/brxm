@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.4</version>
+    <version>7.10.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials</name>
@@ -39,8 +39,8 @@
     <!-- ***END temporary override of versions*** -->
     <maven.plugin.release.version>2.5</maven.plugin.release.version>
 
-    <jstl.version>1.1.2</jstl.version>
-    <taglibs.version>1.1.2</taglibs.version>
+    <jsp-api.version>2.2</jsp-api.version>
+    <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
     <junit.version>4.11</junit.version>
     <easymock.version>3.1</easymock.version>
@@ -122,18 +122,17 @@
 
   <dependencyManagement>
     <dependencies>
-
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${jstl.version}</version>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-spec</artifactId>
+        <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
 
       <dependency>
-        <groupId>taglibs</groupId>
-        <artifactId>standard</artifactId>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-impl</artifactId>
         <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
@@ -183,8 +182,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <target>1.7</target>
-            <source>1.7</source>
+            <target>1.8</target>
+            <source>1.8</source>
           </configuration>
         </plugin>
         <!-- redefine again default Hippo LICENSE and NOTICE file handling configuration like as defined

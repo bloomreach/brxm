@@ -137,8 +137,8 @@
           <version>${maven-compiler-plugin.version}</version>
           <inherited>true</inherited>
           <configuration>
-            <target>1.7</target>
-            <source>1.7</source>
+            <target>1.8</target>
+            <source>1.8</source>
           </configuration>
         </plugin>
       </plugins>
