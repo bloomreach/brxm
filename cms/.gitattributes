@@ -2021,7 +2021,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryWork
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryWorkflowPlugin$UploadDialog_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryWorkflowPlugin_de.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryWorkflowPlugin_fr.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/GalleryWorkflowPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/ImageContainer.html -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/ImageContainer.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/ImageGalleryPlugin.css -text
