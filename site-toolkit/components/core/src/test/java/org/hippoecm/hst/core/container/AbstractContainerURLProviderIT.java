@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
-public class AbstractContainerURLIT extends AbstractTestConfigurations {
+public class AbstractContainerURLProviderIT extends AbstractTestConfigurations {
 
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;

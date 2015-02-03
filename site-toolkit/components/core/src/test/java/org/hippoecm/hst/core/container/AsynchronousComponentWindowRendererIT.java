@@ -36,7 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class AsynchronousComponentWindowRendererIT extends AbstractContainerURLIT {
+public class AsynchronousComponentWindowRendererIT extends AbstractContainerURLProviderIT {
 
     private AbstractAsynchronousComponentWindowRenderer asynchronousComponentWindowRenderer;
 

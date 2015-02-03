@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
-public class ContainerURLProviderIT extends AbstractContainerURLIT {
+public class ContainerURLProviderIT extends AbstractContainerURLProviderIT {
 
     @Test
     public void testBasicContainerURL() throws UnsupportedEncodingException, ContainerException {
