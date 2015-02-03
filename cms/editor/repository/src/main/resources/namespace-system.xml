@@ -187,6 +187,9 @@
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.TextTemplatePlugin</sv:value>
           </sv:property>
+          <sv:property sv:name="diffservice.id" sv:type="String">
+            <sv:value>html.diffservice.id</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>

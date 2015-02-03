@@ -148,6 +148,9 @@
         <sv:property sv:name="htmlcleaner.id" sv:type="String">
           <sv:value>${htmlcleaner.id}</sv:value>
         </sv:property>
+        <sv:property sv:name="diffservice.id" sv:type="String">
+          <sv:value>html.diffservice.id</sv:value>
+        </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.ckeditor.CKEditorPropertyPlugin</sv:value>
         </sv:property>

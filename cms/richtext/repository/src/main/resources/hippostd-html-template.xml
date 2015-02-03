@@ -219,6 +219,9 @@
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin</sv:value>
         </sv:property>
+        <sv:property sv:name="diffservice.id" sv:type="String">
+          <sv:value>html.diffservice.id</sv:value>
+        </sv:property>
         <sv:property sv:name="browser.id" sv:type="String">
           <sv:value>service.browse</sv:value>
         </sv:property>

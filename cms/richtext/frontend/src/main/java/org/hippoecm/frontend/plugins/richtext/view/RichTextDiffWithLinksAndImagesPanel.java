@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
+import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -58,13 +59,14 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
                                                final IModel<Node> baseNodeModel,
                                                final IModel<Node> currentNodeModel,
                                                final IBrowseService browser,
+                                               final DiffService diffService,
                                                final IHtmlCleanerService cleaner) {
         super(id);
 
         final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser, false);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior, cleaner);
+        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior, diffService, cleaner);
         addView(viewModel);
     }
 
@@ -77,6 +79,7 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
     private static IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
                                                   final IModel<Node> currentNodeModel,
                                                   final PreviewLinksBehavior previewLinksBehavior,
+                                                  final DiffService diffService,
                                                   final IHtmlCleanerService cleaner) {
 
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
@@ -102,7 +105,7 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         final StripScriptModel scriptlessBase = new StripScriptModel(decoratedBase);
         final StripScriptModel scriptlessCurrent = new StripScriptModel(decoratedCurrent);
 
-        return new HtmlDiffModel(scriptlessBase, scriptlessCurrent);
+        return new HtmlDiffModel(scriptlessBase, scriptlessCurrent, diffService);
     }
 
     private static JcrPropertyValueModel getContentModelOrNull(IModel<Node> nodeModel) {

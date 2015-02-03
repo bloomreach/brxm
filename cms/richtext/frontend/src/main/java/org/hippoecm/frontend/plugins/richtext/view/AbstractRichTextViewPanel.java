@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.service.IBrowseService;
 
 /**
  * Renders a view of a rich text field. Subclasses must call {@link #addView} once with the view model to render.
@@ -61,7 +59,8 @@ abstract class AbstractRichTextViewPanel extends Panel {
 
         @Override
         public void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
-            final String text = getDefaultModelObject().toString();
+            Object modelObject = getDefaultModelObject();
+            final String text = modelObject != null ? modelObject.toString() : null;
             if (text != null) {
                 replaceComponentTagBody(markupStream, openTag, text);
             } else {

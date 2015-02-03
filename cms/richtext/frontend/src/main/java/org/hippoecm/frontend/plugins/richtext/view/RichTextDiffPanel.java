@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.richtext.view;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
+import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 
 /**
@@ -28,17 +29,18 @@ public class RichTextDiffPanel extends AbstractRichTextDiffPanel {
 
     public RichTextDiffPanel(final String id,
                              final IModel<String> baseModel,
-                             final IModel<String> currentModel) {
+                             final IModel<String> currentModel,
+                             final DiffService diffService) {
         super(id);
 
-        final IModel<String> diffModel = createDiffModel(baseModel, currentModel);
+        final IModel<String> diffModel = createDiffModel(baseModel, currentModel, diffService);
         addView(diffModel);
     }
 
     private IModel<String> createDiffModel(final IModel<String> baseModel,
-                                           final IModel<String> currentModel) {
+                                           final IModel<String> currentModel, final DiffService diffService) {
 
-        return new HtmlDiffModel(new StripScriptModel(baseModel), new StripScriptModel(currentModel));
+        return new HtmlDiffModel(new StripScriptModel(baseModel), new StripScriptModel(currentModel), diffService);
     }
 
 }

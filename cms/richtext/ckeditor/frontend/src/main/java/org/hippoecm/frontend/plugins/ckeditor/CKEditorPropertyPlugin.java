@@ -24,6 +24,8 @@ import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
+import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
+import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 
 /**
  * Property field plugin for editing HTML in a String property using CKEditor. Internal links and images are
@@ -70,7 +72,12 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
     protected Panel createComparePanel(final String id, final IModel<String> baseModel, final IModel<String> currentModel) {
         final JcrPropertyValueModel<String> basePropertyModel = (JcrPropertyValueModel<String>) baseModel;
         final JcrPropertyValueModel<String> currentPropertyModel = (JcrPropertyValueModel<String>) currentModel;
-        return new RichTextDiffPanel(id, basePropertyModel, currentPropertyModel);
+        return new RichTextDiffPanel(id, basePropertyModel, currentPropertyModel, getDiffService());
+    }
+
+    private DiffService getDiffService() {
+        final String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
+        return getPluginContext().getService(serviceId, DefaultHtmlDiffService.class);
     }
 
 }

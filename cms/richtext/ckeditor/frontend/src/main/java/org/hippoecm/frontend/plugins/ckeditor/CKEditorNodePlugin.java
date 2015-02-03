@@ -43,6 +43,8 @@ import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewWithLinksAndImagesPanel;
+import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
+import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -197,8 +199,15 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     protected Panel createComparePanel(final String id, final IModel<Node> baseModel, final IModel<Node> currentModel) {
         final JcrNodeModel baseNodeModel = (JcrNodeModel) baseModel;
         final JcrNodeModel currentNodeModel = (JcrNodeModel) currentModel;
-        return new RichTextDiffWithLinksAndImagesPanel(id, baseNodeModel, currentNodeModel, getBrowser(), getHtmlCleaner());
+        return new RichTextDiffWithLinksAndImagesPanel(id, baseNodeModel, currentNodeModel,
+                getBrowser(), getDiffService(), getHtmlCleaner());
     }
+
+    private DiffService getDiffService() {
+        String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
+        return getPluginContext().getService(serviceId, DefaultHtmlDiffService.class);
+    }
+
 
     private IPluginConfig getChildPluginConfig(final String key, IPluginConfig defaultConfig) {
         IPluginConfig childConfig = getPluginConfig().getPluginConfig(key);

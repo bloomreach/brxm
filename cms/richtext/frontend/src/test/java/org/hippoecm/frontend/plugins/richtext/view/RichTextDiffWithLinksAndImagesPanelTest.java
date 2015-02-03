@@ -146,7 +146,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
 
     private static String createDiff(Node base, Node current) {
         RichTextDiffWithLinksAndImagesPanel panel = new RichTextDiffWithLinksAndImagesPanel("id",
-                createNodeModel(base), createNodeModel(current), null, CLEANER);
+                createNodeModel(base), createNodeModel(current), null, null, CLEANER);
         return panel.get(RichTextDiffWithLinksAndImagesPanel.WICKET_ID_VIEW).getDefaultModelObjectAsString();
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.diff;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.htmldiff.DiffHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 public class HtmlDiffModel extends LoadableDetachableModel<String> {
 
@@ -37,30 +29,43 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
 
     IModel<String> original;
     IModel<String> current;
+    private final DiffService diffService;
 
-    public HtmlDiffModel(IModel<String> original, IModel<String> current) {
+    /**
+     * Create a HtmlDiffModel using the default HTML diff service
+     * @see DefaultHtmlDiffService
+     * @param original
+     * @param current
+     */
+    public HtmlDiffModel(IModel<String> original, IModel<String> current){
+        this(original, current, null);
+    }
+
+    /**
+     * Create the model using a predefined diff service.
+     *
+     * @see DiffService
+     * @param original
+     * @param current
+     * @param diffService  if it's null, the default HTML diff service is used (see {@link DefaultHtmlDiffService})
+     */
+    public HtmlDiffModel(IModel<String> original, IModel<String> current, final DiffService diffService) {
         this.original = new ValidHtmlModel(original);
         this.current = new ValidHtmlModel(current);
+        this.diffService = (diffService == null ? new DefaultHtmlDiffService() : diffService);
     }
 
     @Override
-    protected String load() {
+    protected String load(){
         if (original == null || current == null) {
             return null;
         }
-
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DiffHelper.diffHtml(original.getObject(), current.getObject(), new StreamResult(baos),
-                    Session.get().getLocale());
-            return baos.toString("UTF-8");
-        } catch (TransformerConfigurationException e) {
-            log.error(e.getMessage(), e);
-        } catch (SAXException e) {
-            log.info(e.getMessage(), e);
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        if (diffService != null) {
+            return diffService.diff(original.getObject(), current.getObject());
+        } else {
+            log.warn("Instance of the DiffService not found");
         }
+
         return null;
     }
 
