@@ -113,7 +113,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         return serialize(node, cleaner.getProperties());
     }
 
-    public TagNode filter(final TagNode node) {
+    private TagNode filter(final TagNode node) {
         if (node.getName() != null) {
             if (!whitelist.containsKey(node.getName())) {
                 return null;

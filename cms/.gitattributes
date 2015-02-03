@@ -2556,8 +2556,8 @@ richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 richtext/frontend/src/test/resources/richtexttest.cnd -text
 richtext/repository/src/main/resources/default-html-cleaner-service.xml -text
+richtext/repository/src/main/resources/filtering-html-cleaner-service.xml -text
 richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
-richtext/repository/src/main/resources/html-cleaner-service.xml -text
 scripts/src/main/resources/hippoecm-extension.xml -text
 scripts/src/main/resources/update-plugin-config.xml -text
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
