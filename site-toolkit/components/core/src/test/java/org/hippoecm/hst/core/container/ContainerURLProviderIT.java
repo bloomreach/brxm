@@ -25,18 +25,10 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.component.HstURLFactoryImpl;
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
-import org.hippoecm.hst.site.request.HstRequestContextImpl;
-import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -45,39 +37,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
-public class ContainerURLProviderIT extends AbstractTestConfigurations {
-
-    protected HstURLFactory urlFactory;
-    protected HstContainerURLProvider urlProvider;
-    protected HstMutableRequestContext requestContext;
-
-    protected MockHstComponentWindow rootWindow;
-    protected MockHstComponentWindow leftChildWindow;
-    protected MockHstComponentWindow rightChildWindow;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-
-        this.urlFactory = getComponent(HstURLFactory.class.getName());
-        this.requestContext = new HstRequestContextImpl(null);
-        this.urlProvider = this.urlFactory.getContainerURLProvider();
-        this.requestContext.setURLFactory(urlFactory);
-
-        rootWindow = new MockHstComponentWindow();
-        rootWindow.setReferenceName("root");
-        rootWindow.setReferenceNamespace("");
-
-        leftChildWindow = new MockHstComponentWindow();
-        leftChildWindow.setReferenceName("left");
-        leftChildWindow.setReferenceNamespace("l1");
-        leftChildWindow.setParentWindow(rootWindow);
-
-        rightChildWindow = new MockHstComponentWindow();
-        rightChildWindow.setReferenceName("right");
-        rightChildWindow.setReferenceNamespace("r1");
-        rightChildWindow.setParentWindow(rootWindow);
-    }
+public class ContainerURLProviderIT extends AbstractContainerURLIT {
 
     @Test
     public void testBasicContainerURL() throws UnsupportedEncodingException, ContainerException {
@@ -496,22 +456,4 @@ public class ContainerURLProviderIT extends AbstractTestConfigurations {
         assertEquals("r1", containerURL.getComponentRenderingWindowReferenceNamespace());
     }
 
-    protected HttpServletResponse mockResponse() {
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        response.setCharacterEncoding("UTF-8");
-        return response;
-    }
-
-    protected MockHttpServletRequest mockRequest() {
-        MockHttpServletRequest request = new MockHttpServletRequest(new MockServletContext());
-        request.setScheme("http");
-        request.setServerName("preview.myproject.hippoecm.org");
-        request.setServerPort(8080);
-        request.setMethod("GET");
-        request.setContextPath("/site");
-        request.setPathInfo("/news/2008/08");
-        request.addHeader("Accept-Language", "da, en-gb, en");
-        request.setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
-        return request;
-    }
 }
