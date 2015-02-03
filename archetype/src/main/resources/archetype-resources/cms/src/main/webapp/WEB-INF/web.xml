@@ -230,6 +230,12 @@
   <!-- Timeout in minutes -->
   <session-config>
     <session-timeout>10</session-timeout>
+    <!--
+    The tracking-mode setting protects against so-called session fixation attacks.
+    Although this setting is not defined in the servlet 2.5 spec, Tomcat allows it here.
+    If your container does not then you can remove this setting but then should configure your container
+    to get the same protection.
+    -->
     <tracking-mode>COOKIE</tracking-mode>
   </session-config>
 
