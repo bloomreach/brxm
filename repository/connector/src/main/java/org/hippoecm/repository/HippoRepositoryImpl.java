@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
+import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,6 +105,10 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     public Session login(Credentials credentials, String workspaceName) throws LoginException, RepositoryException {
         if (repository == null) {
             throw new RepositoryException("Repository not initialized yet.");
+        }
+        if (credentials instanceof JvmCredentials) {
+            JvmCredentials jvmCredentials = (JvmCredentials) credentials;
+            credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
         }
         // try to login with credentials
         Session session = repository.login(credentials, workspaceName);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.repository.security.user;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -27,16 +28,19 @@ import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.security.JvmCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * UserManager backend that stores the users inside the JCR repository
  */
 public class RepositoryUserManager extends AbstractUserManager {
 
-    /** SVN id placeholder */
-
+    private static final Logger log = LoggerFactory.getLogger(RepositoryUserManager.class);
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
-    
+
     private static final long ONEDAYMS = 1000 * 3600 * 24;
     
     private boolean maintenanceMode = false;
@@ -84,11 +88,20 @@ public class RepositoryUserManager extends AbstractUserManager {
         try {
             char[] password = creds.getPassword();
             Node userinfo = getUser(creds.getUserID());
-            
-            // check for pre-authenticated user
-            if (password != null && password.length > 0 && userinfo.hasProperty(HippoNodeType.HIPPO_PASSKEY) &&
-                userinfo.getProperty(HippoNodeType.HIPPO_PASSKEY).getString().equals(new String(password))) {
-                return true;
+
+            String passkey = JcrUtils.getStringProperty(userinfo, HippoNodeType.HIPPO_PASSKEY, null);
+            if (passkey != null && password != null && password.length > 0) {
+                if (JvmCredentials.PASSKEY.equals(passkey)) {
+                    final JvmCredentials jvmCreds = JvmCredentials.getCredentials(creds.getUserID());
+                    if (Arrays.equals(jvmCreds.getPassword(), password)) {
+                        log.info("User '{}' authenticated via jvm credentials", creds.getUserID());
+                        return true;
+                    }
+                    log.info("Jvm credentials did not match for user '{}'", creds.getUserID());
+                }
+                else if (Arrays.equals(password, passkey.toCharArray())) {
+                    return true;
+                }
             }
 
             if (maintenanceMode) {
