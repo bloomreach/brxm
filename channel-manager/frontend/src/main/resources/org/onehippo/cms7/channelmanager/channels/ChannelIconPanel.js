@@ -21,18 +21,25 @@
     Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
 
         tpl: new Ext.XTemplate(
-                '<tpl for=".">',
-                '<span class="channel-group-handle expanded {[xindex % 2 === 0 ? "even" : "odd"]}">{name}</span>',
-                '<ul class="channel-group {[xindex % 2 === 0 ? "even" : "odd"]}">',
-                '<tpl for="channels">',
-                '<li class="channel" channelId="{id}">',
-                '<img src="{channelTypeImg}" />',
-                '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
-                '<tpl if="changedBySet.length &gt; 0"><br /><span class="lockedBy" title="{lockedDetail}">{lockedLabel}</span></tpl>',
-                '</li>',
-                '</tpl>',
-                '</ul>',
-                '</tpl>'
+            '<tpl for=".">',
+            '  <div class="channel-group-handle expanded {[xindex % 2 === 0 ? "even" : "odd"]}">{name}</div>',
+            '  <ul class="channel-group {[xindex % 2 === 0 ? "even" : "odd"]}">',
+            '    <tpl for="channels">',
+            '      <li class="channel" channelId="{id}">',
+            '        <div class="channel-icon-stack">',
+            '          <img class="channel-type-icon" src="{channelTypeImg}" />',
+            '          <tpl if="changedBySet.length &gt; 0">',
+            '            <div class="channel-modified-icon"></div>',
+            '          </tpl>',
+            '        </div><br/>',
+            '        <img class="channel-region-icon" src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
+            '        <tpl if="changedBySet.length &gt; 0">',
+            '          <div class="lockedBy" title="{lockedDetail}">{lockedLabel}</div>',
+            '        </tpl>',
+            '      </li>',
+            '    </tpl>',
+            '  </ul>',
+            '</tpl>'
         ),
 
         constructor: function(config) {
