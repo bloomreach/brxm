@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
     private static final String PATH_PARAM = "path";
     private static final String UUID_PARAM = "uuid";
     private static final String URL_PARAMETERS = "parameters";
+    private static final String CONTENT_PATH = "/content";
+    private static final String DOCUMENTS_PATH = CONTENT_PATH + "/documents";
 
     private final IModelReference<Node> modelReference;
     private final IBrowseService browseService;
@@ -158,7 +160,7 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
                 JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
 
                 if (nodeModel.getNode() != null) {
-                    if (browseService != null) {
+                    if (browseService != null && validateNavigationTarget(nodeModel)) {
                         browseService.browse(nodeModel);
                     } else {
                         log.info("Could not find browse service - document " + jcrPath + " will not be selected");
@@ -183,6 +185,19 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
             }
         } finally {
             browsing = false;
+        }
+    }
+
+    private boolean validateNavigationTarget(JcrNodeModel nodeModel) {
+        try {
+            final String path = nodeModel.getNode().getPath();
+            if (path.startsWith(CONTENT_PATH)) {
+                return path.startsWith(DOCUMENTS_PATH);
+            }
+            return true;
+        } catch (RepositoryException e) {
+            log.warn("error validating path: ", e.getMessage());
+            return false;
         }
     }
 
