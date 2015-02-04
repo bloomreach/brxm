@@ -283,8 +283,9 @@ public final class ProjectUtils {
              return null;
         }
         if (folder.isDirectory()) {
-            log.warn("Expected to get folder but got file: {}", folder);
             return folder;
+        }else{
+            log.warn("Expected to get folder but got file: {}", folder);
         }
         return null;
     }
