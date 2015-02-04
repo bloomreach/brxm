@@ -44,6 +44,9 @@ public class NewsBean extends TextBean{
             return this.imageBean;
         }
         imagesLoaded = true;
+        // although the testsuite has imageset types demosite:qaimageset, the HST should fallback to built in HippoGalleryImageSetBean
+        // because we do not have in the testsuite an explicit bean annotated with @Node(jcrType = "demosite:qaimageset")
+        // and thus it should fallback to @Node(jcrType = "hippogallery:imageset")
         this.imageBean = this.getLinkedBean("demosite:image", HippoGalleryImageSetBean.class);
         return imageBean;
     }
