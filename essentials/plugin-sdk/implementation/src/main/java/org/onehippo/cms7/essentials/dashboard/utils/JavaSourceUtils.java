@@ -532,13 +532,8 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      */
     public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName, final boolean multiple) {
-        if (multiple) {
-            addImport(path, List.class.getName());
-            addParameterizedMethod(methodName, "List", "Calendar", path, "getChildBeansByName", propertyName);
-        } else {
-
-            addBeanMethodProperty(path, methodName, propertyName, "Calendar");
-        }
+        final String returnType = multiple ? "Calendar[]" : "Calendar";
+        addBeanMethodProperty(path, methodName, propertyName, returnType);
         final String importName = Calendar.class.getName();
         addImport(path, importName);
 
