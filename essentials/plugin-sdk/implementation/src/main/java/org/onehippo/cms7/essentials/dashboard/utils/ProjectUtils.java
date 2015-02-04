@@ -50,7 +50,7 @@ import com.google.common.base.Strings;
  */
 public final class ProjectUtils {
 
-    private static final String BOOTSTRAP = "bootstrap";
+
     public static final String ENT_GROUP_ID = "com.onehippo.cms7";
     public static final String ENT_ARTIFACT_ID = "hippo-cms7-enterprise-release";
     private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
@@ -60,6 +60,7 @@ public final class ProjectUtils {
     }
 
     public static List<String> getSitePackages(final PluginContext context) {
+
         final File folder = getSiteJavaFolder(context);
         // traverse folder and add packages:
         final Path path = Paths.get(folder.getAbsolutePath());
@@ -83,8 +84,8 @@ public final class ProjectUtils {
         return getJavaFolder(siteDirectory);
     }
 
-    public static File getSiteImagesFolder() {
-        final File site = getSite();
+    public static File getSiteImagesFolder(final PluginContext context) {
+        final File site = getSite(context);
         final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "images";
         return new File(absolutePath);
     }
@@ -94,20 +95,26 @@ public final class ProjectUtils {
      *
      * @return site project folder
      */
-    public static File getSite() {
-        return getFolder("site");
+    public static File getSite(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getSiteFolder());
     }
 
     public static String getBaseProjectDirectory() {
         if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
             return System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
-        } else {
-            return null;
         }
+        throw new IllegalStateException("System property 'project.basedir' was not null or empty. Please start your application with -D=project.basedir=/project/path");
     }
 
-    public static File getSiteJspFolder() {
-        final File site = getSite();
+    public static String getEssentialsFolderName() {
+        if (System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY).isEmpty()) {
+            return System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY);
+        }
+        return "essentials";
+    }
+
+    public static File getSiteJspFolder(final PluginContext context) {
+        final File site = getSite(context);
         final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "webapp"
                 + File.separator + "WEB-INF"
                 + File.separator + "jsp";
@@ -119,8 +126,9 @@ public final class ProjectUtils {
      *
      * @return CMS project folder
      */
-    public static File getCms() {
-        return getFolder("cms");
+    public static File getCms(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getCmsFolder());
+
     }
 
     /**
@@ -128,8 +136,9 @@ public final class ProjectUtils {
      *
      * @return Configuration project folder
      */
-    public static File getBootstrapConfigFolder() {
-        return getFolder(BOOTSTRAP + File.separator + "configuration");
+    public static File getBootstrapConfigFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getBootstrapFolder()+File.separator + "configuration");
+
     }
 
     /**
@@ -137,8 +146,8 @@ public final class ProjectUtils {
      *
      * @return Content project folder
      */
-    public static File getBootstrapContentFolder() {
-        return getFolder(BOOTSTRAP + File.separator + "content");
+    public static File getBootstrapContentFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getBootstrapFolder() + File.separator + "content");
     }
 
     /**
@@ -146,13 +155,14 @@ public final class ProjectUtils {
      *
      * @return Essentials project folder
      */
-    public static File getEssentialsFolder() {
-        return getFolder("essentials");
+    public static File getEssentialsFolderName(final PluginContext context) {
+        return new File(getBaseProjectDirectory() +File.separator + getEssentialsFolderName());
     }
 
+
     public static File getEssentialsResourcesFolder() {
-        final File site = getSite();
-        final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "resources";
+        final File root = getProjectRootFolder();
+        final String absolutePath = root.getAbsolutePath() + File.separator+ getEssentialsFolderName() + "src" + File.separator + "main" + File.separator + "resources";
         return new File(absolutePath);
     }
 
@@ -165,14 +175,14 @@ public final class ProjectUtils {
      *
      * @return Bootstrap project folder
      */
-    public static File getBootstrapFolder() {
-        return getFolder(BOOTSTRAP);
+    public static File getBootstrapFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getBootstrapFolder());
     }
 
-    public static Model getPomModel(TargetPom targetPom) {
-        final String pomPath = getPomPath(targetPom);
+    public static Model getPomModel(final PluginContext context, final TargetPom targetPom) {
+        final String pomPath = getPomPath(context, targetPom);
         if (Strings.isNullOrEmpty(pomPath)) {
-            return null;
+            throw new IllegalStateException("pom.xml could not be found for:" + targetPom);
         }
         return getPomModel(pomPath);
 
@@ -203,31 +213,31 @@ public final class ProjectUtils {
      * @param targetPom targetPom of dependency
      * @return null if targetPom is invalid
      */
-    public static String getPomPath(TargetPom targetPom) {
+    public static String getPomPath(final PluginContext context, final TargetPom targetPom) {
         if (targetPom == null || targetPom == TargetPom.INVALID) {
             return null;
         }
         switch (targetPom) {
             case SITE:
-                return getPomForDir(ProjectUtils.getSite());
+                return getPomForDir(ProjectUtils.getSite(context));
             case CMS:
-                return getPomForDir(ProjectUtils.getCms());
+                return getPomForDir(ProjectUtils.getCms(context));
             case PROJECT:
                 return getPomForDir(ProjectUtils.getProjectRootFolder());
             case BOOTSTRAP:
-                return getPomForDir(ProjectUtils.getBootstrapFolder());
+                return getPomForDir(ProjectUtils.getBootstrapFolder(context));
             case BOOTSTRAP_CONFIG:
-                return getPomForDir(ProjectUtils.getBootstrapConfigFolder());
+                return getPomForDir(ProjectUtils.getBootstrapConfigFolder(context));
             case BOOTSTRAP_CONTENT:
-                return getPomForDir(ProjectUtils.getBootstrapContentFolder());
+                return getPomForDir(ProjectUtils.getBootstrapContentFolder(context));
             case ESSENTIALS:
-                return getPomForDir(ProjectUtils.getEssentialsFolder());
+                return getPomForDir(ProjectUtils.getEssentialsFolderName(context));
         }
         return null;
 
     }
 
-    public static String getWebXmlPath(TargetPom targetPom) {
+    public static String getWebXmlPath(final PluginContext context, final TargetPom targetPom) {
         if (targetPom == null
                 || targetPom == TargetPom.INVALID
                 || targetPom == TargetPom.BOOTSTRAP
@@ -237,11 +247,11 @@ public final class ProjectUtils {
         }
         switch (targetPom) {
             case SITE:
-                return getWebXmlForDir(ProjectUtils.getSite());
+                return getWebXmlForDir(ProjectUtils.getSite(context));
             case CMS:
-                return getWebXmlForDir(ProjectUtils.getCms());
+                return getWebXmlForDir(ProjectUtils.getCms(context));
             case ESSENTIALS:
-                return getWebXmlForDir(ProjectUtils.getEssentialsFolder());
+                return getWebXmlForDir(ProjectUtils.getEssentialsFolderName(context));
         }
         return null;
 
@@ -264,10 +274,16 @@ public final class ProjectUtils {
         }
         final File baseFile = new File(baseDir);
         if (!baseFile.exists() || !baseFile.isDirectory()) {
+            log.warn("Base project folder does not exist or invalid type: {}", baseFile);
             return null;
         }
-        File folder = new File(baseDir + File.separatorChar + name);
+        final File folder = new File(baseDir + File.separatorChar + name);
+        if (!folder.exists()) {
+            log.warn("Folder does not exist: {}", folder);
+             return null;
+        }
         if (folder.isDirectory()) {
+            log.warn("Expected to get folder but got file: {}", folder);
             return folder;
         }
         return null;

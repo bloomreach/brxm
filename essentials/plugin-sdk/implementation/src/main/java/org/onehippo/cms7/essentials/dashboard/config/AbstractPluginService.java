@@ -17,14 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.Writer;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -46,9 +38,16 @@ public abstract class AbstractPluginService implements PluginConfigService {
         this.context = context;
     }
 
+    @Override
     public abstract boolean write(Document document);
+
+    @Override
     public abstract boolean write(Document document, String pluginId);
+
+    @Override
     public abstract <T extends Document> T read(final String pluginId, final Class<T> clazz);
+
+    @Override
     public abstract <T extends Document> T read(final Class<T> clazz);
 
     @Override
@@ -61,9 +60,9 @@ public abstract class AbstractPluginService implements PluginConfigService {
      *
      * @param document   instance of a document represented by the configuration file
      * @param pluginName name of a plugin (may be null)
-     * @return           name of the corresponding configuraion file.
+     * @return name of the corresponding configuraion file.
      */
-    protected String getFileName(final Document document, final String pluginName) {
+    protected static String getFileName(final Document document, final String pluginName) {
         String fileName = pluginName;
         if (Strings.isNullOrEmpty(fileName)) {
             if (Strings.isNullOrEmpty(document.getName())) {
@@ -72,7 +71,7 @@ public abstract class AbstractPluginService implements PluginConfigService {
                 fileName = GlobalUtils.validFileName(document.getName());
             }
         }
-        if(!fileName.endsWith(SETTINGS_EXTENSION)) {
+        if (!fileName.endsWith(SETTINGS_EXTENSION)) {
             fileName = fileName + SETTINGS_EXTENSION;
         }
         return fileName;
@@ -82,44 +81,4 @@ public abstract class AbstractPluginService implements PluginConfigService {
         return context.getEssentialsResourcePath() + File.separator + getFileName(document, pluginName);
     }
 
-    /**
-     * Marshal a document into a writer in order to serialize settings.
-     *
-     * @param writer
-     * @param document
-     * @return true upon success, false otherwise.
-     */
-    protected boolean marshalWriter(final Writer writer, final Document document) {
-        try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(document.getClass());
-            final Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(document, writer);
-            return true;
-        } catch (JAXBException e) {
-            log.error("Error writing settings", e);
-        }
-        return false;
-    }
-
-    /**
-     * Unmarshal an input stream into a document/bean of type clazz.
-     *
-     * @param stream input stream to read from
-     * @param clazz  destination class
-     * @param <T>    return type
-     * @return       document representing the parsed input stream
-     */
-    @SuppressWarnings("unchecked")
-    protected <T extends Document> T unmarshalStream(final InputStream stream, final Class<T> clazz) {
-        final String setting = GlobalUtils.readStreamAsText(stream);
-        try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (T) unmarshaller.unmarshal(new StringReader(setting));
-        } catch (JAXBException e) {
-            log.error("Error reading settings", e);
-        }
-        return null;
-    }
 }

@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import java.io.InputStream;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 
 /**
  * Service to read settings from WAR resources (write operations are implemented as no-op.
@@ -55,7 +55,7 @@ public class ResourcePluginService extends AbstractPluginService {
             return null;
         }
         log.debug("Reading settings of: {}", path);
-        return unmarshalStream(stream, clazz);
+        return GlobalUtils.unmarshalStream(stream, clazz);
     }
 
     @Override

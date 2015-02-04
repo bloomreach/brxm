@@ -47,7 +47,6 @@ public class TestPluginContext extends DefaultPluginContext {
     private HippoRepository hippoRepository;
     private boolean useHippoSession;
     public TestPluginContext(final MemoryRepository repository) {
-        super();
         this.repository = repository;
     }
 

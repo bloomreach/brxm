@@ -52,7 +52,7 @@ public class FilePluginService extends AbstractPluginService {
                 FileUtils.forceMkdir(parentFile);
             }
 
-            return marshalWriter(new FileWriter(file), document);
+            return GlobalUtils.marshalWriter(new FileWriter(file), document);
         } catch (IOException e) {
             log.error("Error writing to file '{}'.", path, e);
         }
@@ -78,7 +78,7 @@ public class FilePluginService extends AbstractPluginService {
         }
         log.debug("Reading settings from '{}'.", path);
         try {
-            return unmarshalStream(new FileInputStream(path), clazz);
+            return GlobalUtils.unmarshalStream(new FileInputStream(path), clazz);
         } catch (IOException e) {
             log.error("Error reading file '{}'.", path, e);
         }
