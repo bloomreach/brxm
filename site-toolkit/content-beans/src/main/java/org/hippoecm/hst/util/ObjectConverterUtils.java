@@ -95,6 +95,7 @@ public class ObjectConverterUtils {
         "hippostd:directory",
         "hippostd:folder",
         "hippogallery:image",
+        "hippogallery:imageset",
         "hippo:resource",
         "hippo:request",
         "hippostd:html",
