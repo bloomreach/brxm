@@ -613,7 +613,6 @@ components/core/src/main/java/org/hippoecm/hst/core/component/HstURLFactoryImpl.
 components/core/src/main/java/org/hippoecm/hst/core/component/HstURLImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/AbstractAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AbstractBaseOrderableValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/AbstractValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/ActionValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AggregationValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AjaxAsynchronousComponentWindowRenderer.java -text
