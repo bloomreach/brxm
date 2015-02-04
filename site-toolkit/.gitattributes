@@ -646,7 +646,6 @@ components/core/src/main/java/org/hippoecm/hst/core/container/InitializationValv
 components/core/src/main/java/org/hippoecm/hst/core/container/JCRSessionStatefulConcurrencyValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/JaxrsRestServiceValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/LocalizationValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/NoContentValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/NotFoundValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/PageCachingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/PageInfoRenderingValve.java -text
