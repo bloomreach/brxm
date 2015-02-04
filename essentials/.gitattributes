@@ -1452,7 +1452,6 @@ plugins/skeleton-package/src/main/resources/instructions/xml/hst/pages/pagenotfo
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/sitemap/any.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/sitemap/pagenotfound.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/sitemap/root.xml -text
-plugins/skeleton-package/src/main/resources/instructions/xml/hst/suffixexclusions.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-footer-freemarker.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-footer-jsp.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/base-layout-freemarker.xml -text
