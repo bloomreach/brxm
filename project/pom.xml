@@ -74,7 +74,7 @@
     <jackson2.version>2.4.5</jackson2.version>
     <spring.version>4.1.4.RELEASE</spring.version>
     <groovy.version>2.3.0</groovy.version>
-    <freemarker.version>2.3.20</freemarker.version>
+    <freemarker.version>2.3.21</freemarker.version>
     <jackrabbit.version>2.8.0</jackrabbit.version>
     <patched.jackrabbit.version>2.8.0-h8</patched.jackrabbit.version>
 
