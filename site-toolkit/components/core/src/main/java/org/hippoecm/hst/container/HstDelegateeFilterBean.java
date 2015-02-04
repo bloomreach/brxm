@@ -216,12 +216,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
 
-            // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-            if (vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
-                chain.doFilter(request, response);
-                return;
-            }
-
             HstMutableRequestContext requestContext = (HstMutableRequestContext) containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
             if (requestContext == null) {
