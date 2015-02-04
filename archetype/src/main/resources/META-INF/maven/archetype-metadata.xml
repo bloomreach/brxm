@@ -87,6 +87,12 @@
       </includes>
     </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
+      <directory>bootstrap/webfiles/src/main/resources/site</directory>
+      <includes>
+        <include>**/**</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false" encoding="UTF-8">
       <directory>bootstrap/webfiles/src/main/resources</directory>
       <includes>
         <include>**/*.png</include>
