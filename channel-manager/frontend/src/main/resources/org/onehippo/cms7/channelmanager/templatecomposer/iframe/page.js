@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -118,6 +118,11 @@
 
             hostToIFrame.subscribe('selectVariant', function(id, variant) {
                 this.selectVariant(id, variant);
+                return false;
+            }, this);
+
+            hostToIFrame.subscribe('renderComponentProperties', function(id, propertiesMap) {
+                this.renderComponentProperties(id, propertiesMap);
                 return false;
             }, this);
 
@@ -273,6 +278,15 @@
             var o = this.retrieve(id),
                 self = this;
             o.selectVariant(variant, function() {
+                self.requestSync();
+                self.sync();
+            });
+        },
+
+        renderComponentProperties: function(id, propertiesMap) {
+            var o = this.retrieve(id),
+                self = this;
+            o.renderComponentProperties(id, propertiesMap, function() {
                 self.requestSync();
                 self.sync();
             });

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -99,6 +99,10 @@
 
         selectVariant: function(id, variant) {
             Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('selectVariant', id, variant);
+        },
+
+        renderComponentProperties: function(id, propertiesMap) {
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('renderComponentProperties', id, propertiesMap);
         },
 
         _initToolkitStore: function(mountId) {

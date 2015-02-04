@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -332,6 +332,7 @@
                             left: 0
                         },
                         listeners: {
+                            propertiesChanged: this._onPropertiesChanged,
                             propertiesSaved: this._onPropertiesSaved,
                             propertiesDeleted: this._onPropertiesDeleted,
                             scope: this
@@ -341,6 +342,10 @@
                 }
                 this.add(tabComponent);
             }, this);
+        },
+
+        _onPropertiesChanged: function(propertiesMap) {
+            this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
         },
 
         _onPropertiesSaved: function(savedVariantId) {
@@ -575,7 +580,7 @@
 
             Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.initComponent.apply(this, arguments);
 
-            this.addEvents('propertiesSaved', 'cancel', 'propertiesDeleted');
+            this.addEvents('propertiesChanged', 'propertiesSaved', 'cancel', 'propertiesDeleted');
         },
 
         setNewVariant: function(newVariantId) {
@@ -774,7 +779,12 @@
                 forceSelection: true,
                 triggerAction: 'all',
                 displayField: 'path',
-                valueField: 'path'
+                valueField: 'path',
+                listeners: {
+                    select: function(combo, comboRecord) {
+                        record.set('value', comboRecord.get('path') || defaultValue);
+                    }
+                }
             });
 
             if (record.get('allowCreation')) {
@@ -801,12 +811,9 @@
 
         addComboBox: function(record, defaultValue, value) {
             var comboBoxValues, comboBoxDisplayValues, dataIndex, comboBoxValuesLength, data = [];
-            comboBoxValues = record.get(
-                    'dropDownListValues'
-            );
-            comboBoxDisplayValues = record.get(
-                    'dropDownListDisplayValues'
-            );
+
+            comboBoxValues = record.get('dropDownListValues');
+            comboBoxDisplayValues = record.get('dropDownListDisplayValues');
 
             for (dataIndex = 0, comboBoxValuesLength = comboBoxValues.length; dataIndex < comboBoxValuesLength; dataIndex++) {
                 data.push([comboBoxValues[dataIndex], comboBoxDisplayValues[dataIndex]]);
@@ -836,12 +843,27 @@
                         // removing the style attribute after render fixes the layout
                         var formElement = this.el.findParent('.x-form-element');
                         formElement.removeAttribute('style');
+                    },
+                    select: function(combo, comboRecord) {
+                        record.set('value', comboRecord.get('id') || defaultValue);
                     }
                 }
             });
         },
 
         addComponent: function(record, defaultValue, value) {
+
+            function updateValue() {
+                var value = this.getValue();
+                if (typeof(value) === 'undefined' || (typeof(value) === 'string' && value.length === 0) || value === this.defaultValue) {
+                    this.addClass('default-value');
+                    this.setValue(this.defaultValue);
+                } else {
+                    this.removeClass('default-value');
+                }
+                record.set('value', value);
+            }
+
             var propertyField, xtype = record.get('type'),
                     propertyFieldConfig = {
                         fieldLabel: record.get('label'),
@@ -851,13 +873,11 @@
                         allowBlank: !record.get('required'),
                         name: record.get('name'),
                         listeners: {
-                            change: function() {
-                                var value = this.getValue();
-                                if (typeof(value) === 'undefined' || (typeof(value) === 'string' && value.length === 0) || value === this.defaultValue) {
-                                    this.addClass('default-value');
-                                    this.setValue(this.defaultValue);
-                                } else {
-                                    this.removeClass('default-value');
+                            change: updateValue,
+                            select: updateValue,
+                            specialkey: function(field, event) {
+                                if (event.getKey() === event.ENTER) {
+                                    record.set('value', field.getValue() || defaultValue);
                                 }
                             },
                             afterrender: function() {
@@ -871,6 +891,7 @@
 
             if (xtype === 'checkbox') {
                 propertyFieldConfig.checked = (value === true || value === 'true' || value === '1' || String(value).toLowerCase() === 'on');
+                propertyFieldConfig.listeners.check = updateValue;
             } else if (xtype === 'linkpicker') {
                 propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
                 propertyFieldConfig.pickerConfig = {
@@ -917,12 +938,25 @@
                     this._loadProperties(records);
                     success();
                 }, this);
+                componentPropertiesStore.on('update', function(store, record) {
+                    this._firePropertiesChanged(store);
+                }, this);
                 componentPropertiesStore.on('exception', function() {
                     this._loadException.apply(this, arguments);
                     fail();
                 }, this);
                 componentPropertiesStore.load();
             }.createDelegate(this));
+        },
+
+        _firePropertiesChanged: function(store) {
+            var propertiesMap = {};
+            store.each(function(record) {
+                var name = record.get('name'),
+                    value = record.get('value');
+                propertiesMap[name] = value;
+            });
+            this.fireEvent('propertiesChanged', propertiesMap);
         },
 
         disableSave: function() {
