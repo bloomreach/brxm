@@ -6,7 +6,7 @@
         "name": "Content Blocks",
         "icon" : "/essentials/images/icons/content-blocks.png",
         "introduction": "With Content Blocks, the content- and document editor can add multiple pre-configured compound type blocks to a document.",
-        "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This feature wraps the certified Hippo Forge Content Blocks plugin.</p>",
+        "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This feature wraps the 'Content Blocks' Standard Plugin.</p>",
         "imageUrls": [
             "/essentials/images/screenshots/contentblocks01.png"
         ],
@@ -22,8 +22,8 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "content-blocks",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-content-blocks",
                 "scope": "compile",
                 "targetPom": "cms"
             }
@@ -64,15 +64,15 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-addon-repository",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-addon-repository",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-addon-cms",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-addon-cms",
                 "scope": "compile",
                 "targetPom": "cms"
             },
@@ -101,7 +101,7 @@
         "name": "Taxonomy",
         "icon" : "/essentials/images/icons/taxonomy.png",
         "introduction": "With the Taxonomy feature you can add extra meta data to your documents to categorize them.",
-        "description": "This feature wraps the certified Hippo Forge Taxonomy Plugin.",
+        "description": "This feature wraps the 'Taxonomy' Standard Plugin.",
         "imageUrls": [
             "/essentials/images/screenshots/taxonomy01.png"
         ],
@@ -127,43 +127,43 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo",
-                "artifactId": "taxonomy-api",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-taxonomy-api",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo",
-                "artifactId": "taxonomy-addon-frontend",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-taxonomy-addon-frontend",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo",
-                "artifactId": "taxonomy-addon-repository",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-taxonomy-addon-repository",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo",
-                "artifactId": "taxonomy-api",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-taxonomy-api",
                 "scope": "compile",
                 "targetPom": "site"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo",
-                "artifactId": "taxonomy-hst-api",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-taxonomy-hst-api",
                 "scope": "compile",
                 "targetPom": "site"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo",
-                "artifactId": "taxonomy-hstclient",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-taxonomy-hstclient",
                 "scope": "compile",
                 "targetPom": "site"
             }
@@ -175,7 +175,7 @@
         "name": "Selections",
         "icon" : "/essentials/images/icons/selections.png",
         "introduction": "With the Selections feature, you can add several kinds of dropdowns, pulldowns and radio groups to your page template.",
-        "description": "This feature wraps the certified Hippo Forge Selection Plugin.",
+        "description": "This feature wraps the 'Selection' Standard Plugin.",
         "imageUrls": [
             "/essentials/images/screenshots/selections01.png"
         ],
@@ -203,22 +203,22 @@
             {
                 "@type": "dependency",
                 "targetPom": "cms",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-addon-cms",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-addon-cms",
                 "scope": "compile"
             },
             {
                 "@type": "dependency",
                 "targetPom": "cms",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-addon-repository",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-addon-repository",
                 "scope": "compile"
             },
             {
                 "@type": "dependency",
                 "targetPom": "site",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-hst-client",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-hst-client",
                 "scope": "compile"
             }
         ]
@@ -229,7 +229,7 @@
         "name": "Tagging",
         "icon" : "/essentials/images/icons/tagging.png",
         "introduction": "With the Tagging feature, you can assign tags to your content.",
-        "description": "This feature wraps the certified Hippo Forge CMS Tagging Addon.",
+        "description": "This feature wraps the 'Content Tagging' Standard Plugin.",
         "imageUrls": [
             "/essentials/images/screenshots/tagging01.png"
         ],
@@ -256,8 +256,8 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "ecm-tagging",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-content-tagging",
                 "scope": "compile",
                 "targetPom": "cms"
             }
@@ -295,22 +295,22 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "dashboard-document-wizard",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-dashboard-document-wizard",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-addon-cms",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-addon-cms",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.selectionplugins",
-                "artifactId": "selectionplugins-addon-repository",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-selections-addon-repository",
                 "scope": "compile",
                 "targetPom": "cms"
             }
@@ -322,7 +322,7 @@
         "name": "Related Documents",
         "icon" : "/essentials/images/icons/related-documents.png",
         "introduction": "With the Related Documents feature, you can pick documents that are related to the currently edited document in the Hippo CMS.",
-        "description": "<p>The feature can also create a list of suggested documents that you might want to pick, based on a matching metadata search.</p><p>This feature wraps the certified Hippo Forge Related Documents plugin.</p>",
+        "description": "<p>The feature can also create a list of suggested documents that you might want to pick, based on a matching metadata search.</p><p>This feature wraps the 'Related Documents' Standard Plugin.</p>",
         "imageUrls": [
             "/essentials/images/screenshots/relateddocuments01.png"
         ],
@@ -348,8 +348,8 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "relateddocs",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-relateddocs",
                 "scope": "compile",
                 "targetPom": "cms"
             }
@@ -377,10 +377,9 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.hst-seo-support",
-                "artifactId": "hst-seo-support",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-seo-support",
                 "scope": "compile",
-                "version": "0.02.00",
                 "targetPom": "site"
             }
         ]
@@ -439,7 +438,7 @@
         "name": "Robots.txt",
         "icon" : "/essentials/images/icons/robotstxt.png",
         "introduction": "With the Robots.txt feature, you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
-        "description": "Besides the component, a sample JSP file for rendering that data into the robots.txt file. This feature wraps the certified Hippo Forge Robots.txt Generator.",
+        "description": "Besides the component, a sample JSP file for rendering that data into the robots.txt file. This feature wraps the 'Robots.txt' Standard Plugin.",
         "imageUrls": [
             "/essentials/images/screenshots/robots01.png",
             "/essentials/images/screenshots/robots02.png"
@@ -458,15 +457,15 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.robotstxt",
-                "artifactId": "robotstxt-addon-repository",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-robotstxt-addon-repository",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.robotstxt",
-                "artifactId": "robotstxt-hst-client",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-robotstxt-hst-client",
                 "scope": "compile",
                 "targetPom": "site"
             }
@@ -479,7 +478,7 @@
         "name": "Polls",
         "icon" : "/essentials/images/icons/polls.png",
         "introduction": "With Polls, you add functionality for creating and showing polls and storing and accessing the acquired poll data.",
-        "description": "The poll feature wraps the Hippo Forge Poll Plugin. It provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class that contains the following functionality:<ul><li>Search the current active poll document in a parameterized repository location</li><li>Provide a bean for this active poll upon request from the view layer</li><li>Vote on a poll, storing the votes in repository outside the document tree in /polldata</li><li>Cookies are used to prevent voting multiple times</li></ul>",
+        "description": "The poll feature wraps the 'Poll' Standard Plugin. It provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class that contains the following functionality:<ul><li>Search the current active poll document in a parameterized repository location</li><li>Provide a bean for this active poll upon request from the view layer</li><li>Vote on a poll, storing the votes in repository outside the document tree in /polldata</li><li>Cookies are used to prevent voting multiple times</li></ul>",
         "imageUrls": [
             "/essentials/images/screenshots/poll01.png",
             "/essentials/images/screenshots/poll02.png",
@@ -499,15 +498,15 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.poll",
-                "artifactId": "poll-addon-repository",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-poll-addon-repository",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.poll",
-                "artifactId": "poll-hst-client",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-poll-hst-client",
                 "scope": "compile",
                 "targetPom": "site"
             }
@@ -817,7 +816,7 @@
         "name": "Sitemap",
         "icon" : "/essentials/images/icons/sitemap.png",
         "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
-        "description": "This feature wraps the certified Hippo Forge Sitemap Component.",
+        "description": "This feature wraps the 'Sitemap' Standard Plugin.",
         "documentationLink": "http://sitemap.forge.onehippo.org",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.sitemap.SitemapParameterService",
         "restClasses": [],
@@ -837,15 +836,15 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.sitemap",
-                "artifactId": "sitemap-content",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-sitemap-component",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.forge.sitemap",
-                "artifactId": "sitemap-component",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-sitemap-content",
                 "scope": "compile",
                 "targetPom": "site"
             }
