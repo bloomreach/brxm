@@ -69,7 +69,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.util.AclChecker;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -345,7 +344,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
 
                 userSession.login(new UserCredentials(new SimpleCredentials(username, password.toCharArray())));
-                AclChecker.checkAccess(getPluginConfig(), userSession.getJcrSession(), PluginApplication.get().getPluginApplicationName());
             } catch (LoginException le) {
                 success = false;
                 loginExceptionPageParameters = buildPageParameters(le.getLoginExceptionCause());
@@ -354,17 +352,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 // Invalidate the current obtained JCR session and create an anonymous one
                 userSession.login();
                 loginExceptionPageParameters = buildPageParameters(LoginException.CAUSE.ACCESS_DENIED);
-            } catch (RepositoryException re) {
-                success = false;
-                // Invalidate the current obtained JCR session and create an anonymous one
-                userSession.login();
-                if (log.isDebugEnabled()) {
-                    log.warn("Repository error while trying to access the "
-                            + PluginApplication.get().getPluginApplicationName() + " application with user '" + username
-                            + "'", re);
-                }
-
-                loginExceptionPageParameters = buildPageParameters(LoginException.CAUSE.REPOSITORY_ERROR);
             }
 
             if (success) {
