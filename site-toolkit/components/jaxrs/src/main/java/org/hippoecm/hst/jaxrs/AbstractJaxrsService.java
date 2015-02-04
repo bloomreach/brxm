@@ -195,15 +195,12 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return a bean of type T and <code>null</code> if there cannot be found a content bean for the requestContext or when the bean is not of type <code>beanMappingClass</code>
      */
     public <T extends HippoBean> T getRequestContentBean(HstRequestContext requestContext, Class<T> beanMappingClass) {
-        HippoBean bean = requestContext.getContentBean();
+        T bean = requestContext.getContentBean(beanMappingClass);
         if(bean == null) {
             return null;
         }
-        if(!beanMappingClass.isAssignableFrom(bean.getClass())) {
-            log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(), bean.getClass().getName());
-            return null;
-        }
-        return (T)bean;
+        requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, bean.getPath());
+        return bean;
     }
 
     /**
@@ -212,7 +209,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return the HippoBean where the relative contentpath of the sitemap item points to or <code>null</code> when not found, or no relative content path is present, or no resolved sitemap item
      */
     public HippoBean getRequestContentBean(HstRequestContext requestContext) {
-       return requestContext.getContentBean();
+       return getRequestContentBean(requestContext, HippoBean.class);
     }
 
     /**

@@ -35,6 +35,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -572,10 +573,22 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public HippoBean getContentBean() {
         HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
+        if (requestContext == null) {
             return null;
         }
-        return getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
+
+        if (requestContext.getResolvedSiteMapItem() != null) {
+            return getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
+        }
+
+        // this might be a request for a mount that is not mapped (does not have a sitemap item)
+        if (!requestContext.getResolvedMount().getMount().isMapped()) {
+            final String contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+            return getHippoBean(getSiteContentBasePath(), contentPathInfo);
+        }
+
+        log.info("Did not find a content bean for request '{}'", requestContext.getServletRequest().getRequestURI());
+        return null;
     }
 
     @Override
@@ -623,8 +636,13 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             return null;
         }
 
+        return getHippoBean(base, relPath);
+
+    }
+
+    private HippoBean getHippoBean(final String base, final String relPath) {
         try {
-            if ("".equals(relPath)) {
+            if (StringUtils.isEmpty(relPath)) {
                 return (HippoBean) getObjectBeanManager().getObject("/" + base);
             } else {
                 return (HippoBean) getObjectBeanManager().getObject("/" + base + "/" + relPath);
@@ -633,7 +651,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             log.error("ObjectBeanManagerException. Return null : {}", e);
             return null;
         }
-
     }
 
     @Override
