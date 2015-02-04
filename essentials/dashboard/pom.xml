@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>1.02.07-SNAPSHOT</version>
+    <version>1.03.00-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>dashboard</artifactId>
