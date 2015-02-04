@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class NotFoundValve extends AbstractBaseOrderableValve {
         if (!StringUtils.isEmpty(context.getServletRequest().getQueryString())) {
             url += "?" + context.getServletRequest().getQueryString();
         }
-        log.warn("Return HttpServletResponse.SC_NOT_FOUND (404) because NoopPipeline was invoked for request {}", url);
+        log.warn("Return HttpServletResponse.SC_NOT_FOUND (404) because NoopPipeline was invoked for {}", context.getServletRequest());
         servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         // do not call invoke next as we already return no content
     }

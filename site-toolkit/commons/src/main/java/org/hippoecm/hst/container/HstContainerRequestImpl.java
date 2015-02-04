@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,12 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
+
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 
 /**
  * <p>
@@ -156,4 +158,17 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     public String getPathTranslated() {
        return pathTranslated;
     }
+    @Override
+    public String toString() {
+        final String scheme = getFarthestRequestScheme(this);
+        final String host = getFarthestRequestHost(this);
+        return "Request{ " +
+                "method='" + getMethod() + '\'' +
+                ", scheme='" + scheme + '\'' +
+                ", host='" + host + '\'' +
+                ", requestURI='" + getRequestURI() + '\'' +
+                ", queryString='" + getQueryString() + '\'' +
+                '}';
+    }
+
 }

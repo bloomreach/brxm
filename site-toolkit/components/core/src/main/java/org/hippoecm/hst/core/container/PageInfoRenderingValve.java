@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class PageInfoRenderingValve extends AbstractBaseOrderableValve {
 
         try {
             if (pageInfo instanceof ForwardPlaceHolderHstPageInfo) {
-                log.debug("Page '{}' is being forwarded internally.", request.getRequestURI());
+                log.debug("'{}' is being forwarded internally.", request);
                 // we need to set the forwarded info again on the request as it might now be not yet set because 
                 // ForwardPlaceHolderPageInfo might come from the cache
                 String forwardPathInfo = ((ForwardPlaceHolderHstPageInfo) pageInfo).getForwardPathInfo();

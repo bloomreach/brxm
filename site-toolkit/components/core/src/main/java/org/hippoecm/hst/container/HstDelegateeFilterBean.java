@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,11 +60,17 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.ServletContextAware;
+
+import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
+import static org.hippoecm.hst.util.HstRequestUtils.getRenderingHost;
+
 
 public class HstDelegateeFilterBean extends AbstractFilterBean implements ServletContextAware, InitializingBean {
 
@@ -151,18 +157,19 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         Task rootTask = null;
 
+        // Sets up the container request wrapper
+        HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
         try {
-            // Sets up the container request wrapper
-            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
 
             if (isAutoReloadEndpoint(containerRequest)) {
-                log.info("Auto reload websocket endpoint request, skip hst request processing");
+                log.info("Auto reload websocket endpoint request for {}, skip hst request processing", containerRequest);
                 chain.doFilter(request, response);
                 return;
             }
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
             if ((containerRequest.getPathSuffix() == null && hstManager.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
+                log.info("'{}' part of excluded paths for hst request matching.", containerRequest);
                 chain.doFilter(request, response);
                 return;
             }
@@ -170,26 +177,26 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             // we always want to have the virtualhost available, even when we do not have hst request processing:
             // We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
             // This info is on the virtual host.
-            String hostName = HstRequestUtils.getFarthestRequestHost(containerRequest);
+            String hostName = getFarthestRequestHost(containerRequest);
 
             VirtualHosts vHosts = hstManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest, hostName));
 
-            String ip = HstRequestUtils.getFarthestRemoteAddr(containerRequest);
+            String ip = getFarthestRemoteAddr(containerRequest);
             if (vHosts.isDiagnosticsEnabled(ip)) {
                 rootTask = HDC.start(HstDelegateeFilterBean.class.getSimpleName());
-                rootTask.setAttribute("hostName", hostName);
-                rootTask.setAttribute("uri", req.getRequestURI());
-                rootTask.setAttribute("query", req.getQueryString());
+                rootTask.setAttribute("request", containerRequest.toString());
             }
 
             ResolvedVirtualHost resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
 
             // when resolvedVirtualHost = null, we cannot do anything else then fall through to the next filter
             if (resolvedVirtualHost == null) {
-                log.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
+                log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
                 chain.doFilter(request, response);
                 return;
             }
+
+            log.debug("{} matched to host '{}'", containerRequest, resolvedVirtualHost.getVirtualHost());
 
             /*
              * HSTTWO-1519
@@ -209,6 +216,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
                     session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
                     session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
+                    log.debug("Redirect {} to '{}'", containerRequest, resourceURL);
                     res.sendRedirect(resourceURL);
                     return;
                 }
@@ -241,7 +249,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 if (resolvedMount != null) {
                     requestContext.setResolvedMount(resolvedMount);
                     // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
-                    String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
+                    String renderingHost = getRenderingHost(containerRequest);
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
                         if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
@@ -251,7 +259,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
                                 if (!(undecoratedMount instanceof ContextualizableMount)) {
-                                    throw new MatchException("The matched mount for request '" + hostName + " and " + containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
+                                    String msg = String.format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. " +
+                                            "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
+                                    throw new MatchException(msg);
                                 }
                                 Mount decoratedMount = mountDecorator.decorateMountAsPreview(undecoratedMount);
                                 if (decoratedMount == undecoratedMount) {
@@ -266,9 +276,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         }
                     }
                 } else {
-                    throw new MatchException("No matching Mount for '" + hostName + "' and '" + containerRequest.getRequestURI() + "'");
+                    throw new MatchException(String.format("No matching Mount for '%s'", containerRequest));
                 }
             }
+
+            log.debug("{} matched to mount '{}'", containerRequest, resolvedMount.getMount());
 
             // sets filterChain for ValveContext to be able to retrieve...
             req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
@@ -277,7 +289,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
 
-            final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(req);
+            final String farthestRequestScheme = getFarthestRequestScheme(req);
             if (resolvedMount.getMount().isMapped()) {
                 ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
                 boolean processSiteMapItemHandlers = false;
@@ -287,51 +299,63 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerUrl.getPathInfo());
                     if(resolvedSiteMapItem == null) {
                         // should not be possible as when it would be null, an exception should have been thrown
-                        log.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+                        log.warn("'{}' could not be processed by the HST: Error resolving request to sitemap item", containerRequest);
                         sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                         return;
                     }
+
+                    log.debug("{} matched to sitemapitem  '{}'", containerRequest, resolvedSiteMapItem.getHstSiteMapItem());
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                 }
 
                 if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
-                   final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                   switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
-                       case HttpServletResponse.SC_OK:
+                    final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+                    final String urlWithExplicitSchemeForRequest;
+                    switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
+                        case HttpServletResponse.SC_OK:
                             // just continue;
                             break;
-                       case HttpServletResponse.SC_MOVED_PERMANENTLY :
-                           res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                           // create fully qualified redirect to scheme from sitemap item
-                           res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
-                           return;
-                       case HttpServletResponse.SC_MOVED_TEMPORARILY:
-                       case HttpServletResponse.SC_SEE_OTHER:
-                       case HttpServletResponse.SC_TEMPORARY_REDIRECT:
-                           // create fully qualified redirect to scheme from sitemap item
-                           res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
-                           return;
-                       case HttpServletResponse.SC_NOT_FOUND:
-                           sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                           return;
-                       case HttpServletResponse.SC_FORBIDDEN:
-                           sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
-                           return;
-                       default :
-                           log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
-                   }
+                        case HttpServletResponse.SC_MOVED_PERMANENTLY:
+                            res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                            // create fully qualified redirect to scheme from sitemap item
+                            urlWithExplicitSchemeForRequest = createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req);
+                            log.debug("Scheme not allowed: MOVED PERMANENTLY {} to {}", containerRequest, urlWithExplicitSchemeForRequest);
+                            res.setHeader("Location", urlWithExplicitSchemeForRequest);
+                            return;
+                        case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                        case HttpServletResponse.SC_SEE_OTHER:
+                        case HttpServletResponse.SC_TEMPORARY_REDIRECT:
+                            // create fully qualified redirect to scheme from sitemap item
+                            urlWithExplicitSchemeForRequest = createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req);
+                            log.debug("Scheme not allowed: MOVED TEMPORARILY {} to {}", containerRequest, urlWithExplicitSchemeForRequest);
+                            res.sendRedirect(urlWithExplicitSchemeForRequest);
+                            return;
+                        case HttpServletResponse.SC_NOT_FOUND:
+                            log.debug("Scheme not allowed for {} : SC_NOT_FOUND", containerRequest);
+                            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                            return;
+                        case HttpServletResponse.SC_FORBIDDEN:
+                            log.debug("Scheme not allowed for {} : SC_FORBIDDEN", containerRequest);
+                            sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
+                            return;
+                        default:
+                            log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
+                    }
                 }
 
+                log.info("Start processing sitemap item '{}' for {}", resolvedSiteMapItem.getHstSiteMapItem(), containerRequest);
                 processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers);
 
             } else {
+                log.debug("{} matches mount {} that is not mapped by a sitemap.", containerRequest, resolvedMount.getMount());
                 if(resolvedMount.getNamedPipeline() == null) {
-                    log.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+                    log.warn("'{}' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount", containerRequest);
                     sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                 }
                 else {
                     if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
                         final Mount mount = resolvedMount.getMount();
+                        final String urlWithExplicitSchemeForRequest;
                         switch (mount.getSchemeNotMatchingResponseCode()) {
                             case HttpServletResponse.SC_OK:
                                 // just continue;
@@ -339,48 +363,47 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             case HttpServletResponse.SC_MOVED_PERMANENTLY :
                                 res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                                 // create fully qualified redirect to scheme from sitemap item
-                                res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
+                                urlWithExplicitSchemeForRequest = createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req);
+                                log.debug("MOVED PERMANENTLY {} to {}", containerRequest, urlWithExplicitSchemeForRequest);
+                                res.setHeader("Location", urlWithExplicitSchemeForRequest);
                                 return;
                             case HttpServletResponse.SC_MOVED_TEMPORARILY:
                             case HttpServletResponse.SC_SEE_OTHER:
                             case HttpServletResponse.SC_TEMPORARY_REDIRECT:
                                 // create fully qualified redirect to scheme from sitemap item
-                                res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
+                                urlWithExplicitSchemeForRequest = createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req);
+                                log.debug("MOVED TEMPORARILY {} to {}", containerRequest, urlWithExplicitSchemeForRequest);
+                                res.sendRedirect(urlWithExplicitSchemeForRequest);
                                 return;
                             case HttpServletResponse.SC_NOT_FOUND:
+                                log.debug("Scheme not allowed for {} : SC_NOT_FOUND", containerRequest);
                                 sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                                 return;
                             case HttpServletResponse.SC_FORBIDDEN:
+                                log.debug("Scheme not allowed for {} : SC_FORBIDDEN", containerRequest);
                                 sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
                                 return;
                             default :
                                 log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
                         }
                     }
-                    log.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
+                    log.info("Start processing request for pipeline '{}' for {}", resolvedMount.getNamedPipeline(), containerRequest);
                     requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                 }
             }
         }
-        catch (MatchException e) {
+        catch (MatchException | ContainerNotFoundException e) {
             if(log.isDebugEnabled()) {
-                log.info(e.getClass().getName() + " for '{}':", req.getRequestURI() , e);
+                log.info("{} for '{}':",e.getClass().getName(), containerRequest , e);
             } else {
-                log.info(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+                log.info("{} for '{}': '{}'" , e.getClass().getName(), containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-        } catch (ContainerNotFoundException e) {
-           if(log.isDebugEnabled()) {
-               log.info(e.getClass().getName() + " for '{}':", req.getRequestURI() , e);
-            } else {
-               log.info(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
-            }
-           sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
             if(log.isDebugEnabled()) {
-                log.warn("ContainerException for '{}':",req.getRequestURI(), e);
+                log.warn("ContainerException for '{}':", containerRequest, e);
             } else {
-                log.warn("ContainerException for '{}': {}",req.getRequestURI(),  e.toString());
+                log.warn("ContainerException for '{}': {}",containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -547,7 +570,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
     }
 
-    protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager,
+    protected void processResolvedSiteMapItem(HttpServletRequest containerRequest, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager,
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers) throws ContainerException {
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
@@ -555,7 +578,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             initializeResourceLifecycleManagements();
             // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
             try {
-                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res, filterChain);
+                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , containerRequest, res, filterChain);
                 if(resolvedSiteMapItem == null) {
                     // one of the handlers has finished the request/response already
                     // call clean up of the resourceLifecycleManagements as there might have been taken a jcr session from some session
@@ -568,21 +591,23 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 throw e;
             }
             // sync possibly changed ResolvedSiteMapItem
-            requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+            if (requestContext.getResolvedSiteMapItem() != resolvedSiteMapItem) {
+                log.debug("Resetting currently request context sitemap item '{}' to '{}'",
+                        requestContext.getResolvedSiteMapItem().getHstSiteMapItem(), resolvedSiteMapItem.getHstSiteMapItem());
+                requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+            }
         }
 
         if (resolvedSiteMapItem.getErrorCode() > 0) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("The resolved sitemap item for {} has error status: {}", requestContext.getBaseURL().getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-                }
+                log.info("The resolved sitemap item for {} has error status: {}", containerRequest , Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
                 res.sendError(resolvedSiteMapItem.getErrorCode());
                 
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Exception invocation on sendError().", e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Exception invocation on sendError().");
+                    log.warn("Exception invocation on sendError() : {}", e.toString());
                 }
             }
             // we're done:
@@ -591,27 +616,30 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         if (resolvedSiteMapItem.getStatusCode() > 0) {
             log.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code"
-                    ,String.valueOf(resolvedSiteMapItem.getStatusCode()), req.getRequestURL().toString() );
+                    , String.valueOf(resolvedSiteMapItem.getStatusCode()), containerRequest.getRequestURL().toString());
             res.setStatus(resolvedSiteMapItem.getStatusCode());
         }
 
-        requestProcessor.processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
+        log.info("Start processing request for pipeline '{}' for {}", resolvedSiteMapItem.getNamedPipeline(), containerRequest);
+        requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedSiteMapItem.getNamedPipeline());
 
         // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
-        if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
-            String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
-            req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+        if(containerRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+            String forwardPathInfo = (String) containerRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+            containerRequest.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
 
             resolvedSiteMapItem = resolvedSiteMapItem.getResolvedMount().matchSiteMapItem(forwardPathInfo);
             if(resolvedSiteMapItem == null) {
                 // should not be possible as when it would be null, an exception should have been thrown
-                throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
+                String msg = String.format("Could not match request '%s' to a sitemap item for forwardPathInfo '%s'.",
+                        containerRequest, forwardPathInfo);
+                throw new MatchException(msg);
             }
             requestContext.clearObjectAndQueryManagers();
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
             requestContext.setBaseURL(urlFactory.getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
-            processResolvedSiteMapItem(req, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true);
+            processResolvedSiteMapItem(containerRequest, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true);
         }
 
         return;
