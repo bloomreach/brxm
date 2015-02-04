@@ -16,10 +16,21 @@
 
 package org.onehippo.cms7.essentials.plugin;
 
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.ext.RuntimeDelegate;
+
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -44,17 +55,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.ws.rs.ext.RuntimeDelegate;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
 * Created by tjeger on 10/11/14.
@@ -117,7 +121,7 @@ public class PluginStore {
         // Read local descriptors
         final List<PluginDescriptorRestful> localDescriptors = getLocalDescriptors();
         for (PluginDescriptorRestful descriptor : localDescriptors) {
-            plugins.add(new Plugin(descriptor));
+            plugins.add(new Plugin(PluginContextFactory.getContext(), descriptor));
         }
 
         // Read remote descriptors
@@ -129,7 +133,7 @@ public class PluginStore {
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
                     for (PluginDescriptorRestful descriptor : descriptors.getItems()) {
-                        plugins.add(new Plugin(descriptor));
+                        plugins.add(new Plugin(PluginContextFactory.getContext(), descriptor));
                     }
                 }
             } catch (Exception e) {

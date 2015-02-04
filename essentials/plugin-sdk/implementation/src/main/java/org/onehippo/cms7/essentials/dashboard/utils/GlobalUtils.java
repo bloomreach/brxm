@@ -19,7 +19,9 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URLDecoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -30,10 +32,15 @@ import java.util.regex.Pattern;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +56,7 @@ public final class GlobalUtils {
     private static final String PREFIX_GET = "get";
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
     private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
+    private static final Pattern PATTERN_SPACES = Pattern.compile("\\s");
     private static Logger log = LoggerFactory.getLogger(GlobalUtils.class);
 
     private GlobalUtils() {
@@ -177,7 +185,7 @@ public final class GlobalUtils {
         }
 
         // remove all spaces:
-        final String name = input.replaceAll("\\s","");
+        final String name = PATTERN_SPACES.matcher(input).replaceAll("");
         final int index = name.indexOf(':');
         if (index == -1 || index == name.length() - 1) {
             return capitalize(name.replace(':', ' ').trim());
@@ -300,5 +308,46 @@ public final class GlobalUtils {
                 .or(CharMatcher.is('_'))
                 .or(CharMatcher.is('-'))
                 .retainFrom(myInput);
+    }
+
+    /**
+     * Marshal a document into a writer in order to serialize settings.
+     *
+     * @param writer
+     * @param document
+     * @return true upon success, false otherwise.
+     */
+    public static boolean marshalWriter(final Writer writer, final Document document) {
+        try {
+            final JAXBContext jaxbContext = JAXBContext.newInstance(document.getClass());
+            final Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(document, writer);
+            return true;
+        } catch (JAXBException e) {
+            log.error("Error writing settings", e);
+        }
+        return false;
+    }
+
+    /**
+     * Unmarshal an input stream into a document/bean of type clazz.
+     *
+     * @param stream input stream to read from
+     * @param clazz  destination class
+     * @param <T>    return type
+     * @return       document representing the parsed input stream
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Document> T unmarshalStream(final InputStream stream, final Class<T> clazz) {
+        final String setting = readStreamAsText(stream);
+        try {
+            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            return (T) unmarshaller.unmarshal(new StringReader(setting));
+        } catch (JAXBException e) {
+            log.error("Error reading settings", e);
+        }
+        return null;
     }
 }

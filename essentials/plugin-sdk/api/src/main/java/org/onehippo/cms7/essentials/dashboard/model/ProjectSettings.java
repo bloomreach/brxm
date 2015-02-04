@@ -27,6 +27,27 @@ import org.onehippo.cms7.essentials.dashboard.config.Document;
  */
 public interface ProjectSettings extends Document {
 
+
+
+    void setEssentialsFolder(String essentialsFolder);
+    String getEssentialsFolder();
+
+    String getSiteFolder();
+
+    void setSiteFolder(String siteFolder);
+
+    String getCmsFolder();
+
+    void setCmsFolder(String cmsFolder);
+
+    String getBootstrapFolder();
+
+    void setBootstrapFolder(String bootstrapFolder);
+
+    String getWebfilesFolder();
+
+    void setWebfilesFolder(String webfilesFolder);
+
     Boolean getSetupDone();
 
     void setSetupDone(Boolean setupDone);

@@ -69,6 +69,7 @@ public class DefaultPluginContext implements PluginContext {
     private String restPackage;
     private String projectNamespace;
     private Map<String, Object> placeholderData;
+    private ProjectSettings projectSettings;
 
     public DefaultPluginContext() {
         final ProjectSettings document = getProjectSettings();
@@ -80,15 +81,40 @@ public class DefaultPluginContext implements PluginContext {
         }
     }
 
+
     @Override
     public ProjectSettings getProjectSettings() {
+        if (projectSettings != null) {
+            return projectSettings;
+        }
+
         try (PluginConfigService service = getConfigService()) {
-            return service.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
+            projectSettings =  service.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
         } catch (Exception e) {
             log.error("Error reading project settings", e);
         }
-        return null;
+        /*if (projectSettings == null) {
+            throw new IllegalStateException("Project settings could not be found (project-settings.xml file should be located within " +
+                    "'essentials/src/main/resources' folder)");
+        }*/
+        return projectSettings;
     }
+
+    /*private ProjectSettings read() {
+        final File file = ProjectUtils.getEssentialsResourcesFolder() + DefaPr.;
+        if (!file.exists()) {
+            log.debug("File '{}' not found.", file);
+            return null;
+        }
+        log.debug("Reading settings from '{}'.", file);
+        try {
+            return GlobalUtils.unmarshalStream(new FileInputStream(path), clazz);
+        } catch (IOException e) {
+            log.error("Error reading file '{}'.", path, e);
+        }
+        return null;
+    }*/
+
 
     @Override
     public Multimap<String, Object> getPluginContextData() {
@@ -114,7 +140,7 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public File getSiteDirectory() {
         if (siteFile == null) {
-            siteFile = ProjectUtils.getSite();
+            siteFile = ProjectUtils.getSite(this);
         }
         return siteFile;
     }
@@ -125,23 +151,23 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public File getCmsDirectory() {
-        return ProjectUtils.getCms();
+        return ProjectUtils.getCms(this);
     }
 
     @Override
     public File getEssentialsDirectory() {
-        return ProjectUtils.getEssentialsFolder();
+        return ProjectUtils.getEssentialsFolderName(this);
     }
 
     @Override
     public String getEssentialsResourcePath() {
-        return ProjectUtils.getEssentialsFolder().getAbsolutePath() + MAIN_RESOURCE_PART;
+        return ProjectUtils.getEssentialsFolderName(this).getAbsolutePath() + MAIN_RESOURCE_PART;
     }
 
 
     @Override
     public boolean isEnterpriseProject() {
-        return DependencyUtils.isEnterpriseProject();
+        return DependencyUtils.isEnterpriseProject(this);
     }
 
     @Override
@@ -187,7 +213,7 @@ public class DefaultPluginContext implements PluginContext {
     }
 
     private Path createPath(final String packageName) {
-        final File siteDirectory = ProjectUtils.getSite();
+        final File siteDirectory = ProjectUtils.getSite(this);
         if (Strings.isNullOrEmpty(packageName) || siteDirectory == null) {
             log.error("Package: {}, or  project site directory: {}, were not defined", packageName, siteDirectory);
             return null;
@@ -209,6 +235,11 @@ public class DefaultPluginContext implements PluginContext {
         return projectNamespace;
     }
 
+
+    @Override
+    public void setProjectSettings(final ProjectSettings projectSettings) {
+        this.projectSettings = projectSettings;
+    }
     @Override
     public void setProjectNamespacePrefix(final String namespace) {
         this.projectNamespace = namespace;
@@ -298,6 +329,7 @@ public class DefaultPluginContext implements PluginContext {
             public String toString() {
                 return UUID.randomUUID().toString();
             }
+
             Function<String, String> id() {
                 return new Function<String, String>() {
                     @Override
@@ -307,31 +339,31 @@ public class DefaultPluginContext implements PluginContext {
                 };
             }
         });
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
-        final String siteWebRoot = ProjectUtils.getSite().getAbsolutePath()
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite(this).getAbsolutePath());
+        final String siteWebRoot = ProjectUtils.getSite(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, siteWebRoot);
 
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_RESOURCES, getSiteDirectory() + MAIN_RESOURCE_PART);
 
-        final String cmsWebRoot = ProjectUtils.getCms().getAbsolutePath()
+        final String cmsWebRoot = ProjectUtils.getCms(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_ROOT, cmsWebRoot);
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, getCmsDirectory() + MAIN_RESOURCE_PART);
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, ProjectUtils.getSite().getAbsolutePath()
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, ProjectUtils.getSite(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_RESOURCES
                 + File.separator + EssentialConst.PATH_REL_OVERRIDE);
 
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_INF_ROOT, ProjectUtils.getSite().getAbsolutePath()
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_INF_ROOT, ProjectUtils.getSite(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_INF);
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_INF_ROOT, ProjectUtils.getCms().getAbsolutePath()
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_INF_ROOT, ProjectUtils.getCms(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_INF);
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);
-        placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite(this).getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);
+        placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder(this));
         placeholderData.put(EssentialConst.PLACEHOLDER_JAVASCRIPT_ROOT, siteWebRoot + File.separator + "js");
         placeholderData.put(EssentialConst.PLACEHOLDER_IMAGES_ROOT, siteWebRoot + File.separator + "images");
         placeholderData.put(EssentialConst.PLACEHOLDER_CSS_ROOT, siteWebRoot + File.separator + "css");
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms().getAbsolutePath());
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms(this).getAbsolutePath());
         // packages
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_PACKAGE, restPackage);
@@ -371,11 +403,11 @@ public class DefaultPluginContext implements PluginContext {
     }
 
     private void fillInProperties() {
-        if(placeholderData==null){
+        if (placeholderData == null) {
             return;
         }
         // check if already set:
-        if(placeholderData.containsKey(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED)){
+        if (placeholderData.containsKey(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED)) {
             return;
         }
         // set boolean value for freemarker templates
@@ -390,6 +422,8 @@ public class DefaultPluginContext implements PluginContext {
             addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, ".ftl");
         }
     }
+
+
 
 
 }

@@ -24,6 +24,7 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,9 @@ public abstract class BaseRepositoryTest extends BaseTest {
         testPluginContext.setComponentsPackageName("org.onehippo.essentials.test.components");
         testPluginContext.setBeansPackageName("org.onehippo.essentials.test.beans");
         testPluginContext.setRestPackageName("org.onehippo.essentials.test.rest");
+        final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
+        testPluginContext.setProjectSettings(projectSettings);
+
         return testPluginContext;
     }
 

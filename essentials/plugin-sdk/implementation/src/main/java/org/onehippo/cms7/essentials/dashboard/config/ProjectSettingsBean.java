@@ -23,6 +23,9 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -33,6 +36,13 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
 
     public static final String DEFAULT_NAME = "project-settings";
+
+
+    public static final String FOLDER_SITE = "site";
+    public static final String FOLDER_CMS = "cms";
+    public static final String FOLDER_BOOTSTRAP = "bootstrap";
+    public static final String FOLDER_WEBFILES = "webfiles";
+
     private String projectNamespace;
 
     private String selectedBeansPackage;
@@ -44,6 +54,77 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private boolean useSamples;
     private boolean confirmParams;
 
+    private String siteFolder;
+    private String cmsFolder;
+    private String bootstrapFolder;
+    private String webfilesFolder;
+    private String essentialsFolder;
+
+    @Override
+    public void setEssentialsFolder(final String essentialsFolder) {
+        this.essentialsFolder = essentialsFolder;
+    }
+
+    @Override
+    public String getEssentialsFolder() {
+        if (essentialsFolder != null) {
+            return essentialsFolder;
+        }
+        essentialsFolder = ProjectUtils.getEssentialsFolderName();
+        return essentialsFolder;
+    }
+
+    @Override
+    public String getSiteFolder() {
+        if (Strings.isNullOrEmpty(siteFolder)) {
+            return FOLDER_SITE;
+        }
+        return siteFolder;
+    }
+
+    @Override
+    public void setSiteFolder(final String siteFolder) {
+        this.siteFolder = siteFolder;
+    }
+
+    @Override
+    public String getCmsFolder() {
+        if (Strings.isNullOrEmpty(cmsFolder)) {
+            return FOLDER_CMS;
+        }
+        return cmsFolder;
+    }
+
+    @Override
+    public void setCmsFolder(final String cmsFolder) {
+        this.cmsFolder = cmsFolder;
+    }
+
+    @Override
+    public String getBootstrapFolder() {
+        if (Strings.isNullOrEmpty(bootstrapFolder)) {
+            return FOLDER_BOOTSTRAP;
+        }
+        return bootstrapFolder;
+    }
+
+    @Override
+    public void setBootstrapFolder(final String bootstrapFolder) {
+        this.bootstrapFolder = bootstrapFolder;
+    }
+
+    @Override
+    public String getWebfilesFolder() {
+        if (Strings.isNullOrEmpty(webfilesFolder)) {
+            return FOLDER_WEBFILES;
+        }
+        return webfilesFolder;
+    }
+
+    @Override
+    public void setWebfilesFolder(final String webfilesFolder) {
+        this.webfilesFolder = webfilesFolder;
+    }
 
     private Set<String> pluginRepositories = new HashSet<>();
 
@@ -69,6 +150,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
             this.setupDone = setupDone;
         }
     }
+
 
     @Override
     public String getProjectNamespace() {

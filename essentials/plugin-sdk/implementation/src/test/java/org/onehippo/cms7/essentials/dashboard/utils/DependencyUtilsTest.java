@@ -21,11 +21,12 @@ import java.net.URL;
 import org.apache.maven.model.Dependency;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -46,15 +47,15 @@ public class DependencyUtilsTest extends BaseResourceTest {
         repository.setUrl("http://maven.onehippo.com/maven2/");
         repository.setId("hippo");
         assertEquals(TargetPom.PROJECT, repository.getDependencyTargetPom());
-        boolean hasRepo = DependencyUtils.hasRepository(repository);
+        boolean hasRepo = DependencyUtils.hasRepository(getContext(), repository);
         assertTrue("Expected hippo maven repository", hasRepo);
         // add new one:
         repository.setUrl(NEW_REPO);
         repository.setId("some-id");
-        hasRepo = DependencyUtils.hasRepository(repository);
+        hasRepo = DependencyUtils.hasRepository(getContext(), repository);
         assertFalse("Expected no maven repository", hasRepo);
-        DependencyUtils.addRepository(repository);
-        hasRepo = DependencyUtils.hasRepository(repository);
+        DependencyUtils.addRepository(getContext(), repository);
+        hasRepo = DependencyUtils.hasRepository(getContext(), repository);
         assertTrue("Expected new maven repository: " + NEW_REPO, hasRepo);
 
 
@@ -69,7 +70,7 @@ public class DependencyUtilsTest extends BaseResourceTest {
         dependency.setVersion("1.01.00-SNAPSHOT");
         dependency.setGroupId("org.onehippo.cms7.essentials");
         assertEquals(TargetPom.CMS, dependency.getDependencyTargetPom());
-        final boolean hasDep = DependencyUtils.hasDependency(dependency);
+        final boolean hasDep = DependencyUtils.hasDependency(getContext(), dependency);
         assertTrue("Expected hippo-plugins-shared version", hasDep);
 
     }
@@ -82,15 +83,16 @@ public class DependencyUtilsTest extends BaseResourceTest {
         dependency.setVersion("1.01.00-SNAPSHOT");
         dependency.setGroupId("org.onehippo.cms7.essentials");
         assertEquals(TargetPom.CMS, dependency.getDependencyTargetPom());
-        boolean hasDep = DependencyUtils.hasDependency(dependency);
+        final PluginContext context = getContext();
+        boolean hasDep = DependencyUtils.hasDependency(context, dependency);
         assertFalse("Expected no dependency", hasDep);
         // add
-        DependencyUtils.addDependency(dependency);
-        hasDep = DependencyUtils.hasDependency(dependency);
+        DependencyUtils.addDependency(context, dependency);
+        hasDep = DependencyUtils.hasDependency(context, dependency);
         assertTrue("Expected hippo-plugins-non-existing", hasDep);
         // remove
-        DependencyUtils.removeDependency(dependency);
-        hasDep = DependencyUtils.hasDependency(dependency);
+        DependencyUtils.removeDependency(context, dependency);
+        hasDep = DependencyUtils.hasDependency(context, dependency);
         assertFalse("Expected hippo-plugins-non-existing to be removed", hasDep);
 
 
@@ -103,9 +105,10 @@ public class DependencyUtilsTest extends BaseResourceTest {
         dependency.setGroupId("org.onehippo.cms7.essentials");
         dependency.setArtifactId("hippo-components-plugin-components");
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, resource.getPath());
-        boolean enterpriseProject = DependencyUtils.isEnterpriseProject();
+        final PluginContext context = getContext();
+        boolean enterpriseProject = DependencyUtils.isEnterpriseProject(context);
         assertFalse(enterpriseProject);
-        enterpriseProject = DependencyUtils.upgradeToEnterpriseProject();
+        enterpriseProject = DependencyUtils.upgradeToEnterpriseProject(context);
         assertTrue(enterpriseProject);
 
     }

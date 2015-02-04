@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -110,6 +111,7 @@ public abstract class BaseTest {
     protected PluginContext getPluginContextFile() {
         if (context == null) {
 
+
             final String basePath = projectRoot.toString();
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, basePath);
             final File file = new File(basePath);
@@ -133,6 +135,8 @@ public abstract class BaseTest {
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
+            final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
+            context.setProjectSettings(projectSettings);
 
         }
         return context;

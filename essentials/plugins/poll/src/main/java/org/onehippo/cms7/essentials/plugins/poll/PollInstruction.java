@@ -61,7 +61,7 @@ public class PollInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        final String webXmlPath = ProjectUtils.getWebXmlPath(TargetPom.SITE);
+        final String webXmlPath = ProjectUtils.getWebXmlPath(context, TargetPom.SITE);
         final WebXml webXml = ProjectUtils.readWebXmlFile(webXmlPath);
         try {
             final String hstBeanContextValue = webXml.getHstBeanContextValue();

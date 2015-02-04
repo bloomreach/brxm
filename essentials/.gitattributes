@@ -990,6 +990,7 @@ plugin-sdk/implementation/src/test/resources/project/content/namespaces/hippoplu
 plugin-sdk/implementation/src/test/resources/project/content/namespaces/hippoplugins/vendor.xml -text
 plugin-sdk/implementation/src/test/resources/project/content/namespaces/hippoplugins/version.xml -text
 plugin-sdk/implementation/src/test/resources/project/essentials/pom.xml -text
+plugin-sdk/implementation/src/test/resources/project/essentials/src/main/resources/project-settings.xml -text
 plugin-sdk/implementation/src/test/resources/project/instruction_file.txt -text
 plugin-sdk/implementation/src/test/resources/project/pom.xml -text
 plugin-sdk/implementation/src/test/resources/project/site/pom.xml -text

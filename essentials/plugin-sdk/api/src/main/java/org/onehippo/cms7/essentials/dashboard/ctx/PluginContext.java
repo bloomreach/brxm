@@ -171,6 +171,8 @@ public interface PluginContext extends Serializable {
      */
     String getProjectNamespacePrefix();
 
+    void setProjectSettings(ProjectSettings projectSettings);
+
     /**
      * Sets project namespace e.g. {@code myproject}
      *

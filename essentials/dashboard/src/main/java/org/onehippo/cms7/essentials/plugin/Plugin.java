@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
@@ -35,8 +36,10 @@ public class Plugin {
 
     private final PluginDescriptor descriptor;
     private final InstallStateMachine stateMachine;
+    private final PluginContext context;
 
-    public Plugin(final PluginDescriptor descriptor) {
+    public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
+        this.context = context;
         this.descriptor = descriptor;
         this.stateMachine = new InstallStateMachine(this);
     }
@@ -108,7 +111,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (Repository repository : descriptor.getRepositories()) {
-            if (!DependencyUtils.addRepository(repository)) {
+            if (!DependencyUtils.addRepository(context, repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
                 } else {
@@ -127,7 +130,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (EssentialsDependency dependency : descriptor.getDependencies()) {
-            if (!DependencyUtils.addDependency(dependency)) {
+            if (!DependencyUtils.addDependency(context, dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");
                 } else {

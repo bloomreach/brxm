@@ -103,6 +103,10 @@ public final class EssentialConst {
      */
     public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
     /**
+     * System property for essentials itself (if moved to another context)
+     */
+    public static final String ESSENTIALS_BASEDIR_PROPERTY = "essentials.dir";
+    /**
      * Hippo system andd plugin CND namespaces
      */
     // TODO add known plugin namespaces to this list
