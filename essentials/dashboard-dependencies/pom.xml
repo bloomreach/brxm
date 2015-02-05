@@ -130,11 +130,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials.plugin</groupId>
-      <artifactId>selection</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
       <artifactId>seo</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -172,6 +167,11 @@
     <dependency>
       <groupId>org.onehippo.cms7.essentials.plugin</groupId>
       <artifactId>rest-services</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+      <artifactId>selection</artifactId>
       <version>${project.version}</version>
     </dependency>
 

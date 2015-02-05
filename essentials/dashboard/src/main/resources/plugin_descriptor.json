@@ -64,20 +64,6 @@
         "dependencies": [
             {
                 "@type": "dependency",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-addon-repository",
-                "scope": "compile",
-                "targetPom": "cms"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-addon-cms",
-                "scope": "compile",
-                "targetPom": "cms"
-            },
-            {
-                "@type": "dependency",
                 "groupId": "org.onehippo.cms7.essentials.components",
                 "artifactId": "cms",
                 "scope": "compile",
@@ -174,16 +160,14 @@
         "id": "selectionPlugin",
         "name": "Selections",
         "icon" : "/essentials/images/icons/selections.png",
-        "introduction": "With the Selections feature, you can add several kinds of dropdowns, pulldowns and radio groups to your page template.",
-        "description": "This feature wraps the 'Selection' Standard Plugin.",
+        "introduction": "With the Selections tool, you can add several kinds of dropdowns, pulldowns and radio groups to your page template.",
+        "description": "This tool helps you adding selection fields to your document types.",
         "imageUrls": [
             "/essentials/images/screenshots/selections01.png"
         ],
         "documentationLink": "http://selection.forge.onehippo.org",
-        "packageFile": "/META-INF/selectionPlugin_instructions.xml",
-        "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.selection.SelectionParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.selection.SelectionResource"],
-        "type": "feature",
+        "type": "tool",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -197,29 +181,6 @@
                         "file": "selectionPlugin.js"
                     }
                 ]
-            }
-        ],
-        "dependencies": [
-            {
-                "@type": "dependency",
-                "targetPom": "cms",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-addon-cms",
-                "scope": "compile"
-            },
-            {
-                "@type": "dependency",
-                "targetPom": "cms",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-addon-repository",
-                "scope": "compile"
-            },
-            {
-                "@type": "dependency",
-                "targetPom": "site",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-hst-client",
-                "scope": "compile"
             }
         ]
     },
@@ -297,20 +258,6 @@
                 "@type": "dependency",
                 "groupId": "org.onehippo.cms7",
                 "artifactId": "hippo-plugin-dashboard-document-wizard",
-                "scope": "compile",
-                "targetPom": "cms"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-addon-cms",
-                "scope": "compile",
-                "targetPom": "cms"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-selections-addon-repository",
                 "scope": "compile",
                 "targetPom": "cms"
             }

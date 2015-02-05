@@ -15,7 +15,7 @@
   -->
 
 <div ng-controller="selectionPluginCtrl">
-    <div class="panel panel-default" ng-show="plugin.installState === 'installed'">
+    <div class="panel panel-default">
         <div class="panel-heading"><h3>Selections Configuration</h3></div>
         <div class="panel-body">
             <essentials-draft-warning></essentials-draft-warning>
@@ -100,7 +100,8 @@
                             <select class="form-control" hippo.theme.select-box
                                     ng-model="selectionType"
                                     ng-selected="selectionType"
-                                    ng-options="type for type in selectionTypes">
+                                    ng-options="type for type in selectionTypes"
+                                    data-options="selectionType">
                             </select>
                         </div>
                     </div>

@@ -21,14 +21,6 @@
 
                 var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
 
-                // Initialize the controller scope
-                $scope.pluginId = "selectionPlugin";
-                $scope.$on('update-plugin-install-state', function(event, args) {
-                    if ($scope.pluginId === args.pluginId && $scope.plugin !== undefined) {
-                        $scope.plugin.installState = args.state;
-                    }
-                });
-
                 $scope.addField = function() {
                     var payload = {
                         values: {
@@ -66,10 +58,9 @@
                 resetAddFieldForm();
                 loadValueLists();
 
-                $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                    $scope.plugin = plugin;
-                });
+                $scope.documentTypes = [];
                 $http.get($rootScope.REST.documents).success(function (data){
+                    debugger;
                     $scope.documentTypes = data;
 
                     // if there's only one selectable type, preselect it.
@@ -96,6 +87,7 @@
                 // Helper functions
                 function loadValueLists() {
                     $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+                        console.log(data);
                         $scope.valueLists = data;
                     });
                 }

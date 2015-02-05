@@ -1360,11 +1360,9 @@ plugins/search/src/main/resources/instructions/xml/hst/search-sitemap.xml -text
 plugins/selection/README.md -text
 plugins/selection/pom.xml -text
 plugins/selection/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionFieldRestful.java -text
-plugins/selection/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionParameterService.java -text
 plugins/selection/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionResource.java -text
-plugins/selection/src/main/resources/META-INF/resources/feature/selectionPlugin/selectionPlugin.html -text
-plugins/selection/src/main/resources/META-INF/resources/feature/selectionPlugin/selectionPlugin.js -text
-plugins/selection/src/main/resources/META-INF/selectionPlugin_instructions.xml -text
+plugins/selection/src/main/resources/META-INF/resources/tool/selectionPlugin/selectionPlugin.html -text
+plugins/selection/src/main/resources/META-INF/resources/tool/selectionPlugin/selectionPlugin.js -text
 plugins/selection/src/main/resources/META-INF/web-fragment.xml -text
 plugins/selection/src/main/resources/xml/multi-field-editor-template.xml -text
 plugins/selection/src/main/resources/xml/multi-field-node-type.xml -text
