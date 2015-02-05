@@ -318,6 +318,8 @@
                 <exclude>engine/src/main/java/org/apache/jackrabbit/core/observation/RevisionEventJournalImpl.java</exclude>
                 <!-- copied from Maven sources -->
                 <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
+                <!-- based upon and adapted from Solr sources -->
+                <exclude>utilities/src/main/java/org/onehippo/repository/util/DateMathParser.java</exclude>
                 <!-- repository content XML -->
                 <exclude>*/src/test/resources/**/*.xml</exclude>
                 <exclude>test/checker-repository.xml</exclude>
