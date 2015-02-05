@@ -60,10 +60,9 @@
 
   </properties>
   <scm>
-    <connection>scm:git:git@github.com:onehippo/essentials.git</connection>
-    <url>scm:git:git@github.com:onehippo/essentials.git</url>
-    <developerConnection>scm:git:git@github.com:onehippo/essentials.git</developerConnection>
-    <tag>HEAD</tag>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</url>
   </scm>
   <distributionManagement>
     <repository>
