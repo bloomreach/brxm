@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.Date;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -63,6 +64,7 @@ import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.util.DateMathParser;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +83,31 @@ import static org.onehippo.repository.util.JcrConstants.JCR_WRITE;
  * hippostd:modify.  This is a set of (path, value) values, with the value being subject to
  * variable expansion.  The expansion takes the following form:
  * <ul>
- *   <li>$now: the current time
+ *   <li><pre>$now: the current time
+ *         optional math functions may be used along with the $now option
+ *         time units supported include:
+ *                Y   - Year
+ *                M   - Month
+ *                D   - Day
+ *                H   - Hour
+ *                MIN - Minute
+ *                SEC - Second
+ *                MIL - Millisecond
+ *         Some example usages are:
+ *           $now/H
+ *              ... Round to the start of the current hour
+ *           $now/D
+ *              ... Round to the start of the current day
+ *           $now+2Y
+ *              ... Exactly two years in the future from now
+ *           $now-1D
+ *              ... Exactly 1 day prior to now
+ *           $now/D+6M+3D
+ *              ... 6 months and 3 days in the future from the start of
+ *                  the current day
+ *           $now+6M+3D/D
+ *              ... 6 months and 3 days in the future from now, rounded
+ *                  down to nearest day</pre>
  *   <li>$holder: the user of the session that invoked the workflow
  *   <li>$inherit: the value under the same path in the parent document.
  *     Can be overridden by providing the property name as an argument.
@@ -227,14 +253,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 newValues = new String[] { name };
             } else if (newValue.equals("$holder")) {
                 newValues = new String[] { workflowContext.getUserIdentity() };
-            } else if (newValue.equals("$now")) {
-                if (currentTime == null) {
-                    currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-                            .format(new java.util.Date());
+            } else if (newValue.startsWith("$now")) {
+                try {
+                    Date dateVal = DateMathParser.parseMath(newValue.substring(4)).getTime();
+                    currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dateVal);
                     currentTime = currentTime.substring(0, currentTime.length() - 2) + ":"
-                            + currentTime.substring(currentTime.length() - 2);
+                                  + currentTime.substring(currentTime.length() - 2);
+                    newValues = new String[] { currentTime };
+                } catch(Exception ex) {
+                    log.error("error while populating default date/time value for:"+name+" property:"+values[i], ex);
                 }
-                newValues = new String[] { currentTime };
             } else if (newValue.startsWith("$inherit")) {
                 String relpath = values[i];
                 String propPath = relpath.substring(relpath.lastIndexOf('/') + 1);
