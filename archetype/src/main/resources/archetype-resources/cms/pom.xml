@@ -51,8 +51,6 @@
       <artifactId>${rootArtifactId}-bootstrap-webfiles</artifactId>
       <version>${dollar}{project.version}</version>
     </dependency>
-
-    <!--  Gallery picker dependency -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-gallerypicker</artifactId>
@@ -60,6 +58,14 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-selections-addon-cms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-selections-addon-repository</artifactId>
     </dependency>
   </dependencies>
   <build>
