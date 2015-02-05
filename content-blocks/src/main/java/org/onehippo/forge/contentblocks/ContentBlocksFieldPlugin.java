@@ -627,9 +627,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
                 dropDown = new DropDownChoice<>("itemsDropDown",
                         new PropertyModel<>(dropDownOptionModel, "item"),
-                        getOptionsFromList(),
+                        options,
                         new ChoiceRenderer<>("label", "value"));
-                dropDown.setRequired(true);
                 form.add(dropDown);
 
                 add(new AjaxButton("addItem", form) {
@@ -641,7 +640,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                         if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Selecting value '{}' from dropdown, compoundList={}",
-                                        dropDownOptionModel.getItem().getValue(), compoundList);
+                                    dropDownOptionModel.getItem().getValue(), compoundList);
                             }
                             addItem(dropDownOptionModel.getItem().getValue(), target);
                         } else {
@@ -662,7 +661,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                         new PropertyModel<>(dropDownOptionModel, "item"),
                         options,
                         new ChoiceRenderer<>("label", "value"));
-                dropDown.setRequired(true);
                 form.add(dropDown);
 
                 add(new AjaxButton("addItem", form) {
@@ -672,11 +670,11 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Selecting value '{}' from dropdown, providerCompoundType={}",
-                                    dropDownOptionModel.getItem().getValue(), providerCompoundType);
-                        }
-                        addItem(dropDownOptionModel.getItem().getValue(), target);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Selecting value '{}' from dropdown, providerCompoundType={}",
+                                        dropDownOptionModel.getItem().getValue(), providerCompoundType);
+                            }
+                            addItem(dropDownOptionModel.getItem().getValue(), target);
                         } else {
                             log.debug("No value selected from dropdown, providerCompoundType={}", providerCompoundType);
                         }
