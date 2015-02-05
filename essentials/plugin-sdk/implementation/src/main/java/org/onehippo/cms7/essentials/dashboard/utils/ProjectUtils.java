@@ -90,6 +90,13 @@ public final class ProjectUtils {
         return new File(absolutePath);
     }
 
+    public static File getWebfiles(final PluginContext context) {
+        final File bootstrapFolder = getFolder(context.getProjectSettings().getBootstrapFolder());
+        // TODO make site part configurable ??
+        final String webfilesPath = bootstrapFolder.getAbsolutePath() + File.separator + "webfiles" + File.separator
+                + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "site";
+        return new File(webfilesPath);
+    }
     /**
      * Returns SITE root folder e.g. {@code /home/foo/myproject/site}
      *

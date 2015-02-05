@@ -20,14 +20,10 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FreemarkerInstructionTest extends BaseRepositoryTest {
@@ -48,19 +44,6 @@ public class FreemarkerInstructionTest extends BaseRepositoryTest {
         instruction.setTarget("{{freemarkerRoot}}/{{namespace}}/homepage-main-content.ftl");
         log.info("instruction {}", instruction);
         assertTrue(instruction.valid());
-        final PluginContext context = getContext();
-        context.addPlaceholderData(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
-        context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
-        context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
-        assertTrue(instruction.valid());
-        final String projectNamespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
-        log.info("projectNamespace {}", projectNamespace);
-        instruction.process(context, InstructionStatus.SUCCESS);
-        assertEquals("/hst:hst/hst:configurations/" + projectNamespace + "/hst:templates", instruction.getRepositoryTarget());
-        assertEquals("homepage-main-content.ftl", instruction.getTemplateName());
-        instruction.process(context, InstructionStatus.SKIPPED);
-
-
     }
 
 

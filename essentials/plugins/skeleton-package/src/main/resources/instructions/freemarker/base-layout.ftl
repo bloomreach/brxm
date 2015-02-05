@@ -14,19 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-{{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/imports.ftl">
-{{/repositoryBased}}
-{{#fileBased}}
-    <#include "/WEB-INF/freemarker/include/imports.ftl">
-{{/fileBased}}
+<#include "../include/imports.ftl">
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <link rel="stylesheet" href="<@hst.link  path="/css/bootstrap.css"/>" type="text/css"/>
+    <link rel="stylesheet" href="<@hst.webfile  path="/css/bootstrap.css"/>" type="text/css"/>
     <@hst.defineObjects/>
     <#if hstRequest.requestContext.cmsRequest>
-      <link rel="stylesheet" href="<@hst.link  path="/css/cms-request.css"/>" type="text/css"/>
+      <link rel="stylesheet" href="<@hst.webfile  path="/css/cms-request.css"/>" type="text/css"/>
     </#if>
 <@hst.headContributions categoryIncludes="htmlHead" xhtml=true/>
 </head>

@@ -29,7 +29,7 @@ public final class EssentialConst {
     public static final String PATH_REL_RESOURCES = "src" + File.separator + "main" + File.separator + "resources";
     public static final String PATH_REL_WEB_ROOT = "src" + File.separator + "main" + File.separator + "webapp";
     public static final String PATH_REL_WEB_INF = PATH_REL_WEB_ROOT + File.separator + "WEB-INF";
-    public static final String FREEMARKER_RELATIVE_FOLDER = PATH_REL_WEB_INF + File.separator + "freemarker";
+
 
     public static final String PATH_REL_OVERRIDE = "META-INF" + File.separator + "hst-assembly" + File.separator + "overrides";
     /**
@@ -53,7 +53,12 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_SITE_WEB_INF_ROOT = "siteWebInfRoot";
     public static final String PLACEHOLDER_CMS_WEB_INF_ROOT = "cmsWebInfRoot";
     public static final String PLACEHOLDER_SITE_RESOURCES = "siteResources";
-    public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "freemarkerRoot";
+    public static final String PLACEHOLDER_WEBFILES_ROOT = "webfilesRoot";
+    public static final String PLACEHOLDER_WEBFILES_FREEMARKER_ROOT = "freemarkerRoot";
+    public static final String PLACEHOLDER_WEBFILES_CSS_ROOT = "webfilesCssRoot";
+    public static final String PLACEHOLDER_WEBFILES_JS_ROOT = "webfilesJsRoot";
+    public static final String PLACEHOLDER_WEBFILES_IMAGES_ROOT = "webfilesImagesRoot";
+    public static final String PLACEHOLDER_WEBFILES_PREFIX = "webfilesPrefix";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
     public static final String PLACEHOLDER_JAVASCRIPT_ROOT = "javascriptRoot";
     public static final String PLACEHOLDER_IMAGES_ROOT = "imagesRoot";
@@ -93,6 +98,7 @@ public final class EssentialConst {
     public static final String MIME_APPLICATION_PDF = "application/pdf";
     public static final String FILE_EXTENSION_JAVA = ".java";
     public static final String SOURCE_PATTERN_JAVA = "java";
+    public static final String WEBFILES_PREFIX = "webfile:";
 
     /**
      * Flag which, if set, initiates updating of image beans
@@ -160,16 +166,9 @@ public final class EssentialConst {
     public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(INSTRUCTION_GROUP_DEFAULT).build();
     public static final String REPO_FOLDER_FORMAT = "yyyy/MM";
     public static final String UTF_8 = "UTF8";
-    public static final String TEMPLATE_PARAM_REPOSITORY_BASED = "repositoryBased";
-    public static final String TEMPLATE_PARAM_FILE_BASED = "fileBased";
-    public static final String TEMPLATE_NAME_EXTENSION = "templateExtension";
     public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
     public static final String PROP_TEMPLATE_NAME = "templateName";
     public static final String PROP_SAMPLE_DATA = "sampleData";
-    public static final String TEMPLATE_FREEMARKER = "freemarker";
-
-    public static final String TEMPLATE_JSP = "jsp";
-    public static final String TEMPLATE_REPOSITORY = "repository";
 
 
     private EssentialConst() {

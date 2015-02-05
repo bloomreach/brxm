@@ -74,27 +74,9 @@ public class DefaultInstructionPackage implements InstructionPackage {
     @Override
     public void setProperties(final Map<String, Object> properties) {
         this.properties = properties;
-        prepareProperties();
     }
 
-    private void prepareProperties() {
-        if (properties == null) {
-            return;
-        }
-        // do not reset:
-        if (properties.containsKey(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED)) {
-            return;
-        }
-        // set boolean value for freemarker templates
-        final String templateName = (String) properties.get(EssentialConst.PROP_TEMPLATE_NAME);
-        if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
-            properties.put(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
-            properties.put(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
-        } else {
-            properties.put(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
-            properties.put(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
-        }
-    }
+
 
     @Override
     public Set<String> groupNames() {

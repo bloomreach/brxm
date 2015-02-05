@@ -138,23 +138,17 @@ public class MessageInstructionExecutor {
         instruction.processPlaceholders(placeholderData);
         if (action.equals("copy")) {
             final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
-            final String userMessage;
-            if (instruction.isRepoBased()) {
-                userMessage = MessageFormat.format("New HST template node will be created: {0}", instruction.getTarget());
-                Restful keyValueRestful = new MessageRestful(userMessage);
-                retVal.put(MessageGroup.XML_NODE_CREATE, keyValueRestful);
-            } else {
-                userMessage = MessageFormat.format("New file will be created: {0}", replacedData);
-                Restful keyValueRestful = new MessageRestful(userMessage);
-                retVal.put(MessageGroup.FILE_CREATE, keyValueRestful);
-            }
+            final String userMessage = MessageFormat.format("New file will be created: {0}", replacedData);
+            final Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.FILE_CREATE, keyValueRestful);
+
 
 
 
         } else if (action.equals("delete")) {
             final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
             final String userMessage = MessageFormat.format("Following file will be deleted: {0}", replacedData);
-            Restful keyValueRestful = new MessageRestful(userMessage);
+            final Restful keyValueRestful = new MessageRestful(userMessage);
             retVal.put(MessageGroup.FILE_DELETE, keyValueRestful);
         }
     }

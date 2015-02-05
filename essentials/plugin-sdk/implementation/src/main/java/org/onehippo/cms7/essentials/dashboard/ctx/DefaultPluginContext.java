@@ -271,7 +271,6 @@ public class DefaultPluginContext implements PluginContext {
         if (data != null) {
             getPlaceholderData().putAll(data);
         }
-        fillInProperties();
     }
 
     /**
@@ -299,8 +298,6 @@ public class DefaultPluginContext implements PluginContext {
             return placeholderData;
         }
 
-        // needed for freemarker templates
-        placeholderData.put(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
 
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
@@ -358,7 +355,13 @@ public class DefaultPluginContext implements PluginContext {
                 + File.separator + EssentialConst.PATH_REL_WEB_INF);
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_INF_ROOT, ProjectUtils.getCms(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_INF);
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite(this).getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);
+        final File webfilesFolder = ProjectUtils.getWebfiles(this);
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_ROOT, webfilesFolder.getAbsolutePath());
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_FREEMARKER_ROOT, webfilesFolder.getAbsolutePath() + File.separator + "freemarker");
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_CSS_ROOT, webfilesFolder.getAbsolutePath() + File.separator + "css");
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_JS_ROOT, webfilesFolder.getAbsolutePath() + File.separator + "js");
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_IMAGES_ROOT, webfilesFolder.getAbsolutePath() + File.separator + "images");
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_PREFIX, EssentialConst.WEBFILES_PREFIX);
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder(this));
         placeholderData.put(EssentialConst.PLACEHOLDER_JAVASCRIPT_ROOT, siteWebRoot + File.separator + "js");
         placeholderData.put(EssentialConst.PLACEHOLDER_IMAGES_ROOT, siteWebRoot + File.separator + "images");
@@ -402,26 +405,7 @@ public class DefaultPluginContext implements PluginContext {
         }
     }
 
-    private void fillInProperties() {
-        if (placeholderData == null) {
-            return;
-        }
-        // check if already set:
-        if (placeholderData.containsKey(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED)) {
-            return;
-        }
-        // set boolean value for freemarker templates
-        final String templateName = (String) placeholderData.get(EssentialConst.PROP_TEMPLATE_NAME);
-        if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
-            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
-            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
-            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
-        } else {
-            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
-            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
-            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, ".ftl");
-        }
-    }
+
 
 
 

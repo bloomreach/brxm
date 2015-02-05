@@ -1,9 +1,5 @@
-{{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/imports.ftl">
-{{/repositoryBased}}
-{{#fileBased}}
-    <#include "/WEB-INF/freemarker/include/imports.ftl">
-{{/fileBased}}
+<#include "../include/imports.ftl">
+
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 

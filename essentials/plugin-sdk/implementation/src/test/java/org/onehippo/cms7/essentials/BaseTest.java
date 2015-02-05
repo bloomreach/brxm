@@ -128,6 +128,10 @@ public abstract class BaseTest {
                 if (!essentialsFolder.exists()) {
                     essentialsFolder.mkdir();
                 }
+                final File bootstrapFolder = new File(basePath + File.separator + "bootstrap");
+                if (!bootstrapFolder.exists()) {
+                    bootstrapFolder.mkdir();
+                }
             }
             context = new TestPluginContext(null);
             context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);

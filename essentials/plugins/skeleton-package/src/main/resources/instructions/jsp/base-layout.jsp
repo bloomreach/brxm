@@ -19,10 +19,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <link rel="stylesheet" href="<hst:link  path="/css/bootstrap.css"/>" type="text/css"/>
+  <link rel="stylesheet" href="<hst:webfile  path="/css/bootstrap.css"/>" type="text/css"/>
   <hst:defineObjects/>
   <c:if test="${hstRequest.requestContext.cmsRequest}">
-    <link rel="stylesheet" href="<hst:link  path="/css/cms-request.css"/>" type="text/css"/>
+    <link rel="stylesheet" href="<hst:webfile  path="/css/cms-request.css"/>" type="text/css"/>
   </c:if>
   <hst:headContributions categoryIncludes="htmlHead" xhtml="true"/>
 </head>
