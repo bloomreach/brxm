@@ -17,10 +17,12 @@ package org.hippoecm.frontend.plugins.console.menu.property;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -132,6 +134,13 @@ public class PropertyDialog extends AbstractDialog<Node> {
                             }
                             list.add(pd);
                             choices.put(pd.getName(), list);
+                        }
+                    }
+                    // remove already set properties from suggestions:
+                    final Set<String> properties = new HashSet<>(choices.keySet());
+                    for (String property : properties) {
+                        if (node.hasProperty(property)) {
+                            choices.remove(property);
                         }
                     }
                 } catch (RepositoryException e) {
