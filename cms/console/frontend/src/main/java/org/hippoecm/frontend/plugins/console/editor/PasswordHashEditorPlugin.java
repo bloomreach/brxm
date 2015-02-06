@@ -23,14 +23,19 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Editor fro generating and hashing passwords
- * @version $Id: $
+ * Editor for generating and hashing passwords
+ *
+ * @version $Id:$
  */
 public class PasswordHashEditorPlugin extends Plugin implements ValueEditorFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(PasswordHashEditorPlugin.class);
     private final int passwordLength;
+
     public PasswordHashEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         context.registerService(this, SERVICE_ID);
@@ -47,7 +52,7 @@ public class PasswordHashEditorPlugin extends Plugin implements ValueEditorFacto
             final Property property = valueModel.getJcrPropertymodel().getProperty();
             return property != null && property.getName().equals("hipposys:password");
         } catch (RepositoryException e) {
-            NodeEditor.log.error(e.getMessage());
+            log.error(e.getMessage());
             return false;
         }
     }
