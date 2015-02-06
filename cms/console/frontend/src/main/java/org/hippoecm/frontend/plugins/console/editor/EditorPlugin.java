@@ -68,16 +68,6 @@ public class EditorPlugin extends RenderPlugin<Node> {
     }
 
 
-    private static class BackgroundStyleModifier extends AttributeModifier {
-        public BackgroundStyleModifier(String cssClass) {
-            super("style", cssClass);
-        }
-
-        @Override
-        protected String newValue(String currentValue, String valueToRemove) {
-            return valueToRemove;
-        }
-    }
     @Override
     public void onEvent(IEvent<?> event) {
         super.onEvent(event);
