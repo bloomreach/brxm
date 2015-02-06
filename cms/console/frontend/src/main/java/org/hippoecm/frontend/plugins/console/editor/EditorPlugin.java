@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.plugins.console.editor;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -45,12 +47,37 @@ public class EditorPlugin extends RenderPlugin<Node> {
     public void onModelChanged() {
         super.onModelChanged();
         IModel<Node> newModel = getModel();
+        try {
+            final Node node = newModel.getObject();
+            if (node != null) {
+                if (node.isCheckedOut()) {
+                    add(new AttributeModifier("style", ""));
+                } else {
+                    add(new AttributeModifier("style", "background-color:#ddd;"));
+                }
+                redraw();
+            }
+
+        } catch (RepositoryException e) {
+            // ignore
+        }
         if (!editor.getModel().equals(newModel)) {
             editor.setModel(newModel);
             redraw();
         }
     }
 
+
+    private static class BackgroundStyleModifier extends AttributeModifier {
+        public BackgroundStyleModifier(String cssClass) {
+            super("style", cssClass);
+        }
+
+        @Override
+        protected String newValue(String currentValue, String valueToRemove) {
+            return valueToRemove;
+        }
+    }
     @Override
     public void onEvent(IEvent<?> event) {
         super.onEvent(event);
