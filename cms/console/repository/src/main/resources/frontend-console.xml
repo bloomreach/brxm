@@ -373,6 +373,17 @@
         <sv:value>org.hippoecm.frontend.plugins.console.editor.HstReferenceEditorPlugin</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="passwordhashplugin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.editor.PasswordHashEditorPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="false" sv:name="passwordLength" sv:type="String">
+        <sv:value>8</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="browserBehavior">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>

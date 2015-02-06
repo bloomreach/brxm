@@ -1396,6 +1396,9 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstR
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/JcrName.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/NodeEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/NodeTypesEditor.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PasswordHashEditor.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PasswordHashEditor.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PasswordHashEditorPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertiesEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertyValueEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.html -text svneol=unset#text/plain
