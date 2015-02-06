@@ -1374,6 +1374,8 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/ren
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/t9ids.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-export.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-import.png -text svneol=unset#image/png
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/BinaryUploadDialog.html svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/BinaryUploadDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupTargetTreeView.java svneol=native#text/plain

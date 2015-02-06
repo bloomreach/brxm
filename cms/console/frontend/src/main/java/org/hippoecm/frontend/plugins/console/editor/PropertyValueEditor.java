@@ -149,7 +149,7 @@ class PropertyValueEditor extends DataView {
         }
 
         if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
-            return new BinaryEditor("value", propertyModel);
+            return new BinaryEditor("value", propertyModel, getEditorPlugin().getPluginContext());
         }
         else if (propertyModel.getProperty().getDefinition().isProtected()) {
             return new Label("value", valueModel) {

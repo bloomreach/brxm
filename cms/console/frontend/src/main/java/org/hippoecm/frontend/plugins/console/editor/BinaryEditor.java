@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.lang.Bytes;
@@ -35,7 +36,12 @@ import org.apache.wicket.util.resource.AbstractResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Time;
+import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.console.dialog.BinaryUploadDialog;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,17 +54,29 @@ public class BinaryEditor extends Panel {
     private static final long ONE_MB = ONE_KB * ONE_KB;
     private static final long ONE_GB = ONE_KB * ONE_MB;
 
-    public BinaryEditor(String id, JcrPropertyModel model) {
+    public BinaryEditor(String id, JcrPropertyModel model, final IPluginContext pluginContext) {
         super(id);
         final IResourceStream stream = new BinaryResourceStream(model);
-        final Link link = new ResourceLink("binary-link", new ResourceStreamResource() {
+        // download
+        final Link downloadLink = new ResourceLink("binary-download-link", new ResourceStreamResource() {
             @Override
             public IResourceStream getResourceStream() {
                 return stream;
             }
         });
-        link.add(new Label("binary-link-text", "download (" + getSizeString(stream.length()) + ")"));
-        add(link);
+        downloadLink.add(new Label("binary-download-text", "download (" + getSizeString(stream.length()) + ")"));
+        add(downloadLink);
+        // upload
+        IDialogFactory factory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public IDialogService.Dialog createDialog() {
+                return new BinaryUploadDialog(model);
+            }
+        };
+        final IDialogService service = pluginContext.getService(IDialogService.class.getName(), IDialogService.class);
+        final DialogLink uploadLink = new DialogLink("binary-upload-link", new Model<>("Upload binary"), factory, service);
+        add(uploadLink);
     }
 
     private static String getSizeString(final Bytes bytes) {
