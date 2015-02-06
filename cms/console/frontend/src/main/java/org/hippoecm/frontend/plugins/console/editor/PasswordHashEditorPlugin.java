@@ -34,7 +34,7 @@ public class PasswordHashEditorPlugin extends Plugin implements ValueEditorFacto
     public PasswordHashEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         context.registerService(this, SERVICE_ID);
-        passwordLength = config.getAsInteger("passwordLength", 8);
+        passwordLength = config.getAsInteger("passwordLength", 12);
     }
 
 

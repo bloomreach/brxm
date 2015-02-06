@@ -381,7 +381,7 @@
         <sv:value>org.hippoecm.frontend.plugins.console.editor.PasswordHashEditorPlugin</sv:value>
       </sv:property>
       <sv:property sv:multiple="false" sv:name="passwordLength" sv:type="String">
-        <sv:value>8</sv:value>
+        <sv:value>12</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="browserBehavior">
