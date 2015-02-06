@@ -40,6 +40,8 @@ public interface PluginContext extends Serializable {
 
     ProjectSettings getProjectSettings();
 
+    void setProjectSettings(ProjectSettings projectSettings);
+
     /**
      * Plugin can store and retrieve data during it's lifecycle
      *
@@ -170,8 +172,6 @@ public interface PluginContext extends Serializable {
      * @return namespace prefix of current project
      */
     String getProjectNamespacePrefix();
-
-    void setProjectSettings(ProjectSettings projectSettings);
 
     /**
      * Sets project namespace e.g. {@code myproject}

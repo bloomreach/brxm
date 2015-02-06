@@ -93,28 +93,13 @@ public class DefaultPluginContext implements PluginContext {
         } catch (Exception e) {
             log.error("Error reading project settings", e);
         }
-        /*if (projectSettings == null) {
-            throw new IllegalStateException("Project settings could not be found (project-settings.xml file should be located within " +
-                    "'essentials/src/main/resources' folder)");
-        }*/
         return projectSettings;
     }
 
-    /*private ProjectSettings read() {
-        final File file = ProjectUtils.getEssentialsResourcesFolder() + DefaPr.;
-        if (!file.exists()) {
-            log.debug("File '{}' not found.", file);
-            return null;
-        }
-        log.debug("Reading settings from '{}'.", file);
-        try {
-            return GlobalUtils.unmarshalStream(new FileInputStream(path), clazz);
-        } catch (IOException e) {
-            log.error("Error reading file '{}'.", path, e);
-        }
-        return null;
-    }*/
-
+    @Override
+    public void setProjectSettings(final ProjectSettings projectSettings) {
+        this.projectSettings = projectSettings;
+    }
 
     @Override
     public Multimap<String, Object> getPluginContextData() {
@@ -235,11 +220,6 @@ public class DefaultPluginContext implements PluginContext {
         return projectNamespace;
     }
 
-
-    @Override
-    public void setProjectSettings(final ProjectSettings projectSettings) {
-        this.projectSettings = projectSettings;
-    }
     @Override
     public void setProjectNamespacePrefix(final String namespace) {
         this.projectNamespace = namespace;

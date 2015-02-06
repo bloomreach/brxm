@@ -36,6 +36,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
@@ -117,11 +118,12 @@ public class PluginStore {
 
     public List<Plugin> getAllPlugins() {
         final List<Plugin> plugins = new ArrayList<>();
+        final PluginContext context = PluginContextFactory.getContext();
 
         // Read local descriptors
         final List<PluginDescriptorRestful> localDescriptors = getLocalDescriptors();
         for (PluginDescriptorRestful descriptor : localDescriptors) {
-            plugins.add(new Plugin(PluginContextFactory.getContext(), descriptor));
+            plugins.add(new Plugin(context, descriptor));
         }
 
         // Read remote descriptors
@@ -133,7 +135,7 @@ public class PluginStore {
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
                     for (PluginDescriptorRestful descriptor : descriptors.getItems()) {
-                        plugins.add(new Plugin(PluginContextFactory.getContext(), descriptor));
+                        plugins.add(new Plugin(context, descriptor));
                     }
                 }
             } catch (Exception e) {

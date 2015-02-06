@@ -67,10 +67,9 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     @Override
     public String getEssentialsFolder() {
-        if (essentialsFolder != null) {
-            return essentialsFolder;
+        if (essentialsFolder == null) {
+            essentialsFolder = ProjectUtils.getEssentialsFolderName();
         }
-        essentialsFolder = ProjectUtils.getEssentialsFolderName();
         return essentialsFolder;
     }
 
