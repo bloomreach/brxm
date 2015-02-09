@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,21 +49,7 @@
                 function selectItem(itemId) {
                     if (FormStateService.isDirty()) {
                         if (FormStateService.isValid()) {
-                            // handle the split between sitemap and external links. Grab whichever
-                            // one is used and save that as link and then destroy them both
-                            var savedMenuItem = angular.copy($scope.$parent.selectedMenuItem);
-
-                            if (savedMenuItem.linkType === 'SITEMAPITEM') {
-                                savedMenuItem.link = savedMenuItem.sitemapLink;
-                            } else if (savedMenuItem.linkType === 'EXTERNAL') {
-                                savedMenuItem.link = savedMenuItem.externalLink;
-                            } else if (savedMenuItem.linkType === 'NONE') {
-                                delete savedMenuItem.link;
-                            }
-                            delete savedMenuItem.sitemapLink;
-                            delete savedMenuItem.externalLink;
-
-                            MenuService.saveMenuItem(savedMenuItem).then(function() {
+                            MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
                                     editItem(itemId);
                                 },
                                 function (error) {

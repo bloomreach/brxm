@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,8 +88,6 @@
                 };
 
                 $scope.updateLinkDestination = function (form) {
-                    // Moved the logic from html to function. It should be
-                    // streamlined, but I don't want to change too much -Mark
                     var formItem;
                     if($scope.selectedMenuItem.linkType === 'NONE') {
                         $scope.saveSelectedMenuItem('linkType');
@@ -141,16 +139,6 @@
 
                     // child properties haven't changed, so don't send them
                     delete savedMenuItem.items;
-
-                    if (savedMenuItem.linkType === 'SITEMAPITEM') {
-                        savedMenuItem.link = savedMenuItem.sitemapLink;
-                    } else if (savedMenuItem.linkType === 'EXTERNAL') {
-                        savedMenuItem.link = savedMenuItem.externalLink;
-                    } else if (savedMenuItem.linkType === 'NONE') {
-                        delete savedMenuItem.link;
-                    }
-                    delete savedMenuItem.sitemapLink;
-                    delete savedMenuItem.externalLink;
 
                     $scope.isSaving[propertyName] = true;
 
