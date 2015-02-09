@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ describe('Menu Service', function () {
                     },
                     {
                         id: '2',
+                        link: 'home',
+                        linkType: 'SITEMAPITEM',
                         title: 'Two',
                         items: [
                             {
@@ -129,11 +131,47 @@ describe('Menu Service', function () {
         expectGetMenu();
     });
 
+    it('should return sitemapLink split from the normal link', function () {
+        menuService.getMenuItem('2').then(function(menuItem) {
+            expect(menuItem).toBeDefined();
+            expect(menuItem.sitemapLink).toBeDefined();
+            expect(menuItem.sitemapLink).toEqual('home');
+        });
+        expectGetMenu();
+    });
+
 
     it('should save a menu item', function () {
-        var savedMenuItem = { id: 'child1', title: 'New title' };
+        var menuItemToSave = {
+                id: 'child1',
+                items: [
+                    {
+                        id: 'child2',
+                        title: 'Child 2',
+                        sitemapLink: 'home',
+                        linkType: 'SITEMAPITEM'
+                    }
+                ],
+                externalLink: 'http://onehippo.org',
+                linkType: 'EXTERNAL',
+                title: 'New title'
+            },
+            savedMenuItem = {
+                id: 'child1',
+                items: [
+                    {
+                        id: 'child2',
+                        title: 'Child 2',
+                        link: 'home',
+                        linkType: 'SITEMAPITEM'
+                    }
+                ],
+                link: 'http://onehippo.org',
+                linkType: 'EXTERNAL',
+                title: 'New title'
+            };
         $httpBackend.expectPOST('api/menuId', savedMenuItem).respond('OK');
-        menuService.saveMenuItem(savedMenuItem);
+        menuService.saveMenuItem(menuItemToSave);
         $httpBackend.flush();
     });
 
