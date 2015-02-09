@@ -140,13 +140,7 @@ h3.lead.item-title {
     z-index: 999999;
     width: 840px;
     height: 485px;
-
-    /* opacity (via http://css-tricks.com/snippets/css/cross-browser-opacity/) */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; /* IE8 */
-    filter: alpha(opacity=0); /* IE 5-7 */
-    -moz-opacity: 0; /* Netscape */
-    -khtml-opacity: 0; /* Safari 1.x */
-    opacity: 0; /* Good browsers */
+    opacity: 0;
 }
 
 .confirmation-dialog {
