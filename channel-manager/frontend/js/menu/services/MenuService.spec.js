@@ -38,6 +38,8 @@ describe('Menu Service', function () {
                 items: [
                     {
                         id: '1',
+                        link: 'http://onehippo.org',
+                        linkType: 'EXTERNAL',
                         title: 'One'
                     },
                     {
@@ -117,6 +119,16 @@ describe('Menu Service', function () {
         });
         expectGetMenu();
     });
+
+    it('should return externalLink split from the normal link', function () {
+        menuService.getMenuItem('1').then(function(menuItem) {
+            expect(menuItem).toBeDefined();
+            expect(menuItem.externalLink).toBeDefined();
+            expect(menuItem.externalLink).toEqual('http://onehippo.org');
+        });
+        expectGetMenu();
+    });
+
 
     it('should save a menu item', function () {
         var savedMenuItem = { id: 'child1', title: 'New title' };

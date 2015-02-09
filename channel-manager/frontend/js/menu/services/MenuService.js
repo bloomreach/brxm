@@ -74,6 +74,14 @@
                     if (angular.isArray(items)) {
                         for (var j = 0, len = items.length; j < len; j++) {
                             if (items[j].id === id) {
+                                //split the link into sitemap and external
+                                if(items[j].linkType) {
+                                    if (items[j].linkType === 'SITEMAPITEM') {
+                                        items[j].sitemapLink = items[j].link;
+                                    } else if (items[j].linkType === 'EXTERNAL') {
+                                        items[j].externalLink = items[j].link;
+                                    }
+                                }
                                 found = items[j];
                                 break;
                             }

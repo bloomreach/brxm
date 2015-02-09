@@ -49,7 +49,21 @@
                 function selectItem(itemId) {
                     if (FormStateService.isDirty()) {
                         if (FormStateService.isValid()) {
-                            MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
+                            // handle the split between sitemap and external links. Grab whichever
+                            // one is used and save that as link and then destroy them both
+                            var savedMenuItem = angular.copy($scope.$parent.selectedMenuItem);
+
+                            if (savedMenuItem.linkType === 'SITEMAPITEM') {
+                                savedMenuItem.link = savedMenuItem.sitemapLink;
+                            } else if (savedMenuItem.linkType === 'EXTERNAL') {
+                                savedMenuItem.link = savedMenuItem.externalLink;
+                            } else if (savedMenuItem.linkType === 'NONE') {
+                                delete savedMenuItem.link;
+                            }
+                            delete savedMenuItem.sitemapLink;
+                            delete savedMenuItem.externalLink;
+
+                            MenuService.saveMenuItem(savedMenuItem).then(function() {
                                     editItem(itemId);
                                 },
                                 function (error) {

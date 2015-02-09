@@ -86,7 +86,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="SITEMAPITEM"
-                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.edit.sitemapItem')">
+                           data-ng-click="updateLinkDestination(form)">
                     {{ 'INTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -95,7 +95,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="EXTERNAL"
-                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.edit.url')">
+                           data-ng-click="updateLinkDestination(form)">
                     {{ 'EXTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -104,11 +104,13 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="NONE"
-                           data-ng-click="selectedMenuItem.link = '';selectedMenuItem.linkType = 'NONE'; saveSelectedMenuItem('linkType')">
+                           data-ng-click="updateLinkDestination(form)">
                     {{ 'NONE' | translate }}
                 </label>
             </div>
         </div>
+        <p>sitemapLink: {{selectedMenuItem.sitemapLink}}</p>
+        <p>externalLink: {{selectedMenuItem.externalLink}}</p>
         <div class="form-group has-feedback"
              data-ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'"
              data-ng-class="{
@@ -118,8 +120,9 @@
             <label for="hippo.channel.menu.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
             <div class="input-group">
                 <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
-                       data-ng-model="selectedMenuItem.link"
-                       data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
+                       data-ng-model="selectedMenuItem.sitemapLink"
+                       data-show-focus="selectedMenuItem.linkType == 'SITEMAPITEM'"
+                       data-ng-blur="updateLinkDestination(form)">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.sitemapItem.$dirty"
                    data-ng-class="{
@@ -151,9 +154,10 @@
             <div class="input-group">
                 <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.edit.url"
                        data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
-                       data-ng-model="selectedMenuItem.link"
+                       data-ng-model="selectedMenuItem.externalLink"
                        data-ng-required="true"
-                       data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';"
+                       data-show-focus="selectedMenuItem.linkType == 'EXTERNAL'"
+                       data-ng-blur="updateLinkDestination(form)"
                        data-tooltip="{{ fieldFeedbackMessage.link }}"
                        data-tooltip-trigger="show"
                        data-tooltip-show="form.url.$invalid"

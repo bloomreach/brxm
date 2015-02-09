@@ -87,6 +87,24 @@
                 $scope.fieldFeedbackMessage = {
                 };
 
+                $scope.updateLinkDestination = function (form) {
+                    // Moved the logic from html to function. It should be
+                    // streamlined, but I don't want to change too much -Mark
+                    var formItem;
+                    if($scope.selectedMenuItem.linkType === 'NONE') {
+                        $scope.saveSelectedMenuItem('linkType');
+                    } else {
+                        if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
+                            formItem = form.sitemapItem;
+                        } else if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
+                            formItem = form.url;
+                        }
+                        if(formItem.$valid) {
+                            $scope.saveSelectedMenuItem('link');
+                        }
+                    }
+                };
+
                 $scope.saveSelectedMenuItem = function(propertyName) {
                     if (shouldSaveSelectedMenuItemProperty(propertyName)) {
                         saveSelectedMenuItemProperty(propertyName);
@@ -123,6 +141,16 @@
 
                     // child properties haven't changed, so don't send them
                     delete savedMenuItem.items;
+
+                    if (savedMenuItem.linkType === 'SITEMAPITEM') {
+                        savedMenuItem.link = savedMenuItem.sitemapLink;
+                    } else if (savedMenuItem.linkType === 'EXTERNAL') {
+                        savedMenuItem.link = savedMenuItem.externalLink;
+                    } else if (savedMenuItem.linkType === 'NONE') {
+                        delete savedMenuItem.link;
+                    }
+                    delete savedMenuItem.sitemapLink;
+                    delete savedMenuItem.externalLink;
 
                     $scope.isSaving[propertyName] = true;
 
