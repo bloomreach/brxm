@@ -299,14 +299,17 @@
         },
 
         selectInitialVariant: function() {
+            var isActiveTabDirty = this.getActiveTab().propertiesForm.isDirty();
+
             if (this.fireVariantChangeEvents) {
                 this.componentVariants.get().when(function(variants) {
-                    var initialVariantId = this._getBestMatchingVariantId(this.initialForcedVariantId, variants),
-                        currentVariantId = this._getCurrentVariantId();
-                    if (initialVariantId !== currentVariantId) {
+                    var initialVariantId = this._getBestMatchingVariantId(this.initialForcedVariantId, variants);
+                    if (isActiveTabDirty || initialVariantId !== this._getCurrentVariantId()) {
                         this.fireEvent('variantChange', this.componentId, initialVariantId);
                     }
                 }.createDelegate(this));
+            } else if (isActiveTabDirty) {
+                this.fireEvent('variantChange', this.componentId, undefined);
             }
         },
 
@@ -592,6 +595,10 @@
                 return this.getHeight() + (2 * this.PADDING);
             }
             return 0;
+        },
+
+        isDirty: function() {
+            return this.getForm().isDirty();
         },
 
         _submitForm: function() {
