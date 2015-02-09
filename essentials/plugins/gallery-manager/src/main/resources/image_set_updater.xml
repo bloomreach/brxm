@@ -47,7 +47,7 @@
 import org.apache.commons.io.IOUtils&#xd;
 import org.apache.jackrabbit.JcrConstants&#xd;
 import org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessor&#xd;
-import org.hippoecm.frontend.plugins.gallery.processor.ScalingParameters&#xd;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters&#xd;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType&#xd;
 import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
 &#xd;

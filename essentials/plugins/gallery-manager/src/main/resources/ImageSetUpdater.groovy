@@ -17,7 +17,7 @@ package org.onehippo.cms7.essentials.rest.model
 import org.apache.commons.io.IOUtils
 import org.apache.jackrabbit.JcrConstants
 import org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessor
-import org.hippoecm.frontend.plugins.gallery.processor.ScalingParameters
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters
 import org.hippoecm.repository.gallery.HippoGalleryNodeType
 import org.onehippo.repository.update.BaseNodeUpdateVisitor
 
