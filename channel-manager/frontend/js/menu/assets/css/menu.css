@@ -162,7 +162,9 @@ h3.lead.item-title {
 }
 
 .confirmation-dialog.s-invisible {
-    top: -181px;
+    /* set offscreen to allow it to scroll in. Should likely
+    change in the future to be calculated with js */
+    top: -240px;
 }
 
 .confirmation-dialog-title {
@@ -170,9 +172,9 @@ h3.lead.item-title {
 }
 
 .confirmation-dialog-message {
-    /* prevent long messages from making the confirmation dialog so high
-       that its bottom becomes visible in 'invisible' state */
-    max-height: 40px;
+    /* prevent long titles from overflowing. Add scrollbar if they do */
+    max-height: 100px;
+    overflow-y: auto;
 }
 
 #close-confirmation {
