@@ -88,18 +88,18 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-        <artifactId>api</artifactId>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
         <version>${dollar}{essentials.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.components</groupId>
-        <artifactId>cms</artifactId>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-components-cms</artifactId>
         <version>${dollar}{essentials.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.components</groupId>
-        <artifactId>hst</artifactId>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-components-hst</artifactId>
         <version>${dollar}{essentials.version}</version>
       </dependency>
 
