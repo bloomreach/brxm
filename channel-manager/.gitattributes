@@ -42,6 +42,7 @@ frontend/js/shared/directives/autofocus.spec.js -text
 frontend/js/shared/directives/illegalCharacter.spec.js -text
 frontend/js/shared/directives/illegalCharacters.js -text
 frontend/js/shared/directives/showFocus.js -text
+frontend/js/shared/directives/showFocus.spec.js -text
 frontend/js/shared/directives/tooltipShow.js -text
 frontend/js/shared/filters/alphanumeric.js -text
 frontend/js/shared/filters/alphanumeric.spec.js -text
