@@ -203,7 +203,6 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/social/twit
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_de.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_fr.properties -text
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_it.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-discard-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-discard.svg -text

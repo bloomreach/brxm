@@ -324,7 +324,7 @@
                         locale: this.locale,
                         componentId: this.componentId,
                         lastModifiedTimestamp: this.lastModifiedTimestamp,
-                        bubbleEvents: ['cancel'],
+                        bubbleEvents: ['close'],
                         margins: {
                             top: 0,
                             right: 10,
@@ -400,7 +400,7 @@
             editor.on('visibleHeightChanged', function(editor, visibleHeight) {
                 this._syncVisibleHeight(visibleHeight);
             }, this);
-            this.relayEvents(editor, ['cancel']);
+            this.relayEvents(editor, ['close']);
             return editor;
         },
 
@@ -556,10 +556,10 @@
             });
             buttons.push(this.saveButton);
             buttons.push({
-                text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-cancel'],
+                text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
                 scope: this,
                 handler: function() {
-                    this.fireEvent('cancel');
+                    this.fireEvent('close');
                 }
             });
 
@@ -580,7 +580,7 @@
 
             Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.initComponent.apply(this, arguments);
 
-            this.addEvents('propertiesChanged', 'propertiesSaved', 'cancel', 'propertiesDeleted');
+            this.addEvents('propertiesChanged', 'propertiesSaved', 'close', 'propertiesDeleted');
         },
 
         setNewVariant: function(newVariantId) {

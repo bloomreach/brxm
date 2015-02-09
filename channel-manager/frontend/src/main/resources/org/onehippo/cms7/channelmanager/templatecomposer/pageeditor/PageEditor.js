@@ -909,11 +909,11 @@
                 globalVariantsStoreFuture: this.globalVariantsStoreFuture,
                 mountId: mountId,
                 listeners: {
-                    'cancel': function() {
-                        window.hide();
-                    },
                     'save': function() {
                         this.fireEvent('channelChanged');
+                    },
+                    'close': function() {
+                        window.hide();
                     },
                     'delete': function() {
                         this.fireEvent('channelChanged');
