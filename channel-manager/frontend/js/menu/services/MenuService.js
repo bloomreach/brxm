@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,6 @@
                     if (angular.isArray(items)) {
                         for (var j = 0, len = items.length; j < len; j++) {
                             if (items[j].id === id) {
-                                //split the link into sitemap and external
                                 if(items[j].linkType) {
                                     if (items[j].linkType === 'SITEMAPITEM') {
                                         items[j].sitemapLink = items[j].link;
@@ -130,6 +129,22 @@
                     return deferred.promise;
                 }
 
+                function extractLinkFromSitemapLinkOrExternalLink(item) {
+                    if (item.linkType === 'SITEMAPITEM') {
+                        item.link = item.sitemapLink;
+                    } else if (item.linkType === 'EXTERNAL') {
+                        item.link = item.externalLink;
+                    } else if (item.linkType === 'NONE') {
+                        delete item.link;
+                    }
+                    delete item.sitemapLink;
+                    delete item.externalLink;
+
+                    angular.forEach(item.items, function (item) {
+                        extractLinkFromSitemapLinkOrExternalLink(item);
+                    });
+                }
+
                 function post(url, body) {
                     var deferred = $q.defer();
 
@@ -178,9 +193,8 @@
                 function removeCollapsedProperties(item) {
                     delete item.collapsed;
                     angular.forEach(item.items, function (item) {
-                            removeCollapsedProperties(item);
-                        }
-                    );
+                        removeCollapsedProperties(item);
+                    });
                 }
 
                 return {
@@ -208,6 +222,7 @@
                         var deferred = $q.defer();
                         var menuItemCopy = angular.copy(menuItem);
                         removeCollapsedProperties(menuItemCopy);
+                        extractLinkFromSitemapLinkOrExternalLink(menuItemCopy);
                         post(menuServiceUrl(), menuItemCopy).then(function() {
                                     deferred.resolve();
                                 }, function (errorResponse) {
