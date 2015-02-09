@@ -26,7 +26,6 @@
 
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
-  <groupId>org.onehippo.cms7.essentials</groupId>
   <artifactId>hippo-essentials</artifactId>
   <version>1.03.00-SNAPSHOT</version>
   <packaging>pom</packaging>

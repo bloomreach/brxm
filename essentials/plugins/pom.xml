@@ -17,14 +17,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <groupId>org.onehippo.cms7.essentials</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials</artifactId>
     <version>1.03.00-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <name>Hippo Essentials Plugins</name>
   <description>Hippo Essentials Plugins</description>
-  <artifactId>plugins</artifactId>
+  <artifactId>hippo-essentials-plugins</artifactId>
   <packaging>pom</packaging>
 
   <properties>
@@ -70,18 +70,18 @@
     <dependencies>
       <!-- PLUGIN API -->
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-        <artifactId>api</artifactId>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-        <artifactId>implementation</artifactId>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-        <artifactId>implementation</artifactId>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
         <scope>test</scope>

@@ -20,24 +20,23 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms7.essentials</groupId>
-    <artifactId>plugins</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-essentials-plugins</artifactId>
     <version>1.03.00-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Events Plugin</name>
   <description>Hippo Essentials Events Plugin</description>
-  <artifactId>events</artifactId>
-  <groupId>org.onehippo.cms7.essentials.plugin</groupId>
+  <artifactId>hippo-essentials-plugin-events</artifactId>
 
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-      <artifactId>api</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-      <artifactId>implementation</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -50,8 +49,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-      <artifactId>implementation</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

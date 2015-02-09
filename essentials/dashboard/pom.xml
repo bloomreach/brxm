@@ -18,12 +18,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <groupId>org.onehippo.cms7.essentials</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials</artifactId>
     <version>1.03.00-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>dashboard</artifactId>
+  <artifactId>hippo-essentials-dashboard</artifactId>
   <packaging>war</packaging>
   <name>Hippo Essentials plugins dashboard</name>
   <description>Hippo Essentials plugins dashboard</description>
@@ -33,8 +33,8 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>dashboard-dependencies</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-dashboard-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
       <scope>provided</scope>
