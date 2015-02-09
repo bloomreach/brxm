@@ -28,8 +28,8 @@
 
   <name>Hippo Essentials CMS Component Library</name>
   <description>Hippo Essentials CMS Component Library</description>
-  <artifactId>cms</artifactId>
-  <groupId>org.onehippo.cms7.essentials.components</groupId>
+  <artifactId>hippo-essentials-components-cms</artifactId>
+  <groupId>org.onehippo.cms7</groupId>
 
   <properties>
     <quartz.version>1.8.5</quartz.version>
