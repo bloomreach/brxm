@@ -15,12 +15,9 @@
  */
 package org.hippoecm.hst.utils;
 
-import static org.junit.Assert.assertEquals;
-
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * TestMessageUtils
@@ -37,10 +34,6 @@ public class TestMessageUtils {
 
     @Test
     public void testBasic() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.setServletRequest(request);
-        ModifiableRequestContextProvider.set(requestContext);
 
         final String bundleName = getClass().getName();
         String replacedMessage = MessageUtils.replaceMessages(bundleName, BASIC_TEST_MESSAGE);
