@@ -108,6 +108,9 @@ api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidget.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.js -text
+api/src/main/java/org/hippoecm/frontend/i18n/ConfigWrapper.java -text
+api/src/main/java/org/hippoecm/frontend/i18n/ITranslation.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/SortedTypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
@@ -1953,11 +1956,8 @@ engine/src/main/java/org/hippoecm/frontend/hippo-cms.ico -text
 engine/src/main/java/org/hippoecm/frontend/hippo-console.ico -text
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/ConfigWrapper.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/ITranslation.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/SearchingTranslatorPlugin.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
 engine/src/main/java/org/hippoecm/frontend/model/JcrSessionModel.java -text
 engine/src/main/java/org/hippoecm/frontend/model/TransientJcrSessionWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/FacetRootsObserver.java -text

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class ConfigWrapper implements ITranslation<IModel> {
     private IValueMap config;
     private Set<String> matches;
 
-    ConfigWrapper(IValueMap config, Map<String, String> keys) {
+    public ConfigWrapper(IValueMap config, Map<String, String> keys) {
         this.config = config;
 
         matches = new HashSet<String>();
