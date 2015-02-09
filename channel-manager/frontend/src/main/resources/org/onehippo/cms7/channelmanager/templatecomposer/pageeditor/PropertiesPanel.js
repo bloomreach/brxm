@@ -315,7 +315,9 @@
 
         _initTabs: function(variants) {
             var propertiesEditorCount, i, tabComponent, propertiesForm;
+
             propertiesEditorCount = variants.length - 1;
+
             Ext.each(variants, function(variant) {
                 if ('plus' === variant.id) {
                     tabComponent = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
@@ -327,7 +329,7 @@
                         locale: this.locale,
                         componentId: this.componentId,
                         lastModifiedTimestamp: this.lastModifiedTimestamp,
-                        bubbleEvents: ['close'],
+                        bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
                         margins: {
                             top: 0,
                             right: 10,
@@ -400,10 +402,21 @@
                 title: variant.name,
                 propertiesForm: propertiesForm
             });
+
             editor.on('visibleHeightChanged', function(editor, visibleHeight) {
                 this._syncVisibleHeight(visibleHeight);
             }, this);
+
+            editor.on('variantDirty', function() {
+                this.setTitle('* ' + variant.name);
+            }, editor);
+
+            editor.on('variantPristine', function() {
+                this.setTitle(variant.name);
+            }, editor);
+
             this.relayEvents(editor, ['close']);
+
             return editor;
         },
 
@@ -583,11 +596,12 @@
 
             Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.initComponent.apply(this, arguments);
 
-            this.addEvents('propertiesChanged', 'propertiesSaved', 'close', 'propertiesDeleted');
+            this.addEvents('propertiesChanged', 'variantDirty', 'variantPristine', 'propertiesSaved', 'close', 'propertiesDeleted');
         },
 
         setNewVariant: function(newVariantId) {
             this.newVariantId = newVariantId;
+            this._fireVariantDirtyOrPristine();
         },
 
         getVisibleHeight: function() {
@@ -597,8 +611,12 @@
             return 0;
         },
 
+        _hasNewVariantId: function() {
+            return this.variant && this.variant.id !== this.newVariantId;
+        },
+
         isDirty: function() {
-            return this.getForm().isDirty();
+            return this.getForm().isDirty() || this._hasNewVariantId();
         },
 
         _submitForm: function() {
@@ -946,7 +964,7 @@
                     success();
                 }, this);
                 componentPropertiesStore.on('update', function(store, record) {
-                    this._firePropertiesChanged(store);
+                    this._onPropertiesChanged(store);
                 }, this);
                 componentPropertiesStore.on('exception', function() {
                     this._loadException.apply(this, arguments);
@@ -954,6 +972,19 @@
                 }, this);
                 componentPropertiesStore.load();
             }.createDelegate(this));
+        },
+
+        _onPropertiesChanged: function(store) {
+            this._fireVariantDirtyOrPristine();
+            this._firePropertiesChanged(store);
+        },
+
+        _fireVariantDirtyOrPristine: function() {
+            if (this.isDirty()) {
+                this.fireEvent('variantDirty');
+            } else {
+                this.fireEvent('variantPristine');
+            }
         },
 
         _firePropertiesChanged: function(store) {
