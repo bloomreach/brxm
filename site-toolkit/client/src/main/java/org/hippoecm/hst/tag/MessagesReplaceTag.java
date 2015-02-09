@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -72,7 +71,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
             }
     
             if (StringUtils.isNotEmpty(basename)) {
-                bundle = ResourceBundleUtils.getBundle((HttpServletRequest) pageContext.getRequest(), basename, locale);
+                bundle = ResourceBundleUtils.getBundle(basename, locale);
             }
 
             if (bundle == null) {

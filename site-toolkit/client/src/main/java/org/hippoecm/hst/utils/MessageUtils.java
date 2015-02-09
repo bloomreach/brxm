@@ -20,8 +20,6 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +48,10 @@ public class MessageUtils {
      * @return
      */
     public static String replaceMessages(String basename, String text) {
-        HstRequestContext requestContext = RequestContextProvider.get();
         ResourceBundle bundle = null;
 
         try {
-            bundle = ResourceBundleUtils.getBundle(requestContext.getServletRequest(), basename, null);
+            bundle = ResourceBundleUtils.getBundle(basename, null);
         } catch (MissingResourceException e) {
             log.warn("Cannot find a resource bundle by the basename, '{}'.", basename);
         }

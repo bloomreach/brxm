@@ -65,10 +65,28 @@ public class ResourceBundleUtils {
      * @return
      * @throws java.lang.NullPointerException - if baseName is null 
      * @throws java.util.MissingResourceException - if no Java standard resource bundle for the specified base name can be found
+     * @deprecated since HST 2.30.00 (CMS 7.10.0) Use {@link #getBundle(String, java.util.Locale)} instead since <code>servletRequest</code> is unused
      */
+    @Deprecated
     public static ResourceBundle getBundle(HttpServletRequest servletRequest, String basename, Locale locale) {
-        return getBundle(servletRequest, basename, locale, true);
+        return getBundle(basename, locale, true);
     }
+
+    /**
+     * Returns resource bundle based on the specified basename and locale.
+     * If the locale is null, then the default locale (Locale.getDefault()) is used.
+     * If the specific resource bundle is not found from the HST ResourceBundleRegistry, then it looks up Java standard resource bundles.
+     * It may throw java.util.MissingResourceException if a resource is not found when Java standard resource bundle resources are looked up.
+     * @param basename
+     * @param locale
+     * @return
+     * @throws java.lang.NullPointerException - if baseName is null
+     * @throws java.util.MissingResourceException - if no Java standard resource bundle for the specified base name can be found
+     */
+    public static ResourceBundle getBundle(String basename, Locale locale) {
+        return getBundle(basename, locale, true);
+    }
+
 
     /**
      * Returns resource bundle based on the specified basename and locale.

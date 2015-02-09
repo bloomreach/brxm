@@ -129,11 +129,11 @@ public class SetHstBundleTag extends TagSupport {
         String [] bundleIds = StringUtils.split(basename, " ,\t\f\r\n");
 
         if (bundleIds != null) {
-            ResourceBundle bundle = null;
+            ResourceBundle bundle;
 
             for (String bundleId : bundleIds) {
                 try {
-                    bundle = ResourceBundleUtils.getBundle(request, bundleId, locale, fallbackToJavaResourceBundle);
+                    bundle = ResourceBundleUtils.getBundle(bundleId, locale, fallbackToJavaResourceBundle);
 
                     if (bundle != null) {
                         bundles.add(bundle);
