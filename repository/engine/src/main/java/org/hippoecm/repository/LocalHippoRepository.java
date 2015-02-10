@@ -284,11 +284,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 } else {
                     log.info("Initial configuration content already present");
                 }
-                if (locked = initializationProcessor.lock(bootstrapSession)) {
-                    postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
-                } else {
-                    throw new RepositoryException("Cannot proceed with initialization: failed to obtain lock on initialization processor");
-                }
+                locked = initializationProcessor.lock(bootstrapSession);
+                postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
             }
 
             jackrabbitRepository.enableVirtualLayer(true);
