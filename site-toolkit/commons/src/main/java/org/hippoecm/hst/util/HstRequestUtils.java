@@ -46,6 +46,7 @@ public class HstRequestUtils {
     private static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
 
     public static final String HTTP_METHOD_POST = "POST";
+    public static final String CMS_REQUEST_PATH = "/_cmsinternal";
 
 
     private HstRequestUtils() {
@@ -261,10 +262,14 @@ public class HstRequestUtils {
         }
 
         HttpSession session = request.getSession(false);
-        if (session != null) {
-            return (String)session.getAttribute(ContainerConstants.RENDERING_HOST);
+        if (session != null && isCmsRequest(request)) {
+            return (String) session.getAttribute(ContainerConstants.RENDERING_HOST);
         }
         return null;
+    }
+
+    private static boolean isCmsRequest(HttpServletRequest request) {
+        return request.getPathInfo().startsWith(CMS_REQUEST_PATH);
     }
 
     /**
