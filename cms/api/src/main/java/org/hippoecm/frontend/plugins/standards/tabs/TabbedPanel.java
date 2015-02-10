@@ -215,10 +215,9 @@ public class TabbedPanel extends WebMarkupContainer {
             protected void onClick(AjaxRequestTarget target) {
                 plugin.onClose(tab, target);
             }
-
         });
 
-        menuContainer.add(new CloseLink<Void>("editor-close-others", null, getPanelContainerForm()) {
+        menuContainer.add(new CloseLink<Void>("editor-close-others", null, null) {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -227,7 +226,7 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         });
 
-        menuContainer.add(new CloseLink<Void>("editor-close-all", null, getPanelContainerForm()) {
+        menuContainer.add(new CloseLink<Void>("editor-close-all", null, null) {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -235,7 +234,7 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         });
 
-        menuContainer.add(new CloseLink<Void>("editor-close-unmodified", null, getPanelContainerForm()) {
+        menuContainer.add(new CloseLink<Void>("editor-close-unmodified", null, null) {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
