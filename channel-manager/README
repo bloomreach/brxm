@@ -6,6 +6,7 @@ Prerequisites
 
  - Java 7
  - Maven 3.x
+ - NodeJS (http://nodejs.org/)
  - Node Package Manager (http://npmjs.org)
  - Grunt (http://gruntjs.org)
  - Bower (http://bower.io)
