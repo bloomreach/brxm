@@ -76,12 +76,6 @@ src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/jsp/errorpag
 src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/jspf/htmlTags.jspf -text
 src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/jspf/taglibs.jspf -text
 src/main/resources/archetype-resources/site/src/main/webapp/WEB-INF/web.xml -text
-src/main/resources/archetype-resources/site/src/main/webapp/images/button_edit.gif -text
-src/main/resources/archetype-resources/site/src/main/webapp/images/catalog-list.png -text
-src/main/resources/archetype-resources/site/src/main/webapp/images/glyphicons-halflings-white.png -text
-src/main/resources/archetype-resources/site/src/main/webapp/images/glyphicons-halflings.png -text
-src/main/resources/archetype-resources/site/src/main/webapp/images/hippo.gif -text
-src/main/resources/archetype-resources/site/src/main/webapp/images/onehippo.gif -text
 src/main/resources/archetype-resources/site/src/test/resources/log4j.xml -text
 src/main/resources/archetype-resources/src/main/assembly/distribution.xml -text
 src/test/resources/projects/gettingstarted/archetype.properties -text
