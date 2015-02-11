@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -32,6 +32,8 @@ public class BooleanValueTemplatePlugin extends RenderPlugin<Boolean> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(BooleanValueTemplatePlugin.class);
+    public static final String CHECKED_SYMBOL = "&#9745;";
+    public static final String UNCHECKED_SYMBOL = "&#9744;";
 
     public BooleanValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -43,8 +45,12 @@ public class BooleanValueTemplatePlugin extends RenderPlugin<Boolean> {
             Fragment fragment = new Fragment("value", "view", this);
             add(fragment);
 
-            CheckBox checkbox = new CheckBox("checkbox", valueModel);
-            checkbox.add(new AttributeModifier("disabled", true, new Model<Boolean>(true)));
+            Component checkbox = new Label("checkbox", new LoadableDetachableModel<String>() {
+                @Override
+                protected String load() {
+                    return valueModel.getObject() ? CHECKED_SYMBOL : UNCHECKED_SYMBOL;
+                }
+            }).setEscapeModelStrings(false);
             fragment.add(checkbox);
         }
         setOutputMarkupId(true);
