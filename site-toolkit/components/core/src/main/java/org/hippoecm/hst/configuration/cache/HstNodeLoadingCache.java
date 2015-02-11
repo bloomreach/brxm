@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ package org.hippoecm.hst.configuration.cache;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -44,9 +44,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
     private int rootPathLength;
     private HstNode rootNode;
     private Repository repository;
-    private String username;
-    private String password;
-
+    private Credentials credentials;
     private Set<HstEvent> events;
 
 
@@ -54,12 +52,8 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         this.repository = repository;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCredentials(final Credentials credentials) {
+        this.credentials = credentials;
     }
 
     public void setRootPath(final String rootPath) {
@@ -191,7 +185,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
                 return session;
             }
             try {
-                session = repository.login(new SimpleCredentials(username, password.toCharArray()));
+                session = repository.login(credentials);
             } catch (RepositoryException e) {
                 throw new ModelLoadingException("Repository exception while getting jcr session", e);
             }

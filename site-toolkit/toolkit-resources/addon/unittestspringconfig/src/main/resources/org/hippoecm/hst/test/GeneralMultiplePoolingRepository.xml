@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -17,37 +17,83 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-  
-  <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin@default" />
-    <constructor-arg value="admin" />
+
+  <bean id="hstJmvEnabledUsers" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <property name="sourceSet">
+      <set>
+        <value>${default.repository.user.name}</value>
+        <value>${preview.repository.user.name}</value>
+        <value>${writable.repository.user.name}</value>
+        <value>${hstconfigreader.repository.user.name}</value>
+      </set>
+    </property>
   </bean>
 
-  <bean id="javax.jcr.Credentials.default.delegating" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin" />
-    <constructor-arg value="admin" />
+  <bean id="javax.jcr.Credentials.default" class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${default.repository.user.name}"/>
+    <property name="separator" value="${repository.pool.user.name.separator}"/>
+    <property name="poolName" value="${default.repository.pool.name}"/>
+    <property name="password" value="${default.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
 
-  <bean id="javax.jcr.Credentials.preview" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin@preview" />
-    <constructor-arg value="admin" />
+  <!-- default cred that can be used in delegating repository -->
+  <bean id="javax.jcr.Credentials.default.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${default.repository.user.name}"/>
+    <property name="password" value="${default.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
 
-  <bean id="javax.jcr.Credentials.preview.delegating" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin" />
-    <constructor-arg value="admin" />
+  <bean id="javax.jcr.Credentials.preview"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${preview.repository.user.name}"/>
+    <property name="separator" value="${repository.pool.user.name.separator}"/>
+    <property name="poolName" value="${preview.repository.pool.name}"/>
+    <property name="password" value="${preview.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
 
-  <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin@writable" />
-    <constructor-arg value="admin" />
+  <!-- preview cred that can be used in delegating repository -->
+  <bean id="javax.jcr.Credentials.preview.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${preview.repository.user.name}"/>
+    <property name="password" value="${preview.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
-  
-  <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}"/>
-    <constructor-arg value="${hstconfigreader.repository.password}"/>
+
+  <bean id="javax.jcr.Credentials.writable"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${writable.repository.user.name}"/>
+    <property name="separator" value="${repository.pool.user.name.separator}"/>
+    <property name="poolName" value="${writable.repository.pool.name}"/>
+    <property name="password" value="${writable.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
-  
+
+  <bean id="javax.jcr.Credentials.hstconfigreader"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${hstconfigreader.repository.user.name}"/>
+    <property name="separator" value="${repository.pool.user.name.separator}"/>
+    <property name="poolName" value="${hstconfigreader.repository.pool.name}"/>
+    <property name="password" value="${hstconfigreader.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+  </bean>
+
+  <!-- hstconfigreader cred that can be used in delegating repository -->
+  <bean id="javax.jcr.Credentials.hstconfigreader.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${hstconfigreader.repository.user.name}"/>
+    <property name="password" value="${hstconfigreader.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+  </bean>
+
+  <bean id="javax.jcr.Credentials.binaries"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${binaries.repository.user.name}"/>
+    <property name="separator" value="${repository.pool.user.name.separator}"/>
+    <property name="poolName" value="${binaries.repository.pool.name}"/>
+    <property name="password" value="${binaries.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+  </bean>
+
+  <bean id="poolingRepositoryFactory" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepositoryFactory">
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+  </bean>
+
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl" destroy-method="close">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
@@ -61,14 +107,15 @@
     <!-- The default credentials for login() without credentials parameter. -->
     <constructor-arg ref="javax.jcr.Credentials.default" />
   </bean>
-  
-  <bean id="javax.jcr.Repository.default" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+
+  <bean id="javax.jcr.Repository.default" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
-    <property name="defaultCredentialsUserID" value="admin@default" />
-    <property name="defaultCredentialsUserIDSeparator" value="@"/>
-    <property name="defaultCredentialsPassword" value="admin" />
+    <property name="defaultCredentialsUserID" value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
+    <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+    <property name="defaultCredentialsPassword" value="${default.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${default.repository.maxActive}" />
     <property name="maxIdle" value="${default.repository.maxIdle}" />
@@ -88,14 +135,15 @@
       </bean>
     </property>
   </bean>
-  
-  <bean id="javax.jcr.Repository.preview" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+
+  <bean id="javax.jcr.Repository.preview" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
-    <property name="defaultCredentialsUserID" value="admin@preview" />
-    <property name="defaultCredentialsUserIDSeparator" value="@"/>
-    <property name="defaultCredentialsPassword" value="admin" />
+    <property name="defaultCredentialsUserID" value="${preview.repository.user.name}${repository.pool.user.name.separator}${preview.repository.pool.name}"/>
+    <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+    <property name="defaultCredentialsPassword" value="${preview.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${preview.repository.maxActive}" />
     <property name="maxIdle" value="${preview.repository.maxIdle}" />
@@ -115,14 +163,15 @@
       </bean>
     </property>
   </bean>
-  
-  <bean id="javax.jcr.Repository.writable" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+
+  <bean id="javax.jcr.Repository.writable" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
-    <property name="defaultCredentialsUserID" value="admin@writable" />
-    <property name="defaultCredentialsUserIDSeparator" value="@"/>
-    <property name="defaultCredentialsPassword" value="admin" />
+    <property name="defaultCredentialsUserID" value="${writable.repository.user.name}${repository.pool.user.name.separator}${writable.repository.pool.name}"/>
+    <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+    <property name="defaultCredentialsPassword" value="${writable.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${writable.repository.maxActive}" />
     <property name="maxIdle" value="${writable.repository.maxIdle}" />
@@ -142,13 +191,15 @@
       </bean>
     </property>
   </bean>
-  
-  <bean id="javax.jcr.Repository.hstconfigreader" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+
+  <bean id="javax.jcr.Repository.hstconfigreader" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
     <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}" />
     <property name="defaultCredentialsPassword" value="${hstconfigreader.repository.password}" />
+    <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${hstconfigreader.repository.maxActive}" />
     <property name="maxIdle" value="${hstconfigreader.repository.maxIdle}" />
@@ -168,19 +219,17 @@
       </bean>
     </property>
   </bean>
-  
+
   <!-- Delegating repository to the raw hippo repository -->
   <bean id="javax.jcr.Repository.delegating" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
-  
+
   <!-- Subject based non-pooling delegating repository -->
   <bean id="javax.jcr.Repository.subjectBased" class="org.hippoecm.hst.core.jcr.SubjectBasedRepository">
     <constructor-arg ref="javax.jcr.Repository.delegating" />
   </bean>
-  
-  <!-- SSO cms non-pooling delegating repository -->
-  <bean id="javax.jcr.Repository.cms" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
-  </bean>
+
 
   <bean id="org.hippoecm.hst.core.jcr.SessionSecurityDelegation" class="org.hippoecm.hst.core.jcr.SessionSecurityDelegationImpl">
     <property name="securityDelegationEnabled" value="${cms.preview.security.delegation.enabled}"/>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.jcr.Credentials;
+import javax.jcr.Node;
+import javax.jcr.PropertyIterator;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +36,7 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.container.GenericRequestContextWrapper;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -41,14 +50,19 @@ import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * AbstractTestContentResource
@@ -176,6 +190,65 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         } finally {
             jaxrsPipeline.cleanup(hstContainerConfig, requestContext, cr, response);
             ModifiableRequestContextProvider.clear();
+        }
+    }
+
+    protected void invokeJaxrsPipelineAsAdmin(HttpServletRequest request, HttpServletResponse response) throws ContainerException, RepositoryException {
+        // every time a jaxrs pipeline is invoked, we also need to create a new request context
+
+        HstContainerRequest cr = new HstContainerRequestImpl(request, "./");
+        String requestPath = HstRequestUtils.getRequestPath(cr);
+        String pathInfo = requestPath.substring(MOUNT_PATH.length() + 1);
+
+        final Session admin;
+        final HstMutableRequestContext requestContextWrapper;
+        {
+            HstMutableRequestContext requestContext = createRequestContext(pathInfo);
+            Repository repository = componentManager.getComponent(Repository.class.getName() + ".delegating");
+            admin = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+
+            requestContext.setSession(admin);
+            requestContextWrapper = new GenericRequestContextWrapper(requestContext) {
+                @Override
+                public void setSession(final Session session) {
+                    // do nothing to avoid the Initialization valve reset the session to null
+                }
+            };
+        }
+
+        ModifiableRequestContextProvider.set(requestContextWrapper);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContextWrapper);
+        requestContextWrapper.setPathSuffix(cr.getPathSuffix());
+        requestContextWrapper.setBaseURL(urlProvider.parseURL(cr, response, requestContextWrapper.getResolvedMount()));
+
+        try {
+            jaxrsPipeline.invoke(hstContainerConfig, requestContextWrapper, cr, response);
+        } catch (Exception e) {
+            throw new ContainerException(e);
+        } finally {
+            jaxrsPipeline.cleanup(hstContainerConfig, requestContextWrapper, cr, response);
+            ModifiableRequestContextProvider.clear();
+            if (admin != null) {
+                admin.logout();
+            }
+        }
+    }
+
+
+    protected void assertWithPreviewUserContentContains(final String absPath, final String property, final String mustContain) throws RepositoryException {
+        Session previewSession = null;
+        try {
+            Credentials previewCreds = componentManager.getComponent(Credentials.class.getName() + ".preview.delegating");
+            final Repository repository = componentManager.getComponent(Repository.class.getName() + ".delegating");
+            previewSession = repository.login(previewCreds);
+            final String previewContent = previewSession.getNode(absPath)
+                    .getProperty(property).getString();
+
+            assertTrue(previewContent.contains(mustContain));
+        } finally {
+            if (previewSession != null) {
+                previewSession.logout();
+            }
         }
     }
 }

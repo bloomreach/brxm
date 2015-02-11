@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.jcr.Value;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.ResourceVisitor;
+import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,6 +257,8 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     protected boolean equalsCredentials(Credentials credentials1, Credentials credentials2) {
         if (credentials1 instanceof SimpleCredentials && credentials2 instanceof SimpleCredentials) {
             return (((SimpleCredentials) credentials1).getUserID().equals(((SimpleCredentials) credentials2).getUserID()));
+        }else if (credentials1 instanceof JvmCredentials && credentials2 instanceof JvmCredentials) {
+            return (((JvmCredentials) credentials1).getUserID().equals(((JvmCredentials) credentials2).getUserID()));
         } else if (credentials1 != null) {
             return credentials1.equals(credentials2);
         }

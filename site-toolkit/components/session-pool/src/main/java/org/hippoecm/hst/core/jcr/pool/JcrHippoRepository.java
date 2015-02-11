@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
@@ -29,6 +32,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +55,7 @@ public class JcrHippoRepository implements Repository {
     private boolean localRepositoryUsed;
 
     private boolean repositoryInitialized;
+    private Set<String> hstJmvEnabledUsers;
 
     public JcrHippoRepository() {
         this((String) null);
@@ -85,6 +91,10 @@ public class JcrHippoRepository implements Repository {
                 localRepositoryUsed = true;
             }
         }
+    }
+
+    public void setHstJmvEnabledUsers(final Set<String> hstJmvEnabledUsers) {
+        this.hstJmvEnabledUsers = hstJmvEnabledUsers;
     }
 
     private synchronized void initHippoRepository() throws RepositoryException {
@@ -192,13 +202,38 @@ public class JcrHippoRepository implements Repository {
         ClassLoader currentClassloader = switchToRepositoryClassloader();
 
         try {
-            return hippoRepository.login((SimpleCredentials) credentials);
+            return hippoRepository.login(credentials);
+        } catch (LoginException e) {
+            if (hstJmvEnabledUsers != null){
+                if (credentials instanceof JvmCredentials) {
+                    logError(((JvmCredentials)credentials).getUserID());
+
+                }
+                if (credentials instanceof SimpleCredentials) {
+                    final SimpleCredentials simpleCredentials = (SimpleCredentials) credentials;
+                    final String userId = simpleCredentials.getUserID();
+                    if (hstJmvEnabledUsers.contains(userId)) {
+                        if (Arrays.equals(simpleCredentials.getPassword(), JvmCredentials.getCredentials(userId).getPassword())) {
+                            logError(userId);
+                        }
+                    }
+                }
+            }
+            throw e;
         } finally {
             if (currentClassloader != null) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
     }
+
+    private void logError(final String userId) {
+        log.error("Cannot retrieve JVM session user for '{}'. Make sure that user '{}' at " +
+                        "/hippo:configuration/hippo:users contains {}={} OR make sure to configure a non empty password " +
+                        "in your hst-config.properties for xxx.repository.password, see SpringComponentManager.properties.",
+                userId, userId, HippoNodeType.HIPPO_PASSKEY, JvmCredentials.PASSKEY);
+    }
+
 
     public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         if (!repositoryInitialized) {
@@ -328,4 +363,5 @@ public class JcrHippoRepository implements Repository {
         }
         return false;
     }
+
 }

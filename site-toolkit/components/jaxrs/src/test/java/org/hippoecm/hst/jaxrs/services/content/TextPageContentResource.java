@@ -154,7 +154,7 @@ public class TextPageContentResource extends AbstractContentResource {
                 }
             });
             wpm.save();
-            
+
             textPage = (TextPage) wpm.getObject(textPage.getPath());
             textPageRepresentation = new TextPageRepresentation().represent(textPage);
         } catch (Exception e) {

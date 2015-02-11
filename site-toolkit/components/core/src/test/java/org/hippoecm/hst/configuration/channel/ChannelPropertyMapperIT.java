@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
@@ -106,8 +107,7 @@ public class ChannelPropertyMapperIT extends RepositoryTestCase {
         hstNodeLoadingCache = new HstNodeLoadingCache();
         hstNodeLoadingCache.setRepository(server.getRepository());
         hstNodeLoadingCache.setRootPath("/test");
-        hstNodeLoadingCache.setPassword("admin");
-        hstNodeLoadingCache.setUsername("admin");
+        hstNodeLoadingCache.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test

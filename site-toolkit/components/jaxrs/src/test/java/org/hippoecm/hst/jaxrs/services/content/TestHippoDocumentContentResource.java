@@ -18,6 +18,10 @@ package org.hippoecm.hst.jaxrs.services.content;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -86,7 +90,7 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
-    
+
     @Test
     public void testUpdateDocumentHtmlResource() throws Exception {
         
@@ -130,18 +134,14 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setContent(xhtml.replace("CMS", "Content_Management_System").getBytes());
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
-        }
-        
+
+        invokeJaxrsPipelineAsAdmin(request, response);
+
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
-        
-        xhtml = response.getContentAsString();
-        assertTrue(xhtml != null && !xhtml.contains("CMS") && xhtml.contains("Content_Management_System"));
-        
+
+        assertWithPreviewUserContentContains("/testcontent/documents/testproject/Products/HippoCMS/HippoCMS/testproject:body",
+                "hippostd:content",
+                "Content_Management_System");
         // revert the change
         request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -157,10 +157,12 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setContent(xhtml.replace("Content_Management_System", "CMS").getBytes());
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
     }
-    
+
+
+
     @Test
     public void testGetDocumentHtmlContent() throws Exception {
         
@@ -188,7 +190,7 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
-    
+
     @Test
     public void testUpdateDocumentHtmlContent() throws Exception {
         
@@ -232,17 +234,12 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setContent(html.replace("CMS", "Content_Management_System").getBytes());
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
-        }
-        
-        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
-        
-        html = response.getContentAsString();
-        assertTrue(html != null && !html.contains("CMS") && html.contains("Content_Management_System"));
+
+        invokeJaxrsPipelineAsAdmin(request, response);
+
+        assertWithPreviewUserContentContains("/testcontent/documents/testproject/Products/HippoCMS/HippoCMS/testproject:body",
+                "hippostd:content",
+                "Content_Management_System");
         
         // revert the change
         request = new MockHttpServletRequest(servletContext);
@@ -259,7 +256,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setContent(html.replace("Content_Management_System", "CMS").getBytes());
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
     }
+
 }

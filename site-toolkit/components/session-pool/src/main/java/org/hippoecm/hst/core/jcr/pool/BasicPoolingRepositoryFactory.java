@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
@@ -82,7 +83,13 @@ import javax.naming.spi.ObjectFactory;
  * </pre></code>
  */
 public class BasicPoolingRepositoryFactory implements ObjectFactory {
-    
+
+    private Set<String> hstJmvEnabledUsers;
+
+    public void setHstJmvEnabledUsers(final Set<String> hstJmvEnabledUsers) {
+        this.hstJmvEnabledUsers = hstJmvEnabledUsers;
+    }
+
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
         return getObjectInstance(obj);
     }
@@ -103,11 +110,12 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
     
     public PoolingRepository getObjectInstanceByConfigMap(Map<String, String> configMap) throws Exception {
         BasicPoolingRepository poolingRepository = new BasicPoolingRepository();
+        poolingRepository.setHstJmvEnabledUsers(hstJmvEnabledUsers);
         
         for (Map.Entry<String, String> entry : configMap.entrySet()) {
             String type = entry.getKey();
             String value = entry.getValue();
-            
+
             if (type.equals("repositoryProviderClassName")) {
                 poolingRepository.setRepositoryProviderClassName(value);
             } else if (type.equals("repositoryAddress")) {
@@ -152,7 +160,7 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setWhenExhaustedAction(value);
             }
         }
-        
+
         poolingRepository.setDefaultCredentials(new SimpleCredentials(poolingRepository.getDefaultCredentialsUserID(), poolingRepository.getDefaultCredentialsPassword()));
         
         poolingRepository.initialize();
@@ -176,5 +184,5 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
         
         return configMap;
     }
-    
+
 }

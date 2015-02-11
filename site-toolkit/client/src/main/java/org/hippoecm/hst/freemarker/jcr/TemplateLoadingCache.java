@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.Binary;
+import javax.jcr.Credentials;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import com.google.common.base.Optional;
 
@@ -50,19 +50,14 @@ public class TemplateLoadingCache {
     private Map<String, Optional<RepositorySource>> cache =  new ConcurrentHashMap<>();
 
     private Repository repository;
-    private String username;
-    private String password;
+    private Credentials credentials;
 
     public void setRepository(final Repository repository) {
         this.repository = repository;
     }
 
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
+    public void setCredentials(final Credentials credentials) {
+        this.credentials = credentials;
     }
 
     /**
@@ -132,7 +127,7 @@ public class TemplateLoadingCache {
     }
 
     private Session createSession() throws RepositoryException {
-        Session session = repository.login(new SimpleCredentials(username, password.toCharArray()));
+        Session session = repository.login(credentials);
         return session;
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -52,6 +53,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private Repository repository;
     private Credentials defaultCredentials;           // credentials provided by the configuration or the user
     private Credentials internalDefaultCredentials;   // credentials used for real JCR API invocations.
+    private Set<String> hstJmvEnabledUsers;
     private boolean isSimpleDefaultCredentials;
     private SessionDecorator sessionDecorator;
     
@@ -61,6 +63,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private String defaultCredentialsUserID;
     private String defaultCredentialsUserIDSeparator = String.valueOf('\uFFFF');
     private char [] defaultCredentailsPassword;
+
     private String defaultWorkspaceName;
 
     private long maxTimeToLiveMillis;
@@ -78,7 +81,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private MultipleRepository multipleRepository;
     
     private PoolingCounter poolingCounter;
-    
+
     public void setLogger(Logger log) {
         this.log = log;
     }
@@ -121,7 +124,10 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             String userIDOnly = StringUtils.substringBefore(userID, defaultCredentialsUserIDSeparator);
             
             if (!userID.equals(userIDOnly)) {
-                internalDefaultCredentials = new SimpleCredentials(userIDOnly, ((SimpleCredentials) defaultCredentials).getPassword());
+                final char[] password = ((SimpleCredentials) defaultCredentials).getPassword();
+                this.defaultCredentials = SimpleCredentialsFactory.createInstance(userIDOnly, password, defaultCredentialsUserIDSeparator,
+                        StringUtils.substringAfter(userID, defaultCredentialsUserIDSeparator), hstJmvEnabledUsers);
+                internalDefaultCredentials = SimpleCredentialsFactory.createInstance(userIDOnly, password, this.hstJmvEnabledUsers);
             }
         }
     }
@@ -164,7 +170,12 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
         System.arraycopy(defaultCredentailsPassword, 0, value, 0, defaultCredentailsPassword.length);
         return value;
     }
-    
+
+    public void setHstJmvEnabledUsers(Set<String> hstJmvEnabledUsers) {
+        this.hstJmvEnabledUsers = hstJmvEnabledUsers;
+    }
+
+
     public void setDefaultWorkspaceName(String defaultWorkspaceName) {
         this.defaultWorkspaceName = defaultWorkspaceName;
     }
@@ -548,8 +559,11 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                 throw new RepositoryException("Cannot create an instance of JcrRepositoryProvider: " + getRepositoryProviderClassName(), e);
             }
             
-            Repository jcrrepository = this.jcrRepositoryProvider.getRepository(getRepositoryAddress());
-            setRepository(jcrrepository);
+            Repository jcrRepository = this.jcrRepositoryProvider.getRepository(getRepositoryAddress());
+            if (jcrRepository instanceof  JcrHippoRepository) {
+                ((JcrHippoRepository)jcrRepository).setHstJmvEnabledUsers(hstJmvEnabledUsers);
+            }
+            setRepository(jcrRepository);
         }
         
         if (getDefaultCredentials() == null && getDefaultCredentialsUserID() != null) {
@@ -1040,7 +1054,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             return this.defaultCredentials.equals(credentials);
         }
     }
-    
+
     private class SessionFactory implements PoolableObjectFactory {
         
         public void activateObject(Object object) throws RepositoryException {

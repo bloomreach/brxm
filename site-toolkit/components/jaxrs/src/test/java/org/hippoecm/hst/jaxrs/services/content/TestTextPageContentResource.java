@@ -205,25 +205,17 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
         request.setContent(updatingTextPageXml.getBytes());
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
         
         if (log.isDebugEnabled()) {
             log.debug("Response Content:\n" + response.getContentAsString() + "\n");
         }
-        
-        String updatedTextPageXml = response.getContentAsString();
-        
+
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
-        
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
-        String title = XPathFactory.newInstance().newXPath().compile("/textpage/title").evaluate(document);
-        String summary = XPathFactory.newInstance().newXPath().compile("/textpage/summary").evaluate(document);
-        String bodyContent = XPathFactory.newInstance().newXPath().compile("/textpage/bodyContent").evaluate(document);
-        String all = title + summary + bodyContent;
-        
-        assertTrue(all != null && !all.contains("CMS") && all.contains("Content_Management_System"));
-        
+        assertWithPreviewUserContentContains("/testcontent/documents/testproject/Products/HippoCMS/HippoCMS/testproject:body",
+                "hippostd:content",
+                "Content_Management_System");
         
         // revert the temporary changes
         
@@ -241,8 +233,8 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
         request.setContent(originalTextPageXml.getBytes());
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
         
         if (log.isDebugEnabled()) {
             log.debug("Response Content:\n" + response.getContentAsString() + "\n");

@@ -22,8 +22,7 @@
 
   <bean id="org.hippoecm.hst.freemarker.jcr.TemplateLoadingCache"  class="org.hippoecm.hst.freemarker.jcr.TemplateLoadingCache">
     <property name="repository" ref="javax.jcr.Repository.delegating" />
-    <property name="username" value="${hstconfigreader.repository.user.name}" />
-    <property name="password" value="${hstconfigreader.repository.password}" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
   </bean>
 
   <bean id="repositoryTemplateEventListener" abstract="true">

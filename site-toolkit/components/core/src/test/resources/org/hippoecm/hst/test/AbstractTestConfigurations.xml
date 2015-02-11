@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,15 +18,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
-      <list>
-        <value>classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties</value>
-      </list>
-    </property>
-  </bean>
+  <import resource="classpath:/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml" />
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
+  <!--<import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml" />-->
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml" />
@@ -42,6 +37,5 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-resourcebundle.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-trace.xml" />
-  <import resource="classpath:/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml" />
   
 </beans>

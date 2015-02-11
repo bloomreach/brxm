@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-
-  sv:name="hst:sites">
+<sv:node sv:name="hst:sites" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         esv:merge="combine" xmlns:esv="http://www.onehippo.org/jcr/xmlimport">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sites</sv:value>
   </sv:property>

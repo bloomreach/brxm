@@ -175,7 +175,7 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
     public void testGetDocumentResource() throws Exception {
         
         log.debug("\n****** testGetDocumentResource *******\n");
-        
+
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
         request.setScheme("http");
@@ -223,8 +223,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setContent("type=testproject:textpage".getBytes());
         
         MockHttpServletResponse response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
         
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
 
@@ -243,8 +243,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
         
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
         
@@ -268,8 +268,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
+
+        invokeJaxrsPipelineAsAdmin(request, response);
         
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }

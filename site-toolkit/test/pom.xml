@@ -100,6 +100,12 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-unittestspringconfig</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
 
     <!-- end hst test content -->
 
@@ -141,7 +147,6 @@
       <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
-
   </dependencies>
 
 </project>

@@ -659,6 +659,7 @@ components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.jav
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositorySessionsRefreshEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/jcr/SimpleCredentialsFactoryBean.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/SubjectBasedRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/CompositeList.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultHstLinkCreator.java svneol=native#text/plain
@@ -881,7 +882,6 @@ components/core/src/test/resources/org/hippoecm/hst/core/container/FactoryCompon
 components/core/src/test/resources/org/hippoecm/hst/core/container/PageCachingValveIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/site/container/SystemDefaultSessionPoolConfigurationsIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/AbstractTestConfigurations.xml -text
-components/core/src/test/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 components/jaxrs/pom.xml svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/AbstractJaxrsService.java svneol=native#text/plain
@@ -946,7 +946,6 @@ components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/services/content/TextPageC
 components/jaxrs/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 components/jaxrs/src/test/resources/hst-testproject-sites.xml svneol=native#text/plain
 components/jaxrs/src/test/resources/log4j.xml svneol=native#text/plain
-components/jaxrs/src/test/resources/org/hippoecm/hst/jaxrs/services/content/GeneralMultiplePoolingRepository.xml svneol=native#text/plain
 components/jaxrs/src/test/resources/org/hippoecm/hst/jaxrs/services/content/TestContentServices.xml svneol=native#text/plain
 components/jaxrs/src/test/resources/org/hippoecm/hst/jaxrs/services/content/custom-jaxrs-resources.xml svneol=native#text/plain
 components/jaxrs/src/test/resources/testproject-content.xml svneol=native#text/plain
@@ -1024,6 +1023,7 @@ components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PooledSessi
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PooledSessionResourceManagement.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingRepositorySessionMustBeLoggedOutListener.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingRepositorySessionsRefreshEventListener.java svneol=native#text/plain
+components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/SimpleCredentialsFactory.java -text
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/util/ProxyFactory.java svneol=native#text/plain
 components/session-pool/src/site/site.xml -text
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/AbstractSessionPoolSpringTestCase.java svneol=native#text/plain
@@ -1135,6 +1135,7 @@ integration/war/pom.xml -text
 integration/war/src/main/java/org/hippoecm/hst/servlets/H2ServerServlet.java -text
 integration/war/src/main/webapp/WEB-INF/web.xml -text
 mock/pom.xml -text
+mock/src/main/java/org/hippoecm/hst/container/GenericRequestContextWrapper.java -text
 mock/src/main/java/org/hippoecm/hst/container/ModifiableRequestContextProvider.java -text
 mock/src/main/java/org/hippoecm/hst/mock/configuration/MockSiteMapItem.java -text
 mock/src/main/java/org/hippoecm/hst/mock/configuration/components/MockHstComponentConfiguration.java -text
@@ -1291,10 +1292,24 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/uni
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemenus.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestsubproject/pages.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestsubproject/sitemap.xml -text svneol=unset#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/security/configuser-read-everywhere.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/group-liveusers.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/group-previewusers.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/group-sitewriters.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/user-author.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/user-configuser.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/user-editor.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/user-liveuser.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/user-previewuser.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/user-sitewriter.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/security/webfiles.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-blueprint.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-image.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-namespace.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-types.cnd -text
 toolkit-resources/addon/unittestcontents/src/site/site.xml -text
+toolkit-resources/addon/unittestspringconfig/hst-addon-unittestspringconfig.iml -text
+toolkit-resources/addon/unittestspringconfig/pom.xml -text
+toolkit-resources/addon/unittestspringconfig/src/main/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
 toolkit-resources/pom.xml svneol=native#text/plain
 toolkit-resources/src/site/site.xml -text
