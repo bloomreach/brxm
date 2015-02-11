@@ -21,13 +21,6 @@ The package for Node.js can be installed using:
 
   $ cinst nodejs.install
 
-Then install Bower and Grunt with NPM as explained before.
-
-#### Dependencies
-
-* [Grunt](http://gruntjs.com/) (task automation)
-* [Bower](http://bower.io/) (package management)
-
 #### Installation
 Run the commands below in the project root directory.
 #####1. Update npm
