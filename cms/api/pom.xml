@@ -270,20 +270,11 @@
         <version>${maven.plugin.exec.version}</version>
         <executions>
           <execution>
-            <id>npm-install</id>
+            <id>npm-bower-install</id>
             <phase>generate-sources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>npm</executable>
-              <commandlineArgs>install</commandlineArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>bower-install</id>
-            <phase>generate-sources</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>bower</executable>
+              <executable>npm-cache</executable>
               <commandlineArgs>install</commandlineArgs>
             </configuration>
           </execution>

@@ -11,6 +11,7 @@ files that will eventually replace the screen.css beast.
 * Maven 3.x
 * [NodeJS](https://nodejs.org/) (NodeJS)
 * [Node Package Manager](https://npmjs.org/) (NPM)
+* [NPM-cache 0.1.0] (https://github.com/swarajban/npm-cache) (NPM and Bower dependencies cache)
 
 #####Windows specific instructions
 You can automate the installation of NPM using Chocolatey package manager:
@@ -33,10 +34,41 @@ Run the commands below in the project root directory.
 
     $ sudo npm install -g grunt-cli bower
     
-#####2. Install project dependencies
+#####2. Install Grunt, Bower and npm-cache
 
-    $ npm install
-    $ bower install
+    npm install -g grunt-cli bower npm-cache
+
+(this might require `sudo` on certain systems).
+
+#####3. Install project dependencies
+Install both npm and bower dependencies
+
+    npm-cache install
+
+While the above is the easiest and also used by the Maven build process, we have a few more options.
+
+Install npm dependencies
+
+    npm-cache install npm
+
+Install bower dependencies
+
+    npm-cache install bower
+
+Clean the cached dependencies
+
+    npm-cache clean
+
+Although it is pretty save to cache dependencies (as we try to use specific versions instead of ranges), you might want
+to ensure yourself that cache is not the issue.
+
+Install fresh npm dependencies (requires network)
+
+    npm install
+
+Install fresh dependencies (requires network)
+
+    bower install
 
 ## Useful commands
 
