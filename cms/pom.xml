@@ -137,10 +137,6 @@
 
   </properties>
 
-  <!--
-     Software configuration management (scm): where to find and how to get acces to the source repository
-     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
-  -->
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
@@ -164,51 +160,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-       <!-- Report project history via xdoc, by supplying information in src/changes/changes.xml
-
-         WARNINGS
-         - Some examples use the following changes plugin, but the report is full of bugs,
-           missing title and descriptions, not using the issueLinkTemplate and ugly markup.
-           <groupId>org.codehaus.mojo</groupId>
-           <artifactId>changes-maven-plugin</artifactId>
-
-         - The issueLinkTemplate configuration is supposed to be deprecated, but is the only
-           way to configure for actions that have no system attribute and therefor have
-           as system 'default'. From the details of issueLinkTemplatePerSystem.
-           Note: The deprecated issueLinkTemplate will be used for a system called "default".
-
-        -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <configuration>
-          <issueLinkTemplatePerSystem>
-            <Jira>%URL%/%ISSUE%</Jira>
-          </issueLinkTemplatePerSystem>
-          <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
-        </configuration>
-        <executions>
-          <execution>
-            <id>validate-changes</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>changes-validate</goal>
-            </goals>
-            <configuration>
-              <!-- if set to true the build will fail if the changes file is invalid,
-                   if set to false warnings will be logged. -->
-              <failOnError>false</failOnError>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-3</version>
-      </plugin>
-    </plugins>
   </build>
 
   <reporting>
