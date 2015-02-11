@@ -90,9 +90,12 @@ if (!YAHOO.hippo.ImageCropper) {
                 // Call second render phase after image has loaded completely and add a timeout
                 // to force IE to behave the same all the time.
                 var img = new Image();
+                var self = this;
                 img.onload = function() {
-                    window.setTimeout(function() {this._render();}.bind(this), 10);
-                }.bind(this);
+                    window.setTimeout(function() {
+                        self._render();
+                    }, 200);
+                };
                 img.src = this.el.src;
             },
             
@@ -119,7 +122,7 @@ if (!YAHOO.hippo.ImageCropper) {
                 if (this.leftCropArea !== null) {
                     this.leftCropAreaRegion = Dom.getRegion(this.leftCropArea); 
                 }
-                
+
                 this.subscribe();
             },
             
