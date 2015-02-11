@@ -38,10 +38,13 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLESUMMARY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
@@ -142,22 +145,12 @@ public class StateIconAttributes implements IObservable, IDetachable {
             NodeType primaryType = null;
             boolean isHistoric = false;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                NodeIterator docs = node.getNodes(node.getName());
-                while (docs.hasNext()) {
-                    document = docs.nextNode();
-                    primaryType = document.getPrimaryNodeType();
-                    retrieveProperties(document, primaryType);
-                    if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                        String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                        if ("unpublished".equals(state)) {
-                            break;
-                        }
-                    }
-                }
+                document = retrieveProperties(node.getNodes(node.getName()));
+                primaryType = document.getPrimaryNodeType();
             } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 document = node;
                 primaryType = document.getPrimaryNodeType();
-                retrieveProperties(document, primaryType);
+                retrieveProperties(document);
             } else if (node.isNodeType("nt:version")) {
                 isHistoric = true;
                 Node frozen = node.getNode("jcr:frozenNode");
@@ -167,7 +160,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     document = frozen;
                 }
-                retrieveProperties(document, primaryType);
+                retrieveProperties(document);
             }
             if (document != null
                     && (primaryType.isNodeType(NT_PUBLISHABLESUMMARY)
@@ -194,8 +187,41 @@ public class StateIconAttributes implements IObservable, IDetachable {
         loaded = true;
     }
 
-    private void retrieveProperties(Node document, NodeType primaryType) throws RepositoryException {
-        if (document == null || primaryType == null) {
+    private Node retrieveProperties(final NodeIterator variants) throws RepositoryException {
+        Node variant = null;
+
+        while (variants.hasNext()) {
+            variant = variants.nextNode();
+            if(variant.hasProperty(HIPPOSTD_STATESUMMARY) && variant.hasProperty(HIPPOSTD_STATE)) {
+                final String stateSummary = variant.getProperty(HIPPOSTD_STATESUMMARY).getString();
+                final String state = variant.getProperty(HIPPOSTD_STATE).getString();
+
+                // set publication date from the published node when statesummary = live or changed
+                if(variant.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
+                    if(PUBLISHED.equals(state) && ("live".equals(stateSummary)) || "changed".equals(stateSummary)) {
+                        publicationDate = variant.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getDate();
+                    }
+                }
+
+                // last modified date & its user from published node when stateSummary = live, but from unpublished node
+                // when stateSummery = changed or new
+                if(variant.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY)
+                        && variant.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE)) {
+                    if ((PUBLISHED.equals(state) && ("live".equals(stateSummary)))
+                            || (UNPUBLISHED.equals(state) && (("changed".equals(stateSummary)) || ("new".equals(stateSummary))))) {
+                        lastModifiedBy = variant.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString();
+                        lastModifiedDate = variant.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate();
+                    }
+                }
+            }
+        }
+
+        // return any variant from which the stateSummary is used later on, which is the same for all variants
+        return variant;
+    }
+
+    private void retrieveProperties(Node document) throws RepositoryException {
+        if (document == null) {
             return;
         }
 
