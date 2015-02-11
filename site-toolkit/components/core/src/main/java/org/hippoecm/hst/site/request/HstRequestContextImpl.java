@@ -39,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -58,7 +57,6 @@ import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -159,8 +157,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public Session getSession(boolean create) throws RepositoryException {
         if (this.session == null) {
             if (create) {
-                if (contextCredentialsProvider != null) {
-                    final SimpleCredentials defaultCredentials = (SimpleCredentials) contextCredentialsProvider.getDefaultCredentials(this);
+                final ContextCredentialsProvider credsProvider = getContextCredentialsProvider();
+                if (credsProvider != null) {
+                    final SimpleCredentials defaultCredentials = (SimpleCredentials) credsProvider.getDefaultCredentials(this);
                     try {
                         this.session = this.repository.login(defaultCredentials);
                     } catch (LoginException e) {
@@ -572,22 +571,18 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public HippoBean getContentBean() {
-        HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext == null) {
-            return null;
-        }
 
-        if (requestContext.getResolvedSiteMapItem() != null) {
-            return getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
+        if (getResolvedSiteMapItem() != null) {
+            return getBeanForResolvedSiteMapItem(getResolvedSiteMapItem());
         }
 
         // this might be a request for a mount that is not mapped (does not have a sitemap item)
-        if (!requestContext.getResolvedMount().getMount().isMapped()) {
-            final String contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+        if (!getResolvedMount().getMount().isMapped()) {
+            final String contentPathInfo = PathUtils.normalizePath(getBaseURL().getPathInfo());
             return getHippoBean(getSiteContentBasePath(), contentPathInfo);
         }
 
-        log.info("Did not find a content bean for '{}'", requestContext.getServletRequest());
+        log.info("Did not find a content bean for '{}'", getServletRequest());
         return null;
     }
 
@@ -606,13 +601,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public String getSiteContentBasePath() {
-        HstRequestContext requestContext = RequestContextProvider.get();
-
-        if (requestContext == null) {
-            throw new IllegalStateException("HstRequestContext is not set in handler.");
-        }
-
-        return PathUtils.normalizePath(requestContext.getResolvedMount().getMount().getContentPath());
+        return PathUtils.normalizePath(getResolvedMount().getMount().getContentPath());
     }
 
     @Override
