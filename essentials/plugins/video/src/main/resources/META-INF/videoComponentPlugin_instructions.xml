@@ -22,7 +22,7 @@
     <cnd documentType="video" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="instructions/xml/namespace/video-namespace.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="instructions/images/video.png" target="{{imagesRoot}}/essentials/catalog-component-icons/video.png"/>
+    <file action="copy" binary="true" source="instructions/images/video.png" target="{{webfilesImagesRoot}}/essentials/catalog-component-icons/video.png"/>
     <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>

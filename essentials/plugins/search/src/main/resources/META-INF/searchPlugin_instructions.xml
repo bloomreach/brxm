@@ -23,7 +23,7 @@
     <xml action="copy" source="instructions/xml/hst/search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="instructions/xml/hst/search-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="instructions/content/search-labels.xml" target="/content/documents/administration/labels"/>
-    <file action="copy" binary="true" source="instructions/images/search-box.png" target="{{imagesRoot}}/essentials/catalog-component-icons/search-box.png"/>
+    <file action="copy" binary="true" source="instructions/images/search-box.png" target="{{webfilesImagesRoot}}/essentials/catalog-component-icons/search-box.png"/>
   </instructionSet>
   <instructionSet group="jsp">
     <file action="copy" source="instructions/jsp/search-box.jsp" target="{{jspRoot}}/hstdefault/search-box.jsp"/>
