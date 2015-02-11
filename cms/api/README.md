@@ -30,10 +30,12 @@ Then install Bower and Grunt with NPM as explained before.
 
 #### Installation
 Run the commands below in the project root directory.
-#####1. Install Grunt and Bower
+#####1. Update npm
+Before setting up Grunt ensure that your npm is up-to-date by running
 
-    $ sudo npm install -g grunt-cli bower
-    
+    npm update -g npm
+
+(this might require `sudo` on certain systems).
 #####2. Install Grunt, Bower and npm-cache
 
     npm install -g grunt-cli bower npm-cache
@@ -106,5 +108,4 @@ Run the CMS with Wicket development mode args:
 The tests need to pass in order to build the theme.
 
     $ grunt test
-
 
