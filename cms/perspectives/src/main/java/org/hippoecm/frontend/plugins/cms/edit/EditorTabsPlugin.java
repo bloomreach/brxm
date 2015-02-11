@@ -25,7 +25,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 
-@Deprecated
 public class EditorTabsPlugin extends TabsPlugin {
 
     public EditorTabsPlugin(final IPluginContext context, final IPluginConfig properties) {
