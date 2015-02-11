@@ -1,4 +1,4 @@
-<#include "../include/imports.ftl">
+<#include "../../include/imports.ftl">
 <#--
   Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
@@ -29,7 +29,7 @@
     </#list>
     <#if pageable.showPagination??>
 
-    <#include "../include/pagination.ftl">
+    <#include "../../include/pagination.ftl">
 
     </#if>
 <#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
