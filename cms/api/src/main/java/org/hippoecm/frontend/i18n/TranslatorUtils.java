@@ -137,49 +137,51 @@ public class TranslatorUtils {
      * Get the first node of type 'frontend:plugincluster' under the 'editor:templates' node
      *
      * @param typeNode a node of type 'editor:templates'
-     * @return
+     * @return the template node or thrown exceptions
      * @throws javax.jcr.RepositoryException
      * @throws org.hippoecm.frontend.i18n.TranslatorException if either no child node of type 'frontend:plugincluster'
      * is found, <code>typeNode</code> is null or not the type 'editor:templates'.
      */
     public static Node getTemplateNode(final Node typeNode) throws TranslatorException {
         try {
-            if (typeNode != null && typeNode.hasNode(EDITOR_TEMPLATES_NODETYPE)) {
-                final Node templateSetNode = typeNode.getNode(EDITOR_TEMPLATES_NODETYPE);
-                if (templateSetNode != null && templateSetNode.isNodeType(EDITOR_TEMPLATESET_NODETYPE)) {
-                    NodeIterator pluginClusterNodes = templateSetNode.getNodes();
-                    while (pluginClusterNodes.hasNext()) {
-                        final Node templateNode = pluginClusterNodes.nextNode();
-                        if (templateNode != null && templateNode.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
-                            return templateNode;
-                        }
-                    }
-                } else {
-                    throw new TranslatorException("Invalid node of type " + EDITOR_TEMPLATESET_NODETYPE);
-                }
-            } else {
+            if (typeNode == null || !typeNode.hasNode(EDITOR_TEMPLATES_NODETYPE)) {
                 throw new TranslatorException("Invalid node of type " + EDITOR_TEMPLATES_NODETYPE);
             }
+            final Node templateSetNode = typeNode.getNode(EDITOR_TEMPLATES_NODETYPE);
+            if (templateSetNode == null || !templateSetNode.isNodeType(EDITOR_TEMPLATESET_NODETYPE)) {
+                throw new TranslatorException("Invalid node of type " + EDITOR_TEMPLATESET_NODETYPE);
+            }
+
+            NodeIterator pluginClusterNodes = templateSetNode.getNodes();
+            while (pluginClusterNodes.hasNext()) {
+                final Node templateNode = pluginClusterNodes.nextNode();
+                if (templateNode != null && templateNode.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
+                    return templateNode;
+                }
+            }
+            throw new TranslatorException("Cannot find child node of type " + FrontendNodeType.NT_PLUGINCLUSTER);
         } catch (RepositoryException e) {
-            throw new TranslatorException("Cannot find child node of type " + FrontendNodeType.NT_PLUGINCLUSTER, e);
+            throw new TranslatorException("Cannot find template node", e);
         }
-        throw new TranslatorException("Cannot find child node of type " + FrontendNodeType.NT_PLUGINCLUSTER);
     }
 
     public static IModel getTranslatedModel(final IPluginConfig translations, final Map<String, String> criteria) {
-        if (translations != null) {
-            IPluginConfig keyConfig = translations.getPluginConfig((String) criteria.get(HippoNodeType.HIPPO_KEY));
-            if (keyConfig != null) {
-                Set<IPluginConfig> candidates = keyConfig.getPluginConfigSet();
-                Set<ConfigWrapper> list = new HashSet<>((int) candidates.size());
-                for (IPluginConfig candidate : candidates) {
-                    if (candidate.getString(HippoNodeType.HIPPO_LANGUAGE, "").equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
-                        list.add(new ConfigWrapper(candidate, criteria));
-                    }
-                }
-                return new TranslationSelectionStrategy<>(criteria.keySet()).select(list).getModel();
+        if (translations == null || criteria == null){
+            return null;
+        }
+
+        IPluginConfig keyConfig = translations.getPluginConfig((String) criteria.get(HippoNodeType.HIPPO_KEY));
+        if (keyConfig == null) {
+            return null;
+        }
+
+        Set<IPluginConfig> candidates = keyConfig.getPluginConfigSet();
+        Set<ConfigWrapper> list = new HashSet<>((int) candidates.size());
+        for (IPluginConfig candidate : candidates) {
+            if (candidate.getString(HippoNodeType.HIPPO_LANGUAGE, "").equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
+                list.add(new ConfigWrapper(candidate, criteria));
             }
         }
-        return null;
+        return new TranslationSelectionStrategy<>(criteria.keySet()).select(list).getModel();
     }
 }
