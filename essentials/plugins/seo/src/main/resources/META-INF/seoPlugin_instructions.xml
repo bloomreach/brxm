@@ -20,7 +20,7 @@
 
   <instructionSet>
     <xml action="copy" source="instructions/seo-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="instructions/seo.png" target="{{webfilesImagesRoot}}/essentials/catalog-component-icons/seo.png"/>
+    <file action="copy" binary="true" source="instructions/seo.png" target="{{imagesRoot}}/essentials/catalog-component-icons/seo.png"/>
   </instructionSet>
 
   <instructionSet group="jsp">
