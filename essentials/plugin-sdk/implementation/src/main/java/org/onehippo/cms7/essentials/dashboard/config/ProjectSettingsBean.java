@@ -59,6 +59,18 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String bootstrapFolder;
     private String webfilesFolder;
     private String essentialsFolder;
+    private String beansFolder;
+
+
+    @Override
+    public String getBeansFolder() {
+        return beansFolder;
+    }
+
+    @Override
+    public void setBeansFolder(final String beansFolder) {
+        this.beansFolder = beansFolder;
+    }
 
     @Override
     public void setEssentialsFolder(final String essentialsFolder) {

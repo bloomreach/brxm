@@ -189,12 +189,44 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public Path getBeansPackagePath() {
-        return createPath(beansPackage);
+        return createBeansPath(beansPackage);
+    }
+
+
+    @Override
+    public Path getBeansRootPath() {
+        if (projectSettings != null && projectSettings.getBeansFolder() != null) {
+            final String beansFolder = projectSettings.getBeansFolder();
+            final File rootFolder = ProjectUtils.getProjectRootFolder();
+            return new File(rootFolder.getAbsolutePath() + File.separator + beansFolder).toPath();
+        }
+
+        return null;
     }
 
     @Override
     public Path getRestPackagePath() {
         return createPath(restPackage);
+    }
+
+    private Path createBeansPath(final String packageName) {
+
+        final Iterator<String> iterator = Splitter.on('.').split(packageName).iterator();
+        final Joiner joiner = Joiner.on(File.separator).skipNulls();
+        final Path beansRootPath = getBeansRootPath();
+        if (beansRootPath !=null) {
+            return new File(beansRootPath.toString() + File.separator + joiner.join(iterator)).toPath();
+        }
+        // default to site folder
+        final File  siteDirectory = ProjectUtils.getSite(this);
+
+
+        if (Strings.isNullOrEmpty(packageName) || siteDirectory == null) {
+            log.error("Package: {}, or  project site directory: {}, were not defined", packageName, siteDirectory);
+            return null;
+        }
+
+        return new File(siteDirectory.getAbsolutePath() + MAIN_JAVA_PART + joiner.join(iterator)).toPath();
     }
 
     private Path createPath(final String packageName) {

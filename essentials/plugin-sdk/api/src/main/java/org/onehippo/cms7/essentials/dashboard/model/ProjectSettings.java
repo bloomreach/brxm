@@ -28,8 +28,12 @@ import org.onehippo.cms7.essentials.dashboard.config.Document;
 public interface ProjectSettings extends Document {
 
 
+    String getBeansFolder();
+
+    void setBeansFolder(String beansFolder);
 
     void setEssentialsFolder(String essentialsFolder);
+
     String getEssentialsFolder();
 
     String getSiteFolder();

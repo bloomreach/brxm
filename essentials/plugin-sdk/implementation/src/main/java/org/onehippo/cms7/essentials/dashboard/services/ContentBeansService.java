@@ -120,7 +120,15 @@ public class ContentBeansService {
                 if (parent != null) {
                     log.debug("found parent: {}, {}", parent, missingBean);
                     missingBeanIterator.remove();
-                    createBean(missingBean, existing.get(parent));
+                    final Path parentPath = existing.get(parent);
+                    if (parentPath == null) {
+                        log.error("Couldn't find parent bean for: {}", parent);
+                        if (parent.equals(baseSupertype)) {
+                            log.error("Base document type is missing: {}", parent);
+                        }
+                        continue;
+                    }
+                    createBean(missingBean, parentPath);
                 }
             }
         }
@@ -605,7 +613,7 @@ public class ContentBeansService {
             name = name.split(",")[0];
         }
         final String className = GlobalUtils.createClassName(name);
-        final Path path = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
+        final Path path = JavaSourceUtils.createJavaClass(context.getBeansRootPath().toString(), className, context.beansPackageName(), null);
         context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
 
         return path;

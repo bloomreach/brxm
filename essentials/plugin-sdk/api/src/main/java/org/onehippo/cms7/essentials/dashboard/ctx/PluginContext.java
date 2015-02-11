@@ -146,6 +146,13 @@ public interface PluginContext extends Serializable {
     Path getBeansPackagePath();
 
     /**
+     * Path to root of HST beans
+     *
+     * @return path, defaults to site java class root (/site/src/main/java)
+     */
+    Path getBeansRootPath();
+
+    /**
      * Path to HST REST package (if all properties are defined, like site dir and REST package name)
      *
      * @return path to HST REST  package or null
