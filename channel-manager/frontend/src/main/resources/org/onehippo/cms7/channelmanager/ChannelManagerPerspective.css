@@ -100,8 +100,6 @@
 
 /* breadcrumb */
 #hippo-channelmanager-breadcrumb {
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
     -webkit-flex: 0 0 auto;
     -ms-flex: 0 0 auto;
     flex: 0 0 auto;
@@ -606,9 +604,12 @@
 }
 
 .channel-manager ul.channel-group {
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    justify-content: flex-start;
     padding-left: 24px;
     border-bottom: 1px solid #ebeced;
 }
@@ -618,6 +619,8 @@
 }
 
 .channel-manager ul.channel-group li {
+    -webkit-flex: 0 0 150px;
+    -ms-flex: 0 0 150px;
     flex: 0 0 150px;
     display: block;
     margin-bottom: 28px;
