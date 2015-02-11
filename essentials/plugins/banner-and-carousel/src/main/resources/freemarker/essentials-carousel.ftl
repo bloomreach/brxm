@@ -81,10 +81,10 @@
     </style>
 
     <@hst.headContribution category="htmlBodyEnd">
-    <script type="text/javascript" src="<@hst.link path="/js/jquery-2.1.0.min.js"/>"></script>
+    <script type="text/javascript" src="<@hst.webfile path="/js/jquery-2.1.0.min.js"/>"></script>
     </@hst.headContribution>
     <@hst.headContribution category="htmlBodyEnd">
-    <script type="text/javascript" src="<@hst.link path="/js/bootstrap.min.js"/>"></script>
+    <script type="text/javascript" src="<@hst.webfile path="/js/bootstrap.min.js"/>"></script>
     </@hst.headContribution>
 <#elseif editMode>
   <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
