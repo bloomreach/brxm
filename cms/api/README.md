@@ -11,7 +11,6 @@ files that will eventually replace the screen.css beast.
 * Maven 3.x
 * [NodeJS](https://nodejs.org/) (NodeJS)
 * [Node Package Manager](https://npmjs.org/) (NPM)
-* [NPM-cache 0.1.0] (https://github.com/swarajban/npm-cache) (NPM and Bower dependencies cache)
 
 #####Windows specific instructions
 You can automate the installation of NPM using Chocolatey package manager:
@@ -21,49 +20,21 @@ The package for Node.js can be installed using:
 
   $ cinst nodejs.install
 
+#### Dependencies
+
+* [Grunt](http://gruntjs.com/) (task automation)
+* [Bower](http://bower.io/) (package management)
+
 #### Installation
 Run the commands below in the project root directory.
-#####1. Update npm
-Before setting up Grunt ensure that your npm is up-to-date by running
+#####1. Install Grunt and Bower
 
-    npm update -g npm
+    $ sudo npm install -g grunt-cli bower
+    
+#####2. Install project dependencies
 
-(this might require `sudo` on certain systems).
-#####2. Install Grunt, Bower and npm-cache
-
-    npm install -g grunt-cli bower npm-cache
-
-(this might require `sudo` on certain systems).
-
-#####3. Install project dependencies
-Install both npm and bower dependencies
-
-    npm-cache install
-
-While the above is the easiest and also used by the Maven build process, we have a few more options.
-
-Install npm dependencies
-
-    npm-cache install npm
-
-Install bower dependencies
-
-    npm-cache install bower
-
-Clean the cached dependencies
-
-    npm-cache clean
-
-Although it is pretty save to cache dependencies (as we try to use specific versions instead of ranges), you might want
-to ensure yourself that cache is not the issue.
-
-Install fresh npm dependencies (requires network)
-
-    npm install
-
-Install fresh dependencies (requires network)
-
-    bower install
+    $ npm install
+    $ bower install
 
 ## Useful commands
 
@@ -101,4 +72,5 @@ Run the CMS with Wicket development mode args:
 The tests need to pass in order to build the theme.
 
     $ grunt test
+
 
