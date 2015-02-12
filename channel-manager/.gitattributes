@@ -86,9 +86,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEdi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerGlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerHeaderItem.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditorBundle.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/PluginsBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.java -text
