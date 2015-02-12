@@ -765,24 +765,7 @@
             this.overlay.append(this.menu);
          },
 
-        selectVariant: function(variant, callback) {
-            var data = {};
-            if (this.el.attr(HST.ATTR.URL)) {
-                this.el.attr(HST.ATTR.VARIANT, variant);
-                data[HST.ATTR.VARIANT] = variant;
-                $.ajax({
-                    url: this.el.attr(HST.ATTR.URL),
-                    context: this,
-                    data: data,
-                    dataType: 'html',
-                    success: function(response) {
-                        this.refreshComponent(response, callback);
-                    }
-                });
-            }
-        },
-
-        renderComponentProperties: function(id, propertiesMap, callback) {
+        renderComponent: function(id, propertiesMap, callback) {
             if (this.el.attr(HST.ATTR.URL)) {
                 $.ajax({
                     url: this.el.attr(HST.ATTR.URL),
@@ -858,16 +841,14 @@
         },
 
         onClick : function() {
-            var id, forcedVariant, containerDisabled;
+            var id, containerDisabled;
             if (this.isTemporary) {
                 iframeToHost.publish('refresh');
             } else {
                 id = this.element.getAttribute('id');
-                forcedVariant = this.el.attr(HST.ATTR.VARIANT);
                 containerDisabled = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED));
                 iframeToHost.publish('onclick', {
                     elementId: id,
-                    forcedVariant: forcedVariant,
                     containerDisabled: containerDisabled
                 });
             }

@@ -57,9 +57,9 @@
             return this.variantsFuture;
         },
 
-        invalidate: function() {
+        invalidate: function(triggeredByVariantId) {
             this.variantsFuture = null;
-            this.fireEvent('invalidated');
+            this.fireEvent('invalidated', triggeredByVariantId);
         },
 
         cleanup: function() {

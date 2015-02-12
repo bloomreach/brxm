@@ -97,12 +97,8 @@
             return this.pageContainer;
         },
 
-        selectVariant: function(id, variant) {
-            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('selectVariant', id, variant);
-        },
-
-        renderComponentProperties: function(id, propertiesMap) {
-            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('renderComponentProperties', id, propertiesMap);
+        renderComponent: function(id, propertiesMap) {
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('renderComponent', id, propertiesMap);
         },
 
         _initToolkitStore: function(mountId) {

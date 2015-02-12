@@ -34,14 +34,12 @@
         variants: null,
         variantsUuid: null,
         locale: null,
-        fireVariantChangeEvents: false,
+        firePropertiesChangedEvents: false,
         variantAdderXType: null,
         propertiesEditorXType: null,
 
         // set in functions
         componentId: null,
-        forcedVariantId: null,
-        initialForcedVariantId: null,
         pageRequestVariants: [],
         componentVariants: null,
         lastModifiedTimestamp: null,
@@ -78,33 +76,26 @@
             }, this);
 
             this.on('tabchange', function(panel, tab) {
-                if (this.fireVariantChangeEvents && tab) {
-                    this.fireEvent('variantChange', tab.componentId, tab.variant ? tab.variant.id : undefined);
+                if (this.firePropertiesChangedEvents && tab && tab.propertiesForm) {
+                    tab.propertiesForm.firePropertiesChanged();
                 }
             }, this);
-
         },
 
         /**
-         * Load and show all variant tabs for the given component. The initially selected tab is determined by the
-         * 'forced variant' (the variant the component has been forced to render, e.g. because that variant
-         * has been selected in this properties window before) and the available page request variants (e.g. the
-         * possible variants for which this page can be rendered).
+         * Load and show all variant tabs for the given component. The initially selected tab is determined by
+         * the available page request variants (e.g. the possible variants for which this page can be rendered).
          *
          * @param componentId the UUID of the component
-         * @param forcedVariantId the variant that has been forced upon this component, or undefined if no specific
-         *        variant has been forced.
          * @param pageRequestVariants the possible page request variants
          * @param lastModifiedTimestamp the time this component has last been modified
          */
-        load: function(componentId, forcedVariantId, pageRequestVariants, lastModifiedTimestamp) {
+        load: function(componentId, pageRequestVariants, lastModifiedTimestamp) {
             if (this.componentVariants !== null) {
                 this.componentVariants.un('invalidated', this.updateUI, this);
             }
 
             this.componentId = componentId;
-            this.forcedVariantId = forcedVariantId;
-            this.initialForcedVariantId = forcedVariantId;
             this.pageRequestVariants = pageRequestVariants;
             this.lastModifiedTimestamp = lastModifiedTimestamp;
 
@@ -117,129 +108,96 @@
                 locale: this.locale
             });
 
-            this.componentVariants.on('invalidated', this.updateUI, this);
-
-            this.updateUI();
-        },
-
-        reload: function(variantId) {
-            this.forcedVariantId = variantId;
-            this.componentVariants.invalidate();
-            return this.componentVariants.get();
-        },
-
-        updateUI: function() {
-            this.fireVariantChangeEvents = false;
-            this.beginUpdate();
-            this.removeAll();
-
             if (this.componentVariants.isMultivariate()) {
                 this._showTabs();
             } else {
                 this._hideTabs();
             }
 
+            this.componentVariants.on('invalidated', this.updateUI, this);
+
+            this.updateUI();
+        },
+
+        updateUI: function(triggeredByVariantId) {
+            var existingTabs = triggeredByVariantId ? this._getTabs() : [],
+                reusableTabs = existingTabs.filter(function(tab) {
+                    // reuse all variant tabs except the changed one that triggerd the UI update
+                    return tab.variant && tab.variant.id !== triggeredByVariantId;
+                });
+
+            this.firePropertiesChangedEvents = false;
+            this.beginUpdate();
+            this.removeAll();
             this.componentVariants.get().when(function(variants) {
                 var endUpdate;
 
-                this._initTabs(variants);
+                this._initTabs(variants, reusableTabs);
                 this.adjustBodyWidth(this.tabWidth);
 
-                this.fireVariantChangeEvents = true;
-                this._selectBestMatchingTab(this.forcedVariantId, variants);
+                this.firePropertiesChangedEvents = true;
+                this._selectBestMatchingTab(triggeredByVariantId, variants);
 
                 endUpdate = this.endUpdate.createDelegate(this);
-                this._loadAllTabs().when(endUpdate).otherwise(endUpdate);
+                this._loadTabs().when(endUpdate).otherwise(endUpdate);
             }.createDelegate(this)).otherwise(function(response) {
                 Hippo.Msg.alert('Failed to get variants.', 'Only the default variant will be available: ' + response.status + ':' + response.statusText);
                 this.endUpdate();
             }.createDelegate(this));
         },
 
-        _loadAllTabs: function() {
+        _getTabs: function() {
+            var tabs = [];
+            this.items.each(function(tab) {
+                tabs.push(tab);
+            });
+            return tabs;
+        },
+
+        _loadTabs: function() {
             var futures = [];
 
-            this.items.each(function(item) {
-                futures.push(item.load());
+            this.items.each(function(tab) {
+                futures.push(tab.load());
             }, this);
 
             return Hippo.Future.join(futures);
         },
 
-        selectInitialVariant: function() {
+        fireInitialPropertiesChangedIfNeeded: function() {
             var isActiveTabDirty = this.getActiveTab().propertiesForm.isDirty();
 
-            if (this.fireVariantChangeEvents) {
+            if (this.firePropertiesChangedEvents) {
                 this.componentVariants.get().when(function(variants) {
-                    var initialVariantId = this._getBestMatchingVariantId(this.initialForcedVariantId, variants);
+                    var initialVariantId = this._getBestMatchingVariantId('', variants);
                     if (isActiveTabDirty || initialVariantId !== this._getCurrentVariantId()) {
-                        this.fireEvent('variantChange', this.componentId, initialVariantId);
+                        this._getTab(initialVariantId).propertiesForm.fireInitialPropertiesChanged();
                     }
                 }.createDelegate(this));
             } else if (isActiveTabDirty) {
-                this.fireEvent('variantChange', this.componentId, undefined);
+                this.getActiveTab().propertiesForm.fireInitialPropertiesChanged();
             }
         },
 
-        _initTabs: function(variants) {
-            var propertiesEditorCount, i, tabComponent, propertiesForm;
+        _initTabs: function(variants, reusableTabs) {
+            var propertiesEditorCount = variants.length - 1,
+                reusablePropertiesForms = {};
 
-            propertiesEditorCount = variants.length - 1;
+            reusableTabs.forEach(function(tab) {
+                reusablePropertiesForms[tab.variant.id] = tab.propertiesForm;
+            });
 
             Ext.each(variants, function(variant) {
+                var tab, propertiesForm;
+
                 if ('plus' === variant.id) {
-                    tabComponent = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
+                    tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
                 } else {
-                    propertiesForm = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
-                        variant: variant,
-                        mountId: this.mountId,
-                        composerRestMountUrl: this.composerRestMountUrl,
-                        locale: this.locale,
-                        componentId: this.componentId,
-                        lastModifiedTimestamp: this.lastModifiedTimestamp,
-                        bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
-                        margins: {
-                            top: 0,
-                            right: 10,
-                            bottom: 0,
-                            left: 0
-                        },
-                        listeners: {
-                            propertiesChanged: this._onPropertiesChanged,
-                            propertiesSaved: this._onPropertiesSaved,
-                            propertiesDeleted: this._onPropertiesDeleted,
-                            scope: this
-                        }
-                    });
-                    tabComponent = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
+                    propertiesForm = this._createOrReusePropertiesForm(variant, reusablePropertiesForms);
+                    tab = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
                 }
-                this.add(tabComponent);
+                this.add(tab);
             }, this);
-        },
-
-        _onPropertiesChanged: function(propertiesMap) {
-            this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
-        },
-
-        _onPropertiesSaved: function(savedVariantId) {
-            Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, savedVariantId);
-            this._reloadCleanupAndFireEvent(savedVariantId, 'save');
-        },
-
-        _onPropertiesDeleted: function() {
-            this._reloadCleanupAndFireEvent(this.initialForcedVariantId, 'delete');
-        },
-
-        _reloadCleanupAndFireEvent: function(variantId, event) {
-            this.reload(variantId).when(function() {
-                this.componentVariants.cleanup().when(function() {
-                    this.fireEvent(event);
-                }.createDelegate(this));
-            }.createDelegate(this)).otherwise(function(response) {
-                Hippo.Msg.alert('Error', 'Failed to reload component configuration: '
-                    + response.status + ', ' + response.statusText
-                    + '. Please close the component properties window and try again.');
-            });
         },
 
         _createVariantAdder: function(variant, skipVariantIds) {
@@ -251,12 +209,63 @@
                 title: variant.name,
                 variantsUuid: this.variantsUuid,
                 listeners: {
-                    'save': function(tab, variant) {
+                    'save': function(variant) {
                         this._onPropertiesSaved(variant);
                     },
                     'copy': this._copyVariant,
                     scope: this
                 }
+            });
+        },
+
+        _createOrReusePropertiesForm: function(variant, formsToReuse) {
+            if (formsToReuse.hasOwnProperty(variant.id)) {
+                return formsToReuse[variant.id].createCopy(variant);
+            } else {
+                return new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
+                    variant: variant,
+                    mountId: this.mountId,
+                    composerRestMountUrl: this.composerRestMountUrl,
+                    locale: this.locale,
+                    componentId: this.componentId,
+                    lastModifiedTimestamp: this.lastModifiedTimestamp,
+                    bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
+                    margins: {
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                        left: 0
+                    },
+                    listeners: {
+                        propertiesChanged: this._onPropertiesChanged,
+                        propertiesSaved: this._onPropertiesSaved,
+                        propertiesDeleted: this._onPropertiesDeleted,
+                        scope: this
+                    }
+                });
+            }
+        },
+
+        _onPropertiesChanged: function(propertiesMap) {
+            this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
+        },
+
+        _onPropertiesSaved: function(savedVariantId) {
+            this._reloadCleanupAndFireEvent(savedVariantId, 'save');
+        },
+
+        _onPropertiesDeleted: function(deletedVariantId) {
+            this._reloadCleanupAndFireEvent(deletedVariantId, 'delete');
+        },
+
+        _reloadCleanupAndFireEvent: function(changedVariantId, event) {
+            this.componentVariants.invalidate(changedVariantId);
+            this.componentVariants.cleanup().when(function() {
+                this.fireEvent(event);
+            }.createDelegate(this)).otherwise(function(response) {
+                Hippo.Msg.alert('Error', 'Failed to reload component configuration: '
+                + response.status + ', ' + response.statusText
+                + '. Please close the component properties window and try again.');
             });
         },
 
@@ -306,22 +315,22 @@
             return this.getActiveTab().variant ? this.getActiveTab().variant.id : null;
         },
 
-        _getBestMatchingVariantId: function(forcedVariantId, variants) {
-            var tabIndex = this._getBestMatchingTabIndex(forcedVariantId, variants),
+        _getBestMatchingVariantId: function(variantId, variants) {
+            var tabIndex = this._getBestMatchingTabIndex(variantId, variants),
                 variant = this.getItem(tabIndex).variant;
             return variant ? variant.id : undefined;
         },
 
-        _selectBestMatchingTab: function(forcedVariantId, variants) {
-            var tabIndex = this._getBestMatchingTabIndex(forcedVariantId, variants);
+        _selectBestMatchingTab: function(variantId, variants) {
+            var tabIndex = this._getBestMatchingTabIndex(variantId, variants);
             this.setActiveTab(tabIndex);
         },
 
-        _getBestMatchingTabIndex: function(forcedVariantId, variants) {
+        _getBestMatchingTabIndex: function(variantId, variants) {
             var tabIndex, i, len;
 
-            // first check if any tab matches the forced variant
-            tabIndex = this._getTabIndexByVariant(forcedVariantId, variants);
+            // first check if any tab matches the given variant
+            tabIndex = this._getTabIndexByVariant(variantId, variants);
             if (tabIndex >= 0) {
                 return tabIndex;
             }
@@ -355,13 +364,14 @@
 
             existingTab = this._getTab(existingVariant);
             if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
-                newPropertiesForm = existingTab.propertiesForm.copy(newVariant);
+                newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
                 newTab = this._createPropertiesEditor(newVariant, this.items.length, newPropertiesForm);
                 newTabIndex = this.items.length - 1;
                 this.insert(newTabIndex, newTab);
                 this.setActiveTab(newTabIndex);
                 this.syncSize();
                 newTab.syncVisibleHeight();
+                newPropertiesForm.firePropertiesChanged();
             } else {
                 console.log("Cannot find tab for variant '" + existingVariant + "', copy to '" + newVariant + "' failed");
             }

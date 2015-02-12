@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -541,9 +541,8 @@
         },
 
         _onClick: function(data) {
-            var id, forcedVariant, containerDisabled, record;
+            var id, containerDisabled, record;
             id = data.elementId;
-            forcedVariant = data.forcedVariant;
             containerDisabled = data.containerDisabled;
             record = this.pageContext.stores.pageModel.getById(id);
 
@@ -555,7 +554,7 @@
             if (this.selectedRecord !== record) {
                 Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
-                this.fireEvent('selectItem', record, forcedVariant, containerDisabled);
+                this.fireEvent('selectItem', record, containerDisabled);
             }
         },
 

@@ -116,13 +116,8 @@
                 return false;
             }, this);
 
-            hostToIFrame.subscribe('selectVariant', function(id, variant) {
-                this.selectVariant(id, variant);
-                return false;
-            }, this);
-
-            hostToIFrame.subscribe('renderComponentProperties', function(id, propertiesMap) {
-                this.renderComponentProperties(id, propertiesMap);
+            hostToIFrame.subscribe('renderComponent', function(id, propertiesMap) {
+                this.renderComponent(id, propertiesMap);
                 return false;
             }, this);
 
@@ -274,19 +269,10 @@
             });
         },
 
-        selectVariant : function(id, variant) {
+        renderComponent: function(id, propertiesMap) {
             var o = this.retrieve(id),
                 self = this;
-            o.selectVariant(variant, function() {
-                self.requestSync();
-                self.sync();
-            });
-        },
-
-        renderComponentProperties: function(id, propertiesMap) {
-            var o = this.retrieve(id),
-                self = this;
-            o.renderComponentProperties(id, propertiesMap, function() {
+            o.renderComponent(id, propertiesMap, function() {
                 self.requestSync();
                 self.sync();
             });

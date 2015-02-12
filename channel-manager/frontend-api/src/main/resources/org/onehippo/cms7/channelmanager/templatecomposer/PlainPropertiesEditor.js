@@ -29,15 +29,17 @@
 
         initComponent: function() {
             Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.initComponent.apply(this, arguments);
-
-            this.propertiesForm.on('propertiesLoaded', function() {
-                this.syncVisibleHeight();
-            }, this);
+            this.propertiesForm.on('propertiesLoaded', this.syncVisibleHeight, this);
         },
 
         syncVisibleHeight: function() {
             var visibleHeight = this.propertiesForm.getVisibleHeight();
             this.fireEvent('visibleHeightChanged', this, visibleHeight);
+        },
+
+        destroy: function() {
+            Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.destroy.apply(this, arguments);
+            this.propertiesForm.un('propertiesLoaded', this.syncVisibleHeight, this);
         }
 
     });
