@@ -26,6 +26,9 @@
   <sv:property sv:name="hipposys:password" sv:type="String">
     <sv:value>previewuserpass</sv:value>
   </sv:property>
+  <sv:property sv:name="hipposys:passkey" sv:type="String">
+    <sv:value>jvm://</sv:value>
+  </sv:property>
   <sv:property sv:name="hipposys:securityprovider" sv:type="String">
     <sv:value>internal</sv:value>
   </sv:property>
