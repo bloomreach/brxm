@@ -8,6 +8,8 @@ angularjs-api/bower.json -text
 angularjs-api/declutter.config.json -text
 angularjs-api/package.json -text
 angularjs-api/src/images/loader.gif -text
+angularjs-api/src/shared/directives/showFocus.js -text
+angularjs-api/src/shared/directives/showFocus.spec.js -text
 frontend-api/src/main/appended-resources/META-INF/LICENSE -text
 frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrlService.java -text
 frontend/.bowerrc -text
@@ -26,7 +28,6 @@ frontend/js/menu/states/menu-item/CloseConfirmationCtrl.js -text
 frontend/js/menu/states/menu-item/MenuCtrl.js -text
 frontend/js/menu/states/menu-item/MenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/TreeCtrl.js -text
-frontend/js/menu/states/menu-item/add/AddMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemFormCtrl.js -text
 frontend/js/menu/states/menu-item/menu-item.html -text
@@ -194,7 +195,6 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/social/twit
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_de.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_fr.properties -text
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_it.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-discard-blue.svg -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/button-discard.svg -text

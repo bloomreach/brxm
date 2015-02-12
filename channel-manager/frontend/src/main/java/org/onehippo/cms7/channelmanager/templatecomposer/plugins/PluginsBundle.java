@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,20 @@ public final class PluginsBundle {
         // prevent instantiation
     }
 
-    public static final String COLOR_FIELD = "colorfield/colorfield.js";
+    /**
+     * List of files that make up the plugins bundle, in the order they should be loaded.
+     * N.B. this list is duplicated in the pom.xml file of this module to describe the concatenated
+     * sources. When updating this list, make sure to also update the list in the pom.xml file.
+     */
+    public static final String[] FILES = {
+            "floatingwindow/FloatingWindow.js",
+            "colorfield/colorfield.js",
+            "vtabs/VerticalTabPanel.js"
+    };
 
-    public static final String FLOATING_WINDOW = "floatingwindow/FloatingWindow.js";
-
-    public static final String VTABS = "vtabs/VerticalTabPanel.js";
-
+    /**
+     * File that contains all sources concatenated.
+     */
     public static final String ALL = "plugins-all.js";
 
 }

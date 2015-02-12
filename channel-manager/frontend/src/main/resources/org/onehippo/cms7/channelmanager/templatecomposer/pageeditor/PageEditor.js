@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -909,11 +909,11 @@
                 globalVariantsStoreFuture: this.globalVariantsStoreFuture,
                 mountId: mountId,
                 listeners: {
-                    'cancel': function() {
-                        window.hide();
-                    },
                     'save': function() {
                         this.fireEvent('channelChanged');
+                    },
+                    'close': function() {
+                        window.hide();
                     },
                     'delete': function() {
                         this.fireEvent('channelChanged');
@@ -922,6 +922,9 @@
                         if (id !== null) {
                             this.selectVariant(id, variantId);
                         }
+                    },
+                    'propertiesChanged': function(componentId, propertiesMap) {
+                        this.renderComponentProperties(componentId, propertiesMap);
                     },
                     scope: this
                 }
@@ -1039,6 +1042,10 @@
 
         selectVariant: function(id, variant) {
             this.pageContainer.pageContext.selectVariant(id, variant);
+        },
+
+        renderComponentProperties: function(id, propertiesMap) {
+            this.pageContainer.pageContext.renderComponentProperties(id, propertiesMap);
         },
 
         editMenu: function(uuid) {
