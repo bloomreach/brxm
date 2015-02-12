@@ -63,7 +63,7 @@ public class AuthorFieldHandler implements WorkflowEventHandler {
         if (HippoEventConstants.CATEGORY_WORKFLOW.equals(event.category())) {
             HippoWorkflowEvent<?> wfEvent = new HippoWorkflowEvent(event);
 
-            if (METHOD_NAME_SAVE.equals(wfEvent.methodName())) {
+            if (METHOD_NAME_SAVE.equals(wfEvent.action())) {
                 dispatchSaveEvent(wfEvent, session);
             }
         }
@@ -74,7 +74,7 @@ public class AuthorFieldHandler implements WorkflowEventHandler {
      * Derive the unpublished variant of the document the save event pertains to, and check who wants it.
      *
      * @param event   the event.
-     * @param session
+     * @param session the JCR session
      */
     @SuppressWarnings("HippoHstCallNodeRefreshInspection")
     private void dispatchSaveEvent(HippoWorkflowEvent<?> event, final Session session) {
