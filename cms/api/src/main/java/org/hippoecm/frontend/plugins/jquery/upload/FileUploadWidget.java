@@ -34,7 +34,6 @@ import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -87,6 +86,7 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
             ServletWebRequest servletWebRequest = (ServletWebRequest) RequestCycle.get().getRequest();
             try {
                 MultipartServletWebRequest multipartServletWebRequest = createMultipartWebRequest(servletWebRequest);
+                multipartServletWebRequest.parseFileParts();
 
                 Map<String, FileUploadInfo> allUploadedFiles = new HashMap<>();
                 // try to upload all files
