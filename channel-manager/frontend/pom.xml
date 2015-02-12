@@ -316,11 +316,20 @@
         <version>${maven.plugin.exec.version}</version>
         <executions>
           <execution>
-            <id>npm-bower-install</id>
+            <id>npm-install</id>
             <phase>generate-sources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>npm-cache</executable>
+              <executable>npm</executable>
+              <commandlineArgs>install</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bower-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>bower</executable>
               <commandlineArgs>install</commandlineArgs>
             </configuration>
           </execution>
