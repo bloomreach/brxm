@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@
 
     <!-- START edit form -->
     <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channel.menu.EditMenuItemFormCtrl">
-        <h1><strong>{{ selectedMenuItem.title }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
+        <h1><strong>{{ selectedMenuItem.title | placeholder:'UNTITLED' }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
         <p class="alert alert-danger alert-dismissable" data-ng-show="feedback.message">
             <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
@@ -65,7 +65,7 @@
                    data-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
-                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';"
+                   data-ng-blur="saveTitle(form)"
                    data-tooltip="{{ fieldFeedbackMessage.title }}"
                    data-tooltip-trigger="show"
                    data-tooltip-show="form.title.$invalid"
@@ -119,7 +119,7 @@
             <div class="input-group">
                 <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
                        data-ng-model="selectedMenuItem.sitemapLink"
-                       data-show-focus="selectedMenuItem.linkType == 'SITEMAPITEM'"
+                       data-show-focus="linkToFocus == 'sitemapLink'"
                        data-ng-blur="updateLinkDestination(form)">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.sitemapItem.$dirty"
@@ -154,7 +154,7 @@
                        data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                        data-ng-model="selectedMenuItem.externalLink"
                        data-ng-required="true"
-                       data-show-focus="selectedMenuItem.linkType == 'EXTERNAL'"
+                       data-show-focus="linkToFocus == 'externalLink'"
                        data-ng-blur="updateLinkDestination(form)"
                        data-tooltip="{{ fieldFeedbackMessage.link }}"
                        data-tooltip-trigger="show"
@@ -173,10 +173,8 @@
             </div>
         </div>
 
-        <hr>
+        <hr />
 
         <button type="button" class="btn btn-default" data-ng-click="remove.show()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
     </form>
-    <!-- END edit form -->
-
 </div>
