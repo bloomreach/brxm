@@ -166,7 +166,7 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
                         log.info("Could not find browse service - document " + jcrPath + " will not be selected");
                     }
 
-                    if (editorMgr != null) {
+                    if (editorMgr != null && validateNavigationTarget(nodeModel)) {
                         IEditor editor = editorMgr.getEditor(nodeModel);
                         try {
                             if (editor == null) {
