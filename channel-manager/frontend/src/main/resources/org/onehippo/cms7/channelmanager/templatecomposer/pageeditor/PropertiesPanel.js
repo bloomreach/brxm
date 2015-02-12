@@ -194,7 +194,7 @@
                     tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
                 } else {
                     propertiesForm = this._createOrReusePropertiesForm(variant, reusablePropertiesForms);
-                    tab = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
+                    tab = this._createPropertiesEditor(variant, variants, propertiesForm);
                 }
                 this.add(tab);
             }, this);
@@ -269,13 +269,13 @@
             });
         },
 
-        _createPropertiesEditor: function(variant, variantCount, propertiesForm) {
+        _createPropertiesEditor: function(variant, variants, propertiesForm) {
             var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
                 cls: 'component-properties-editor',
                 autoScroll: true,
                 componentId: this.componentId,
                 variant: variant,
-                variantCount: variantCount,
+                allVariants: variants,
                 title: variant.name,
                 propertiesForm: propertiesForm
             });
@@ -365,7 +365,9 @@
             existingTab = this._getTab(existingVariant);
             if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
                 newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
-                newTab = this._createPropertiesEditor(newVariant, this.items.length, newPropertiesForm);
+                newTab = this._createPropertiesEditor(newVariant,
+                    Ext.pluck(this.items.getRange(), "variant"),
+                    newPropertiesForm);
                 newTabIndex = this.items.length - 1;
                 this.insert(newTabIndex, newTab);
                 this.setActiveTab(newTabIndex);

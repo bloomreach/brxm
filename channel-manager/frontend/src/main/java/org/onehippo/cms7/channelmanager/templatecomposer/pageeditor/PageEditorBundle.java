@@ -15,16 +15,11 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.pageeditor;
 
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
-
 public final class PageEditorBundle {
 
     private PageEditorBundle() {
         // prevent instantiation
     }
-
-    public static final String MESSAGE_BUS = "MessageBus.js";
-    public static final String IFRAME_PANEL = "IFramePanel.js";
 
     /**
      * List of files that make up the page editor bundle, in the order they should be loaded.
@@ -36,9 +31,6 @@ public final class PageEditorBundle {
             "ToolkitGridPanel.js",
             "IconToolbarWindow.js",
             "ManageChangesWindow.js",
-            MESSAGE_BUS,
-            IFRAME_PANEL,
-            "IFrameWindow.js",
             "PageSettingsWindow.js",
             "PagesWindow.js",
             "EditMenuWindow.js",
