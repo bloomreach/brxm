@@ -43,7 +43,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  */
 public class HstRequestUtils {
 
-    private static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
+    public static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
 
     public static final String HTTP_METHOD_POST = "POST";
 
