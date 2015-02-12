@@ -56,11 +56,12 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     
     private String pathSuffix;
     private String pathSuffixDelimiter;
+    private String stringRepresentation;
 
     /**
      * Creates a wrapper {@link HttpServletRequest} with a {@link HttpServletRequest#getServletPath()} that is an empty {@link String} (""). The 
      * {@link HttpServletRequest#getPathInfo()} will be the part of the {@link HttpServletRequest#getRequestURI()} after the {@link HttpServletRequest#getContextPath()}
-     * and before the {@link #getPathSuffix()} and before the {@link #MATRIX_PARAMETERS_DELIMITER}
+     * and before the {@link #getPathSuffix()} and before the {@link HstRequestUtils#MATRIX_PARAMS_PATTERN}
      * @param request
      * @param pathSuffixDelimiter
      */
@@ -160,15 +161,26 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     }
     @Override
     public String toString() {
+        if (stringRepresentation != null) {
+            return stringRepresentation;
+        }
         final String scheme = getFarthestRequestScheme(this);
         final String host = getFarthestRequestHost(this);
-        return "Request{ " +
+        stringRepresentation = "Request{ " +
                 "method='" + getMethod() + '\'' +
                 ", scheme='" + scheme + '\'' +
                 ", host='" + host + '\'' +
-                ", requestURI='" + getRequestURI() + '\'' +
+                ", requestURI='" + getOriginalRequestUri() + '\'' +
                 ", queryString='" + getQueryString() + '\'' +
                 '}';
+        return stringRepresentation;
+    }
+
+    private String getOriginalRequestUri() {
+        if (pathSuffix != null) {
+            return getRequestURI() + pathSuffixDelimiter + pathSuffix;
+        }
+        return getRequestURI();
     }
 
 }
