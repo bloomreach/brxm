@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.channelmanager;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstRequest;
@@ -42,7 +41,7 @@ public abstract class AbstractComponentWindowResponseAppender implements Compone
         return Boolean.TRUE.equals(composerMode);
     }
 
-    protected Comment createCommentWithAttr(HashMap<String, String> attributes, HstResponse response) {
+    protected Comment createCommentWithAttr(Map<String, String> attributes, HstResponse response) {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> attr : attributes.entrySet()) {
             if (builder.length() != 0) {

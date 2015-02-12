@@ -66,7 +66,16 @@
     <property name="sourceList">
       <list>
         <bean class="org.hippoecm.hst.core.autoreload.AutoReloadResponseAppender"/>
-        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender"/>
+        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender">
+          <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
+         </bean>
+      </list>
+    </property>
+  </bean>
+  <bean id="cmsComponentAttributeContributors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentAttributeContributor"/>
       </list>
     </property>
   </bean>

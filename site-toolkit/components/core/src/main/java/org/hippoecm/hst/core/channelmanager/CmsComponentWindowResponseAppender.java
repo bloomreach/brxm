@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.core.channelmanager;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,26 +26,31 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Comment;
+
+import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
     private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
 
     private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
+
+    private List<AttributeContributor> attributeContributors = Collections.emptyList();
+
+    public void setAttributeContributors(final List<AttributeContributor> attributeContributors) {
+        this.attributeContributors = attributeContributors;
+    }
 
     @Override
     public void process(final HstComponentWindow rootWindow, final HstComponentWindow rootRenderingWindow, final HstComponentWindow window, final HstRequest request, final HstResponse response) {
@@ -56,7 +64,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         }
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
-        HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
+        HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
         final HstRequestContext requestContext = request.getRequestContext();
         Mount mount = requestContext.getResolvedMount().getMount();
         if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
@@ -67,7 +75,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             if (resolvedSiteMapItem != null) {
                 final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                response.addHeader(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo)hstSiteMapItem).getCanonicalIdentifier());
+                response.addHeader(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
                 final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
                 if (siteMap instanceof CanonicalInfo) {
                     final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
@@ -99,54 +107,22 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                 return;
             }
 
-            HashMap<String, String> attributes = new HashMap<String, String>();
-            attributes.put("uuid", compConfig.getCanonicalIdentifier());
-            if(compConfig.getXType() != null) {
-                attributes.put("xtype", compConfig.getXType());
-            }
-            if(compConfig.isInherited()) {
-                attributes.put("inherited", "true");
-            }
-            attributes.put("type", compConfig.getComponentType().toString());
-            HstURLFactory urlFactory = requestContext.getURLFactory();
-            HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
-                    window.getReferenceNamespace(), null,
-                    requestContext);
-            attributes.put("url", url.toString());
-            attributes.put("refNS", window.getReferenceNamespace());
-            if (compConfig instanceof ConfigurationLockInfo) {
-                ConfigurationLockInfo lockInfo = (ConfigurationLockInfo)compConfig;
-                if (lockInfo.getLockedBy() != null) {
-                    String cmsUserId = (String)session.getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
-                    attributes.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
-                    if (lockInfo.getLockedBy().equals(cmsUserId)) {
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
-                    } else {
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
-                    }
-                    if (lockInfo.getLockedOn() != null) {
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
-                    }
-                }
-            }
-            if (compConfig.getLastModified() != null) {
-                attributes.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
-            }
-
-            Comment comment = createCommentWithAttr(attributes, response);
-            response.addPreamble(comment);
+            final Map<String, String> attributes = getAttributeMap(window, request);
+            response.addPreamble(createCommentWithAttr(attributes, response));
         }
 
     }
 
     private boolean isContainerOrContainerItem(final HstComponentConfiguration compConfig) {
-        if (HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())) {
-            return true;
-        }
-        if (HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(compConfig.getComponentType())) {
-            return true;
-        }
-        return false;
+        return CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())
+                || CONTAINER_COMPONENT.equals(compConfig.getComponentType());
     }
 
+    final Map<String, String> getAttributeMap(HstComponentWindow window, HstRequest request) {
+        final Map<String, String> map = new HashMap<>();
+        return attributeContributors.stream()
+                .reduce(map,
+                        (attributeMap, contributor) -> contributor.contribute(window, request, attributeMap),
+                        (m1, m2) -> m2);
+    }
 }
