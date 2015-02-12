@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 
 import com.google.common.base.Strings;
 
@@ -61,6 +60,10 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     @Override
     public String getBeansFolder() {
+        if (Strings.isNullOrEmpty(beansFolder)) {
+            beansFolder = getSiteModule() + "/src/main/java";
+        }
+
         return beansFolder;
     }
 
