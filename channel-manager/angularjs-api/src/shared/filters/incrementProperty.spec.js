@@ -19,7 +19,7 @@ describe('the incrementProperty filter', function () {
 
     var incrementPropertyFilter;
 
-    beforeEach(module('hippo.channel.menu'));
+    beforeEach(module('hippo.channel'));
     beforeEach(inject(function (_incrementPropertyFilter_) {
         incrementPropertyFilter = _incrementPropertyFilter_;
     }));

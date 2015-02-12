@@ -264,7 +264,7 @@
 
             switch (xtype) {
                 case 'documentcombobox':
-                    field = this._addDocumentComboBox(record, defaultValue, value)
+                    field = this._addDocumentComboBox(record, defaultValue, value);
                     break;
                 case 'combo':
                     field = this._addComboBox(record, defaultValue, value);
