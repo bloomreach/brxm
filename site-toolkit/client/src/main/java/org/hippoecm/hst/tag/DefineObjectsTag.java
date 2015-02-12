@@ -28,8 +28,12 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefineObjectsTag extends TagSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(DefineObjectsTag.class);
 
     private static final long serialVersionUID = 1L;
     public static final String HST_REQUEST_CONTEXT_ATTR_NAME = "hstRequestContext";
@@ -75,7 +79,13 @@ public class DefineObjectsTag extends TagSupport {
 
         if (hstResponse != null) {
             // needed to loop through child content nodes in freemarker templates
-            setAttribute(hstResponse.getChildContentNames(), HST_RESPONSE_CHILD_CONTENT_NAMES_ATTR_NAME);
+            // HstResourceResponseImpl does not support #getChildContentNames and throws UnsupportedOperationException
+            try {
+                setAttribute(hstResponse.getChildContentNames(), HST_RESPONSE_CHILD_CONTENT_NAMES_ATTR_NAME);
+            } catch (RuntimeException e) {
+                log.debug("hstResponse of class '{}'cannot return child content names. This is not a problem. Child " +
+                        "content names are skipped.", hstResponse.getClass().getName());
+            }
         }
 
         return SKIP_BODY;
