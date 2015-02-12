@@ -23,7 +23,6 @@
             'hippo.channel.ConfigService',
             '$http',
             '$q',
-            '$log',
             function (ConfigService, $http, $q) {
                 var menuData = {
                         items: null
@@ -252,11 +251,11 @@
                                                 + (options ? '?position=' + options.position
                                                 + (options.siblingId ? ('&sibling=' + options.siblingId) : '') : '')), menuItem)
                             .then(function(response) {
-                                        menuItem.id = response.data;
-                                        deferred.resolve(response.data);
-                                    }, function (errorResponse) {
-                                        deferred.reject(errorResponse);
-                                    });
+                                menuItem.id = response.data;
+                                deferred.resolve(response.data);
+                            }, function (errorResponse) {
+                                deferred.reject(errorResponse);
+                            });
                         return deferred.promise;
                     },
 
