@@ -21,13 +21,13 @@
 
         /**
          * @ngdoc filter
-         * @name hippo.channel.filter:placeholder
+         * @name hippo.channel.filter:hippChannelPlaceholder
          * @requires $filter
          *
          * @description
          * Returns the translated value of the placeholder when the input is empty
          */
-        .filter('placeholder', ['$filter', function ($filter) {
+        .filter('hippoChannelPlaceholder', ['$filter', function ($filter) {
             return function (value, placeholder) {
                 var translate = $filter('translate');
                 return (value) ? value : translate(placeholder);

@@ -53,6 +53,14 @@
                 return iframePanel;
             }
 
+            function publish(event) {
+                return getParentIFramePanel().iframeToHost.publish(event);
+            }
+
+            function subscribe(event, callback, scope) {
+                return getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
+            }
+
             function getConfig() {
                 var iframePanel = getParentIFramePanel(),
                     config = iframePanel.initialConfig.iframeConfig;
@@ -82,8 +90,9 @@
             return {
                 isActive: ($window.self !== $window.top),
                 getConfig: getConfig,
-                getContainer: getParentIFramePanel,
-                enableLiveReload: enableLiveReload
+                enableLiveReload: enableLiveReload,
+                publish: publish,
+                subscribe: subscribe
             };
         }]);
 }());

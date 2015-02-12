@@ -33,17 +33,20 @@
             'hippo.channel.FormStateService',
             function($log, $rootScope, IFrameService, FormStateService) {
 
+                function performClose() {
+                    IFrameService.publish('close-reply');
+                }
+
                 function handleClose() {
                     if (IFrameService.isActive) {
-                        var iframePanel = IFrameService.getContainer();
 
-                        iframePanel.hostToIFrame.subscribe('close-request', function() {
+                        IFrameService.subscribe('close-request', function() {
 
                             $rootScope.$broadcast('container:before-close');
 
                             var closeEvent = $rootScope.$broadcast('container:close');
                             if (!closeEvent.defaultPrevented) {
-                                iframePanel.iframeToHost.publish('close-reply');
+                                performClose();
                             }
                         });
 
@@ -56,14 +59,8 @@
                     }
                 }
 
-                function performClose() {
-                    var iFramePanel = IFrameService.getContainer();
-                    iFramePanel.iframeToHost.publish('close-reply');
-                }
-
                 function showPage(path) {
-                    var iframePanel = IFrameService.getContainer();
-                    iframePanel.iframeToHost.publish('browseTo', prefixWithSlash(path));
+                    IFrameService.publish('browseTo', prefixWithSlash(path));
                 }
 
                 return {

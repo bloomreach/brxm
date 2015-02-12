@@ -4,6 +4,8 @@
 /.idea
 /.project
 /.settings
+angularjs-api/*.iml
+angularjs-api/node_modules
 frontend-api/*.iml
 frontend-api/.project
 frontend-api/target

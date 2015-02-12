@@ -17,22 +17,19 @@
 (function () {
     'use strict';
 
-    // the directive is not namespaced, because the special notation causes an error with the isolated scope definition.
-    // Error: [$compile:iscp] Invalid isolate scope definition for directive 'hippo.channel.menu.illegalCharacters'.
-
     angular.module('hippo.channel')
 
         /**
          * @ngdoc directive
-         * @name hippo.channel.menu.directive:illegalCharacters
+         * @name hippo.channel.directive:hippoChannelIllegalCharacters
          * @restrict A
          *
          * @description
          * Custom validator for elements that use ng-model.
          *
-         * @param {string} hippo.channel.menu.illegalCharacters A string containing the space-separated invalid characters
+         * @param {string} illegalCharacters A string containing the space-separated invalid characters
          */
-        .directive('illegalCharacters', [function () {
+        .directive('hippoChannelIllegalCharacters', [function () {
             return {
                 restrict: 'A',
                 require: 'ngModel',
@@ -41,7 +38,7 @@
                         var isValid = true;
                         value = value || '';
 
-                        angular.forEach(attrs.illegalCharacters, function (character) {
+                        angular.forEach(attrs.hippoChannelIllegalCharacters, function (character) {
                             if (value.indexOf(character) >= 0) {
                                 isValid = false;
                             }
