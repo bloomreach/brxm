@@ -16,20 +16,17 @@
 
 package org.hippoecm.hst.core.channelmanager;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class CmsComponentWindowResponseAppenderTest {
@@ -49,29 +46,47 @@ public class CmsComponentWindowResponseAppenderTest {
     @Test
     public void testGetAttributeMap_with_one_contributor() {
 
-        final AttributeContributor contributor = createNiceMock(AttributeContributor.class);
-        final Map<String, String> map = new HashMap<>();
-        expect(contributor.contribute(eq(null), eq(null), isA(Map.class))).andReturn(map).once();
-        replay(contributor);
+        final ComponentWindowAttributeContributor contributor = new ComponentWindowAttributeContributor() {
+            @Override
+            public void contribute(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+                populatingAttributesMap.put("foo","bar");
+            }
+        };
 
-        appender.setAttributeContributors(Arrays.asList(contributor));
-        assertThat(appender.getAttributeMap(null, null), is(map));
+        final List<ComponentWindowAttributeContributor> contributorList = new ArrayList<>();
+        contributorList.add(contributor);
+        appender.setAttributeContributors(contributorList);
+
+        final Map<String, String> attributeMap = appender.getAttributeMap(null, null);
+        assertEquals("bar", attributeMap.get("foo"));
     }
 
     @Test
-    public void testGetAttributeMap_with_three_contributors() {
+    public void testGetAttributeMap_with_two_contributors() {
 
-        final AttributeContributor contributor = createNiceMock(AttributeContributor.class);
-        appender.setAttributeContributors(Arrays.asList(contributor, contributor, contributor));
+        final ComponentWindowAttributeContributor contributor1 = new ComponentWindowAttributeContributor() {
+            @Override
+            public void contribute(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+                populatingAttributesMap.put("foo1","bar1");
+            }
+        };
 
-        final Map<String, String> m1 = new HashMap<>(), m2 = new HashMap<>(), m3 = new HashMap<>();
-        expect(contributor.contribute(eq(null), eq(null), isA(Map.class))).andReturn(m1);
-        expect(contributor.contribute(null, null, m1)).andReturn(m2);
-        expect(contributor.contribute(null, null, m2)).andReturn(m3);
-        replay(contributor);
+        final ComponentWindowAttributeContributor contributor2 = new ComponentWindowAttributeContributor() {
+            @Override
+            public void contribute(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+                populatingAttributesMap.put("foo2","bar2");
+            }
+        };
 
-        m3.put("foo", "bar");
-        assertThat(appender.getAttributeMap(null, null).get("foo"), is(equalTo("bar")));
+        final List<ComponentWindowAttributeContributor> contributorList = new ArrayList<>();
+        contributorList.add(contributor1);
+        contributorList.add(contributor2);
+
+        appender.setAttributeContributors(contributorList);
+
+        final Map<String, String> attributeMap = appender.getAttributeMap(null, null);
+        assertEquals("bar1", attributeMap.get("foo1"));
+        assertEquals("bar2", attributeMap.get("foo2"));
     }
 
 }

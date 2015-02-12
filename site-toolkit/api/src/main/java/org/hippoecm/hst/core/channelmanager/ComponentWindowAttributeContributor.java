@@ -24,19 +24,16 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 /**
  * Provides functions for contributing key-value pairs to attribute maps
  */
-public interface AttributeContributor {
+public interface ComponentWindowAttributeContributor {
 
     /**
      * Uses the given window and request to compute the attributes that should be contributed to the given attribute
-     * map. The returned map is a copy of the attributeMap but with possibly more entries or modified values, It is
-     * assumed that upon execution of this method the thread-local variable {@link org.hippoecm.hst.core.request.HstRequestContext}
-     * is not <code>null</code>.
+     * map.
      *
      * @param window       a hst component window for which to contribute attributes
      * @param request      the current request
-     * @param attributeMap a map containing attributes as key-value pairs
-     * @return a new attribute map with attribute contributions.
+     * @param populatingAttributesMap a map containing attributes as key-value pairs
      */
-    Map<String, String> contribute(HstComponentWindow window, HstRequest request, Map<String, String> attributeMap);
+    void contribute(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
 
 }

@@ -16,7 +16,6 @@
 
 package org.hippoecm.hst.core.channelmanager;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -28,47 +27,44 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class CmsComponentAttributeContributor implements AttributeContributor {
+public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
     @Override
-    public Map<String, String> contribute(HstComponentWindow window, HstRequest request, Map<String, String> attributeMap) {
-
-        final Map<String, String> newAttributeMap = new HashMap<>(attributeMap);
+    public void contribute(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
 
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
         final HstRequestContext requestContext = request.getRequestContext();
 
-        newAttributeMap.put("uuid", compConfig.getCanonicalIdentifier());
+        populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
         if (compConfig.getXType() != null) {
-            newAttributeMap.put("xtype", compConfig.getXType());
+            populatingAttributesMap.put("xtype", compConfig.getXType());
         }
         if (compConfig.isInherited()) {
-            newAttributeMap.put("inherited", "true");
+            populatingAttributesMap.put("inherited", "true");
         }
-        newAttributeMap.put("type", compConfig.getComponentType().toString());
+        populatingAttributesMap.put("type", compConfig.getComponentType().toString());
         HstURLFactory urlFactory = requestContext.getURLFactory();
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
-        newAttributeMap.put("url", url.toString());
-        newAttributeMap.put("refNS", window.getReferenceNamespace());
+        populatingAttributesMap.put("url", url.toString());
+        populatingAttributesMap.put("refNS", window.getReferenceNamespace());
         if (compConfig instanceof ConfigurationLockInfo) {
             ConfigurationLockInfo lockInfo = (ConfigurationLockInfo) compConfig;
             if (lockInfo.getLockedBy() != null) {
                 String cmsUserId = (String) request.getSession(false).getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
-                newAttributeMap.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
+                populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
                 if (lockInfo.getLockedBy().equals(cmsUserId)) {
-                    newAttributeMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
                 } else {
-                    newAttributeMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
                 }
                 if (lockInfo.getLockedOn() != null) {
-                    newAttributeMap.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
                 }
             }
         }
         if (compConfig.getLastModified() != null) {
-            newAttributeMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
+            populatingAttributesMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
         }
 
-        return newAttributeMap;
     }
 }

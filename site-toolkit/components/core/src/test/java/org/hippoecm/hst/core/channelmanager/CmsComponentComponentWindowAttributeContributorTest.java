@@ -40,13 +40,13 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
 import static org.junit.Assert.assertThat;
 
-public class CmsComponentAttributeContributorTest {
+public class CmsComponentComponentWindowAttributeContributorTest {
 
     private List<Object> mocks;
     private HstComponentWindow window;
     private HstRequest request;
 
-    private CmsComponentAttributeContributor contributor;
+    private CmsComponentComponentWindowAttributeContributor contributor;
 
     @Before
     public void setUp() {
@@ -54,7 +54,7 @@ public class CmsComponentAttributeContributorTest {
         window = mock(HstComponentWindow.class);
         request = mock(HstRequest.class);
 
-        contributor = new CmsComponentAttributeContributor();
+        contributor = new CmsComponentComponentWindowAttributeContributor();
     }
 
     @Test
@@ -73,16 +73,15 @@ public class CmsComponentAttributeContributorTest {
         replay(mocks.toArray());
 
         final Map<String, String> map = new HashMap<>();
-        final Map<String, String> result = contributor.contribute(window, request, map);
+        contributor.contribute(window, request, map);
 
-        assertThat(result.containsKey("xtype"), is(false));
-        assertThat(result.containsKey("inherited"), is(false));
+        assertThat(map.containsKey("xtype"), is(false));
+        assertThat(map.containsKey("inherited"), is(false));
 
-        assertThat(result, is(not(map)));
-        assertThat(result.containsKey("uuid"), is(true));
-        assertThat(result.containsKey("type"), is(true));
-        assertThat(result.containsKey("refNS"), is(true));
-        assertThat(result.containsKey("url"), is(true));
+        assertThat(map.containsKey("uuid"), is(true));
+        assertThat(map.containsKey("type"), is(true));
+        assertThat(map.containsKey("refNS"), is(true));
+        assertThat(map.containsKey("url"), is(true));
     }
 
     private <T> T mock(final Class<T> type) {

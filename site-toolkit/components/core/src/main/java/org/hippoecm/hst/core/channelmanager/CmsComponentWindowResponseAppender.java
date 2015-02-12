@@ -46,9 +46,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
 
-    private List<AttributeContributor> attributeContributors = Collections.emptyList();
+    private List<ComponentWindowAttributeContributor> attributeContributors = Collections.emptyList();
 
-    public void setAttributeContributors(final List<AttributeContributor> attributeContributors) {
+    public void setAttributeContributors(final List<ComponentWindowAttributeContributor> attributeContributors) {
         this.attributeContributors = attributeContributors;
     }
 
@@ -120,9 +120,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     final Map<String, String> getAttributeMap(HstComponentWindow window, HstRequest request) {
         final Map<String, String> map = new HashMap<>();
-        return attributeContributors.stream()
-                .reduce(map,
-                        (attributeMap, contributor) -> contributor.contribute(window, request, attributeMap),
-                        (m1, m2) -> m2);
+        for (ComponentWindowAttributeContributor attributeContributor : attributeContributors) {
+            attributeContributor.contribute(window, request, map);
+        }
+        return map;
     }
 }
