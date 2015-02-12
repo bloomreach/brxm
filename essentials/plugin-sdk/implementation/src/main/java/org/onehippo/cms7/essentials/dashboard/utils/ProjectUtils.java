@@ -91,7 +91,7 @@ public final class ProjectUtils {
     }
 
     public static File getWebfiles(final PluginContext context) {
-        final File bootstrapFolder = getFolder(context.getProjectSettings().getBootstrapFolder());
+        final File bootstrapFolder = getFolder(context.getProjectSettings().getBootstrapModule());
         // TODO make site part configurable ??
         final String webfilesPath = bootstrapFolder.getAbsolutePath() + File.separator + "webfiles" + File.separator
                 + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "site";
@@ -103,7 +103,7 @@ public final class ProjectUtils {
      * @return site project folder
      */
     public static File getSite(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getSiteFolder());
+        return getFolder(context.getProjectSettings().getSiteModule());
     }
 
     public static String getBaseProjectDirectory() {
@@ -113,7 +113,7 @@ public final class ProjectUtils {
         throw new IllegalStateException("System property 'project.basedir' was not null or empty. Please start your application with -D=project.basedir=/project/path");
     }
 
-    public static String getEssentialsFolderName() {
+    public static String getEssentialsModuleName() {
         if (System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY).isEmpty()) {
             return System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY);
         }
@@ -134,7 +134,7 @@ public final class ProjectUtils {
      * @return CMS project folder
      */
     public static File getCms(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getCmsFolder());
+        return getFolder(context.getProjectSettings().getCmsModule());
 
     }
 
@@ -144,7 +144,7 @@ public final class ProjectUtils {
      * @return Configuration project folder
      */
     public static File getBootstrapConfigFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapFolder()+File.separator + "configuration");
+        return getFolder(context.getProjectSettings().getBootstrapModule()+File.separator + "configuration");
 
     }
 
@@ -154,7 +154,7 @@ public final class ProjectUtils {
      * @return Content project folder
      */
     public static File getBootstrapContentFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapFolder() + File.separator + "content");
+        return getFolder(context.getProjectSettings().getBootstrapModule() + File.separator + "content");
     }
 
     /**
@@ -163,13 +163,13 @@ public final class ProjectUtils {
      * @return Essentials project folder
      */
     public static File getEssentialsFolderName(final PluginContext context) {
-        return new File(getBaseProjectDirectory() +File.separator + getEssentialsFolderName());
+        return new File(getBaseProjectDirectory() +File.separator + getEssentialsModuleName());
     }
 
 
     public static File getEssentialsResourcesFolder() {
         final File root = getProjectRootFolder();
-        final String absolutePath = root.getAbsolutePath() + File.separator+ getEssentialsFolderName() + "src" + File.separator + "main" + File.separator + "resources";
+        final String absolutePath = root.getAbsolutePath() + File.separator+ getEssentialsModuleName() + "src" + File.separator + "main" + File.separator + "resources";
         return new File(absolutePath);
     }
 
@@ -183,7 +183,7 @@ public final class ProjectUtils {
      * @return Bootstrap project folder
      */
     public static File getBootstrapFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapFolder());
+        return getFolder(context.getProjectSettings().getBootstrapModule());
     }
 
     public static Model getPomModel(final PluginContext context, final TargetPom targetPom) {

@@ -32,25 +32,21 @@ public interface ProjectSettings extends Document {
 
     void setBeansFolder(String beansFolder);
 
-    void setEssentialsFolder(String essentialsFolder);
+    String getSiteModule();
 
-    String getEssentialsFolder();
+    void setSiteModule(String siteFolder);
 
-    String getSiteFolder();
+    String getCmsModule();
 
-    void setSiteFolder(String siteFolder);
+    void setCmsModule(String cmsFolder);
 
-    String getCmsFolder();
+    String getBootstrapModule();
 
-    void setCmsFolder(String cmsFolder);
+    void setBootstrapModule(String bootstrapFolder);
 
-    String getBootstrapFolder();
+    String getWebfilesSubModule();
 
-    void setBootstrapFolder(String bootstrapFolder);
-
-    String getWebfilesFolder();
-
-    void setWebfilesFolder(String webfilesFolder);
+    void setWebfilesSubModule(String webfilesFolder);
 
     Boolean getSetupDone();
 

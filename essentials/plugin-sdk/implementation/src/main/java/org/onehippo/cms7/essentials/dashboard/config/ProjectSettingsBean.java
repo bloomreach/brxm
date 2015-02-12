@@ -34,14 +34,12 @@ import com.google.common.base.Strings;
 @XmlRootElement(name = "project")
 public class ProjectSettingsBean extends BaseDocument implements ProjectSettings {
 
-
     public static final String DEFAULT_NAME = "project-settings";
 
-
-    public static final String FOLDER_SITE = "site";
-    public static final String FOLDER_CMS = "cms";
-    public static final String FOLDER_BOOTSTRAP = "bootstrap";
-    public static final String FOLDER_WEBFILES = "webfiles";
+    public static final String MODULE_SITE = "site";
+    public static final String MODULE_CMS = "cms";
+    public static final String MODULE_BOOTSTRAP = "bootstrap";
+    public static final String SUBMODULE_WEBFILES = "webfiles";
 
     private String projectNamespace;
 
@@ -54,11 +52,10 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private boolean useSamples;
     private boolean confirmParams;
 
-    private String siteFolder;
-    private String cmsFolder;
-    private String bootstrapFolder;
-    private String webfilesFolder;
-    private String essentialsFolder;
+    private String siteModule;
+    private String cmsModule;
+    private String bootstrapModule;
+    private String webfilesSubModule;
     private String beansFolder;
 
 
@@ -73,68 +70,55 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     }
 
     @Override
-    public void setEssentialsFolder(final String essentialsFolder) {
-        this.essentialsFolder = essentialsFolder;
-    }
-
-    @Override
-    public String getEssentialsFolder() {
-        if (essentialsFolder == null) {
-            essentialsFolder = ProjectUtils.getEssentialsFolderName();
+    public String getSiteModule() {
+        if (Strings.isNullOrEmpty(siteModule)) {
+            return MODULE_SITE;
         }
-        return essentialsFolder;
+        return siteModule;
     }
 
     @Override
-    public String getSiteFolder() {
-        if (Strings.isNullOrEmpty(siteFolder)) {
-            return FOLDER_SITE;
+    public void setSiteModule(final String siteModule) {
+        this.siteModule = siteModule;
+    }
+
+    @Override
+    public String getCmsModule() {
+        if (Strings.isNullOrEmpty(cmsModule)) {
+            return MODULE_CMS;
         }
-        return siteFolder;
+        return cmsModule;
     }
 
     @Override
-    public void setSiteFolder(final String siteFolder) {
-        this.siteFolder = siteFolder;
+    public void setCmsModule(final String cmsModule) {
+        this.cmsModule = cmsModule;
     }
 
     @Override
-    public String getCmsFolder() {
-        if (Strings.isNullOrEmpty(cmsFolder)) {
-            return FOLDER_CMS;
+    public String getBootstrapModule() {
+        if (Strings.isNullOrEmpty(bootstrapModule)) {
+            return MODULE_BOOTSTRAP;
         }
-        return cmsFolder;
+        return bootstrapModule;
     }
 
     @Override
-    public void setCmsFolder(final String cmsFolder) {
-        this.cmsFolder = cmsFolder;
+    public void setBootstrapModule(final String bootstrapModule) {
+        this.bootstrapModule = bootstrapModule;
     }
 
     @Override
-    public String getBootstrapFolder() {
-        if (Strings.isNullOrEmpty(bootstrapFolder)) {
-            return FOLDER_BOOTSTRAP;
+    public String getWebfilesSubModule() {
+        if (Strings.isNullOrEmpty(webfilesSubModule)) {
+            return SUBMODULE_WEBFILES;
         }
-        return bootstrapFolder;
+        return webfilesSubModule;
     }
 
     @Override
-    public void setBootstrapFolder(final String bootstrapFolder) {
-        this.bootstrapFolder = bootstrapFolder;
-    }
-
-    @Override
-    public String getWebfilesFolder() {
-        if (Strings.isNullOrEmpty(webfilesFolder)) {
-            return FOLDER_WEBFILES;
-        }
-        return webfilesFolder;
-    }
-
-    @Override
-    public void setWebfilesFolder(final String webfilesFolder) {
-        this.webfilesFolder = webfilesFolder;
+    public void setWebfilesSubModule(final String webfilesSubModule) {
+        this.webfilesSubModule = webfilesSubModule;
     }
 
     private Set<String> pluginRepositories = new HashSet<>();
