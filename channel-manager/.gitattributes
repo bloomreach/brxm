@@ -10,6 +10,8 @@ angularjs-api/package.json -text
 angularjs-api/src/images/loader.gif -text
 angularjs-api/src/shared/directives/showFocus.js -text
 angularjs-api/src/shared/directives/showFocus.spec.js -text
+angularjs-api/src/shared/filters/incrementProperty.js -text
+angularjs-api/src/shared/filters/incrementProperty.spec.js -text
 frontend-api/src/main/appended-resources/META-INF/LICENSE -text
 frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrlService.java -text
 frontend/.bowerrc -text

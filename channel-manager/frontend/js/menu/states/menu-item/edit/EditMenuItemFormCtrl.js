@@ -20,16 +20,31 @@
     angular.module('hippo.channel.menu')
 
         .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
+            '$rootScope',
             '$scope',
             '$filter',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $filter, FormStateService, ContainerService, FocusService, MenuService) {
+            function ($rootScope, $scope, $filter, FormStateService, ContainerService, FocusService, MenuService) {
                 var translate = $filter('translate');
 
                 $scope.focus = FocusService.focusElementWithId;
+
+                $scope.$watch('form', function (form) {
+                    var newItemListener = $rootScope.$on('new-menu-item', afternewItem);
+                    function afternewItem() {
+                        $scope.selectedMenuItem.title = '';
+                        if(form && form.title) {
+                            form.title.$dirty = true;
+                            form.title.$valid = false;
+                        }
+                        FormStateService.setDirty(true);
+                        FormStateService.setValid(false);
+                        newItemListener(); //remove listener after 1 call
+                    }
+                });
 
                 // The following logic will check the client-side validation of the
                 // edit menu item form. When a field is invalid, the FormStateService
