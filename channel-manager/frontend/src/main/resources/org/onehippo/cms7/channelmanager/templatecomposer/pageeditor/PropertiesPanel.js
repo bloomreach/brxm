@@ -275,7 +275,7 @@
                 autoScroll: true,
                 componentId: this.componentId,
                 variant: variant,
-                allVariants: variants,
+                allVariants: variants.slice(0, variants.length - 1),
                 title: variant.name,
                 propertiesForm: propertiesForm
             });
