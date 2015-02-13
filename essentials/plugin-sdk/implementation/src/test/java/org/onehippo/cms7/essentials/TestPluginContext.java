@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials;
 
+import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -76,7 +77,8 @@ public class TestPluginContext extends DefaultPluginContext {
     public Session createSession() {
         try {
             if(useHippoSession){
-                return hippoRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+                Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
+                return hippoRepository.login(credentials);
             }
             return repository.getSession();
         } catch (RepositoryException e) {
