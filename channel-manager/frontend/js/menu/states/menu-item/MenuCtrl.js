@@ -19,90 +19,22 @@
     angular.module('hippo.channel.menu')
 
         .controller('hippo.channel.menu.MenuCtrl', [
-            '$rootScope',
             '$scope',
-            '$filter',
             '$state',
             '$stateParams',
-            'hippo.channel.FeedbackService',
-            'hippo.channel.FormStateService',
             'hippo.channel.menu.MenuService',
-            function ($rootScope, $scope, $filter, $state, $stateParams, FeedbackService, FormStateService, MenuService) {
-                $scope.isSaving = {};
-
+            function ($scope, $state, $stateParams, MenuService) {
                 $scope.addItem = function () {
-                    if (FormStateService.isDirty()) {
-                        if (FormStateService.isValid()) {
-                            MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
-                                    addItemAfterCheckingValidity();
-                                },
-                                function (errorResponse) {
-                                    $scope.feedback = FeedbackService.getFeedback(errorResponse);
-                                });
-                        }
-                    } else {
-                        addItemAfterCheckingValidity();
-                    }
-
-                    function addItemAfterCheckingValidity () {
-                        $scope.isSaving.newItem = true;
-                        MenuService.getMenu().then(function (menuData) {
-                            var blankMenuItem = {
-                                linkType: 'SITEMAPITEM',
-                                title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
-                                link: ''
-                            };
-
-                            if ($stateParams.menuItemId) {
-                                MenuService.getPathToMenuItem($stateParams.menuItemId).then(addMenuItemToPath);
-                            } else {
-                                addMenuItemToPath([]);
-                            }
-
-                            function addMenuItemToPath(path) {
-                                var currentItem, parentItemId, position = MenuService.AFTER, siblingId;
-
-                                // create child if currently selected item already has children.
-                                // otherwise, create sibling.
-                                if (path && path.length >= 1) {
-                                    currentItem = path.pop();
-                                    if (currentItem.items && currentItem.items.length > 0) {
-                                        parentItemId = currentItem.id;
-                                        position = MenuService.FIRST;
-                                    } else if (path.length >= 1) {
-                                        siblingId = currentItem.id;
-                                        currentItem = path.pop();
-                                        parentItemId = currentItem.id;
-                                    }
-                                }
-
-                                MenuService.createMenuItem(parentItemId, blankMenuItem, {
-                                    position: position,
-                                    siblingId: siblingId
-                                }).then(
-                                    function (menuItemId) {
-                                        FormStateService.setValid(true);
-                                        $scope.$parent.selectedMenuItem.collapsed = false;
-
-                                        $state.go('menu-item.edit', {
-                                            menuItemId: menuItemId
-                                        });
-
-                                        var menuListener = $scope.$on('menu-items-changed', afterItemIsAddedToList);
-                                        function afterItemIsAddedToList() {
-                                            $scope.isSaving.newItem = false;
-                                            $rootScope.$broadcast('new-menu-item');
-                                            menuListener(); //remove listener after 1 call
-                                        }
-                                    },
-                                    function (errorResponse) {
-                                        $scope.isSaving.newItem = false;
-                                        $scope.feedback = FeedbackService.getFeedback(errorResponse);
-                                    }
-                                );
-                            }
-                        });
-                    }
+                    // only navigate to the add menu item form when there are no
+                    // validation errors for the edit menu item form
+                    MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
+                            $scope.$parent.selectedMenuItem.collapsed = false;
+                            // navigate to the add menu item state
+                            var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
+                            $state.go('menu-item.add', {menuItemId: parentItemId});
+                        },
+                        function (errorResponse) {}
+                    );
                 };
             }
         ]);

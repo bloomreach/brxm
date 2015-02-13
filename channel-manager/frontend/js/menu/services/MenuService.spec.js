@@ -38,14 +38,10 @@ describe('Menu Service', function () {
                 items: [
                     {
                         id: '1',
-                        link: 'http://onehippo.org',
-                        linkType: 'EXTERNAL',
                         title: 'One'
                     },
                     {
                         id: '2',
-                        link: 'home',
-                        linkType: 'SITEMAPITEM',
                         title: 'Two',
                         items: [
                             {
@@ -122,56 +118,10 @@ describe('Menu Service', function () {
         expectGetMenu();
     });
 
-    it('should return externalLink split from the normal link', function () {
-        menuService.getMenuItem('1').then(function(menuItem) {
-            expect(menuItem).toBeDefined();
-            expect(menuItem.externalLink).toBeDefined();
-            expect(menuItem.externalLink).toEqual('http://onehippo.org');
-        });
-        expectGetMenu();
-    });
-
-    it('should return sitemapLink split from the normal link', function () {
-        menuService.getMenuItem('2').then(function(menuItem) {
-            expect(menuItem).toBeDefined();
-            expect(menuItem.sitemapLink).toBeDefined();
-            expect(menuItem.sitemapLink).toEqual('home');
-        });
-        expectGetMenu();
-    });
-
-
     it('should save a menu item', function () {
-        var menuItemToSave = {
-                id: 'child1',
-                items: [
-                    {
-                        id: 'child2',
-                        title: 'Child 2',
-                        sitemapLink: 'home',
-                        linkType: 'SITEMAPITEM'
-                    }
-                ],
-                externalLink: 'http://onehippo.org',
-                linkType: 'EXTERNAL',
-                title: 'New title'
-            },
-            savedMenuItem = {
-                id: 'child1',
-                items: [
-                    {
-                        id: 'child2',
-                        title: 'Child 2',
-                        link: 'home',
-                        linkType: 'SITEMAPITEM'
-                    }
-                ],
-                link: 'http://onehippo.org',
-                linkType: 'EXTERNAL',
-                title: 'New title'
-            };
+        var savedMenuItem = { id: 'child1', title: 'New title' };
         $httpBackend.expectPOST('api/menuId', savedMenuItem).respond('OK');
-        menuService.saveMenuItem(menuItemToSave);
+        menuService.saveMenuItem(savedMenuItem);
         $httpBackend.flush();
     });
 

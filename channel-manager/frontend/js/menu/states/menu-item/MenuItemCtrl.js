@@ -39,7 +39,6 @@
                         return menuData.items;
                     }, function() {
                         $scope.list = menuData.items;
-                        $scope.$broadcast('menu-items-changed');
 
                         // merge pending changes into newly loaded tree
                         if ($scope.selectedMenuItem) {

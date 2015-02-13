@@ -140,7 +140,13 @@ h3.lead.item-title {
     z-index: 999999;
     width: 840px;
     height: 485px;
-    opacity: 0;
+
+    /* opacity (via http://css-tricks.com/snippets/css/cross-browser-opacity/) */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; /* IE8 */
+    filter: alpha(opacity=0); /* IE 5-7 */
+    -moz-opacity: 0; /* Netscape */
+    -khtml-opacity: 0; /* Safari 1.x */
+    opacity: 0; /* Good browsers */
 }
 
 .confirmation-dialog {
@@ -156,9 +162,7 @@ h3.lead.item-title {
 }
 
 .confirmation-dialog.s-invisible {
-    /* set offscreen to allow it to scroll in. Should likely
-    change in the future to be calculated with js */
-    top: -240px;
+    top: -181px;
 }
 
 .confirmation-dialog-title {
@@ -166,9 +170,9 @@ h3.lead.item-title {
 }
 
 .confirmation-dialog-message {
-    /* prevent long titles from overflowing. Add scrollbar if they do */
-    max-height: 100px;
-    overflow-y: auto;
+    /* prevent long messages from making the confirmation dialog so high
+       that its bottom becomes visible in 'invisible' state */
+    max-height: 40px;
 }
 
 #close-confirmation {

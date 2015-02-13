@@ -23,6 +23,7 @@
             'hippo.channel.ConfigService',
             '$http',
             '$q',
+            '$log',
             function (ConfigService, $http, $q) {
                 var menuData = {
                         items: null
@@ -73,13 +74,6 @@
                     if (angular.isArray(items)) {
                         for (var j = 0, len = items.length; j < len; j++) {
                             if (items[j].id === id) {
-                                if(items[j].linkType) {
-                                    if (items[j].linkType === 'SITEMAPITEM') {
-                                        items[j].sitemapLink = items[j].link;
-                                    } else if (items[j].linkType === 'EXTERNAL') {
-                                        items[j].externalLink = items[j].link;
-                                    }
-                                }
                                 found = items[j];
                                 break;
                             }
@@ -126,22 +120,6 @@
                         }
                     );
                     return deferred.promise;
-                }
-
-                function extractLinkFromSitemapLinkOrExternalLink(item) {
-                    if (item.linkType === 'SITEMAPITEM') {
-                        item.link = item.sitemapLink;
-                    } else if (item.linkType === 'EXTERNAL') {
-                        item.link = item.externalLink;
-                    } else if (item.linkType === 'NONE') {
-                        delete item.link;
-                    }
-                    delete item.sitemapLink;
-                    delete item.externalLink;
-
-                    angular.forEach(item.items, function (item) {
-                        extractLinkFromSitemapLinkOrExternalLink(item);
-                    });
                 }
 
                 function post(url, body) {
@@ -192,8 +170,9 @@
                 function removeCollapsedProperties(item) {
                     delete item.collapsed;
                     angular.forEach(item.items, function (item) {
-                        removeCollapsedProperties(item);
-                    });
+                            removeCollapsedProperties(item);
+                        }
+                    );
                 }
 
                 return {
@@ -221,7 +200,6 @@
                         var deferred = $q.defer();
                         var menuItemCopy = angular.copy(menuItem);
                         removeCollapsedProperties(menuItemCopy);
-                        extractLinkFromSitemapLinkOrExternalLink(menuItemCopy);
                         post(menuServiceUrl(), menuItemCopy).then(function() {
                                     deferred.resolve();
                                 }, function (errorResponse) {
@@ -251,11 +229,11 @@
                                                 + (options ? '?position=' + options.position
                                                 + (options.siblingId ? ('&sibling=' + options.siblingId) : '') : '')), menuItem)
                             .then(function(response) {
-                                menuItem.id = response.data;
-                                deferred.resolve(response.data);
-                            }, function (errorResponse) {
-                                deferred.reject(errorResponse);
-                            });
+                                        menuItem.id = response.data;
+                                        deferred.resolve(response.data);
+                                    }, function (errorResponse) {
+                                        deferred.reject(errorResponse);
+                                    });
                         return deferred.promise;
                     },
 

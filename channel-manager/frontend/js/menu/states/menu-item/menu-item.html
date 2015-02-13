@@ -28,13 +28,8 @@
                     </div>
                 </div>
                 <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl">
-                    <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()" data-ng-disabled="isSaving.newItem">
-                        <i class="fa"
-                           data-ng-class="{
-                            'fa-spinner fa-spin': isSaving.newItem,
-                            'fa-plus': !isSaving.newItem
-                            }"></i>
-                        {{ 'ADD_MENU_ITEM' | translate }}
+                    <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
+                        <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
                     </button>
                 </div>
             </div>
