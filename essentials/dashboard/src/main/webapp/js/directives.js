@@ -426,7 +426,7 @@
             return {
                 replace: false,
                 restrict: 'E',
-                transclude: true,
+                scope: {},
                 templateUrl: 'directives/essentials-draft-warning.html',
                 controller: function ($scope, $rootScope, $http) {
                     $scope.hasDraftDocuments = false;

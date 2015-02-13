@@ -17,8 +17,9 @@
 <div class="panel panel-default" ng-controller="taggingPluginCtrl" ng-show="plugin.installState == 'installed'">
     <div class="panel-heading"><h3>{{plugin.name}}</h3></div>
     <div class="panel-body">
-        <form novalidate name="taggingForm">
-            <div ng-show="documentTypes.length">
+        <essentials-draft-warning></essentials-draft-warning>
+        <div ng-show="documentTypes.length">
+            <form novalidate name="taggingForm">
                 <h4>Add Tagging fields to following documents:</h4>
 
                 <div class="form-group">
@@ -69,8 +70,8 @@
                     Editor (Use above Edit links). Make sure you commit all changes before coming back to the setup
                     application.</p>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
     <div class="panel-footer">
         <div class="pull-right">
