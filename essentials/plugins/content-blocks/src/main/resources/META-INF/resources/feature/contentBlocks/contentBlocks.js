@@ -88,11 +88,17 @@
             };
 
             $scope.selectedDocTypeNamespace = function() {
-                return $scope.selectedDocumentType.id.split(':')[0];
+                if ($scope.selectedDocumentType) {
+                    return $scope.selectedDocumentType.id.split(':')[0];
+                }
+                return null;
             };
 
             $scope.selectedDocTypeName = function() {
-                return $scope.selectedDocumentType.id.split(':')[1];
+                if ($scope.selectedDocumentType) {
+                    return $scope.selectedDocumentType.id.split(':')[1];
+                }
+                return null;
             };
 
             $scope.init = function () {
