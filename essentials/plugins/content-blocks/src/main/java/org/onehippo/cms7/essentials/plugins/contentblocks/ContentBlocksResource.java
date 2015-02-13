@@ -38,9 +38,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -318,10 +315,7 @@ public class ContentBlocksResource extends BaseResource {
                 throw new ContentBlocksException(errorMsg);
             }
             in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-            ((HippoSession)session).importDereferencedXML(nodeTypeNode.getPath(), in,
-                    ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
-                    ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+            session.importXML(nodeTypeNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
             // Import editor template
             parsed = TemplateUtils.injectTemplate("content_blocks_template.xml", data, getClass());
@@ -330,10 +324,7 @@ public class ContentBlocksResource extends BaseResource {
                 throw new ContentBlocksException(errorMsg);
             }
             in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-            ((HippoSession)session).importDereferencedXML(editorTemplateNode.getPath(), in,
-                    ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
-                    ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+            session.importXML(editorTemplateNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
             // Set maxitems
             if (field.getMaxItems() > 0) {
@@ -456,10 +447,8 @@ public class ContentBlocksResource extends BaseResource {
                 InputStream in = null;
                 try {
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-                    ((HippoSession)session).importDereferencedXML("/hippo:configuration/hippo:update/hippo:queue", in,
-                            ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
-                            ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+                    session.importXML("/hippo:configuration/hippo:update/hippo:queue", in,
+                            ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                     session.save();
                     updatersRun++;
                 } catch (RepositoryException | IOException e) {
