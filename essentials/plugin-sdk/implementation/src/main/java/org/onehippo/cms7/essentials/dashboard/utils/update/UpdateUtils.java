@@ -27,7 +27,6 @@ import javax.jcr.Session;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -35,9 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Util to add entries to the new updater engine API (from 7.8 and upwards). In this util you can easily create updater scrips and add them with code.
- * Almost every plug-in will need some DTAP integration.
- * There is a distinction between addToQueue (immediately add and run on startup) and addToRegistry (add to the updater engine registry for manual startup)
+ * Util to add entries to the new updater engine API (from 7.8 and upwards). In this util you can easily create
+ * updater scrips and add them with code. Almost every plug-in will need some DTAP integration.
+ * There is a distinction between addToQueue (immediately add and run on startup) and addToRegistry (add to the
+ * updater engine registry for manual startup)
  *
  * @version "$Id$"
  */
@@ -143,8 +143,9 @@ public final class UpdateUtils {
             if (session.itemExists(UPDATE_UTIL_PATH + type.getPath())) {
                 if (session instanceof HippoSession) {
                     HippoSession hippoSession = (HippoSession) session;
-                    hippoSession.importDereferencedXML(UPDATE_UTIL_PATH + type.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+                    hippoSession.importEnhancedSystemViewXML(UPDATE_UTIL_PATH + type.getPath(), in,
+                            ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, null);
                 } else {
                     session.importXML(UPDATE_UTIL_PATH + type.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                 }

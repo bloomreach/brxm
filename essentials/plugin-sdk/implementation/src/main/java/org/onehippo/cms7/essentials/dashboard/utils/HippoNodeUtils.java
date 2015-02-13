@@ -46,8 +46,8 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PropertyRestful;
 import org.slf4j.Logger;
@@ -246,8 +246,7 @@ public final class HippoNodeUtils {
         if (!session.nodeExists(source)) {
             return null;
         }
-
-        return copyNode(session, session.getNode(source), destination);
+        return JcrUtils.copy(session, source, destination);
     }
 
     /**
@@ -263,8 +262,7 @@ public final class HippoNodeUtils {
         if (source == null) {
             return null;
         }
-        final HippoSession hs = (HippoSession) session;
-        return hs.copy(source, destination);
+        return JcrUtils.copy(session, source.getPath(), destination);
     }
 
     /**
