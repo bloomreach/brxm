@@ -610,11 +610,15 @@
         },
 
         disableDelete: function() {
-            this.deleteButton && this.deleteButton.disable();
+            if (this.deleteButton) {
+                this.deleteButton.disable();
+            }
         },
 
         enableDelete: function() {
-            this.deleteButton && this.deleteButton.disable();
+            if (this.deleteButton) {
+                this.deleteButton.enable();
+            }
         }
 
     });
