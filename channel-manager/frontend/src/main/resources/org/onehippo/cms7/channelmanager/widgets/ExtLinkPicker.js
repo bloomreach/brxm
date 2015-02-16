@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
         constructor: function(config) {
             Hippo.ChannelManager.ExtLinkPickerFactory.Instance = this;
 
-            this.addEvents('pick', 'picked');
+            this.addEvents('pick', 'picked', 'select');
 
             this.listeners = config.listeners;
 
@@ -84,20 +84,20 @@
         },
 
         openPicker: function() {
-            Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
-                    this.getValue(),
-                    this.pickerConfig,
-                    Ext.createDelegate(this.picked, this)
-            );
+            if (!this.disabled) {
+                Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
+                        this.getValue(),
+                        this.pickerConfig,
+                        Ext.createDelegate(this.picked, this)
+                );
+            }
         },
 
         picked: function(value) {
-            if (Ext.isDefined(value)) {
-                this.setValue(value);
-            } else {
-                this.setValue('');
-            }
+            var newValue = Ext.isDefined(value) ? value : '';
+            this.setValue(newValue);
             this.updateClearButton();
+            this.fireEvent('select', this, newValue);
         },
 
         updateClearButton: function() {

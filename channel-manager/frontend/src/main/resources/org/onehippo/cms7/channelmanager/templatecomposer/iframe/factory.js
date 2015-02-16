@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@
             },
 
             _enhance : function(element) {
-                var hstContainerMetaData, id, type, base, xtype, url, refNS, variant,
+                var hstContainerMetaData, id, type, base, xtype, url, refNS,
                         hstContainerLockedBy, hstContainerLockedByCurrentUser, hstContainerLockedOn, hstContainerLastModified, disabled;
 
                 hstContainerMetaData = this.getContainerMetaData(element);
@@ -128,11 +128,6 @@
 
                 if (hstContainerMetaData[HST.ATTR.INHERITED] !== undefined) {
                     element.setAttribute(HST.ATTR.HST_CONTAINER_DISABLED, "true");
-                }
-
-                variant = hstContainerMetaData[HST.ATTR.VARIANT];
-                if (variant !== undefined) {
-                    element.setAttribute(HST.ATTR.VARIANT, variant);
                 }
 
                 if (type === HST.CONTAINER || type === HST.CONTAINERITEM) {

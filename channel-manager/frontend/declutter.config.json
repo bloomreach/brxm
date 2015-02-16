@@ -17,6 +17,12 @@
       "dist/images/*",
       "dist/fonts/*"
     ],
+    "hippo-addon-channel-manager-angularjs-api": [
+        "dist/css/main.min.css",
+        "dist/js/main.min.js",
+        "dist/images/*",
+        "dist/fonts/*"
+    ],
     "jasmine-jquery": [],
     "jquery": ["dist/jquery.min.js", "dist/jquery.min.map"],
     "underscore": ["underscore-min.js", "underscore-min.map"]

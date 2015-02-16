@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -352,9 +352,9 @@
             variantsComboBox.on('afterRender', function() {
                 variantsComboBox.setValue(this.renderedVariant);
                 this.globalVariantsStoreFuture.when(function() {
-                    var selectVariant = this.globalVariantsStore.indexOfId(this.renderedVariant) >= 0 ? this.renderedVariant : 'hippo-default';
-                    variantsComboBox.setValue(selectVariant);
-                    this.templateComposerApi.selectedVariant(selectVariant);
+                    var selectedVariant = this.globalVariantsStore.indexOfId(this.renderedVariant) >= 0 ? this.renderedVariant : 'hippo-default';
+                    variantsComboBox.setValue(selectedVariant);
+                    this.templateComposerApi.selectedVariant(selectedVariant);
                 }.createDelegate(this));
             }, this);
 
@@ -854,9 +854,9 @@
                 }
             }, this);
 
-            this.on('selectItem', function(record, forcedVariant, containerDisabled) {
+            this.on('selectItem', function(record, containerDisabled) {
                 if (record.get('type') === HST.CONTAINERITEM && containerDisabled !== true) {
-                    this.showProperties(record, forcedVariant);
+                    this.showProperties(record);
                 }
             }, this);
 
@@ -909,19 +909,17 @@
                 globalVariantsStoreFuture: this.globalVariantsStoreFuture,
                 mountId: mountId,
                 listeners: {
-                    'cancel': function() {
-                        window.hide();
-                    },
                     'save': function() {
                         this.fireEvent('channelChanged');
+                    },
+                    'close': function() {
+                        window.hide();
                     },
                     'delete': function() {
                         this.fireEvent('channelChanged');
                     },
-                    'variantChange': function(id, variantId) {
-                        if (id !== null) {
-                            this.selectVariant(id, variantId);
-                        }
+                    'propertiesChanged': function(componentId, propertiesMap) {
+                        this.renderComponent(componentId, propertiesMap);
                     },
                     scope: this
                 }
@@ -946,7 +944,7 @@
                 listeners: {
                     hide: function() {
                         this.pageContainer.deselectComponents();
-                        propertiesPanel.selectInitialVariant();
+                        propertiesPanel.fireInitialPropertiesChangedIfNeeded();
                     },
                     scope: this
                 },
@@ -977,12 +975,12 @@
             return window;
         },
 
-        showProperties: function(record, forcedVariant) {
+        showProperties: function(record) {
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel'),
                 componentId = record.get('id'),
                 pageRequestVariants = this.pageContainer.pageContext.pageRequestVariants,
                 lastModifiedTimestamp = record.get('lastModifiedTimestamp');
-            componentPropertiesPanel.load(componentId, forcedVariant, pageRequestVariants, lastModifiedTimestamp);
+            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp);
             if (this.propertiesWindow) {
                 this.propertiesWindow.setTitle(record.get('name'));
                 this.propertiesWindow.show();
@@ -1037,8 +1035,8 @@
             Ext.getCmp('pageEditorIFrame').unmask();
         },
 
-        selectVariant: function(id, variant) {
-            this.pageContainer.pageContext.selectVariant(id, variant);
+        renderComponent: function(id, propertiesMap) {
+            this.pageContainer.pageContext.renderComponent(id, propertiesMap);
         },
 
         editMenu: function(uuid) {

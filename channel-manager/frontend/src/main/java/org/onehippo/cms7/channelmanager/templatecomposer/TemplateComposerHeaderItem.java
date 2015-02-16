@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.wicket.Application;
@@ -31,43 +32,29 @@ import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 
 public class TemplateComposerHeaderItem extends HeaderItem {
 
-    private static final JavaScriptResourceReference[] DEVELOPMENT_REFERENCES;
-    private static final JavaScriptResourceReference[] DEPLOYMENT_REFERENCES;
+    private static final List<JavaScriptResourceReference> DEVELOPMENT_REFERENCES;
+    private static final List<JavaScriptResourceReference> DEPLOYMENT_REFERENCES;
 
     static {
-        List<JavaScriptResourceReference> developmentRefs = new ArrayList<JavaScriptResourceReference>();
-        developmentRefs.add(new JavaScriptResourceReference(PluginsBundle.class, PluginsBundle.FLOATING_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PluginsBundle.class, PluginsBundle.COLOR_FIELD));
-        developmentRefs.add(new JavaScriptResourceReference(PluginsBundle.class, PluginsBundle.VTABS));
-
+        List<JavaScriptResourceReference> developmentRefs = new ArrayList<>();
+        developmentRefs.addAll(javaScriptResources(PluginsBundle.class, PluginsBundle.FILES));
         developmentRefs.add(new JavaScriptResourceReference(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS));
         developmentRefs.add(new JavaScriptResourceReference(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ICON_GRID_VIEW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_GRID_PANEL));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ICON_TOOLBAR_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MANAGE_CHANGES_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_SETTINGS_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGES_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.EDIT_MENU_WINDOW));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.NOTIFICATION));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.REST_STORE));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.DRAG_DROP_ONE));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MSG));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_STORE));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_MODEL_STORE));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_CONTEXT));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_CONTAINER));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_EDITOR));
-        DEVELOPMENT_REFERENCES = developmentRefs.toArray(new JavaScriptResourceReference[developmentRefs.size()]);
+        developmentRefs.addAll(javaScriptResources(PageEditorBundle.class, PageEditorBundle.FILES));
+        DEVELOPMENT_REFERENCES = Collections.unmodifiableList(developmentRefs);
 
-        List<JavaScriptResourceReference> deploymentRefs = new ArrayList<JavaScriptResourceReference>();
+        List<JavaScriptResourceReference> deploymentRefs = new ArrayList<>();
         deploymentRefs.add(new JavaScriptResourceReference(PluginsBundle.class, PluginsBundle.ALL));
         deploymentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ALL));
-        DEPLOYMENT_REFERENCES = deploymentRefs.toArray(new JavaScriptResourceReference[deploymentRefs.size()]);
+        DEPLOYMENT_REFERENCES = Collections.unmodifiableList(deploymentRefs);
+    }
+
+    private static List<JavaScriptResourceReference> javaScriptResources(Class scope, String... sources) {
+        final List<JavaScriptResourceReference> resources = new ArrayList<>();
+        for (String source : sources) {
+            resources.add(new JavaScriptResourceReference(scope, source));
+        }
+        return resources;
     }
 
     private static final TemplateComposerHeaderItem INSTANCE = new TemplateComposerHeaderItem();
@@ -90,14 +77,12 @@ public class TemplateComposerHeaderItem extends HeaderItem {
 
     @Override
     public void render(final Response response) {
-        JavaScriptResourceReference[] references;
-        if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            references = DEVELOPMENT_REFERENCES;
-        } else {
-            references = DEPLOYMENT_REFERENCES;
-        }
-        for (JavaScriptResourceReference reference : references) {
+        for (JavaScriptResourceReference reference : getRenderedReferences()) {
             JavaScriptHeaderItem.forReference(reference).render(response);
         }
+    }
+
+    private static List<JavaScriptResourceReference> getRenderedReferences() {
+        return Application.get().getDebugSettings().isAjaxDebugModeEnabled() ? DEVELOPMENT_REFERENCES : DEPLOYMENT_REFERENCES;
     }
 }

@@ -8,7 +8,8 @@
     "angular-translate-loader-static-files": "2.2.0",
     "angular-ui-router": "0.2.11",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
-    "jquery": "1.11.1"
+    "jquery": "1.11.1",
+    "hippo-addon-channel-manager-angularjs-api": "./target/dependency/hippo-addon-channel-manager-angularjs-api.zip"
   },
   "devDependencies": {
     "angular-mocks": "1.3.1",

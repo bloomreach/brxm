@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -62,13 +62,13 @@
             <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
                    data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
-                   data-auto-focus
+                   data-hippo-channel-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
                    data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';"
                    data-tooltip="{{ fieldFeedbackMessage.title }}"
                    data-tooltip-trigger="show"
-                   data-tooltip-show="form.title.$invalid"
+                   data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
             <i class="fa form-control-feedback"
                data-ng-show="form.title.$dirty"
@@ -156,7 +156,7 @@
                        data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';"
                        data-tooltip="{{ fieldFeedbackMessage.link }}"
                        data-tooltip-trigger="show"
-                       data-tooltip-show="form.url.$invalid"
+                       data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.url.$dirty"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-describe('the autofocus directive', function () {
+describe('the showFocus directive', function () {
     'use strict';
 
-    var element;
+    var wrapper, element, $scope, $timeout;
 
     beforeEach(module('hippo.channel'));
 
@@ -28,19 +28,28 @@ describe('the autofocus directive', function () {
         });
     });
 
-    beforeEach(inject(function (_$compile_, _$rootScope_, _$timeout_) {
-        element = angular.element('<input auto-focus>');
-        _$compile_(element)(_$rootScope_);
-        _$rootScope_.$digest();
-        element.appendTo(document.body);
-        _$timeout_.flush();
+    beforeEach(inject(function ($compile, $rootScope, _$timeout_) {
+        $scope = $rootScope;
+        $timeout = _$timeout_;
+        wrapper = angular.element('<div data-ng-show="showWrapper">');
+        element = angular.element('<input data-show-focus="focusInput">');
+        $compile(element)($scope);
+        $scope.$digest();
     }));
 
     afterEach(function () {
         element.remove();
+        wrapper.remove();
     });
 
-    it('should focus an element', function () {
+    it('should focus an element within an ng-show', function () {
+        element.appendTo(wrapper);
+        wrapper.appendTo(document.body);
+        $scope.showWrapper = true;
+        expect(wrapper).toBeVisible();
+
+        $scope.focusInput = true;
+        $timeout.flush();
         expect(element).toBeFocused();
     });
 

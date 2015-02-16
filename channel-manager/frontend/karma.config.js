@@ -38,16 +38,11 @@ module.exports = function(config) {
             'components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
             'components/angular-ui-router/release/angular-ui-router.min.js',
             'components/angular-ui-tree/dist/angular-ui-tree.js',
+            'components/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
 
             // testing dependencies
             'components/jasmine-jquery/lib/jasmine-jquery.js',
             'components/angular-mocks/angular-mocks.js',
-
-            // shared sources
-            'shared/shared-dependencies.js',
-            'shared/services/*.js',
-            'shared/filters/**/*.js',
-            'shared/directives/**/*.js',
 
             // apps sources
             'menu/menu-dependencies.js',
@@ -108,8 +103,7 @@ module.exports = function(config) {
         preprocessors: {
             'menu/**/!(*spec).js': ['coverage'],
             'page/**/!(*spec).js': ['coverage'],
-            'pages/**/!(*spec).js': ['coverage'],
-            'shared/**/!(*spec).js': ['coverage']
+            'pages/**/!(*spec).js': ['coverage']
         },
 
         junitReporter: {

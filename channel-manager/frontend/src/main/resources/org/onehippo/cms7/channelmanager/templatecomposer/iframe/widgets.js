@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -765,51 +765,53 @@
             this.overlay.append(this.menu);
          },
 
-        selectVariant: function(variant, callback) {
-            var data = {};
+        renderComponent: function(id, propertiesMap, callback) {
             if (this.el.attr(HST.ATTR.URL)) {
-                this.el.attr(HST.ATTR.VARIANT, variant);
-                data[HST.ATTR.VARIANT] = variant;
                 $.ajax({
                     url: this.el.attr(HST.ATTR.URL),
+                    type: 'POST',
                     context: this,
-                    data: data,
+                    data: propertiesMap,
                     dataType: 'html',
                     success: function(response) {
-                        var emptyElementHeight, intervalCounter, interval, containerElement, componentElement;
-                        containerElement = this.el;
-                        containerElement.html('');
-                        emptyElementHeight = containerElement.height();
-
-                        componentElement = $(response);
-                        /*
-                         When response contains hst-container-item class element, the content of that
-                         element is copied to the container item element and all attributes will
-                         be copied. By default the full response will be place in the container
-                         element.
-                          */
-                        if(componentElement.hasClass(HST.CLASS.ITEM)) {
-                            // Copy attributes to container item element
-                            this.copyAttributes(componentElement, containerElement);
-                            // Set the inner html of component's container item to container HTML
-                            containerElement.html(componentElement.html());
-                        } else {
-                            // Set the plain response to the container HTML
-                            containerElement.html(response);
-                        }
-
-                        // poll for five seconds to check the component is rendered
-                        intervalCounter = 0;
-                        interval = window.setInterval(function() {
-                            if (intervalCounter > 50 || containerElement.height() !== emptyElementHeight) {
-                                window.clearInterval(interval);
-                                callback();
-                            }
-                            intervalCounter++;
-                        }, 100);
+                        this.refreshComponent(response, callback);
                     }
                 });
             }
+        },
+
+        refreshComponent: function(response, callback) {
+            var emptyElementHeight, intervalCounter, interval, containerElement, componentElement;
+            containerElement = this.el;
+            containerElement.html('');
+            emptyElementHeight = containerElement.height();
+
+            componentElement = $(response);
+            /*
+             When response contains hst-container-item class element, the content of that
+             element is copied to the container item element and all attributes will
+             be copied. By default the full response will be place in the container
+             element.
+             */
+            if (componentElement.hasClass(HST.CLASS.ITEM)) {
+                // Copy attributes to container item element
+                this.copyAttributes(componentElement, containerElement);
+                // Set the inner html of component's container item to container HTML
+                containerElement.html(componentElement.html());
+            } else {
+                // Set the plain response to the container HTML
+                containerElement.html(response);
+            }
+
+            // poll for five seconds to check the component is rendered
+            intervalCounter = 0;
+            interval = window.setInterval(function() {
+                if (intervalCounter > 50 || containerElement.height() !== emptyElementHeight) {
+                    window.clearInterval(interval);
+                    callback();
+                }
+                intervalCounter++;
+            }, 100);
         },
 
         copyAttributes: function(sourceElement, targetElement) {
@@ -839,16 +841,14 @@
         },
 
         onClick : function() {
-            var id, forcedVariant, containerDisabled;
+            var id, containerDisabled;
             if (this.isTemporary) {
                 iframeToHost.publish('refresh');
             } else {
                 id = this.element.getAttribute('id');
-                forcedVariant = this.el.attr(HST.ATTR.VARIANT);
                 containerDisabled = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED));
                 iframeToHost.publish('onclick', {
                     elementId: id,
-                    forcedVariant: forcedVariant,
                     containerDisabled: containerDisabled
                 });
             }

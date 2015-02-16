@@ -17,12 +17,24 @@
 describe('filter', function () {
     'use strict';
 
-    var placeholderFilter;
+    var placeholderFilter,
+        filterMock,
+        translateFilterMock;
 
-    beforeEach(module('hippo.channel.menu'));
-    beforeEach(inject(function (_placeholderFilter_) {
-        placeholderFilter = _placeholderFilter_;
-    }));
+    beforeEach(function () {
+        translateFilterMock = function (value) {
+            return value + '-translated';
+        };
+        filterMock = jasmine.createSpy('filterSpy').and.callFake(function (name) {
+            return (name === 'translate') ? translateFilterMock : null;
+        });
+        module('hippo.channel', function($provide) {
+            $provide.value('$filter', filterMock);
+        });
+        inject(function (_hippoChannelPlaceholderFilter_) {
+            placeholderFilter = _hippoChannelPlaceholderFilter_;
+        });
+    });
 
     describe('placeholder', function () {
         it('should not insert the placeholder when the input is not empty', function () {
@@ -30,11 +42,11 @@ describe('filter', function () {
         });
 
         it('should insert the placeholder when the input is empty', function () {
-            expect(placeholderFilter('', 'test')).toBe('test');
+            expect(placeholderFilter('', 'test')).toBe('test-translated');
         });
 
         it('should insert the placeholder when the input is null', function () {
-            expect(placeholderFilter(null, 'abc')).toBe('abc');
+            expect(placeholderFilter(null, 'abc')).toBe('abc-translated');
         });
     });
 

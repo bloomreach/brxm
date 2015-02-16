@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,46 +21,36 @@ public final class PageEditorBundle {
         // prevent instantiation
     }
 
-    public static final String ICON_GRID_VIEW = "IconGridView.js";
+    /**
+     * List of files that make up the page editor bundle, in the order they should be loaded.
+     * N.B. this list is duplicated in the pom.xml file of this module to describe the concatenated
+     * sources. When updating this list, make sure to also update the list in the pom.xml file.
+     */
+    public static final String[] FILES = {
+            "IconGridView.js",
+            "ToolkitGridPanel.js",
+            "IconToolbarWindow.js",
+            "ManageChangesWindow.js",
+            "PageSettingsWindow.js",
+            "PagesWindow.js",
+            "EditMenuWindow.js",
+            "Notification.js",
+            "RestStore.js",
+            "ComponentVariants.js",
+            "PropertiesForm.js",
+            "PropertiesPanel.js",
+            "DragDropOne.js",
+            "Hippo.Msg.js",
+            "ToolkitStore.js",
+            "PageModelStore.js",
+            "PageContext.js",
+            "PageContainer.js",
+            "PageEditor.js"
+    };
 
-    public static final String TOOLKIT_GRID_PANEL = "ToolkitGridPanel.js";
-
-    public static final String ICON_TOOLBAR_WINDOW = "IconToolbarWindow.js";
-
-    public static final String MANAGE_CHANGES_WINDOW = "ManageChangesWindow.js";
-
-    public static final String MESSAGE_BUS = "MessageBus.js";
-
-    public static final String IFRAME_PANEL = "IFramePanel.js";
-
-    public static final String IFRAME_WINDOW = "IFrameWindow.js";
-
-    public static final String PAGE_SETTINGS_WINDOW = "PageSettingsWindow.js";
-
-    public static final String PAGES_WINDOW = "PagesWindow.js";
-
-    public static final String EDIT_MENU_WINDOW = "EditMenuWindow.js";
-
-    public static final String DRAG_DROP_ONE = "DragDropOne.js";
-
-    public static final String NOTIFICATION = "Notification.js";
-
-    public static final String MSG = "Hippo.Msg.js";
-
-    public static final String REST_STORE = "RestStore.js";
-
-    public static final String TOOLKIT_STORE = "ToolkitStore.js";
-
-    public static final String PAGE_MODEL_STORE = "PageModelStore.js";
-
-    public static final String PAGE_CONTEXT = "PageContext.js";
-
-    public static final String PAGE_CONTAINER = "PageContainer.js";
-
-    public static final String PROPERTIES_PANEL = "PropertiesPanel.js";
-
-    public static final String PAGE_EDITOR = "PageEditor.js";
-
+    /**
+     * File that contains all sources concatenated.
+     */
     public static final String ALL = "page-editor-all.js";
 
 

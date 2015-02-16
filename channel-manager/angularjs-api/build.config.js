@@ -13,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function () {
-    'use strict';
 
-    angular.module('hippo.channel')
-
-        /**
-         * @ngdoc filter
-         * @name hippo.channel.filter:alphanumeric
-         *
-         * @description
-         * Converts all non-alphanumeric characters to the `-` character. Spaces will also be converted.
-         */
-        .filter('alphanumeric', function () {
-            return function (value) {
-                return (value) ? value.replace(/[^a-zA-Z0-9]/g, '-') : '';
-            };
-        });
-})();
+module.exports = {
+    source: 'js',
+    target: 'target/classes/angular'
+};

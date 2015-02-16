@@ -22,24 +22,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.javascript.host.Node;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import com.google.gson.Gson;
+
+import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
+import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
+import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerGlobalBundle;
+import org.onehippo.cms7.jquery.JQueryBundle;
+import org.wicketstuff.js.ext.ExtBundle;
+
 import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
 import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
-
-import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerGlobalBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
-import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
-import org.onehippo.cms7.jquery.JQueryBundle;
-import org.wicketstuff.js.ext.ExtBundle;
-
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.javascript.host.Node;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
-import com.google.gson.Gson;
 
 abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTest {
 
@@ -82,14 +81,14 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
         injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
-        injectJavascript(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS);
-        injectJavascript(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL);
+        injectJavascript(TemplateComposerApiHeaderItem.class, "MessageBus.js");
+        injectJavascript(TemplateComposerApiHeaderItem.class, "IFramePanel.js");
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
         ScriptableObject instance = getScriptableObject(window, "Hippo.MockedPageEditorIFramePanel");
-        ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
-        ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
+        ScriptableObject hostToIFrame = (ScriptableObject) instance.get("hostToIFrame");
+        ScriptableObject iframeToHost = (ScriptableObject) instance.get("iframeToHost");
         interceptMessages(hostToIFrame, hostToIFrameMessages);
         interceptMessages(iframeToHost, iframeToHostMessages);
 
@@ -121,7 +120,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         ScriptableObject.putProperty(messageBus, "publish", new BaseFunction() {
             @Override
             public Object call(final net.sourceforge.htmlunit.corejs.javascript.Context cx, final Scriptable scope, final Scriptable thisObj, final Object[] args) {
-                String tag = (String)args[0];
+                String tag = (String) args[0];
                 Object payload = args.length > 1 ? args[1] : null;
                 interceptedMessages.add(new Message(tag, payload));
                 return oldFunction.call(cx, scope, thisObj, args);

@@ -19,7 +19,7 @@
 
     angular.module('hippo.channel')
 
-        .directive('autoFocus', [
+        .directive('hippoChannelAutoFocus', [
             '$timeout',
             function ($timeout) {
                 return {
