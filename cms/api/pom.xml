@@ -280,20 +280,20 @@
           </execution>
           <execution>
             <id>bower-install</id>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>bower</executable>
-              <commandlineArgs>install</commandlineArgs>
+              <commandlineArgs>install --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
             <id>grunt-build</id>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
-              <commandlineArgs>build</commandlineArgs>
+              <commandlineArgs>build --no-color</commandlineArgs>
             </configuration>
           </execution>
         </executions>
@@ -312,37 +312,5 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <profiles>
-    <profile>
-      <id>clean-bower</id>
-      <activation>
-        <file>
-          <exists>node_modules</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.plugin.exec.version}</version>
-            <executions>
-              <execution>
-                <id>clean-bower</id>
-                <phase>clean</phase>
-                <goals><goal>exec</goal></goals>
-                <configuration>
-                  <executable>grunt</executable>
-                  <commandlineArgs>clean:bower clean:tmp clean:copies</commandlineArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
 
 </project>
