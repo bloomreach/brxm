@@ -53,7 +53,7 @@ module.exports = function (grunt) {
             },
 
             bower: {
-                src: '<%= build.ngsource %>/components/**'
+                src: '<%= build.bower %>/**'
             }
         },
 
@@ -71,8 +71,7 @@ module.exports = function (grunt) {
                             '!**/*.spec.js',
                             '**/assets/css/*',
                             '**/assets/images/*',
-                            '**/i18n/*.json',
-                            '!components/**'
+                            '**/i18n/*.json'
                         ]
                     }
                 ]
@@ -82,7 +81,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= build.ngsource %>/components',
+                        cwd: '<%= build.bower %>',
                         dest: '<%= build.ngtarget %>/components',
                         src: readDeclutteredComponentFiles()
                     }
@@ -130,8 +129,7 @@ module.exports = function (grunt) {
 
             apps: {
                 files: [
-                    '<%= build.ngsource %>/**/*',
-                    '!<%= build.ngsource %>/components/**/*'
+                    '<%= build.ngsource %>/**/*'
                 ],
                 tasks: ['build']
             },
@@ -148,7 +146,7 @@ module.exports = function (grunt) {
                 rules: readDeclutterConfig()
             },
             files: [
-                '<%= build.ngsource %>/components/*'
+                '<%= build.bower %>/*'
             ]
         },
 
@@ -160,12 +158,10 @@ module.exports = function (grunt) {
             },
             apps: [
                 '<%= build.ngsource %>/**/*.js',
-                '!<%= build.ngsource %>/**/*.spec.js',
-                '!<%= build.ngsource %>/components/**/*'
+                '!<%= build.ngsource %>/**/*.spec.js'
             ],
             tests: [
-                '<%= build.ngsource %>/**/*.spec.js',
-                '!<%= build.ngsource %>/components/**/*'
+                '<%= build.ngsource %>/**/*.spec.js'
             ]
         },
 
