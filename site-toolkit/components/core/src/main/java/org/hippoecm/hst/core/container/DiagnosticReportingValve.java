@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,37 +15,37 @@
  */
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.TaskLogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DiagnosticReportingValve extends AbstractBaseOrderableValve {
+public class DiagnosticReportingValve extends AbstractDiagnosticReportingValve {
 
     private static Logger log = LoggerFactory.getLogger(DiagnosticReportingValve.class);
 
-    @Override
-    public void invoke(ValveContext context) throws ContainerException {
-        if (context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
-            // continue
-            context.invokeNext();
-            return;
-        }
-
-        if (HDC.isStarted()) {
-            HDC.getRootTask().stop();
-            logDiagnosticSummary();
-        }
-
-        // continue
-        context.invokeNext();
-    }
-
-    private void logDiagnosticSummary() {
+    protected void logDiagnosticSummary(final ValveContext context, final Task rootTask) {
         if (log.isInfoEnabled()) {
-            Task rootTask = HDC.getRootTask();
-            log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask));
+
+            final VirtualHosts virtualHosts = context.getRequestContext().getResolvedMount().getMount().getVirtualHost().getVirtualHosts();
+            if (virtualHosts instanceof VirtualHostsService) {
+                final VirtualHostsService virtualHostsService = (VirtualHostsService) virtualHosts;
+                final long threshold = virtualHostsService.getDiagnosticsThresholdMillis();
+                if (threshold > -1) {
+                    // only log when threshold exceeded
+                    if (rootTask.getDurationTimeMillis() < threshold) {
+                        log.debug("Skipping task '{}' because took only '{}' ms.", rootTask.getName(), rootTask.getDurationTimeMillis());
+                        return;
+                    }
+                }
+
+                final int diagnosticsDepth = virtualHostsService.getDiagnosticsDepth();
+                log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask, diagnosticsDepth));
+            } else {
+                log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask));
+            }
         }
     }
 

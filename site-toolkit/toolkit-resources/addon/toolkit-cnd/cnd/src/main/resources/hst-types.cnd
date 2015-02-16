@@ -403,6 +403,10 @@
 - hst:channelmanagersites (string)
 - hst:diagnosticsenabled (boolean)
 - hst:diagnosticsforips (string) multiple
+// log / save the diagnostic tasks at most until depth level deep
+- hst:diagnosticsdepth (long)
+// only log in case the total request takes longer than the threshold
+- hst:diagnosticsthresholdmillisec (long)
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
 // since 7.9 default is true when missing

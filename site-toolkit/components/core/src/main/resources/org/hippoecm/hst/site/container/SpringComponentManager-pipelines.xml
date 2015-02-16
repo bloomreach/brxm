@@ -174,7 +174,7 @@
     <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
   </bean>
 
-  <bean id="diagnosticReportingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+  <bean id="diagnosticReportingValve" class="org.hippoecm.hst.core.container.DiagnosticReportingValve">
     <property name="valveName" value="diagnosticReportingValve" />
   </bean>
 

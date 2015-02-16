@@ -32,13 +32,33 @@ public class TaskLogFormatter {
      * @return returns the <code>task</code> nicely hierarchical formatted
      */
     public static String getTaskLog(Task task) {
+        return getTaskLog(task, -1);
+    }
+
+    /**
+     *
+     * @param task the task to log
+     * @param maxDepth the maximum depth until how deep child tasks should be logged. <code>maxDepth</code> of <code>-1</code>
+     *                 will log all descendant tasks, <code>maxDepth</code> of <code>0</code> only the rootTask, <code>maxDepth</code>
+     *                 of <code>1</code> the rootTask plus its direct children, etc.
+     * @return
+     */
+    public static String getTaskLog(Task task, final int maxDepth) {
         StringBuilder sb = new StringBuilder(256);
-        appendTaskLog(sb, task, 0, new BitSet(0), false);
+        appendTaskLog(sb, task, 0, new BitSet(0), false, maxDepth);
         return sb.toString();
     }
 
-    private static void appendTaskLog(StringBuilder sb, Task task, int depth, final BitSet bitset, boolean lastChild) {
-        
+    private static void appendTaskLog(final StringBuilder sb,
+                                      final Task task,
+                                      final int depth,
+                                      final BitSet bitset,
+                                      final boolean lastChild,
+                                      final int maxDepth) {
+        if (maxDepth > -1 && depth > maxDepth) {
+            return;
+        }
+
         BitSet hidePipeAt = new BitSet(depth);
         hidePipeAt.or(bitset);
         for (int i = 0; i < depth; i++) {
@@ -75,9 +95,9 @@ public class TaskLogFormatter {
         for (Task childTask : task.getChildTasks()) {
             count++;
             if (count == task.getChildTasks().size()) {
-                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, true);
+                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, true, maxDepth);
             } else {
-                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, false);
+                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, false, maxDepth);
             }
         }
     }

@@ -148,6 +148,8 @@ public interface HstNodeTypes {
     String VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX = "hst:cmspreviewprefix";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED = "hst:diagnosticsenabled";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS = "hst:diagnosticsforips";
+    String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_DEPTH = "hst:diagnosticsdepth";
+    String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS = "hst:diagnosticsthresholdmillisec";
 
     /**
      * @deprecated since CMS 7.9.1 not used any more

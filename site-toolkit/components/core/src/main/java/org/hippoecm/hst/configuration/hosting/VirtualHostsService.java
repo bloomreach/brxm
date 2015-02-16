@@ -127,6 +127,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
      */
     private String cmsPreviewPrefix;
 
+    // default depth of -1 meaning no maximum
+    private int diagnosticsDepth = -1;
+
+    // default threshold of -1 meaning no threshold
+    private long diagnosticsThresholdMillis = -1;
+
     private boolean diagnosticsEnabled;
 
     private boolean cacheable = false;
@@ -183,6 +189,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         cmsPreviewPrefix = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         diagnosticsEnabled = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_DEPTH)) {
+            diagnosticsDepth = vHostConfValueProvider.getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_DEPTH).intValue();
+        }
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS)) {
+            diagnosticsThresholdMillis = vHostConfValueProvider.getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS);
+        }
 
         String[] ips = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
         Collections.addAll(diagnosticsForIps, ips);
@@ -673,6 +685,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
     @Override
     public boolean isDiagnosticsEnabled(String ip) {
         return diagnosticsEnabled && (ip == null || diagnosticsForIps.isEmpty() || diagnosticsForIps.contains(ip));
+    }
+
+    public int getDiagnosticsDepth() {
+        return diagnosticsDepth;
+    }
+
+    public long getDiagnosticsThresholdMillis() {
+        return diagnosticsThresholdMillis;
     }
 
     public boolean isCacheable() {

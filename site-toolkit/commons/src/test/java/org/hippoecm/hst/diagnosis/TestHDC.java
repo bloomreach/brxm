@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -64,7 +65,17 @@ public class TestHDC {
         rootTask.stop();
 
         // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
-        logSummary();
+        final String logSummary = logSummary();
+        assertTrue(logSummary.contains("valve2"));
+
+        final String logSummaryWithDepth0 = logSummary(0);
+        assertFalse(logSummaryWithDepth0.contains("valve2"));
+
+        final String logSummaryWithDepthMinus1 = logSummary(-1);
+        assertTrue(logSummaryWithDepthMinus1.contains("valve2"));
+
+        final String logSummaryWithDepth1 = logSummary(1);
+        assertTrue(logSummaryWithDepth1.contains("valve2"));
 
         // clean up all the stored thread context information..
         HDC.cleanUp();
@@ -89,7 +100,9 @@ public class TestHDC {
         }
 
         // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
-        logSummary();
+        final String logSummary = logSummary();
+
+        assertFalse(logSummary.contains("valve2"));
 
         // clean up all the stored thread context information..
         HDC.cleanUp();
@@ -120,16 +133,23 @@ public class TestHDC {
         rootTask.stop();
 
         // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
-        logSummary();
+        final String logSummary = logSummary();
+
+        assertFalse(logSummary.contains("valve2"));
 
         // clean up all the stored thread context information..
         HDC.cleanUp();
     }
 
-    private void logSummary() {
+
+    private String logSummary() {
         Task rootTask = HDC.getRootTask();
-        String formattedTask = TaskLogFormatter.getTaskLog(rootTask);
-        assertTrue(formattedTask.length() > 0);
+        return TaskLogFormatter.getTaskLog(rootTask);
+    }
+
+    private String logSummary(final int depth) {
+        Task rootTask = HDC.getRootTask();
+        return TaskLogFormatter.getTaskLog(rootTask, depth);
     }
 
 
