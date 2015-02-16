@@ -142,16 +142,18 @@
             return this._hasNewVariantId() || this._isStoreDirty();
         },
 
-        _isStoreDirty: function() {
+        _isStoreDirty: function () {
             var isDirty = false;
-            this.store.each(function(record) {
-                var value = record.get('value'),
-                    initialValue = record.get('initialValue');
-                if (value !== initialValue) {
-                    isDirty = true;
-                    return false;
-                }
-            });
+            if (this.store !== null) {
+                this.store.each(function (record) {
+                    var value = record.get('value'),
+                        initialValue = record.get('initialValue');
+                    if (value !== initialValue) {
+                        isDirty = true;
+                        return false;
+                    }
+                });
+            }
             return isDirty;
         },
 
