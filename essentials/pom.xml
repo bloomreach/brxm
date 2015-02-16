@@ -282,6 +282,8 @@
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/bootstrap/**</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/js/bootstrap*.js</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/js/jquery*.js</exclude>
+                <exclude>plugins/**/*.ftl</exclude>
+                <exclude>plugins/**/*.jsp</exclude>
               </excludes>
             </configuration>
           </plugin>
