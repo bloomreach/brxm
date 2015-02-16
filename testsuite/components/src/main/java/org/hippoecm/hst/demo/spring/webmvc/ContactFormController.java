@@ -60,12 +60,12 @@ public class ContactFormController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String onSubmit(@ModelAttribute("contactMessageBean") ContactMessageBean contactMessageBean,
+    public String onSubmit(@ModelAttribute("contactMessage") ContactMessageBean contactMessageBean,
                            BindingResult result) {
         contactMessageValidator.validate(contactMessageBean, result);
 
         if (result.hasErrors()) {
-            log.warn("Binding errors");
+            log.warn("Form input validation errors");
             return "spring/contactspringmvc-form";
         }
 
