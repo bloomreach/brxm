@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,38 @@ package org.onehippo.addon.frontend.gallerypicker.dialog;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -47,11 +57,15 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
+import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
+import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.WorkflowException;
@@ -68,21 +82,43 @@ public class GalleryPickerDialog extends LinkPickerDialog {
     @SuppressWarnings({"UnusedDeclaration"})
     private static Logger log = LoggerFactory.getLogger(GalleryPickerDialog.class);
 
+    private static final ResourceReference DIALOG_SKIN = new CssResourceReference(GalleryPickerDialog.class, "GalleryPickerDialog.css");
+
     IModel<List<String>> typesModel;
     private String selectedType;
+
+    private final FileUploadValidationService validator;
 
     public GalleryPickerDialog(IPluginContext context, IPluginConfig config, IModel<String> model) {
         super(context, config, model);
 
-        Fragment fragment;
+        validator = loadFileUploadValidationService();
 
+        Fragment fragment;
         if (config.getAsBoolean("enable.upload", false)) {
             fragment = createUploadForm(config);
         } else{
             fragment = new Fragment("fragment", "empty-fragment", this);
         }
-
         add(fragment);
+    }
+
+    private FileUploadValidationService loadFileUploadValidationService() {
+        String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
+        FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
+        if (validator == null) {
+            validator = new DefaultUploadValidationService();
+            log.warn("Cannot load validation service '{}' using the interface '{}'",
+                    serviceId, FileUploadValidationService.class.getName());
+        }
+        return validator;
+    }
+
+    @Override
+    protected FeedbackPanel newFeedbackPanel(final String id) {
+        return new FeedbackPanel(id) {{
+            setOutputMarkupId(true);
+        }};
     }
 
     @SuppressWarnings("unchecked")
@@ -119,73 +155,79 @@ public class GalleryPickerDialog extends LinkPickerDialog {
                 final FileUpload upload = uploadField.getFileUpload();
                 if (upload != null) {
                     try {
-                        String filename = upload.getClientFileName();
-                        String mimetype;
-
-
-                        mimetype = upload.getContentType();
-                        InputStream istream = upload.getInputStream();
-                        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                        HippoNode node = null;
-                        try {
-                            //Get the selected folder from the folderReference Service
-                            Node folderNode = getFolderModel().getObject();
-
-                            //TODO replace shortcuts with custom workflow category(?)
-                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", folderNode);
-                            String nodeName = getNodeNameCodec().encode(filename);
-                            String localName = getLocalizeCodec().encode(filename);
-                            Document document = workflow.createGalleryItem(nodeName, selectedType);
-                            node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
-                            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                            if (!node.getLocalizedName().equals(localName)) {
-                                defaultWorkflow.localizeName(localName);
-                            }
-                        } catch (WorkflowException ex) {
-                            log.error(ex.getMessage());
-                            error(ex);
-                        } catch (MappingException ex) {
-                            log.error(ex.getMessage());
-                            error(ex);
-                        } catch (RepositoryException ex) {
-                            log.error(ex.getMessage());
-                            error(ex);
+                        GalleryPickerDialog.this.validate(upload);
+                        createGalleryItem(target, upload);
+                    } catch (FileUploadViolationException e) {
+                        final String localName = getLocalizeCodec().encode(upload.getClientFileName());
+                        List<String> errors = e.getViolationMessages();
+                        final String errorMessage = StringUtils.join(errors, ";");
+                        String errMsg = getExceptionTranslation(e, localName, errorMessage).getObject();
+                        log.warn(errMsg);
+                        GalleryPickerDialog.this.error(errMsg);
+                        if (log.isDebugEnabled()) {
+                            log.error("Failed to validate uploading file '{}': {}", localName, errorMessage);
                         }
-                        if (node != null) {
-                            try {
-                                getGalleryProcessor().makeImage(node, istream, mimetype, filename);
-                                node.getSession().save();
-                                uploadField.setModel(null);
-                                target.add(uploadField);
-                            } catch (RepositoryException ex) {
-                                log.error(ex.getMessage());
-                                error(ex);
-                                try {
-                                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                                    defaultWorkflow.delete();
-                                } catch (WorkflowException e) {
-                                    log.error(e.getMessage());
-                                } catch (MappingException e) {
-                                    log.error(e.getMessage());
-                                } catch (RepositoryException e) {
-                                    log.error(e.getMessage());
-                                }
-                                try {
-                                    node.getSession().refresh(false);
-                                } catch (RepositoryException e) {
-                                    // deliberate ignore
-                                }
-                            } catch (GalleryException ex) {
-                                log.error(ex.getMessage());
-                                error(ex);
-                            }
-                        }
-                    } catch (IOException ex) {
-                        log.info("upload of image truncated");
-                        error("Unable to read the uploaded image");
                     }
                 } else {
                     error("Please select a file to upload");
+                }
+            }
+
+            private void createGalleryItem(final AjaxRequestTarget target, final FileUpload upload) {
+                try {
+                    final String filename = upload.getClientFileName();
+                    final String mimetype = upload.getContentType();
+                    final InputStream istream = upload.getInputStream();
+                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                    HippoNode node = null;
+                    String localName = null;
+                    try {
+                        //Get the selected folder from the folderReference Service
+                        Node folderNode = getFolderModel().getObject();
+
+                        //TODO replace shortcuts with custom workflow category(?)
+                        GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", folderNode);
+                        String nodeName = getNodeNameCodec().encode(filename);
+                        localName = getLocalizeCodec().encode(filename);
+                        Document document = workflow.createGalleryItem(nodeName, selectedType);
+                        node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByIdentifier(document.getIdentity());
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                        if (!node.getLocalizedName().equals(localName)) {
+                            defaultWorkflow.localizeName(localName);
+                        }
+                    } catch (WorkflowException | RepositoryException ex) {
+                        log.error(ex.getMessage());
+                        error(getExceptionTranslation(ex, localName).getObject());
+                    }
+
+                    if (node != null) {
+                        try {
+                            getGalleryProcessor().makeImage(node, istream, mimetype, filename);
+                            node.getSession().save();
+                            uploadField.setModel(null);
+                            target.add(uploadField);
+                        } catch (RepositoryException ex) {
+                            log.error(ex.getMessage());
+                            error(getExceptionTranslation(ex));
+                            try {
+                                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                                defaultWorkflow.delete();
+                            } catch (WorkflowException | RepositoryException e) {
+                                log.error(e.getMessage());
+                            }
+                            try {
+                                node.getSession().refresh(false);
+                            } catch (RepositoryException e) {
+                                // deliberate ignore
+                            }
+                        } catch (GalleryException ex) {
+                            log.error(ex.getMessage());
+                            error(getExceptionTranslation(ex));
+                        }
+                    }
+                } catch (IOException ex) {
+                    log.info("upload of image truncated");
+                    error("Unable to read the uploaded image");
                 }
             }
         };
@@ -242,6 +284,38 @@ public class GalleryPickerDialog extends LinkPickerDialog {
             uploadButton.add(new AttributeAppender("class", true, new Model<String>("upload-button-osx"), " "));
         }
         return fragment;
+    }
+
+    /***
+     * Validate upload file with file upload validation service
+     * @param upload
+     * @throws FileUploadViolationException
+     */
+    private void validate(final FileUpload upload) throws FileUploadViolationException {
+        try {
+            validator.validate(upload);
+        } catch (ValidationException e) {
+            log.error("Error while validating upload", e);
+            throw new FileUploadViolationException("Error while validating upload " + e.getMessage());
+        }
+
+        IValidationResult result = validator.getValidationResult();
+        if (!result.isValid()){
+            List<String> errors = result.getViolations().stream()
+                    .map(violation -> violation.getMessage().getObject())
+                    .collect(Collectors.toList());
+            throw new FileUploadViolationException(errors);
+        }
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        response.render(CssHeaderItem.forReference(DIALOG_SKIN));
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return new ValueMap("width=855,height=565");
     }
 
     protected GalleryProcessor getGalleryProcessor() {

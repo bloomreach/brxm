@@ -126,6 +126,9 @@
         <sv:property sv:name="translator.id" sv:type="String">
           <sv:value>imagepicker.translator</sv:value>
         </sv:property>
+        <sv:property sv:name="validator.id" sv:type="String">
+          <sv:value>service.gallery.image.validation</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
 

@@ -41,7 +41,7 @@
     <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
 
-    <lib.commons-lang.version>2.1</lib.commons-lang.version>
+    <lib.commons-lang.version>2.6</lib.commons-lang.version>
     <lib.easymock.version>2.4</lib.easymock.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
