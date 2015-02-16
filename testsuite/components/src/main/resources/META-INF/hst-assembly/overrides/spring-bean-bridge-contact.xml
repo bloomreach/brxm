@@ -29,7 +29,7 @@
     <property name="subject" value="My opinion" />
   </bean>
 
-  <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+  <bean id="mailSender" class="org.hippoecm.hst.demo.util.NoJavaMailSenderImpl">
     <property name="host" value="mail.mycompany.com"/>
   </bean>
 

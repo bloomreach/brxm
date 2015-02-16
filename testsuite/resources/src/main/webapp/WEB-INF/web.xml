@@ -144,11 +144,10 @@
   </filter-mapping>
 
   <!-- Bootstrap listener to start up root web application context. -->
-  <!--
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-  -->
+
   <!-- Listener that dispatches http session events to ComponentManager. -->
   <listener>
     <listener-class>org.hippoecm.hst.site.container.session.HttpSessionEventPublisher</listener-class>
@@ -184,7 +183,7 @@
     <servlet-name>ModifyingHstConfigurationServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.demo.servlet.ModifyingHstConfigurationServlet</servlet-class>
   </servlet>
-<!--
+
   <servlet>
     <servlet-name>HstDispatcherServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</servlet-class>
@@ -193,7 +192,7 @@
       <param-value>/WEB-INF/applicationContext.xml</param-value>
     </init-param>
   </servlet>
--->
+
   <servlet>
     <servlet-name>YUIResourceServlet</servlet-name>
     <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
@@ -250,13 +249,13 @@
     <servlet-name>DateTimeServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.demo.servlet.DateTimeServlet</servlet-class>
   </servlet>
-<!--
+
   <servlet>
     <servlet-name>springapp</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>201</load-on-startup>
   </servlet>
--->
+
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
@@ -271,12 +270,12 @@
     <servlet-name>ModifyingHstConfigurationServlet</servlet-name>
     <url-pattern>/hstconfigmodifier/*</url-pattern>
   </servlet-mapping>
-<!--
+
   <servlet-mapping>
     <servlet-name>HstDispatcherServlet</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
--->
+
   <servlet-mapping>
     <servlet-name>YUIResourceServlet</servlet-name>
     <url-pattern>/javascript/yui/*</url-pattern>
@@ -306,12 +305,12 @@
     <servlet-name>HstResourceServlet</servlet-name>
     <url-pattern>/resources/*</url-pattern>
   </servlet-mapping>
-<!--
+
   <servlet-mapping>
     <servlet-name>springapp</servlet-name>
     <url-pattern>/springapp/*</url-pattern>
   </servlet-mapping>
--->
+
   <!-- The Usual Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
@@ -382,7 +381,6 @@
     <res-type>javax.jcr.Repository</res-type>
     <res-auth>Container</res-auth> </resource-ref>
   -->
-
 
   <env-entry>
     <env-entry-name>logging/contextName</env-entry-name>

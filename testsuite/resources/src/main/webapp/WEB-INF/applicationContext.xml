@@ -15,8 +15,9 @@
   limitations under the License.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
 
   <!--
   In this example, it is assumed that the render path property (hst:renderpath) is set to 
@@ -29,6 +30,12 @@
   Also, you can set the render path property (hst:renderpath) to '/WEB-INF/jsp/spring/contactspring.jsp' directly.
   In that case, the dispatching to render path is directly done without passing through the spring framework's DispatcherServlet.
   -->
+
+  <!-- The controllers are autodetected POJOs labeled with the @Controller annotation. -->
+  <context:component-scan base-package="org.hippoecm.hst.demo.spring.webmvc" />
+
+  <bean id="handlerMappingApplicationContext" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+  </bean>
 
   <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
     <property name="basenames">
@@ -49,7 +56,6 @@
     <property name="mappings">
       <value>
         /spring/contactspring.do = contactViewController
-        /spring/contactspringmvc.do = contactFormController
       </value>
     </property>
   </bean>
@@ -61,26 +67,11 @@
     <property name="to" value="contact@mycompany.com" />
     <property name="subject" value="My opinion" />
   </bean>
-  
-  <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+
+  <bean id="mailSender" class="org.hippoecm.hst.demo.util.NoJavaMailSenderImpl">
     <property name="host" value="mail.mycompany.com"/>
   </bean>
 
-  <!-- Spring Web MVC Integration Example -->
-  <bean id="contactFormController" class="org.hippoecm.hst.demo.spring.webmvc.ContactFormController">
-    <property name="mailSender" ref="mailSender" />
-    <property name="templateMessage" ref="templateMessage" />
-    <property name="formView" value="spring/contactspringmvc-form"/>
-    <property name="successView" value="spring/contactspringmvc-success"/>
-    <property name="commandName" value="contactMessage"/>
-    <property name="commandClass" value="org.hippoecm.hst.demo.spring.webmvc.ContactMessageBean"/>
-    <property name="validateOnBinding" value="true"/>
-    <property name="validators">
-      <list>
-        <bean class="org.hippoecm.hst.demo.spring.webmvc.ContactMessageValidator">
-        </bean>
-      </list>
-    </property>
-  </bean>
+  <bean id="contactMessageValidator" class="org.hippoecm.hst.demo.spring.webmvc.ContactMessageValidator"/>
 
 </beans>

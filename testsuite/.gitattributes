@@ -85,6 +85,7 @@ components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ExampleServletConte
 components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/SiteMapItemRedirectView.java -text
 components/src/main/java/org/hippoecm/hst/demo/util/DateRangeQueryConstraints.java -text
 components/src/main/java/org/hippoecm/hst/demo/util/DemoRepoBasedMenuItem.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/util/NoJavaMailSenderImpl.java -text
 components/src/main/java/org/hippoecm/hst/demo/util/SimplePageErrorHandler.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBean.java -text
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBeanFactory.java -text
