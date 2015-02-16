@@ -32,16 +32,16 @@
     angular.module('hippo.channel.menu')
 
         .controller('hippo.channel.menu.EditMenuItemCtrl', [
+            '$rootScope',
             '$scope',
             '$stateParams',
             '$state',
-            '$log',
             '$window',
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
-            function ($scope, $stateParams, $state, $log, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
+            function ($rootScope, $scope, $stateParams, $state, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -87,16 +87,35 @@
                 $scope.fieldFeedbackMessage = {
                 };
 
+                $scope.saveTitle = function (form) {
+                    if(form.title.$dirty && form.title.$valid) {
+                        $scope.saveSelectedMenuItem('title');
+                    }
+                };
+
+                $scope.updateLinkDestination = function (form) {
+                    var formItem;
+                    if($scope.selectedMenuItem.linkType === 'NONE') {
+                        $scope.linkToFocus = 'none';
+                        $scope.saveSelectedMenuItem('linkType');
+                    } else {
+                        if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
+                            formItem = form.sitemapItem;
+                            $scope.linkToFocus = 'sitemapLink';
+                        } else if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
+                            formItem = form.url;
+                            $scope.linkToFocus = 'externalLink';
+                        }
+                        if(formItem.$dirty && formItem.$valid) {
+                            $scope.saveSelectedMenuItem('link');
+                        }
+                    }
+                };
+
                 $scope.saveSelectedMenuItem = function(propertyName) {
                     if (shouldSaveSelectedMenuItemProperty(propertyName)) {
                         saveSelectedMenuItemProperty(propertyName);
                     }
-                };
-
-                $scope.createNewPage = function () {
-                    $state.go('menu-item.add-page', {
-                        menuItemId: $stateParams.menuItemId
-                    });
                 };
 
                 $scope.showPage = function() {
@@ -126,18 +145,18 @@
 
                     $scope.isSaving[propertyName] = true;
 
-                    MenuService.saveMenuItem(savedMenuItem).then(function () {
-                                $scope.isSaving[propertyName] = false;
-                                $scope.isSaved[propertyName] = true;
-                                FormStateService.setValid(true);
-                            },
-                            function (errorResponse) {
-                                $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
-                                $scope.isSaving[propertyName] = false;
-                                $scope.isSaved[propertyName] = false;
-                                FormStateService.setValid(false);
-                            }
-                    );
+                    MenuService.saveMenuItem(savedMenuItem)
+                        .then(function () {
+                            $scope.isSaving[propertyName] = false;
+                            $scope.isSaved[propertyName] = true;
+                            FormStateService.setValid(true);
+                        },
+                        function (errorResponse) {
+                            $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
+                            $scope.isSaving[propertyName] = false;
+                            $scope.isSaved[propertyName] = false;
+                            FormStateService.setValid(false);
+                        });
                 }
 
                 function remove() {
@@ -175,10 +194,7 @@
                             $scope.feedback = FeedbackService.getFeedback(errorResponse);
                         });
                     });
-
-
                 }
-
             }
         ]);
 }());
