@@ -6,7 +6,6 @@ src/main/resources/META-INF/maven/archetype-metadata.xml -text
 src/main/resources/archetype-resources/README.txt -text
 src/main/resources/archetype-resources/bootstrap/configuration/pom.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml -text
-src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/modules/eventlogcleanup-module.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hippoecm-extension.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/channels.xml -text
 src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations.xml -text
