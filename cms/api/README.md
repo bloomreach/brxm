@@ -9,8 +9,8 @@ files that will eventually replace the screen.css beast.
 
 * Java 7
 * Maven 3.x
-* [NodeJS](https://nodejs.org/) (NodeJS)
-* [Node Package Manager](https://npmjs.org/) (NPM)
+* NodeJS (https://nodejs.org/) 0.10+
+* Node Package Manager (https://npmjs.org/) (NPM)
 
 #####Windows specific instructions
 You can automate the installation of NPM using Chocolatey package manager:
