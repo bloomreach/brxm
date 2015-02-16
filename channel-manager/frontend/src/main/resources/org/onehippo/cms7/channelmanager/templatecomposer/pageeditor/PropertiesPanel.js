@@ -40,7 +40,7 @@
 
         // set in functions
         componentId: null,
-        pageRequestVariants: {},
+        pageRequestVariants: [],
         componentVariants: null,
         lastModifiedTimestamp: null,
 
@@ -180,7 +180,8 @@
         },
 
         _initTabs: function(variants, reusableTabs) {
-            var reusablePropertiesForms = {};
+            var propertiesEditorCount = variants.length - 1,
+                reusablePropertiesForms = {};
 
             reusableTabs.forEach(function(tab) {
                 reusablePropertiesForms[tab.variant.id] = tab.propertiesForm;
@@ -325,35 +326,37 @@
             this.setActiveTab(tabIndex);
         },
 
-        _getBestMatchingTabIndex: function (variantId, variants) {
-            var tabIndex = 0,
-                candidates = [
-                    variantId,
-                    this.pageRequestVariants[this.componentId]
-                ];
+        _getBestMatchingTabIndex: function(variantId, variants) {
+            var tabIndex, i, len;
 
-            candidates.some(function (candidate) {
-                var index = this._getTabIndexByVariant(candidate, variants);
-                if (index >= 0) {
-                    tabIndex = index;
-                    return true;
+            // first check if any tab matches the given variant
+            tabIndex = this._getTabIndexByVariant(variantId, variants);
+            if (tabIndex >= 0) {
+                return tabIndex;
+            }
+
+            // second, find tab with the best-matching page request variant
+            for (i = 0, len = this.pageRequestVariants.length; i < len; i++) {
+                tabIndex = this._getTabIndexByVariant(this.pageRequestVariants[i], variants);
+                if (tabIndex >= 0) {
+                    return tabIndex;
                 }
-            }.bind(this));
+            }
 
-            return tabIndex;
+            // third, return the first tab
+            return 0;
         },
 
         _getTabIndexByVariant: function(variantId, variants) {
-            var result = -1;
+            var i, len;
             if (!Ext.isEmpty(variantId)) {
-                variants.some(function(variant, i) {
+                for (i = 0, len = variants.length; i < len; i++) {
                     if (variants[i].id === variantId) {
-                        result = i;
-                        return true;
+                        return i;
                     }
-                });
+                }
             }
-            return result;
+            return -1;
         },
 
         _copyVariant: function(existingVariant, newVariant) {
@@ -362,8 +365,7 @@
             existingTab = this._getTab(existingVariant);
             if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
                 newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
-                newTab = this._createPropertiesEditor(
-                    newVariant,
+                newTab = this._createPropertiesEditor(newVariant,
                     Ext.pluck(this.items.getRange(), "variant"),
                     newPropertiesForm);
                 newTabIndex = this.items.length - 1;

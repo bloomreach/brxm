@@ -21,7 +21,7 @@
 
         /**
          * @ngdoc filter
-         * @name hippo.channel.filter:hippoChannelPlaceholder
+         * @name hippo.channel.filter:hippChannelPlaceholder
          * @requires $filter
          *
          * @description
