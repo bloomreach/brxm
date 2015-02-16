@@ -10,7 +10,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/contentblocks01.png"
         ],
-        "documentationLink": "http://content-blocks.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/content-blocks/about.html",
         "type": "feature",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"],
@@ -91,7 +91,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/taxonomy01.png"
         ],
-        "documentationLink": "http://taxonomy.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"],
         "type": "feature",
@@ -194,7 +194,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/tagging01.png"
         ],
-        "documentationLink": "http://ecm-tagging.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/tagging/about.html",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
         "packageClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingInstructionPackage",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"],
@@ -234,7 +234,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/documentwizard01.png"
         ],
-        "documentationLink": "http://documentwizard.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"],
         "type": "feature",
@@ -273,7 +273,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/relateddocuments01.png"
         ],
-        "documentationLink": "http://relateddocs.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/related-documents/about.html",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
         "type": "feature",
@@ -311,7 +311,7 @@
         "imageUrls": [
             "/essentials/images/screenshots/seo01.png"
         ],
-        "documentationLink": "http://hst-seo-support.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/seo-support/about.html",
         "packageFile": "/META-INF/seoPlugin_instructions.xml",
         "restClasses": [],
         "type": "feature",
@@ -390,7 +390,7 @@
             "/essentials/images/screenshots/robots01.png",
             "/essentials/images/screenshots/robots02.png"
         ],
-        "documentationLink": "http://robotstxt.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/robots.txt/about.html",
         "restClasses": [],
         "packageFile": "/META-INF/robots_plugin_instructions.xml",
         "type": "feature",
@@ -431,7 +431,7 @@
             "/essentials/images/screenshots/poll02.png",
             "/essentials/images/screenshots/poll03.png"
         ],
-        "documentationLink": "http://poll.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/poll/about.html",
         "restClasses": [],
         "packageFile": "/META-INF/poll_plugin_instructions.xml",
         "type": "feature",
@@ -764,7 +764,7 @@
         "icon" : "/essentials/images/icons/sitemap.png",
         "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
         "description": "This feature wraps the 'Sitemap' Standard Plugin.",
-        "documentationLink": "http://sitemap.forge.onehippo.org",
+        "documentationLink": "http://www.onehippo.org/library/concepts/plugins/sitemap/about.html",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.sitemap.SitemapParameterService",
         "restClasses": [],
         "type": "feature",
