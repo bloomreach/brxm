@@ -52,7 +52,7 @@ public class BinaryUploadDialog extends AbstractDialog<Void> {
         msgText = new Model<>("Upload new binary file");
         add(new Label("message", msgText));
 
-        setOkLabel("import");
+        setOkLabel("Import");
     }
 
     @Override
