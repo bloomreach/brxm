@@ -28,6 +28,18 @@
   <sv:property sv:name="plugin.class" sv:type="String">
     <sv:value>org.onehippo.forge.selection.frontend.plugin.DynamicMultiSelectPlugin</sv:value>
   </sv:property>
+  <sv:property sv:name="multiselect.type" sv:type="String">
+    <sv:value>{{presentation}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="palette.alloworder" sv:type="Boolean">
+    <sv:value>{{allowOrdering}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="palette.maxrows" sv:type="String">
+    <sv:value>{{maxRows}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="selectlist.maxrows" sv:type="String">
+    <sv:value>{{maxRows}}</sv:value>
+  </sv:property>
   <sv:property sv:name="valuelist.provider" sv:type="String">
     <sv:value>service.valuelist.default</sv:value>
   </sv:property>

@@ -38,5 +38,8 @@
     <sv:property sv:name="source" sv:type="String">
       <sv:value>{{valueList}}</sv:value>
     </sv:property>
+    <sv:property sv:name="orientation" sv:type="String">
+      <sv:value>{{orientation}}</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>

@@ -35,6 +35,6 @@
     <sv:value>false</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:type" sv:type="String">
-    <sv:value>DynamicDropdown</sv:value>
+    <sv:value>{{presentationType}}</sv:value>
   </sv:property>
 </sv:node>

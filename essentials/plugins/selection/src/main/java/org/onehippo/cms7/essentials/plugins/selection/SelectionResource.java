@@ -130,17 +130,18 @@ public class SelectionResource extends BaseResource {
                                        final String documentName, final Node nodeType, final Node editorTemplate)
         throws RepositoryException
     {
+        final String pluginClass = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
         final NodeIterator children = nodeType.getNodes();
         while (children.hasNext()) {
             final Node child = children.nextNode();
 
-            if (child.hasProperty("hipposysedit:type") && "DynamicDropdown".equals(child.getProperty("hipposysedit:type").getString())) {
-                final String fieldName = child.getName();
-                final NodeIterator editorFields = editorTemplate.getNodes();
-                while (editorFields.hasNext()) {
-                    final Node editorField = editorFields.nextNode();
-                    if (editorField.hasProperty("field") && fieldName.equals(editorField.getProperty("field").getString())
-                        && !editorField.hasNode("valuelist.options")) {
+            if (child.hasProperty("hipposysedit:type")) {
+                String type = child.getProperty("hipposysedit:type").getString();
+                if ("DynamicDropdown".equals(type) || "selection:RadioGroup".equals(type)) {
+                    final Node editorField = findCorrespondingEditorTemplateField(child, editorTemplate);
+                    if (editorField != null && editorField.hasProperty("plugin.class")
+                            && pluginClass.equals(editorField.getProperty("plugin.class").getString())) {
+
                         final SelectionFieldRestful field = new SelectionFieldRestful();
                         field.setType("single");
                         field.setNameSpace(nameSpace);
@@ -148,11 +149,30 @@ public class SelectionResource extends BaseResource {
                         field.setName(editorField.getProperty("caption").getString());
                         field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                         fields.add(field);
-                        break; // out of the inner loop
                     }
                 }
             }
         }
+    }
+
+    /**
+     * @param nodeTypeField  Node representing the field's node type definition
+     * @param editorTemplate Node representing the document's editor template
+     * @return               Node representing the field's editor template definition, or null.
+     * @throws RepositoryException
+     */
+    private Node findCorrespondingEditorTemplateField(final Node nodeTypeField, final Node editorTemplate)
+        throws RepositoryException
+    {
+        final String fieldName = nodeTypeField.getName();
+        final NodeIterator editorFields = editorTemplate.getNodes();
+        while (editorFields.hasNext()) {
+            final Node editorField = editorFields.nextNode();
+            if (editorField.hasProperty("field") && fieldName.equals(editorField.getProperty("field").getString())) {
+                return editorField;
+            }
+        }
+        return null;
     }
 
     /**
@@ -219,7 +239,15 @@ public class SelectionResource extends BaseResource {
         // Put the new field to the default location
         values.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
 
+        log.error("allowOrdering is {}.", values.get("allowOrdering"));
+
+        String presentationType = "DynamicDropdown";
         if ("single".equals(values.get("selectionType"))) {
+            if ("radioboxes".equals(values.get("presentation"))) {
+                presentationType = "selection:RadioGroup";
+            }
+            values.put("presentationType", presentationType);
+
             importXml("/xml/single-field-editor-template.xml", values, editorTemplate);
             importXml("/xml/single-field-node-type.xml", values, nodeType);
         } else if ("multiple".equals(values.get("selectionType"))) {
@@ -269,6 +297,7 @@ public class SelectionResource extends BaseResource {
     {
         final InputStream stream = getClass().getResourceAsStream(resourcePath);
         final String processedXml = TemplateUtils.replaceStringPlaceholders(GlobalUtils.readStreamAsText(stream), placeholderMap);
+        log.error("Imported XML is '{}'.", processedXml);
         destination.getSession().importXML(destination.getPath(), IOUtils.toInputStream(processedXml),
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }

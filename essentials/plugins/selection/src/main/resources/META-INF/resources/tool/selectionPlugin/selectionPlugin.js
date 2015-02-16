@@ -19,88 +19,113 @@
     angular.module('hippo.essentials')
         .controller('selectionPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
 
-                var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
+            var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
+            var singlePresentations = [
+                { id: 'dropdown', label: 'Dropdown'},
+                { id: 'radioboxes', label: 'Radioboxes'}
+            ];
+            var multiplePresentations = [
+                { id: 'selectlist', label: 'Select list' },
+                { id: 'checkboxes', label: 'Checkboxes' },
+                { id: 'palette', label: 'Palette' }
+            ];
 
-                $scope.addField = function() {
-                    var payload = {
-                        values: {
-                            namespace:     $scope.selectedDocumentType.prefix,
-                            documentType:  $scope.selectedDocumentType.name,
-                            fieldName:     $scope.fieldName,
-                            selectionType: $scope.selectionType,
-                            valueList:     $scope.selectedValueList.value
-                        }
-                    };
-                    $http.post(restEndpoint + 'addfield/', payload).success(function () {
-                        resetAddFieldForm();
-                        reloadSelectionFields($scope.selectedDocumentType);
-                        $scope.fieldAdded = true;
-                        $scope.modifiedType = $scope.selectedDocumentType;
-                    });
+            $scope.addField = function() {
+                var payload = {
+                    values: {
+                        namespace:     $scope.selectedDocumentType.prefix,
+                        documentType:  $scope.selectedDocumentType.name,
+                        fieldName:     $scope.fieldName,
+                        selectionType: $scope.selectionType,
+                        valueList:     $scope.selectedValueList.value,
+                        presentation:  $scope.presentation.id,
+                        orientation:   $scope.orientation,
+                        maxRows:       $scope.maxRows,
+                        allowOrdering: $scope.allowOrdering
+                    }
                 };
-                $scope.showDocument = function(documentType) { // don't show the basedocument option
-                    return documentType.name !== 'basedocument';
-                };
+                $http.post(restEndpoint + 'addfield/', payload).success(function () {
+                    resetAddFieldForm();
+                    reloadSelectionFields($scope.selectedDocumentType);
+                    $scope.fieldAdded = true;
+                    $scope.modifiedType = $scope.selectedDocumentType;
+                });
+            };
+            $scope.showDocument = function(documentType) { // don't show the basedocument option
+                return documentType.name !== 'basedocument';
+            };
 
-                $scope.valueListAsOption = function(valueList) {
-                    return valueList.key + ' (' + valueList.value + ')';
-                };
-                $scope.selectionTypes = [ 'single', 'multiple' ];
-                $scope.valueListNameByPath = function(path) {
-                    var name = '';
-                    angular.forEach($scope.valueLists, function(entry) {
-                        if (entry.value === path) {
-                            name = entry.key;
-                        }
-                    });
-                    return name;
-                };
-                resetAddFieldForm();
-                loadValueLists();
-
-                $scope.documentTypes = [];
-                $http.get($rootScope.REST.documents).success(function (data){
-                    debugger;
-                    $scope.documentTypes = data;
-
-                    // if there's only one selectable type, preselect it.
-                    var selectable = [];
-                    angular.forEach($scope.documentTypes, function(type) {
-                        if ($scope.showDocument(type)) {
-                            selectable.push(type);
-                        }
-                    });
-                    if (selectable.length == 1) {
-                        $scope.selectedDocumentType = selectable[0];
+            $scope.valueListAsOption = function(valueList) {
+                return valueList.key + ' (' + valueList.value + ')';
+            };
+            $scope.selectionTypes = [ 'single', 'multiple' ];
+            $scope.$watch('selectionType', function(newValue) {
+                console.log("Selection type: ", newValue);
+                if (newValue === 'single') {
+                    $scope.typePresentations = singlePresentations;
+                } else if (newValue === 'multiple') {
+                    $scope.typePresentations = multiplePresentations;
+                }
+                $scope.presentation = $scope.typePresentations[0]; // set default
+            });
+            $scope.orientations = [ 'vertical', 'horizontal' ];
+            $scope.orientation = $scope.orientations[0]; // set default
+            $scope.valueListNameByPath = function(path) {
+                var name = '';
+                angular.forEach($scope.valueLists, function(entry) {
+                    if (entry.value === path) {
+                        name = entry.key;
                     }
                 });
+                return name;
+            };
+            resetAddFieldForm();
+            loadValueLists();
 
-                // when changing the document type, set the default position and retrieve a fresh list of fields
-                $scope.$watch('selectedDocumentType', function (newDocType) {
-                    if (newDocType) {
-                        reloadSelectionFields(newDocType);
-                    } else {
-                        $scope.selectionFields = [];
+            $scope.documentTypes = [];
+            $http.get($rootScope.REST.documents).success(function (data){
+                $scope.documentTypes = data;
+
+                // if there's only one selectable type, preselect it.
+                var selectable = [];
+                angular.forEach($scope.documentTypes, function(type) {
+                    if ($scope.showDocument(type)) {
+                        selectable.push(type);
                     }
-                }, true);
+                });
+                if (selectable.length == 1) {
+                    $scope.selectedDocumentType = selectable[0];
+                }
+            });
 
-                // Helper functions
-                function loadValueLists() {
-                    $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
-                        console.log(data);
-                        $scope.valueLists = data;
-                    });
-                }
-                function resetAddFieldForm() {
-                    $scope.fieldName = '';
-                    $scope.selectionType = 'single';
-                    $scope.selectedValueList = undefined;
-                }
-                function reloadSelectionFields(documentType) {
+            // when changing the document type, set the default position and retrieve a fresh list of fields
+            $scope.$watch('selectedDocumentType', function (newDocType) {
+                if (newDocType) {
+                    reloadSelectionFields(newDocType);
+                } else {
                     $scope.selectionFields = [];
-                    $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
-                        $scope.selectionFields = data;
-                    });
                 }
+            }, true);
+
+            // Helper functions
+            function loadValueLists() {
+                $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+                    $scope.valueLists = data;
+                });
+            }
+            function resetAddFieldForm() {
+                $scope.fieldName = '';
+                console.log("Setting selection type");
+                $scope.selectionType = 'single';
+                $scope.selectedValueList = undefined;
+                $scope.allowOrdering = false;
+                $scope.maxRows = undefined;
+            }
+            function reloadSelectionFields(documentType) {
+                $scope.selectionFields = [];
+                $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
+                    $scope.selectionFields = data;
+                });
+            }
         })
 })();
