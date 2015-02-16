@@ -49,7 +49,7 @@
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
                 Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
                 Essentials.addPayloadData("documentQuery", $scope.documentQuery.value, payload);
-                Essentials.addPayloadData("valueListPath", $scope.valueListPath, payload);
+                Essentials.addPayloadData("valueListPath", $scope.valueListPath.value, payload);
                 // labels
                 Essentials.addPayloadData("shortcutLinkLabel", $scope.shortcutLinkLabel, payload);
                 Essentials.addPayloadData("nameLabel", $scope.nameLabel, payload);
