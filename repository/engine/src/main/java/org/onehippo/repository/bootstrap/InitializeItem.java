@@ -398,7 +398,10 @@ public class InitializeItem {
 
         if (itemNode != null && isReloadRequested()) {
             if (isDeltaMerge()) {
-                log.error("Cannot reload initialize item {} because it is a combine or overlay delta", getName());
+                String message = "Cannot reload initialize item " + getName() + " because it is a combine or overlay delta";
+                log.error(message);
+                itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
+                itemNode.setProperty(HIPPO_ERRORMESSAGE, message);
             } else {
                 if (isReloadEnabled() || isNodetypesResource()) {
                     log.info("Item {} set to status reload", tempItemNode.getName());
