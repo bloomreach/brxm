@@ -126,8 +126,8 @@ module.exports = function (grunt) {
                 options: {
                     browsers: ['> 0%']
                 },
-                src: '.tmp/css/main.css',
-                dest: '.tmp/css/main.css'
+                src: '<%= build.tmp %>/css/main.css',
+                dest: '<%= build.tmp %>/css/main.css'
             }
         },
 
@@ -135,14 +135,14 @@ module.exports = function (grunt) {
         less: {
             main: {
                 files: {
-                    '.tmp/css/main.css': 'src/less/main.less'
+                    '<%= build.tmp %>/css/main.css': 'src/less/main.less'
                 }
             },
             vendors: {
                 files: {
-                    '.tmp/css/bootstrap.css': 'src/less/bootstrap.less',
-                    '.tmp/css/font-awesome.css': 'src/less/font-awesome.less',
-                    '.tmp/css/bootstrap-chosen.css': 'src/less/bootstrap-chosen.less'
+                    '<%= build.tmp %>/css/bootstrap.css': 'src/less/bootstrap.less',
+                    '<%= build.tmp %>/css/font-awesome.css': 'src/less/font-awesome.less',
+                    '<%= build.tmp %>/css/bootstrap-chosen.css': 'src/less/bootstrap-chosen.less'
                 }
             }
         },
