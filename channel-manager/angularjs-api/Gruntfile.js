@@ -62,7 +62,6 @@ module.exports = function (grunt) {
             },
             livereload: {
                 files: [
-                    '<%= cfg.demoSrc %>/**/*.html',
                     'dist/css/**/*.css'
                 ]
             }
