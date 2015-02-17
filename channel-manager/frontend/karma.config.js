@@ -20,45 +20,45 @@ module.exports = function(config) {
 
     config.set({
 
-        // base path, that will be used to resolve files and exclude
-        basePath: build.ngsource,
-
         // frameworks to use
         frameworks: ['jasmine'],
 
         // list of files / patterns to load in the browser
         files: [
             // dependencies
-            '../target/bower/components/jquery/dist/jquery.js',
-            '../target/bower/components/angular/angular.js',
-            '../target/bower/components/angular-bootstrap/ui-bootstrap.min.js',
-            '../target/bower/components/angular-route/angular-route.js',
-            '../target/bower/components/hippo-theme/dist/js/main.js',
-            '../target/bower/components/angular-translate/angular-translate.js',
-            '../target/bower/components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-            '../target/bower/components/angular-ui-router/release/angular-ui-router.min.js',
-            '../target/bower/components/angular-ui-tree/dist/angular-ui-tree.js',
-            '../target/bower/components/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
+            build.bower + '/jquery/dist/jquery.js',
+            build.bower + '/angular/angular.js',
+            build.bower + '/angular-bootstrap/ui-bootstrap.min.js',
+            build.bower + '/angular-route/angular-route.js',
+            build.bower + '/hippo-theme/dist/js/main.js',
+            build.bower + '/angular-translate/angular-translate.js',
+            build.bower + '/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+            build.bower + '/angular-ui-router/release/angular-ui-router.min.js',
+            build.bower + '/angular-ui-tree/dist/angular-ui-tree.js',
+            build.bower + '/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
 
             // testing dependencies
-            '../target/bower/components/jasmine-jquery/lib/jasmine-jquery.js',
-            '../target/bower/components/angular-mocks/angular-mocks.js',
+            build.bower + '/jasmine-jquery/lib/jasmine-jquery.js',
+            build.bower + '/angular-mocks/angular-mocks.js',
 
             // apps sources
-            'menu/menu-dependencies.js',
-            'menu/services/*.js',
-            'menu/states/**/*.js',
+            build.ngsource + '/shared/services/PageService.js',
 
-            'page/page-dependencies.js',
-            'page/states/**/*.js',
+            build.ngsource + '/menu/menu-dependencies.js',
+            build.ngsource + '/menu/services/*.js',
+            build.ngsource + '/menu/states/**/*.js',
 
-            'pages/pages-dependencies.js',
-            'pages/filters/*.js',
-            'pages/states/**/*.js',
+            build.ngsource + '/page/page-dependencies.js',
+            build.ngsource + '/page/states/**/*.js',
+
+            build.ngsource + '/pages/pages-dependencies.js',
+            build.ngsource + '/pages/filters/*.js',
+            build.ngsource + '/pages/states/**/*.js',
+
 
             // tests
             {
-                pattern: '**/*.spec.js',
+                pattern: build.ngsource + '/**/*.spec.js',
                 included: false
             }
         ],
@@ -101,13 +101,13 @@ module.exports = function(config) {
         singleRun: false,
 
         preprocessors: {
-            'menu/**/!(*spec).js': ['coverage'],
-            'page/**/!(*spec).js': ['coverage'],
-            'pages/**/!(*spec).js': ['coverage']
+            '<%= build.ngsource %>/menu/**/!(*spec).js': ['coverage'],
+            '<%= build.ngsource %>/page/**/!(*spec).js': ['coverage'],
+            '<%= build.ngsource %>/pages/**/!(*spec).js': ['coverage']
         },
 
         junitReporter: {
-            outputFile: '../target/surefire-reports/TEST-karma-results.xml'
+            outputFile: './target/surefire-reports/TEST-karma-results.xml'
         }
 
     });
