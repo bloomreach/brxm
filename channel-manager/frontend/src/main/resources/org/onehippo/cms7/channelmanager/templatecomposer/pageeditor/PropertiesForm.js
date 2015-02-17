@@ -69,8 +69,9 @@
 
         initComponent: function() {
             var buttons = [];
+
             if (this.variant.id !== 'hippo-default') {
-                buttons.push({
+                this.deleteButton = new Ext.Button({
                     text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
                     handler: function() {
                         Ext.Ajax.request({
@@ -85,8 +86,10 @@
                     },
                     scope: this
                 });
+                buttons.push(this.deleteButton);
                 buttons.push('->');
             }
+
             this.saveButton = new Ext.Button({
                 text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
                 handler: this._submitForm,
@@ -606,12 +609,16 @@
             }
         },
 
-        disableSave: function() {
-            this.saveButton.disable();
+        disableDelete: function() {
+            if (this.deleteButton) {
+                this.deleteButton.disable();
+            }
         },
 
-        enableSave: function() {
-            this.saveButton.enable();
+        enableDelete: function() {
+            if (this.deleteButton) {
+                this.deleteButton.enable();
+            }
         }
 
     });

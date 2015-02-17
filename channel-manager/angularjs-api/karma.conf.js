@@ -16,9 +16,7 @@
 
 module.exports = function (config) {
 
-    var hippo = {
-        bowerComponents : 'components'
-    };
+    var build = require( './build.config.js' );
 
     config.set({
         basePath: '',
@@ -27,10 +25,10 @@ module.exports = function (config) {
         // files to load in the browser
         files: [
             // external sources
-            hippo.bowerComponents + '/jquery/dist/jquery.js',
-            hippo.bowerComponents + '/jasmine-jquery/lib/jasmine-jquery.js',
-            hippo.bowerComponents + '/angular/angular.js',
-            hippo.bowerComponents + '/angular-mocks/angular-mocks.js',
+            build.bower + '/jquery/dist/jquery.js',
+            build.bower + '/jasmine-jquery/lib/jasmine-jquery.js',
+            build.bower + '/angular/angular.js',
+            build.bower + '/angular-mocks/angular-mocks.js',
 
             // components
             'src/shared/shared-dependencies.js',

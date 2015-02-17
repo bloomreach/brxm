@@ -16,24 +16,15 @@
 
 module.exports = function (grunt) {
 
-    var userhome = require('userhome');
-
     // display execution time of each task
     require('time-grunt')(grunt);
 
     // load all grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
-    var cfg = {
-        tmpDir: '.tmp'
-    };
-
-    cfg.tmpRepoDir = userhome(cfg.tmpDir);
-
     grunt.initConfig({
-        // Configuration
-        cfg: cfg,
-        userhome: userhome,
+
+        build: require('./build.config.js'),
 
         // Watch for file changes and run corresponding tasks
         watch: {
@@ -62,16 +53,15 @@ module.exports = function (grunt) {
             },
             livereload: {
                 files: [
-                    '<%= cfg.demoSrc %>/**/*.html',
-                    'dist/css/**/*.css'
+                    '<%= build.dist %>/css/**/*.css'
                 ]
             }
         },
 
         // clean target (distribution) folder
         clean: {
-            bower: [ 'components/**' ],
-            dist: [ 'dist/**/*' ]
+            bower: [ '<%= build.bower %>/**' ],
+            dist: [ '<%= build.dist %>/**/*' ]
         },
 
         // Check if JS files are according to conventions specified in .jshintrc
@@ -81,7 +71,7 @@ module.exports = function (grunt) {
                 '!**/*.spec.js'
             ],
             options: {
-                'jshintrc': true,
+                jshintrc: true,
                 reporter: require('jshint-stylish')
             }
         },
@@ -97,13 +87,13 @@ module.exports = function (grunt) {
                     'src/shared/**/*.js',
                     '!src/shared/**/*.spec.js'
                 ],
-                dest: 'dist/js/main.js'
+                dest: '<%= build.dist %>/js/main.js'
             },
             css: {
                 src: [
-                    '.tmp/css/main.css'
+                    '<%= build.tmp %>/css/main.css'
                 ],
-                dest: 'dist/css/main.css'
+                dest: '<%= build.dist %>/css/main.css'
             }
         },
 
@@ -114,7 +104,7 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'dist/js/main.min.js': ['dist/js/main.js']
+                    '<%= build.dist %>/js/main.min.js': ['<%= build.dist %>/js/main.js']
                 }
             }
         },
@@ -126,7 +116,7 @@ module.exports = function (grunt) {
                     csslintrc: '.csslintrc'
                 },
 
-                src: ['.tmp/css/main.css']
+                src: ['<%= build.tmp %>/css/main.css']
             }
         },
 
@@ -163,7 +153,7 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'dist/css/main.min.css': ['dist/css/main.css']
+                    '<%= build.dist %>/css/main.min.css': ['<%= build.dist %>/css/main.css']
                 }
             }
         },
@@ -187,21 +177,21 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'components/bootstrap/fonts',
+                        cwd: '<%= build.bower %>/bootstrap/fonts',
                         src: ['**/*'],
-                        dest: 'dist/fonts/'
+                        dest: '<%= build.dist %>/fonts/'
                     },
                     {
                         expand: true,
-                        cwd: 'components/font-awesome/fonts',
+                        cwd: '<%= build.bower %>/font-awesome/fonts',
                         src: ['**/*'],
-                        dest: 'dist/fonts/'
+                        dest: '<%= build.dist %>/fonts/'
                     },
                     {
                         expand: true,
                         cwd: 'src/images',
                         src: ['**/*.{png,jpg,gif}'],
-                        dest: 'dist/images/'
+                        dest: '<%= build.dist %>/images/'
                     }
                 ]
             }
