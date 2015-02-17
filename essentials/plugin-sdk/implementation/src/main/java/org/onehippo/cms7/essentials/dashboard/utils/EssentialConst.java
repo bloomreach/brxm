@@ -161,6 +161,9 @@ public final class EssentialConst {
     public static final String HIPPO_COMPOUND = "hippo:compound";
     public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
+    public static final String HIPPO_ITEM_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoItem";
+    public static final String HIPPO_BEAN_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoBean";
+    public static final String HIPPO_FACET_SELECT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoFacetSelect";
     public static final String HIPPO_IMAGE_SET_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet";
     public static final String INSTRUCTION_GROUP_DEFAULT = "default";
     public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(INSTRUCTION_GROUP_DEFAULT).build();
@@ -169,6 +172,9 @@ public final class EssentialConst {
     public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
     public static final String PROP_TEMPLATE_NAME = "templateName";
     public static final String PROP_SAMPLE_DATA = "sampleData";
+    public static final String METHOD_RELATED_DOCUMENTS = "getRelatedDocuments";
+    public static final String RELATED_DOCUMENTS_BEAN = "RelatedDocumentsBean";
+    public static final String RELATEDDOCS_DOCS = "relateddocs:docs";
 
 
     private EssentialConst() {

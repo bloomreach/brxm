@@ -77,6 +77,7 @@ public class ContentBeansService {
 
     public static final String HIPPO_GALLERY_IMAGE_SET_BEAN = "HippoGalleryImageSetBean";
     public static final String HIPPO_GALLERY_IMAGE_SET_CLASS = "HippoGalleryImageSet";
+    public static final String RELATED_MIXIN = "relateddocs:relatabledocs";
     private static Logger log = LoggerFactory.getLogger(ContentBeansService.class);
 
     private final PluginContext context;
@@ -144,8 +145,76 @@ public class ContentBeansService {
         } else if (hasNonCreatedBeans) {
             log.error("Not all beans were created: {}", extendedMissing);
         }
+        processRelatedDocuments();
 
     }
+
+
+    private void processRelatedDocuments() {
+        boolean hasRelatedDocs = false;
+        for (HippoContentBean contentBean : contentBeans) {
+            if (contentBean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
+                hasRelatedDocs = true;
+            }
+        }
+        // check related docs existence:
+        Map<String, Path> existing = findExitingBeans();
+        if (hasRelatedDocs) {
+            ensureRelatedDocsBean(existing);
+        }
+
+        existing = findExitingBeans();
+        final Path relatedPath = existing.get(EssentialConst.RELATEDDOCS_DOCS);
+        if (relatedPath == null) {
+            log.warn("Missing related documents bean");
+            return;
+        }
+
+        for (HippoContentBean contentBean : contentBeans) {
+            final Path path = existing.get(contentBean.getName());
+            if (path != null && contentBean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
+                final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
+                final Set<String> methodInternalNames = methodCollection.getMethodInternalNames();
+                if (!methodInternalNames.contains(EssentialConst.RELATEDDOCS_DOCS)) {
+                    log.debug("Adding related docs method to: ", path);
+                    JavaSourceUtils.addRelatedDocsMethod(EssentialConst.METHOD_RELATED_DOCUMENTS, path, relatedPath);
+                    log.debug(MSG_ADDED_METHOD, EssentialConst.METHOD_RELATED_DOCUMENTS);
+                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", EssentialConst.METHOD_RELATED_DOCUMENTS)));
+
+                }
+            }
+        }
+    }
+
+    private Path ensureRelatedDocsBean(final Map<String, Path> existing) {
+        if (existing.containsKey(EssentialConst.RELATEDDOCS_DOCS)) {
+            return existing.get(EssentialConst.RELATEDDOCS_DOCS);
+        }
+        //final String relatedDocumentsBean = EssentialConst.RELATED_DOCUMENTS_BEAN;
+        final String className = GlobalUtils.createClassName(EssentialConst.RELATED_DOCUMENTS_BEAN);
+        final Path path = JavaSourceUtils.createJavaClass(context.getBeansRootPath().toString(), className, context.beansPackageName(), null);
+        context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
+        JavaSourceUtils.createHippoBean(path, context.beansPackageName(), EssentialConst.RELATEDDOCS_DOCS, EssentialConst.RELATEDDOCS_DOCS);
+        JavaSourceUtils.addExtendsClass(path, "HippoItem");
+        JavaSourceUtils.addImport(path, EssentialConst.HIPPO_ITEM_IMPORT);
+        JavaSourceUtils.populateRelatedDocsBean(EssentialConst.METHOD_RELATED_DOCUMENTS, path);
+        return path;
+
+    }
+
+
+    /*
+      public List<HippoBean> getRelatedDocs() {
+
+        RelatedDocsBean bean = this.getBean("relateddocs:docs");
+        return bean.getDocs();
+
+    }
+     */
+    public void addRelatedDocsMethod(final Path bean) {
+
+    }
+
 
     private Iterator<HippoContentBean> filterMissingBeans(final Map<String, Path> existing) {
         final Iterable<HippoContentBean> missingBeans = Iterables.filter(contentBeans, new Predicate<HippoContentBean>() {
@@ -191,7 +260,7 @@ public class ContentBeansService {
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
                 JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET_CLASS);
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
-                addMethods(missingBean, javaClass, new ArrayList<String>());
+                addMethods(missingBean, javaClass, new ArrayList<>());
             }
         }
     }
@@ -443,6 +512,8 @@ public class ContentBeansService {
         }
 
     }
+
+
 
     private Path extractPath() {
         final Multimap<String, Object> pluginContextData = context.getPluginContextData();
