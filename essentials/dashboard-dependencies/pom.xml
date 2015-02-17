@@ -183,10 +183,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-provider</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>jsr311-api</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
