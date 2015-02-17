@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.diagnosis;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-
 import org.hippoecm.hst.util.TaskLogFormatter;
 import org.junit.Test;
 import org.slf4j.Logger;
