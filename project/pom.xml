@@ -391,7 +391,7 @@
       </dependency>
       <dependency>
         <groupId>javax.ws.rs</groupId>
-        <artifactId>ws.rs-api</artifactId>
+        <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
       </dependency>
     </dependencies>
