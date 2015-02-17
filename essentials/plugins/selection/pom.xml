@@ -37,6 +37,10 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-selections-hst-client</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

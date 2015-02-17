@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,15 +36,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
 import org.apache.commons.io.IOUtils;
+import org.dom4j.*;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.onehippo.forge.selection.hst.manager.ValueListManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +65,12 @@ public class SelectionResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(SelectionResource.class);
     public static final String MULTISELECT_PLUGIN_CLASS = "org.onehippo.forge.selection.frontend.plugin.DynamicMultiSelectPlugin";
+    public static final String VALUELIST_MANAGER_ID = ValueListManager.class.getName();
+    private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
+            + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
+
+    @Inject
+    private EventBus eventBus;
 
     @POST
     @Path("/addfield")
@@ -88,6 +102,74 @@ public class SelectionResource extends BaseResource {
         }
 
         return fields;
+    }
+
+    @GET
+    @Path("spring")
+    public List<ProvisionedValueList> loadProvisionedValueLists() {
+        List<ProvisionedValueList> pvlList = new ArrayList<>();
+        final Document document = readSpringConfiguration();
+
+        String xPath = VALUELIST_XPATH + "/beans:entry";
+        List valueLists = document.selectNodes(xPath);
+        Iterator iter = valueLists.iterator();
+
+        while (iter.hasNext()) {
+            Element valueList = (Element)iter.next();
+            ProvisionedValueList pvl = new ProvisionedValueList();
+            pvl.setId(valueList.attributeValue("key"));
+            pvl.setPath(valueList.attributeValue("value"));
+            pvlList.add(pvl);
+        }
+        return pvlList;
+    }
+
+    @POST
+    @Path("spring")
+    public MessageRestful storeProvisionedValueLists(final List<ProvisionedValueList> provisionedValueLists,
+                                                     @Context HttpServletResponse response) {
+        final Document document = readSpringConfiguration();
+        if (document == null) {
+            return createErrorMessage("Failure parsing the Spring configuration.", response);
+        }
+
+        Element map = (Element)document.selectSingleNode(VALUELIST_XPATH);
+        if (map == null) {
+            return createErrorMessage("Failure locating the relevant piece of Spring configuration.", response);
+        }
+
+        // remove the old value lists
+        List<Element> oldValueLists = (List<Element>)map.elements();
+        for (Element e : oldValueLists) {
+            e.detach();
+        }
+
+        // add the new value lists
+        for (ProvisionedValueList pvl : provisionedValueLists) {
+            Element entry = map.addElement("entry");
+            entry.addAttribute("key", pvl.getId());
+            entry.addAttribute("value", pvl.getPath());
+        }
+
+        try {
+            final File springFile = getSpringFile();
+            springFile.getParentFile().mkdirs();
+            springFile.createNewFile();
+
+            FileOutputStream fos = new FileOutputStream(springFile);
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(fos, format);
+            writer.write(document);
+            writer.flush();
+        } catch (IOException ex) {
+            log.error("Problem writing the Spring configuration", ex);
+            return createErrorMessage("Failure storing the Spring configuration.", response);
+        }
+
+        final String message = "Spring configuration updated, project rebuild needed";
+        eventBus.post(new RebuildEvent("selectionPlugin", message));
+
+        return new MessageRestful("Successfully updated the Spring configuration");
     }
 
     /**
@@ -300,5 +382,66 @@ public class SelectionResource extends BaseResource {
         log.error("Imported XML is '{}'.", processedXml);
         destination.getSession().importXML(destination.getPath(), IOUtils.toInputStream(processedXml),
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+    }
+
+    private Document readSpringConfiguration() {
+        final File springFile = getSpringFile();
+        InputStream is = null;
+        if (springFile.exists() && springFile.isFile()) {
+            try {
+                is = new FileInputStream(springFile);
+            } catch (FileNotFoundException ex) {
+                log.error("Problem reading Spring configuration file.", ex);
+            }
+        } else {
+            // no Spring configuration present yet, use template.
+            final String path = "/xml/valuelistmanager.xml";
+            is = getClass().getResourceAsStream(path);
+        }
+
+        if (is != null) {
+            try {
+                Map<String, String> namespaceUris = new HashMap<>();
+                namespaceUris.put("beans", "http://www.springframework.org/schema/beans");
+
+                DocumentFactory factory = new DocumentFactory();
+                factory.setXPathNamespaceURIs(namespaceUris);
+
+                SAXReader reader = new SAXReader();
+                reader.setDocumentFactory(factory);
+                return reader.read(is);
+            } catch (DocumentException ex) {
+                log.error("Problem parsing Spring configuration file.", ex);
+            }
+        }
+        return null;
+    }
+
+    private File getSpringFile() {
+        final String baseDir = GlobalUtils.decodeUrl(ProjectUtils.getBaseProjectDirectory());
+        if (Strings.isNullOrEmpty(baseDir)) {
+            return null;
+        }
+        PluginContext context = PluginContextFactory.getContext();
+        String springFilePath = new StringBuilder()
+                .append(baseDir)
+                .append(File.separator)
+                .append(context.getProjectSettings().getSiteModule())
+                .append(File.separator)
+                .append("src")
+                .append(File.separator)
+                .append("main")
+                .append(File.separator)
+                .append("resources")
+                .append(File.separator)
+                .append("META-INF")
+                .append(File.separator)
+                .append("hst-assembly")
+                .append(File.separator)
+                .append("overrides")
+                .append(File.separator)
+                .append("valueListManager.xml").toString();
+
+        return new File(springFilePath);
     }
 }

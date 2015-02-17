@@ -30,25 +30,29 @@
                 { id: 'palette', label: 'Palette' }
             ];
 
+            // Since the tabs use transclusive scopes, we need to put our two-way bound variables into data structure.
+            $scope.data = {};
+            $scope.initializing = true;
+
             $scope.addField = function() {
                 var payload = {
                     values: {
-                        namespace:     $scope.selectedDocumentType.prefix,
-                        documentType:  $scope.selectedDocumentType.name,
-                        fieldName:     $scope.fieldName,
-                        selectionType: $scope.selectionType,
-                        valueList:     $scope.selectedValueList.value,
-                        presentation:  $scope.presentation.id,
-                        orientation:   $scope.orientation,
-                        maxRows:       $scope.maxRows,
-                        allowOrdering: $scope.allowOrdering
+                        namespace:     $scope.data.selectedDocumentType.prefix,
+                        documentType:  $scope.data.selectedDocumentType.name,
+                        fieldName:     $scope.data.fieldName,
+                        selectionType: $scope.data.selectionType,
+                        valueList:     $scope.data.selectedValueList.value,
+                        presentation:  $scope.data.presentation.id,
+                        orientation:   $scope.data.orientation,
+                        maxRows:       $scope.data.maxRows,
+                        allowOrdering: $scope.data.allowOrdering
                     }
                 };
                 $http.post(restEndpoint + 'addfield/', payload).success(function () {
                     resetAddFieldForm();
-                    reloadSelectionFields($scope.selectedDocumentType);
+                    reloadSelectionFields($scope.data.selectedDocumentType);
                     $scope.fieldAdded = true;
-                    $scope.modifiedType = $scope.selectedDocumentType;
+                    $scope.modifiedType = $scope.data.selectedDocumentType;
                 });
             };
             $scope.showDocument = function(documentType) { // don't show the basedocument option
@@ -58,18 +62,32 @@
             $scope.valueListAsOption = function(valueList) {
                 return valueList.key + ' (' + valueList.value + ')';
             };
+            $scope.saveProvisioning = function() {
+                var provisionedValueLists = [];
+                angular.forEach($scope.provisionedValueLists, function(valueList) {
+                    if (valueList.included) {
+                        provisionedValueLists.push({
+                            id: valueList.id,
+                            path: valueList.path
+                        });
+                    }
+                });
+                $http.post(restEndpoint + 'spring', provisionedValueLists).success(function() {
+                    loadProvisionedValueLists();
+                });
+            };
+
             $scope.selectionTypes = [ 'single', 'multiple' ];
-            $scope.$watch('selectionType', function(newValue) {
-                console.log("Selection type: ", newValue);
+            $scope.$watch('data.selectionType', function(newValue) {
                 if (newValue === 'single') {
                     $scope.typePresentations = singlePresentations;
                 } else if (newValue === 'multiple') {
                     $scope.typePresentations = multiplePresentations;
                 }
-                $scope.presentation = $scope.typePresentations[0]; // set default
+                $scope.data.presentation = $scope.typePresentations[0]; // set default
             });
             $scope.orientations = [ 'vertical', 'horizontal' ];
-            $scope.orientation = $scope.orientations[0]; // set default
+            $scope.data.orientation = $scope.orientations[0]; // set default
             $scope.valueListNameByPath = function(path) {
                 var name = '';
                 angular.forEach($scope.valueLists, function(entry) {
@@ -85,6 +103,7 @@
             $scope.documentTypes = [];
             $http.get($rootScope.REST.documents).success(function (data){
                 $scope.documentTypes = data;
+                $scope.initializing = false;
 
                 // if there's only one selectable type, preselect it.
                 var selectable = [];
@@ -94,12 +113,12 @@
                     }
                 });
                 if (selectable.length == 1) {
-                    $scope.selectedDocumentType = selectable[0];
+                    $scope.data.selectedDocumentType = selectable[0];
                 }
             });
 
             // when changing the document type, set the default position and retrieve a fresh list of fields
-            $scope.$watch('selectedDocumentType', function (newDocType) {
+            $scope.$watch('data.selectedDocumentType', function (newDocType) {
                 if (newDocType) {
                     reloadSelectionFields(newDocType);
                 } else {
@@ -111,15 +130,41 @@
             function loadValueLists() {
                 $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
                     $scope.valueLists = data;
+
+                    loadProvisionedValueLists();
                 });
             }
+            function loadProvisionedValueLists() {
+                if ($scope.valueLists.length > 0) {
+                    $http.get(restEndpoint + 'spring').success(function (oldProvisionedValueLists) {
+                        var provisionedValueLists = [];
+                        angular.forEach($scope.valueLists, function(valueList) {
+                            var oldItem, newItem;
+                            angular.forEach(oldProvisionedValueLists, function(oldValueList) {
+                                if (oldValueList.path === valueList.value) {
+                                    oldItem = oldValueList;
+                                }
+                            });
+                            if (oldItem) {
+                                oldItem.included = true;
+                                newItem = oldItem;
+                            } else {
+                                newItem = {
+                                    path: valueList.value
+                                };
+                            }
+                            provisionedValueLists.push(newItem);
+                        });
+                        $scope.provisionedValueLists = provisionedValueLists;
+                    });
+                }
+            }
             function resetAddFieldForm() {
-                $scope.fieldName = '';
-                console.log("Setting selection type");
-                $scope.selectionType = 'single';
-                $scope.selectedValueList = undefined;
-                $scope.allowOrdering = false;
-                $scope.maxRows = undefined;
+                $scope.data.fieldName = '';
+                $scope.data.selectionType = 'single';
+                $scope.data.selectedValueList = undefined;
+                $scope.data.allowOrdering = false;
+                $scope.data.maxRows = undefined;
             }
             function reloadSelectionFields(documentType) {
                 $scope.selectionFields = [];

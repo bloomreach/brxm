@@ -743,6 +743,7 @@ dashboard/src/main/webapp/images/screenshots/robots02.png -text
 dashboard/src/main/webapp/images/screenshots/search01.png -text
 dashboard/src/main/webapp/images/screenshots/search02.png -text
 dashboard/src/main/webapp/images/screenshots/selections01.png -text
+dashboard/src/main/webapp/images/screenshots/selections02.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/seo01.png -text
 dashboard/src/main/webapp/images/screenshots/simplecontent01.png -text
 dashboard/src/main/webapp/images/screenshots/tagging01.png -text
@@ -1359,6 +1360,7 @@ plugins/search/src/main/resources/instructions/xml/hst/search-page.xml -text
 plugins/search/src/main/resources/instructions/xml/hst/search-sitemap.xml -text
 plugins/selection/README.md -text
 plugins/selection/pom.xml -text
+plugins/selection/src/main/java/org/onehippo/cms7/essentials/plugins/selection/ProvisionedValueList.java -text
 plugins/selection/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionFieldRestful.java -text
 plugins/selection/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionResource.java -text
 plugins/selection/src/main/resources/META-INF/resources/tool/selectionPlugin/selectionPlugin.html -text
