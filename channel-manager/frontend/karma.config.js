@@ -29,20 +29,20 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             // dependencies
-            'components/jquery/dist/jquery.js',
-            'components/angular/angular.js',
-            'components/angular-bootstrap/ui-bootstrap.min.js',
-            'components/angular-route/angular-route.js',
-            'components/hippo-theme/dist/js/main.js',
-            'components/angular-translate/angular-translate.js',
-            'components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-            'components/angular-ui-router/release/angular-ui-router.min.js',
-            'components/angular-ui-tree/dist/angular-ui-tree.js',
-            'components/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
+            '../target/bower/components/jquery/dist/jquery.js',
+            '../target/bower/components/angular/angular.js',
+            '../target/bower/components/angular-bootstrap/ui-bootstrap.min.js',
+            '../target/bower/components/angular-route/angular-route.js',
+            '../target/bower/components/hippo-theme/dist/js/main.js',
+            '../target/bower/components/angular-translate/angular-translate.js',
+            '../target/bower/components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+            '../target/bower/components/angular-ui-router/release/angular-ui-router.min.js',
+            '../target/bower/components/angular-ui-tree/dist/angular-ui-tree.js',
+            '../target/bower/components/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
 
             // testing dependencies
-            'components/jasmine-jquery/lib/jasmine-jquery.js',
-            'components/angular-mocks/angular-mocks.js',
+            '../target/bower/components/jasmine-jquery/lib/jasmine-jquery.js',
+            '../target/bower/components/angular-mocks/angular-mocks.js',
 
             // apps sources
             'menu/menu-dependencies.js',
