@@ -61,7 +61,7 @@
     <commons-logging.version>1.1.3</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <guava.version>16.0.1</guava.version>
-    <jsr311.version>1.1.1</jsr311.version>
+    <jaxrs.version>2.0.1</jaxrs.version>
 
     <!--
         Below are only the defined versions of some dependencies that are used in multiple projects.
@@ -391,8 +391,8 @@
       </dependency>
       <dependency>
         <groupId>javax.ws.rs</groupId>
-        <artifactId>jsr311-api</artifactId>
-        <version>${jsr311.version}</version>
+        <artifactId>ws.rs-api</artifactId>
+        <version>${jaxrs.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
