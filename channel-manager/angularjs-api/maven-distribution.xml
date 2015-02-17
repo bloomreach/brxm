@@ -36,7 +36,8 @@
   </files>
   <fileSets>
     <fileSet>
-      <directory>dist</directory>
+      <outputDirectory>dist</outputDirectory>
+      <directory>${project.build.directory}/dist</directory>
     </fileSet>
   </fileSets>
 </assembly>

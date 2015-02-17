@@ -47,20 +47,20 @@
           </execution>
           <execution>
             <id>bower-install</id>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>bower</executable>
-              <commandlineArgs>install</commandlineArgs>
+              <commandlineArgs>install --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
             <id>grunt-build</id>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
-              <commandlineArgs>build:dist</commandlineArgs>
+              <commandlineArgs>build:dist --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
@@ -69,7 +69,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
-              <commandlineArgs>test</commandlineArgs>
+              <commandlineArgs>test --no-color</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>
@@ -95,36 +95,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>grunt-clean</id>
-      <activation>
-        <file>
-          <exists>node_modules/grunt</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.plugin.exec.version}</version>
-            <executions>
-              <execution>
-                <id>grunt-clean</id>
-                <phase>clean</phase>
-                <goals><goal>exec</goal></goals>
-                <configuration>
-                  <executable>grunt</executable>
-                  <commandlineArgs>clean</commandlineArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
