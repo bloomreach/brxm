@@ -45,7 +45,7 @@
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>
-      <artifactId>jsr311-api</artifactId>
+      <artifactId>ws.rs-api</artifactId>
     </dependency>
     
     <!-- STAX API -->
