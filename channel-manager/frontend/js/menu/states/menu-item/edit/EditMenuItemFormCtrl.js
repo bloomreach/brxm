@@ -33,7 +33,7 @@
                 $scope.focus = FocusService.focusElementWithId;
 
                 $scope.$watch('form', function (form) {
-                    var newItemListener = $rootScope.$on('new-menu-item', afternewItem);
+                    var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
                     function afternewItem() {
                         $scope.selectedMenuItem.title = '';
                         if(form && form.title) {
@@ -42,7 +42,7 @@
                         }
                         FormStateService.setDirty(true);
                         FormStateService.setValid(false);
-                        newItemListener(); //remove listener after 1 call
+                        deregisterNewItemListener();
                     }
                 });
 

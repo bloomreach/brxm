@@ -88,11 +88,11 @@
                                             menuItemId: menuItemId
                                         });
 
-                                        var menuListener = $scope.$on('menu-items-changed', afterItemIsAddedToList);
+                                        var deregisterListener = $scope.$on('menu-items-changed', afterItemIsAddedToList);
                                         function afterItemIsAddedToList() {
                                             $scope.isSaving.newItem = false;
                                             $rootScope.$broadcast('new-menu-item');
-                                            menuListener(); //remove listener after 1 call
+                                            deregisterListener();
                                         }
                                     },
                                     function (errorResponse) {
