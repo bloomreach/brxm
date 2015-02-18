@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -22,12 +25,16 @@ import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.repository.api.HippoNodeType;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 public class TypeRenderer extends AbstractNodeRenderer {
 
-    private static final long serialVersionUID = 1L;
+    private static final TypeRenderer INSTANCE = new TypeRenderer();
+
+    private TypeRenderer() {
+    }
+
+    public static TypeRenderer getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {

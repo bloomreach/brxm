@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -143,12 +143,11 @@ class ReorderDialog extends AbstractWorkflowDialog {
 
         ReorderDataProvider(DocumentsProvider documents) {
             listItems = new LinkedList<ListItem>();
-            DocumentTypeIconAttributeModifier attributeModifier = new DocumentTypeIconAttributeModifier();
             Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
                 IModel<Node> entry = documents.model(it.next());
                 if (entry instanceof JcrNodeModel) {
-                    listItems.add(new ListItem((JcrNodeModel) entry, attributeModifier));
+                    listItems.add(new ListItem((JcrNodeModel) entry, DocumentTypeIconAttributeModifier.getInstance()));
                 }
             }
         }
@@ -232,14 +231,11 @@ class ReorderDialog extends AbstractWorkflowDialog {
             super(id);
             setOutputMarkupId(true);
 
-            List<ListColumn<ListItem>> columns = new ArrayList<ListColumn<ListItem>>();
-            final DocumentTypeIconAttributeModifier attributeModifier = new DocumentTypeIconAttributeModifier();
+            List<ListColumn<ListItem>> columns = new ArrayList<>();
 
-            ListColumn<ListItem> column = new ListColumn<ListItem>(new Model<String>(""), "icon");
-            column.setRenderer(new EmptyRenderer<ListItem>());
+            ListColumn<ListItem> column = new ListColumn<>(Model.of(""), "icon");
+            column.setRenderer(EmptyRenderer.getInstance());
             column.setAttributeModifier(new AbstractListAttributeModifier<ListItem>() {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public AttributeModifier[] getCellAttributeModifiers(IModel<ListItem> model) {
                     ListItem item = model.getObject();
@@ -248,12 +244,14 @@ class ReorderDialog extends AbstractWorkflowDialog {
 
                 @Override
                 public AttributeModifier[] getColumnAttributeModifiers() {
-                    return new AttributeModifier[] { attributeModifier.getColumnAttributeModifier() };
+                    return new AttributeModifier[] {
+                            DocumentTypeIconAttributeModifier.getInstance().getColumnAttributeModifier()
+                    };
                 }
             });
             columns.add(column);
 
-            column = new ListColumn<ListItem>(new Model<String>(""), "name");
+            column = new ListColumn<ListItem>(Model.of(""), "name");
             column.setRenderer(new IListCellRenderer<ListItem>() {
                 private static final long serialVersionUID = 1L;
 

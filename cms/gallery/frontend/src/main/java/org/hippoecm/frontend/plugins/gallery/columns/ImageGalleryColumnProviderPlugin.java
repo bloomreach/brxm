@@ -39,6 +39,7 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
@@ -47,6 +48,8 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private static final String GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
     private static final String GALLERY_THUMBNAIL_BOX_SIZE = "gallery.thumbnail.box.size";
+
+    public static final ListColumn<Node> NAME_COLUMN = createNameColumn();
 
     private final String primaryItemName;
 
@@ -58,23 +61,29 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
     public List<ListColumn<Node>> getColumns() {
         final List<ListColumn<Node>> columns = new ArrayList<>();
         columns.add(createIconColumn());
-        columns.add(createNameColumn());
+        columns.add(NAME_COLUMN);
         return columns;
     }
 
-    private ListColumn<Node> createIconColumn() {
-        final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
-        final int thumbnailSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_SIZE);
-        final int thumbnailBoxSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_BOX_SIZE);
-        column.setRenderer(new ImageIconRenderer(thumbnailSize, thumbnailBoxSize));
-        column.setCssClass(DocumentListColumn.ICON.getCssClass());
+    private static ListColumn<Node> createNameColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("gallery-name", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
+        column.setComparator(NameComparator.getInstance());
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        column.setAttributeModifier(DocumentAttributeModifier.getInstance());
         return column;
     }
 
-    private ListColumn<Node> createNameColumn() {
-        final ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("gallery-name", Translations.class), "name");
-        column.setComparator(new NameComparator());
-        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+    private ListColumn<Node> createIconColumn() {
+        final int thumbnailSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_SIZE);
+        final int thumbnailBoxSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_BOX_SIZE);
+        return createIconColumn(thumbnailSize, thumbnailBoxSize);
+    }
+
+    public static ListColumn<Node> createIconColumn(final int thumbnailSize, final int thumbnailBoxSize) {
+        final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
+        column.setRenderer(new ImageIconRenderer(thumbnailSize, thumbnailBoxSize));
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
         return column;
     }
 
@@ -90,7 +99,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private ListColumn<Node> createWidthColumn() {
         final ClassResourceModel displayModel = new ClassResourceModel("gallery-width", Translations.class);
-        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "width");
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "width");
         column.setRenderer(new ImageDimensionRenderer(HippoGalleryNodeType.IMAGE_WIDTH, primaryItemName));
         column.setComparator(new LongPropertyComparator(HippoGalleryNodeType.IMAGE_WIDTH, primaryItemName));
         column.setCssClass(DocumentListColumn.WIDTH.getCssClass());
@@ -99,7 +108,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private ListColumn<Node> createHeightColumn() {
         final ClassResourceModel displayModel = new ClassResourceModel("gallery-height", Translations.class);
-        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "height");
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "height");
         column.setRenderer(new ImageDimensionRenderer(HippoGalleryNodeType.IMAGE_HEIGHT, primaryItemName));
         column.setComparator(new LongPropertyComparator(HippoGalleryNodeType.IMAGE_HEIGHT, primaryItemName));
         column.setCssClass(DocumentListColumn.HEIGHT.getCssClass());
@@ -108,7 +117,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private ListColumn<Node> createMimeTypeColumn() {
         final ClassResourceModel displayModel = new ClassResourceModel("gallery-mimetype", Translations.class);
-        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "mimetype");
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "mimetype");
         column.setRenderer(new StringPropertyRenderer(JcrConstants.JCR_MIMETYPE, primaryItemName));
         column.setComparator(new MimeTypeComparator(JcrConstants.JCR_MIMETYPE, primaryItemName));
         column.setCssClass(DocumentListColumn.MIME_TYPE.getCssClass());
@@ -117,7 +126,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private ListColumn<Node> createSizeColumn() {
         final ClassResourceModel displayModel = new ClassResourceModel("gallery-size", Translations.class);
-        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "size");
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "size");
         column.setRenderer(new SizeRenderer(JcrConstants.JCR_DATA, primaryItemName));
         column.setComparator(new SizeComparator(JcrConstants.JCR_DATA, primaryItemName));
         column.setCssClass(DocumentListColumn.SIZE.getCssClass());
@@ -126,7 +135,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private ListColumn<Node> createLastModifiedColumn() {
         final ClassResourceModel displayModel = new ClassResourceModel("gallery-lastmodified", Translations.class);
-        final ListColumn<Node> column = new ListColumn<Node>(displayModel, "lastmodified");
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "lastmodified");
         column.setRenderer(new DatePropertyRenderer(JcrConstants.JCR_LASTMODIFIED, primaryItemName));
         column.setComparator(new CalendarComparator(JcrConstants.JCR_LASTMODIFIED, primaryItemName));
         column.setCssClass(DocumentListColumn.LAST_MODIFIED_BY.getCssClass());

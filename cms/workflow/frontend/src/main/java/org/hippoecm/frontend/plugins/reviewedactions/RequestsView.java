@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,14 +26,13 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.TextDialog;
@@ -42,7 +41,10 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Request;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RequestModel;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -133,12 +135,8 @@ public class RequestsView extends RepeatingView {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/workflow-accept-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/workflow-accept-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
             }
 
             @Override
@@ -164,12 +162,8 @@ public class RequestsView extends RepeatingView {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
             }
 
             @Override
@@ -178,7 +172,7 @@ public class RequestsView extends RepeatingView {
                 return new TextDialog(
                         new StringResourceModel("reject-request-title", RequestsView.this, null),
                         new StringResourceModel("reject-request-text", RequestsView.this, null),
-                        new PropertyModel<String>(this, "reason")) {
+                        new PropertyModel<>(this, "reason")) {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         stdWorkflow.invokeWorkflow();
@@ -207,40 +201,33 @@ public class RequestsView extends RepeatingView {
                 return "request";
             }
 
+
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/delete-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/delete-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
             }
 
             @Override
             protected IModel getTitle() {
-                String state = getState();
-                if (state.equals("request-rejected")) {
-                    return new StringResourceModel("drop-request", RequestsView.this, null);
-                } else {
-                    return new StringResourceModel("cancel-request", RequestsView.this, null);
-                }
+                final String translationKey = isRequestRejected() ? "drop-request" : "cancel-request";
+                return new StringResourceModel(translationKey, RequestsView.this, null);
             }
 
-            private String getState() {
+            private boolean isRequestRejected() {
                 final Request request = item.getModel().getObject();
-                return request.getState();
+                final String state = request.getState();
+                return state.equals("request-rejected");
             }
 
             @Override
             protected Dialog createRequestDialog() {
-                String state = getState();
-                if (state.equals("request-rejected")) {
+                if (isRequestRejected()) {
                     IModel<String> reason = null;
                     try {
                         String id = item.getModelObject().getId();
                         Node node = UserSession.get().getJcrSession().getNodeByIdentifier(id);
-                        if (node != null && node.hasProperty("hippostdpubwf:reason")) {
-                            reason = Model.of(node.getProperty("hippostdpubwf:reason").getString());
+                        if (node != null && node.hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON)) {
+                            reason = Model.of(node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON).getString());
                         }
                     } catch (RepositoryException ex) {
                         log.warn(ex.getMessage(), ex);

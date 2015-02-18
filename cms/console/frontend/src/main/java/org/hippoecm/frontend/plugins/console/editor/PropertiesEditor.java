@@ -32,12 +32,10 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -91,8 +89,6 @@ public class PropertiesEditor extends DataView<Property> {
             addLink.add(new AttributeModifier("title", getString("property.value.add")));
             item.add(addLink);
 
-            addLink.add(new Image("add-icon", new PackageResourceReference(PropertiesEditor.class, "list-add-16.png")));
-
             PropertyDefinition definition = model.getProperty().getDefinition();
             addLink.setVisible(definition.isMultiple() && !definition.isProtected());
         } catch (RepositoryException e) {
@@ -130,7 +126,7 @@ public class PropertiesEditor extends DataView<Property> {
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 super.onComponentTag(tag);
-                tag.put("class", "property-value-remove");
+                tag.put("class", "property-remove");
             }
 
             @Override
@@ -147,7 +143,6 @@ public class PropertiesEditor extends DataView<Property> {
             }
         };
 
-        deleteLink.add(new Image("remove-icon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
         deleteLink.add(new AttributeModifier("title", getString("property.remove")));
 
         return deleteLink;

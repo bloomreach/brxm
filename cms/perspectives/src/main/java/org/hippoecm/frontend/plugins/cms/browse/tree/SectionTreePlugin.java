@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("unused")
 public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     private static final long serialVersionUID = 1L;
@@ -214,7 +215,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         super.renderHead(container);
 
         final IHeaderResponse response = container.getHeaderResponse();
-        response.render(OnDomReadyHeaderItem.forScript(String.format("jQuery('#%s').selectric();", select.getMarkupId())));
+        final String selectricOptions = "{ optionsItemBuilder: '<span class=\"{value}\">{text}</span>' }";
+        final String selectricInit = String.format("jQuery('#%s').selectric(%s);", select.getMarkupId(), selectricOptions);
+        response.render(OnDomReadyHeaderItem.forScript(selectricInit));
     }
 
     @Override
@@ -244,9 +247,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     @Override
     protected void onDetach() {
-        for (Section section : sections.getObject()) {
-            section.detach();
-        }
+        sections.getObject().forEach(SectionTreePlugin.Section::detach);
         super.onDetach();
     }
 

@@ -22,17 +22,19 @@ import org.apache.wicket.behavior.AttributeAppender;
  */
 public enum DocumentListColumn {
 
-    ICON("doclisting-icon"),
-    NAME("doclisting-name"),
-    TYPE("doclisting-type"),
-    STATE("doclisting-state"),
     DATE("doclisting-date"),
+    HEIGHT("doclisting-height"),
+    ICON("doclisting-icon"),
     LAST_MODIFIED_BY("doclisting-lastmodified-by"),
-    TRANSLATIONS("doclisting-translations"),
-    SIZE("doclisting-size"),
     MIME_TYPE("doclisting-mimetype"),
-    WIDTH("doclisting-width"),
-    HEIGHT("doclisting-height");
+    NAME("doclisting-name"),
+    PATH("doclisting-path"),
+    SELECTOR("doclisting-selector"),
+    SIZE("doclisting-size"),
+    STATE("doclisting-state"),
+    TRANSLATIONS("doclisting-translations"),
+    TYPE("doclisting-type"),
+    WIDTH("doclisting-width");
 
     public static final String DOCUMENT_LIST_CSS_CLASS = "hippo-list-documents";
 

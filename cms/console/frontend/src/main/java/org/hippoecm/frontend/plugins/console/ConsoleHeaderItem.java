@@ -28,7 +28,7 @@ public class ConsoleHeaderItem extends HippoHeaderItem {
 
     protected static final ResourceReference CONSOLE_CSS = new CssResourceReference(ConsoleHeaderItem.class, "console.css");
     protected static final ResourceReference TREE_CSS = new CssResourceReference(ConsoleHeaderItem.class, "tree/tree.css");
-    protected static final ResourceReference FA_CSS = new CssResourceReference(RootPlugin.class, "font-awesome/css/font-awesome.css");
+    protected static final ResourceReference FA_CSS = new CssResourceReference(RootPlugin.class, "fontawesome/css/font-awesome.css");
 
     private static final ConsoleHeaderItem INSTANCE = new ConsoleHeaderItem();
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+
+
 /* ======================================== */
 
 body.hippo-root #doc3 {
@@ -767,7 +769,7 @@ table.hippo-window-form {
   width: 300px;
 }
 
-.hippo-window-form td.hippo-window-navigator{
+.hippo-window-form td.hippo-window-navigator {
   padding: 0;
 }
 
@@ -1042,40 +1044,6 @@ body .hippo-picker-properties div.text-input input {
   width: 515px
 }
 
-/* Referring documents */
-
-.hippo-window-form.compatibility-workflow-plugin-date-dialog {
-    position: absolute;
-    bottom: 50px;
-}
-
-.hippo-referring-documents {
-  margin: 5px;
-  height: 365px;
-}
-
-.hippo-referring-documents-list {
-  height: 245px;
-  position: relative;
-  margin-top: 8px;
-}
-
-.hippo-delete-dialog .hippo-referring-documents {
-  height: 240px;
-}
-
-.hippo-delete-dialog .hippo-referring-documents-list {
-  height: 181px;
-}
-
-.hippo-depublish-dialog .hippo-referring-documents {
-  height: 240px;
-}
-
-.hippo-depublish-dialog .hippo-referring-documents-list {
-  height: 181px;
-}
-
 /* Wizard */
 /* ================================================ */
 .hippo-wizard {
@@ -1101,40 +1069,6 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
 
 /* Editor Plugin */
 /* ================================================ */
-/* default background when nothing is selected */
-.hippo-tabs-documents .tabbed-panel-layout-center {
-  background: #f4f4f4 no-repeat center center
-}
-
-ul.hippo-toolbar-section li.icon-16 {
-  padding-bottom: 0;
-}
-
-.column-wrapper {
-  width: 100%;
-  overflow: auto;
-}
-
-.column-wrapper .col70 {
-  width: 70%;
-  float: left;
-}
-
-.column-wrapper .col30 {
-  width: 30%;
-  float: right;
-}
-
-.column-wrapper .col80 {
-  width: 80%;
-  float: left;
-}
-
-.column-wrapper .col20 {
-  width: 20%;
-  float: right;
-}
-
 .default-textarea textarea {
   width: 100%;
   height: 150px;

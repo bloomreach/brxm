@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -39,6 +40,8 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDial
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -59,12 +62,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/unpublish-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/unpublish-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
             }
 
             @Override
@@ -92,12 +91,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
             }
 
             @Override
@@ -127,12 +122,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_SCHEDULED_TINY);
             }
 
             @Override
@@ -168,12 +159,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_SCHEDULED_TINY);
             }
 
             @Override
@@ -208,12 +195,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/publish-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/publish-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
             }
 
             @Override
@@ -250,12 +233,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestpublish-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestpublish-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
             }
 
             @Override
@@ -293,12 +272,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/publish-schedule-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.PUBLISH_SCHEDULED_TINY);
             }
 
             @Override
@@ -335,12 +310,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/publish-schedule-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.PUBLISH_SCHEDULED_TINY);
             }
 
             @Override

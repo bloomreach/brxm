@@ -28,7 +28,6 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -44,7 +43,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IOUtils;
@@ -54,6 +53,7 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.JcrTree;
@@ -139,7 +139,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 super.populateTreeItem(item, level);
                 final Component nodeLink = item.get("nodeLink");
                 if (nodeLink != null) {
-                    nodeLink.add(new AttributeModifier("class", "node-link"));
+                    nodeLink.add(CssClass.append("node-link"));
                 }
             }
 
@@ -229,7 +229,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     }
 
     public IModel<String> getTitle(final Component component) {
-        return new StringResourceModel("updater-editor-title", this, null);
+        return Model.of(getString("updater-editor-title"));
     }
 
     @Override

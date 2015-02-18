@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -24,24 +23,16 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.HeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.hippoecm.frontend.editor.resources.CmsEditorHeaderItem;
-import org.hippoecm.frontend.plugins.standards.image.CachingImage;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -54,26 +45,18 @@ import org.joda.time.format.DateTimeFormatter;
  *
  * DatePicker can be configured using a frontend:pluginconfig node with name <code>datepicker</code>.
  *
- * @see YuiDatePickerSettings
+ * @see YuiDatePickerSettings for all configuration options
  */
 
 public class YuiDateTimeField extends DateTimeField {
 
-    private static final long serialVersionUID = 1L;
-    private static final CssResourceReference YUIDATETIME_STYLESHEET = new CssResourceReference(YuiDateTimeField.class, "yuidatetime.css") {
-        @Override
-        public Iterable<? extends HeaderItem> getDependencies() {
-            return Collections.singleton(CmsEditorHeaderItem.get());
-        }
-    };
-
-    public static final String MINUTES_LABEL = "minutes-label";
-    public static final String HOURS_LABEL = "hours-label";
     public static final String DATE_LABEL = "date-label";
-
-    private boolean todayLinkVisible = true;
+    public static final String HOURS_LABEL = "hours-label";
+    public static final String MINUTES_LABEL = "minutes-label";
 
     private YuiDatePickerSettings settings;
+
+    private boolean todayLinkVisible = true;
 
     public YuiDateTimeField(String id, IModel<Date> model) {
         this(id, model, null);
@@ -85,58 +68,39 @@ public class YuiDateTimeField extends DateTimeField {
         if (settings == null) {
             settings = new YuiDatePickerSettings();
         }
-
         this.settings = settings;
 
         setOutputMarkupId(true);
 
-        //replace Wicket extensions YUI picker with our own
-        DateTextField dateField = (DateTextField) get("date");
-        for (Behavior b : dateField.getBehaviors()) {
-            dateField.remove(b);
-        }
+        final DateTextField dateField = (DateTextField) get("date");
+        dateField.setLabel(Model.of(getString(DATE_LABEL)));
+
+        // Remove existing behaviors from dateField
+        dateField.getBehaviors().forEach(dateField::remove);
+        // And add our own YuiDatePicker instead
         dateField.add(new YuiDatePicker(settings));
-        IModel<String> sizeModel = new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            protected String load() {
-                return Integer.valueOf(YuiDateTimeField.this.settings.getDatePattern().length() + 2).toString();
-            }
+        // Restrict the size of the input field to match the date pattern
+        final int dateLength = calculateDateLength();
 
-        };
-        dateField.add(new AttributeModifier("size", sizeModel));
-        dateField.add(new AttributeModifier("maxlength", sizeModel));
-        dateField.add(new AttributeModifier("style", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                int size = YuiDateTimeField.this.settings.getDatePattern().length() + 2;
-                return "width: " + (size * 6 + 7) + "px;";
-            }
-
-        }));
-
-        dateField.setLabel(new StringResourceModel(DATE_LABEL, this, null));
+        dateField.add(AttributeModifier.replace("size", dateLength));
+        dateField.add(AttributeModifier.replace("maxlength", dateLength));
 
         final TextField hoursField = (TextField) get("hours");
-        hoursField.setLabel(new StringResourceModel(HOURS_LABEL, this, null));
+        hoursField.setLabel(Model.of(getString(HOURS_LABEL)));
 
         final TextField minutesField = (TextField) get("minutes");
-        minutesField.setLabel(new StringResourceModel(MINUTES_LABEL, this, null));
+        minutesField.setLabel(Model.of(getString(MINUTES_LABEL)));
 
         //add "Now" link
         AjaxLink<Date> today;
         add(today = new AjaxLink<Date>("today") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 YuiDateTimeField.this.setDefaultModelObject(new Date());
-                ((FormComponent<Date>) YuiDateTimeField.this.get("date")).clearInput();
-                ((FormComponent<Date>) YuiDateTimeField.this.get("hours")).clearInput();
-                ((FormComponent<Date>) YuiDateTimeField.this.get("minutes")).clearInput();
+                dateField.clearInput();
+                hoursField.clearInput();
+                minutesField.clearInput();
                 if (target != null) {
                     target.add(YuiDateTimeField.this);
                 }
@@ -148,8 +112,7 @@ public class YuiDateTimeField extends DateTimeField {
             }
         });
 
-        today.add(new CachingImage("current-date-img", new PackageResourceReference(YuiDateTimeField.class,
-                "resources/set-now-16.png")));
+        today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE_TINY));
 
         //Add change behavior to super fields
         for (String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
@@ -164,9 +127,8 @@ public class YuiDateTimeField extends DateTimeField {
         }
     }
 
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        response.render(CssHeaderItem.forReference(YUIDATETIME_STYLESHEET));
+    private int calculateDateLength() {
+        return settings.getDatePattern().length() + 2;
     }
 
     private void updateDateTime() {
@@ -213,8 +175,6 @@ public class YuiDateTimeField extends DateTimeField {
     @Override
     protected DatePicker newDatePicker() {
         return new DatePicker() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String getDatePattern() {
                 return "This string is non-null to please the base class.  Please ignore it."
@@ -223,12 +183,9 @@ public class YuiDateTimeField extends DateTimeField {
         };
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected DateTextField newDateTextField(String id, PropertyModel dateFieldModel) {
+    protected DateTextField newDateTextField(String id, PropertyModel<Date> dateFieldModel) {
         return new DateTextField(id, dateFieldModel, new DateConverter(false) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public String getDatePattern(Locale locale) {
                 return YuiDateTimeField.this.getDatePattern();

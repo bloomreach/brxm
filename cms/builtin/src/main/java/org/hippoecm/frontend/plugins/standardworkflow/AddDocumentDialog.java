@@ -34,7 +34,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
@@ -42,7 +41,7 @@ import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
@@ -87,7 +86,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
 
         });
         nameComponent.setRequired(true);
-        nameComponent.setLabel(new StringResourceModel("name-label", this, null));
+        nameComponent.setLabel(Model.of(getString("name-label")));
         nameComponent.add(new OnChangeAjaxBehavior() {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -106,8 +105,9 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
         setFocus(nameComponent);
         add(nameComponent);
 
-        final Label typeLabel;
-        add(typeLabel = new Label("typelabel", new StringResourceModel("document-type", this, null)));
+        final Model<String> documentType = Model.of(getString("document-type"));
+        final Label typeLabel = new Label("typelabel", documentType);
+        add(typeLabel);
 
         if (prototypes.size() > 1) {
             final List<String> prototypesList = new LinkedList<>(prototypes);
@@ -122,7 +122,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
             });
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
-            folderChoice.setLabel(new StringResourceModel("document-type", this, null));
+            folderChoice.setLabel(documentType);
 
             // while not a prototype chosen, disable ok button
             add(new EmptyPanel("notypes").setVisible(false));
@@ -153,14 +153,14 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
             }
         });
 
-        uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+        uriComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 return uriModified ? "grayedin" : "grayedout";
             }
         }));
         uriComponent.setRequired(true);
-        uriComponent.setLabel(new StringResourceModel("url-label", this, null));
+        uriComponent.setLabel(Model.of(getString("url-label")));
         uriComponent.setOutputMarkupId(true);
 
         AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {

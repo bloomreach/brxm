@@ -23,12 +23,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -43,7 +42,9 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -80,12 +81,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/rename-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/rename-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.RENAME_TINY);
             }
 
             @Override
@@ -166,12 +163,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/copy-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/copy-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILES_TINY);
             }
 
             @Override
@@ -254,12 +247,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/move-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/move-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.MOVE_TINY);
             }
 
             @Override
@@ -313,12 +302,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/delete-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/delete-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
             }
 
             @Override
@@ -355,12 +340,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestdelete-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/workflow-requestdelete-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
             }
 
             @Override
@@ -388,12 +369,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/where-used-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/where-used-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.URL_NAVIGATION_TINY);
             }
 
             @Override
@@ -416,12 +393,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/revision-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/revision-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.HISTORY_TINY);
             }
 
             @Override

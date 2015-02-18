@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -18,14 +18,18 @@
   <wicket:panel>
     <div class="hippo-editor-field">
       <h3 class="hippo-editor-field-title">
-        <wicket:message key="filename.label"> </wicket:message>
+        <span><wicket:message key="filename.label"></wicket:message></span>
       </h3>
       <wicket:container wicket:id="fragment" />
     </div>
   </wicket:panel>
 
   <wicket:fragment wicket:id="filename">
-    <span wicket:id="name"></span>
+    <div class="hippo-editor-field-value">
+      <div class="hippo-editor-field-value-container">
+        <span wicket:id="name"></span>
+      </div>
+    </div>
   </wicket:fragment>
 
 </html>

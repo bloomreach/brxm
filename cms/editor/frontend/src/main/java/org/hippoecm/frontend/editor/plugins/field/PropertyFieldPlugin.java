@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.Property;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -39,15 +40,16 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrPropertyValueModel> {
-
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(PropertyFieldPlugin.class);
 
@@ -59,8 +61,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IFieldDescriptor field = getFieldHelper().getField();
-
         nodeModel = (JcrNodeModel) getDefaultModel();
 
         // use caption for backwards compatibility; i18n should use field name
@@ -68,19 +68,46 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
         add(createNrItemsLabel());
 
-        Label required = new Label("required", "*");
+        final Label required = new Label("required", "*");
+        add(required);
+
+        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(createAddLink());
+
+        final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe(field);
             if (!field.getValidators().contains("required")) {
                 required.setVisible(false);
             }
-        }
-        add(required);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
-        add(createAddLink());
+            final String name = cssClassName(field.getTypeDescriptor().getName());
+            add(CssClass.append("hippo-property-field-name-" + name));
+
+            final String type = cssClassName(field.getTypeDescriptor().getType());
+            add(CssClass.append("hippo-property-field-type-" + type));
+
+            if (field.isMultiple()) {
+                add(CssClass.append("hippo-property-field-multiple"));
+            }
+
+            if (field.isMandatory()) {
+                add(CssClass.append("hippo-property-field-mandatory"));
+            }
+
+            if (field.isProtected()) {
+                add(CssClass.append("hippo-property-field-protected"));
+            }
+        }
     }
 
+    private String cssClassName(final String name) {
+        if (StringUtils.isEmpty(name)) {
+            return StringUtils.EMPTY;
+        }
+        return StringUtils.replace(name, ":", "-").toLowerCase();
+
+    }
     private JcrPropertyModel newPropertyModel(JcrNodeModel model) {
         IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
@@ -174,8 +201,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         fragment.add(controls);
 
         MarkupContainer remove = new AjaxLink("remove") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onRemoveItem(model, target);
@@ -184,11 +209,13 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         if (!canRemoveItem()) {
             remove.setVisible(false);
         }
+
+        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.DELETE_TINY);
+        remove.add(removeIcon);
+
         controls.add(remove);
 
         MarkupContainer upLink = new AjaxLink("up") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onMoveItemUp(model, target);
@@ -199,11 +226,13 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
             upLink.setVisible(false);
         }
         upLink.setEnabled(!isFirst);
+
+        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP_TINY);
+        upLink.add(upIcon);
+
         controls.add(upLink);
 
         MarkupContainer downLink = new AjaxLink("down") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 JcrPropertyValueModel nextModel = new JcrPropertyValueModel(model.getIndex() + 1, model
@@ -216,6 +245,10 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
             downLink.setVisible(false);
         }
         downLink.setEnabled(!isLast);
+
+        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN_TINY);
+        downLink.add(downIcon);
+
         controls.add(downLink);
 
         item.add(fragment);
@@ -227,19 +260,23 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         item.add(fragment);
     }
 
-    // privates
-
     protected Component createAddLink() {
         if (canAddItem()) {
-            return new AjaxLink("add") {
-                private static final long serialVersionUID = 1L;
+          final AjaxLink link = new AjaxLink("add") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+              target.focusComponent(this);
+              PropertyFieldPlugin.this.onAddItem(target);
+            }
+          };
 
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    target.focusComponent(this);
-                    PropertyFieldPlugin.this.onAddItem(target);
-                }
-            };
+          final Label addLink = new Label("add-label", getString("add-label"));
+          link.add(addLink);
+
+          final HippoIcon addIcon = HippoIcon.fromSprite("add-icon", Icon.PLUS_TINY);
+          link.add(addIcon);
+
+          return link;
         } else {
             return new Label("add").setVisible(false);
         }

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -51,13 +53,16 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -102,8 +107,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     RenameDocumentArguments renameDocumentModel = new RenameDocumentArguments();
 
                     @Override
-                    protected ResourceReference getIcon() {
-                        return new PackageResourceReference(getClass(), "rename-16.png");
+                    protected Component getIcon(final String id) {
+                        return HippoIcon.fromSprite(id, Icon.RENAME_TINY);
                     }
 
                     @Override
@@ -158,8 +163,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     public List<String> order = new LinkedList<>();
 
                     @Override
-                    protected ResourceReference getIcon() {
-                        return new PackageResourceReference(getClass(), "reorder-16.png");
+                    protected Component getIcon(final String id) {
+                        return HippoIcon.fromSprite(id, Icon.ORDER_TINY);
                     }
 
                     @Override
@@ -180,8 +185,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 add(new StdWorkflow("delete", new StringResourceModel("delete-title", this, null), context, getModel()) {
 
                     @Override
-                    protected ResourceReference getIcon() {
-                        return new PackageResourceReference(getClass(), "delete-16.png");
+                    protected Component getIcon(final String id) {
+                        return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
                     }
 
                     @Override
@@ -264,12 +269,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 for (final String category : prototypes.keySet()) {
                     IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
                             new StringResourceModel(category, this, null));
-                    ResourceReference iconResource = new PackageResourceReference(getClass(), category + "-16.png");
-                    if (iconResource.getResource() == null ||
-                            (iconResource.getResource() instanceof PackageResource && ((PackageResource) iconResource.getResource()).getResourceStream() == null)) {
-                        iconResource = new PackageResourceReference(getClass(), "new-document-16.png");
-                    }
-                    list.add(new StdWorkflow<FolderWorkflow>("id", categoryLabel, iconResource, getPluginContext(), model) {
+
+                    final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
                         AddDocumentArguments addDocumentModel = new AddDocumentArguments();
 
@@ -282,6 +283,40 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                     translated.contains(category),
                                     this
                             );
+                        }
+
+                        @Override
+                        protected Component getIcon(final String id) {
+                            final String pngName = category + "-16";
+                            final String svgName = category + "-" + IconSize.TINY.name().toLowerCase();
+
+                            // Override using inline SVG icon
+                            ResourceReference iconResource = new PackageResourceReference(getClass(), svgName + ".svg");
+                            if (!resourceExists(iconResource)) {
+                                // Override using PNG icon
+                                iconResource = new PackageResourceReference(getClass(), pngName + ".png");
+                            }
+
+                            if (resourceExists(iconResource)) {
+                                // Return override icon
+                                return HippoIcon.fromResource(id, iconResource);
+                            }
+
+                            // Try to match svgName with a built-in Icon
+                            final String iconName = StringUtils.replace(svgName, "-", "_").toUpperCase();
+                            for (Icon icon: Icon.values()) {
+                                if (icon.name().equals(iconName)) {
+                                    return HippoIcon.fromSprite(id, icon);
+                                }
+                            }
+
+                            // Fallback to default icon
+                            return HippoIcon.fromSprite(id, Icon.NEW_DOCUMENT_TINY);
+                        }
+
+                        private boolean resourceExists(final ResourceReference reference) {
+                            return !(reference.getResource() == null ||
+                                    (reference.getResource() instanceof PackageResource && ((PackageResource) reference.getResource()).getResourceStream() == null));
                         }
 
                         @Override
@@ -324,7 +359,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             }
                             return null;
                         }
-                    });
+                    };
+                    list.add(stdWorkflow);
                 }
             }
             AbstractView add;
@@ -363,7 +399,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 invoker,
                 codecModel
         );
-                    }
+    }
 
     protected boolean isLanguageKnown() {
         WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
@@ -382,8 +418,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
     }
 
     protected AddDocumentDialog createAddDocumentDialog(AddDocumentArguments addDocumentModel,
-                                                     String category, Set<String> prototypes, boolean translated,
-                                                     IWorkflowInvoker invoker) {
+                                                        String category, Set<String> prototypes, boolean translated,
+                                                        IWorkflowInvoker invoker) {
         String locale = getCodecLocale();
         IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
 
@@ -400,7 +436,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         if (locale != null) {
             dialog.getLanguageField().setVisible(false);
-                    }
+        }
 
         return dialog;
     }

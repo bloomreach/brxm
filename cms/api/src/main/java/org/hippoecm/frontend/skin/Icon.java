@@ -18,8 +18,11 @@ package org.hippoecm.frontend.skin;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.util.lang.Args;
+import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,18 +31,29 @@ import org.slf4j.LoggerFactory;
  * References to icons.
  */
 public enum Icon {
-
-    BULLET_TINY,
+    ADD_DOCUMENT_TINY,
+    ADD_FOLDER_TINY,
+    ADD_OVERLAY_TINY,
+    ARROW_DOWN_TINY,
+    ARROW_UP_TINY,
     BULLET_LARGE,
+    BULLET_TINY,
+    CALENDAR_MONTH_TINY,
     CARET_UP_TINY,
     CARET_RIGHT_TINY,
     CARET_DOWN_TINY,
     CARET_LEFT_TINY,
     CLOSE_TINY,
     COLLAPSE_TINY,
+    CONFIGURATION_TINY,
     CONTEXT_MENU_TINY,
+    DELETE_TINY,
+    DEPUBLISH_SCHEDULED_TINY,
+    DEPUBLISH_TINY,
     DOCUMENT_TINY,
     DOCUMENT_SMALL,
+    DOCUMENT_FILES_TINY,
+    DOCUMENT_UNLOCKED_TINY,
     DROPDOWN_TINY,
     EDIT_TINY,
     EMPTY_TINY,
@@ -48,14 +62,35 @@ public enum Icon {
     FOLDER_TINY,
     FOLDER_SMALL,
     FOLDER_OPEN_TINY,
+    GLOBAL_TINY,
+    HISTORY_TINY,
+    INFO_CIRCLE_TINY,
     LIST_TINY,
+    MOVE_TINY,
+    NEW_COLLECTION_TINY,
+    NEW_COMPOUND_TINY,
+    NEW_DOCUMENT_TINY,
+    NEW_FILE_FOLDER_TINY,
+    NEW_FOLDER_TINY,
+    NEW_IMAGE_FOLDER_TINY,
+    NEW_IMAGE_TINY,
+    NEW_TRANSLATED_FOLDER_TINY,
+    ORDER_TINY,
+    PLUS_TINY,
+    PUBLISH_SCHEDULED_TINY,
+    PUBLISH_TINY,
+    RENAME_TINY,
+    RESTORE_TINY,
     SAVE_TINY,
     SAVE_CLOSE_TINY,
     SEARCH_TINY,
     STATE_CHANGED_SMALL,
     STATE_LIVE_SMALL,
     STATE_NEW_SMALL,
-    THUMBNAILS_TINY;
+    THUMBNAILS_TINY,
+    TRANSLATE_TINY,
+    UNLOCKED_TINY,
+    URL_NAVIGATION_TINY;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 
@@ -77,7 +112,12 @@ public enum Icon {
     }
 
     private static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
-        String data = IOUtils.toString(reference.getResource().getResourceStream().getInputStream());
+        final PackageResource resource = reference.getResource();
+        final IResourceStream resourceStream = resource.getResourceStream();
+        if (resourceStream == null) {
+            throw new NullPointerException("Failed to load SVG icon " + resource.toString());
+        }
+        String data = IOUtils.toString(resourceStream.getInputStream());
         //skip everything (comments, xml declaration and dtd definition) before <svg element
         return data.substring(data.indexOf("<svg "));
     }
@@ -124,21 +164,25 @@ public enum Icon {
 
     /**
      * @return all CSS helper classes to identify an icon. For example, the icon {@link CARET_DOWN_TINY}
-     * will get the CSS classes "hi hi-tiny hi-caret hi-caret-down".
+     * will get the CSS classes "hi hi-caret hi-caret-down hi-tiny".
      */
     private String getCssClasses() {
+        final String[] nameParts = StringUtils.split(name().toLowerCase(), '_');
         final StringBuilder cssClasses = new StringBuilder("hi");
 
-        final String[] nameParts = StringUtils.split(name().toLowerCase(), '_');
-        final String name = nameParts[0];                       // e.g. 'caret' in CARET_DOWN_TINY
-        final String size = nameParts[nameParts.length - 1];    // e.g. 'tiny' in CARET_DOWN_TINY
-
-        cssClasses.append(" hi-").append(size);
-        cssClasses.append(" hi-").append(name);
-
-        if (nameParts.length == 3) {
-            final String variant = nameParts[1];                // e.g. 'down' in 'CARET_DOWN_TINY'
-            cssClasses.append(" hi-").append(name).append("-").append(variant);
+        String name = null;
+        for (int i = 0; i < nameParts.length; i++) {
+            if (i == nameParts.length - 1) {
+                // Last name part is always the size e.g. 'tiny' in CARET_DOWN_TINY
+                cssClasses.append(" hi-").append(nameParts[i]);
+            } else {
+                if (name == null) {
+                    name = " hi-" + nameParts[i];
+                } else {
+                    name += "-" + nameParts[i];
+                }
+                cssClasses.append(name);
+            }
         }
         return cssClasses.toString();
     }

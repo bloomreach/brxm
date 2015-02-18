@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -41,12 +40,8 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
-import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
-import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -64,52 +59,37 @@ public class EditPerspective extends Perspective {
 
     static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
-    private static final long serialVersionUID = 1L;
-
-    private String topHeight;
-    private WireframeSettings wfSettings;
     private FeedbackPanel feedback;
     private boolean feedbackShown;
 
     public EditPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        feedback = new FeedbackPanel("feedback", new IFeedbackMessageFilter() {
-            private static final long serialVersionUID = 1L;
+        add(CssClass.append("hippo-editor"));
 
-            public boolean accept(FeedbackMessage message) {
-                if (config.getString(RenderService.FEEDBACK) != null) {
-                    List<IFeedbackMessageFilter> filters = context.getServices(
-                            config.getString(RenderService.FEEDBACK), IFeedbackMessageFilter.class);
-                    for (IFeedbackMessageFilter filter : filters) {
-                        if (filter.accept(message)) {
-                            return true;
-                        }
+        feedback = new FeedbackPanel("feedback", message -> {
+            final String serviceId = config.getString(RenderService.FEEDBACK);
+            if (serviceId != null) {
+                List<IFeedbackMessageFilter> filters = context.getServices(serviceId, IFeedbackMessageFilter.class);
+                for (IFeedbackMessageFilter filter : filters) {
+                    if (filter.accept(message)) {
+                        return true;
                     }
                 }
-                return false;
             }
+            return false;
         });
-        feedback.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
+        feedback.add(CssClass.append(new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
-                if (feedback.anyMessage()) {
-                    return "hippo-shown";
-                } else {
-                    return "hippo-hidden";
-                }
+                return feedback.anyMessage() ? "hippo-shown" : "hippo-hidden";
             }
         }));
         feedback.setOutputMarkupId(true);
         add(feedback);
-        feedbackShown = false;
 
         if (config.containsKey(IValidationService.VALIDATE_ID)) {
             context.registerService(new IValidationListener() {
-                private static final long serialVersionUID = 1L;
-
                 public void onResolve(Set<Violation> violations) {
                 }
 
@@ -122,15 +102,6 @@ public class EditPerspective extends Perspective {
 
             }, config.getString(IValidationService.VALIDATE_ID));
         }
-
-        IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
-        if (wfConfig == null) {
-            wfConfig = new JavaPluginConfig();
-        }
-        wfSettings = new WireframeSettings(wfConfig);
-        UnitSettings topSettings = wfSettings.getUnit("top");
-        topHeight = topSettings.getHeight();
-        add(new WireframeBehavior(wfSettings));
     }
 
     @Override
@@ -140,32 +111,20 @@ public class EditPerspective extends Perspective {
     }
 
     private void renderFeedbackIfNeeded(final AjaxRequestTarget target) {
-        boolean hasMessage = feedback.anyMessage();
-        UnitSettings topSettings = wfSettings.getUnit("top");
-        boolean updateTop = false;
-        if (hasMessage && !feedbackShown) {
-            topSettings.setHeight(Integer.valueOf(
-                    getPluginConfig().getAsInteger("feedback.height", 50) + Integer.parseInt(topHeight)).toString());
-            feedbackShown = true;
-            updateTop = true;
-        } else if (!hasMessage && feedbackShown) {
-            topSettings.setHeight(topHeight);
-            feedbackShown = false;
-            updateTop = true;
-        }
-        if (updateTop && isVisibleInHierarchy() && target != null) {
-            String topId = topSettings.getId().getElementId();
-            target.appendJavaScript("YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get('" + topId
-                    + "')).set('height', " + topSettings.getHeight() + ");");
-            target.add(feedback);
+        if (target != null && isVisibleInHierarchy()) {
+            if (!feedbackShown && feedback.anyMessage()) {
+                feedbackShown = true;
+                target.add(feedback);
+            } else if (feedbackShown && !feedback.anyMessage()) {
+                feedbackShown = false;
+                target.add(feedback);
+            }
         }
     }
 
     @Override
     public IModel<String> getTitle() {
         return new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String load() {
                 JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
@@ -241,8 +200,8 @@ public class EditPerspective extends Perspective {
     }
 
     protected ILocaleProvider getLocaleProvider() {
-        return getPluginContext().getService(
-                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
-                ILocaleProvider.class);
+        final String defaultServiceId = ILocaleProvider.class.getName();
+        final String serviceId = getPluginConfig().getString(ILocaleProvider.SERVICE_ID, defaultServiceId);
+        return getPluginContext().getService(serviceId, ILocaleProvider.class);
     }
 }

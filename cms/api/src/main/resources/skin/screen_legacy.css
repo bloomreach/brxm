@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1285,40 +1285,6 @@ body .hippo-picker-properties div.text-input input {
     width: 535px
 }
 
-/* Referring documents */
-
-.hippo-window-form.compatibility-workflow-plugin-date-dialog {
-    position: absolute;
-    bottom: 50px;
-}
-
-.hippo-referring-documents {
-    margin: 5px;
-    height: 365px;
-}
-
-.hippo-referring-documents-list {
-    height: 245px;
-    position: relative;
-    margin-top: 8px;
-}
-
-.hippo-delete-dialog .hippo-referring-documents {
-    height: 240px;
-}
-
-.hippo-delete-dialog .hippo-referring-documents-list {
-    height: 181px;
-}
-
-.hippo-depublish-dialog .hippo-referring-documents {
-    height: 240px;
-}
-
-.hippo-depublish-dialog .hippo-referring-documents-list {
-    height: 181px;
-}
-
 /* Wizard */
 /* ================================================ */
 .hippo-wizard {
@@ -1350,8 +1316,7 @@ body .hippo-picker-properties div.text-input input {
     background: transparent
 }
 
-.hippo-browser-documents-small .hippo-browser-docum
-ents-small-folders h3 {
+.hippo-browser-documents-small .hippo-browser-documents-small-folders h3 {
     background: transparent url(images/filelistHeaderback.png) repeat-x;
     font-weight: normal;
     padding: 2px;

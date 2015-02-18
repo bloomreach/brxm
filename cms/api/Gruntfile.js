@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,11 +68,16 @@ module.exports = function (grunt) {
                     '<%= build.tmp %>/css/<%= build.file %>.css': '<%= build.src %>/less/main.less'
                 }
             },
+            nolint: {
+                files: {
+                    '<%= build.tmp %>/css/style-test.css':   '<%= build.src %>/less/nolint/style-test.less',
+                    '<%= build.tmp %>/css/wicket.css':       '<%= build.src %>/less/nolint/wicket.less',
+                    '<%= build.tmp %>/css/workarounds.css':  '<%= build.src %>/less/nolint/workarounds.less'
+                }
+            },
             vendors: {
                 files: {
-                    '<%= build.tmp %>/css/open-sans.css':    '<%= build.src %>/less/lib/open-sans.less',
-                    '<%= build.tmp %>/css/wicket.css':       '<%= build.src %>/less/lib/wicket.less',
-                    '<%= build.tmp %>/css/style-test.css':   '<%= build.src %>/less/lib/style-test.less'
+                    '<%= build.tmp %>/css/open-sans.css':    '<%= build.src %>/less/lib/open-sans.less'
                 }
             }
         },
@@ -81,7 +86,7 @@ module.exports = function (grunt) {
         autoprefixer: {
             theme: {
                 options: {
-                    browsers: ['> 0%']
+                    browsers: ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10']
                 },
                 src: '<%= build.tmp %>/css/<%= build.file %>.css',
                 dest: '<%= build.tmp %>/css/<%= build.file %>.css'
@@ -152,15 +157,18 @@ module.exports = function (grunt) {
                     '<%= build.bower %>/jquery-selectric/dist/selectric.css',
                     '<%= build.tmp %>/css/style-test.css',
                     '<%= build.tmp %>/css/<%= build.file %>.css',
-                    '<%= build.tmp %>/css/wicket.css'
+                    '<%= build.tmp %>/css/wicket.css',
+                    '<%= build.tmp %>/css/workarounds.css'
                 ],
-                dest: '<%= build.skin %>/css/<%= build.file %>.css'
+                dest: '<%= build.skin %>/css/<%= build.file %>.css',
+                nonull: true
             },
             js: {
                 src: [
                     '<%= build.bower %>/jquery-selectric/dist/jquery.selectric.js'
                 ],
-                dest: '<%= build.skin %>/js/<%= build.file %>.js'
+                dest: '<%= build.skin %>/js/<%= build.file %>.js',
+                nonull: true
             }
         },
 

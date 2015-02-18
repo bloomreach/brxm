@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
-import org.apache.wicket.AttributeModifier;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -30,24 +39,15 @@ import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
 import org.hippoecm.frontend.plugins.standards.NodeFilter;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
     private static final int DEFAULT_LIMIT = 15;
 
@@ -158,9 +158,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         @Override
         protected void populateItem(final Item item) {
             // Add even/odd row css styling
-            item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
-                private static final long serialVersionUID = 1L;
-
+            item.add(CssClass.append(new AbstractReadOnlyModel() {
                 @Override
                 public Object getObject() {
                     return (item.getIndex() % 2 == 1) ? "even" : "odd";

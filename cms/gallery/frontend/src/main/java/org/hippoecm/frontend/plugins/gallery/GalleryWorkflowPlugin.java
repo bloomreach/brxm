@@ -32,10 +32,9 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -49,8 +48,10 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.JQueryFileUploadDialog;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -203,14 +204,16 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     }
 
     protected IDataProvider<StdWorkflow> createListDataProvider() {
-        List<StdWorkflow> list = new LinkedList<>();
-        list.add(0, new WorkflowAction("add", new StringResourceModel(getPluginConfig()
-                .getString("option.label", "add"), this, null, "Add")) {
-            private static final long serialVersionUID = 1L;
+        final String option = getPluginConfig().getString("option.label", "add");
+        final String label = getString(option, null, "Add");
+
+        final List<StdWorkflow> list = new LinkedList<>();
+        list.add(new WorkflowAction("add", Model.of(label)) {
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "image-add-16.png");
+            protected Component getIcon(final String id) {
+                final Icon icon = option.equals("add-image") ? Icon.NEW_IMAGE_TINY : Icon.NEW_DOCUMENT_TINY;
+                return HippoIcon.fromSprite(id, icon);
             }
 
             @Override
@@ -240,7 +243,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
         Component typeComponent;
         if (galleryTypes != null && galleryTypes.size() > 1) {
             type = galleryTypes.get(0);
-            typeComponent = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
+            typeComponent = new DropDownChoice<>("type", new PropertyModel<>(this, "type"), galleryTypes,
                     new TypeChoiceRenderer(this)).setNullValid(false).setRequired(true);
         } else if (galleryTypes != null && galleryTypes.size() == 1) {
             type = galleryTypes.get(0);

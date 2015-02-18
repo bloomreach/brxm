@@ -1,21 +1,16 @@
-/*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/* TabsPlugin perspective switcher (left buttons) */
-/* ================================================ */
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 .tabbed-panel-layout-left {
   background-color: @main-menu-bgcolor;
@@ -28,13 +23,11 @@
 
   li {
     margin-bottom: 4px;
+    border-left: @main-menu-border-size solid transparent;
+    border-right: @main-menu-border-size solid transparent;
 
     > div {
       padding: 5px 0;
-
-      &:hover svg {
-        fill: @main-menu-hover-icon-color;
-      }
 
       a {
         color: @main-menu-text-color;
@@ -55,16 +48,30 @@
           text-align: center;
         }
       }
+
+      &:hover {
+        svg {
+          fill: @main-menu-hover-icon-color;
+        }
+
+        a span {
+          color: @main-menu-hover-text-color;
+        }
+      }
     }
   }
 
-  .selected div {
-    background-color: @main-menu-selected-bgcolor;
-    a {
-      color: @main-menu-selected-text-color;
+  .selected {
+    border-left: @main-menu-border-size solid @main-menu-selected-border-color;
+    border-right: @main-menu-border-size solid @main-menu-selected-bgcolor;
+    div {
+      background-color: @main-menu-selected-bgcolor;
+      a {
+        color: @main-menu-selected-text-color;
 
-      svg {
-        fill: @main-menu-selected-icon-color;
+        svg {
+          fill: @main-menu-selected-icon-color;
+        }
       }
     }
   }

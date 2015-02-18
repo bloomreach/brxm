@@ -61,17 +61,13 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-    <dependency>
-      <groupId>de.agilecoders.wicket</groupId>
-      <artifactId>wicket-bootstrap-core</artifactId>
-      <version>${agilecoders.wicket.bootstrap.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>de.agilecoders.wicket</groupId>
-      <artifactId>wicket-bootstrap-extensions</artifactId>
-      <version>${agilecoders.wicket.bootstrap.version}</version>
-    </dependency>
 
     <!-- test -->
     <dependency>
@@ -166,7 +162,7 @@
           </archive>
         </configuration>
       </plugin>
-      <plugin>
+    <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jslint-maven-plugin</artifactId>
         <configuration>
@@ -181,7 +177,74 @@
           <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
         </configuration>
       </plugin>
+
+      <!-- Use NPM/Bower to install/build Hippo Console theme -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.plugin.exec.version}</version>
+        <executions>
+          <execution>
+            <id>npm-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>install</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bower-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>bower</executable>
+              <commandlineArgs>install</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt-build</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>grunt</executable>
+              <commandlineArgs>build</commandlineArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>clean-bower</id>
+      <activation>
+        <file>
+          <exists>node_modules/grunt</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${maven.plugin.exec.version}</version>
+            <executions>
+              <execution>
+                <id>clean-bower</id>
+                <phase>clean</phase>
+                <goals><goal>exec</goal></goals>
+                <configuration>
+                  <executable>grunt</executable>
+                  <commandlineArgs>clean:bower clean:tmp clean:copies</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

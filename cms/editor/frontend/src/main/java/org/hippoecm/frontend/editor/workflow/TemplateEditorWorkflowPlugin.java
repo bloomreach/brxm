@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -32,7 +33,10 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -45,7 +49,6 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
         super(context, config);
 
         add(new WorkflowAction("create", new StringResourceModel("create-namespace", this, null)) {
-            private static final long serialVersionUID = 1L;
 
             public String url;
             public String prefix;
@@ -53,6 +56,14 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 return new NamespaceDialog(this);
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                final HippoIconStack icon = new HippoIconStack(id, IconSize.TINY);
+                icon.addFromSprite(Icon.CONFIGURATION_TINY);
+                icon.addFromSprite(Icon.ADD_OVERLAY_TINY);
+                return icon;
             }
 
             @Override
@@ -101,7 +112,7 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
 
         @Override
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return new StringResourceModel("create-namespace", TemplateEditorWorkflowPlugin.this, null);
         }
 

@@ -26,6 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.plugins.standards.image.CachedJcrImage;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
@@ -271,7 +272,7 @@ public class HippoIcon extends Panel {
             super(id, model);
             setRenderBodyOnly(true);
 
-            add(new JcrImage("streamIcon", model.getObject(), width, height));
+            add(new CachedJcrImage("streamIcon", model.getObject(), width, height));
         }
     }
 

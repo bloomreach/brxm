@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,8 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <ul class="hippo-toolbar-section">
-          <li wicket:id="list"><span wicket:id="item"></span></li>
-        </ul>
+        <div class="hippo-toolbar-menu">
+            <ul class="hippo-toolbar-section">
+                <li wicket:id="list"><span wicket:id="item"></span></li>
+            </ul>
+        </div>
+        <div wicket:id="hippo-toolbar-status" class="hippo-toolbar-status">
+            <ul class="hippo-toolbar-status-labels">
+              <li wicket:id="status"><span wicket:id="item"></span></li>
+            </ul>
+        </div>
     </wicket:panel>
 </html>

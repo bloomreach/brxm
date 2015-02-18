@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Item;
@@ -47,41 +47,61 @@ import org.slf4j.LoggerFactory;
 
 public class FallbackAssetGalleryListColumnProvider implements IListColumnProvider {
 
-    static final Logger log = LoggerFactory.getLogger(FallbackAssetGalleryListColumnProvider.class);
+    private static final FallbackAssetGalleryListColumnProvider INSTANCE = new FallbackAssetGalleryListColumnProvider();
 
-    public IHeaderContributor getHeaderContributor() {
-        return null;
+    private static final Logger log = LoggerFactory.getLogger(FallbackAssetGalleryListColumnProvider.class);
+
+    private FallbackAssetGalleryListColumnProvider() {
+    }
+
+    public static FallbackAssetGalleryListColumnProvider getInstance() {
+        return INSTANCE;
     }
 
     public List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-
-        ListColumn column = new ListColumn(new ClassResourceModel("assetgallery-type", Translations.class), "type");
-        column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new MimeTypeAttributeModifier());
-        column.setComparator(new MimeTypeComparator());
-        column.setCssClass(DocumentListColumn.ICON.getCssClass());
-        columns.add(column);
-
-        column = new ListColumn(new ClassResourceModel("assetgallery-name", Translations.class), "name");
-        column.setComparator(new NameComparator());
-        column.setCssClass(DocumentListColumn.NAME.getCssClass());
-        columns.add(column);
-
-        column = new ListColumn(new ClassResourceModel("assetgallery-size", Translations.class), "size");
-        column.setRenderer(new SizeRenderer());
-        column.setComparator(new SizeComparator());
-        column.setCssClass(DocumentListColumn.SIZE.getCssClass());
-        columns.add(column);
-
-        return columns;
+        return Arrays.asList(
+                createTypeColumn(),
+                createNameColumn(),
+                createSizeColumn()
+        );
     }
 
     public List<ListColumn<Node>> getExpandedColumns() {
         return getColumns();
     }
 
-    class MimeTypeComparator extends NodeComparator {
+    private static ListColumn<Node> createTypeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-type", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "type");
+        column.setRenderer(EmptyRenderer.getInstance());
+        column.setAttributeModifier(new MimeTypeAttributeModifier());
+        column.setComparator(new MimeTypeComparator());
+        column.setCssClass(DocumentListColumn.ICON.getCssClass());
+        return column;
+    }
+
+    private static ListColumn<Node> createNameColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-name", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
+        column.setComparator(NameComparator.getInstance());
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        return column;
+    }
+
+    private static ListColumn<Node> createSizeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-size", Translations.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "size");
+        column.setRenderer(new SizeRenderer());
+        column.setComparator(new SizeComparator());
+        column.setCssClass(DocumentListColumn.SIZE.getCssClass());
+        return column;
+    }
+
+    public IHeaderContributor getHeaderContributor() {
+        return null;
+    }
+
+    private static class MimeTypeComparator extends NodeComparator {
 
         @Override
         public int compare(JcrNodeModel nodeModel1, JcrNodeModel nodeModel2) {
@@ -114,25 +134,28 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
         }
     }
 
-    public class SizeRenderer extends AbstractNodeRenderer {
+    private static class SizeRenderer extends AbstractNodeRenderer {
 
         ByteSizeFormatter formatter = new ByteSizeFormatter(1);
 
         @Override
         protected Component getViewer(String id, Node node) throws RepositoryException {
-            if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-                Node imageSet = node.getNode(node.getName());
-                try {
-                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
-                    if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        long length = ((Node) primItem).getProperty(JcrConstants.JCR_DATA).getLength();
-                        return new Label(id, formatter.format(length));
-                    } else {
-                        log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                final String nodeName = node.getName();
+                if (node.hasNode(nodeName)) {
+                    Node imageSet = node.getNode(nodeName);
+                    try {
+                        final Item primItem = JcrHelper.getPrimaryItem(imageSet);
+                        if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                            long length = ((Node) primItem).getProperty(JcrConstants.JCR_DATA).getLength();
+                            return new Label(id, formatter.format(length));
+                        } else {
+                            log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
+                        }
+                    } catch (ItemNotFoundException e) {
+                        log.warn("ImageSet must have a primary item. " + node.getPath()
+                                + " probably not of correct image set type");
                     }
-                } catch (ItemNotFoundException e) {
-                    log.warn("ImageSet must have a primary item. " + node.getPath()
-                            + " probably not of correct image set type");
                 }
             }
             return new Label(id);
@@ -140,7 +163,7 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
 
     }
 
-    class SizeComparator extends NodeComparator {
+    private static class SizeComparator extends NodeComparator {
 
         @Override
         public int compare(JcrNodeModel nodeModel1, JcrNodeModel nodeModel2) {
@@ -161,11 +184,14 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
 
         private long getSize(final JcrNodeModel nodeModel) throws RepositoryException {
             final Node node = getCanonicalNode(nodeModel);
-            if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-                Node imageSet = node.getNode(node.getName());
-                Item primaryItem = JcrHelper.getPrimaryItem(imageSet);
-                if (primaryItem.isNode() && ((Node) primaryItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                    return ((Node) primaryItem).getProperty(JcrConstants.JCR_DATA).getLength();
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                final String nodeName = node.getName();
+                if (node.hasNode(nodeName)) {
+                    final Node imageSet = node.getNode(nodeName);
+                    final Item primaryItem = JcrHelper.getPrimaryItem(imageSet);
+                    if (primaryItem.isNode() && ((Node) primaryItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                        return ((Node) primaryItem).getProperty(JcrConstants.JCR_DATA).getLength();
+                    }
                 }
             }
             return 0;

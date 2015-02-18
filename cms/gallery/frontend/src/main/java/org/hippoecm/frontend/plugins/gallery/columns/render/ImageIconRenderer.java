@@ -50,13 +50,13 @@ public class ImageIconRenderer extends IconRenderer {
                         int iconWidth = -1, iconHeight = -1;
 
                         if (imageNode.hasProperty(HippoGalleryNodeType.IMAGE_WIDTH)) {
-                            int storedWidth = (int) imageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong();
+                            double storedWidth = imageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getDouble();
                             iconWidth = (int) (storedWidth / ratio);
 
                         }
 
                         if (imageNode.hasProperty(HippoGalleryNodeType.IMAGE_HEIGHT)) {
-                            int storedHeight = (int) imageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong();
+                            double storedHeight = imageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getDouble();
                             iconHeight = (int) (storedHeight / ratio);
                         }
 

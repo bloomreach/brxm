@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,30 +19,25 @@ import javax.jcr.Node;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.ObservablePropertyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
-
-    private static final long serialVersionUID = 1L;
 
     static final String PREFIX = "state-";
 
     @Override
     public AttributeModifier getColumnAttributeModifier() {
-        return new CssClassAppender(new Model("icon-16"));
+        return CssClass.append("icon-16");
     }
 
     @Override
     public AttributeModifier[] getCellAttributeModifiers(Node node) {
         StateIconAttributes attrs = new StateIconAttributes(new JcrNodeModel(node));
         AttributeModifier[] attributes = new AttributeModifier[2];
-        attributes[0] = new CssClassAppender(new ObservablePropertyModel(attrs, "cssClass"));
+        attributes[0] = CssClass.appendAndObserve(new ObservablePropertyModel(attrs, "cssClass"));
         attributes[1] = new AttributeAppender("title", new ObservablePropertyModel(attrs, "summary"), " ");
         return attributes;
     }

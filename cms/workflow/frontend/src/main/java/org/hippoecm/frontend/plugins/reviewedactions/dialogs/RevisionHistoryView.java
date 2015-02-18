@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
@@ -45,11 +44,9 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A panel that displays the revision history of a document as a list.
@@ -57,8 +54,6 @@ import org.slf4j.LoggerFactory;
 public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
     private static final long serialVersionUID = -6072417388871990194L;
-
-    static final Logger log = LoggerFactory.getLogger(RevisionHistoryView.class);
 
     private RevisionHistory history;
 
@@ -69,8 +64,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
         final SortState state = new SortState();
         final ISortableDataProvider<Revision, String> provider = new ISortableDataProvider<Revision, String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public ISortState<String> getSortState() {
                 return state;
@@ -97,28 +90,20 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         };
 
         final ListDataTable<Revision> dataTable = new ListDataTable<>("datatable", getTableDefinition(), provider, new TableSelectionListener<Revision>() {
-            private static final long serialVersionUID = 1L;
-
+            @Override
             public void selectionChanged(IModel<Revision> model) {
                 onSelect(model);
             }
-
         }, true, this);
         add(dataTable);
 
-        add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
+        add(CssClass.append(new LoadableDetachableModel<String>() {
             protected String load() {
-                if (getRevisions().size() == 0) {
-                    return "hippo-empty";
-                }
-                return "";
+                return getRevisions().isEmpty() ? "hippo-empty" : "";
             }
-
         }));
 
-        add(new CssClassAppender(new Model<>("hippo-history-documents")));
+        add(CssClass.append("hippo-history-documents"));
     }
 
     protected List<Revision> getRevisions() {
@@ -155,22 +140,23 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
      * @param columns the list of columns.
      */
     private void addTimeColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(new StringResourceModel("history-time", this, null), null);
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-time")), null);
         column.setRenderer(new IListCellRenderer<Revision>() {
-            private static final long serialVersionUID = 1L;
-
+            @Override
             public Component getRenderer(String id, final IModel<Revision> model) {
                 IModel labelModel = new IModel() {
-
+                    @Override
                     public Object getObject() {
                         Format format = new MessageFormat("{0,date} {0,time}", getLocale());
                         return format.format(new Object[] { model.getObject().getCreationDate() });
                     }
 
+                    @Override
                     public void setObject(Object object) {
                         throw new UnsupportedOperationException();
                     }
 
+                    @Override
                     public void detach() {
                         model.detach();
                     }
@@ -178,10 +164,10 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 return new Label(id, labelModel);
             }
 
+            @Override
             public IObservable getObservable(IModel<Revision> model) {
                 return null;
             }
-
         });
         columns.add(column);
     }
@@ -192,23 +178,24 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
      * @param columns the list of columns.
      */
     private void addUserColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(new StringResourceModel("history-user", this, null), "user");
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-user")), "user");
         column.setRenderer(new IListCellRenderer<Revision>() {
-            private static final long serialVersionUID = 1L;
-
+            @Override
             public Component getRenderer(String id, final IModel<Revision> model) {
                 IModel labelModel = new IModel() {
-
+                    @Override
                     public Object getObject() {
                         Revision revision = model.getObject();
                         StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
                         return attrs.getLastModifiedBy();
                     }
 
+                    @Override
                     public void setObject(Object object) {
                         throw new UnsupportedOperationException();
                     }
 
+                    @Override
                     public void detach() {
                         model.detach();
                     }
@@ -229,24 +216,22 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
      * @param columns the list of columns.
      */
     private void addStateColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(new StringResourceModel("history-state", this, null), "state");
-        column.setRenderer(new EmptyRenderer<Revision>());
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-state")), "state");
+        column.setRenderer(EmptyRenderer.getInstance());
         column.setAttributeModifier(new AbstractListAttributeModifier<Revision>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public AttributeModifier[] getCellAttributeModifiers(IModel<Revision> model) {
                 Revision revision = model.getObject();
                 StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
                 AttributeModifier[] attributes = new AttributeModifier[2];
-                attributes[0] = new CssClassAppender(new PropertyModel<String>(attrs, "cssClass"));
+                attributes[0] = CssClass.append(new PropertyModel<String>(attrs, "cssClass"));
                 attributes[1] = new AttributeAppender("title", new PropertyModel(attrs, "summary"), " ");
                 return attributes;
             }
 
             @Override
             public AttributeModifier[] getColumnAttributeModifiers() {
-                return new AttributeModifier[] { new CssClassAppender(new Model<>("icon-16")) };
+                return new AttributeModifier[] { CssClass.append("icon-16") };
             }
         });
         columns.add(column);

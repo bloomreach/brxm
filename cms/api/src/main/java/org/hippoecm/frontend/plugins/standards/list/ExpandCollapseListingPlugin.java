@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,11 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -36,12 +34,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 
 public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
-    private static final long serialVersionUID = 1L;
 
     private final ExpandCollapseLink toggleLink;
     private WebMarkupContainer buttons;
@@ -55,8 +53,6 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         super(context, config);
 
         add(buttons = new WebMarkupContainer("buttons") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isVisible() {
                 return true;
@@ -124,7 +120,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
                 triState, pagingDefinition);
 
         if (className != null) {
-            datatable.add(new AttributeAppender("class", new Model<String>(className), " "));
+            datatable.add(CssClass.append(className));
         }
         datatable.add(behavior = getBehavior());
         return datatable;
@@ -176,7 +172,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     }
 
     protected List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+        List<ListColumn<Node>> columns = new ArrayList<>();
 
         List<IListColumnProvider> providers = getListColumnProviders();
         for (IListColumnProvider provider : providers) {
@@ -187,7 +183,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     }
 
     protected List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+        List<ListColumn<Node>> columns = new ArrayList<>();
 
         List<IListColumnProvider> providers = getListColumnProviders();
         for (IListColumnProvider provider : providers) {
@@ -198,7 +194,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     }
 
     protected List<IListColumnProvider> getDefaultColumnProviders() {
-        List<IListColumnProvider> providers = new LinkedList<IListColumnProvider>();
+        List<IListColumnProvider> providers = new LinkedList<>();
         providers.add(getDefaultColumnProvider());
         return providers;
     }
@@ -211,8 +207,8 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
             }
 
             public List<ListColumn<Node>> getColumns() {
-                List<ListColumn<Node>> cols = new LinkedList<ListColumn<Node>>();
-                ListColumn<Node> column = new ListColumn<Node>(new ResourceModel("default-column-nodename"), "name");
+                List<ListColumn<Node>> cols = new LinkedList<>();
+                ListColumn<Node> column = new ListColumn<>(new ResourceModel("default-column-nodename"), "name");
                 cols.add(column);
                 return cols;
             }

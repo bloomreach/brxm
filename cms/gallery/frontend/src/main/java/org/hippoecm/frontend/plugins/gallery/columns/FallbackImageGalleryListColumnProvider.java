@@ -15,43 +15,33 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public class FallbackImageGalleryListColumnProvider implements IListColumnProvider {
 
+    @Override
     public IHeaderContributor getHeaderContributor() {
         return null;
     }
 
+    @Override
     public List<ListColumn<Node>> getColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<>();
-
-        ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
-        column.setRenderer(new EmptyRenderer<Node>());
-        column.setCssClass(DocumentListColumn.ICON.getCssClass());
-        columns.add(column);
-
-        column = new ListColumn<Node>(new ClassResourceModel("gallery-name", Translations.class), "name");
-        column.setComparator(new NameComparator());
-        column.setCssClass(DocumentListColumn.NAME.getCssClass());
-        columns.add(column);
-
-        return columns;
+        final int thumbnailSize = DefaultGalleryProcessor.DEFAULT_THUMBNAIL_SIZE;
+        return Arrays.asList(
+                ImageGalleryColumnProviderPlugin.createIconColumn(thumbnailSize, thumbnailSize),
+                ImageGalleryColumnProviderPlugin.NAME_COLUMN
+        );
     }
 
+    @Override
     public List<ListColumn<Node>> getExpandedColumns() {
         return getColumns();
     }

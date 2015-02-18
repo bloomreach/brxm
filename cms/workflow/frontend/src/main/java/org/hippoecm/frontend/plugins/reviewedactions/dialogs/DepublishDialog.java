@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
@@ -28,16 +27,10 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DepublishDialog extends AbstractWorkflowDialog {
-
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(DepublishDialog.class);
 
     private IModel title;
 
@@ -50,8 +43,6 @@ public class DepublishDialog extends AbstractWorkflowDialog {
         try {
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()));
             MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public int getPageSize() {
                     return 5;
@@ -61,7 +52,7 @@ public class DepublishDialog extends AbstractWorkflowDialog {
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
-        add(new CssClassAppender(Model.of("hippo-depublish-dialog")));
+        add(CssClass.append("hippo-depublish-dialog"));
 
         setFocusOnOk();
     }

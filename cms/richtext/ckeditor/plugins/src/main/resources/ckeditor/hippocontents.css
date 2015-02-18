@@ -40,14 +40,12 @@
 .cke_wysiwyg_div.cke_editable,
 .cke_panel_container {
     color: #333;
-    font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
 
 .cke_wysiwyg_div.cke_editable blockquote {
-    border-color: #ccc;
-    border-style: solid;
-    border-width: 0;
+    border: 0 solid #ccc;
     font-family: Georgia, Times, "Times New Roman", serif;
     font-style: italic;
     padding: 2px 0;
@@ -66,7 +64,7 @@
 }
 
 .cke_wysiwyg_div.cke_editable a {
-    color: #0782C1;
+    color: #0086f8;
     text-decoration: underline;
 }
 
@@ -90,7 +88,7 @@
 .cke_wysiwyg_div.cke_editable ul,
 .cke_wysiwyg_div.cke_editable dl {
     list-style-type: disc;
-    *margin-right: 0;
+    margin-right: 0;
     padding: 0 40px;
 }
 
@@ -194,8 +192,7 @@
 }
 
 .cke_wysiwyg_div.cke_editable pre {
-    white-space: pre-wrap; /* CSS 2.1 */
-    word-wrap: break-word; /* IE7 */
+    white-space: pre-wrap;
 }
 
 .cke_wysiwyg_div.cke_editable .marker {

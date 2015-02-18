@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProvider
     private ListColumn<Node> createNameColumn() {
         final ClassResourceModel displayModel = new ClassResourceModel("assetgallery-name", Translations.class);
         final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
-        column.setComparator(new NameComparator());
+        column.setComparator(NameComparator.getInstance());
         column.setCssClass(DocumentListColumn.NAME.getCssClass());
         column.setAttributeModifier(new AssetAttributeModifier());
         return column;

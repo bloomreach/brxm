@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,9 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -38,20 +40,22 @@ import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +69,6 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         super(context, config);
 
         add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this, null)) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public String getSubMenu() {
@@ -73,34 +76,50 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.EDIT_TINY);
+            }
+
+            @Override
             public String execute(Workflow workflow) throws Exception {
-                EditmodelWorkflow emWorkflow = (EditmodelWorkflow) workflow;
-                if (emWorkflow != null) {
-                    String path = emWorkflow.edit();
-                    try {
-                        Node node = UserSession.get().getJcrSession().getRootNode().getNode(path.substring(1));
-                        JcrItemModel itemModel = new JcrItemModel(node);
-                        if (path != null) {
-                            IEditorManager editorMgr = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditorManager.class);
-                            if (editorMgr != null) {
-                                JcrNodeModel nodeModel = new JcrNodeModel(itemModel);
-                                IEditor editor = editorMgr.getEditor(nodeModel);
-                                if (editor == null) {
-                                    editorMgr.openEditor(nodeModel);
-                                } else {
-                                    editor.setMode(IEditor.Mode.EDIT);
-                                }
-                            } else {
-                                log.warn("No view service found");
-                            }
-                        } else {
-                            log.error("no model found to edit");
-                        }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage());
-                    }
+                if (workflow == null) {
+                    log.error("No workflow defined on model for selected node");
+                    return null;
+                }
+
+                final String path = ((EditmodelWorkflow) workflow).edit();
+                if (path == null) {
+                    log.error("No model found to edit");
+                    return null;
+                }
+
+                final String serviceId = config.getString(IEditorManager.EDITOR_ID);
+                final IEditorManager editorMgr = context.getService(serviceId, IEditorManager.class);
+                if (editorMgr == null) {
+                    log.warn("No view service found for id '{}'", serviceId);
+                    return null;
+                }
+
+                final Session session = UserSession.get().getJcrSession();
+                final Node node;
+                try {
+                    node = JcrUtils.getNodeIfExists(path, session);
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                    return null;
+                }
+
+                if (node == null) {
+                    log.error("No model found at path '{}'", path);
+                    return null;
+                }
+
+                final JcrNodeModel nodeModel = new JcrNodeModel(node);
+                final IEditor editor = editorMgr.getEditor(nodeModel);
+                if (editor == null) {
+                    editorMgr.openEditor(nodeModel);
                 } else {
-                    log.error("no workflow defined on model for selected node");
+                    editor.setMode(IEditor.Mode.EDIT);
                 }
                 return null;
             }
@@ -114,6 +133,11 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             public String getSubMenu() {
                 return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILES_TINY);
             }
 
             @Override
@@ -165,28 +189,26 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             if (workflowDescriptor != null) {
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
-                if (info.containsKey("edit") && info.get("edit") instanceof Boolean && !((Boolean) info.get("edit")).booleanValue()) {
-                    editAction.setVisible(false);
+                if (info.containsKey("edit")) {
+                    Object editObject = info.get("edit");
+                    if (editObject instanceof Boolean) {
+                        editAction.setVisible((Boolean) editObject);
+                    }
                 }
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage(), ex);
-        } catch (WorkflowException ex) {
-            log.error(ex.getMessage(), ex);
-        } catch (RemoteException ex) {
+        } catch (RepositoryException | WorkflowException | RemoteException ex) {
             log.error(ex.getMessage(), ex);
         }
     }
 
     public class CopyModelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
-        private static final long serialVersionUID = 1L;
 
         private String name;
 
         public CopyModelDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
             action.super();
             WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getDefaultModel();
-            PropertyModel model = new PropertyModel(action, "name");
+            PropertyModel<String> model = new PropertyModel<>(action, "name");
             try {
                 model.setObject(name = workflowModel.getNode().getName());
             } catch (RepositoryException ex) {
@@ -221,7 +243,6 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     private static class ExceptionError implements IValidationError, IClusterable {
-        private static final long serialVersionUID = 1L;
 
         private Exception exception;
 

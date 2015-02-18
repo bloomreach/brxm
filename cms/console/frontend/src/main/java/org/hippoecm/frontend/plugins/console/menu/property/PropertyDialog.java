@@ -299,7 +299,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                     }
                 };
                 
-                deleteLink.add(new Image("removeIcon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
+//                deleteLink.add(new Image("removeIcon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
                 deleteLink.add(new AttributeModifier("title", getString("property.value.remove")));
                 deleteLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
                     @Override

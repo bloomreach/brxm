@@ -17,13 +17,9 @@ package org.hippoecm.frontend.plugins.richtext.view;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * Renders a view of a rich text field. Subclasses must call {@link #addView} once with the view model to render.
@@ -32,16 +28,8 @@ abstract class AbstractRichTextViewPanel extends Panel {
 
     protected static final String WICKET_ID_VIEW = "view";
 
-    private static final ResourceReference CSS = new CssResourceReference(AbstractRichTextViewPanel.class, "richtext.css");
-
     public AbstractRichTextViewPanel(final String id) {
         super(id);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(CSS));
     }
 
     protected void addView(IModel<String> model) {

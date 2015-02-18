@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,6 +80,13 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected void invoke() {
             }
+
+            @Override
+            public boolean isVisible() {
+                // Show the workflow status of the document, except when it is live (in that case,
+                // no user action is required anymore).
+                return !"live".equals(getStateSummary());
+            }
         });
 
         add(infoEditAction = new StdWorkflow("infoEdit", "infoEdit") {
@@ -150,7 +157,7 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         } catch (RepositoryException ex) {
             log.warn("Unable to ascertain state summary", ex);
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private void hideInvalidActions() {

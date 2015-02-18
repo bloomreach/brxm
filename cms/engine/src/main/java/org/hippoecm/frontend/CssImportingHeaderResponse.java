@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.DecoratingHeaderResponse;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.lang.Objects;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +112,7 @@ public class CssImportingHeaderResponse extends DecoratingHeaderResponse {
         getResponse().write("@import url('" + cssUrl + "');");
 
         String media = imp.getMedia();
-        if(media != null && !media.equals("screen") && Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
+        if(media != null && !media.equals("screen") && WebApplicationHelper.isDevelopmentMode()) {
             log.warn("CssImportingHeaderResponse only accepts stylesheets of @media='screen', css file {} will be skipped.", cssUrl);
         }
     }

@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -34,6 +34,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -71,6 +72,7 @@ import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.recompute.RecomputeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
@@ -81,9 +83,6 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.agilecoders.wicket.core.markup.html.bootstrap.behavior.CssClassNameAppender;
-import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
 
 public class BrowserPlugin extends RenderPlugin<Node> {
 
@@ -274,20 +273,24 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         @Override
         protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
             final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
-            if (nodeModel == null) {
-                return new Icon(id, JcrNodeIcon.getDefaultIconType());
+            if (nodeModel ==  null || nodeModel.getObject() == null) {
+                return getDefaultIcon(id);
             }
+
             Node jcrNode = nodeModel.getObject();
-            if (jcrNode == null) {
-                return new Icon(id, JcrNodeIcon.getDefaultIconType());
-            }
-            Icon icon = new Icon(id, JcrNodeIcon.getIcon(jcrNode));
-            icon.add(new CssClassNameAppender(new Model<>(JcrNodeIcon.getIconColorCssClassname(jcrNode))));
+            Label icon = new Label(id, StringUtils.EMPTY);
+            icon.add(new CssClassAppender(new Model<>(JcrNodeIcon.getIconCssClass(jcrNode))));
 
             final String tooltip = getTooltip(jcrNode);
             if(StringUtils.isNotBlank(tooltip)) {
                 icon.add(new AttributeAppender("title", tooltip));
             }
+            return icon;
+        }
+
+        private Component getDefaultIcon(final String id) {
+            Label icon = new Label(id, StringUtils.EMPTY);
+            icon.add(new CssClassAppender(new Model<>(JcrNodeIcon.DEFAULTNODE_ICON_CSSCLASS)));
             return icon;
         }
 
@@ -316,16 +319,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("add-node", new Model<String>(getString("add.node")), dialogFactory, getDialogService()));
+                    new DialogLink("add-node", new Model<>(getString("add.node")), dialogFactory, getDialogService()));
             // add node icon
-            Image iconAddNode = new Image("icon-add-node") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "add-node.png");
-                }
-            };
+            Label iconAddNode = new Label("icon-add-node", StringUtils.EMPTY);
+            iconAddNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.PLUS.cssClassName())));
+            iconAddNode.add(new CssClassAppender(new Model<>("add-icon")));
             menuContainer.add(iconAddNode);
 
             // delete node
@@ -337,16 +335,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("delete-node", new Model<String>(getString("delete.node")), dialogFactory, getDialogService()));
+                    new DialogLink("delete-node", new Model<>(getString("delete.node")), dialogFactory, getDialogService()));
             // delete node icon
-            Image iconDeleteNode = new Image("icon-delete-node") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "delete-node.png");
-                }
-            };
+            Label iconDeleteNode = new Label("icon-delete-node", StringUtils.EMPTY);
+            iconDeleteNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.TIMES.cssClassName())));
+            iconDeleteNode.add(new CssClassAppender(new Model<>("delete-icon")));
             menuContainer.add(iconDeleteNode);
 
             // add property
@@ -358,16 +351,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("add-property", new Model<String>(getString("add.property")), dialogFactory, getDialogService()));
+                    new DialogLink("add-property", new Model<>(getString("add.property")), dialogFactory, getDialogService()));
             // add property icon
-            Image addProperty = new Image("icon-add-property") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "add-property.png");
-                }
-            };
+            Label addProperty = new Label("icon-add-property", StringUtils.EMPTY);
+            addProperty.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.PLUS.cssClassName())));
+            addProperty.add(new CssClassAppender(new Model<>("add-property-icon")));
             menuContainer.add(addProperty);
 
             // copy node
@@ -379,16 +367,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("copy-node", new Model<String>(getString("copy.node")), dialogFactory, getDialogService()));
+                    new DialogLink("copy-node", new Model<>(getString("copy.node")), dialogFactory, getDialogService()));
             // copy node icon
-            Image iconCopyNode = new Image("icon-copy-node") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "copy-node.png");
-                }
-            };
+            Label iconCopyNode = new Label("icon-copy-node", StringUtils.EMPTY);
+            iconCopyNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.FILES_O.cssClassName())));
+            iconCopyNode.add(new CssClassAppender(new Model<>("copy-icon")));
             menuContainer.add(iconCopyNode);
 
             // move node
@@ -400,16 +383,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("move-node", new Model<String>(getString("move.node")), dialogFactory, getDialogService()));
-            // copy node icon
-            Image iconMoveNode = new Image("icon-move-node") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "move-node.png");
-                }
-            };
+                    new DialogLink("move-node", new Model<>(getString("move.node")), dialogFactory, getDialogService()));
+            // move node icon
+            Label iconMoveNode = new Label("icon-move-node", StringUtils.EMPTY);
+            iconMoveNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.BARS.cssClassName())));
+            iconMoveNode.add(new CssClassAppender(new Model<>("move-icon")));
             menuContainer.add(iconMoveNode);
 
             // rename node
@@ -421,16 +399,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("rename-node", new Model<String>(getString("rename.node")), dialogFactory, getDialogService()));
-            // copy node icon
-            Image iconRenameNode = new Image("icon-rename-node") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "rename-node.png");
-                }
-            };
+                    new DialogLink("rename-node", new Model<>(getString("rename.node")), dialogFactory, getDialogService()));
+            // rename node icon
+            Label iconRenameNode = new Label("icon-rename-node", StringUtils.EMPTY);
+            iconRenameNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.PENCIL_SQUARE_O.cssClassName())));
+            iconRenameNode.add(new CssClassAppender(new Model<>("rename-icon")));
             menuContainer.add(iconRenameNode);
 
             // xml export
@@ -442,16 +415,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("xml-export", new Model<String>(getString("xml.export")), dialogFactory, getDialogService()));
+                    new DialogLink("xml-export", new Model<>(getString("xml.export")), dialogFactory, getDialogService()));
             // xml export icon
-            Image iconXmlExport = new Image("icon-xml-export") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "xml-export.png");
-                }
-            };
+            Label iconXmlExport = new Label("icon-xml-export", StringUtils.EMPTY);
+            iconXmlExport.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.DOWNLOAD.cssClassName())));
+            iconXmlExport.add(new CssClassAppender(new Model<>("xml-export-icon")));
             menuContainer.add(iconXmlExport);
             // xml import
             dialogFactory = new IDialogFactory() {
@@ -462,17 +430,13 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("xml-import", new Model<String>(getString("xml.import")), dialogFactory, getDialogService()));
+                    new DialogLink("xml-import", new Model<>(getString("xml.import")), dialogFactory, getDialogService()));
             // xml import icon
-            Image iconXmlImport = new Image("icon-xml-import") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "xml-import.png");
-                }
-            };
+            Label iconXmlImport = new Label("icon-xml-import", StringUtils.EMPTY);
+            iconXmlImport.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.UPLOAD.cssClassName())));
+            iconXmlImport.add(new CssClassAppender(new Model<>("xml-import-icon")));
             menuContainer.add(iconXmlImport);
+
             // generate t9ids
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
@@ -483,17 +447,12 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
 
             };
-            menuContainer.add(new DialogLink("t9ids", new Model<String>(getString("new.translation.ids")), dialogFactory,
+            menuContainer.add(new DialogLink("t9ids", new Model<>(getString("new.translation.ids")), dialogFactory,
                                              getDialogService()));
             // generate t9ids icon
-            Image iconT9ids = new Image("icon-t9ids") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "t9ids.png");
-                }
-            };
+            Label iconT9ids = new Label("icon-t9ids", StringUtils.EMPTY);
+            iconT9ids.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.FLAG_O.cssClassName())));
+            iconT9ids.add(new CssClassAppender(new Model<>("t9ids-icon")));
             menuContainer.add(iconT9ids);
 
             dialogFactory = new IDialogFactory() {
@@ -504,16 +463,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new RecomputeDialog(model);
                 }
             };
-            menuContainer.add(new DialogLink("recompute", new Model<String>(getString("recompute.derived")), dialogFactory,
+            menuContainer.add(new DialogLink("recompute", new Model<>(getString("recompute.derived")), dialogFactory,
                                              getDialogService()));
-            Image iconHippoPaths = new Image("icon-recompute") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "derived.png");
-                }
-            };
+            Label iconHippoPaths = new Label("icon-recompute", StringUtils.EMPTY);
+            iconHippoPaths.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.CALCULATOR.cssClassName())));
+            iconHippoPaths.add(new CssClassAppender(new Model<>("recompute-icon")));
             menuContainer.add(iconHippoPaths);
 
             return menuContainer;

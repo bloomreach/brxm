@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,35 +15,26 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 public class ListTableHeader<T> extends Border {
-    private static final long serialVersionUID = 1L;
 
-    private T property;
-    private ISortStateLocator<T> stateLocator;
+    private final T property;
+    private final ISortStateLocator<T> stateLocator;
 
-    @Deprecated
-    public ListTableHeader(String id, final T property, final ISortStateLocator<T> stateLocator,
-                           final DataTable dataTable, final boolean triState) {
-        this(id, property, stateLocator);
-    }
     public ListTableHeader(String id, final T property, final ISortStateLocator<T> stateLocator) {
         super(id);
 
         this.property = property;
         this.stateLocator = stateLocator;
 
-        add(new AttributeModifier("class", new AbstractReadOnlyModel() {
-            private static final long serialVersionUID = 1L;
-
+        add(CssClass.append(new AbstractReadOnlyModel() {
             @Override
             public Object getObject() {
                 switch (getSortOrder()) {
@@ -58,8 +49,6 @@ public class ListTableHeader<T> extends Border {
         }));
 
         add(new AjaxEventBehavior("onclick") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 switch (getSortOrder()) {

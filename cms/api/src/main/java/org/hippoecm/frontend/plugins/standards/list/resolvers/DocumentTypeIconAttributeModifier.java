@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,12 +30,18 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentTypeIconAttributeModifier extends IconAttributeModifier {
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(DocumentTypeIconAttributeModifier.class);
 
-    static final Logger log = LoggerFactory.getLogger(DocumentTypeIconAttributeModifier.class);
+    private static final DocumentTypeIconAttributeModifier INSTANCE = new DocumentTypeIconAttributeModifier();
+
+    private DocumentTypeIconAttributeModifier() {
+    }
+
+    public static DocumentTypeIconAttributeModifier getInstance() {
+        return INSTANCE;
+    }
 
     private static class IconAttributeModel extends LoadableDetachableModel<String> {
-        private static final long serialVersionUID = 1L;
 
         private JcrNodeModel nodeModel;
 
@@ -48,14 +54,18 @@ public class DocumentTypeIconAttributeModifier extends IconAttributeModifier {
             super.detach();
             nodeModel.detach();
         }
-        
+
+        @Override
         protected String load() {
-            Node node = nodeModel.getNode();
+            final Node node = nodeModel.getNode();
             String classValue = getIconClassname(node);
             try {
-                if (classValue != null && node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-                    Node child = node.getNode(node.getName());
-                    classValue += " " + StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
+                if (classValue != null && node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    final String nodeName = node.getName();
+                    if (node.hasNode(nodeName)) {
+                        Node child = node.getNode(nodeName);
+                        classValue += " " + StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
+                    }
                 }
             } catch (RepositoryException e) {
                 log.error("Unable to determine document-type-specific icon for document", e);
@@ -110,7 +120,7 @@ public class DocumentTypeIconAttributeModifier extends IconAttributeModifier {
 
     @Override
     public AttributeModifier getCellAttributeModifier(Node node) {
-        return new CssClassAppender(new IconAttributeModel(new JcrNodeModel(node)));
+        return CssClass.append(new IconAttributeModel(new JcrNodeModel(node)));
     }
 
 }

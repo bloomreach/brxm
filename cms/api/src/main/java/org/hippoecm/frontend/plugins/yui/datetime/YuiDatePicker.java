@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,21 +26,18 @@ import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.markup.html.form.AbstractTextComponent.ITextFormatProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
+import org.hippoecm.frontend.skin.Icon;
 import org.joda.time.DateTime;
 
 public class YuiDatePicker extends AbstractYuiBehavior {
-    private static final long serialVersionUID = 1L;
-
 
     private static final ResourceReference SKIN = new PackageResourceReference(YuiDatePicker.class, "resources/skin.css");
 
@@ -50,8 +47,6 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     public YuiDatePicker(YuiDatePickerSettings settings) {
         PackageTextTemplate init = new PackageTextTemplate(YuiDatePicker.class, "resources/init.js");
         this.template = new DynamicTextTemplate(init, settings) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected Map<String, Object> getVariables() {
                 Map<String, Object> vars = super.getVariables();
@@ -66,8 +61,6 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         helper.addCssReference(SKIN);
         helper.addModule(HippoNamespace.NS, "datetime");
         helper.addOnDomLoad(new AbstractReadOnlyModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public String getObject() {
                 return "YAHOO.hippo.DateTime.render('" + component.getMarkupId() + "', " + template.getConfigurationAsJSON() + ");";
@@ -92,17 +85,18 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         }
         response.write("z-index: 99999;\" id=\"");
         response.write(getEscapedComponentMarkupId());
-        response.write("Dp\"></span><img style=\"");
+        response.write("Dp\"></span><a style=\"");
         response.write(getIconStyle());
         response.write("\" id=\"");
         response.write(getIconId());
-        response.write("\" src=\"");
-        CharSequence iconUrl = getIconUrl();
-        response.write(Strings.escapeMarkup(iconUrl != null ? iconUrl.toString() : ""));
-        response.write("\" alt=\"\"/>");
+        response.write("\">");
+        response.write(getIcon().getSpriteReference());
+        response.write("</a>");
+
         if (renderOnLoad()) {
             response.write("<br style=\"clear:left;\"/>");
         }
+
         response.write("</div>");
     }
 
@@ -147,11 +141,21 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     /**
      * Gets the url for the popup button. Users can override to provide their own icon URL.
      *
+     * @deprecated This method is deprecated since 10.0.x, use getIcon() instead
      * @return the url to use for the popup button/ icon
      */
+    @Deprecated
     protected CharSequence getIconUrl() {
-        //TODO: FIX!
-        return RequestCycle.get().urlFor(new PackageResourceReference(YuiDatePicker.class, "resources/calendar-16.png"), null);
+        return null;
+    }
+
+    /**
+     * Gets the {@link Icon} for the popup button. Users can override to provide their own icon.
+
+     * @return the icon to use for the popup button
+     */
+    protected Icon getIcon() {
+        return Icon.CALENDAR_MONTH_TINY;
     }
 
     /**
@@ -179,6 +183,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
      * @throws UnableToDetermineFormatException
      *          if this date picker is unable to determine a format.
      */
+    @SuppressWarnings("unused")
     private void checkComponentProvidesDateFormat(Component component) {
         if (getDatePattern() == null) {
             throw new UnableToDetermineFormatException();

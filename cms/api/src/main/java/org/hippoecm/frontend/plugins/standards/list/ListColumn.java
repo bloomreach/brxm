@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -36,7 +35,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
@@ -49,12 +48,11 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
  */
 public class ListColumn<T> extends AbstractColumn<T, String> {
 
-    private static final long serialVersionUID = 1L;
-
     private Comparator<T> comparator;
     private IListCellRenderer<T> renderer;
     private Object attributeModifier;
     private String cssClass;
+    private boolean isLink = true;
 
     private IPluginContext context;
     private List<IObserver<?>> observers;
@@ -100,6 +98,10 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
         this.attributeModifier = attributeModifier;
     }
 
+    public void setLink(boolean isLink) {
+        this.isLink = isLink;
+    }
+
     @SuppressWarnings("unchecked")
     @Deprecated
     public IListAttributeModifier<T> getAttributeModifier() {
@@ -138,7 +140,7 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
     }
 
     protected boolean isLink() {
-        return true;
+        return isLink;
     }
 
     @Override
@@ -192,8 +194,6 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
     protected void addLinkBehavior(final Item<ICellPopulator<T>> item, final IModel<T> model) {
         if (isLink()) {
             item.add(new AjaxEventBehavior("onclick") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
                     ListDataTable dataTable = item.findParent(ListDataTable.class);
@@ -205,7 +205,7 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
 
     protected void addCssClasses(Item<ICellPopulator<T>> item) {
         if (isLink()) {
-            item.add(new CssClassAppender(Model.of("link")));
+            item.add(CssClass.append("link"));
         }
     }
 

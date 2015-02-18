@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.editor.workflow.action;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.template.JcrTemplateStore;
@@ -29,6 +27,8 @@ import org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateCompoundTypeDialog;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 
 public class NewCompoundTypeAction extends Action {
@@ -75,10 +75,9 @@ public class NewCompoundTypeAction extends Action {
 
         return null;
     }
-    
+
     @Override
-    protected ResourceReference getIcon() {
-        return new PackageResourceReference(StdWorkflow.class, "compound-new-16.png");
+    protected Component getIcon(final String id) {
+        return HippoIcon.fromSprite(id, Icon.NEW_COMPOUND_TINY);
     }
-    
 }

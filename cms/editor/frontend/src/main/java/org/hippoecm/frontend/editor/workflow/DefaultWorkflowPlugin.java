@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,8 +39,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
@@ -59,7 +57,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
@@ -92,43 +90,22 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWorkflowPlugin.class);
 
-    private IModel caption = new StringResourceModel("unknown", this, null);
+    private final StdWorkflow editAction;
+    private final StdWorkflow deleteAction;
+    private final StdWorkflow renameAction;
+    private final StdWorkflow copyAction;
+    private final StdWorkflow moveAction;
+    private final StdWorkflow whereUsedAction;
 
-    private StdWorkflow editAction;
-    private StdWorkflow deleteAction;
-    private StdWorkflow renameAction;
-    private StdWorkflow copyAction;
-    private StdWorkflow moveAction;
-    private StdWorkflow whereUsedAction;
-
-    private static final List<String> KNOWN_IMAGE_EXTENSIONS = Arrays.asList(
-            "jpg", "jpeg", "gif", "png"
-    );
     private static final String NUMBER_EXPRESSION = "[0-9]*";
+    private static final List<String> KNOWN_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "gif", "png");
 
     public DefaultWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("info", "info") {
-
-            @Override
-            public String getSubMenu() {
-                return "info";
-            }
-
-            @Override
-            protected IModel getTitle() {
-                return caption;
-            }
-
-            @Override
-            protected void invoke() {
-            }
-        });
-
         onModelChanged();
 
-        add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this, null), getModel()) {
+        add(editAction = new StdWorkflow("edit", Model.of(getString("edit")), getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -160,7 +137,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
+        add(renameAction = new StdWorkflow("rename", Model.of(getString("rename-label")), context, getModel()) {
             public String targetName;
             public String uriName;
 
@@ -170,8 +147,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "rename-16.png");
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.RENAME_TINY);
             }
 
             @Override
@@ -183,8 +160,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 } catch (RepositoryException ex) {
                     uriName = targetName = "";
                 }
-                return new RenameDocumentDialog(this, new StringResourceModel("rename-title",
-                        DefaultWorkflowPlugin.this, null));
+                return new RenameDocumentDialog(this, Model.of(getString("rename-title")));
             }
 
             @Override
@@ -210,7 +186,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this, null), context, getModel()) {
+        add(copyAction = new StdWorkflow("copy", Model.of(getString("copy-label")), context, getModel()) {
             NodeModelWrapper<Node> destination = null;
             String name = null;
 
@@ -220,8 +196,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "copy-16.png");
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILES_TINY);
             }
 
             @Override
@@ -246,8 +222,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     return new ExceptionDialog(ex);
                 }
                 return new DestinationDialog(
-                        new StringResourceModel("copy-title", DefaultWorkflowPlugin.this, null),
-                        new StringResourceModel("copy-name", DefaultWorkflowPlugin.this, null),
+                        Model.of(getString("copy-title")),
+                        Model.of(getString("copy-name")),
                         new PropertyModel<>(this, "name"), destination, context, config) {
                     {
                         setOkEnabled(true);
@@ -333,7 +309,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(moveAction = new StdWorkflow("move", new StringResourceModel("move-label", this, null), context, getModel()) {
+        add(moveAction = new StdWorkflow("move", Model.of(getString("move-label")), context, getModel()) {
             public NodeModelWrapper<Node> destination = null;
 
             @Override
@@ -342,16 +318,15 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "move-16.png");
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.MOVE_TINY);
             }
 
             @Override
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper<Node>(getFolder()) {
                 };
-                return new DestinationDialog(new StringResourceModel("move-title",
-                        DefaultWorkflowPlugin.this, null), null, null, destination, context, config) {
+                return new DestinationDialog(Model.of(getString("move-title")), null, null, destination, context, config) {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         moveAction.invokeWorkflow();
@@ -373,7 +348,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 if (srcLocale == null) {
                     if (destLocale != null) {
                         codec = CodecUtils.getNodeNameCodec(getPluginContext(), destLocale);
-                }
+                    }
                 } else if (!srcLocale.equals(destLocale)) {
                     codec = CodecUtils.getNodeNameCodec(getPluginContext(), destLocale);
                 }
@@ -411,8 +386,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(deleteAction = new StdWorkflow("delete",
-                new StringResourceModel("delete-label", this, null), context, getModel()) {
+        add(deleteAction = new StdWorkflow("delete", Model.of(getString("delete-label")), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -420,17 +394,15 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "delete-16.png");
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
             }
 
             @Override
             protected Dialog createRequestDialog() {
                 final IModel<String> docName = getDocumentName();
-                IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null,
-                        docName);
-                IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
-                        docName);
+                final IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null, docName);
+                final IModel<String> title = Model.of(getString("delete-title"));
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
@@ -441,7 +413,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
+        add(whereUsedAction = new StdWorkflow("where-used", Model.of(getString("where-used-label")), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -449,8 +421,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "where-used-16.png");
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.URL_NAVIGATION_TINY);
             }
 
             @Override
@@ -529,7 +501,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             try {
                 return new Model<>(getModel().getNode().getName());
             } catch (RepositoryException e) {
-                return new StringResourceModel("unknown", this, null);
+                return Model.of(getString("unknown"));
             }
         }
     }
@@ -541,10 +513,6 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     private Map<String, Serializable> obtainWorkflowHints(WorkflowDescriptorModel model) {
         Map<String, Serializable> info = Collections.emptyMap();
         try {
-            Node documentNode = model.getNode();
-            if (documentNode != null) {
-                caption = new NodeTranslator(new JcrNodeModel(documentNode)).getNodeName();
-            }
             WorkflowDescriptor workflowDescriptor = model.getObject();
             if (workflowDescriptor != null) {
                 WorkflowManager manager = obtainUserSession().getWorkflowManager();
@@ -570,10 +538,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
     }
 
-    public class RenameDocumentDialog extends AbstractWorkflowDialog<WorkflowDescriptor> {
-        private IModel<String> title;
-        private TextField nameComponent;
-        private TextField uriComponent;
+    public class RenameDocumentDialog extends AbstractWorkflowDialog {
+
+        private final IModel<String> title;
+        private final TextField nameComponent;
+        private final TextField uriComponent;
         private boolean uriModified;
 
         public RenameDocumentDialog(StdWorkflow action, IModel<String> title) {
@@ -598,7 +567,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             nameComponent = new TextField<>("name", nameModel);
             nameComponent.setRequired(true);
-            nameComponent.setLabel(new StringResourceModel("name-label", DefaultWorkflowPlugin.this, null));
+            nameComponent.setLabel(Model.of(getString("name-label")));
             nameComponent.add(new OnChangeAjaxBehavior() {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
@@ -626,7 +595,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 }
             });
 
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+            uriComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
                 @Override
                 public String getObject() {
                     return uriModified ? "grayedin" : "grayedout";
@@ -659,7 +628,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         }
 
         @Override
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return title;
         }
 

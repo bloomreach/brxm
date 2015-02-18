@@ -55,23 +55,6 @@
     <sv:property sv:name="wicket.feedback" sv:type="String">
       <sv:value>${cluster.id}.feedback</sv:value>
     </sv:property>
-    <sv:node sv:name="layout.wireframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=editor-perspective-center,body=editor-perspective-center-body,scroll=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>editor-perspective-wrapper</sv:value>
-      </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=editor-perspective-top,height=41,zindex=1</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="editorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

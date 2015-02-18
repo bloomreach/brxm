@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.perspective;
 
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -28,6 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -60,6 +60,8 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
+
+        add(CssClass.append("perspective"));
     }
 
     public String getTitleCssClass() {
@@ -67,17 +69,9 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         return "hippo-perspective-" + getClass().getSimpleName().toLowerCase();
     }
 
-    // ITitleDecorator
-
     @Override
     public IModel<String> getTitle() {
         return title;
-    }
-
-    @Override
-    public void onComponentTag(final ComponentTag tag) {
-        super.onComponentTag(tag);
-        tag.append("class", "perspective", " ");
     }
 
     @Override
@@ -121,7 +115,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
             }
         }
         if (size != null) {
-            name.append('-').append(size.getSize());    
+            name.append('-').append(size.getSize());
         }
         name.append('.').append(extension);
 

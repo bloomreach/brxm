@@ -23,24 +23,31 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 
 public class JcrNodeIcon {
 
     static final Logger log = LoggerFactory.getLogger(JcrNodeIcon.class);
 
-    private static final Map<String, FontAwesomeIconType> nodeNameIcons;
+    private static final Map<String, FontAwesomeIconClass> nodeNameIcons;
     private static final List<String> nodeTypes;
     private static final Map<String, String> pathCssNames;
     private static final String JCRNODE_CSSNAME_PREFIX = "jcrnode-";
     private static final String JCRNODE_CSSNAME_DEFAULT = "default";
+    private static final String FA_CSSCLASS_PREFIX = "fa ";
+    private static final String FA_DEFAULT_ICON_CSSNAME = FontAwesomeIconClass.CIRCLE.cssClassName();
+    private static final String FA_VIRTUALNODE_ICON_CSSNAME = FontAwesomeIconClass.CIRCLE_O.cssClassName();
 
+    public static final String DEFAULTNODE_ICON_CSSCLASS = FA_CSSCLASS_PREFIX + " " + FA_DEFAULT_ICON_CSSNAME + " "
+            + JCRNODE_CSSNAME_PREFIX + JCRNODE_CSSNAME_DEFAULT;
 
     static {
         nodeTypes = new ArrayList<>();
@@ -48,66 +55,82 @@ public class JcrNodeIcon {
 
         nodeNameIcons = new HashMap<>();
         // hst config
-        nodeNameIcons.put("hst:hst", FontAwesomeIconType.cloud);
-        nodeNameIcons.put("hst:sitemapitem", FontAwesomeIconType.sitemap);
-        nodeNameIcons.put("hst:sitemap", FontAwesomeIconType.sitemap);
-        nodeNameIcons.put("hst:template", FontAwesomeIconType.file_text_o);
-        nodeNameIcons.put("hst:templates", FontAwesomeIconType.file_o);
-        nodeNameIcons.put("hst:component", FontAwesomeIconType.puzzle_piece);
-        nodeNameIcons.put("hst:components", FontAwesomeIconType.puzzle_piece);
-        nodeNameIcons.put("hst:abstractcomponent", FontAwesomeIconType.puzzle_piece);
-        nodeNameIcons.put("hst:blueprint", FontAwesomeIconType.dropbox);
-        nodeNameIcons.put("hst:blueprints", FontAwesomeIconType.dropbox);
-        nodeNameIcons.put("hst:channels", FontAwesomeIconType.laptop);
-        nodeNameIcons.put("hst:channel", FontAwesomeIconType.laptop);
-        nodeNameIcons.put("hst:channelinfo", FontAwesomeIconType.info_circle);
-        nodeNameIcons.put("hst:sites", FontAwesomeIconType.star_o);
-        nodeNameIcons.put("hst:site", FontAwesomeIconType.star);
-        nodeNameIcons.put("hst:pages", FontAwesomeIconType.copy);
-        nodeNameIcons.put("hst:workspace", FontAwesomeIconType.wrench);
-        nodeNameIcons.put("hst:catalog", FontAwesomeIconType.dropbox);
-        nodeNameIcons.put("hst:configuration", FontAwesomeIconType.cog);
-        nodeNameIcons.put("hst:configurations", FontAwesomeIconType.cogs);
-        nodeNameIcons.put("hst:mount", FontAwesomeIconType.rocket);
-        nodeNameIcons.put("hst:virtualhosts", FontAwesomeIconType.arrow_circle_down);
-        nodeNameIcons.put("hst:virtualhostgroup", FontAwesomeIconType.arrow_circle_o_right);
-        nodeNameIcons.put("hst:virtualhost", FontAwesomeIconType.arrow_circle_right);
-        nodeNameIcons.put("hippogallery:stdAssetGallery", FontAwesomeIconType.paperclip);
-        nodeNameIcons.put("hippogallery:stdImageGallery", FontAwesomeIconType.picture_o);
-        nodeNameIcons.put("webfiles:webfiles", FontAwesomeIconType.suitcase);
-        nodeNameIcons.put("hst:containeritemcomponent", FontAwesomeIconType.puzzle_piece);
-        nodeNameIcons.put("hst:containeritempackage", FontAwesomeIconType.dropbox);
-        nodeNameIcons.put("hst:containercomponent", FontAwesomeIconType.columns);
-        nodeNameIcons.put("hst:containercomponentfolder", FontAwesomeIconType.trello);
-        nodeNameIcons.put("hst:sitemenus", FontAwesomeIconType.th_list);
-        nodeNameIcons.put("hst:sitemenu", FontAwesomeIconType.th_list);
-        nodeNameIcons.put("hst:sitemenuitem", FontAwesomeIconType.align_justify);
+        nodeNameIcons.put("hst:hst", FontAwesomeIconClass.CLOUD);
+        nodeNameIcons.put("hst:sitemapitem", FontAwesomeIconClass.SITEMAP);
+        nodeNameIcons.put("hst:sitemap", FontAwesomeIconClass.SITEMAP);
+        nodeNameIcons.put("hst:template", FontAwesomeIconClass.FILE_TEXT_O);
+        nodeNameIcons.put("hst:templates", FontAwesomeIconClass.FILE_O);
+        nodeNameIcons.put("hst:component", FontAwesomeIconClass.PUZZLE_PIECE);
+        nodeNameIcons.put("hst:components", FontAwesomeIconClass.PUZZLE_PIECE);
+        nodeNameIcons.put("hst:abstractcomponent", FontAwesomeIconClass.PUZZLE_PIECE);
+        nodeNameIcons.put("hst:blueprint", FontAwesomeIconClass.DROPBOX);
+        nodeNameIcons.put("hst:blueprints", FontAwesomeIconClass.DROPBOX);
+        nodeNameIcons.put("hst:channels", FontAwesomeIconClass.LAPTOP);
+        nodeNameIcons.put("hst:channel", FontAwesomeIconClass.LAPTOP);
+        nodeNameIcons.put("hst:channelinfo", FontAwesomeIconClass.INFO_CIRCLE);
+        nodeNameIcons.put("hst:sites", FontAwesomeIconClass.STAR_O);
+        nodeNameIcons.put("hst:site", FontAwesomeIconClass.STAR);
+        nodeNameIcons.put("hst:pages", FontAwesomeIconClass.COPY);
+        nodeNameIcons.put("hst:workspace", FontAwesomeIconClass.WRENCH);
+        nodeNameIcons.put("hst:catalog", FontAwesomeIconClass.DROPBOX);
+        nodeNameIcons.put("hst:configuration", FontAwesomeIconClass.COG);
+        nodeNameIcons.put("hst:configurations", FontAwesomeIconClass.COGS);
+        nodeNameIcons.put("hst:mount", FontAwesomeIconClass.ROCKET);
+        nodeNameIcons.put("hst:virtualhosts", FontAwesomeIconClass.ARROW_CIRCLE_DOWN);
+        nodeNameIcons.put("hst:virtualhostgroup", FontAwesomeIconClass.ARROW_CIRCLE_O_RIGHT);
+        nodeNameIcons.put("hst:virtualhost", FontAwesomeIconClass.ARROW_CIRCLE_RIGHT);
+        nodeNameIcons.put("hippogallery:stdAssetGallery", FontAwesomeIconClass.PAPERCLIP);
+        nodeNameIcons.put("hippogallery:stdImageGallery", FontAwesomeIconClass.PICTURE_O);
+        nodeNameIcons.put("hst:containeritemcomponent", FontAwesomeIconClass.CUBE);
+        nodeNameIcons.put("hst:containeritempackage", FontAwesomeIconClass.DROPBOX);
+        nodeNameIcons.put("hst:containercomponent", FontAwesomeIconClass.COLUMNS);
+        nodeNameIcons.put("hst:containercomponentfolder", FontAwesomeIconClass.TRELLO);
+        nodeNameIcons.put("hst:sitemenus", FontAwesomeIconClass.TH_LIST);
+        nodeNameIcons.put("hst:sitemenu", FontAwesomeIconClass.TH_LIST);
+        nodeNameIcons.put("hst:sitemenuitem", FontAwesomeIconClass.ALIGN_JUSTIFY);
 
         // content
-        nodeNameIcons.put("hippo:handle", FontAwesomeIconType.umbrella);
-        nodeNameIcons.put("hippostd:publishable", FontAwesomeIconType.file_text);
-        nodeNameIcons.put("hippo:translation", FontAwesomeIconType.flag_o);
-        nodeNameIcons.put("hippotranslation:translations", FontAwesomeIconType.random);
-        nodeNameIcons.put("hippostd:folder", FontAwesomeIconType.folder_o);
-        nodeNameIcons.put("hippostd:directory", FontAwesomeIconType.folder);
-        nodeNameIcons.put("hippofacnav:facetnavigation", FontAwesomeIconType.dribbble);
-        nodeNameIcons.put("hst:formdatacontainer", FontAwesomeIconType.certificate);
-        nodeNameIcons.put("hst:formdata", FontAwesomeIconType.certificate);
+        nodeNameIcons.put("hippo:handle", FontAwesomeIconClass.UMBRELLA);
+        nodeNameIcons.put("hippostd:publishable", FontAwesomeIconClass.FILE_TEXT);
+        nodeNameIcons.put("hippo:translation", FontAwesomeIconClass.FLAG_O);
+        nodeNameIcons.put("hippotranslation:translations", FontAwesomeIconClass.RANDOM);
+        nodeNameIcons.put(NT_FOLDER, FontAwesomeIconClass.FOLDER_O);
+        nodeNameIcons.put(NT_DIRECTORY, FontAwesomeIconClass.FOLDER);
+        nodeNameIcons.put("hippofacnav:facetnavigation", FontAwesomeIconClass.DRIBBBLE);
+        nodeNameIcons.put("hst:formdatacontainer", FontAwesomeIconClass.SEND);
+        nodeNameIcons.put("hst:formdata", FontAwesomeIconClass.SEND_O);
 
         // config
-        nodeNameIcons.put("hipposys:configuration", FontAwesomeIconType.cogs);
-        nodeNameIcons.put("hipposysedit:namespacefolder", FontAwesomeIconType.bullseye);
-        nodeNameIcons.put("hipposysedit:namespace", FontAwesomeIconType.bullseye);
-        nodeNameIcons.put("frontend:plugin", FontAwesomeIconType.cog);
-        nodeNameIcons.put("frontend:pluginconfig", FontAwesomeIconType.cog);
-        nodeNameIcons.put("frontend:plugincluster", FontAwesomeIconType.cogs);
-        nodeNameIcons.put("editor:templateset", FontAwesomeIconType.file_text_o);
-        nodeNameIcons.put("hipposysedit:prototypeset", FontAwesomeIconType.star_o);
-        nodeNameIcons.put("hipposysedit:templatetype", FontAwesomeIconType.file_text);
+        nodeNameIcons.put("webfiles:webfiles", FontAwesomeIconClass.SUITCASE);
+        nodeNameIcons.put("webfiles:bundle", FontAwesomeIconClass.SUITCASE);
+        nodeNameIcons.put("nt:folder", FontAwesomeIconClass.FOLDER_O);
+        nodeNameIcons.put("nt:file", FontAwesomeIconClass.FILE_TEXT_O);
+        nodeNameIcons.put("hipposys:configuration", FontAwesomeIconClass.COGS);
+        nodeNameIcons.put("hipposysedit:namespacefolder", FontAwesomeIconClass.BULLSEYE);
+        nodeNameIcons.put("hipposysedit:namespace", FontAwesomeIconClass.BULLSEYE);
+        nodeNameIcons.put("frontend:plugin", FontAwesomeIconClass.PLUG);
+        nodeNameIcons.put("frontend:pluginconfig", FontAwesomeIconClass.COG);
+        nodeNameIcons.put("frontend:plugincluster", FontAwesomeIconClass.COGS);
+        nodeNameIcons.put("editor:templateset", FontAwesomeIconClass.FILE_TEXT_O);
+        nodeNameIcons.put("hipposysedit:prototypeset", FontAwesomeIconClass.STAR_O);
+        nodeNameIcons.put("hipposysedit:templatetype", FontAwesomeIconClass.FILE_TEXT);
+        nodeNameIcons.put("hipposys:group", FontAwesomeIconClass.USERS);
+        nodeNameIcons.put("hipposys:groupfolder", FontAwesomeIconClass.USERS);
+        nodeNameIcons.put("hipposys:userfolder", FontAwesomeIconClass.USER);
+        nodeNameIcons.put("hipposys:user", FontAwesomeIconClass.USER);
+        nodeNameIcons.put("hipposys:workflowfolder", FontAwesomeIconClass.REFRESH);
+        nodeNameIcons.put("hipposys:workflowcategory", FontAwesomeIconClass.REFRESH);
+        nodeNameIcons.put("hipposys:workflow", FontAwesomeIconClass.REFRESH);
+        nodeNameIcons.put("hipposys:update", FontAwesomeIconClass.WRENCH);
+        nodeNameIcons.put("hipposys:applicationfolder", FontAwesomeIconClass.DIAMOND);
+        nodeNameIcons.put("hipposys:modulefolder", FontAwesomeIconClass.SIMPLYBUILT);
+        nodeNameIcons.put("hipposys:queryfolder", FontAwesomeIconClass.QUESTION_CIRCLE);
+        nodeNameIcons.put("hipposys:queryfolder", FontAwesomeIconClass.QUESTION_CIRCLE);
+        nodeNameIcons.put("hippostd:templatequery", FontAwesomeIconClass.QUESTION);
 
         pathCssNames = new HashMap<>();
         pathCssNames.put("/hst:hst", "hst");
-        pathCssNames.put("/hippo:configuration", "conf");
+        pathCssNames.put("/" + CONFIGURATION_PATH, "conf");
         pathCssNames.put("/content", "content");
         pathCssNames.put("/hippo:namespaces", "namespaces");
         pathCssNames.put("/formdata", "formdata");
@@ -117,33 +140,37 @@ public class JcrNodeIcon {
 
     }
 
-    public static IconType getIcon(Node jcrNode) {
+    public static String getIconCssClass(Node jcrNode) {
+        return FA_CSSCLASS_PREFIX + " " + getIconTypeCssClass(jcrNode) + " " + getIconColorCssClassname(jcrNode);
+    }
+
+    private static String getIconTypeCssClass(final Node jcrNode) {
         // types first
         for(String nodeType : nodeTypes) {
             if(isNodeType(jcrNode, nodeType)) {
                 if(nodeNameIcons.containsKey(nodeType)) {
-                    return nodeNameIcons.get(nodeType);
+                    return nodeNameIcons.get(nodeType).cssClassName();
                 }
             }
         }
 
         final String nodeName = getNodeName(jcrNode);
         if(nodeNameIcons.containsKey(nodeName)) {
-            return nodeNameIcons.get(nodeName);
+            return nodeNameIcons.get(nodeName).cssClassName();
         }
         if (isVirtual(jcrNode)) {
-            return getVirtualNodeIconType();
+            return FA_VIRTUALNODE_ICON_CSSNAME;
         }
-        return getDefaultIconType();
+        return FA_DEFAULT_ICON_CSSNAME;
     }
 
-    public static String getIconColorCssClassname(final Node jcrNode) {
+    private static String getIconColorCssClassname(final Node jcrNode) {
         String cssClassName = JCRNODE_CSSNAME_DEFAULT;
         try {
             final String path = jcrNode.getPath();
 
-            if (path.startsWith("/content") && jcrNode.hasProperty("hippostd:state")) {
-                cssClassName = jcrNode.getProperty("hippostd:state").getString();
+            if (path.startsWith("/content") && jcrNode.hasProperty(HIPPOSTD_STATE)) {
+                cssClassName = jcrNode.getProperty(HIPPOSTD_STATE).getString();
             } else if (JcrNodeIcon.isNodeType(jcrNode, "hippofacnav:facetnavigation")) {
                 cssClassName = "facnav";
             } else if (isVirtual(jcrNode)) {
@@ -172,7 +199,7 @@ public class JcrNodeIcon {
         return StringUtils.EMPTY;
     }
 
-    public static boolean isNodeType(final Node jcrNode, final String typeName) {
+    private static boolean isNodeType(final Node jcrNode, final String typeName) {
         try {
             return jcrNode.isNodeType(typeName);
         } catch (RepositoryException e) {
@@ -185,21 +212,13 @@ public class JcrNodeIcon {
      * Checks if the wrapped jcr node is a virtual node
      * @return true if the node is virtual else false
      */
-    public static boolean isVirtual(Node jcrNode) {
+    private static boolean isVirtual(Node jcrNode) {
         try {
             return JcrUtils.isVirtual(jcrNode);
         } catch (RepositoryException e) {
             log.info("Cannot determine whether node '{}' is virtual, assuming it's not", JcrUtils.getNodePathQuietly(jcrNode), e);
             return false;
         }
-    }
-
-    public static IconType getDefaultIconType() {
-        return FontAwesomeIconType.circle;
-    }
-
-    public static IconType getVirtualNodeIconType() {
-        return FontAwesomeIconType.circle_o;
     }
 
     private JcrNodeIcon() {}

@@ -255,14 +255,14 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-editor .property-name {font-size: 14px; color:#333; font-weight: bold; }
 .hippo-console-editor .property-namespace {font-size: 14px; color: #8d8d8d; font-weight: bold; }
 .hippo-console-editor .property-type {font-size: 14px; color:#666; margin-right: 5px;}
-.hippo-console-editor .property-add {font-size: 14px; color:#32629b; }
-.hippo-console-editor .property-remove {font-size: 14px; color:#32629b; }
+.hippo-console-editor .property-add {font-size: 14px; position:relative; top:-6px;}
+.hippo-console-editor .property-remove {font-size: 14px; position: relative; top: 2px;}
 .hippo-console-editor .property-value-container {margin: 4px 0 4px;}
 .hippo-console-editor .property-value {font-size: 12px;}
 .hippo-console-editor .property-value a {color:#32629b;}
-.hippo-console-editor .property-value-remove {font-size: 14px; color:#32629b; display: inline-block; }
-.hippo-console-editor .property .add-icon {margin-top:-5px;}
-.hippo-console-editor .property .remove-icon {vertical-align: middle;}
+.hippo-console-editor .property-value-remove {font-size: 14px; position: relative; top: -6px;}
+.hippo-console-editor .property .add-icon {color: #4CAF50; font-size: 18px;}
+.hippo-console-editor .property .remove-icon {color: #F44336; font-size: 20px;}
 .hippo-console-editor textarea {width: 95%; font-size: 14px; display: inline-block; margin: 3px 0 3px;}
 .hippo-console-editor .mixin-type {font-size: 14px; margin: 3px 0 3px;}
 .hippo-console-editor .mixin-type .mixin-name {margin-left: 4px; font-weight: bold; color: #666;}
@@ -312,6 +312,43 @@ body.hippo-root div.yui-log-container {
   top: 3px;
   z-index: 2;
 }
+.hippo-console-contextmenu .icon {
+  font-size: 17px;
+  margin-top: 1px;
+  width: 25px;
+  z-index: 2;
+  position: absolute;
+}
+.hippo-console-contextmenu .icon.add-icon {
+    color: #4CAF50;
+}
+.hippo-console-contextmenu .icon.delete-icon {
+    color: #F44336;
+}
+.hippo-console-contextmenu .icon.add-property-icon {
+    color: #3F51B5;
+}
+.hippo-console-contextmenu .icon.copy-icon {
+    color: #795548;
+}
+.hippo-console-contextmenu .icon.move-icon {
+    color: #03A9F4;
+}
+.hippo-console-contextmenu .icon.rename-icon {
+    color: #673AB7;
+}
+.hippo-console-contextmenu .icon.xml-export-icon {
+    color: #4CAF50;
+}
+.hippo-console-contextmenu .icon.xml-import-icon {
+    color: #FF5722;
+}
+.hippo-console-contextmenu .icon.t9ids-icon {
+    color: #009688;
+}
+.hippo-console-contextmenu .icon.recompute-icon {
+    color: #009688;
+}
 .hippo-console-contextmenu .menu-item {
   position: absolute;
 }
@@ -329,7 +366,7 @@ body.hippo-root div.yui-log-container {
 }
 .hippo-console-contextmenu .menu-item a span {
   position: absolute;
-  left: 25px;
+  left: 32px;
   top: 3px;
 }
 
@@ -423,10 +460,12 @@ body.hippo-root div.yui-log-container {
 
 .property-dialog .property-value-add {
     margin: 5px 0;
-    display: inline-block;
 }
-
-.property-dialog .property-value-add img,
-.property-dialog .property-value-remove img {
-    vertical-align: middle;
+.property-dialog .property-value-add .add-icon {
+  color: #4CAF50;
+  font-size: 18px;
+}
+.property-dialog .property-value-remove.remove-icon {
+  color: #F44336;
+  font-size: 20px;
 }

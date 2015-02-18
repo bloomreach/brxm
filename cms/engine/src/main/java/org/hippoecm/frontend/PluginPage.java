@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -45,6 +46,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
@@ -52,13 +54,13 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
     private final int pageId;
 
-    private PluginManager mgr;
-    private PluginContext context;
+    private final PluginManager mgr;
+    private final PluginContext context;
     private IRenderService root;
-    private DialogServiceFactory dialogService;
-    private ObservableRegistry obRegistry;
-    private IPluginConfigService pluginConfigService;
-    private ContextMenuBehavior menuBehavior;
+    private final DialogServiceFactory dialogService;
+    private final ObservableRegistry obRegistry;
+    private final IPluginConfigService pluginConfigService;
+    private final ContextMenuBehavior menuBehavior;
 
     public PluginPage() {
         this(PluginUserSession.get().getApplicationFactory());
@@ -128,6 +130,14 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
         CoreLibrariesContributor.contribute(Application.get(), response);
+        if (WebApplicationHelper.isDevelopmentMode()) {
+            addDevelopmentModeCssClassToHtml(response);
+        }
+    }
+
+    private static void addDevelopmentModeCssClassToHtml(final IHeaderResponse response) {
+        final String script = "$('html').addClass('wicket-development-mode');";
+        response.render(JavaScriptHeaderItem.forScript(script, "html-wicket-development-mode"));
     }
 
     public Component getComponent() {
@@ -152,9 +162,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         refresh();
         try {
             // re-evaluate models
-            for (IRefreshable refreshable : context.getServices(IRefreshable.class.getName(), IRefreshable.class)) {
-                refreshable.refresh();
-            }
+            context.getServices(IRefreshable.class.getName(), IRefreshable.class).forEach(org.hippoecm.frontend.model.event.IRefreshable::refresh);
 
             // process JCR events
             JcrObservationManager.getInstance().processEvents();

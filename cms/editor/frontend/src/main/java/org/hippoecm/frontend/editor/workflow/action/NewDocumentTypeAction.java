@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,10 +21,8 @@ import java.util.List;
 import javax.jcr.ItemExistsException;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.template.JcrTemplateStore;
@@ -37,7 +35,9 @@ import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateDocumentTypeDialog;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
@@ -120,8 +120,7 @@ public class NewDocumentTypeAction extends Action {
     }
 
     @Override
-    protected ResourceReference getIcon() {
-        return new PackageResourceReference(StdWorkflow.class, "doctype-new-16.png");
+    protected Component getIcon(final String id) {
+        return HippoIcon.fromSprite(id, Icon.NEW_DOCUMENT_TINY);
     }
-
 }

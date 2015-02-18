@@ -31,8 +31,10 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -81,6 +83,10 @@ public class WebApplicationHelper {
 
     public static String getApplicationName() {
         return PluginApplication.get().getPluginApplicationName();
+    }
+
+    public static boolean isDevelopmentMode() {
+        return Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT);
     }
 
     public static boolean isPartOfPage(final Component component) {

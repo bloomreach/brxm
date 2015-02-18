@@ -22,7 +22,6 @@ api/src/main/java/org/hippoecm/addon/workflow/TextDialog_de.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog_fr.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog_it.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog_nl.properties -text
-api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/Home.java -text
 api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/PluginApplication.java -text
@@ -86,10 +85,8 @@ api/src/main/java/org/hippoecm/frontend/editor/compare/ObjectComparer.java svneo
 api/src/main/java/org/hippoecm/frontend/editor/compare/StreamComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/TypedComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHint.css -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHint.html -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHint.java -text
-api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/hint.png -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/PdfParser.java -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
@@ -102,6 +99,8 @@ api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-1
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/DocumentMetadataDialog.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/DocumentMetadataDialog_nl.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/ReferringDocumentsView_de.properties -text
+api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/SelectableDocumentsView.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/SelectableDocumentsView.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/WhereUsedDialog_de.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/model/DocumentMetadataEntry.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
@@ -252,6 +251,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/TableDefinition.j
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NameComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeNameComparator.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/StateComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/TypeComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/IPagingDefinition.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/ListDataTable.html -text
@@ -380,8 +380,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_de
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_fr.properties -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_it.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_nl.properties -text svneol=unset#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/calendar-16.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/set-now-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/sprite.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/AbstractDragDropBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/DragBehavior.java svneol=native#text/plain
@@ -1095,16 +1093,43 @@ api/src/main/resources/skin/images/tabs-vertical-top-back.png -text
 api/src/main/resources/skin/images/tmp/border-top.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/transparent2.png -text
 api/src/main/resources/skin/images/tree-icons.png -text
+api/src/main/resources/skin/images/warning.png -text svneol=unset#image/png
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
+api/src/main/styling/images/icons/add-document-tiny.svg -text
+api/src/main/styling/images/icons/add-folder-tiny.svg -text
+api/src/main/styling/images/icons/arrow-down-tiny.svg -text
+api/src/main/styling/images/icons/arrow-up-tiny.svg -text
+api/src/main/styling/images/icons/delete-tiny.svg -text
+api/src/main/styling/images/icons/depublish-scheduled-tiny.svg -text
+api/src/main/styling/images/icons/depublish-tiny.svg -text
+api/src/main/styling/images/icons/document-files-tiny.svg -text
+api/src/main/styling/images/icons/global-tiny.svg -text
+api/src/main/styling/images/icons/history-tiny.svg -text
+api/src/main/styling/images/icons/info-circle-tiny.svg -text
+api/src/main/styling/images/icons/move-tiny.svg -text
+api/src/main/styling/images/icons/order-tiny.svg -text
+api/src/main/styling/images/icons/plus-tiny.svg -text
+api/src/main/styling/images/icons/publish-scheduled-tiny.svg -text
+api/src/main/styling/images/icons/publish-tiny.svg -text
+api/src/main/styling/images/icons/rename-tiny.svg -text
+api/src/main/styling/images/icons/translate-tiny.svg -text
+api/src/main/styling/images/icons/unlocked-tiny.svg -text
+api/src/main/styling/images/icons/url-navigation-tiny.svg -text
+api/src/main/styling/images/loading.gif -text
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_ajax_loader.less -text
 api/src/main/styling/less/_buttons.less -text
+api/src/main/styling/less/_ckeditor.less -text
 api/src/main/styling/less/_dashboard.less -text
+api/src/main/styling/less/_datepicker.less -text
 api/src/main/styling/less/_doclist.less -text
 api/src/main/styling/less/_editor.less -text
+api/src/main/styling/less/_editor_doctype.less -text
 api/src/main/styling/less/_editor_feedback.less -text
+api/src/main/styling/less/_editor_hint_field.less -text
+api/src/main/styling/less/_editor_linkpicker.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_editor_toolbar.less -text
 api/src/main/styling/less/_footer.less -text
@@ -1117,21 +1142,25 @@ api/src/main/styling/less/_icons.less -text
 api/src/main/styling/less/_image_gallery.less -text
 api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text
+api/src/main/styling/less/_modal_datepicker.less -text
 api/src/main/styling/less/_navigator.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text
 api/src/main/styling/less/_picker_section_viewer.less -text
 api/src/main/styling/less/_revision_history.less -text
+api/src/main/styling/less/_rich_text.less -text
 api/src/main/styling/less/_scaffolding.less -text
 api/src/main/styling/less/_section_search.less -text
 api/src/main/styling/less/_section_viewer.less -text
+api/src/main/styling/less/_selectable_documents.less -text
 api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
 api/src/main/styling/less/_typography.less -text
 api/src/main/styling/less/_variables.less -text
 api/src/main/styling/less/lib/open-sans.less -text
-api/src/main/styling/less/lib/style-test.less -text
-api/src/main/styling/less/lib/wicket.less -text
 api/src/main/styling/less/main.less -text
+api/src/main/styling/less/nolint/style-test.less -text
+api/src/main/styling/less/nolint/wicket.less -text
+api/src/main/styling/less/nolint/workarounds.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
 api/src/test/java/org/hippoecm/frontend/model/TraceMonitorTest.java -text
@@ -1301,13 +1330,6 @@ builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/LanguageField_it.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/LanguageField_nl.properties svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/NameUriField.java svneol=native#text/plain
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/delete-16.png -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-collection-16.png -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-document-16.png -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-folder-16.png -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-translated-folder-16.png -text svneol=unset#image/png
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/rename-16.png -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/reorder-16.png -text svneol=unset#image/png
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/workflow-16.png -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.properties svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl_de.properties -text
@@ -1354,6 +1376,10 @@ config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/shortcuts-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/plain
+console/frontend/.bowerrc -text
+console/frontend/README.md -text
+console/frontend/bower.json -text
+console/frontend/package.json -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
@@ -1367,6 +1393,7 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/Bro
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin_nl.properties -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/FontAwesomeIconClass.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/add-node.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/add-property.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/copy-node.png -text svneol=unset#image/png
@@ -1528,36 +1555,6 @@ console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/consol
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-teal.ico -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console-yellow.ico -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/console.css svneol=native#text/css
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/fonts/FontAwesome.otf -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/fonts/fontawesome-webfont.eot -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/fonts/fontawesome-webfont.ttf -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/fonts/fontawesome-webfont.woff -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/bordered-pulled.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/core.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/fixed-width.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/font-awesome.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/icons.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/larger.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/list.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/mixins.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/path.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/rotated-flipped.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/spinning.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/stacked.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/less/variables.less -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_bordered-pulled.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_core.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_fixed-width.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_icons.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_larger.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_list.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_mixins.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_path.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_rotated-flipped.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_spinning.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_stacked.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/_variables.scss -text
-console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/scss/font-awesome.scss -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree-console-icons.png -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree-images.png -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree.css svneol=native#text/plain
@@ -2083,7 +2080,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/ren
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-zip-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_de.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_fr.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.properties -text
@@ -2441,7 +2437,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
@@ -2488,7 +2483,6 @@ reporting/repository/src/main/resources/reports-cluster-loader.xml -text
 richtext/ckeditor/frontend/pom.xml -text
 richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/AutoSaveBehavior.java svneol=native#text/plain
 richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverter.java -text
-richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
 richtext/ckeditor/frontend/src/test/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverterTest.java -text
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickimage.png -text svneol=unset#image/png
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickinternallink.png -text svneol=unset#image/png
@@ -2928,12 +2922,10 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/di
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/SchedulePublishDialog_nl.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesDialog_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesDialog_it.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView.html svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_fr.properties svneol=native#text/plain
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_nl.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/docmetadata-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/but-small.png -text svneol=unset#image/png
@@ -2985,7 +2977,6 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/li
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/ReviewedActionsListColumnProviderPlugin_fr.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/ReviewedActionsListColumnProviderPlugin_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/ReviewedActionsListColumnProviderPlugin_nl.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/comparators/StateComparator.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/resolvers/StateIconAttributeModifier.java -text svneol=unset#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/resolvers/StateIconAttributes.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/resolvers/StateRenderer.java -text svneol=unset#text/plain
@@ -3024,6 +3015,4 @@ workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDescription.java svne
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDrop_de.properties -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDrop_it.properties -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/PluginController.java svneol=native#text/plain
-workflowmenu/src/main/java/org/hippoecm/addon/workflow/compound-new-16.png -text svneol=unset#image/png
-workflowmenu/src/main/java/org/hippoecm/addon/workflow/doctype-new-16.png -text svneol=unset#image/png
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/update-all-16.png -text svneol=unset#image/png

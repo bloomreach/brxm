@@ -4,9 +4,9 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,12 +53,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.DocumentTranslationProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
@@ -226,7 +228,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         private final String language;
         private final IModel<String> languageModel;
-        private final IModel<ResourceReference> iconModel;
+        private final IModel<HippoLocale> localeModel;
 
         public String name;
         public String url;
@@ -235,12 +237,12 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         public List<FolderTranslation> folders;
         private final IModel<String> title;
 
-        private TranslationAction(String id, IModel<String> name, IModel<ResourceReference> iconModel, String language, IModel<String> languageModel) {
+        private TranslationAction(String id, IModel<String> name, IModel<HippoLocale> localeModel, String language, IModel<String> languageModel) {
             super(id, name, getPluginContext(), (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getModel());
             this.language = language;
             this.title = name;
             this.languageModel = languageModel;
-            this.iconModel = iconModel;
+            this.localeModel = localeModel;
         }
 
         @Override
@@ -252,25 +254,35 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
 
         @Override
-        protected ResourceReference getIcon() {
-            return iconModel.getObject();
+        protected Component getIcon(final String id) {
+            final HippoLocale hippoLocale = localeModel.getObject();
+            final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.TINY);
+
+            final ResourceReference flagIcon = hippoLocale.getIcon(IconSize.TINY, LocaleState.EXISTS);
+            nodeIcon.addFromResource(flagIcon);
+
+            if (!hasLocale(hippoLocale.getName())) {
+                nodeIcon.addInline(Icon.ADD_OVERLAY_TINY);
+            }
+
+            return nodeIcon;
         }
 
         @Override
-        protected IModel getTitle() {
+        protected IModel<String> getTitle() {
             return title;
         }
 
         @Override
         protected String execute(TranslationWorkflow wf) throws Exception {
             if (hasLocale(language)) {
-                return executeAvailableTransaction(wf);
+                return executeAvailableTransaction();
             } else {
                 return executeNonAvailableTranslation(wf);
             }
         }
 
-        private String executeAvailableTransaction(TranslationWorkflow wf) throws Exception {
+        private String executeAvailableTransaction() throws Exception {
             IBrowseService<JcrNodeModel> browser = getBrowserService();
             if (browser != null) {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
@@ -400,11 +412,11 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 }
 
                 ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
-                                                                         ISettingsService.class);
+                        ISettingsService.class);
                 StringResourceModel titleModel = new StringResourceModel("translate-title", TranslationWorkflowPlugin.this, null);
                 return new DocumentTranslationDialog(settingsService, this, titleModel,
-                                                     folders, autoTranslateModel, languageModel.getObject(), language,
-                                                     getLocaleProvider());
+                        folders, autoTranslateModel, languageModel.getObject(), language,
+                        getLocaleProvider());
             } catch (Exception e) {
                 log.error("Error creating document translation dialog (" + e.getMessage() + ")", e);
                 error(e.getMessage());
@@ -431,7 +443,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             // walk up the source tree until a translated ancestor is found
             while (sourceTranslatedFolder.getSibling(language) == null) {
                 FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(sourceTranslatedFolder.node,
-                                                                                           null);
+                        null);
                 ft.setEditable(true);
                 folders.add(ft);
 
@@ -491,7 +503,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                     }
 
                     FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(null,
-                                                                                               targetTranslatedFolder.node);
+                            targetTranslatedFolder.node);
                     ft.setEditable(false);
                     folders.add(ft);
 
@@ -534,7 +546,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         @Override
         protected void onDetach() {
-            iconModel.detach();
             super.onDetach();
         }
     }
@@ -552,7 +563,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         DocumentTranslationProvider docTranslationProvider = null;
         try {
             docTranslationProvider = new DocumentTranslationProvider(new JcrNodeModel(getDocumentNode()),
-                                                                     localeProvider);
+                    localeProvider);
         } catch (RepositoryException e) {
             log.warn("Unable to find document node");
         }
@@ -618,18 +629,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                                 }
                                 return base;
                             }
-                        }, new LoadableDetachableModel<ResourceReference>() {
-
-                            @Override
-                            protected ResourceReference load() {
-                                if (!hasLocale(language)) {
-                                    return locale.getIcon(IconSize.TINY, LocaleState.AVAILABLE);
-                                } else {
-                                    return locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
-                                }
-                            }
-
-                        }, language, languageModel
+                        }, item.getModel(), language, languageModel
                         ));
                     }
 
@@ -691,7 +691,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
     protected IBrowseService getBrowserService() {
         return getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse"),
-                                             IBrowseService.class);
+                IBrowseService.class);
     }
 
     protected StringCodec getLocalizeCodec() {
@@ -726,7 +726,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                     richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
                 } else if (fieldType.isNode()) {
                     collectFields((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(),
-                                  fieldType.getType(), plainTextFields, richTextFields);
+                            fieldType.getType(), plainTextFields, richTextFields);
                 }
             }
         } catch (StoreException ex) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,15 +28,12 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.DocumentAttributeComparator;
-import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.DocumentAttributeAttributeModifier;
 import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.DocumentAttributeRenderer;
-import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

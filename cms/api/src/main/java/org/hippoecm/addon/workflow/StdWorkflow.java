@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,19 +18,21 @@ package org.hippoecm.addon.workflow;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -43,6 +45,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
+
+    private static final String ICON_ID = "icon";
 
     private IModel<String> name;
     private ResourceReference iconReference;
@@ -100,28 +104,27 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         this(id, name, null, null, model);
     }
 
-    public StdWorkflow(String id, IModel<String> name, ResourceReference iconReference, WorkflowDescriptorModel model) {
-        this(id, name, iconReference, null, model);
-    }
-
     public StdWorkflow(String id, IModel<String> name, IPluginContext pluginContext, WorkflowDescriptorModel model) {
         this(id, name, null, pluginContext, model);
+    }
+
+    public StdWorkflow(String id, IModel<String> name, ResourceReference iconReference, WorkflowDescriptorModel model) {
+        this(id, name, iconReference, null, model);
     }
 
     public StdWorkflow(String id, IModel<String> name, ResourceReference iconReference, IPluginContext pluginContext, WorkflowDescriptorModel model) {
         super(id, model);
 
+        this.name = name;
         this.iconReference = iconReference;
         this.pluginContext = pluginContext;
-
-        this.name = name;
 
         add(new ActionDisplay("text") {
             @Override
             protected void initialize() {
                 IModel<String> title = getTitle();
                 Label titleLabel = new Label("text", title);
-                titleLabel.add(new AttributeModifier("title", true, getTooltip()));
+                titleLabel.add(new AttributeModifier("title", getTooltip()));
                 add(titleLabel);
             }
         });
@@ -130,14 +133,26 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             @Override
             protected void initialize() {
 
-                Component icon = getIcon("icon");
+                add(CssClass.append(new AbstractReadOnlyModel<String>() {
+                    @Override
+                    public String getObject() {
+                        return StdWorkflow.this.isEnabled() ? "icon-enabled" : "icon-disabled";
+                    }
+                }));
+
+                Component icon = getIcon(ICON_ID);
                 if (icon == null) {
-                    icon = HippoIcon.fromResourceModel("icon", new LoadableDetachableModel<ResourceReference>() {
-                        @Override
-                        protected ResourceReference load() {
-                            return getIcon();
-                        }
-                    });
+                    if (getIcon() != null) {
+                        // Legacy custom override
+                        icon = HippoIcon.fromResourceModel(ICON_ID, new LoadableDetachableModel<ResourceReference>() {
+                            @Override
+                            protected ResourceReference load() {
+                                return getIcon();
+                            }
+                        });
+                    } else {
+                        icon = HippoIcon.fromSprite(ICON_ID, Icon.CONFIGURATION_TINY);
+                    }
                 }
                 add(icon);
             }
@@ -158,7 +173,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         return name.getObject();
     }
 
-    protected IModel getTitle() {
+    protected IModel<String> getTitle() {
         return new StringResourceModel(getName(), this, null, getName());
     }
 
@@ -172,7 +187,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
      */
     @Deprecated
     protected ResourceReference getIcon() {
-        return new PackageResourceReference(StdWorkflow.class, "workflow-16.png");
+        return null;
     }
 
     protected Component getIcon(final String id) {

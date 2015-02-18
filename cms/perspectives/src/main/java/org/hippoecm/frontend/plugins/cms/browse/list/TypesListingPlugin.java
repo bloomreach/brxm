@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
@@ -46,10 +45,12 @@ import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
+import org.hippoecm.frontend.plugins.standards.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAndStateRenderer;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -60,7 +61,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(TypesListingPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TypesListingPlugin.class);
 
     private ITypeLocator typeLocator;
 
@@ -191,8 +192,8 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
         private ListColumn<Node> createIconColumn() {
             final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
             final ListColumn<Node> column = new ListColumn<>(iconHeader, "icon");
-            column.setComparator(new StateComparator());
-            column.setRenderer(new TypeIconAndStateRenderer());
+            column.setComparator(StateComparator.getInstance());
+            column.setRenderer(TypeIconAndStateRenderer.getInstance());
             column.setCssClass(DocumentListColumn.ICON.getCssClass());
             return column;
         }
@@ -201,7 +202,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
             final ClassResourceModel nameHeader = new ClassResourceModel("typeslisting-name", TypesListingPlugin.class);
             final ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
             column.setCssClass(DocumentListColumn.NAME.getCssClass());
-            column.setComparator(new NameComparator());
+            column.setComparator(NameComparator.getInstance());
             return column;
         }
 

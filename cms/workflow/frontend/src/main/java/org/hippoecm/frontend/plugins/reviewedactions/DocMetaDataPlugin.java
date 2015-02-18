@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -24,6 +25,8 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.dialog.DocumentMetadataDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 
 public class DocMetaDataPlugin extends AbstractDocumentWorkflowPlugin {
@@ -39,8 +42,8 @@ public class DocMetaDataPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "docmetadata-16.png");
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.INFO_CIRCLE_TINY);
             }
 
             @Override

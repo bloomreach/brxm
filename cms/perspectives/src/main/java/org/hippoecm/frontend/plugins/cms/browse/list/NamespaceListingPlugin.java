@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<No
     private ListColumn<Node> createNameColumn() {
         final StringResourceModel nameHeader = new StringResourceModel("nslisting-name", this, null);
         ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
-        column.setComparator(new NameComparator());
+        column.setComparator(NameComparator.getInstance());
         column.setCssClass(DocumentListColumn.NAME.getCssClass());
         return column;
     }

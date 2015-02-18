@@ -1,0 +1,172 @@
+// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Document type editor styling
+.hippo-editor-template-editor {
+  padding-top: 4px;
+  padding-left: 4px;
+
+  .hippo-editor-field-textarea {
+    margin: 4px;
+  }
+
+  .hippo-editor-field-subfield {
+    margin: 7px 10px;
+    padding-right: 5px;
+
+    .hippo-editor-field {
+      padding: 4px 8px;
+    }
+  }
+
+  .hippo-editor-compound-field {
+    margin: 0;
+  }
+}
+
+.hippo-editor-template-field-edit {
+  padding: 10px 15px 5px;
+
+  .hippo-editor-field-title {
+    color: @darker-shade;
+    display: block;
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: bold;
+    margin: 7px 10px;
+  }
+
+  input[type=checkbox] {
+    width: 20px;
+  }
+
+  table {
+    margin-top: 5px;
+  }
+
+  td {
+    color: @darker-shade;
+    padding: 2px;
+  }
+
+  .disabled {
+    color: @dark-shade;
+    padding: 2px;
+  }
+
+  .ordered {
+    margin-top: 5px;
+  }
+
+  .hippo-editor-field-subfield {
+    background: white;
+    border: 1px solid @dark-shade;
+    padding-right: 5px;
+  }
+}
+
+.hippo-editor-template-field {
+  background-color: transparent;
+  border: 1px solid @light-gray;
+  padding: 0;
+}
+
+.hippo-editor-template-field-controls {
+  background-color: white;
+  height: 20px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  &.active {
+    background-color: @primary;
+  }
+
+  ul {
+    float: right;
+  }
+
+  li {
+    display: inline;
+
+    a {
+      background-position: center center;
+      display: block;
+      float: left;
+      height: 16px;
+      width: 16px;
+
+      &:hover {
+        background-color: white;
+      }
+    }
+  }
+
+  .delete-16 {
+    float: right;
+    width: 49px;
+  }
+
+  .up {
+    background-image: url("@{images_legacy}/icons/arrow-sort-up-16.png")
+  }
+
+  .down {
+    background-image: url("@{images_legacy}/icons/arrow-sort-down-16.png")
+  }
+
+  .left {
+    background-image: url("@{images_legacy}/icons/arrow-sort-left-16.png")
+  }
+
+  .right {
+    background-image: url("@{images_legacy}/icons/arrow-sort-right-16.png")
+  }
+}
+
+.hippo-editor-template-field-new {
+  height: 200px;
+  overflow: auto;
+
+  li {
+    list-style-type: none;
+    margin-bottom: 5px;
+    padding-bottom: 2px;
+    padding-top: 4px;
+
+    span em,
+    a {
+      background: url("@{images_legacy}/icons/workflow-16.png") no-repeat;
+      display: inline;
+      padding-left: 20px;
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+  }
+}
+
+.hippo-editor-template-css li {
+  div {
+    float: left;
+    overflow: hidden;
+    width: 80%;
+  }
+
+  a {
+    float: right;
+    width: 15%;
+  }
+}

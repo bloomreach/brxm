@@ -35,6 +35,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +75,7 @@ public class TodoPlugin extends RenderPlugin {
 
         @Override
         protected void populateItem(final Item item) {
-            item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
-                private static final long serialVersionUID = 1L;
-
+            item.add(CssClass.append(new AbstractReadOnlyModel() {
                 @Override
                 public Object getObject() {
                     return (item.getIndex() % 2 == 1) ? "even" : "odd";

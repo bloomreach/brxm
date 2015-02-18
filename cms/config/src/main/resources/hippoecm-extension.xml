@@ -254,6 +254,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>900.6</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.27.00</sv:value>
+    </sv:property>
   </sv:node>
   <!-- CMS preview perspective -->
   <sv:node sv:name="cms-preview">
@@ -269,7 +275,15 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>900.7</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.27.00</sv:value>
+    </sv:property>
   </sv:node>
+
+
   <!-- CMS shortcuts perspective -->
   <sv:node sv:name="cms-dashshortcuts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -410,7 +424,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.03</sv:value>
+      <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS search views -->

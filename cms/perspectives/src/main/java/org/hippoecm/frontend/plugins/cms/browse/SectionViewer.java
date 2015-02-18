@@ -1,12 +1,12 @@
 /*
  *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public class SectionViewer extends Panel implements ICardView {
         super(id, new Model<String>(null));
 
         setOutputMarkupId(true);
-        
+
         add(new AttributeAppender("class", Model.of("section-viewer"), " "));
 
         this.parentService = parentRenderService;
@@ -106,7 +106,7 @@ public class SectionViewer extends Panel implements ICardView {
                 component.setOutputMarkupId(true);
                 component.setOutputMarkupPlaceholderTag(true);
                 item.add(component);
-                
+
                 item.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
                     @Override
                     public String getObject() {
@@ -132,16 +132,16 @@ public class SectionViewer extends Panel implements ICardView {
 
         final SectionNamesModel sectionNamesModel = new SectionNamesModel();
         this.sections.addListener(sectionNamesModel);
-        
+
         final IModel<String> selectModel = new SelectedSectionModel();
-        select = new DropDownChoice<>("select", selectModel, sectionNamesModel, 
+        select = new DropDownChoice<>("select", selectModel, sectionNamesModel,
             new IChoiceRenderer<String>() {
                 @Override
                 public Object getDisplayValue(final String sectionId) {
                     final IBrowserSection section = sections.getSection(sectionId);
                     return section.getTitle().getObject();
                 }
-    
+
                 @Override
                 public String getIdValue(final String sectionId, final int index) {
                     return sectionId;
@@ -188,7 +188,9 @@ public class SectionViewer extends Panel implements ICardView {
         super.renderHead(container);
 
         final IHeaderResponse response = container.getHeaderResponse();
-        response.render(OnDomReadyHeaderItem.forScript(String.format("jQuery('#%s').selectric();", select.getMarkupId())));        
+        final String selectricOptions = "{ optionsItemBuilder: '<span class=\"{value}\">{text}</span>' }";
+        final String selectricInit = String.format("jQuery('#%s').selectric(%s);", select.getMarkupId(), selectricOptions);
+        response.render(OnDomReadyHeaderItem.forScript(selectricInit));
     }
 
     public void onSelect(String extension) {
@@ -205,7 +207,7 @@ public class SectionViewer extends Panel implements ICardView {
             }
         }
     }
-    
+
     @Override
     public boolean isActive(Component component) {
         if (isActive()) {
@@ -233,7 +235,7 @@ public class SectionViewer extends Panel implements ICardView {
     private class SectionNamesModel extends AbstractReadOnlyModel<List<String>> implements IChangeListener {
 
         private ArrayList<String> names;
-        
+
         @Override
         public List<String> getObject() {
             if (names == null) {

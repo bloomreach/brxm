@@ -27,129 +27,130 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameMessage;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 
 public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
-        private IModel<String> title;
-        private IModel<StringCodec> codec;
-        private TextField<String> nameComponent;
-        private TextField<String> uriComponent;
-        private boolean uriModified;
 
-        public RenameDocumentDialog(StdWorkflow action, IModel<String> title, IModel<StringCodec> codecModel) {
-            super(null, action);
+    private final IModel<String> title;
+    private final IModel<StringCodec> codec;
+    private final TextField<String> nameComponent;
+    private final TextField<String> uriComponent;
+    private boolean uriModified;
 
-            this.title = title;
-            this.codec = codecModel;
+    public RenameDocumentDialog(StdWorkflow action, IModel<String> title, IModel<StringCodec> codecModel) {
+        super(null, action);
 
-            final PropertyModel<String> nameModel = new PropertyModel<>(action, "targetName");
-            final PropertyModel<String> uriModel = new PropertyModel<>(action, "uriName");
-            final PropertyModel<Map<Localized, String>> localizedNamesModel = new PropertyModel<>(action, "localizedNames");
+        this.title = title;
+        this.codec = codecModel;
 
-            String s1 = nameModel.getObject();
-            String s2 = uriModel.getObject();
-            uriModified = !s1.equals(s2);
+        final PropertyModel<String> nameModel = new PropertyModel<>(action, "targetName");
+        final PropertyModel<String> uriModel = new PropertyModel<>(action, "uriName");
+        final PropertyModel<Map<Localized, String>> localizedNamesModel = new PropertyModel<>(action, "localizedNames");
 
-            nameComponent = new TextField<>("name", nameModel);
-            nameComponent.setRequired(true);
-            nameComponent.setLabel(new StringResourceModel("name-label", this, null));
-            nameComponent.add(new OnChangeAjaxBehavior() {
+        String s1 = nameModel.getObject();
+        String s2 = uriModel.getObject();
+        uriModified = !s1.equals(s2);
 
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    if (!uriModified) {
-                        String encoded = codec.getObject().encode(nameModel.getObject());
-                        uriModel.setObject(encoded);
-                        target.add(uriComponent);
-                    }
+        nameComponent = new TextField<>("name", nameModel);
+        nameComponent.setRequired(true);
+        nameComponent.setLabel(Model.of(getString("name-label")));
+        nameComponent.add(new OnChangeAjaxBehavior() {
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                if (!uriModified) {
+                    String encoded = codec.getObject().encode(nameModel.getObject());
+                    uriModel.setObject(encoded);
+                    target.add(uriComponent);
                 }
-
-                @Override
-                protected void onError(final AjaxRequestTarget target, final RuntimeException e) {
-                    super.onError(target, e);
-
-                    //if we get past the super call, RunTimeException e is null and we are dealing with
-                    //either a validation or a conversion error, so we can/should update the URI component if needed
-                    String rawInput = nameComponent.getInput();
-                    if (!uriModified && Strings.isEmpty(rawInput)) {
-                        uriModel.setObject("");
-                        target.add(uriComponent);
-                    }
-                }
-
-                @Override
-                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                    super.updateAjaxAttributes(attributes);
-                    attributes.setThrottlingSettings(new ThrottlingSettings(nameComponent.getPath(), Duration.milliseconds(500)));
-                }
-            });
-            nameComponent.setOutputMarkupId(true);
-            setFocus(nameComponent);
-            add(nameComponent);
-
-            add(uriComponent = new TextField<String>("uriinput", uriModel) {
-                @Override
-                public boolean isEnabled() {
-                    return uriModified;
-                }
-            });
-
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return uriModified ? "grayedin" : "grayedout";
-                }
-            }));
-            uriComponent.setOutputMarkupId(true);
-
-            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    uriModified = !uriModified;
-                    if (!uriModified) {
-                        String uri = Strings.isEmpty(nameModel.getObject()) ? ""
-                                : codec.getObject().encode(nameModel.getObject());
-                        uriModel.setObject(uri);
-                    } else {
-                        target.focusComponent(uriComponent);
-                    }
-                    target.add(RenameDocumentDialog.this);
-                }
-            };
-            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return uriModified ? getString("url-reset") : getString("url-edit");
-                }
-            }));
-            add(uriAction);
-
-            final Locale cmsLocale = UserSession.get().getLocale();
-            final RenameMessage message = new RenameMessage(cmsLocale, localizedNamesModel.getObject());
-            if (message.shouldShow()) {
-                warn(message.forDocument());
             }
-        }
 
-        @Override
-        public IModel<String> getTitle() {
-            return title;
-        }
+            @Override
+            protected void onError(final AjaxRequestTarget target, final RuntimeException e) {
+                super.onError(target, e);
 
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.MEDIUM;
+                //if we get past the super call, RunTimeException e is null and we are dealing with
+                //either a validation or a conversion error, so we can/should update the URI component if needed
+                String rawInput = nameComponent.getInput();
+                if (!uriModified && Strings.isEmpty(rawInput)) {
+                    uriModel.setObject("");
+                    target.add(uriComponent);
+                }
+            }
+
+            @Override
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(nameComponent.getPath(), Duration.milliseconds(500)));
+            }
+        });
+        nameComponent.setOutputMarkupId(true);
+        setFocus(nameComponent);
+        add(nameComponent);
+
+        add(uriComponent = new TextField<String>("uriinput", uriModel) {
+            @Override
+            public boolean isEnabled() {
+                return uriModified;
+            }
+        });
+
+        uriComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return uriModified ? "grayedin" : "grayedout";
+            }
+        }));
+        uriComponent.setOutputMarkupId(true);
+
+        AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                uriModified = !uriModified;
+                if (!uriModified) {
+                    String uri = Strings.isEmpty(nameModel.getObject()) ? ""
+                            : codec.getObject().encode(nameModel.getObject());
+                    uriModel.setObject(uri);
+                } else {
+                    target.focusComponent(uriComponent);
+                }
+                target.add(RenameDocumentDialog.this);
+            }
+        };
+        uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return uriModified ? getString("url-reset") : getString("url-edit");
+            }
+        }));
+        add(uriAction);
+
+        final Locale cmsLocale = UserSession.get().getLocale();
+        final RenameMessage message = new RenameMessage(cmsLocale, localizedNamesModel.getObject());
+        if (message.shouldShow()) {
+            warn(message.forDocument());
         }
     }
+
+    @Override
+    public IModel<String> getTitle() {
+        return title;
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return DialogConstants.MEDIUM;
+    }
+}

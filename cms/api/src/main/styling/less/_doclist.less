@@ -1,39 +1,29 @@
-/*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-.fixed-width (@width) {
-  width: @width;
-  min-width: @width;
-  max-width: @width;
-}
-
-.fixed-height (@height) {
-  height: @height;
-  min-height: @height;
-  max-height: @height;
-}
+@doclist-icon-shift-right: 2px;
 
 .hippo-list-documents {
   background-color: @body-bgcolor;
   border-collapse: collapse;
+  width: 100%;
 
   // keep the styling that affect width in sync in the thead and tbody to ensure correctly aligned table headers
   > thead > tr > th,
   > tbody > tr > td {
-    padding: @doclist-padding-top-bottom @doclist-padding-left-right;
+    padding-left: @doclist-padding-left-right;
+    padding-right: @doclist-padding-left-right;
 
     // border between columns
     border-left: 1px solid transparent;
@@ -42,20 +32,53 @@
     }
 
     // column types
+    &.doclisting-date {
+      .fixed-width(140px);
+    }
+    &.doclisting-height {
+      .fixed-width(75px);
+    }
     &.doclisting-icon {
       .fixed-width(32px);
-      padding: @doclist-padding-icon;
+
+      // shift the icons a little to the right
+      padding: @doclist-padding-icon (@doclist-padding-icon - @doclist-icon-shift-right) @doclist-padding-icon (@doclist-padding-icon + @doclist-icon-shift-right);
+
       + .doclisting-name {
         border-left: 0;
         padding-left: 0;
+      }
+    }
+    &.doclisting-lastmodified-by {
+      .fixed-width(120px);
+      &:last-child {
+        .fixed-width(200px);
+      }
+    }
+    &.doclisting-mimetype {
+      .fixed-width(130px);
+      span {
+        word-wrap: none;
+        text-overflow: ellipsis;
       }
     }
     &.doclisting-name {
       width: 100%;
       min-width: 10px;
     }
-    &.doclisting-type {
-      .fixed-width(110px);
+    &.doclisting-path {
+      .fixed-width(400px);
+    }
+    &.doclisting-selector {
+      .fixed-width(19px);
+      span {
+        display: flex;
+        justify-content: center;
+        align-content: center;
+      }
+    }
+    &.doclisting-size {
+      .fixed-width(80px);
     }
     &.doclisting-state {
       .fixed-width(51px);
@@ -76,15 +99,6 @@
       }
 
     }
-    &.doclisting-date {
-      .fixed-width(140px);
-    }
-    &.doclisting-lastmodified-by {
-      .fixed-width(120px);
-      &:last-child {
-        .fixed-width(200px);
-      }
-    }
     &.doclisting-translations {
       .fixed-width(120px);
       padding-top: 0;
@@ -102,20 +116,10 @@
         height: 16px;
       }
     }
-    &.doclisting-size {
-      .fixed-width(80px);
-    }
-    &.doclisting-mimetype {
-      .fixed-width(130px);
-      span {
-        word-wrap: none;
-        text-overflow: ellipsis;
-      }
+    &.doclisting-type {
+      .fixed-width(110px);
     }
     &.doclisting-width {
-      .fixed-width(75px);
-    }
-    &.doclisting-height {
       .fixed-width(75px);
     }
   }
@@ -134,8 +138,15 @@
         font-size: @font-size-large;
         line-height: @line-height-computed;
         border-color: @doclist-head-border-color;
+        padding-top: floor((@doclist-head-height - @line-height-computed) / 2);
+        padding-bottom: ceil((@doclist-head-height - @line-height-computed) / 2);
+
         &:hover {
-          color: @aqua;
+          color: @primary;
+        }
+        // align the background image of the icon column header with the icons in the body
+        &.doclisting-icon {
+          background-position: top (@doclist-padding-icon + 1) left (@doclist-padding-icon + @doclist-icon-shift-right + 8);
         }
       }
 
@@ -145,15 +156,17 @@
         cursor: pointer;
       }
 
-      .hippo-list-order-ascending > span {
-        padding-right: 16px;
+      .hippo-list-order-ascending > span,
+      .hippo-list-order-descending > span {
+        padding-right: 20px;
         color: @doclist-head-sorted-color;
+      }
+
+      .hippo-list-order-ascending > span {
         background: url("@{images}/icons/sort-ascending-tiny.svg") 100% 100% no-repeat;
       }
 
       .hippo-list-order-descending > span {
-        padding-right: 16px;
-        color: @doclist-head-sorted-color;
         background: url("@{images}/icons/sort-descending-tiny.svg") 100% 100% no-repeat;
       }
 
@@ -190,8 +203,11 @@
 
       border-top: 1px solid @doclist-row-separator-color;
 
-      > td {
+      &:first-child {
+        border-top: none;
+      }
 
+      > td {
         // ensure icons smaller than 32px are centered in a 32x32px box
         &.doclisting-icon span {
           .fixed-height(32px);
@@ -199,22 +215,18 @@
           justify-content: center;
           align-items: center;
         }
-      }
 
-      > td:not(.doclisting-icon) > span span {
-        // show only 2 lines of text, but allow icons to shift
-        // out of their box (e.g. for stacked document state icons)
-        display: block;
-        overflow: hidden;
-        max-height: 2 * @line-height-computed;
+        &:not(.doclisting-icon) > span span {
+          // show only 2 lines of text, but allow icons to shift
+          // out of their box (e.g. for stacked document state icons)
+          display: block;
+          overflow: hidden;
+          max-height: 2 * @line-height-computed;
+        }
       }
 
       .link {
         cursor: pointer;
-      }
-
-      &:first-child {
-        border-top: none;
       }
     }
 
@@ -347,7 +359,7 @@
     }
 
     &:hover .hi {
-      fill: @aqua;
+      fill: @primary;
     }
   }
 }

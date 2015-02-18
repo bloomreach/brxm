@@ -99,7 +99,6 @@ class PropertyValueEditor extends DataView {
                 }
             };
 
-            removeLink.add(new Image("remove-icon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
             removeLink.add(new AttributeModifier("title", getString("property.value.remove")));
 
             PropertyDefinition definition = propertyModel.getProperty().getDefinition();

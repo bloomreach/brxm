@@ -1,5 +1,5 @@
 <!--
- * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,28 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-  <span class="yui-date-time-field">
-  	<span class="yui-date-time-field-input">
-      <input type="text" wicket:id="date" size="14" class="date" maxlength="14"/>
-      <input type="text" wicket:id="hours" size="2" class="time" maxlength="2"/>
-      <span class="time-separator" wicket:id="hoursSeparator">:</span>
-      <input type="text" wicket:id="minutes" size="2" class="time" maxlength="2"/>
-      <select wicket:id="amOrPmChoice"></select>
-  	</span>
-	<span class="yui-date-time-field-reset">
-      <a wicket:id="today" class="today-link" wicket:message="title:set-to-current-date-tooltip">
-        <img wicket:id="current-date-img"/>
-        <wicket:message key="set-to-current-date"></wicket:message>
-      </a>
-	</span>
-	<div style="clear: both;" />
-  </span>
-</wicket:panel></html>
+    <div class="hippo-datepicker">
+        <div class="hippo-datepicker-date">
+            <div class="hippo-datepicker-value-container">
+                <input type="text" wicket:id="date" size="14" class="date" maxlength="14"/>
+            </div>
+        </div>
+        <div class="hippo-datepicker-time">
+            <div class="hippo-datepicker-value-container hippo-datepicker-hours">
+                <input type="text" wicket:id="hours" size="2" class="time" maxlength="2"/>
+            </div>
+            <div class="time-separator" wicket:id="hoursSeparator">:</div>
+            <div class="hippo-datepicker-value-container hippo-datepicker-minutes">
+                <input type="text" wicket:id="minutes" size="2" class="time" maxlength="2"/>
+            </div>
+            <select wicket:id="amOrPmChoice"></select>
+        </div>
+        <div class="hippo-global-clearer"/>
+        <a wicket:id="today" class=" hippo-datepicker-reset simple-link today-link" wicket:message="title:set-to-current-date-tooltip">
+            <span wicket:id="current-date-icon"/>
+            <span class="button-label"><wicket:message key="set-to-current-date"></wicket:message></span>
+        </a>
+        <div class="hippo-global-clearer"/>
+    </div>
+</wicket:panel>
+</html>

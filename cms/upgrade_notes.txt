@@ -2,8 +2,7 @@
 # Cleanup the UI in dev mode
 
 - The YUI logger is disabled in dev mode, see api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hippologger-debug.js 
-- The Wicket debug widget is hidden in dev mode, see /Users/adcb/Development/Hippo/2014/hippo/cms/cms/branches/cms-restyling-v2/api/src/main/styling/src/less/lib/wicket.less 
-
+- The Wicket debug widget is hidden in dev mode, see api/src/main/styling/src/less/lib/wicket.less
 
 # Code changes
 

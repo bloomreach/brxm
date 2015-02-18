@@ -36,7 +36,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -53,7 +52,7 @@ import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -64,13 +63,9 @@ import org.slf4j.LoggerFactory;
 
 public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSection {
 
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
 
     private final class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
-        private static final long serialVersionUID = 1L;
-
         private SubmittingTextField(String id, IModel<String> model) {
             super(id, model);
 
@@ -138,8 +133,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
             onFolderChange(model);
         }
-
     }
+
+    private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
 
     private String rootPath;
     private FolderModelService folderService;
@@ -196,7 +192,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
-                    collection.setSearchResult(new Model(null));
+                    collection.setSearchResult(NO_RESULTS);
+                    query = "";
                 } else {
                     updateSearch(true);
                 }
@@ -233,10 +230,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        scopeContainer.add(new CssClassAppender(new SearchScopeModel(scopeLink)));
+        scopeContainer.add(CssClass.append(new SearchScopeModel(scopeLink)));
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String load() {
                 return new NodeTranslator(scopeModel).getNodeName().getObject();
@@ -247,16 +242,12 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         form.add(scopeContainer);
 
         WebMarkupContainer allContainer = new WebMarkupContainer("all-container") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isVisible() {
                 return collection.getType() == DocumentCollectionType.SEARCHRESULT;
             }
         };
         final AjaxLink allLink = new AjaxLink("all") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IModel<Node> backup = folderService.getModel();
@@ -273,7 +264,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return false;
             }
         };
-        allContainer.add(new CssClassAppender(new SearchScopeModel(allLink)));
+        allContainer.add(CssClass.append(new SearchScopeModel(allLink)));
         allContainer.add(allLink);
         form.add(allContainer);
 
@@ -301,7 +292,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }
         if (forceQuery || collection.getType() == DocumentCollectionType.SEARCHRESULT) {
             if (Strings.isEmpty(query)) {
-                collection.setSearchResult(new Model(null));
+                collection.setSearchResult(NO_RESULTS);
             } else {
                 TextSearchBuilder sb = new TextSearchBuilder();
                 sb.setScope(new String[] { scope });
@@ -389,7 +380,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         collection.setFolder(folder);
 
         if (toBrowseMode || BrowserHelper.isFolder(document)) {
-            collection.setSearchResult(new Model(null));
+            collection.setSearchResult(NO_RESULTS);
         }
     }
 
@@ -418,7 +409,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     public IModel<String> getTitle() {
-        return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
+        final String titleKey = getPluginConfig().getString("title", getPluginConfig().getName());
+        return Model.of(getString(titleKey));
     }
 
     @Override
@@ -430,7 +422,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
             @Override
             protected Icon load() {
-                return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.CLOSE_TINY : Icon.SEARCH_TINY;
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.DELETE_TINY : Icon.SEARCH_TINY;
             }
         };
         return HippoIcon.fromSprite(id, iconModel);

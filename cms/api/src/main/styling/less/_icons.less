@@ -1,25 +1,23 @@
-/*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 .hi-defs {
   display: none;
 }
 
 .hi {
-  display: inline-block;  
+  display: inline-block;
 }
 
 //TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), XLARGE(96), HUGE(128),
@@ -105,57 +103,140 @@
 // Default colors of shapes in icons
 .hi-document,
 .hi-folder {
-  fill: @aqua;
+  fill: @primary;
 }
 
 .hi-expand,
 .hi-collapse {
-  fill: #4c4c4c;
+  fill: @dark-gray;
 }
 
 .hi-context-menu {
   .hi-shape-bg {
-    fill: #fff;
+    fill: @white;
   }
   .hi-shape-circle,
   .hi-shape-arrow {
-    fill: @aqua;
+    fill: @primary;
   }
 }
 
 .hi-state-new {
   .hi-shape-circle {
-    fill: #f45151;
+    fill: @danger;
   }
   .hi-shape-stripe {
-    fill: #fff;
+    fill: @white;
   }
 }
 
 .hi-state-live {
   .hi-shape-circle {
-    fill: #5bbc5b;
+    fill: @success;
   }
   .hi-shape-checkmark {
-    fill: #fff;
+    fill: @white;
   }
 }
 
 .hi-state-changed {
   .hi-shape-circle {
-    fill: #5bbc5b;
+    fill: @success;
   }
   .hi-shape-checkmark {
-    fill: #fff;
+    fill: @white;
   }
   .hi-shape-triangle {
-    fill: #f6de49;
+    fill: @warning;
   }
   .hi-shape-triangle-border {
-    fill: #b7a137;
+    fill: darken(@warning, 30%);
   }
   .hi-shape-exclamation-mark {
-    fill: #231f20;
+    fill: @darkest-shade;
   }
 }
 
+.hi-move {
+  fill: transparent;
+}
+
+.hi-document-files {
+  fill: @black;
+}
+
+// TODO: decide if we need a hi-add-configuration icon and remove this if so
+.hi-configuration + .hi-add-overlay {
+  position: relative;
+  top: 1px;
+  left: 1px;
+}
+
+// Enabled icons
+.icon-enabled {
+  .hi {
+    color: @black;
+  }
+
+  .hi-configuration {
+    fill: @primary;
+  }
+
+  .hi-delete {
+    color: @hippo-icon-delete-enabled;
+  }
+
+  .hi-depublish {
+    fill: @danger;
+  }
+
+  .hi-document-unlocked {
+    fill: @primary;
+    color: @black;
+  }
+
+  .hi-new {
+    color: @primary;
+  }
+
+  .hi-publish {
+    fill: @success;
+  }
+}
+
+// Disabled icons
+.icon-disabled {
+  .hi {
+    color: @hippo-menu-disabled-color;
+  }
+
+  .hi-add-overlay {
+    fill: @dark-gray;
+  }
+
+  .hi-configuration {
+    fill: @hippo-menu-disabled-color;
+  }
+
+  .hi-depublish,
+  .hi-publish {
+    fill:  @dark-gray;
+    color: @hippo-menu-disabled-color;
+  }
+
+  .hi-document-files {
+    fill: @hippo-menu-disabled-color;
+  }
+
+  .hi-document-unlocked {
+    fill: @hippo-menu-disabled-color;
+  }
+
+  .hi-new {
+    fill: @hippo-menu-disabled-color;
+  }
+
+  .hi-rename {
+    fill: @hippo-menu-disabled-color;
+  }
+}

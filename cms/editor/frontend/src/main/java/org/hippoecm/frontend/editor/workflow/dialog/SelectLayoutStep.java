@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 public class SelectLayoutStep extends WizardStep {
 
@@ -66,17 +66,15 @@ public class SelectLayoutStep extends WizardStep {
                 link.add(new Label("layout", descriptor.getName()));
                 item.add(link);
 
-                item.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-                    private static final long serialVersionUID = 1L;
-
+                item.add(CssClass.append((new LoadableDetachableModel<String>() {
                     @Override
                     protected String load() {
                         if (layout.equals(SelectLayoutStep.this.layoutModel.getObject())) {
                             return "selected";
                         }
-                        return null;
+                        return "";
                     }
-                }));
+                })));
             }
         });
     }

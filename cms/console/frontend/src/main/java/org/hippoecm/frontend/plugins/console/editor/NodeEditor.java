@@ -28,6 +28,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -43,13 +44,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugins.console.browser.JcrNodeIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.agilecoders.wicket.core.markup.html.bootstrap.behavior.CssClassNameAppender;
-import de.agilecoders.wicket.core.markup.html.bootstrap.image.Icon;
-import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
 
 class NodeEditor extends Form<Node> {
     private static final long serialVersionUID = 1L;
@@ -76,16 +74,14 @@ class NodeEditor extends Form<Node> {
         setOutputMarkupId(true);
 
         add(new ToggleHeader("toggle-header-0", "0", "General"));
-        Icon icon = new Icon("nodeIcon", new LoadableDetachableModel<IconType>() {
-            @Override
-            protected IconType load() {
-                return JcrNodeIcon.getIcon(getModel().getObject());
-            }
-        });
-        icon.add(new CssClassNameAppender(new LoadableDetachableModel<String>() {
+
+        Label icon = new Label("nodeIcon", StringUtils.EMPTY);
+        icon.add(new CssClassAppender(new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected String load() {
-                return JcrNodeIcon.getIconColorCssClassname(getModel().getObject());
+                return JcrNodeIcon.getIconCssClass(getModel().getObject());
             }
         }));
         add(icon);
@@ -94,7 +90,7 @@ class NodeEditor extends Form<Node> {
         add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
 
         add(new ToggleHeader("toggle-header-1", "1", "Types"));
-        final TextFieldWidget primaryTypeWidget = new TextFieldWidget("primarytype", new PropertyModel<String>(this, "primaryType"));
+        final TextFieldWidget primaryTypeWidget = new TextFieldWidget("primarytype", new PropertyModel<>(this, "primaryType"));
         primaryTypeWidget.setSize("40");
         add(primaryTypeWidget);
 
@@ -103,7 +99,7 @@ class NodeEditor extends Form<Node> {
         add(new Label("types", new PropertyModel<String>(typesEditor, "mixinTypes")));
 
         add(new ToggleHeader("toggle-header-2", "2", "Properties"));
-        namespaceProvider = new NamespaceProvider(new EmptyDataProvider<Property>());
+        namespaceProvider = new NamespaceProvider(new EmptyDataProvider<>());
         namespacePropertiesEditor = new NamespacePropertiesEditor("namespaces", namespaceProvider);
         add(namespacePropertiesEditor);
 

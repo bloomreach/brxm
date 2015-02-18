@@ -31,7 +31,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.repository.api.StringCodec;
 
 public class NameUriField extends WebMarkupContainer {
@@ -124,7 +124,7 @@ public class NameUriField extends WebMarkupContainer {
             }
         };
 
-        urlComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+        urlComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 return urlModified ? "grayedin" : "grayedout";

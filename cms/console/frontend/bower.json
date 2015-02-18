@@ -1,0 +1,8 @@
+{
+  "name": "hippo-console-theme",
+  "version": "0",
+  "private": true,
+  "devDependencies": {
+      "fontawesome": "4.3.0"
+  }
+}

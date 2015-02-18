@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,8 +40,17 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     private static final String FOLDER_CSS_CLASS = "hippo-folder";
     private static final String DOCUMENT_CSS_CLASS = "hippo-document";
 
-    public static final AttributeAppender FOLDER_CLASS_APPENDER = new AttributeAppender("class", Model.of(FOLDER_CSS_CLASS), " ");
-    public static final AttributeAppender DOCUMENT_CLASS_APPENDER = new AttributeAppender("class", Model.of(DOCUMENT_CSS_CLASS), " ");
+    private static final AttributeModifier FOLDER_CLASS_APPENDER = CssClass.append(FOLDER_CSS_CLASS);
+    private static final AttributeModifier DOCUMENT_CLASS_APPENDER = CssClass.append(DOCUMENT_CSS_CLASS);
+
+    private static final DocumentAttributeModifier INSTANCE = new DocumentAttributeModifier();
+
+    private DocumentAttributeModifier() {
+    }
+
+    public static DocumentAttributeModifier getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public AttributeModifier[] getCellAttributeModifiers(IModel<Node> model) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,6 +34,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -44,15 +44,15 @@ import org.slf4j.LoggerFactory;
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);
+    private static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);
 
     private static final CssResourceReference CSS_RESOURCE_REFERENCE = new CssResourceReference(MimeTypeAttributeModifier.class, "mimetypes.css");
 
     static class MimeTypeAttributeModel extends LoadableDetachableModel<String> implements IObservable {
         private static final long serialVersionUID = 1L;
 
-        private JcrNodeModel nodeModel;
-        private Observable observable;
+        private final JcrNodeModel nodeModel;
+        private final Observable observable;
 
         public MimeTypeAttributeModel(JcrNodeModel model) {
             this.nodeModel = model;
@@ -127,13 +127,10 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     @Override
     public AttributeModifier getCellAttributeModifier(Node node) {
         return new CssClassAppender(new MimeTypeAttributeModel(new JcrNodeModel(node))) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void bind(Component hostComponent) {
                 super.bind(hostComponent);
                 hostComponent.add(new Behavior() {
-
                     @Override
                     public void renderHead(Component component, final IHeaderResponse response) {
                         response.render(CssHeaderItem.forReference(CSS_RESOURCE_REFERENCE));
@@ -145,6 +142,6 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
 
     @Override
     public AttributeModifier getColumnAttributeModifier() {
-        return new CssClassAppender(new Model("icon-16"));
+        return CssClass.append("icon-16");
     }
 }

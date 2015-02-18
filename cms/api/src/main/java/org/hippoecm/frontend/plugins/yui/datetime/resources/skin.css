@@ -1,26 +1,28 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* YUI skinning isn't working as should so I've copied the calendar sam skin into a hippo-editor-field-datepicker namespace */ 
+/* YUI skinning isn't working as should so I've copied the calendar sam skin into a hippo-editor-field-datepicker namespace */
 
 /* CALENDAR BOUNDING BOX */
 .hippo-root .yui-calcontainer {
-    background-color:#f2f2f2;
-    border:1px solid #808080;
-    padding:10px;
+    background-color: #fff;
+    border: 1px solid #b8bcbf;
+    padding: 10px;
     z-index: 21000;
+    box-shadow: 4px 4px 4px 0 #b8bcbf;
+    color: #39434c;
 }
 
 /* CALENDARGROUP BOUNDING BOX */
@@ -38,7 +40,7 @@
 
 /* TITLE BAR */
 .hippo-root .yui-calcontainer .title {
-    background:url(sprite.png) repeat-x 0 0;
+    background-color: #e1e3e5;
     border-bottom:1px solid #cccccc;
     font:100% sans-serif;
     color:#000;
@@ -65,7 +67,7 @@
     width:25px;
     height:15px;
     top:.4em;
-    right:.4em;
+    right: 8px;
     cursor:pointer;
 }
 
@@ -105,7 +107,7 @@
     height:15px;
     top:0;
     bottom:0;
-    left:-10px;
+    left:-7px;
     margin-left:.4em;
     cursor:pointer;
 }
@@ -117,7 +119,7 @@
     height:15px;
     top:0;
     bottom:0;
-    right:-10px;
+    right:-7px;
     margin-right:.4em;
     cursor:pointer;
 }
@@ -134,7 +136,7 @@
 
 /* WEEKDAY (Su, Mo, Tu...) HEADER CELLS */
 .hippo-root .yui-calendar .calweekdaycell {
-    color:#000;
+    color:#39434c;
     font-weight:bold;
     text-align:center;
     width:2em;
@@ -207,7 +209,7 @@
 
 .hippo-root .yui-calendar td.calcell.selected a {
     background-color:#b3d4ff;
-    color:#000;
+    color:#39434c;
 }
 
 /* HOVER DATE */
@@ -237,7 +239,7 @@
 /* CalendarNavigator */
 
 /* MONTH/YEAR LABEL */
-.hippo-root .yui-calendar a.calnav { 
+.hippo-root .yui-calendar a.calnav {
     border: 1px solid #f2f2f2;
     padding:0 4px;
     text-decoration:none;
@@ -245,7 +247,7 @@
     zoom:1;
 }
 
-.hippo-root .yui-calendar a.calnav:hover { 
+.hippo-root .yui-calendar a.calnav:hover {
     background: url(sprite.png) repeat-x 0 0;
     border-color:#A0A0A0;
     cursor:pointer;

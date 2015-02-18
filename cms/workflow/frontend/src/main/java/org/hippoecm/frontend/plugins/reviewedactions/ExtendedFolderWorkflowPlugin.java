@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -45,8 +46,10 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -95,12 +98,8 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         add(new StdWorkflow("publishAll", new StringResourceModel("publish-all-label", this, null), context, getModel()) {
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/publish-all-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/publish-all-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
             }
 
             @Override
@@ -156,12 +155,8 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         add(new StdWorkflow("depublishAll", new StringResourceModel("depublish-all-label", this, null), context, getModel()) {
 
             @Override
-            protected ResourceReference getIcon() {
-                if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "img/depublish-all-16.png");
-                } else {
-                    return new PackageResourceReference(getClass(), "img/depublish-all-disabled-16.png");
-                }
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
             }
 
             @Override
@@ -265,13 +260,13 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             Label textComponent = new Label("text");
             textComponent.setDefaultModel(dialogText);
             add(textComponent);
-            
+
             add(new Label("counttext", dialogSubText));
-            
+
             Label countComponent = new Label("count");
             countComponent.setDefaultModel(new Model<>(Integer.toString(documents.size())));
             add(countComponent);
-            
+
             Label locationComponent = new Label("location");
             locationComponent.setDefaultModel(new Model<>((String) folderName.getObject()));
             add(locationComponent);

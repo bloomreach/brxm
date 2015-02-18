@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
@@ -198,7 +198,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 managedValidation = true;
                 if (!field.isMultiple()) {
-                    add(new CssClassAppender(filter));
+                    add(CssClass.append(filter));
                 }
             }
         }
@@ -450,7 +450,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     };
                     listener.setValid(itemRenderer.isValid());
                     addValidationFilter(item, listener);
-                    item.add(new CssClassAppender(listener));
+                    item.add(CssClass.append(listener));
                 }
                 C model = (C) itemRenderer.getModel();
                 populateEditItem(item, model);

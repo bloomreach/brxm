@@ -77,6 +77,6 @@ public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
     @Override
     protected IListColumnProvider getDefaultColumnProvider() {
-        return new FallbackAssetGalleryListColumnProvider();
+        return FallbackAssetGalleryListColumnProvider.getInstance();
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -37,10 +38,12 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.HippoSession;
@@ -49,8 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
-
-    private static final long serialVersionUID = 1L;
 
     static protected Logger log = LoggerFactory.getLogger(TemplateEditingWorkflowPlugin.class);
 
@@ -109,6 +110,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.SAVE_TINY);
+            }
+
+            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
@@ -123,6 +129,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             public String getSubMenu() {
                 return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.SAVE_CLOSE_TINY);
             }
 
             @Override
@@ -192,8 +203,6 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             add(exceptionLabel);
 
             AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     try {
@@ -201,7 +210,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         closeDialog();
                         closeEditor();
                     } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
+                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
                         target.add(exceptionLabel);
                     }
                 }
@@ -210,8 +219,6 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             addButton(button);
 
             button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public boolean isEnabled() {
                     return super.isValid() && TemplateEditingWorkflowPlugin.this.isValid();
@@ -224,7 +231,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         closeDialog();
                         closeEditor();
                     } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
+                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
                         target.add(exceptionLabel);
                     }
                 }
@@ -233,7 +240,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             addButton(button);
         }
 
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return new StringResourceModel("close-document", this, null, "Close {0}",
                         new PropertyModel(TemplateEditingWorkflowPlugin.this, "model.node.name"));
         }

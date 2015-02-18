@@ -47,7 +47,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
@@ -332,9 +332,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                         }
                     };
                     link.add(new Label("category", section.getTitleModel()));
-                    link.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-                        private static final long serialVersionUID = 1L;
-
+                    link.add(CssClass.append(new LoadableDetachableModel<String>() {
                         @Override
                         protected String load() {
                             if (active == section) {

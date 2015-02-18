@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -28,19 +28,13 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ModifiedDocumentsView extends Panel implements IPagingDefinition {
 
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(ModifiedDocumentsView.class);
-
-    private ListDataTable dataTable;
-    private ModifiedDocumentsProvider provider;
+    private final ListDataTable dataTable;
+    private final ModifiedDocumentsProvider provider;
 
     public ModifiedDocumentsView(String id, final ModifiedDocumentsProvider provider) {
         super(id);
@@ -49,8 +43,6 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
         this.provider = provider;
 
         add(new Label("message", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String load() {
                 if (provider.size() > 1) {
@@ -62,19 +54,16 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
                     return "";
                 }
             }
-
         }));
 
         dataTable = new ListDataTable("datatable", getTableDefinition(), this.provider, new ListDataTable.TableSelectionListener(){
-            public void selectionChanged(IModel iModel) {
+            public void selectionChanged(IModel model) {
                 //Do Nothing for now
             }
         }, true, this);
         add(dataTable);
 
-        add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
+        add(CssClass.append(new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
                 if (ModifiedDocumentsView.this.provider.size() == 0) {
@@ -85,18 +74,19 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
         }));
 
 
-        add(new CssClassAppender(new Model<String>("hippo-referring-documents")));
+        add(CssClass.append("hippo-referring-documents"));
     }
 
-
     protected TableDefinition getTableDefinition() {
-        List<ListColumn> columns = new ArrayList<ListColumn>();
-
-        ListColumn column = new ListColumn(new StringResourceModel("doclisting-name", this, null), null);
-        column.setAttributeModifier(new DocumentAttributeModifier());
-        columns.add(column);
-
+        final List<ListColumn> columns = Collections.singletonList(createNameColumn());
         return new TableDefinition(columns);
+    }
+
+    private ListColumn createNameColumn() {
+        final Model<String> displayModel = Model.of(getString("doclisting-name"));
+        final ListColumn column = new ListColumn(displayModel, null);
+        column.setAttributeModifier(DocumentAttributeModifier.getInstance());
+        return column;
     }
 
     public int getPageSize() {

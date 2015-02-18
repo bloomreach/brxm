@@ -1,37 +1,388 @@
-/*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-@import "_editor_preview";
-@import "_editor_toolbar";
-@import "_editor_feedback";
 
 .hippo-editor {
+  color: @editor-color;
   background: @editor-bgcolor;
-
-  .hippo-editor-top,
-  .hippo-editor-body {
-    border-left: 8px solid;
-  }
-
-  .hippo-editor-top {
-    border-left-color: @editor-top-border-color;
-  }
+  display: flex;
+  flex-direction: column;
+  .fixed-height(100%);
 
   .hippo-editor-body {
-    border-left-color: @editor-body-border-color;
+    flex: 1;
+    overflow: auto;
+
+    > div > div {
+      padding: 32px;
+    }
+  }
+
+  .col20 {
+    padding-left: 16px;
+    width: 20%;
+    float: right;
+  }
+
+  .col30 {
+    padding-left: 16px;
+    width: 30%;
+    float: right;
+  }
+
+  .col70 {
+    padding-right: 16px;
+    width: 70%;
+    float: left;
+  }
+
+  .col80 {
+    padding-right: 16px;
+    width: 80%;
+    float: left;
+  }
+
+  .col20,
+  .col30,
+  .col70,
+  .col80 {
+    box-sizing: border-box;
+    > .even:last-child,
+    > .odd:last-child {
+      .hippo-editor-compound-field > .hippo-editor-field:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 
+.hippo-editor-feedback,
+.hippo-editor-body {
+  border-left: 8px solid @editor-body-border-color;
+}
+
+.hippo-editor-threepane {
+  width: 100%;
+
+  tr td {
+    vertical-align: top;
+  }
+}
+
+.hippo-editor-field {
+  margin-bottom: 32px;
+
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .dialog-link,
+  .hippo-editor-field-textarea,
+  select,
+  .hippo-editor-field-value-container,
+  .yui-date-time-field input {
+    background-color: @editor-subfield-bg;
+    border: 1px solid @editor-subfield-border;
+    box-sizing: border-box;
+    font-size: 13px;
+    padding: 8px;
+
+    .hippo-editor-large & {
+      font-size: 26px;
+    }
+  }
+
+  input {
+    background: none;
+    border: none;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  input[type="checkbox"] {
+    width: auto;
+  }
+
+  input[type="submit"] {
+    width: auto;
+  }
+
+  textarea {
+    background: none;
+    border: none;
+    box-sizing: border-box;
+    min-height: 100px;
+    overflow-y: auto;
+    padding: 0;
+    width: 100%;
+  }
+
+  .hippo-editor-field-textarea {
+    line-height: normal;
+  }
+
+  .linefill {
+    background: url("@{images_legacy}/hippo-editor-top.png") repeat-x top left transparent;
+  }
+
+  .dialog-link {
+    background-color: @editor-subfield-bg !important;
+    border: 1px solid @editor-subfield-border !important;
+  }
+}
+
+.hippo-editor-compound-field {
+  margin: 0 -8px;
+
+  .hippo-editor-compound-field {
+    margin: 0;
+  }
+
+  > .hippo-editor-field {
+    padding: 16px 8px;
+    border: 1px solid @editor-compound-field-border;
+
+    > .hippo-editor-field-title > span {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    > .hippo-editor-field-subfield > .hippo-editor-field-subfield-controls {
+      padding: 0;
+    }
+
+    .hippo-editor-field-subfield & {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.hippo-editor-field-bg();
+
+.hippo-editor-field-title {
+  color: @editor-field-title-color;
+  font-weight: normal;
+  margin-bottom: 8px;
+  margin-right: 4px;
+
+  &,
+  & span {
+    display: inline-block;
+    font-size: 18px;
+  }
+}
+
+.hippo-editor-field-subfield {
+  margin-bottom: 8px;
+  position: relative;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .hippo-editor-field {
+    margin-bottom: 8px;
+  }
+
+  .hippo-editor-field-title {
+    margin-bottom: 5px;
+  }
+
+  .hippo-editor-field-title,
+  .hippo-editor-field-title span {
+    display: inline-block;
+    font-size: 13px;
+  }
+
+  .hippo-editor-field-subfield-input {
+    display: inline-block;
+    margin-right: 22px;
+    width: auto;
+  }
+
+  .hippo-editor-field-subfield-button {
+    display: block;
+    height: 22px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .add-16:hover {
+    border: 1px solid @lighter-shade;
+    background-color: white
+  }
+}
+
+.hippo-editor-field-subfield-controls {
+  opacity: 0;
+  padding: 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .hippo-editor-field-subfield:hover > & {
+    opacity: 1;
+  }
+
+  .hi {
+    color: @darkest-shade;
+  }
+
+  em .hi {
+    color: @dark-gray;
+  }
+
+
+  .hippo-node-field-name-selection-listitem  & {
+    padding: 0;
+  }
+}
+
+.simple-link {
+  background: transparent;
+  border-radius: 5px;
+  border: 1px solid @dark-gray;
+  display: block;
+  float: left;
+  line-height: 13px;
+  padding: 4px;
+
+  .button-label {
+    color: @darkest-shade;
+    display: inline-block;
+    line-height: 16px;
+    vertical-align: middle;
+  }
+
+  .hi {
+    color: @darkest-shade;
+    vertical-align: middle;
+  }
+
+  &:link,
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.resource-values {
+  padding: 0;
+
+  ul {
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+}
+
+.resource-upload {
+  margin: 0;
+}
+
+.invalid .hippo-editor-field {
+  .dialog-link,
+  .hippo-editor-field-textarea,
+  select,
+  .hippo-editor-field-value-container {
+    border-color: @validation-border;
+  }
+
+  .hippo-editor-field-title {
+    color: @validation-title-color;
+  }
+}
+
+.hippo-editor-metadata {
+  background: @lightest-shade;
+  min-width: 200px;
+  padding: 0 4px 4px;
+}
+
+.hippo-diff-removed {
+  background-color: @danger-light;
+  text-decoration: line-through;
+
+  img {
+    border: 5px solid @danger-light;
+  }
+}
+
+.hippo-diff-added {
+  background-color: @success-light;
+
+  img {
+    border: 5px solid @success-light;
+  }
+}
+
+.hippo-dif-removed,
+.hippo-dif-added {
+  .hippo-editor-field-textarea {
+    min-height: 0;
+  }
+
+  .resource-values ul {
+    clear: both;
+    padding: 0 10px 0 10px;
+  }
+}
+
+.compare {
+  .hippo-diff-removed,
+  .hippo-diff-added {
+    float: left;
+    padding: 0 10px 0 10px;
+  }
+}
+
+.compare-base {
+  padding-right: 15px;
+}
+
+.lock-ui {
+  background-color: @black;
+  cursor: wait;
+  height: 100%;
+  left: 0;
+  margin: 0;
+  opacity: 0.6;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 99999;
+}
+
+.column-wrapper {
+  width: 100%;
+  overflow: visible;
+}
+
+.column-wrapper:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+// Without setting height explicitly to 100% for all nested divs, no scrollbars will be rendered
+.browse-perspective-center-body,
+.browse-perspective-center-body .document,
+.browse-perspective-center-body .tabpanel,
+.browse-perspective-center-body .tabpanel form,
+.browse-perspective-center-body .tabpanel form > div,
+.browse-perspective-center-body .tabpanel form > div > div {
+  .fixed-height(100%);
+}

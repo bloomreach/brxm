@@ -28,22 +28,21 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
 
 public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentArguments> {
 
-    private IModel<String> title;
-    private TextField nameComponent;
-    private TextField uriComponent;
+    private final IModel<String> title;
+    private final TextField nameComponent;
+    private final TextField uriComponent;
     private boolean uriModified;
     private final IModel<StringCodec> nodeNameCodecModel;
 
@@ -62,7 +61,7 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
 
         nameComponent = new TextField<>("name", nameModel);
         nameComponent.setRequired(true);
-        nameComponent.setLabel(new StringResourceModel("name-label", this, null));
+        nameComponent.setLabel(Model.of(getString("name-label")));
         nameComponent.add(new OnChangeAjaxBehavior() {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -90,10 +89,10 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
             }
         };
 
-        uriComponent.setLabel(new StringResourceModel("url-label", this, null));
+        uriComponent.setLabel(Model.of(getString("url-label")));
         add(uriComponent);
 
-        uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+        uriComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 return uriModified ? "grayedin" : "grayedout";

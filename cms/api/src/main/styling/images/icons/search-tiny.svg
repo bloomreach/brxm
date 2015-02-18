@@ -18,12 +18,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-<g opacity="0.6">
-	<g>
-		<path fill="#474747" d="M6.989,3.111c2.151,0,3.9,1.745,3.9,3.889c0,2.144-1.744,3.888-3.889,3.888
-			c-2.181,0-3.889-1.659-3.889-3.777C3.111,4.943,4.887,3.111,6.989,3.111 M6.989,2C4.234,2,2,4.349,2,7.111C2,9.87,4.246,12,7,12
-			c2.754,0,5-2.24,5-5C12,4.238,9.742,2,6.989,2L6.989,2z"/>
-	</g>
+<g>
+  <path fill="currentColor" d="M6.989,3.111c2.151,0,3.9,1.745,3.9,3.889c0,2.144-1.744,3.888-3.889,3.888
+    c-2.181,0-3.889-1.659-3.889-3.777C3.111,4.943,4.887,3.111,6.989,3.111 M6.989,2C4.234,2,2,4.349,2,7.111C2,9.87,4.246,12,7,12
+    c2.754,0,5-2.24,5-5C12,4.238,9.742,2,6.989,2L6.989,2z"/>
 </g>
-<line opacity="0.6" fill="none" stroke="#474747" stroke-miterlimit="10" x1="13.5" y1="13.5" x2="10.567" y2="10.541"/>
+<line stroke="currentColor" stroke-miterlimit="10" x1="13.5" y1="13.5" x2="10.567" y2="10.541"/>
 </svg>

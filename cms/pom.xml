@@ -487,6 +487,8 @@
                 <exclude>api/.csslintrc</exclude>
                 <exclude>api/README.md</exclude>
                 <exclude>upgrade_notes.txt</exclude>
+                <exclude>console/frontend/.bowerrc</exclude>
+                <exclude>console/frontend/README.md</exclude>
               </excludes>
             </configuration>
           </plugin>
