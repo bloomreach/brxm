@@ -139,7 +139,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                     // remove already set properties from suggestions:
                     final Set<String> properties = new HashSet<>(choices.keySet());
                     for (String property : properties) {
-                        if (node.hasProperty(property)) {
+                        if (!isResidual(property) && node.hasProperty(property)) {
                             choices.remove(property);
                         }
                     }
@@ -361,6 +361,10 @@ public class PropertyDialog extends AbstractDialog<Node> {
         });
 
         setFocus(nameField);
+    }
+
+    private boolean isResidual(final String propertyName) {
+        return propertyName.equals("*");
     }
 
     @Override
