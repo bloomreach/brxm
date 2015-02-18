@@ -71,12 +71,6 @@
                         });
                     }
                 });
-
-                $rootScope.$on('before-close', function(event) {
-                    if ($state.current.name == 'menu-item.add') {
-                        event.preventDefault();
-                    }
-                });
             }
         ]);
 }());
