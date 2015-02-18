@@ -70,8 +70,8 @@ describe('IFrame Service', function () {
     });
 
     it('should call the parent IFramePanel.iFrameToHost.publish', function() {
-        iframeService.publish('test');
-        expect(publishMock).toHaveBeenCalledWith('test');
+        iframeService.publish('browseTo', '/about');
+        expect(publishMock).toHaveBeenCalledWith('browseTo', '/about');
     });
 
     it('should call the parent IFramePanel.hostToIFrame.subscribe', function() {
