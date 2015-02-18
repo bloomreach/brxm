@@ -82,7 +82,6 @@
     <!-- Project Dependencies -->
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <tika.version>1.3</tika.version>
     <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
     <pdfbox.version>1.8.8</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
@@ -206,34 +205,6 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tika</groupId>
-        <artifactId>tika-parsers</artifactId>
-        <version>${tika.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-debug-all</artifactId>
-          </exclusion>
-          <exclusion>
-            <artifactId>boilerpipe</artifactId>
-            <groupId>de.l3s.boilerpipe</groupId>
-          </exclusion>
-          <!-- Exclude xmlbeans because it contains org/w3c/dom/** which is incompatible with Java6 or higher. -->
-          <exclusion>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
