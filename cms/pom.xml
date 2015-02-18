@@ -118,8 +118,6 @@
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.2.2</json-lib.version>
 
-    <jackrabbit.patched.version>${jackrabbit.version}-h1</jackrabbit.patched.version>
-    <tika.version>1.3</tika.version>
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
     <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
@@ -264,35 +262,6 @@
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.tika</groupId>
-        <artifactId>tika-parsers</artifactId>
-        <version>${tika.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-debug-all</artifactId>
-          </exclusion>
-          <exclusion>
-            <artifactId>boilerpipe</artifactId>
-            <groupId>de.l3s.boilerpipe</groupId>
-          </exclusion>
-          <!-- Exclude xmlbeans because it contains org/w3c/dom/** which is incompatible with Java6 or higher. -->
-          <exclusion>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
