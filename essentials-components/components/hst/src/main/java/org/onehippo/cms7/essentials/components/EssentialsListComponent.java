@@ -42,7 +42,6 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
-import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
@@ -181,8 +180,7 @@ public class EssentialsListComponent extends CommonComponent {
             final HippoResultSetBean resultSet = facetBean.getResultSet();
             if (resultSet != null) {
                 final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
-                pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(),
-                                                    getCurrentPage(request));
+                pageable = getPageableFactory().createPageable(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
             }
         }
         return pageable;
@@ -233,7 +231,7 @@ public class EssentialsListComponent extends CommonComponent {
         buildAndApplyFilters(request, query);
 
         final HstQueryResult execute = query.execute();
-        return new IterablePagination<>(
+        return getPageableFactory().createPageable(
                 execute.getHippoBeans(),
                 execute.getTotalSize(),
                 pageSize,
