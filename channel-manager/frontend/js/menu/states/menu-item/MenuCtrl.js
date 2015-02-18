@@ -49,7 +49,7 @@
                         MenuService.getMenu().then(function (menuData) {
                             var blankMenuItem = {
                                 linkType: 'SITEMAPITEM',
-                                title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED')),
+                                title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
                                 link: ''
                             };
 

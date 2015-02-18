@@ -52,7 +52,25 @@ describe('the incrementProperty filter', function () {
             {
                 name: 'Untitled (5)'
             },
-        ];
+        ],
+        items4 = [
+            {
+                name: 'Untitled',
+                items: [
+                    {
+                        name: 'Untitled (12)',
+                        items: [
+                            {
+                                name: 'Untitled (17)'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: 'Untitled (5)'
+            }
+        ]
 
     it('should add a number to an item without any increments', function () {
         expect(incrementPropertyFilter(items, 'name', 'Untitled')).toEqual('Untitled');
@@ -68,6 +86,10 @@ describe('the incrementProperty filter', function () {
 
     it('should increment after the highest value', function () {
         expect(incrementPropertyFilter(items3, 'name', 'Untitled')).toEqual('Untitled (6)');
+    });
+
+    it('should search sub collections', function () {
+        expect(incrementPropertyFilter(items4, 'name', 'Untitled', 'items')).toEqual('Untitled (18)');
     });
 
 });
