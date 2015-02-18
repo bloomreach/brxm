@@ -38,8 +38,8 @@
     <commons-lang.version>2.6</commons-lang.version>
     <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>1.05.00-SNAPSHOT</hippo.services.version>
-    <tika.version>1.3</tika.version>
 
+    <jackrabbit.vault.version>3.1.6</jackrabbit.vault.version>
     <junit.version>4.11</junit.version>
   </properties>
 
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>org.apache.jackrabbit.vault</groupId>
       <artifactId>org.apache.jackrabbit.vault</artifactId>
-      <version>3.1.6</version>
+      <version>${jackrabbit.vault.version}</version>
     </dependency>
 
     <dependency>
@@ -99,8 +99,6 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
-      <version>${tika.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
