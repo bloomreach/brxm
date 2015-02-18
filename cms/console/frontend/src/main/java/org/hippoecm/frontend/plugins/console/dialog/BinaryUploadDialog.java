@@ -56,7 +56,7 @@ public class BinaryUploadDialog extends AbstractDialog<Void> {
     }
 
     @Override
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return new Model<>("Update binary property");
     }
 
