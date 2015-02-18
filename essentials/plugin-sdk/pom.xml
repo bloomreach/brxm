@@ -35,8 +35,8 @@
     <junit.version>4.11</junit.version>
     <maven-model.version>3.2.1</maven-model.version>
     <commons-io.version>2.3</commons-io.version>
-    <tika-parsers.version>0.9</tika-parsers.version>
-    <core.jdt.version>3.3.0-v_771</core.jdt.version>
+    <tika-parsers.version>1.3</tika-parsers.version>
+    <core.jdt.version>3.10.0</core.jdt.version>
     <commons-lang.version>2.6</commons-lang.version>
     <jaxb-impl.version>2.2.6</jaxb-impl.version>
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
@@ -138,10 +138,10 @@
 
       <dependency>
         <groupId>org.eclipse.jdt</groupId>
-        <artifactId>core</artifactId>
-        <type>jar</type>
+        <artifactId>org.eclipse.jdt.core</artifactId>
         <version>${core.jdt.version}</version>
       </dependency>
+
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>

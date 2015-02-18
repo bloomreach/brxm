@@ -136,10 +136,10 @@
 
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>org.eclipse.jdt.core</artifactId>
       <exclusions>
         <exclusion>
-          <artifactId>app</artifactId>
+          <artifactId>org.eclipse.equinox.app</artifactId>
           <groupId>org.eclipse.equinox</groupId>
         </exclusion>
       </exclusions>
