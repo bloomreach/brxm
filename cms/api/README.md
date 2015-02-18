@@ -65,15 +65,8 @@ Install both npm and bower dependencies
 ## Useful commands
 
 ####Build theme
-The theme is built and copied to `src/main/resources/skin/hippo-cms` (css, js, fonts) and
-`src/main/resources/org/hippoecm/frontend/skin` (images, icons)
 
     grunt build
-
-####Install theme
-The theme is built and copied to the classpath of the api module
-
-    grunt install
 
 ####Live reload
 You need a browser extension to use live reload.

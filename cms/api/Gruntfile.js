@@ -198,30 +198,6 @@ module.exports = function (grunt) {
                         dest: '<%= build.images %>'
                     }
                 ]
-            },
-
-            sources2classpath: {
-                // Copy resources to classpath so Wicket will pick them up
-                expand: true,
-                cwd: '<%= build.skin %>',
-                src: '**/*',
-                dest: '<%= build.target %>/classes/skin/hippo-cms',
-                filter: function () {
-                    //little hack to force it to only copy when dest exists
-                    return classPathExists();
-                }
-            },
-
-            images2classpath: {
-                // Copy images to the classpath so Wicket will pick them up
-                expand: true,
-                cwd: '<%= build.images %>',
-                src: '**/*',
-                dest: '<%= build.target %>/classes/org/hippoecm/frontend/skin/images',
-                filter: function () {
-                    //little hack to force it to only copy when dest exists
-                    return classPathExists();
-                }
             }
         },
 
@@ -256,7 +232,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['install', 'watch']);
+    grunt.registerTask('default', ['build', 'watch']);
 
     // build theme
     grunt.registerTask('build', 'Build the theme', [
@@ -269,15 +245,7 @@ module.exports = function (grunt) {
         'cssmin:theme',
         'copy:binaries',
         'svgmin:theme',
-        'svgstore:theme',
-        'clean:tmp'
-    ]);
-
-    // install
-    grunt.registerTask('install', 'Build and install the theme', [
-        'build',
-        'newer:copy:sources2classpath',
-        'newer:copy:images2classpath'
+        'svgstore:theme'
     ]);
 
 };
