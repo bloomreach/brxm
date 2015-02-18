@@ -71,7 +71,6 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/Compo
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/SiteUtils.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
-components/hst/src/main/resources/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml -text
 components/hst/src/test/resources/log4j.xml -text
 components/pom.xml -text
 dashboard-dependencies/pom.xml -text
@@ -1468,6 +1467,7 @@ plugins/skeleton-package/src/main/resources/instructions/xml/hst/templates/pagen
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/base.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/homepage.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/pagenotfound.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/spring/hippo-essentials-spring.xml -text
 plugins/skeleton-package/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsInstructionPackageTest.java -text
 plugins/skeleton-package/src/test/resources/log4j.xml -text
 plugins/tagging/pom.xml -text

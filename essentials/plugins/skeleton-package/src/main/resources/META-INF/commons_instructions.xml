@@ -94,7 +94,7 @@
     <xml action="copy" source="instructions/xml/hst/pages/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- default-->
     <xml action="copy" source="instructions/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
-
+    <file action="copy" source="instructions/xml/spring/hippo-essentials-spring.xml" target="{{siteResources}}/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml"/>
   </instructionSet>
 
   <!--
