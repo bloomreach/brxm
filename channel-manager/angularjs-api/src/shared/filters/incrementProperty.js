@@ -51,26 +51,4 @@
                 return null;
             };
         });
-        /*
-        .filter('incrementProperty', ['$filter', function ($filter) {
-            return function(collection, propertyName, propertyValue) {
-                var searchThroughAndAddIncrement = function(value) {
-                    if ($filter('getByProperty')(collection, propertyName, value)) {
-                        if('search', value.search(/\((\d+)\)/) < 0) {
-                            return searchThroughAndAddIncrement(value + ' (' + 1 + ')');
-                        }
-                        var incrementedNumAtEnd = value.replace(/\((\d+)\)/, function(match, number) {
-                            return '(' + (parseInt(number, 10) + 1) + ')';
-                        });
-                        console.log('incrementedNumAtEnd', incrementedNumAtEnd);
-                        return searchThroughAndAddIncrement(incrementedNumAtEnd);
-                    } else {
-                        console.log('name doesnt exist', value);
-                        return value;
-                    }
-                };
-                return searchThroughAndAddIncrement(propertyValue);
-            };
-        }]);
-        */
 })();
