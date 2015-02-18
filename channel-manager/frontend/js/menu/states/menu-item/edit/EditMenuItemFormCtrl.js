@@ -36,12 +36,9 @@
                     var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
                     function afternewItem() {
                         $scope.selectedMenuItem.title = '';
-                        if(form && form.title) {
-                            form.title.$dirty = true;
-                            form.title.$valid = false;
-                        }
+                        $scope.selectedMenuItem.isNew = true;
+
                         FormStateService.setDirty(true);
-                        FormStateService.setValid(false);
                         deregisterNewItemListener();
                     }
                 });

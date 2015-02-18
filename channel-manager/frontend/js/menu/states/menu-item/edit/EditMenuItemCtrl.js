@@ -88,6 +88,10 @@
                 };
 
                 $scope.saveTitle = function (form) {
+                    if($scope.selectedMenuItem.isNew === true) {
+                        form.title.$dirty = true;
+                        delete $scope.selectedMenuItem.isNew;
+                    }
                     if(form.title.$dirty && form.title.$valid) {
                         $scope.saveSelectedMenuItem('title');
                     }
