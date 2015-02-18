@@ -25,14 +25,9 @@ module.exports = function (grunt) {
     // display execution time of each task
     require('time-grunt')(grunt);
 
-    var buildConfig = require('./build.config.js');
-    function classPathExists() {
-        return fs.existsSync(buildConfig.target + '/classes/');
-    }
-
     grunt.initConfig({
 
-        build: buildConfig,
+        build : require('./build.config.js'),
 
         copy: {
             binaries: {
@@ -50,18 +45,6 @@ module.exports = function (grunt) {
                         dest: '<%= build.faresources %>/css'
                     }
                 ]
-            },
-
-            sources2classpath: {
-                // Copy resources to classpath so Wicket will pick them up
-                expand: true,
-                cwd: '<%= build.faresources %>',
-                src: '**/*',
-                dest: '<%= build.target %>/classes/skin/hippo-console',
-                filter: function () {
-                    //little hack to force it to only copy when dest exists
-                    return classPathExists();
-                }
             }
         },
 
@@ -107,8 +90,7 @@ module.exports = function (grunt) {
 
     // install
     grunt.registerTask('install', 'Build and install the theme', [
-        'build',
-        'newer:copy:sources2classpath'
+        'build'
     ]);
 
 };

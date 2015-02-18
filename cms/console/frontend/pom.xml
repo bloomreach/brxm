@@ -219,35 +219,4 @@
     </plugins>
   </build>
 
-  <profiles>
-    <profile>
-      <id>clean-bower</id>
-      <activation>
-        <file>
-          <exists>node_modules/grunt</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.plugin.exec.version}</version>
-            <executions>
-              <execution>
-                <id>clean-bower</id>
-                <phase>clean</phase>
-                <goals><goal>exec</goal></goals>
-                <configuration>
-                  <executable>grunt</executable>
-                  <commandlineArgs>clean:bower clean:tmp clean:copies</commandlineArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 </project>

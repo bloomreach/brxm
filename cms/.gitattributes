@@ -1558,8 +1558,6 @@ console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/consol
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree-console-icons.png -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree-images.png -text
 console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree.css svneol=native#text/plain
-console/frontend/src/site/apt/index.apt -text
-console/frontend/src/site/site.xml svneol=native#text/plain
 console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain
 console/repository/src/main/resources/frontend-console.xml -text svneol=unset#text/plain
 console/repository/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain

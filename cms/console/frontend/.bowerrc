@@ -1,4 +1,4 @@
 {
-  "directory": "src/main/styling/components",
+  "directory": "target/bower/components",
   "json": "bower.json"
 }
