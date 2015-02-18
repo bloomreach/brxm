@@ -31,6 +31,8 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsN
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsPageNotFoundComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsSearchComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsVideoComponent.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/DefaultPageableFactory.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/PageableFactory.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.java -text
@@ -69,6 +71,7 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/Compo
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/SiteUtils.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
+components/hst/src/main/resources/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml -text
 components/hst/src/test/resources/log4j.xml -text
 components/pom.xml -text
 dashboard-dependencies/pom.xml -text

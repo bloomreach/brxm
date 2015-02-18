@@ -24,7 +24,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo;
-import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 
 /**
@@ -41,7 +40,7 @@ public class EssentialsListPickerComponent extends EssentialsListComponent {
         final List<HippoDocument> documentItems = getDocumentItems(paramInfo);
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
-        final Pageable<HippoDocument> pageable = new IterablePagination<>(documentItems, page, pageSize);
+        final Pageable<HippoDocument> pageable = getPageableFactory().createPageable(documentItems, page, pageSize);
         request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }

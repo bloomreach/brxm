@@ -34,8 +34,11 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
+import org.onehippo.cms7.essentials.components.ext.DefaultPageableFactory;
+import org.onehippo.cms7.essentials.components.ext.PageableFactory;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +61,8 @@ public abstract class CommonComponent extends BaseHstComponent {
      */
     public static final String PAGE_NOT_FOUND = "pagenotfound";
 
+    @SuppressWarnings("HippoHstThreadSafeInspection")
+    private PageableFactory pageableFactory;
     /**
      * Attribute names used within Essentials
      */
@@ -245,8 +250,8 @@ public abstract class CommonComponent extends BaseHstComponent {
     /**
      * Adds beans to collection for given path
      *
-     * @param path
-     * @param beans
+     * @param path document path
+     * @param beans existing collection of HippoDocuments
      */
     public void addBeanForPath(final String path, final Collection<HippoDocument> beans) {
         if (Strings.isNullOrEmpty(path)) {
@@ -269,4 +274,17 @@ public abstract class CommonComponent extends BaseHstComponent {
     protected void setEditMode(final HstRequest request) {
         request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
     }
+
+    public PageableFactory getPageableFactory() {
+        if (pageableFactory == null) {
+            pageableFactory = HstServices.getComponentManager().getComponent(PageableFactory.class.getName());
+            if (pageableFactory == null) {
+                log.info("PageableFactory bean: {} is *not* configured, essentials will use DefaultPageableFactory", PageableFactory.class.getName());
+                pageableFactory = new DefaultPageableFactory();
+            }
+        }
+        return pageableFactory;
+    }
+
+
 }
