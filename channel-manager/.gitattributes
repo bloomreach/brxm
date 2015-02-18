@@ -190,7 +190,6 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/channelacti
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_fr.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_it.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_nl.properties -text
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/channelactions/channel-icon-16.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/social/facebook-icon-16.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/social/linkedin-icon-16.png -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/plugins/social/twitter-icon-16.png -text

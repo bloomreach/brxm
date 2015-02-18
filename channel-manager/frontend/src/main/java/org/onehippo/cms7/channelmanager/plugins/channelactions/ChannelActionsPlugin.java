@@ -41,8 +41,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
@@ -50,8 +48,10 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -224,8 +224,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         }
 
         @Override
-        protected ResourceReference getIcon() {
-            return new PackageResourceReference(getClass(), "channel-icon-16.png");
+        protected Component getIcon(final String id) {
+            return HippoIcon.fromSprite(id, Icon.GLOBAL_TINY);
         }
 
         @Override
@@ -257,8 +257,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         }
 
         @Override
-        protected ResourceReference getIcon() {
-            return new PackageResourceReference(getClass(), "channel-icon-16.png");
+        protected Component getIcon(final String id) {
+            return HippoIcon.fromSprite(id, Icon.GLOBAL_TINY);
         }
 
         @Override
