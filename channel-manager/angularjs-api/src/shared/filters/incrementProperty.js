@@ -18,7 +18,7 @@
 
     angular.module('hippo.channel')
         .filter('incrementProperty', function () {
-            return function (collection, propertyName, propertyValue, subCollection) {
+            return function (collection, propertyName, propertyValue) {
                 var itemsWithProperty = [];
                 function findPropertiesAndSubProperties (newCollection) {
                     for (var i = 0; i < newCollection.length; i++) {
@@ -28,9 +28,6 @@
                             itemsWithProperty.push(match[1]);
                         } else if(propName.match(propertyValue)) {
                             itemsWithProperty.push('0');
-                        }
-                        if(subCollection && newCollection[i][subCollection]) {
-                            findPropertiesAndSubProperties(newCollection[i][subCollection]);
                         }
                     }
                 }
