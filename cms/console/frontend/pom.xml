@@ -198,20 +198,20 @@
           </execution>
           <execution>
             <id>bower-install</id>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>bower</executable>
-              <commandlineArgs>install</commandlineArgs>
+              <commandlineArgs>install --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
             <id>grunt-build</id>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
-              <commandlineArgs>build</commandlineArgs>
+              <commandlineArgs>build --no-color</commandlineArgs>
             </configuration>
           </execution>
         </executions>
