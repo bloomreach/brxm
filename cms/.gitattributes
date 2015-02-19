@@ -1380,6 +1380,7 @@ console/frontend/.bowerrc -text
 console/frontend/README.md -text
 console/frontend/bower.json -text
 console/frontend/package.json -text
+console/frontend/src/main/appended-resources/META-INF/LICENSE -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
