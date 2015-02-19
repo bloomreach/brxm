@@ -51,13 +51,9 @@ module.exports = function (grunt) {
                 files: ['<%= build.src %>/**/*.less'],
                 tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:tmp']
             },
-            livereload: {
-                files: ['<%= build.skin %>/**/*.css'],
-                tasks: ['newer:copy:sources2classpath', 'shell:notify']
-            },
             images: {
                 files: ['<%= build.src %>/images/**'],
-                tasks: ['newer:copy:binaries', 'svgmin:theme', 'svgstore:theme', 'newer:copy:images2classpath']
+                tasks: ['newer:copy:binaries', 'svgmin:theme', 'svgstore:theme' ]
             }
         },
 
