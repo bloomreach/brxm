@@ -30,7 +30,6 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
