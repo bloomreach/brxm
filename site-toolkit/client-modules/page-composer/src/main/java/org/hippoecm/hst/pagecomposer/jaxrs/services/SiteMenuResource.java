@@ -81,7 +81,8 @@ public class SiteMenuResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final Mount mount = getPageComposerContextService().getEditingMount();
-                final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu, mount);
+                final String siteContentIdentifier = getPageComposerContextService().getSiteContentIdentifier(mount);
+                final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu, mount, siteContentIdentifier);
                 return ok("Menu item loaded successfully", representation);
             }
         });

@@ -138,4 +138,19 @@ public class PageComposerContextService {
         return getEditingPreviewSite().hasPreviewConfiguration();
     }
 
+    /**
+     * @return the site content identifier for <code>mount</code> and <code>null</code> if not found
+     */
+    public String getSiteContentIdentifier(final Mount mount) {
+        String contentPath = mount.getContentPath();
+        if (contentPath == null) {
+            return null;
+        }
+        try {
+            return getRequestContext().getSession().getNode(contentPath).getIdentifier();
+        } catch (RepositoryException e) {
+            log.info("Cannot find site content identifier for mount {} for content path {}", mount, contentPath);
+            return null;
+        }
+    }
 }
