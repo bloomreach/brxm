@@ -116,7 +116,7 @@ public class TabsPlugin extends RenderPlugin {
         MarkupContainer tabsContainer = new TabsContainer();
         tabsContainer.setOutputMarkupId(true);
 
-        tabs = new ArrayList<Tab>();
+        tabs = new ArrayList<>();
         add(tabbedPanel = newTabbedPanel("tabs", tabs, tabsContainer));
         tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
         tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, "tiny")));
@@ -205,9 +205,7 @@ public class TabsPlugin extends RenderPlugin {
 
     @Override
     public void onDetach() {
-        for (Tab tab : tabs) {
-            tab.detach();
-        }
+        tabs.forEach(TabsPlugin.Tab::detach);
         super.onDetach();
     }
 
@@ -248,7 +246,7 @@ public class TabsPlugin extends RenderPlugin {
      * @return List<Tab> of changed tabs, empty list if there are none.
      */
     private List<Tab> getChangedTabs(Tab ignoreTab) {
-        List<Tab> changedTabs = new ArrayList<Tab>();
+        List<Tab> changedTabs = new ArrayList<>();
         for (Tab tab : tabs) {
             if (ignoreTab != null && tab.equals(ignoreTab)) {
                 continue;
@@ -292,7 +290,7 @@ public class TabsPlugin extends RenderPlugin {
             dialogService.show(new CloseAllDialog(changedTabs, ignoredTab));
 
         } else {
-            List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+            List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
             for (TabsPlugin.Tab currentTab : tabsCopy) {
                 if(ignoredTab != null && ignoredTab.equals(currentTab)){
                     continue;
@@ -534,6 +532,11 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         public Component getIcon(String id, IconSize size) {
+            Component icon = decorator.getIcon(id, size);
+            if (icon != null) {
+                return icon;
+            }
+
             ResourceReference reference = decorator != null ? decorator.getIcon(size) : null;
             return reference != null ? HippoIcon.fromResource(id, reference, size) : null;
         }
@@ -586,11 +589,9 @@ public class TabsPlugin extends RenderPlugin {
             setOkVisible(false);
 
             AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
-                    List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+                    List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
                     for (TabsPlugin.Tab currentTab : tabsCopy) {
                         IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
                         if (reference == null) {
@@ -655,7 +656,7 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         private List<JcrNodeModel> getTabModelList(List<Tab> changedTabs) {
-            List<JcrNodeModel> tabModels = new ArrayList<JcrNodeModel>();
+            List<JcrNodeModel> tabModels = new ArrayList<>();
             for (Tab tab : changedTabs) {
                 IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
                 if (reference == null) {
@@ -673,7 +674,7 @@ public class TabsPlugin extends RenderPlugin {
             return tabModels;
         }
 
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return new StringResourceModel("title", this, null);
         }
 
@@ -683,9 +684,7 @@ public class TabsPlugin extends RenderPlugin {
         }
     }
 
-    private static class OnCloseDialog extends AbstractDialog {
-        private static final long serialVersionUID = 1L;
-
+    private static class OnCloseDialog extends AbstractDialog<Node> {
         public interface Actions extends IClusterable {
 
             void save();
@@ -711,8 +710,6 @@ public class TabsPlugin extends RenderPlugin {
             add(exceptionLabel);
 
             AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     try {
@@ -720,7 +717,7 @@ public class TabsPlugin extends RenderPlugin {
                         actions.close();
                         closeDialog();
                     } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(new Model<String>(ex.getMessage()));
+                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
                         target.add(exceptionLabel);
                     }
                 }
@@ -734,8 +731,6 @@ public class TabsPlugin extends RenderPlugin {
             addButton(button);
 
             button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public boolean isVisible() {
                     return isValid;
@@ -748,7 +743,7 @@ public class TabsPlugin extends RenderPlugin {
                         actions.close();
                         closeDialog();
                     } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(new Model<String>(ex.getMessage()));
+                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
                         target.add(exceptionLabel);
                     }
                 }

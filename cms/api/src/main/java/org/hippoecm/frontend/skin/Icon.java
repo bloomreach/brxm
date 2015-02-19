@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.io.IOUtils;
-import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.slf4j.Logger;
@@ -50,6 +49,9 @@ public enum Icon {
     DELETE_TINY,
     DEPUBLISH_SCHEDULED_TINY,
     DEPUBLISH_TINY,
+    DOCUMENT_COMPOUND_TINY,
+    DOCUMENT_FILE_TINY,
+    DOCUMENT_IMAGE_TINY,
     DOCUMENT_TINY,
     DOCUMENT_SMALL,
     DOCUMENT_FILES_TINY,
@@ -186,5 +188,4 @@ public enum Icon {
         }
         return cssClasses.toString();
     }
-
 }

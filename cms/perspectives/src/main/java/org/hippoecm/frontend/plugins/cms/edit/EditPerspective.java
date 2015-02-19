@@ -28,14 +28,15 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -45,13 +46,10 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
-import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
-import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.Violation;
-import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +59,7 @@ public class EditPerspective extends Perspective {
 
     private FeedbackPanel feedback;
     private boolean feedbackShown;
+    private Component icon;
 
     public EditPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -103,7 +102,6 @@ public class EditPerspective extends Perspective {
             }, config.getString(IValidationService.VALIDATE_ID));
         }
     }
-
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
@@ -150,7 +148,6 @@ public class EditPerspective extends Perspective {
                 }
                 return nodeName.getObject();
             }
-
         };
     }
 
@@ -169,34 +166,27 @@ public class EditPerspective extends Perspective {
     }
 
     @Override
-    public ResourceReference getIcon(IconSize iconSize) {
-        JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
-        if (nodeModel != null) {
-            ILocaleProvider localeProvider = getLocaleProvider();
-            if (localeProvider != null) {
-                Node node = nodeModel.getNode();
-                if (node != null) {
-                    try {
-                        if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                            String localeName = node.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                            for (HippoLocale locale : localeProvider.getLocales()) {
-                                if (localeName.equals(locale.getName())) {
-                                    return locale.getIcon(iconSize, LocaleState.EXISTS);
-                                }
-                            }
-                            log.info("Locale '" + localeName + "' was not found in provider");
-                        } else {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Node " + node.getPath() + " is not translated");
-                            }
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Repository error while retrieving locale for edited document", e);
-                    }
-                }
-            }
+    public Component getIcon(final String id, final IconSize size) {
+        if (icon == null) {
+            final EditorTabIconProvider iconProvider = new EditorTabIconProvider(getLocaleProvider());
+            final JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
+            icon = iconProvider.getIcon(nodeModel, id, size);
         }
-        return super.getIcon(iconSize);
+
+        if (icon == null) {
+            icon = super.getIcon(id, size);
+        }
+
+        return icon;
+    }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+
+        if (icon != null) {
+            icon.detach();
+        }
     }
 
     protected ILocaleProvider getLocaleProvider() {
