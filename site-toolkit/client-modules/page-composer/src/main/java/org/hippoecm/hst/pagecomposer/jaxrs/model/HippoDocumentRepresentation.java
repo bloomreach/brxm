@@ -17,25 +17,17 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
 
-public class HippoDocumentReprentation {
+public class HippoDocumentRepresentation {
 
     private String id;
     private String nodeName;
@@ -43,19 +35,21 @@ public class HippoDocumentReprentation {
     private String nodePath;
     private boolean selectable;
     private boolean folder;
-    private List<HippoDocumentReprentation> folders = new ArrayList<>();
-    private List<HippoDocumentReprentation> documents = new ArrayList<>();
+    private boolean hasFolders;
+    private boolean hasDocuments;
+    private List<HippoDocumentRepresentation> folders = new ArrayList<>();
+    private List<HippoDocumentRepresentation> documents = new ArrayList<>();
 
 
-    public HippoDocumentReprentation() {
+    public HippoDocumentRepresentation() {
         super();
     }
 
-    public HippoDocumentReprentation(final Node hippoDocumentNode) throws RepositoryException {
+    public HippoDocumentRepresentation(final Node hippoDocumentNode) throws RepositoryException {
         this(hippoDocumentNode, true, true);
     }
 
-    private HippoDocumentReprentation(final Node node, final boolean traverseChildren, final boolean folder) throws RepositoryException {
+    private HippoDocumentRepresentation(final Node node, final boolean includeChildren, final boolean folder) throws RepositoryException {
         if (!(node instanceof HippoNode)) {
             throw new ClientException("Expected object of class HippoNode but was of class " + node.getClass().getName(),
                     ClientError.UNKNOWN);
@@ -65,28 +59,35 @@ public class HippoDocumentReprentation {
         displayName = ((HippoNode)node).getLocalizedName();
         nodePath = node.getPath();
         this.folder = folder;
-        // to be done: Only if a link can be created for the document
+
+        // to be done: selectable Only if a link can be created for the document
         selectable = true;
-        if (traverseChildren) {
-            for (Node child : new NodeIterable(node.getNodes())) {
-                if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+
+        for (Node child : new NodeIterable(node.getNodes())) {
+            if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                hasFolders = true;
+                if (includeChildren) {
                     addFolder(child);
                 }
-                if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
+            }
+            if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                hasDocuments = true;
+                if (includeChildren) {
                     addDocument(child);
                 }
-                // else ignore
             }
+            // else ignore
         }
+
     }
 
     private void addFolder(final Node child) throws RepositoryException {
-        HippoDocumentReprentation folder = new HippoDocumentReprentation(child, false, true);
+        HippoDocumentRepresentation folder =  new HippoDocumentRepresentation(child, false, true);
         folders.add(folder);
     }
 
     private void addDocument(final Node child) throws RepositoryException {
-        HippoDocumentReprentation document = new HippoDocumentReprentation(child, false, false);
+        HippoDocumentRepresentation document =  new HippoDocumentRepresentation(child, false, false);
         documents.add(document);
     }
 
@@ -138,19 +139,35 @@ public class HippoDocumentReprentation {
         this.folder = folder;
     }
 
-    public List<HippoDocumentReprentation> getFolders() {
+    public boolean isHasFolders() {
+        return hasFolders;
+    }
+
+    public void setHasFolders(final boolean hasFolders) {
+        this.hasFolders = hasFolders;
+    }
+
+    public boolean isHasDocuments() {
+        return hasDocuments;
+    }
+
+    public void setHasDocuments(final boolean hasDocuments) {
+        this.hasDocuments = hasDocuments;
+    }
+
+    public List<HippoDocumentRepresentation> getFolders() {
         return folders;
     }
 
-    public void setFolders(final List<HippoDocumentReprentation> folders) {
+    public void setFolders(final List<HippoDocumentRepresentation> folders) {
         this.folders = folders;
     }
 
-    public List<HippoDocumentReprentation> getDocuments() {
+    public List<HippoDocumentRepresentation> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(final List<HippoDocumentReprentation> documents) {
+    public void setDocuments(final List<HippoDocumentRepresentation> documents) {
         this.documents = documents;
     }
 }

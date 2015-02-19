@@ -25,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.HippoDocumentReprentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.HippoDocumentRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
@@ -38,8 +38,8 @@ public class HippoFolderResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Node hippoDocumentNode = getPageComposerContextService().getRequestConfigNode(HippoNodeType.NT_DOCUMENT);
-                HippoDocumentReprentation representation = new HippoDocumentReprentation(hippoDocumentNode);
+                final Node hippoFolderNode = getPageComposerContextService().getRequestConfigNode(HippoNodeType.NT_DOCUMENT);
+                HippoDocumentRepresentation representation = new HippoDocumentRepresentation(hippoFolderNode);
                 return ok("Folder loaded successfully", representation);
             }
         });
