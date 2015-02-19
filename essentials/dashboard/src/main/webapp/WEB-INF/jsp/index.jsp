@@ -73,7 +73,7 @@
         <span class="icon-bar"></span>
       </button>
       <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
-      <a class="navbar-brand" href="#">Hippo setup</a>
+      <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo setup</a>
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>

@@ -26,44 +26,51 @@
             $stateProvider
                 .state('index', {
                     url: '',
-                    resolve: { factory: initAndDispatch }
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('introduction', {
                     url: '/introduction',
                     templateUrl: 'pages/introduction.html',
-                    controller: 'introductionCtrl'
+                    controller: 'introductionCtrl',
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('library', {
                     url: '/library',
                     templateUrl: 'pages/library.html',
-                    controller: 'pluginCtrl'
+                    controller: 'pluginCtrl',
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('installed-features', {
                     url: '/installed-features',
                     templateUrl: 'pages/installed-features.html',
-                    controller: 'pluginCtrl'
+                    controller: 'pluginCtrl',
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('features', {
                     url: '/features/:id',
                     templateUrl: function ($stateParams) {
                         return 'feature/' + $stateParams.id + '/' + $stateParams.id + '.html';
-                    }
+                    },
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('tools', {
                     url: '/tools',
                     templateUrl: 'pages/tools.html',
-                    controller: 'pluginCtrl'
+                    controller: 'pluginCtrl',
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('tools-id', {
                     url: '/tools/:id',
                     templateUrl: function ($stateParams) {
                         return 'tool/' + $stateParams.id + '/' + $stateParams.id + '.html';
-                    }
+                    },
+                    resolve: {factory: initAndDispatch}
                 })
                 .state('build', {
                     url: '/build',
                     templateUrl: 'pages/build.html',
-                    controller: 'pluginCtrl'
+                    controller: 'pluginCtrl',
+                    resolve: {factory: initAndDispatch}
                 });
         });
 
@@ -71,7 +78,7 @@
         // Determine the correct location path to start.
         // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
         var deferred = $q.defer();
-        var startPinger = function() {
+        var startPinger = function () {
             var PING_RUNNING_TIMER = 7000;
             var PING_DOWN_TIMER = 10000;
             //############################################
@@ -84,7 +91,7 @@
                 var modalOptions = {
                     headerText: 'Service Down',
                     bodyText: 'The setup application server appears to be down. If you are' +
-                        ' rebuilding the project, please wait until it is up and running again.'
+                    ' rebuilding the project, please wait until it is up and running again.'
 
                 };
 
@@ -121,19 +128,29 @@
 
             })();
         };
-        var dispatch = function() {
+        var dispatch = function () {
+            // return at once if already initialized
+            if ($rootScope.DISPATCH_PROCESSED) {
+                deferred.resolve(true);
+                return;
+            }
+            $rootScope.DISPATCH_PROCESSED = true;
             startPinger();
-            
             $http.get($rootScope.REST.project + '/status')
                 .success(function (response) {
-                    if (response.projectInitialized) {
-                        if (response.pluginsInstalled > 0) {
+                    if (!response.projectInitialized) {
+                        $location.path("/introduction");
+                    } else {
+                        // on browser reload, keep url user was on:
+                        var url = $location.url();
+                        if (url != '') {
+                            $location.path(url);
+                        }
+                        else if (response.pluginsInstalled > 0) {
                             $location.path("/installed-features");
                         } else {
                             $location.path("/library");
                         }
-                    } else {
-                        $location.path("/introduction");
                     }
                     deferred.resolve(true);
                 })
@@ -142,7 +159,6 @@
                     deferred.resolve(true);
                 });
         };
-
         $http.post($rootScope.REST.plugins + '/autosetup').success(dispatch).error(dispatch);
 
         return deferred.promise;
