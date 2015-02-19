@@ -28,7 +28,7 @@ public class UsernameValidator extends StringValidator {
 
         String username = (String) validatable.getValue();
         if (User.userExists(username)) {
-            validatable.error(new ValidationError(this, "UsernameValidator.exists"));
+            validatable.error(new ValidationError(this, "exists"));
         }
     }
 }
