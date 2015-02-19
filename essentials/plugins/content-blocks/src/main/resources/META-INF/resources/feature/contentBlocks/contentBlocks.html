@@ -49,11 +49,12 @@
           </p>
         </div>
         <form ng-show="documentTypes.length > 0" class="form-horizontal" novalidate name="contentBlocksForm">
-          <div ng-show="contentBlocksForm.$valid" class="form-group row">
+          <div class="form-group row">
             <label class="col-sm-4 control-label">Document Type:</label>
-            <div class="col-sm-8">
+            <div class="col-sm-4">
               <select name="documentType" hippo.theme.select-box
                       class="form-control"
+                      ng-disabled="!contentBlocksForm.$valid"
                       ng-model="selectedDocumentType"
                       ng-selected="selectedDocumentType"
                       ng-options="type.name for type in documentTypes"
@@ -61,21 +62,19 @@
                       data-placeholder="Choose a document type...">
               </select>
             </div>
+            <div class="col-sm-4 form-control-static">
+              <p ng-show="selectedDocumentType">
+                <essentials-cms-document-type-deep-link
+                      name-space="{{selectedDocTypeNamespace()}}"
+                      document-name="{{selectedDocTypeName()}}"
+                      label="Edit {{selectedDocumentType.name}} in CMS">
+                </essentials-cms-document-type-deep-link>
+              </p>
+            </div>
           </div>
 
           <!--Document type-specific part-->
           <div ng-show="selectedDocumentType">
-            <div class="row" ng-show="contentBlocksForm.$valid">
-              <div class="col-sm-8 col-sm-offset-4">
-                <p>
-                  <essentials-cms-document-type-deep-link
-                      name-space="{{selectedDocTypeNamespace()}}"
-                      document-name="{{selectedDocTypeName()}}"
-                      label="Edit {{selectedDocumentType.name}} in CMS">
-                  </essentials-cms-document-type-deep-link>
-                </p>
-              </div>
-            </div>
             <div ng-hide="selectedDocumentType.contentBlocksFields.length > 0" class="alert alert-warning">
               <p>This document type does not yet have any content blocks fields. You can add some and then set them up.
               </p>
