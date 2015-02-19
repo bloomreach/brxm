@@ -39,6 +39,7 @@ import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -253,12 +254,15 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new Label("type", "default").setVisible(false);
         }
 
-        UploadDialog dialog = newUploadDialog();
+        AbstractDialog dialog = newUploadDialog();
         dialog.add(typeComponent);
         return dialog;
     }
 
-    protected UploadDialog newUploadDialog() {
+    /**
+     * Override this method to extend uploading dialog
+     */
+    protected AbstractDialog newUploadDialog() {
         return new UploadDialog(getPluginContext(), getPluginConfig());
     }
 
