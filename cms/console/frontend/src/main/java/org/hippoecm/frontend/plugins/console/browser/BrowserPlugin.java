@@ -35,7 +35,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -43,8 +42,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
@@ -62,6 +59,9 @@ import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
+import org.hippoecm.frontend.plugins.console.icons.FontAwesomeIcon;
+import org.hippoecm.frontend.plugins.console.icons.IconLabel;
+import org.hippoecm.frontend.plugins.console.icons.JcrNodeIcon;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
@@ -72,7 +72,7 @@ import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.recompute.RecomputeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
@@ -237,7 +237,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             if (object instanceof IJcrTreeNode) {
                 IJcrTreeNode treeNode = (IJcrTreeNode) object;
                 final WebMarkupContainer menu = createContextMenu("contextMenu",
-                                                                  (JcrNodeModel) treeNode.getNodeModel());
+                        (JcrNodeModel) treeNode.getNodeModel());
                 item.add(menu);
                 item.add(new RightClickBehavior(menu, item) {
                     private static final long serialVersionUID = 1L;
@@ -279,19 +279,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
             Node jcrNode = nodeModel.getObject();
             Label icon = new Label(id, StringUtils.EMPTY);
-            icon.add(new CssClassAppender(new Model<>(JcrNodeIcon.getIconCssClass(jcrNode))));
+            icon.add(CssClass.append(JcrNodeIcon.getIconCssClass(jcrNode)));
 
             final String tooltip = getTooltip(jcrNode);
-            if(StringUtils.isNotBlank(tooltip)) {
+            if (StringUtils.isNotBlank(tooltip)) {
                 icon.add(new AttributeAppender("title", tooltip));
             }
             return icon;
         }
 
         private Component getDefaultIcon(final String id) {
-            Label icon = new Label(id, StringUtils.EMPTY);
-            icon.add(new CssClassAppender(new Model<>(JcrNodeIcon.DEFAULTNODE_ICON_CSSCLASS)));
-            return icon;
+            return new IconLabel(id, JcrNodeIcon.FA_DEFAULT_NODE_CSS_CLASS);
         }
 
         private String getTooltip(final Node jcrNode) {
@@ -322,8 +320,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("add-node", new Model<>(getString("add.node")), dialogFactory, getDialogService()));
             // add node icon
             Label iconAddNode = new Label("icon-add-node", StringUtils.EMPTY);
-            iconAddNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.PLUS.cssClassName())));
-            iconAddNode.add(new CssClassAppender(new Model<>("add-icon")));
+            iconAddNode.add(CssClass.append(FontAwesomeIcon.PLUS.cssClass()));
+            iconAddNode.add(CssClass.append("add-icon"));
             menuContainer.add(iconAddNode);
 
             // delete node
@@ -338,8 +336,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("delete-node", new Model<>(getString("delete.node")), dialogFactory, getDialogService()));
             // delete node icon
             Label iconDeleteNode = new Label("icon-delete-node", StringUtils.EMPTY);
-            iconDeleteNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.TIMES.cssClassName())));
-            iconDeleteNode.add(new CssClassAppender(new Model<>("delete-icon")));
+            iconDeleteNode.add(CssClass.append(FontAwesomeIcon.TIMES.cssClass()));
+            iconDeleteNode.add(CssClass.append("delete-icon"));
             menuContainer.add(iconDeleteNode);
 
             // add property
@@ -354,8 +352,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("add-property", new Model<>(getString("add.property")), dialogFactory, getDialogService()));
             // add property icon
             Label addProperty = new Label("icon-add-property", StringUtils.EMPTY);
-            addProperty.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.PLUS.cssClassName())));
-            addProperty.add(new CssClassAppender(new Model<>("add-property-icon")));
+            addProperty.add(CssClass.append(FontAwesomeIcon.PLUS.cssClass()));
+            addProperty.add(CssClass.append("add-property-icon"));
             menuContainer.add(addProperty);
 
             // copy node
@@ -370,8 +368,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("copy-node", new Model<>(getString("copy.node")), dialogFactory, getDialogService()));
             // copy node icon
             Label iconCopyNode = new Label("icon-copy-node", StringUtils.EMPTY);
-            iconCopyNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.FILES_O.cssClassName())));
-            iconCopyNode.add(new CssClassAppender(new Model<>("copy-icon")));
+            iconCopyNode.add(CssClass.append(FontAwesomeIcon.FILES_O.cssClass()));
+            iconCopyNode.add(CssClass.append("copy-icon"));
             menuContainer.add(iconCopyNode);
 
             // move node
@@ -386,8 +384,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("move-node", new Model<>(getString("move.node")), dialogFactory, getDialogService()));
             // move node icon
             Label iconMoveNode = new Label("icon-move-node", StringUtils.EMPTY);
-            iconMoveNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.BARS.cssClassName())));
-            iconMoveNode.add(new CssClassAppender(new Model<>("move-icon")));
+            iconMoveNode.add(CssClass.append(FontAwesomeIcon.BARS.cssClass()));
+            iconMoveNode.add(CssClass.append("move-icon"));
             menuContainer.add(iconMoveNode);
 
             // rename node
@@ -402,8 +400,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("rename-node", new Model<>(getString("rename.node")), dialogFactory, getDialogService()));
             // rename node icon
             Label iconRenameNode = new Label("icon-rename-node", StringUtils.EMPTY);
-            iconRenameNode.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.PENCIL_SQUARE_O.cssClassName())));
-            iconRenameNode.add(new CssClassAppender(new Model<>("rename-icon")));
+            iconRenameNode.add(CssClass.append(FontAwesomeIcon.PENCIL_SQUARE_O.cssClass()));
+            iconRenameNode.add(CssClass.append("rename-icon"));
             menuContainer.add(iconRenameNode);
 
             // xml export
@@ -418,8 +416,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("xml-export", new Model<>(getString("xml.export")), dialogFactory, getDialogService()));
             // xml export icon
             Label iconXmlExport = new Label("icon-xml-export", StringUtils.EMPTY);
-            iconXmlExport.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.DOWNLOAD.cssClassName())));
-            iconXmlExport.add(new CssClassAppender(new Model<>("xml-export-icon")));
+            iconXmlExport.add(CssClass.append(new Model<>(FontAwesomeIcon.DOWNLOAD.cssClass())));
+            iconXmlExport.add(CssClass.append(new Model<>("xml-export-icon")));
             menuContainer.add(iconXmlExport);
             // xml import
             dialogFactory = new IDialogFactory() {
@@ -433,8 +431,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("xml-import", new Model<>(getString("xml.import")), dialogFactory, getDialogService()));
             // xml import icon
             Label iconXmlImport = new Label("icon-xml-import", StringUtils.EMPTY);
-            iconXmlImport.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.UPLOAD.cssClassName())));
-            iconXmlImport.add(new CssClassAppender(new Model<>("xml-import-icon")));
+            iconXmlImport.add(CssClass.append(FontAwesomeIcon.UPLOAD.cssClass()));
+            iconXmlImport.add(CssClass.append("xml-import-icon"));
             menuContainer.add(iconXmlImport);
 
             // generate t9ids
@@ -448,11 +446,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
             };
             menuContainer.add(new DialogLink("t9ids", new Model<>(getString("new.translation.ids")), dialogFactory,
-                                             getDialogService()));
+                    getDialogService()));
             // generate t9ids icon
             Label iconT9ids = new Label("icon-t9ids", StringUtils.EMPTY);
-            iconT9ids.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.FLAG_O.cssClassName())));
-            iconT9ids.add(new CssClassAppender(new Model<>("t9ids-icon")));
+            iconT9ids.add(CssClass.append(FontAwesomeIcon.FLAG_O.cssClass()));
+            iconT9ids.add(CssClass.append("t9ids-icon"));
             menuContainer.add(iconT9ids);
 
             dialogFactory = new IDialogFactory() {
@@ -464,10 +462,10 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(new DialogLink("recompute", new Model<>(getString("recompute.derived")), dialogFactory,
-                                             getDialogService()));
+                    getDialogService()));
             Label iconHippoPaths = new Label("icon-recompute", StringUtils.EMPTY);
-            iconHippoPaths.add(new CssClassAppender(new Model<>(FontAwesomeIconClass.CALCULATOR.cssClassName())));
-            iconHippoPaths.add(new CssClassAppender(new Model<>("recompute-icon")));
+            iconHippoPaths.add(CssClass.append(FontAwesomeIcon.CALCULATOR.cssClass()));
+            iconHippoPaths.add(CssClass.append("recompute-icon"));
             menuContainer.add(iconHippoPaths);
 
             return menuContainer;

@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.browser;
+package org.hippoecm.frontend.plugins.console.icons;
 
-public enum FontAwesomeIconClass {
+public enum FontAwesomeIcon {
 
     /**
      * The enum items do not contain all FA icons available. Add one when you need it.
@@ -421,11 +421,11 @@ public enum FontAwesomeIconClass {
 
     private final String classString;
 
-    private FontAwesomeIconClass(String classString) {
+    private FontAwesomeIcon(String classString) {
         this.classString = classString;
     }
 
-    public String cssClassName() {
+    public String cssClass() {
         return this.classString;
     }
 }

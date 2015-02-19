@@ -28,7 +28,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -37,14 +36,12 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.EmptyDataProvider;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.plugins.console.browser.JcrNodeIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.console.icons.IconLabel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,16 +72,7 @@ class NodeEditor extends Form<Node> {
 
         add(new ToggleHeader("toggle-header-0", "0", "General"));
 
-        Label icon = new Label("nodeIcon", StringUtils.EMPTY);
-        icon.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                return JcrNodeIcon.getIconCssClass(getModel().getObject());
-            }
-        }));
-        add(icon);
+        add(new IconLabel("nodeIcon", getModel()));
         add(new Label("nodePath", new PropertyModel<String>(this, "nodePath")));
         add(new Label("name", new PropertyModel<String>(this, "name")));
         add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
