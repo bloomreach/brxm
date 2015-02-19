@@ -30,6 +30,7 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public class EditorTabIconProvider implements IClusterable {
 
         Component icon = null;
         try {
-            if (node.isNodeType("hippo:document")) {
+            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 // document, image or asset
                 if (node.isNodeType("hippogallery:imageset")) {
                     icon = getImageIcon(node, id, size);
@@ -66,7 +67,7 @@ public class EditorTabIconProvider implements IClusterable {
                 } else {
                     icon = getDocumentIcon(node, id, size);
                 }
-            } else if (node.isNodeType("hipposysedit:templatetype")) {
+            } else if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 // document template
                 icon = getTemplateIcon(node, id, size);
             }
@@ -110,11 +111,11 @@ public class EditorTabIconProvider implements IClusterable {
     }
 
     private boolean isCompoundTemplate(final Node templateType) throws RepositoryException {
-        if (templateType.hasNode("hipposysedit:nodetype")) {
-            Node nodeType = templateType.getNode("hipposysedit:nodetype");
-            if (nodeType.hasNode("hipposysedit:nodetype")) {
-                nodeType = nodeType.getNode("hipposysedit:nodetype");
-                final Property superTypeProperty = nodeType.getProperty("hipposysedit:supertype");
+        if (templateType.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+            Node nodeType = templateType.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+            if (nodeType.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+                nodeType = nodeType.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                final Property superTypeProperty = nodeType.getProperty(HippoNodeType.HIPPO_SUPERTYPE);
                 if (superTypeProperty.isMultiple()) {
                     for (Value value : superTypeProperty.getValues()) {
                         if ("hippo:compound".equals(value.getString())) {
