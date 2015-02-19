@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 /**
@@ -61,9 +62,13 @@ public abstract class AbstractDocumentWorkflowAction extends AbstractWorkflowAct
         return WORKFLOW_CLASS;
     }
 
-    protected final DocumentWorkflow getDocumentWorkflow(Node handle) throws RepositoryException {
+    protected final DocumentWorkflow getDocumentWorkflow(Node handle) throws RepositoryException, WorkflowException {
         Workflow wf = getWorkflowManager(handle.getSession()).getWorkflow(getWorkflowCategory(), handle);
-        assert wf instanceof DocumentWorkflow;
+        if (wf == null) {
+            context.getLog().error("FIXME: find out what is going wrong");
+            throw new WorkflowException("Workflow is null");
+        }
+
         return (DocumentWorkflow) wf;
     }
     
