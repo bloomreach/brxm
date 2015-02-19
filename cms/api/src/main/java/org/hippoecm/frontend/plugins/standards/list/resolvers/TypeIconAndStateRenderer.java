@@ -18,7 +18,9 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -60,7 +62,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
         public Container(final String id, final Node node) {
             super(id, new JcrNodeModel(node));
 
-            add(HippoIcon.fromSprite(WICKET_ID_TYPE_ICON, Icon.DOCUMENT_SMALL));
+            add(getTypeIcon(WICKET_ID_TYPE_ICON));
             add(getStateIcon(WICKET_ID_STATE_ICON));
         }
 
@@ -70,6 +72,43 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                 replace(getStateIcon(WICKET_ID_STATE_ICON));
             }
             super.onBeforeRender();
+        }
+
+        private Component getTypeIcon(final String id) {
+            if (isCompound()) {
+                return HippoIcon.fromSprite(id, Icon.DOCUMENT_COMPOUND_SMALL);
+            } else {
+                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILE_SMALL);
+            }
+        }
+
+        private boolean isCompound() {
+            final JcrNodeModel nodeModel = (JcrNodeModel)getDefaultModel();
+            final Node node = nodeModel.getNode();
+            if (node != null) {
+                try {
+                    if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
+                            && node.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+                        Node ntHandle = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                        if (ntHandle.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+                            Node variant = ntHandle.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                            final Property superTypeProperty = variant.getProperty(HippoNodeType.HIPPO_SUPERTYPE);
+                            if (superTypeProperty.isMultiple()) {
+                                for (Value value : superTypeProperty.getValues()) {
+                                    if ("hippo:compound".equals(value.getString())) {
+                                        return true;
+                                    }
+                                }
+                            } else {
+                                return "hippo:compound".equals(superTypeProperty.getString());
+                            }
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.info("Unable to determine if template node is of type compound for '{}'", JcrUtils.getNodePathQuietly(node), e);
+                }
+            }
+            return false;
         }
 
         private Component getStateIcon(final String id) {
