@@ -38,6 +38,7 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +84,8 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
         if(jcrPath != null){
             IEditor.Mode mode = IEditor.Mode.VIEW;
             final String modeValue = parameters.get(MODE_PARAM);
-            if (modeValue != null && !modeValue.isEmpty()) {
-                if (modeValue.toString().equals(MODE_VALUE_EDIT)) {
-                    mode = IEditor.Mode.EDIT;
-                }
+            if (MODE_VALUE_EDIT.equals(modeValue)) {
+                mode = IEditor.Mode.EDIT;
             }
             browseTo(jcrPath, mode);
         }
@@ -159,30 +158,35 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
             if (jcrPath != null) {
                 JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
 
-                if (nodeModel.getNode() != null) {
+                Node jcrNode = nodeModel.getNode();
+                if (jcrNode != null) {
                     if (browseService != null && validateNavigationTarget(nodeModel)) {
                         browseService.browse(nodeModel);
                     } else {
                         log.info("Could not find browse service - document " + jcrPath + " will not be selected");
                     }
 
-                    if (editorMgr != null && validateNavigationTarget(nodeModel)) {
-                        IEditor editor = editorMgr.getEditor(nodeModel);
-                        try {
-                            if (editor == null) {
-                                editor = editorMgr.openPreview(nodeModel);
+                    if (!jcrNode.isNodeType(HippoStdNodeType.NT_FOLDER) && !jcrNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
+                        if (editorMgr != null) {
+                            IEditor editor = editorMgr.getEditor(nodeModel);
+                            try {
+                                if (editor == null) {
+                                    editor = editorMgr.openPreview(nodeModel);
+                                }
+                                editor.setMode(mode);
+                            } catch (EditorException e) {
+                                log.info("Could not open editor for " + jcrPath);
+                            } catch (ServiceException e) {
+                                log.info("Could not open preview for " + jcrPath);
                             }
-                            editor.setMode(mode);
-                        } catch (EditorException e) {
-                            log.info("Could not open editor for " + jcrPath);
-                        } catch (ServiceException e) {
-                            log.info("Could not open preview for " + jcrPath);
                         }
                     }
                 } else {
                     log.debug("Cannot browse to '{}': node does not exist", jcrPath);
                 }
             }
+        } catch (RepositoryException e) {
+            log.warn("Could not determine node type - " + jcrPath, e);
         } finally {
             browsing = false;
         }
