@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,6 +98,18 @@
 
 .cke_wysiwyg_div.cke_editable ol > li {
     list-style-type: decimal;
+}
+
+.cke_panel_block {
+    outline: 0;
+}
+
+.cke_panel_grouptitle {
+    background: #f2f2f2 none;
+}
+
+.cke_panel_container .cke_selected > a {
+    border-color: #d4d6d8;
 }
 
 .cke_wysiwyg_div.cke_editable h1,

@@ -20,8 +20,11 @@
   .hippo-ckeditor-textarea {
     opacity: 0;
   }
+}
 
-  // override default CKEditor styling
+// override default CKEditor styling
+.hippo-root {
+
   .cke {
     border-color: @editor-subfield-border;
     box-shadow: none;
@@ -51,17 +54,43 @@
   .cke_combo_button {
     margin-right: 8px;
     margin-bottom: 8px;
-    background: @ckeditor-toolbar-btn-bgcolor none;
-    border-color: @ckeditor-toolbar-btn-border-color;
+    background: @ckeditor-button-off-color none;
+    border-color: @ckeditor-button-border-color;
   }
 
-  .cke_button:hover {
-    background: @ckeditor-toolbar-btn-hover-color none;
+  .cke_button_off:hover,
+  .cke_button_disabled:hover,
+  .cke_combo_off a.cke_combo_button:hover {
+    background: @ckeditor-button-off-hover-color none;
     box-shadow: none;
   }
 
   .cke_button_on {
-    background: @ckeditor-toolbar-btn-on-color none;
+    background: @ckeditor-button-on-color none;
+    border-color: @ckeditor-button-border-color;
+    box-shadow: none;
+    &:hover {
+      background-color: @ckeditor-button-on-hover-color;
+      box-shadow: none;
+    }
+  }
+
+  .cke_combo_on a.cke_combo_button,
+  .cke_combo_on a.cke_combo_button:focus {
+    background: @ckeditor-button-off-color none;
+    border-color: @ckeditor-button-border-color;
+    box-shadow: none;
+  }
+
+  .cke_combo_on a.cke_combo_button:hover,
+  .cke_combo_off a.cke_combo_button:active {
+    background: @ckeditor-button-off-hover-color none;
+    border-color: @ckeditor-button-border-color;
+    box-shadow: none;
+  }
+
+  .cke_wysiwyg_div.cke_editable {
+    padding: 8px;
   }
 
   .cke_bottom {
@@ -69,7 +98,7 @@
     padding-left: 4px;
   }
 
-  .cke_wysiwyg_div.cke_editable {
-    padding: 8px;
+  .cke_panel {
+    border-color: @dark-gray;
   }
 }
