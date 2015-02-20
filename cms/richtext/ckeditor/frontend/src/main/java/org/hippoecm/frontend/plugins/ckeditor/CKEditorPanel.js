@@ -151,18 +151,4 @@
         });
     };
 
-    if (Wicket.Browser.isIE()) {
-        CKEDITOR_READY.when(function() {
-            /*
-              Replace CKEditor's 'appendStyleText' method. IE chokes on the original because it calls createStyleSheet()
-              with an empty string as argument. That throws an Error when the page is served by an HTTP server.
-             */
-            CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
-                var style = this.$.createStyleSheet();
-                style.cssText = cssStyleText;
-                return style;
-            };
-        });
-    }
-
 }(jQuery));
