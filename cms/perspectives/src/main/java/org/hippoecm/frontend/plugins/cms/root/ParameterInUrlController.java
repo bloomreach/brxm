@@ -52,8 +52,6 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
     private static final String PATH_PARAM = "path";
     private static final String UUID_PARAM = "uuid";
     private static final String URL_PARAMETERS = "parameters";
-    private static final String CONTENT_PATH = "/content";
-    private static final String DOCUMENTS_PATH = CONTENT_PATH + "/documents";
 
     private final IModelReference<Node> modelReference;
     private final IBrowseService browseService;
@@ -160,7 +158,7 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
 
                 Node jcrNode = nodeModel.getNode();
                 if (jcrNode != null) {
-                    if (browseService != null && validateNavigationTarget(nodeModel)) {
+                    if (browseService != null) {
                         browseService.browse(nodeModel);
                     } else {
                         log.info("Could not find browse service - document " + jcrPath + " will not be selected");
@@ -189,19 +187,6 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
             log.warn("Could not determine node type - " + jcrPath, e);
         } finally {
             browsing = false;
-        }
-    }
-
-    private boolean validateNavigationTarget(JcrNodeModel nodeModel) {
-        try {
-            final String path = nodeModel.getNode().getPath();
-            if (path.startsWith(CONTENT_PATH)) {
-                return path.startsWith(DOCUMENTS_PATH);
-            }
-            return true;
-        } catch (RepositoryException e) {
-            log.warn("error validating path: ", e.getMessage());
-            return false;
         }
     }
 
