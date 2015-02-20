@@ -60,7 +60,7 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body id="container"  ng-cloak>
-<essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages"></essentials-notifier>
+<essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages" ng-class="{'log-visible':feedbackMessages.length && addLogClass}"></essentials-notifier>
 
 
 <div class="hippo-navbar navbar navbar-default navbar-fixed-top" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
