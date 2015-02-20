@@ -51,6 +51,9 @@ module.exports = function (grunt) {
                 files: ['<%= build.src %>/**/*.less'],
                 tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:tmp']
             },
+            reloadCompiledCss: {
+                files: ['<%= build.skin %>/**/*.css']
+            },
             images: {
                 files: ['<%= build.src %>/images/**'],
                 tasks: ['newer:copy:binaries', 'svgmin:theme', 'svgstore:theme' ]
