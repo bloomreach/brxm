@@ -31,6 +31,7 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -38,7 +39,9 @@ import org.slf4j.LoggerFactory;
 
 public class EditorTabIconProvider implements IClusterable {
 
-    public static final Logger log = LoggerFactory.getLogger(EditorTabIconProvider.class);
+    private static final String HIPPO_COMPOUND = "hippo:compound";
+    private static final String HIPPOGALLERY_ASSET = "hippogallery:asset";
+    private static final Logger log = LoggerFactory.getLogger(EditorTabIconProvider.class);
 
     private ILocaleProvider localeProvider;
 
@@ -60,33 +63,32 @@ public class EditorTabIconProvider implements IClusterable {
         try {
             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 // document, image or asset
-                if (node.isNodeType("hippogallery:imageset")) {
-                    icon = getImageIcon(node, id, size);
-                } else if ("hippogallery:asset".equals(node.getPrimaryNodeType().getPrimaryItemName())) {
-                    icon = getAssetIcon(node, id, size);
+                if (node.isNodeType(HippoGalleryNodeType.IMAGE_SET)) {
+                    icon = getImageIcon(id);
+                } else if (HIPPOGALLERY_ASSET.equals(node.getPrimaryNodeType().getPrimaryItemName())) {
+                    icon = getAssetIcon(id);
                 } else {
                     icon = getDocumentIcon(node, id, size);
                 }
             } else if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 // document template
-                icon = getTemplateIcon(node, id, size);
+                icon = getTemplateIcon(node, id);
             }
         } catch (RepositoryException e) {
-            log.error("Error retrieving icon for node {}, message is {}", JcrUtils.getNodePathQuietly(node),
-                    e.getMessage());
+            log.info("Cannot retrieve icon for node {}", JcrUtils.getNodePathQuietly(node), e);
         }
         return icon;
     }
 
-    private Component getAssetIcon(final Node node, final String id, final IconSize size) {
+    private Component getAssetIcon(final String id) {
         return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILE_TINY);
     }
 
-    private Component getImageIcon(final Node node, final String id, final IconSize size) {
+    private Component getImageIcon(final String id) {
         return HippoIcon.fromSprite(id, Icon.DOCUMENT_IMAGE_TINY);
     }
 
-    private Component getTemplateIcon(final Node node, final String id, final IconSize size) throws RepositoryException {
+    private Component getTemplateIcon(final Node node, final String id) throws RepositoryException {
         if (isCompoundTemplate(node)) {
             return HippoIcon.fromSprite(id, Icon.DOCUMENT_COMPOUND_TINY);
         } else {
@@ -104,7 +106,7 @@ public class EditorTabIconProvider implements IClusterable {
                         return HippoIcon.fromResource(id, reference);
                     }
                 }
-                log.info("Locale '" + localeName + "' was not found in provider");
+                log.info("Locale '{}' was not found in locale provider", localeName);
             }
         }
         return HippoIcon.fromSprite(id, Icon.DOCUMENT_TINY);
@@ -118,12 +120,12 @@ public class EditorTabIconProvider implements IClusterable {
                 final Property superTypeProperty = nodeType.getProperty(HippoNodeType.HIPPO_SUPERTYPE);
                 if (superTypeProperty.isMultiple()) {
                     for (Value value : superTypeProperty.getValues()) {
-                        if ("hippo:compound".equals(value.getString())) {
+                        if (HIPPO_COMPOUND.equals(value.getString())) {
                             return true;
                         }
                     }
                 } else {
-                    return "hippo:compound".equals(superTypeProperty.getString());
+                    return HIPPO_COMPOUND.equals(superTypeProperty.getString());
                 }
             }
         }
