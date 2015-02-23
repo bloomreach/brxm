@@ -48,7 +48,7 @@
     <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.8.2</junit.version>
-    <wicket.version>6.14.0</wicket.version>
+    <wicket.version>6.19.0</wicket.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
