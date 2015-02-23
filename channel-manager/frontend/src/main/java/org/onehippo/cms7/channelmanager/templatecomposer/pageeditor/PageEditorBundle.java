@@ -37,6 +37,7 @@ public final class PageEditorBundle {
             "Notification.js",
             "RestStore.js",
             "ComponentVariants.js",
+            "ValidatorField.js",
             "PropertiesForm.js",
             "PropertiesPanel.js",
             "DragDropOne.js",
@@ -52,6 +53,5 @@ public final class PageEditorBundle {
      * File that contains all sources concatenated.
      */
     public static final String ALL = "page-editor-all.js";
-
 
 }

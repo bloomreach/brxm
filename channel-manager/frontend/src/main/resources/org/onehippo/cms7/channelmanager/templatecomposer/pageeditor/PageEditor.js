@@ -944,7 +944,7 @@
                 listeners: {
                     hide: function() {
                         this.pageContainer.deselectComponents();
-                        propertiesPanel.fireInitialPropertiesChangedIfNeeded();
+                        propertiesPanel.onHide();
                     },
                     scope: this
                 },

@@ -30,7 +30,7 @@
             this.variant = config.variant;
             this.propertiesForm = config.propertiesForm;
 
-            this.addEvents('variantPristine', 'variantDirty', 'visibleHeightChanged');
+            this.addEvents('visibleHeightChanged');
         },
 
         load: function() {
@@ -50,12 +50,8 @@
          * Marks this editor as 'dirty' or not.
          * @param isDirty whether to mark this editor as dirty.
          */
-        setDirty: function(isDirty) {
-            if (isDirty) {
-                this.fireEvent('variantDirty');
-            } else {
-                this.fireEvent('variantPristine');
-            }
+        markDirty: function(isDirty) {
+            this.propertiesForm.markDirty(isDirty);
         }
 
     });
