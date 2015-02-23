@@ -1309,7 +1309,6 @@ toolkit-resources/addon/unittestcontents/src/main/resources/unittest-image.xml s
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-namespace.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-types.cnd -text
 toolkit-resources/addon/unittestcontents/src/site/site.xml -text
-toolkit-resources/addon/unittestspringconfig/hst-addon-unittestspringconfig.iml -text
 toolkit-resources/addon/unittestspringconfig/pom.xml -text
 toolkit-resources/addon/unittestspringconfig/src/main/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
 toolkit-resources/pom.xml svneol=native#text/plain
