@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
             this.variant = config.variant;
             this.propertiesForm = config.propertiesForm;
 
-            this.addEvents('visibleHeightChanged');
+            this.addEvents('variantPristine', 'variantDirty', 'visibleHeightChanged');
         },
 
         load: function() {
@@ -44,6 +44,18 @@
          */
         syncVisibleHeight: function() {
             // empty base method
+        },
+
+        /**
+         * Marks this editor as 'dirty' or not.
+         * @param isDirty whether to mark this editor as dirty.
+         */
+        setDirty: function(isDirty) {
+            if (isDirty) {
+                this.fireEvent('variantDirty');
+            } else {
+                this.fireEvent('variantPristine');
+            }
         }
 
     });

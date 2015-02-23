@@ -127,7 +127,6 @@
 
         setNewVariant: function(newVariantId) {
             this.newVariantId = newVariantId;
-            this._fireVariantDirtyOrPristine();
         },
 
         getVisibleHeight: function() {
@@ -137,12 +136,8 @@
             return 0;
         },
 
-        _hasNewVariantId: function() {
-            return this.variant && this.variant.id !== this.newVariantId;
-        },
-
         isDirty: function() {
-            return this._hasNewVariantId() || this._isStoreDirty();
+            return this._isStoreDirty();
         },
 
         _isStoreDirty: function () {
