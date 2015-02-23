@@ -26,9 +26,6 @@
   <packaging>pom</packaging>
 
   <url>http://www.onehippo.org/cms7/</url>
-  <prerequisites>
-    <maven>3.0.4</maven>
-  </prerequisites>
 
   <organization>
     <name>Hippo B.V. (http://www.onehippo.com)</name>
@@ -109,6 +106,7 @@
     <maven.plugin.surefire-report.version>2.16</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.4</maven.plugin.war.version>
+    <maven.plugin.enforcer.version>1.4</maven.plugin.enforcer.version>
 
     <!-- if you want a remote debugging on a different a address
          override on command line with -Dcargo.debug.addres=xxxx -->
@@ -746,6 +744,11 @@
             </container>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven.plugin.enforcer.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -763,6 +766,25 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
         <version>${maven.plugin.clean.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-maven-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0.5</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
