@@ -31,7 +31,6 @@ import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
-import org.hippoecm.frontend.widgets.MultipleTextFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class TemplateParameterEditor extends Panel {
