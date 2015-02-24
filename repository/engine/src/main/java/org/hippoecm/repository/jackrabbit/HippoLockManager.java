@@ -20,8 +20,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.lock.LockInfo;
@@ -58,6 +60,22 @@ public class HippoLockManager extends LockManagerImpl {
             }
         }
         super.checkUnlock(info, session);
+    }
+
+    @Override
+    public Lock lock(final NodeImpl node, final boolean isDeep, final boolean isSessionScoped) throws LockException, RepositoryException {
+        if (isSessionScoped) {
+            log.warn("Session-scoped locks are not propagated through the cluster, use open-scoped if you want to be able to run a cluster.");
+        }
+        return super.lock(node, isDeep, isSessionScoped);
+    }
+
+    @Override
+    public Lock lock(final NodeImpl node, final boolean isDeep, final boolean isSessionScoped, final long timoutHint, final String ownerInfo) throws LockException, RepositoryException {
+        if (isSessionScoped) {
+            log.warn("Session-scoped locks are not propagated through the cluster, use open-scoped if you want to be able to run a cluster.");
+        }
+        return super.lock(node, isDeep, isSessionScoped, timoutHint, ownerInfo);
     }
 
     @Override
