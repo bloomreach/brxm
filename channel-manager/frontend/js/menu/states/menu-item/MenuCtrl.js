@@ -82,7 +82,10 @@
                                 }).then(
                                     function (menuItemId) {
                                         FormStateService.setValid(true);
-                                        $scope.$parent.selectedMenuItem.collapsed = false;
+
+                                        if ($scope.$parent.selectedMenuItem) {
+                                            $scope.$parent.selectedMenuItem.collapsed = false;
+                                        }
 
                                         $state.go('menu-item.edit', {
                                             menuItemId: menuItemId

@@ -166,9 +166,9 @@
                 function remove() {
                     MenuService.getPathToMenuItem($scope.selectedMenuItem.id).then(function(path) {
                         var nextState = (function() {
-                            var item, parent, items, state;
+                            var item, parent, items;
                             if (!path || path.length < 2) {
-                                return { state: 'list-empty', id: undefined };
+                                return { state: 'none' };
                             }
 
                             item = path.pop();
@@ -176,8 +176,11 @@
                             items = parent.items;
                             if (items.length == 1) {
                                 // item to delete has no siblings, so parent will be selected
-                                state = path.length > 0 ? 'edit' : 'list-empty';
-                                return {state: state, id: parent.id};
+                                if (path.length > 0) {
+                                    return {state: 'edit', id: parent.id};
+                                } else {
+                                    return {state: 'none'};
+                                }
                             }
                             var itemIndex = items.indexOf(item);
                             if (itemIndex === 0) {

@@ -33,6 +33,7 @@ frontend/js/menu/states/menu-item/TreeCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemFormCtrl.js -text
 frontend/js/menu/states/menu-item/menu-item.html -text
+frontend/js/menu/states/menu-item/none/NoMenuItemCtrl.js -text
 frontend/js/page/i18n/de.json -text
 frontend/js/page/i18n/en.json -text
 frontend/js/page/i18n/fr.json -text

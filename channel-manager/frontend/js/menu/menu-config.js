@@ -44,7 +44,10 @@
                         templateUrl: 'states/menu-item/edit/edit-menu-item.html'
                     })
 
-                    .state('menu-item.list-empty', {});
+                    .state('menu-item.none', {
+                        url: '/none',
+                        controller: 'hippo.channel.menu.NoMenuItemCtrl'
+                    });
 
 
                 // translations

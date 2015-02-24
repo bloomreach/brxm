@@ -26,10 +26,11 @@
                 MenuService.getMenu().then(
                     function (menuData) {
                         if (menuData.items && menuData.items.length > 0) {
-                            // go to default state
                             $state.go('menu-item.edit', {
                                 menuItemId: menuData.items[0].id
                             });
+                        } else {
+                            $state.go('menu-item.none');
                         }
                     },
                     function (error) {
