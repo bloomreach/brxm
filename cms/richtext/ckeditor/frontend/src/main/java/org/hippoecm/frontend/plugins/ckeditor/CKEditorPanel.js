@@ -151,4 +151,18 @@
         });
     };
 
+    if (Wicket.Browser.isIELessThan11()) {
+        CKEDITOR_READY.when(function() {
+            /*
+             Replace CKEditor's 'appendStyleText' method. IE < 11 chokes on the original because it calls createStyleSheet()
+             with an empty string as argument. That throws an Error when the page is served by an HTTP server.
+             */
+            CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
+                var styleSheet = this.$.createStyleSheet();
+                styleSheet.cssText = cssStyleText;
+                return styleSheet;
+            };
+        });
+    }
+
 }(jQuery));
