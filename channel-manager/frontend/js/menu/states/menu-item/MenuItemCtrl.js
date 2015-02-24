@@ -42,7 +42,7 @@
                         $scope.$broadcast('menu-items-changed');
 
                         // merge pending changes into newly loaded tree
-                        if ($scope.selectedMenuItem) {
+                        if ($scope.list.length > 0 && $scope.selectedMenuItem) {
                             MenuService.getMenuItem($scope.selectedMenuItem.id).then(function(item) {
                                 if ($scope.selectedMenuItem != item) {
                                     delete $scope.selectedMenuItem.items;

@@ -168,7 +168,7 @@
                         var nextState = (function() {
                             var item, parent, items, state;
                             if (!path || path.length < 2) {
-                                return { state: 'add', id: undefined };
+                                return { state: 'list-empty', id: undefined };
                             }
 
                             item = path.pop();
@@ -176,7 +176,7 @@
                             items = parent.items;
                             if (items.length == 1) {
                                 // item to delete has no siblings, so parent will be selected
-                                state = path.length > 0 ? 'edit' : 'add';
+                                state = path.length > 0 ? 'edit' : 'list-empty';
                                 return {state: state, id: parent.id};
                             }
                             var itemIndex = items.indexOf(item);

@@ -42,7 +42,10 @@
                         url: '/:menuItemId/edit',
                         controller: 'hippo.channel.menu.EditMenuItemCtrl',
                         templateUrl: 'states/menu-item/edit/edit-menu-item.html'
-                    });
+                    })
+
+                    .state('menu-item.list-empty', {});
+
 
                 // translations
                 $translateProvider.useStaticFilesLoader({
