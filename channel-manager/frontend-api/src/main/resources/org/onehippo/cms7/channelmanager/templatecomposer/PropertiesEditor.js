@@ -51,7 +51,7 @@
          * @param isDirty whether to mark this editor as dirty.
          */
         markDirty: function(isDirty) {
-            this.propertiesForm.markDirty(isDirty);
+            this.propertiesForm.markDirty(isDirty === undefined ? true : isDirty);
         }
 
     });
