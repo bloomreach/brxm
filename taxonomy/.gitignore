@@ -1,0 +1,15 @@
+/*.iml
+/.idea
+addon/*.iml
+addon/frontend/*.iml
+addon/frontend/target
+addon/repository/*.iml
+addon/repository/target
+addon/target
+api/*.iml
+api/target
+hst-api/*.iml
+hst-api/target
+hst/*.iml
+hst/target
+/target
