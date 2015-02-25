@@ -34,15 +34,21 @@
         .controller('hippo.channel.menu.EditMenuItemCtrl', [
             '$rootScope',
             '$scope',
-            '$stateParams',
             '$state',
+            '$stateParams',
             '$window',
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
-            function ($rootScope, $scope, $stateParams, $state, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
+            function ($rootScope, $scope, $state, $stateParams, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
                 var savedMenuItem;
+
+                if (!$scope.$parent.selectedMenuItem || $stateParams.menuItemId !== $scope.$parent.selectedMenuItem.id) {
+                    MenuService.getMenuItem($stateParams.menuItemId).then(function (item) {
+                        $scope.$parent.selectedMenuItem = item;
+                    });
+                }
 
                 $scope.isSaving = {
                     title: false,
@@ -67,6 +73,14 @@
                     },
                     cancel: function() {
                         $scope.remove.isVisible = false;
+                    }
+                };
+
+                $scope.internal = {
+                    openPicker: function() {
+                        $state.go('picker', {
+                            menuItemId: $scope.selectedMenuItem.id
+                        });
                     }
                 };
 
