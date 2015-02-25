@@ -59,7 +59,7 @@
       </sv:property>
       <sv:property sv:name="browsers.supported" sv:type="String">
         <sv:value>ie 10 &gt;=</sv:value>
-        <sv:value>firefox 35 &gt;=</sv:value>
+        <sv:value>firefox 31 &gt;=</sv:value>
         <sv:value>safari 7 &gt;=</sv:value>
         <sv:value>chrome 40 &gt;=</sv:value>
       </sv:property>
