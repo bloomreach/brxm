@@ -27,12 +27,14 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.Home;
@@ -319,8 +321,14 @@ public class PluginUserSession extends UserSession {
         if (credentials == null) {
             pageId = 0;
         } else {
+            // Set the username to facilitate two-factor authentication filters
+            getHttpSession().setAttribute("hippo:username", credentials.getUsername());
             pageId = 1;
         }
+    }
+
+    private HttpSession getHttpSession() {
+        return ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getSession();
     }
 
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
@@ -337,6 +345,8 @@ public class PluginUserSession extends UserSession {
 
         JcrObservationManager.getInstance().cleanupListeners(this);
         pageId = 0;
+
+        getHttpSession().removeAttribute("hippo:username");
 
         invalidate();
         dirty();
