@@ -128,6 +128,17 @@ div.taxonomy-details a:hover {
     padding: 4px;
 }
 
+.taxonomy-field {
+    margin-bottom: 6px;
+}
+
+.taxonomy-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 15px;
+}
+
 .taxonomy-selected {
     margin-left: 10px;
     margin-top: 15px;
@@ -151,19 +162,19 @@ div.taxonomy-details a:hover {
 }
 
 .taxonomy-picker-link {
-    padding: 3px;
+    line-height: 16px;
 }
 
 .taxonomy-picker-link a:visited span {
-    color: #0467B4;
+    color: #22272F;
 }
 
 .taxonomy-picker-link a span {
-    color: #0467B4;
+    color: #22272F;
 }
 
-.taxonomy-picker-link a:hover span {
-    text-decoration: underline;
+.taxonomy-picker-link a:hover {
+    text-decoration: none;
 }
 
 .taxonomy-editor .hippo-toolbar {
@@ -224,7 +235,8 @@ div.taxonomy-details a:hover {
 }
 
 .taxonomy-current-canon {
-    padding: 3px;
+    padding-bottom: 8px;
+    padding-bottom: 8px;
     display: block;
 }
 

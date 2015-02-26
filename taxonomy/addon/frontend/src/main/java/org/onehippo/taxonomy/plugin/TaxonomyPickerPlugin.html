@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,22 +15,26 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-    <div class="hippo-editor-field">
+    <div class="hippo-editor-field hippo-property-field-name-string hippo-property-field-type-string hippo-property-field-multiple">
         <h3 class="hippo-editor-field-title">
             <span wicket:id="title">Taxonomy</span>
         </h3>
-        <div class="hippo-editor-field-subfield">
-            <div class="hippo-editor-field-textarea">
-                <div class="taxonomy-current-canon" wicket:id="canon"></div>
-                <div class="taxonomy-picker-link" wicket:id="edit"></div>
-                <div>
-                    <ul class="taxonomy-selected-list-in-documenttype">
-                      <li wicket:id="keys"><span wicket:id="key"></span></li>
-                    </ul>
+
+        <div class="taxonomy-current-canon" wicket:id="canon"></div>
+
+        <div class="hippo-editor-field-subfield" wicket:id="keys">
+            <div class="hippo-editor-field-subfield-item taxonomy-field">
+                <div class="hippo-editor-field-value">
+                    <div class="hippo-editor-field-value-container">
+                        <div class="taxonomy-value" wicket:id="key"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    </wicket:panel>
-</html>
 
+        <div class="taxonomy-picker-link add-link simple-link" wicket:id="edit"></div>
+    </div>
+
+    </wicket:panel>
+
+</html>
