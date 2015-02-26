@@ -22,9 +22,11 @@ import javax.jcr.Session;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
+import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ProvidesService(types = { AutoReloadService.class })
 public class AutoReloadServiceModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(AutoReloadServiceModule.class);
