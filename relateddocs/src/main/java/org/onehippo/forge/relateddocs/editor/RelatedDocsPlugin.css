@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,30 +15,10 @@
  *  limitations under the License.
 */
 
-.relateddocs-container{
-    border-top:solid #abcdef 1px;
-    border-left:solid #abcdef 1px;
-    border-right: solid #abcdef 1px;
-}
-
-.hippo-editor-field-relateddocs{
-    font-size: 11px;
-    line-height: 24px;
-    background: transparent;
-    border: none;
-    color: #333333;
-    margin: 2px;
-    font-family: arial,sans-serif,helvetica;
-}
-
-.hippo-editor-field-relateddocs ul li{
-    margin-bottom:5px; border-bottom:dashed #0467B4 1px;
-}
-
-.hippo-editor-field-relateddocs ul li.last{
-    border-bottom: none;
-}
-
-a.delete{
-    color:#FF3D3D;
+div.relatingdocs-link > a.simple-link {
+    display: inline;
+    float: none;
+    margin-left: 4px;
+    padding-top: 1px;
+    padding-bottom: 2px;
 }

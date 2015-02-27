@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.ChangeType;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.skin.Icon;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.slf4j.Logger;
@@ -178,8 +180,9 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                 if (Mode.EDIT != mode) {
                     deleteLink.setVisible(false);
                 }
-                item.add(deleteLink);
 
+                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.DELETE_TINY));
+                item.add(deleteLink);
             }
         };
     }
@@ -264,7 +267,9 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                     public void onClick(AjaxRequestTarget target) {
                     }
                 };
+
                 deleteLink.setVisible(false);
+                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.DELETE_TINY));
                 item.add(deleteLink);
             }
         };

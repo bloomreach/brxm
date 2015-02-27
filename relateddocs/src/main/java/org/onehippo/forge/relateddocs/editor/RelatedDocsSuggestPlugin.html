@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,30 +15,31 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <div class="reladeddocs-suggestions-container">
         <div wicket:id="relateddoc-view" class="hippo-editor-field"></div>
+
         <wicket:fragment wicket:id="empty">
         </wicket:fragment>
+
         <wicket:fragment wicket:id="relateddoc-suggestions">
             <h3 class="hippo-editor-field-title"><wicket:message key="documents_suggestions" /></h3>
-            <div class="hippo-editor-field-subfield">
-                <div class="hippo-editor-field-relateddocsuggest">
-                    <ul>
-                        <li wicket:id="view">
+            <div class="hippo-editor-field-subfield" wicket:id="view">
+                <div class="hippo-editor-field-item">
+                    <div class="hippo-editor-field-value">
+                        <div class="hippo-editor-field-value-container relatingdocs-link">
                             <a wicket:id="link" class="relatingdocs-link"> <span
                                     wicket:id="link-text" class="relatingdocs-relateddoc">[ name of the related doc ]</span> </a>
-                            <a wicket:id="preview" class="relatingdocs-link preview"><wicket:message key="document_view" /></a>
-                        </li>
-                    </ul>
+                            <a wicket:id="preview" class="simple-link"><wicket:message key="document_view" /></a>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <form wicket:id="suggestions-form">
                 <h2><wicket:message key="suggestions" /></h2>
                 <div class="hippo-editor-field-subfield"><input wicket:id="count" value="5" /></div>
-
             </form>
+
             <a wicket:id="refreshlink" class="relatingdocs-link preview"><wicket:message key="refreshlink" /></a> | <span wicket:id="browse" class="relatingdocs-link preview">BROWSE</span>
         </wicket:fragment>
-        </div>
     </wicket:panel>
 </html>

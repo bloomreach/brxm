@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,29 +15,31 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <div class="relateddocs-container">
-            <div class="hippo-editor-field">
-                <h3 class="hippo-editor-field-title"><wicket:message key="relateddocs" /></h3>
-                <div class="hippo-editor-field-subfield">
-                    <div class="hippo-editor-field-textarea">
-                        <div class="hippo-editor-field-relateddocs">
-                            <ul>
-                                <li wicket:id="view">
-                                    <a wicket:id="link" class="relatingdocs-link">
-                                        <span wicket:id="link-text" class="relatingdocs-relateddoc">[ link to relatedDoc ]</span>
-                                    </a>
-                                    &nbsp;
-                                    <a wicket:id="delete" class="delete"><wicket:message key="documentdelete" /></a>
-                                </li>
-                            </ul>
+        <div class="hippo-editor-field hippo-property-field-name-string hippo-property-field-type-string hippo-property-field-multiple relateddocs-container">
+            <h3 class="hippo-editor-field-title"><wicket:message key="relateddocs" /></h3>
+
+            <div class="hippo-editor-field-subfield" wicket:id="view">
+                <div class="hippo-editor-field-subfield-controls">
+                    <a wicket:id="delete" class="remove-link">
+                        <span wicket:id="deleteIcon"></span>
+                    </a>
+                </div>
+
+                <div class="hippo-editor-field-item">
+                    <div class="hippo-editor-field-value">
+                        <div class="hippo-editor-field-value-container relatingdocs-link">
+                            <a wicket:id="link">
+                                <span wicket:id="link-text" class="relatingdocs-relateddoc">[ link to relatedDoc ]</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="relatingdocs-autocomplete-position">
-                <div id="relatingdocs-autocomplete-index">
-                    <div id="relatingdocs-autocomplete"></div>
-                </div>
+        </div>
+
+        <div id="relatingdocs-autocomplete-position">
+            <div id="relatingdocs-autocomplete-index">
+                <div id="relatingdocs-autocomplete"></div>
             </div>
         </div>
     </wicket:panel>
