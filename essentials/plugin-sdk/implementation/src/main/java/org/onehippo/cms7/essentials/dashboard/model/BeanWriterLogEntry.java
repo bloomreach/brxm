@@ -16,16 +16,23 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import com.google.common.base.Strings;
+
 /**
  * @version "$Id$"
  */
 public class BeanWriterLogEntry {
 
     private String beanName;
+    private String message;
     private String methodName;
     private String beanPath;
     private ActionType actionType;
 
+
+    public BeanWriterLogEntry(final String message) {
+        this.message = message;
+    }
 
     public BeanWriterLogEntry(final ActionType actionType) {
         this.actionType = actionType;
@@ -82,12 +89,17 @@ public class BeanWriterLogEntry {
 
 
     public String getMessage() {
+        if (!Strings.isNullOrEmpty(message)) {
+             return message;
+        }
         if (actionType == ActionType.CREATED_CLASS) {
             return "Created HST bean: " + getBeanName();
         } else if (actionType == ActionType.CREATED_METHOD) {
             return "Created method: " + getMethodName();
         } else if (actionType == ActionType.MODIFIED_METHOD) {
             return "Re-created method: " + getMethodName();
+        } else if (actionType == ActionType.DELETED_METHOD) {
+            return "Deleted method: " + getMethodName();
         }
 
         return actionType.toString();

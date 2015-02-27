@@ -150,6 +150,62 @@ public class ContentBeansService {
     }
 
 
+    /**
+     * Removes methods which are annotated but missing within content services
+     */
+    public void cleanupMethods() {
+        final Set<HippoContentBean> beans = getContentBeans();
+        final Map<String, Path> existing = findExitingBeans();
+        for (HippoContentBean bean : beans) {
+            final Path path = existing.get(bean.getName());
+            if (path != null) {
+                final Set<String> properties = extractInternalNames(bean);
+                final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
+
+                final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
+                for (EssentialsGeneratedMethod method : generatedMethods) {
+                    final String internalName = method.getInternalName();
+                    if (!properties.contains(internalName)) {
+                        if (internalName.equals(EssentialConst.RELATEDDOCS_DOCS)) {
+                            // check if we have mixin:
+                            if (bean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
+                                log.info("Skipping deletion of {}, mixin type", internalName);
+                                continue;
+                            }
+                        }
+                        log.info("@Missing declaration for: {}. Method will be deleted", internalName);
+                        final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
+                        final String methodName = method.getMethodName();
+                        if (deleted) {
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), methodName, ActionType.DELETED_METHOD));
+                            eventBus.post(new MessageEvent(String.format("Successfully deleted method: %s", methodName)));
+                        } else {
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(String.format("Failed to  delete method: %s", methodName)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Set<String> extractInternalNames(final HippoContentBean bean) {
+        final Set<String> set = new HashSet<>();
+        final List<HippoContentProperty> properties = bean.getProperties();
+        if (properties != null) {
+            for (HippoContentProperty property : properties) {
+                set.add(property.getName());
+            }
+        }
+        final List<HippoContentChildNode> children = bean.getChildren();
+        if (children != null) {
+            for (HippoContentChildNode child : children) {
+                set.add(child.getName());
+            }
+        }
+
+        return set;
+    }
+
     private void processRelatedDocuments() {
         boolean hasRelatedDocs = false;
         for (HippoContentBean contentBean : contentBeans) {
@@ -248,8 +304,6 @@ public class ContentBeansService {
             }
         }
     }
-
-
 
 
     private void processMissing(final List<HippoContentBean> missingBeans) {
@@ -364,7 +418,7 @@ public class ContentBeansService {
         final List<HippoContentProperty> properties = bean.getProperties();
         for (HippoContentProperty property : properties) {
             final String name = property.getName();
-            if(!hasChange(name, existing, beanPath, property.isMultiple())){
+            if (!hasChange(name, existing, beanPath, property.isMultiple())) {
                 continue;
             }
             final String type = property.getType();
@@ -514,7 +568,6 @@ public class ContentBeansService {
     }
 
 
-
     private Path extractPath() {
         final Multimap<String, Object> pluginContextData = context.getPluginContextData();
         final Collection<Object> data = pluginContextData.get(CONTEXT_BEAN_IMAGE_SET);
@@ -575,7 +628,7 @@ public class ContentBeansService {
         for (Map.Entry<String, Path> entry : existing.entrySet()) {
             // check if image type and skip if so:
             final Path path = entry.getValue();
-            if(imageTypePaths.contains(path)){
+            if (imageTypePaths.contains(path)) {
                 continue;
             }
             final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
@@ -600,8 +653,6 @@ public class ContentBeansService {
             }
         }
     }
-
-
 
 
     private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement) {
@@ -633,13 +684,15 @@ public class ContentBeansService {
                     if (method == null) {
                         return super.visit(node);
                     }
+                    if (returnTypeName == null) {
+                        return super.visit(node);
+                    }
                     if (returnTypeName.equals(oldReturnType)) {
                         node.delete();
                         deletedMethods.put(method.getMethodName(), method);
                         return super.visit(node);
                     }
 
-                    log.info("oldReturnType {}", oldReturnType);
                 }
                 return super.visit(node);
             }
@@ -690,7 +743,7 @@ public class ContentBeansService {
         return path;
     }
 
-    private boolean hasChange(final String name, final Collection<String> existing, final Path beanPath, final boolean multiple){
+    private boolean hasChange(final String name, final Collection<String> existing, final Path beanPath, final boolean multiple) {
         if (existing.contains(name)) {
             log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
             final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);

@@ -96,6 +96,10 @@ public class BeanWriterResource extends BaseResource {
                 contentBeansService.convertImageMethods(imageSet);
             }
         }
+
+        // cleanup
+        contentBeansService.cleanupMethods();
+        // user feedback
         BeanWriterUtils.populateBeanwriterMessages(context, messages);
         if (messages.getItems().size() == 0) {
             messages.add(new MessageRestful("All beans were up to date"));

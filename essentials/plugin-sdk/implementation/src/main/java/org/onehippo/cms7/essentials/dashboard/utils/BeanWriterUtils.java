@@ -23,26 +23,17 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryProperty;
-import org.onehippo.cms7.essentials.dashboard.utils.xml.NodeOrProperty;
-import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
-import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
@@ -79,7 +70,7 @@ public final class BeanWriterUtils {
         for (Object object : objects) {
             final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
             final ActionType actionType = entry.getActionType();
-            if (actionType == ActionType.CREATED_METHOD || actionType == ActionType.MODIFIED_METHOD) {
+            if (actionType == ActionType.CREATED_METHOD || actionType == ActionType.MODIFIED_METHOD || actionType == ActionType.DELETED_METHOD) {
                 messages.add(new MessageRestful(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName())));
             } else if (actionType == ActionType.CREATED_CLASS) {
                 messages.add(new MessageRestful(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath())));

@@ -83,13 +83,20 @@ public final class JavaSourceUtils {
         final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
         final Map<String, EssentialsGeneratedMethod> deletedMethods = new HashMap<>();
         final String oldReturnType = getReturnType(method.getReturnType());
-
         deleteUnit.accept(new ASTVisitor() {
             @Override
-            public boolean visit(MethodDeclaration node) {
+            public boolean visit(final MethodDeclaration node) {
+                final String internalName = getHippoEssentialsAnnotation(node);
+                if (internalName == null) {
+                    return super.visit(node);
+                }
+                if (!internalName.equals(method.getInternalName())) {
+                    return super.visit(node);
+                }
                 final String methodName = node.getName().getFullyQualifiedName();
                 final Type type = node.getReturnType2();
                 final String returnTypeName = getReturnType(type);
+
                 if (returnTypeName != null) {
                     final EssentialsGeneratedMethod method = extractMethod(methodName, generatedMethods);
                     if (method == null) {
@@ -113,8 +120,9 @@ public final class JavaSourceUtils {
             GlobalUtils.writeToFile(deletedSource, path);
         }
         return deletedSize > 0;
-
     }
+
+
 
 
     public static EssentialsGeneratedMethod extractMethod(final String methodName, final Iterable<EssentialsGeneratedMethod> generatedMethods) {
@@ -189,7 +197,7 @@ public final class JavaSourceUtils {
                 return clazzPath;
             }
             final Path file = Files.createFile(clazzPath);
-            final AST ast = AST.newAST(AST.JLS3);
+            final AST ast = AST.newAST(AST.JLS8);
             final CompilationUnit compilationUnit = ast.newCompilationUnit();
             final PackageDeclaration packageDeclaration = ast.newPackageDeclaration();
             packageDeclaration.setName(ast.newName(packageName));
@@ -774,7 +782,7 @@ public final class JavaSourceUtils {
         the location must be extablished explicitly by calling setProject(IJavaProject) and setUnitName(String).
     */
         final CompilationUnit unit = getCompilationUnit(path);
-        final ASTParser parser = ASTParser.newParser(AST.JLS3);
+        final ASTParser parser = ASTParser.newParser(AST.JLS8);
         /*IFile file =
         parser.setSource(JavaCore.createClassFileFrom(file));*/
         parser.setSource(GlobalUtils.readTextFile(path).toString().toCharArray());
@@ -825,7 +833,7 @@ public final class JavaSourceUtils {
         options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS, alignmentValue);
         final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
         final TextEdit edit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, source, 0, source.length(), 0, System.getProperty("line.separator"));
-        final ASTParser parser = ASTParser.newParser(AST.JLS3);
+        final ASTParser parser = ASTParser.newParser(AST.JLS8);
         final IDocument document = new Document(source);
         parser.setSource(document.get().toCharArray());
         try {
@@ -935,6 +943,42 @@ public final class JavaSourceUtils {
             }
         }
         return false;
+    }
+
+    public static String  getHippoEssentialsAnnotation(final MethodDeclaration node) {
+        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        final List modifiers = node.modifiers();
+        if (modifiers == null) {
+            return null;
+        }
+        for (Object modifier : modifiers) {
+            if (modifier instanceof NormalAnnotation) {
+                final NormalAnnotation annotation = (NormalAnnotation) modifier;
+                final Name typeName = annotation.getTypeName();
+                final String fullyQualifiedName = typeName.getFullyQualifiedName();
+                if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
+                        && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
+                    continue;
+                }
+                final List<?> values = annotation.values();
+                for (Object value : values) {
+                    if (value instanceof MemberValuePair) {
+                        final MemberValuePair mvp = (MemberValuePair) value;
+                        final String n = mvp.getName().getIdentifier();
+                        final Expression myValue = mvp.getValue();
+                        if (myValue instanceof StringLiteral) {
+                            final StringLiteral lit = (StringLiteral) myValue;
+                            final String v = lit.getLiteralValue();
+                            if ("internalName".equals(n)) {
+                                return v;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return null;
     }
 
     public static HippoEssentialsGeneratedObject getHippoGeneratedAnnotation(final Path path) {
@@ -1202,16 +1246,18 @@ public final class JavaSourceUtils {
     }
 
     public static CompilationUnit getCompilationUnit(final String content) {
-        final ASTParser parser = ASTParser.newParser(AST.JLS3);
+        final ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setResolveBindings(true);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(new Document(content).get().toCharArray());
         return (CompilationUnit) parser.createAST(null);
     }
 
     public static CompilationUnit getCompilationUnit(final Path path) {
         final StringBuilder builder = GlobalUtils.readTextFile(path);
-        final ASTParser parser = ASTParser.newParser(AST.JLS3);
+        final ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setResolveBindings(true);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(new Document(builder.toString()).get().toCharArray());
         return (CompilationUnit) parser.createAST(null);
     }
@@ -1470,7 +1516,6 @@ public final class JavaSourceUtils {
         addHippoGeneratedAnnotation(propertyName, unit, methodDeclaration, ast);
         replaceFile(path, unit, ast);
     }
-
 
 
 }

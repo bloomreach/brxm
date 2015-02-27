@@ -22,5 +22,5 @@ package org.onehippo.cms7.essentials.dashboard.model;
  * @version "$Id$"
  */
 public enum ActionType {
-    CREATED_CLASS, CREATED_METHOD, MODIFIED_CLASS, MODIFIED_METHOD
+    CREATED_CLASS, CREATED_METHOD, MODIFIED_CLASS, MODIFIED_METHOD, DELETED_METHOD
 }
