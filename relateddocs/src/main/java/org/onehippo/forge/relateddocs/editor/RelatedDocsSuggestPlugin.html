@@ -26,20 +26,22 @@
                 <div class="hippo-editor-field-item">
                     <div class="hippo-editor-field-value">
                         <div class="hippo-editor-field-value-container relatingdocs-link">
-                            <a wicket:id="link" class="relatingdocs-link"> <span
-                                    wicket:id="link-text" class="relatingdocs-relateddoc">[ name of the related doc ]</span> </a>
+                            <a wicket:id="link"> <span
+                                    wicket:id="link-text">[ name of the related doc ]</span> </a>
                             <a wicket:id="preview" class="simple-link"><wicket:message key="document_view" /></a>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <span wicket:id="browse" class="dialog-link-button">BROWSE</span>
+
             <form wicket:id="suggestions-form">
-                <h2><wicket:message key="suggestions" /></h2>
-                <div class="hippo-editor-field-subfield"><input wicket:id="count" value="5" /></div>
+                <span><wicket:message key="suggestions" /></span>
+                <input wicket:id="count" value="5" />
             </form>
 
-            <a wicket:id="refreshlink" class="relatingdocs-link preview"><wicket:message key="refreshlink" /></a> | <span wicket:id="browse" class="relatingdocs-link preview">BROWSE</span>
+            <a wicket:id="refreshlink" class="relatingdocs-link"><wicket:message key="refreshlink" /></a>
         </wicket:fragment>
     </wicket:panel>
 </html>

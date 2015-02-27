@@ -15,10 +15,14 @@
  *  limitations under the License.
 */
 
-div.relatingdocs-link > a.simple-link {
-    display: inline;
-    float: none;
-    margin-left: 4px;
-    padding-top: 1px;
-    padding-bottom: 2px;
+.relatingdocs-link a:hover{
+    text-decoration: none;
+}
+
+.relatingdocs-link a{
+    color: #22272F;
+}
+
+.relatingdocs-link {
+    color: #22272F;
 }
