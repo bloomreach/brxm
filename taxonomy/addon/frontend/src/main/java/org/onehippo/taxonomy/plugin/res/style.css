@@ -161,22 +161,6 @@ div.taxonomy-details a:hover {
     font-weight: bold;
 }
 
-.taxonomy-picker-link {
-    line-height: 16px;
-}
-
-.taxonomy-picker-link a:visited span {
-    color: #22272F;
-}
-
-.taxonomy-picker-link a span {
-    color: #22272F;
-}
-
-.taxonomy-picker-link a:hover {
-    text-decoration: none;
-}
-
 .taxonomy-editor .hippo-toolbar {
   display: table;
   margin-bottom: 3px;
