@@ -17,7 +17,6 @@ package org.hippoecm.addon.workflow;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,15 +34,16 @@ class MenuBar extends Panel implements MenuComponent {
 
     private List<IContextMenu> buttons;
 
-    public MenuBar(String id, MenuHierarchy list) {
+    public MenuBar(String id, MenuHierarchy hierarchy) {
         super(id);
         buttons = new LinkedList<>();
 
         setRenderBodyOnly(true);
 
-        final List<Component> all = list.list(this);
-        final List<Component> labels = all.stream().filter(component -> component instanceof MenuLabel).collect(Collectors.toList());
-        final List<Component> menus = all.stream().filter(component -> !labels.contains(component)).collect(Collectors.toList());
+        final List<Component> menus = new LinkedList<>();
+        final List<Component> labels = new LinkedList<>();
+
+        hierarchy.list(this).forEach((c) -> ((c instanceof MenuLabel) ? labels : menus).add(c));
 
         add(new ListView("list", new ListDataProvider<>(menus), "menu-item") {
             @Override

@@ -311,7 +311,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             }
 
                             // Fallback to default icon
-                            return HippoIcon.fromSprite(id, Icon.NEW_DOCUMENT_TINY);
+                            return HippoIcon.fromSprite(id,
+                                    category.endsWith("-folder") ? Icon.NEW_FOLDER_TINY : Icon.NEW_DOCUMENT_TINY);
                         }
 
                         private boolean resourceExists(final ResourceReference reference) {
