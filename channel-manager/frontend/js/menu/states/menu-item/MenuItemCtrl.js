@@ -61,16 +61,6 @@
                         $scope.tooltip = '';
                     };
                 });
-
-                // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
-                $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                    if (toState.name == 'menu-item.edit' &&
-                            (!$scope.selectedMenuItem || toParams.menuItemId != $scope.selectedMenuItem.id)) {
-                        MenuService.getMenuItem(toParams.menuItemId).then(function (item) {
-                            $scope.selectedMenuItem = item;
-                        });
-                    }
-                });
             }
         ]);
 }());

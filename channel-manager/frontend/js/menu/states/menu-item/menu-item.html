@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channel.menu.TreeCtrl">
             <div class="panel panel-default">
-                <div class="panel-content l-sidebar">
+                <div class="panel-content l-sidebar" data-keep-scroll-pos>
                     <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">
                         <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" data-ng-hide="childNodes().length === 0">
                             <span class="fa" data-ng-class="{'fa-caret-down': !collapsed, 'fa-caret-right': collapsed}"></span>

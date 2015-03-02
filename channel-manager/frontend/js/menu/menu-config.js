@@ -42,8 +42,13 @@
                         url: '/:menuItemId/edit',
                         controller: 'hippo.channel.menu.EditMenuItemCtrl',
                         templateUrl: 'states/menu-item/edit/edit-menu-item.html'
-                    });
+                    })
 
+                    .state('picker', {
+                        url: '/:menuItemId/picker',
+                        controller: 'hippo.channel.menu.PickerCtrl',
+                        templateUrl: 'states/picker/picker.html'
+                    });
                 // translations
                 $translateProvider.useStaticFilesLoader({
                     prefix: 'i18n/',
