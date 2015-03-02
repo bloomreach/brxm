@@ -26,3 +26,8 @@
 .relatingdocs-link {
     color: #22272F;
 }
+
+.relatingdocs-refresh {
+    color: #22272F;
+    text-decoration: underline;
+}

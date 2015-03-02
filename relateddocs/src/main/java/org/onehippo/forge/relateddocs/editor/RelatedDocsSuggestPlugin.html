@@ -34,14 +34,15 @@
                 </div>
             </div>
 
-            <span wicket:id="browse" class="simple-link dialog-link">BROWSE</span>
+            <span wicket:id="browse" class="simple-link dialog-link relateddocs-select-button">BROWSE</span>
 
-            <form wicket:id="suggestions-form">
+            <div class="relateddocs-suggestion-controls">
                 <span><wicket:message key="suggestions" /></span>
-                <input wicket:id="count" value="5" />
-            </form>
-
-            <a wicket:id="refreshlink" class="relatingdocs-link"><wicket:message key="refreshlink" /></a>
+                <form wicket:id="suggestions-form" class="relateddoc-suggestion-form">
+                    <input wicket:id="count" class="hippo-editor-field-value-container relateddocs-suggestion-input" value="5" />
+                </form>
+                <a wicket:id="refreshlink" class="relatingdocs-refresh"><wicket:message key="refreshlink" /></a>
+            </div>
         </wicket:fragment>
     </wicket:panel>
 </html>

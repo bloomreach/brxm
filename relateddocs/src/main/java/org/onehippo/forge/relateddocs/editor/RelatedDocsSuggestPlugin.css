@@ -16,9 +16,28 @@
 */
 
 div.relatingdocs-link > a.simple-link {
-    display: inline;
-    float: none;
-    margin-left: 4px;
-    padding-top: 1px;
-    padding-bottom: 2px;
+  display: inline;
+  float: none;
+  margin-left: 4px;
+  padding-top: 1px;
+  padding-bottom: 2px;
+}
+
+.relateddocs-select-button {
+  margin-bottom: 8px;
+}
+
+.relateddocs-suggestion-controls {
+  clear: both;
+}
+
+.relateddoc-suggestion-form {
+  display: inline;
+}
+
+.relateddocs-suggestion-controls .relateddocs-suggestion-input {
+  width: 30px;
+  display: inline;
+  margin-left: 4px;
+  margin-right: 4px;
 }
