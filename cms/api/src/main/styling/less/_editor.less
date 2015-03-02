@@ -279,19 +279,17 @@
   }
 }
 
-.dialog-link-button > a {
-  background: transparent;
-  border-radius: 5px;
-  border: 1px solid @dark-gray;
-  display: inline-block;
-  padding: 4px;
+.simple-link.dialog-link {
+  padding: 0;
 
-  color: @darkest-shade;
-  line-height: 16px;
-
-  &:link,
-  &:hover {
-    text-decoration: none;
+  > a {
+    padding: 8px;
+    display: inline-block;
+    color: @darkest-shade;
+    &:link,
+    &:hover {
+      text-decoration: none;
+    }
   }
 }
 
