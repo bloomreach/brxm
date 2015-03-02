@@ -16,7 +16,7 @@
 
 <div class="row" ng-controller="pluginCtrl">
     <div class="col-lg-12">
-        <div ng-repeat="plugin in plugins | filter:isInstalledTool">
+        <div ng-repeat="plugin in plugins | filter:isInstalledTool | orderBy:'name'">
             <essentials-installed-tool plugin="plugin"></essentials-installed-tool>
         </div>
     </div>

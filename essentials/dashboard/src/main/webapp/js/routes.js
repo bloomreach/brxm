@@ -74,6 +74,7 @@
                 });
         });
 
+    var dispatchProcessed = false;
     var initAndDispatch = function ($q, $rootScope, $location, $http, $log, $timeout, modalService, pluginTypeFilter) {
         // Determine the correct location path to start.
         // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
@@ -130,23 +131,18 @@
         };
         var dispatch = function () {
             // return at once if already initialized
-            if ($rootScope.DISPATCH_PROCESSED) {
+            if (dispatchProcessed) {
                 deferred.resolve(true);
                 return;
             }
-            $rootScope.DISPATCH_PROCESSED = true;
+            dispatchProcessed = true;
             startPinger();
             $http.get($rootScope.REST.project + '/status')
                 .success(function (response) {
-                    if (!response.projectInitialized) {
-                        $location.path("/introduction");
-                    } else {
-                        // on browser reload, keep url user was on:
-                        var url = $location.url();
-                        if (url != '') {
-                            $location.path(url);
-                        }
-                        else if (response.pluginsInstalled > 0) {
+                    if ($location.url() == '') { // only dispatch if not on specific "page".
+                        if (!response.projectInitialized) {
+                            $location.path("/introduction");
+                        } else if (response.pluginsInstalled > 0) {
                             $location.path("/installed-features");
                         } else {
                             $location.path("/library");
