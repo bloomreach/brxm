@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .controller('hippo.channel.menu.PickerCtrl', [
-            '$scope',
-            '$state',
-            '$stateParams',
-            function ($scope, $state, $stateParams) {
-                $scope.cancelPicker = function() {
-                    $state.go('menu-item.edit', {
-                        menuItemId: $stateParams.menuItemId
-                    });
-                };
-            }
-        ]);
+      .controller('hippo.channel.menu.PickerCtrl', [
+        '$scope',
+        '$state',
+        '$stateParams',
+        function ($scope, $state, $stateParams) {
+          $scope.cancelPicker = function() {
+            $state.go('menu-item.edit', {
+              menuItemId: $stateParams.menuItemId
+            });
+          };
+        }
+      ]);
 }());
