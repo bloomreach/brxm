@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.swing.event.TreeModelEvent;
@@ -32,6 +33,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.ObservableTreeModel.ObservableTreeModelEvent;
+import org.hippoecm.frontend.model.tree.ObservableTreeModel.TranslationEvent;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +60,14 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
         while (iter.hasNext()) {
             IEvent<ObservableTreeModel> event = iter.next();
             if (event instanceof ObservableTreeModelEvent) {
-                Event jcrEvent = ((ObservableTreeModelEvent) event).getJcrEvent().getEvent();
                 try {
-                    TreeModelEvent tme = newTreeModelEvent(jcrEvent);
+                    TreeModelEvent tme;
+                    if (event instanceof TranslationEvent) {
+                        tme = fromTranslationEvent((TranslationEvent) event);
+                    } else {
+                        Event jcrEvent = ((ObservableTreeModelEvent) event).getJcrEvent().getEvent();
+                        tme = newTreeModelEvent(jcrEvent);
+                    }
                     if (tme != null) {
                         for (TreeModelListener l : listeners) {
                             l.treeStructureChanged(tme);
@@ -70,6 +78,23 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
                 }
             }
         }
+    }
+
+    private TreeModelEvent fromTranslationEvent(final TranslationEvent event) throws RepositoryException {
+        final JcrNodeModel notifiedJcrModel = new JcrNodeModel(event.getJcrEvent().getEvent().getPath());
+        JcrNodeModel translationNodeModel = notifiedJcrModel.getParentModel();
+        Node translationNode = translationNodeModel.getNode();
+        if (translationNode != null && translationNode.isNodeType(HippoNodeType.HIPPO_TRANSLATION)) {
+            TreePath parentPath = lookup(translationNodeModel.getParentModel());
+            if (parentPath != null) {
+                TreeNode parentNode = (TreeNode) parentPath.getLastPathComponent();
+                if ((parentNode instanceof IJcrTreeNode)
+                    && ((IJcrTreeNode) parentNode).getNodeModel().equals(translationNodeModel.getParentModel())) {
+                    return new TreeModelEvent(this, parentPath);
+                }
+            }
+        }
+        return null;
     }
 
     // translate the jcr event into a tree model event

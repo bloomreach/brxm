@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,12 +25,14 @@ import java.util.TreeMap;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
@@ -42,6 +44,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.JcrEvent;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +78,48 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
     }
 
+    public class TranslationEvent extends ObservableTreeModelEvent {
+        public TranslationEvent(final JcrEvent event) {
+            super(event);
+        }
+    }
+
+    /**
+     * Observe jcr events of a specified node and transform them into {@link ObservableTreeModelEvent}
+     */
+    private abstract class NodeObserver implements IObserver {
+        protected final IModel<Node> nodeModel;
+        protected final IObservationContext<ObservableTreeModel> observationContext;
+
+        public NodeObserver(final IModel<Node> model, final IObservationContext<ObservableTreeModel> observationContext){
+            this.nodeModel = model;
+            this.observationContext = observationContext;
+        }
+        @Override
+        public IObservable getObservable() {
+            return (IObservable) nodeModel;
+        }
+
+        @Override
+        public void onEvent(final Iterator events) {
+            // wrap jcr events to observable events
+            EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<>();
+            while (events.hasNext()) {
+                IEvent<ObservableTreeModel> treeModelEvent = createEvent((JcrEvent) events.next());
+                treeModelEvents.add(treeModelEvent);
+            }
+            observationContext.notifyObservers(treeModelEvents);
+        }
+
+        /**
+         * Create an event of type {@link org.hippoecm.frontend.model.tree.ObservableTreeModel.ObservableTreeModelEvent}
+         * from the {@link org.hippoecm.frontend.model.event.JcrEvent} <code>jcrEvent</code>
+         * @param jcrEvent
+         * @return
+         */
+        public abstract ObservableTreeModelEvent createEvent(final JcrEvent jcrEvent);
+    }
+
     class ExpandedNode implements Serializable, IDetachable {
 
         private boolean expanded = false;
@@ -82,11 +127,14 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
         private final String identifier;
         private final Map<String, ExpandedNode> children;
         private IObserver observer;
+        private IObserver translationObserver;
+        private final IModel<Node> translatorNodeModel;
 
         ExpandedNode(final IJcrTreeNode treeNode) {
             this.treeNode = treeNode;
             this.children = new TreeMap<String, ExpandedNode>();
             IModel<Node> nodeModel = treeNode.getNodeModel();
+            this.translatorNodeModel = createTranslatorNodeModel();
             String id = "<unknown>";
             try {
                 final Node node = nodeModel.getObject();
@@ -192,33 +240,114 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
             }
         }
 
+
         public void startObservation() {
+            if (observationContext!= null && translatorNodeModel != null) {
+                translationObserver = createTranslationObserver();
+                observationContext.registerObserver(translationObserver);
+            }
+
             if (expanded && observationContext != null) {
-                observer = new IObserver() {
-
-                    @Override
-                    public IObservable getObservable() {
-                        return (IObservable) treeNode.getNodeModel();
-                    }
-
-                    @Override
-                    public void onEvent(final Iterator events) {
-                        reloadChildren();
-
-                        EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<IEvent<ObservableTreeModel>>();
-                        while (events.hasNext()) {
-                            IEvent<ObservableTreeModel> treeModelEvent = new ObservableTreeModelEvent(
-                                    (JcrEvent) events.next());
-                            treeModelEvents.add(treeModelEvent);
-                        }
-                        observationContext.notifyObservers(treeModelEvents);
-                    }
-                };
+                observer = createObserver();
                 observationContext.registerObserver(observer);
                 for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
                     entry.getValue().startObservation();
                 }
             }
+        }
+
+        private IModel<Node> createTranslatorNodeModel() {
+            Node folderNode = treeNode.getNodeModel().getObject();
+            try {
+                NodeIterator nodes = folderNode.getNodes(HippoNodeType.HIPPO_TRANSLATION);
+                Node translatorNode = findLocalTranslationNode(nodes);
+                if (translatorNode != null){
+                    return new JcrNodeModel(translatorNode);
+                } else {
+                    log.debug("Cannot find translation node to monitor at {}", folderNode.getPath());
+                }
+            } catch (RepositoryException e) {
+                try {
+                    log.warn("Cannot find translation node: {}", folderNode.getPath());
+                } catch (RepositoryException e1) {
+                    log.error("Error to get node path", e1);
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Find node with hippo:translation property = $currentLanguage. If no localized node is found, return the
+         * neutral translation node, i.e. the node with empty property value 'hippo:language'
+         *
+         * @param nodes translation nodes of type 'hippo:translation'
+         * @return
+         * @throws RepositoryException
+         */
+        private Node findLocalTranslationNode(final NodeIterator nodes) throws RepositoryException {
+            if (nodes == null) {
+                return null;
+            }
+            final String currentLanguage = Session.get().getLocale().getLanguage();
+            Node localTranslationNode = null;
+            while(nodes.hasNext()){
+                Node translationNode = nodes.nextNode();
+                if (translationNode.hasProperty(HippoNodeType.HIPPO_LANGUAGE)){
+                    String language = translationNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+                    if (StringUtils.isEmpty(language)) {
+                        // return the neutral translation node if no language is defined
+                        localTranslationNode = translationNode;
+                    } else if (StringUtils.equals(language, currentLanguage)) {
+                        localTranslationNode = translationNode;
+                        break;
+                    }
+                }
+            }
+            return localTranslationNode;
+        }
+
+        private IObserver createObserver() {
+            return new NodeObserver(treeNode.getNodeModel(), observationContext) {
+                @Override
+                public ObservableTreeModelEvent createEvent(final JcrEvent jcrEvent) {
+                    return new ObservableTreeModelEvent(jcrEvent);
+                }
+                @Override
+                public void onEvent(final Iterator events) {
+                    reloadChildren();
+                    super.onEvent(events);
+                }
+            };
+        }
+
+        private IObserver createTranslationObserver() {
+            if (log.isDebugEnabled()) {
+                try {
+                    log.debug("Monitoring translation node {}", translatorNodeModel.getObject().getPath());
+                } catch (RepositoryException e) {
+                    log.error("Cannot get node path", e);
+                }
+            }
+
+            return new NodeObserver(translatorNodeModel, observationContext) {
+                @Override
+                public ObservableTreeModelEvent createEvent(final JcrEvent jcrEvent) {
+                    return new TranslationEvent(jcrEvent);
+                }
+
+                @Override
+                public void onEvent(final Iterator events){
+                    if (log.isDebugEnabled()) {
+                        try {
+                            log.warn("On updating translation node at {}", this.nodeModel.getObject().getPath());
+                        } catch (RepositoryException e) {
+                            log.error("Cannot get node path", e);
+                        }
+                    }
+                    reloadChildren();
+                    super.onEvent(events);
+                }
+            };
         }
 
         public void stopObservation() {
@@ -229,11 +358,19 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                 observationContext.unregisterObserver(observer);
                 observer = null;
             }
+
+            if (translationObserver != null){
+                observationContext.unregisterObserver(translationObserver);
+                translationObserver = null;
+            }
         }
 
         @Override
         public void detach() {
             treeNode.detach();
+            if (translatorNodeModel != null){
+                translatorNodeModel.detach();
+            }
             for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
                 entry.getValue().detach();
             }
