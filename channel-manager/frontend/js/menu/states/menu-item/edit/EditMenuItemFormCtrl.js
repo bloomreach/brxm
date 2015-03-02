@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@
 
                 $scope.focus = FocusService.focusElementWithId;
 
-                $scope.$watch('form', function (form) {
+                $scope.$watch('form', function () {
                     var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
                     function afternewItem() {
                         $scope.selectedMenuItem.title = '';
@@ -66,10 +66,12 @@
                     var isValid = $scope.form.title.$valid &&
                         $scope.form.destination.$valid;
 
-                    if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
-                        isValid = isValid && ($scope.form.url.$valid);
-                    } else if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
-                        isValid = isValid && ($scope.form.sitemapItem.$valid);
+                    if ($scope.selectedMenuItem) {
+                        if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
+                            isValid = isValid && ($scope.form.url.$valid);
+                        } else if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
+                            isValid = isValid && ($scope.form.sitemapItem.$valid);
+                        }
                     }
 
                     FormStateService.setValid(isValid);

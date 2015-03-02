@@ -39,6 +39,7 @@
         composerRestMountUrl: null,
         componentId: null,
         locale: null,
+        markedDirty: false,
 
         store: null,
 
@@ -52,6 +53,8 @@
             this.locale = config.locale;
             this.componentId = config.componentId;
             this.lastModifiedTimestamp = config.lastModifiedTimestamp;
+
+            this.saveEnabledChecks = [];
 
             Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
                 cls: 'templateComposerPropertiesForm'
@@ -105,6 +108,8 @@
                 }
             });
 
+            this.addSaveEnabledCheck(this.isDirty.bind(this));
+
             Ext.apply(this, {
                 autoHeight: true,
                 border: false,
@@ -127,7 +132,6 @@
 
         setNewVariant: function(newVariantId) {
             this.newVariantId = newVariantId;
-            this._fireVariantDirtyOrPristine();
         },
 
         getVisibleHeight: function() {
@@ -137,12 +141,13 @@
             return 0;
         },
 
-        _hasNewVariantId: function() {
-            return this.variant && this.variant.id !== this.newVariantId;
+        markDirty: function(isDirty) {
+            this.markedDirty = isDirty;
+            this._fireVariantDirtyOrPristine();
         },
 
         isDirty: function() {
-            return this._hasNewVariantId() || this._isStoreDirty();
+            return this.markedDirty || this._isStoreDirty();
         },
 
         _isStoreDirty: function () {
@@ -236,6 +241,12 @@
                     this._initField(record);
                 }
             }, this);
+
+            this.add({
+                xtype: 'Hippo.ChannelManager.TemplateComposer.ValidatorField',
+                validator: this.isSaveEnabled.bind(this)
+            });
+
             this.saveButton.show();
         },
 
@@ -607,6 +618,25 @@
                 });
                 this.fireEvent('propertiesChanged', propertiesMap);
             }
+        },
+
+        /**
+         * Add a function that returns whether the save button of this form should be enabled or not.
+         * When all check functions return true the save button is enabled. If any of the check functions
+         * returns false, the save button is disabled.
+         * @param fn the save-enabled check function to add.
+         */
+        addSaveEnabledCheck: function(fn) {
+            this.saveEnabledChecks.push(fn);
+        },
+
+        isSaveEnabled: function() {
+            var isEnabled = true;
+            this.saveEnabledChecks.some(function(checkSaveEnabled) {
+                isEnabled = checkSaveEnabled();
+                return !isEnabled;
+            });
+            return isEnabled;
         },
 
         disableDelete: function() {

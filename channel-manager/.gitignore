@@ -6,6 +6,7 @@
 /.settings
 angularjs-api/*.iml
 angularjs-api/node_modules
+angularjs-api/target
 frontend-api/*.iml
 frontend-api/.project
 frontend-api/target

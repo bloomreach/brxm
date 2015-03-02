@@ -31,9 +31,6 @@
             'hippo.channel.menu.MenuService',
             function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, FormStateService, MenuService) {
 
-                function onSuccess() {
-                }
-
                 function setErrorFeedback(errorResponse) {
                     $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
                 }
@@ -64,7 +61,7 @@
                 }
 
                 $scope.callbacks = {
-                    accept: function(sourceNodeScope, destNodesScope, destIndex) {
+                    accept: function() {
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63
                         // for now, simply don't accept any moves when the form is invalid

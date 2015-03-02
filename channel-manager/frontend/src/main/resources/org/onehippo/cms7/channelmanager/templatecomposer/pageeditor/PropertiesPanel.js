@@ -67,12 +67,17 @@
 
             this.addEvents('visibleHeightChanged');
 
-            this.on('beforetabchange', function(panel, newTab) {
+            this.on('beforetabchange', function(panel, newTab, currentTab) {
+                var proceed;
                 if (!Ext.isDefined(newTab)) {
-                    return true;
+                    proceed = true;
                 } else {
-                    return newTab.fireEvent('beforeactivate', newTab, panel);
+                    proceed = newTab.fireEvent('beforeactivate', newTab, panel);
+                    if (proceed && currentTab) {
+                        currentTab.fireEvent('beforedeactivate', currentTab);
+                    }
                 }
+                return proceed;
             }, this);
 
             this.on('tabchange', function(panel, tab) {
@@ -164,7 +169,19 @@
             return Hippo.Future.join(futures);
         },
 
-        fireInitialPropertiesChangedIfNeeded: function() {
+        onHide: function() {
+            this._stopValidationMonitoring();
+            this._fireInitialPropertiesChangedIfNeeded();
+        },
+
+        _stopValidationMonitoring: function() {
+            var activeForm = this.getActiveTab().propertiesForm;
+            if (activeForm) {
+                activeForm.stopMonitoring();
+            }
+        },
+
+        _fireInitialPropertiesChangedIfNeeded: function() {
             var isActiveTabDirty = this.getActiveTab().propertiesForm.isDirty();
 
             if (this.firePropertiesChangedEvents) {
@@ -290,6 +307,14 @@
             editor.on('variantPristine', function() {
                 this.setTitle(variant.name);
             }, editor);
+
+            editor.on('beforeactivate', function() {
+                propertiesForm.startMonitoring();
+            });
+
+            editor.on('beforedeactivate', function() {
+                propertiesForm.stopMonitoring();
+            });
 
             this.relayEvents(editor, ['close']);
 

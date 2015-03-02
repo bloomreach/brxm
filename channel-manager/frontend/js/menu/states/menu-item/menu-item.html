@@ -26,6 +26,7 @@
                         <div class="spacer" data-ng-show="childNodes().length === 0">&#9679;</div>
                         {{ item.title }}
                     </div>
+                    <div class="empty-tree" data-ng-if="list.length == 0">{{ 'EMPTY_MENU' | translate }}</div>
                 </div>
                 <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl">
                     <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()" data-ng-disabled="isSaving.newItem">

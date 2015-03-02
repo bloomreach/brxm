@@ -44,6 +44,11 @@
                         templateUrl: 'states/menu-item/edit/edit-menu-item.html'
                     })
 
+                    .state('menu-item.none', {
+                        url: '/none',
+                        controller: 'hippo.channel.menu.NoMenuItemCtrl'
+                    })
+
                     .state('picker', {
                         url: '/:menuItemId/picker',
                         controller: 'hippo.channel.menu.PickerCtrl',
