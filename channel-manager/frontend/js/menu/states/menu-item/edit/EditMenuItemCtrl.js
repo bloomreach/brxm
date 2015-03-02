@@ -76,13 +76,7 @@
                     }
                 };
 
-                $scope.internal = {
-                    dismissFeedback: function () {
-                        if($scope.feedback.message) {
-                            $scope.feedback.message = '';
-                        }
-                        $scope.fieldFeedbackMessage = {};
-                    },
+                $scope.internalLink = {
                     openPicker: function() {
                         $state.go('picker', {
                             menuItemId: $scope.selectedMenuItem.id
@@ -91,61 +85,72 @@
                     showPage: function() {
                         var link = getLink($scope.selectedMenuItem);
                         ContainerService.showPage(link);
-                    },
-                    saveSelectedMenuItem: function(propertyName) {
-                        if (shouldSaveSelectedMenuItemProperty(propertyName)) {
-                            saveSelectedMenuItemProperty(propertyName);
-                        }
-                    },
-                    saveTitle: function (form) {
-                        if($scope.selectedMenuItem.isNew === true) {
-                            form.title.$dirty = true;
-                            delete $scope.selectedMenuItem.isNew;
-                        }
-                        if(form.title.$dirty && form.title.$valid) {
-                            $scope.internal.saveSelectedMenuItem('title');
-                        }
-                    },
-                    updateLinkDestination: function (form) {
-                        var formItem;
-                        if($scope.selectedMenuItem.linkType === 'NONE') {
-                            $scope.linkToFocus = 'none';
-                            $scope.internal.saveSelectedMenuItem('linkType');
-                        } else {
-                            if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
-                                formItem = form.sitemapItem;
-                                $scope.linkToFocus = 'sitemapLink';
-                            } else if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
-                                formItem = form.url;
-                                $scope.linkToFocus = 'externalLink';
-                            }
-                            if(formItem.$dirty && formItem.$valid) {
-                                $scope.internal.saveSelectedMenuItem('link');
-                            }
-                        }
                     }
                 };
 
-                $scope.external = {
+                $scope.externalLink = {
                     isVisible: false,
                     show: function() {
-                        $scope.external.isVisible = true;
+                        $scope.externalLink.isVisible = true;
                     },
                     execute: function() {
-                        $scope.external.isVisible = false;
+                        $scope.externalLink.isVisible = false;
                         $window.open($scope.selectedMenuItem.link);
                     },
                     cancel: function() {
-                        $scope.external.isVisible = false;
+                        $scope.externalLink.isVisible = false;
                     }
                 };
 
-                $scope.fieldFeedbackMessage= {};
+                $scope.fieldFeedbackMessage = {
+                };
+
+                $scope.saveTitle = function (form) {
+                    if($scope.selectedMenuItem.isNew === true) {
+                        form.title.$dirty = true;
+                        delete $scope.selectedMenuItem.isNew;
+                    }
+                    if(form.title.$dirty && form.title.$valid) {
+                        $scope.saveSelectedMenuItem('title');
+                    }
+                };
+
+                $scope.updateLinkDestination = function (form) {
+                    var formItem;
+                    if($scope.selectedMenuItem.linkType === 'NONE') {
+                        $scope.linkToFocus = 'none';
+                        $scope.saveSelectedMenuItem('linkType');
+                    } else {
+                        if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
+                            formItem = form.sitemapItem;
+                            $scope.linkToFocus = 'sitemapLink';
+                        } else if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
+                            formItem = form.url;
+                            $scope.linkToFocus = 'externalLink';
+                        }
+                        if(formItem.$dirty && formItem.$valid) {
+                            $scope.saveSelectedMenuItem('link');
+                        }
+                    }
+                };
+
+                $scope.saveSelectedMenuItem = function(propertyName) {
+                    if (shouldSaveSelectedMenuItemProperty(propertyName)) {
+                        saveSelectedMenuItemProperty(propertyName);
+                    }
+                };
+
+                $scope.dismissFeedback = function () {
+                    if($scope.feedback.message) {
+                        $scope.feedback.message = '';
+                    }
+                    $scope.fieldFeedbackMessage = {};
+                };
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
 
                 function shouldSaveSelectedMenuItemProperty() {
-                    $scope.internal.dismissFeedback();
+                    $scope.dismissFeedback();
                     return angular.isDefined($scope.selectedMenuItem);
                 }
 
