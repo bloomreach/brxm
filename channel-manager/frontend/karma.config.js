@@ -35,6 +35,7 @@ module.exports = function(config) {
             build.bower + '/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
             build.bower + '/angular-ui-router/release/angular-ui-router.min.js',
             build.bower + '/angular-ui-tree/dist/angular-ui-tree.js',
+            build.bower + '/angular-chosen-localytics/chosen.js',
             build.bower + '/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
 
             // testing dependencies

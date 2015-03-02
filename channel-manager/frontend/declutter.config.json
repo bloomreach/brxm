@@ -1,6 +1,7 @@
 {
     "angular": ["angular.min.js", "angular.min.js.map"],
     "angular-bootstrap": ["ui-bootstrap-tpls.min.js"],
+    "angular-chosen-localytics": ["chosen.js"],
     "angular-mocks": [],
     "angular-route": ["angular-route.min.js", "angular-route.min.js.map"],
     "angular-translate": ["angular-translate.min.js"],
@@ -9,7 +10,6 @@
     "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
     "chosen": ["chosen.jquery.min.js"],
     "es5-shim": [],
-    "flot": [],
     "google-code-prettify": [],
     "hippo-theme": [
       "dist/css/main.min.css",
