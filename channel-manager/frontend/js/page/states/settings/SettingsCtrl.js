@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,6 +91,10 @@
                 loadHost()
                     .then(loadPage)
                     .then(loadPrototypes);
+
+                $scope.showAssignNewTemplate = function() {
+                    $scope.template.isVisible = true;
+                };
 
                 $scope.submit = function () {
                     var pageModel = {

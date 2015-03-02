@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -95,18 +95,18 @@
                     <label for="page-prototype">
                         <a class="toggle"
                            data-ng-class="{true: 'toggle-open', false: 'toggle-closed'}[template.isVisible]"
-                           data-ng-click="template.isVisible = true"
-                           data-ng-click="showAssignNewTemplate">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
+                           data-ng-click="showAssignNewTemplate()">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
                     </label>
 
                     <div class="form-group" data-ng-show="template.isVisible">
-                        <select hippo.theme.select-box class="form-control" id="page-prototype"
+                        <select class="form-control"
+                                id="page-prototype"
+                                data-chosen
                                 data-ng-options="p.displayName for p in prototypes"
-                                data-options="prototypes"
                                 data-ng-model="page.prototype"
-                                data-ng-attr-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"
-                                data-no-results-text="{{ 'NO_TEMPLATE_FOUND_FOR' | translate }}"></select>
-
+                                data-ng-attr-placeholder="'SELECT_TEMPLATE' | translate"
+                                data-no-results-text="'NO_TEMPLATE_FOUND_FOR' | translate">
+                        </select>
                         <div data-ng-show="page.hasContainerItem">
                             <div class="alert alert-warning" data-ng-show="!page.prototype.id || page.prototype.hasContainerInPageDefinition">
                                 {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
