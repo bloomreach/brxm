@@ -51,7 +51,7 @@
     <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channel.menu.EditMenuItemFormCtrl">
         <h1><strong>{{ selectedMenuItem.title | hippoChannelPlaceholder:'UNTITLED' }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
         <p class="alert alert-danger alert-dismissable" data-ng-show="feedback.message">
-            <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
+            <button type="button" class="close" data-ng-click="internal.dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
         </p>
         <div class="form-group has-feedback"
@@ -65,7 +65,7 @@
                    data-hippo-channel-auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
-                   data-ng-blur="saveTitle(form)"
+                   data-ng-blur="internal.saveTitle(form)"
                    data-tooltip="{{ fieldFeedbackMessage.title }}"
                    data-tooltip-trigger="show"
                    data-hippo-channel-tooltip-show="form.title.$invalid"
@@ -86,7 +86,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="SITEMAPITEM"
-                           data-ng-click="updateLinkDestination(form)">
+                           data-ng-click="internal.updateLinkDestination(form)">
                     {{ 'INTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -95,7 +95,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="EXTERNAL"
-                           data-ng-click="updateLinkDestination(form)">
+                           data-ng-click="internal.updateLinkDestination(form)">
                     {{ 'EXTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -104,7 +104,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="NONE"
-                           data-ng-click="updateLinkDestination(form)">
+                           data-ng-click="internal.updateLinkDestination(form)">
                     {{ 'NONE' | translate }}
                 </label>
             </div>
@@ -120,7 +120,7 @@
                 <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
                        data-ng-model="selectedMenuItem.sitemapLink"
                        data-show-focus="linkToFocus == 'sitemapLink'"
-                       data-ng-blur="updateLinkDestination(form)">
+                       data-ng-blur="internal.updateLinkDestination(form)">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.sitemapItem.$dirty"
                    data-ng-class="{
@@ -135,10 +135,9 @@
                           data-ng-mouseenter="showTooltip()"
                           data-ng-mouseleave="hideTooltip()">
                       <button class="btn btn-default" type="button" data-ng-click="internal.openPicker()">Pick</button>
-                      <button class="btn btn-default" type="button"
-                                data-ng-click="showPage()">
-                            <i class="fa fa-external-link"></i>
-                        </button>
+                      <button class="btn btn-default" type="button" data-ng-click="internal.showPage()">
+                        <i class="fa fa-external-link"></i>
+                      </button>
                     </div>
                 </span>
             </div>
@@ -156,7 +155,7 @@
                        data-ng-model="selectedMenuItem.externalLink"
                        data-ng-required="true"
                        data-show-focus="linkToFocus == 'externalLink'"
-                       data-ng-blur="updateLinkDestination(form)"
+                       data-ng-blur="internal.updateLinkDestination(form)"
                        data-tooltip="{{ fieldFeedbackMessage.link }}"
                        data-tooltip-trigger="show"
                        data-hippo-channel-tooltip-show="form.url.$invalid"
