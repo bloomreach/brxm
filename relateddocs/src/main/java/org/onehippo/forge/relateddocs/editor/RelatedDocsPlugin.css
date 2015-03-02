@@ -15,19 +15,19 @@
  *  limitations under the License.
 */
 
-.relatingdocs-link a:hover{
+.relateddocs-link a:hover{
     text-decoration: none;
 }
 
-.relatingdocs-link a{
+.relateddocs-link a{
     color: #22272F;
 }
 
-.relatingdocs-link {
+.relateddocs-link {
     color: #22272F;
 }
 
-.relatingdocs-refresh {
+.relateddocs-refresh {
     color: #22272F;
     text-decoration: underline;
 }

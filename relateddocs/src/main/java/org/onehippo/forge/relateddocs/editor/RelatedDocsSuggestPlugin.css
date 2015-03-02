@@ -15,7 +15,7 @@
  *  limitations under the License.
 */
 
-div.relatingdocs-link > a.simple-link {
+div.relateddocs-link > a.simple-link {
   display: inline;
   float: none;
   margin-left: 4px;
