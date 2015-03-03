@@ -1,13 +1,6 @@
 /*.iml
 /.DS_Store
 /.idea
-archetype/*.iml
-archetype/.DS_Store
-archetype/.idea
-archetype/atlassian-ide-plugin.xml
-archetype/classes
-archetype/hippo-plugins.iws
-archetype/target
 /atlassian-ide-plugin.xml
 /classes
 components/*.iml

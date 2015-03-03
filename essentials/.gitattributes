@@ -3,7 +3,6 @@
 /NOTICE -text
 /README.md -text
 /VERSIONS -text
-archetype/moved.txt -text
 components/cms/pom.xml -text
 components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterJob.java -text
 components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogUpdater.java -text
