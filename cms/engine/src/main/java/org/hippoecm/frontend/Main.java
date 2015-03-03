@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
-import org.apache.wicket.ISessionListener;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -48,6 +47,8 @@ import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
+import org.apache.wicket.markup.html.IPackageResourceGuard;
+import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
@@ -193,7 +194,7 @@ public class Main extends PluginApplication {
 
             @Override
             public Iterator<URL> getResources(String name) {
-                List<URL> resources = new LinkedList<URL>();
+                List<URL> resources = new LinkedList<>();
                 for (Iterator<URL> iter = originalResolver.getResources(name); iter.hasNext(); ) {
                     resources.add(iter.next());
                 }
@@ -375,6 +376,14 @@ public class Main extends PluginApplication {
             }
         });
 
+        final IPackageResourceGuard packageResourceGuard = resourceSettings.getPackageResourceGuard();
+        if (packageResourceGuard instanceof SecurePackageResourceGuard) {
+            SecurePackageResourceGuard guard = (SecurePackageResourceGuard) packageResourceGuard;
+
+            // CMS7-8898: allow .woff2 files to be served
+            guard.addPattern("+*.woff2");
+        }
+
         if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
@@ -438,13 +447,7 @@ public class Main extends PluginApplication {
         });
 
         final IContextProvider<AjaxRequestTarget, Page> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
-        setAjaxRequestTargetProvider(new IContextProvider<AjaxRequestTarget, Page>() {
-
-            @Override
-            public AjaxRequestTarget get(final Page context) {
-                return new PluginRequestTarget(ajaxRequestTargetProvider.get(context));
-            }
-        });
+        setAjaxRequestTargetProvider(context -> new PluginRequestTarget(ajaxRequestTargetProvider.get(context)));
 
         setPageRendererProvider(new IPageRendererProvider() {
 
@@ -476,12 +479,7 @@ public class Main extends PluginApplication {
     }
 
     protected void registerSessionListeners() {
-        getSessionListeners().add(new ISessionListener() {
-            @Override
-            public void onCreated(final Session session) {
-                ((PluginUserSession) session).login();
-            }
-        });
+        getSessionListeners().add(session -> ((PluginUserSession) session).login());
     }
 
     @Override
