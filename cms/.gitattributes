@@ -1921,7 +1921,6 @@ editor/test/src/test/resources/log4j.dtd -text
 editor/test/src/test/resources/log4j.xml -text
 editor/test/src/test/resources/repository-test.cnd -text
 engine/src/main/java/org/hippoecm/frontend/ClassFromKeyStringResourceLoader.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/CssImportingHeaderResponse.java -text
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage.properties -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_de.properties -text

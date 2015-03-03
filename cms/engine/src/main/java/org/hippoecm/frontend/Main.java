@@ -45,15 +45,12 @@ import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
-import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
@@ -66,7 +63,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.cycle.RequestCycleListenerCollection;
 import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
-import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.mapper.mount.IMountedRequestMapper;
 import org.apache.wicket.request.mapper.mount.Mount;
@@ -429,22 +425,6 @@ public class Main extends PluginApplication {
         if (outputWicketpaths != null && "true".equalsIgnoreCase(outputWicketpaths)) {
             getDebugSettings().setOutputComponentPath(true);
         }
-
-        setHeaderResponseDecorator(new IHeaderResponseDecorator() {
-
-            @Override
-            public IHeaderResponse decorate(IHeaderResponse response) {
-                boolean isIE = WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
-                int version = WebSession.get().getClientInfo().getProperties().getBrowserVersionMajor();
-                boolean isAjax = ((WebRequest) RequestCycle.get().getRequest()).isAjax();
-                if (isIE && !isAjax && (0 < version && version < 10)) {
-                    // Before IE10 the number of stylesheets is restricted to 31
-                    return new CssImportingHeaderResponse(response);
-                }
-                return response;
-            }
-
-        });
 
         final IContextProvider<AjaxRequestTarget, Page> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
         setAjaxRequestTargetProvider(context -> new PluginRequestTarget(ajaxRequestTargetProvider.get(context)));
