@@ -31,6 +31,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -264,7 +265,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
     }
 
     @Test
-    public void document_linked_via_component_try_preferred_sitemap_item() throws Exception {
+    public void linked_via_component_try_preferred_sitemap_item() throws Exception {
         // add hst component class to the contactpage:
         Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
@@ -291,7 +292,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
 
 
     @Test
-    public void document_linked_via_component_AND_via_sitemap_content_path_uses_sitemap_as_preferred() throws Exception {
+    public void linked_via_component_AND_via_sitemap_content_path_uses_sitemap_as_preferred() throws Exception {
         // add hst component class to the contactpage:
         Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
@@ -308,7 +309,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         Node tmpDoc = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/tmpdoc");
 
         final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
-        // home page has preference since shortest
+        // home page has preference since in sitemap (which has precedence over component linked docs)
         assertEquals("", hstLink.getPath());
 
         HstSiteMapItem contactPreferred = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItem("contact");
@@ -323,17 +324,42 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         final HstLink hstLinkPreferredNews1 = linkCreator.create(tmpDoc, requestContext, newsPreferred, fallback);
         final HstLink hstLinkPreferredNews2 = linkCreator.create(tmpDoc, requestContext, newsPreferred, !fallback);
 
-        // home page has preference since shortest so should be the fallback
+        // home page has preference since in sitemap (which has precedence over component linked docs)
         assertEquals("", hstLinkPreferredNews1.getPath());
         // preferred sitemap item news and fallback false can not create link
         assertTrue(hstLinkPreferredNews2.isNotFound());
 
 
         final List<HstLink> hstLinks = linkCreator.createAll(tmpDoc, requestContext, false);
-        // home page has preference since shortest
+        // createAll order does not take sitemap or component precedence into account but just by depth and then lexical
         assertEquals("", hstLinks.get(0).getPath());
         assertEquals("contact", hstLinks.get(1).getPath());
     }
 
+
+    @Ignore(value = "Should pass after HSTTWO-3215 is done.")
+    @Test
+    public void document_linked_via_component_AND_via_sitemap_content_path_uses_sitemap_as_preferred_even_if_sitemap_path_deeper() throws Exception {
+
+        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
+        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
+        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
+        contactPage.setProperty("hst:parametervalues", new String[]{"tmpdoc"});
+
+        // add relative hst:relativecontentpath = tmpdoc to existing sitemap item for '/contact/thankyou' which is a deeper
+        // path than for 'contactpage' (/contact)
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/contact/thankyou")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "tmpdoc");
+
+        session.save();
+
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        Node tmpDoc = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/tmpdoc");
+
+        final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
+        // contact/thankyou has preference since sitemap has precedence over component linked docs
+        assertEquals("contact/thankyou", hstLink.getPath());
+
+    }
 
 }
