@@ -34,6 +34,7 @@
 - hst:displayname (string)
 // the relative path to primary container
 - hst:primarycontainer (string)
+- hst:supporteddoctypes (string) multiple
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
@@ -248,7 +249,6 @@
 - hst:content (string)
 // deprecated and unused: do not use
 - hst:portalconfigurationenabled (boolean)
-- hst:componentlinkrewritingsupported (boolean)
 
 [hst:sites] > nt:base, mix:referenceable, mix:versionable
 + * (hst:site) = hst:site version

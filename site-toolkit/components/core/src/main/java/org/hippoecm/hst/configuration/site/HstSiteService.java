@@ -53,7 +53,6 @@ public class HstSiteService implements HstSite {
     private MountSiteMapConfiguration mountSiteMapConfiguration;
     private HstConfigurationLoadingCache configLoadingCache;
     private final Object hstModelMutex;
-    private boolean componentLinkRewritingSupported;
 
     public static HstSiteService createLiveSiteService(final HstNode site,
                                                        final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -76,7 +75,6 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
-        componentLinkRewritingSupported = site.getValueProvider().getBoolean(HstNodeTypes.SITE_PROPERTY_COMPONENT_LINK_REWRITING_SUPPORTED);
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
         init();
     }
@@ -246,12 +244,10 @@ public class HstSiteService implements HstSite {
             if (locationMapTree != null) {
                 return locationMapTree;
             }
-            if (isComponentLinkRewritingSupported()) {
-                locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems(),
-                        getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
-            } else {
-                locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems());
-            }
+
+            locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems(),
+                    getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
+
             return locationMapTree;
         }
     }
@@ -310,11 +306,6 @@ public class HstSiteService implements HstSite {
         for(HstComponentConfiguration child : hstComponentConfiguration.getChildren().values()) {
             sanitizeHstComponentConfiguration(child);
         }
-    }
-
-    @Override
-    public boolean isComponentLinkRewritingSupported() {
-        return componentLinkRewritingSupported;
     }
 
     @Override

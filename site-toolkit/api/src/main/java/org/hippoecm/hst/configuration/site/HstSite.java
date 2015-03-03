@@ -92,9 +92,4 @@ public interface HstSite {
      */
     boolean hasPreviewConfiguration();
 
-    /**
-     * @return <code>true</code> when the link rewriting should next to the sitemap also include documents picked in hst components
-     */
-    boolean isComponentLinkRewritingSupported();
-
 }

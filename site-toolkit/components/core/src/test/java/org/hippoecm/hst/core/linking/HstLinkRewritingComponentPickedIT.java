@@ -50,9 +50,6 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         session = createAdminSession();
         createHstConfigBackup(session);
 
-        // enable hst:componentlinkrewritingsupported on mount
-        session.getNode("/hst:hst/hst:sites/unittestproject").setProperty("hst:componentlinkrewritingsupported", true);
-
         // create tmpdoc that is not mapped via sitemap
         //session.getNode("/unittestcontent/documents/unittestproject/News/News1")
         JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/News/News1", TMPDOC_LOC);

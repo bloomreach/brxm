@@ -975,12 +975,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             if (tryMount.isMapped() && tryMount.getHstSite() != null) {
                 if (resolverProperties.preferredItem != null) {
                     final LocationMapResolver subResolver;
-                    if (tryMount.getHstSite() != null && tryMount.getHstSite().isComponentLinkRewritingSupported()) {
-                        subResolver = getSubLocationMapResolver(resolverProperties.preferredItem,
-                                tryMount.getHstSite().getComponentsConfiguration(), tryMount.getContentPath());
-                    }  else {
-                        subResolver = getSubLocationMapResolver(resolverProperties.preferredItem, null, null);
-                    }
+
+                    subResolver = getSubLocationMapResolver(
+                            resolverProperties.preferredItem,
+                            tryMount.getHstSite().getComponentsConfiguration(),
+                            tryMount.getContentPath());
+
                     subResolver.setRepresentsDocument(resolverProperties.representsDocument);
                     subResolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
                     subResolver.setCanonical(resolverProperties.canonicalLink);

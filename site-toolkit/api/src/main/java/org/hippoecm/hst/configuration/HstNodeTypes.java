@@ -219,7 +219,6 @@ public interface HstNodeTypes {
     String SITE_CONFIGURATIONPATH = "hst:configurationpath";
     String SITE_VERSION = "hst:version";
     String SITE_CONTENT = "hst:content";
-    String SITE_PROPERTY_COMPONENT_LINK_REWRITING_SUPPORTED = "hst:componentlinkrewritingsupported";
 
     String NODENAME_HST_CONTENTNODE = "hst:content";
     String NODENAME_HST_SITEMAP = "hst:sitemap";
