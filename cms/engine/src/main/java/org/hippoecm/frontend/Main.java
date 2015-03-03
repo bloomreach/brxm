@@ -74,6 +74,7 @@ import org.apache.wicket.request.mapper.mount.MountParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.IExceptionSettings;
@@ -243,7 +244,11 @@ public class Main extends PluginApplication {
             }
         });
 
-        resourceSettings.setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new LastModifiedResourceVersion()));
+        if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
+            resourceSettings.setCachingStrategy(new NoOpResourceCachingStrategy());
+        } else {
+            resourceSettings.setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new LastModifiedResourceVersion()));
+        }
 
         mount(new MountMapper("binaries", new IMountedRequestMapper() {
 
