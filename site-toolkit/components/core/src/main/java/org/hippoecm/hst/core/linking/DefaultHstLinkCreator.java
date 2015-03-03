@@ -18,9 +18,9 @@ package org.hippoecm.hst.core.linking;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -128,7 +128,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         final Mount mount = hstRequestContext.getResolvedMount().getMount();
         final String type = mount.getType();
         final String hostGroupName = mount.getVirtualHost().getHostGroupName();
-       return createAll(node, hstRequestContext, hostGroupName, type , crossMount);
+        return createAll(node, hstRequestContext, hostGroupName, type, crossMount);
     }
 
     public List<HstLink> createAll(final Node node, final HstRequestContext hstRequestContext,
@@ -717,11 +717,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     List<HstLinkImpl> hstLinkListForMount = resolveToHstLinkList(rewritePath, tryMount, resolverProperties);
                     // strip doubles here.
                     // Two HstLinks with same getPath for one mount are collapsed
-                    // Tow HstLinks with same getPath except one with extension (/foo and /foo.html) are collapsed to a
+                    // Two HstLinks with same getPath except one with extension (/foo and /foo.html) are collapsed to a
                     // one, where in case HstLinkImpl has contentType DOCUMENT the one with extension is kept, and
                     // contentType FOLDER the /foo. If contentType unknown, we keep both
 
-                    Map<String, HstLinkImpl> collapsedLinks = new TreeMap<>();
+                    Map<String, HstLinkImpl> collapsedLinks = new HashMap<>();
                     for (HstLinkImpl hstLink : hstLinkListForMount) {
                         String path = hstLink.getPath();
                         if (path == null) {
@@ -779,6 +779,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return Collections.emptyList();
             }
 
+            Collections.sort(hstLinkList, new LowestDepthFirstAndThenLexicalComparator());
             return hstLinkList;
         }
 
@@ -1032,10 +1033,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         boolean fallback;
         boolean navigationStateful;
     }
-    
 
-    
-    private class CandidateMountComparator implements Comparator<Mount> {
+
+
+    static class CandidateMountComparator implements Comparator<Mount> {
 
         Mount referenceMount;
         CandidateMountComparator(Mount referenceMount) {
@@ -1099,6 +1100,31 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
             }
             return counter;
+        }
+    }
+
+    static class LowestDepthFirstAndThenLexicalComparator implements Comparator<HstLink> {
+        @Override
+        public int compare(final HstLink link1, final HstLink link2) {
+            final String path1 = link1.getPath();
+            final String path2 = link2.getPath();
+
+            if (path1 == null) {
+                if (path2 == null) {
+                    return 0;
+                }
+                return 1;
+            }
+            if (path2 == null) {
+                return -1;
+            }
+
+            int depth1 = path1.split("/").length;
+            int depth2 = path2.split("/").length;
+            if (depth1 == depth2) {
+                return path1.compareTo(path2);
+            }
+            return depth1 - depth2;
         }
     }
 

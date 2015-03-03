@@ -188,6 +188,82 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
     }
 
     @Test
+    public void document_linked_via_two_components_within_same_page_and_not_with_sitemap_content_path() throws Exception {
+        // add hst component class to the contactpage and to the body of contact page:
+        String[] componentPaths = {"/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage",
+                "/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage/body"};
+
+        for (String componentPath : componentPaths) {
+            Node componentNode = session.getNode(componentPath);
+            componentNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
+            componentNode.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
+            componentNode.setProperty("hst:parametervalues", new String[]{"tmpdoc"});
+
+        }
+        session.save();
+
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        Node tmpDoc = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/tmpdoc");
+
+        HstSiteMapItem contactPreferred = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItem("contact");
+        HstSiteMapItem homePreferred = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItem("home");
+        final boolean fallback = true;
+        final HstLink hstLink1 = linkCreator.create(tmpDoc, requestContext, contactPreferred, fallback);
+        final HstLink hstLink2 = linkCreator.create(tmpDoc, requestContext, homePreferred, fallback);
+        final HstLink hstLink3 = linkCreator.create(tmpDoc, requestContext, contactPreferred, !fallback);
+        final HstLink hstLink4 = linkCreator.create(tmpDoc, requestContext, homePreferred, !fallback);
+        assertEquals("contact", hstLink1.getPath());
+        assertEquals("contact", hstLink2.getPath());
+        assertEquals("contact", hstLink3.getPath());
+        // preferred sitemap item home and fallback false can not create link
+        assertTrue(hstLink4.isNotFound());
+    }
+
+    @Test
+    public void document_linked_via_multiple_components_in_multiple_pages_and_not_with_sitemap_content_path_chooses_shortest_then_sorted() throws Exception {
+        // add hst component class to the contactpage, searchpage and thankyou (thankyou is URL for /contactpage/thankyou)
+        String[] componentPaths = {"/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage",
+                "/hst:hst/hst:configurations/unittestcommon/hst:pages/searchpage",
+                "/hst:hst/hst:configurations/unittestcommon/hst:pages/thankyou"};
+
+        for (String componentPath : componentPaths) {
+            Node componentNode = session.getNode(componentPath);
+            componentNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
+            componentNode.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
+            componentNode.setProperty("hst:parametervalues", new String[]{"tmpdoc"});
+        }
+
+        session.save();
+
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        Node tmpDoc = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/tmpdoc");
+        HstSiteMapItem contactPreferred = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItem("contact");
+        HstSiteMapItem homePreferred = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItem("home");
+
+        final boolean fallback = true;
+        final HstLink hstLink1 = linkCreator.create(tmpDoc, requestContext, contactPreferred, fallback);
+        final HstLink hstLink2 = linkCreator.create(tmpDoc, requestContext, homePreferred, fallback);
+        final HstLink hstLink3 = linkCreator.create(tmpDoc, requestContext, contactPreferred, !fallback);
+        final HstLink hstLink4 = linkCreator.create(tmpDoc, requestContext, homePreferred, !fallback);
+        assertEquals("contact", hstLink1.getPath());
+        assertEquals("contact", hstLink2.getPath());
+        assertEquals("contact", hstLink3.getPath());
+        // preferred sitemap item home and fallback false can not create link
+        assertTrue(hstLink4.isNotFound());
+
+        final List<HstLink> allLinks = linkCreator.createAll(tmpDoc, requestContext, false);
+
+        assertEquals(6, allLinks.size());
+        assertEquals("contact", allLinks.get(0).getPath());
+        assertEquals("search", allLinks.get(1).getPath());
+        assertEquals("contact-dispatch/thankyou", allLinks.get(2).getPath());
+        assertEquals("contact-spring/thankyou", allLinks.get(3).getPath());
+        assertEquals("contact-springmvc/thankyou", allLinks.get(4).getPath());
+        assertEquals("contact/thankyou", allLinks.get(5).getPath());
+
+    }
+
+    @Test
     public void document_linked_via_component_try_preferred_sitemap_item() throws Exception {
         // add hst component class to the contactpage:
         Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
@@ -213,8 +289,9 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         assertTrue(hstLink4.isNotFound());
     }
 
+
     @Test
-    public void test_document_linked_via_component_AND_via_sitemap_content_path() throws Exception {
+    public void document_linked_via_component_AND_via_sitemap_content_path_uses_sitemap_as_preferred() throws Exception {
         // add hst component class to the contactpage:
         Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());

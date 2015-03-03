@@ -814,6 +814,7 @@ components/core/src/test/java/org/hippoecm/hst/core/linking/AbstractHstLinkRewri
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstContainerResourceLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkAllRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkForCmsRequestIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkLowestDepthFirstAndTheLexicalComparatorTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingComponentPickedIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingCrossSchemeIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingIT.java -text svneol=unset#text/plain
