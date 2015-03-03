@@ -10,23 +10,21 @@ suggestions for improvements.
 
 # Getting Started
 
-## Git checkout
+## SVN checkout
 
-To get started with the Hippo Essentials checkout the current master branch. You have two options to check out
+To get started with the Hippo Essentials checkout the trunk. You have two options to check out
 the project.
 
-
-### Clone project *
-
-One option is to use HTTPS* (see NOTES below).
-The second option is to use a SSH clone. By using the SSH clone, you don't have to provide your username
-and password. You just have to create a SSH key and configure the key in your GIT account. There are
-[instructions on how to create your SSH key](https://help.github.com/articles/generating-ssh-keys) on Git
-Hub. In order to make use of your SSH key, you have to make sure you use the following clone command:
-
+### Read-only
 ```shell
-git clone git@github.com:onehippo/essentials.git
+svn co  http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk  essentials
 ```
+
+### Read-write (you'll need Hippo SVN account for this)
+```shell
+svn co  https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk  essentials
+```
+
 ### Build the essentials components:
 ```shell
 cd essentials
@@ -38,49 +36,16 @@ mvn clean install
 mvn clean && mvn validate -Ppedantic
 ```
 
-### Create and install archetype locally :
+### Create and install archetype locally:
 ```shell
-cd essentials/archetype
+svn co  http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk/ archetype
+cd archetype
 mvn clean install
 ```
 
 ### run archetype
 ```shell
-mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=hippo-project-archetype" -D "archetypeVersion=2.00.04-SNAPSHOT"
-```
-
-## Working with Git
-
-Create local working branch to work on:
-```shell
-git checkout -b YOUR_LOCAL_BRANCH_NAME
-```
-
-Now work on files, use git status to & git add and git commit files.
-NOTE: This can be done within Intellij as well, just commit files
-
-Push your changes to remote repository, -u option is to create remote tracking branch:
-
-```shell
-git push -u origin YOUR_LOCAL_BRANCH_NAME
-```
-This will make a remote branch, visible to other team members.
-
-Once you are make changes,  use git push to push your changes to above mentioned remote branch.
-Once you are ready to integrate your work into master, request a pull request through GITHUB website.
-
-NOTE: If you wanna merge your changes yourself do following:
-
-```shell
-git checkout master
-git pull
-git pull origin YOUR_LOCAL_BRANCH_NAME
-git push
-```
-
-To delete remote branch:
-```shell
-git push origin --delete  YOUR_LOCAL_BRANCH_NAME
+mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=hippo-project-archetype" -D "archetypeVersion=2.01.00-SNAPSHOT"
 ```
 
 ##Running locally
@@ -100,7 +65,7 @@ The following URLs are available from this project:
  * Website at http://localhost:8080/site 
  * Essentials dashboard at http://localhost:8080/essentials
 
-Logs are located in `target/tomcat6x/logs`
+Logs are located in `target/tomcat8x/logs`
 
 ##Using JRebel
 
@@ -151,17 +116,6 @@ as the default for your project edit the file
 
 ##Copyright and license
 
-Copyright 2013-2014 Hippo B.V. 
-Distributed under the [Apache 2.0 license](https://github.com/onehippo/essentials/blob/master/LICENSE).
+Copyright 2013-2015 Hippo B.V.
+Distributed under the [Apache 2.0 license](http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk/LICENSE).
 
-
-## NOTES:
-
-### Cloning project using HTTPS clone
-
-The first option is to use a HTTPS clone. You have to provide your GIT username and password to be able
-to perform GIT operations. The clone can be created by the following command:
-
-```shell
-git clone https://github.com/onehippo/essentials.git
-```
