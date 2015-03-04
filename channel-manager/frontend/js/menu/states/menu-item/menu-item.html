@@ -21,7 +21,9 @@
                 <div class="panel-content l-sidebar">
                     <div hippo-tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">
                         <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" data-ng-hide="childNodes().length === 0">
-                            <span class="fa" data-ng-class="{'fa-caret-down': !collapsed, 'fa-caret-right': collapsed}"></span>
+                            <hippo-icon class="hi hi-caret hi-tiny" name="caret" size="tiny"
+                                        data-ng-class="{'hi-caret-down': !collapsed, 'hi-caret-right': collapsed}">
+                            </hippo-icon>
                         </a>
                         <div class="spacer" data-ng-show="childNodes().length === 0">&#9679;</div>
                         {{ item.title }}
