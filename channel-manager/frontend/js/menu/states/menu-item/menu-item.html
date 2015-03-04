@@ -19,7 +19,7 @@
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channel.menu.TreeCtrl">
             <div class="panel panel-default">
                 <div class="panel-content l-sidebar">
-                    <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">
+                    <div hippo-tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">
                         <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" data-ng-hide="childNodes().length === 0">
                             <span class="fa" data-ng-class="{'fa-caret-down': !collapsed, 'fa-caret-right': collapsed}"></span>
                         </a>
@@ -46,7 +46,7 @@
         <!-- START general confirmation dialog -->
         <div data-ng-controller="hippo.channel.menu.CloseConfirmationCtrl" id="close-confirmation">
             <div class="overlay" data-ng-show="dialog.visible">&#160;</div>
-            <div hippo.theme.confirmation-dialog
+            <div hippo-confirmation-dialog
                  data-show="dialog.visible"
                  data-perform-confirmation="confirm()"
                  data-perform-cancel="cancel()"
