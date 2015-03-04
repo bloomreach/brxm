@@ -667,6 +667,7 @@ components/core/src/main/java/org/hippoecm/hst/core/jcr/SubjectBasedRepository.j
 components/core/src/main/java/org/hippoecm/hst/core/linking/CompositeList.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultHstLinkCreator.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultRewriteContextResolver.java -text
+components/core/src/main/java/org/hippoecm/hst/core/linking/DocumentParamsScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkProcessorChain.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapResolver.java svneol=native#text/plain
@@ -812,6 +813,7 @@ components/core/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtua
 components/core/src/test/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositoryIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/AbstractHstLinkRewritingIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/DocumentParamsScannerTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstContainerResourceLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkAllRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkForCmsRequestIT.java -text

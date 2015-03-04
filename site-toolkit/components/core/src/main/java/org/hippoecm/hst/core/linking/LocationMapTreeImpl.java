@@ -15,32 +15,21 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
-import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -54,10 +43,6 @@ public class LocationMapTreeImpl implements LocationMapTree {
     private final static Logger log = LoggerFactory.getLogger(LocationMapTreeImpl.class);
     
     private Map<String, LocationMapTreeItem> children = new HashMap<>();
-
-    // simple cache to avoid class method and annotation scanning over and over. Needs to be
-    // synchronized since LocationMapTreeImpl construction can be invoked concurrent
-    private final static ConcurrentMap<String, Set<String>> componentClassToDocumentParameterNamesCache = new ConcurrentHashMap<>();
 
     public LocationMapTreeImpl(final List<HstSiteMapItem> siteMapItems) {
         this(siteMapItems, null, null);
@@ -102,7 +87,7 @@ public class LocationMapTreeImpl implements LocationMapTree {
             } else {
 
                 // find all extra document paths possibly stored in the components belonging to the page of this siteMapItem
-                List<String> documentPaths = findDocumentPathsRecursive(cc);
+                List<String> documentPaths =  DocumentParamsScanner.findDocumentPathsRecursive(cc);
 
                 Properties siteMapItemParameters = new Properties();
                 for (Map.Entry<String, String> param : siteMapItem.getParameters().entrySet()) {
@@ -276,67 +261,6 @@ public class LocationMapTreeImpl implements LocationMapTree {
         return children.get(name);
     }
 
-    private List<String> findDocumentPathsRecursive(final HstComponentConfiguration config) {
-        final ArrayList<String> populate = new ArrayList<>();
-        findDocumentPathsRecursive(config, populate);
-        return populate;
-    }
-
-    private void findDocumentPathsRecursive(final HstComponentConfiguration config,
-                                            final List<String> populate) {
-
-        final String componentClassName = config.getComponentClassName();
-        if (StringUtils.isNotEmpty(componentClassName)) {
-            Set<String> parameterNames = componentClassToDocumentParameterNamesCache.get(componentClassName);
-            if (parameterNames == null) {
-                try {
-                    parameterNames = new HashSet<>();
-                    final Class<?> compClass = Class.forName(componentClassName);
-                    HstComponent component = (HstComponent) compClass.newInstance();
-                    ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
-
-                    if (parametersInfo != null) {
-                        Class<?> parametersInfoType = parametersInfo.type();
-
-                        if (!parametersInfoType.isInterface()) {
-                            throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
-                        }
-                        for (Method method : parametersInfoType.getMethods()) {
-                            if (method.isAnnotationPresent(Parameter.class) &&
-                                    (method.isAnnotationPresent(JcrPath.class) || method.isAnnotationPresent(DocumentLink.class))) {
-                                Parameter parameter = method.getAnnotation(Parameter.class);
-                                parameterNames.add(parameter.name());
-                            }
-                        }
-                    }
-                }  catch (Exception e) {
-                    log.warn("Exception while finding documentLink or JcrPath annotations for {}. Skip it: {}",
-                            config.getCanonicalStoredLocation(), e.toString());
-                }
-                componentClassToDocumentParameterNamesCache.putIfAbsent(componentClassName, parameterNames);
-            }
-
-            for (String param : parameterNames) {
-                String documentPath = config.getParameter(param);
-                if (StringUtils.isNotEmpty(documentPath)) {
-                    populate.add(documentPath);
-                }
-                // add variants as well
-                for (String prefix : config.getParameterPrefixes()) {
-                    final String prefixedParam = ConfigurationUtils.createPrefixedParameterName(prefix, param);
-                    String variantDocumentPath = config.getParameter(prefixedParam);
-                    if (StringUtils.isNotEmpty(variantDocumentPath)) {
-                        populate.add(variantDocumentPath);
-                    }
-                }
-            }
-
-        }
-
-        for (HstComponentConfiguration child : config.getChildren().values()) {
-            findDocumentPathsRecursive(child, populate);
-        }
-    }
 
     private void optimize() {
         children = CollectionOptimizer.optimizeHashMap(children);
