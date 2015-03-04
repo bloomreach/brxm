@@ -154,11 +154,13 @@
             var isDirty = false;
             if (this.store !== null) {
                 this.store.each(function (record) {
-                    var value = record.get('value'),
-                        initialValue = record.get('initialValue');
-                    if (value !== initialValue) {
-                        isDirty = true;
-                        return false;
+                    if (!record.get('hiddenInChannelManager')) {
+                        var value = record.get('value'),
+                            initialValue = record.get('initialValue');
+                        if (String(value) !== String(initialValue)) {
+                            isDirty = true;
+                            return false;
+                        }
                     }
                 });
             }
