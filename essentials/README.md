@@ -12,17 +12,18 @@ suggestions for improvements.
 
 ## SVN checkout
 
-To get started with the Hippo Essentials checkout the trunk. You have two options to check out
-the project.
+To get started with the Hippo Essentials, checkout the code. You have two options to check out
+the project. The example commands below use the potentially unstable trunk snapshot. Consider
+using a tag instead.
 
 ### Read-only
 ```shell
-svn co  http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk  essentials
+svn co http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk essentials
 ```
 
 ### Read-write (you'll need Hippo SVN account for this)
 ```shell
-svn co  https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk  essentials
+svn co https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk essentials
 ```
 
 ### Build the essentials components:
@@ -38,14 +39,14 @@ mvn clean && mvn validate -Ppedantic
 
 ### Create and install archetype locally:
 ```shell
-svn co  http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk/ archetype
+svn co http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk/ archetype
 cd archetype
 mvn clean install
 ```
 
-### run archetype
+### Generate a new Hippo project from the archetype (use appropriate archetype version):
 ```shell
-mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=hippo-project-archetype" -D "archetypeVersion=2.01.00-SNAPSHOT"
+mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=hippo-project-archetype" -D "archetypeVersion=[archetype version]"
 ```
 
 ##Running locally
@@ -55,8 +56,8 @@ This project uses the Maven Cargo plugin to run the CMS, Website and Essentials 
 From the project root folder, execute:
 
 ```shell
-mvn clean install
-mvn -P cargo.run
+mvn clean verify
+mvn -P cargo.run -Drepo.path=storage
 ```
 
 The following URLs are available from this project:
@@ -109,9 +110,9 @@ mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
 
 ##Automatic Export
 
-To have your repository changes automatically exported to filesystem during local development, log into
-http://localhost:8080/cms/console and press the *"Enable Auto Export"* button at the top right. To set this
-as the default for your project edit the file
+Essentials depends on the automatic export feature being enabled, which is the archetype-generated Hippo
+project's default setting. You can change the setting temporarily in the upper right corner in the CMS,
+or permanently in your project's file
 `./bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml`
 
 ##Copyright and license
