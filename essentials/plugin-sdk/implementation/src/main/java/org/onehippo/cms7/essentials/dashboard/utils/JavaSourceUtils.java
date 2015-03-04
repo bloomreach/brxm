@@ -701,6 +701,46 @@ public final class JavaSourceUtils {
         addBeanMethodProperty(path, methodName, propertyName, returnType);
     }
 
+
+
+    @SuppressWarnings(UNCHECKED)
+    public static void addBeanMethodDocbase(final Path path, final String methodName, final String propertyName, final boolean multiple) {
+        final ASTParser parser = ASTParser.newParser(AST.JLS8);
+        parser.setResolveBindings(true);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        final String source = multiple ?
+                parseTemplate(SourceCodeTemplates.TEMPLATE_DOCBASE_MULTIPLE, propertyName, methodName):
+                parseTemplate(SourceCodeTemplates.TEMPLATE_DOCBASE, propertyName, methodName);
+        parser.setSource(new Document(source).get().toCharArray());
+        final CompilationUnit sourceUnit = (CompilationUnit) parser.createAST(null);
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        final AST ast = unit.getAST();
+        sourceUnit.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(final MethodDeclaration node) {
+                final ASTNode astNode = ASTNode.copySubtree(ast, node);
+                classType.bodyDeclarations().add(astNode);
+                return true;
+            }
+        });
+        replaceFile(path, unit, ast);
+        addImport(path, HippoEssentialsGenerated.class.getName());
+        addImport(path, EssentialConst.HIPPO_BEAN_IMPORT);
+        if (multiple) {
+            addImport(path, ArrayList.class.getName());
+            addImport(path, List.class.getName());
+        }
+    }
+
+    private static String parseTemplate(final String template, final String propertyName, final String methodName) {
+         String retValue = template.replaceAll("\\$methodName\\$", methodName);
+          retValue = retValue.replaceAll("\\$internalName\\$", propertyName);
+        return retValue;
+    }
+
+
     /**
      * Adds Long property method (getProperty)
      *

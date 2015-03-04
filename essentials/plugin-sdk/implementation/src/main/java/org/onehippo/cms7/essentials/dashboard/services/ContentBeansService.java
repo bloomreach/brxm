@@ -78,6 +78,7 @@ public class ContentBeansService {
     public static final String HIPPO_GALLERY_IMAGE_SET_BEAN = "HippoGalleryImageSetBean";
     public static final String HIPPO_GALLERY_IMAGE_SET_CLASS = "HippoGalleryImageSet";
     public static final String RELATED_MIXIN = "relateddocs:relatabledocs";
+    public static final String DOCBASE = "Docbase";
     private static Logger log = LoggerFactory.getLogger(ContentBeansService.class);
 
     private final PluginContext context;
@@ -421,63 +422,64 @@ public class ContentBeansService {
             if (!hasChange(name, existing, beanPath, property.isMultiple())) {
                 continue;
             }
-            final String type = property.getType();
+            String type = property.getType();
             log.debug("processing missing property, BEAN: {}, PROPERTY: {}", bean.getName(), property.getName());
 
             if (type == null) {
                 log.error("Missing type for property, cannot create method {}", property.getName());
                 continue;
             }
+            if (type.equals("String")) {
+                final String cmsType = property.getCmsType();
+                if (!Strings.isNullOrEmpty(cmsType) && cmsType.equals(DOCBASE)) {
+                    type  = DOCBASE;
+                }
+            }
+
             final boolean multiple = property.isMultiple();
             String methodName;
             switch (type) {
                 case "String":
                 case "Html":
                 case "Password":
-                case "Docbase":
                 case "Text":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
+                    logMessage(beanPath, methodName);
                     break;
 
                 case "Date":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
+                    logMessage(beanPath, methodName);
                     break;
                 case "Boolean":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
+                    logMessage(beanPath, methodName);
                     break;
                 case "Long":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodLong(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
+                    logMessage(beanPath, methodName);
                     break;
                 case "Double":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodDouble(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
+                    logMessage(beanPath, methodName);
+                    break;
+                case DOCBASE:
+                    methodName = GlobalUtils.createMethodName(name);
+                    JavaSourceUtils.addBeanMethodDocbase(beanPath, methodName, name, multiple);
+                    existing.add(name);
+                    logMessage(beanPath, methodName);
                     break;
                 default:
-
                     final String message = String.format("TODO: Beanwriter: Failed to create getter for property: %s of type: %s", property.getName(), type);
                     JavaSourceUtils.addClassJavaDoc(beanPath, message);
                     log.warn(message);
@@ -507,8 +509,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
+                    logChildBeanMessage(beanPath, methodName);
                     break;
 
                 case "hippogallerypicker:imagelink":
@@ -522,23 +523,21 @@ public class ContentBeansService {
                         JavaSourceUtils.addBeanMethodInternalImageSet(beanPath, className, importName, methodName, name, multiple);
                     }
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
+                    logChildBeanMessage(beanPath, methodName);
                     break;
                 case "hippo:mirror":
+                    // TODO: we could add a note to define more specific type instead of HippoBean
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
+                    logChildBeanMessage(beanPath, methodName);
                     break;
                 case "hippogallery:image":
 
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
+                    logChildBeanMessage(beanPath, methodName);
                     break;
                 default:
                     // check if project type is used:
@@ -565,6 +564,17 @@ public class ContentBeansService {
             }
         }
 
+    }
+
+
+    private void logChildBeanMessage(final Path beanPath, final String methodName) {
+        context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+        log.debug(MSG_ADDED_METHOD, methodName);
+    }
+
+    private void logMessage(final Path beanPath, final String methodName) {
+        logChildBeanMessage(beanPath, methodName);
+        eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
     }
 
 

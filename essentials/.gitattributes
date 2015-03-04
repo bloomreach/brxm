@@ -884,6 +884,7 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JcrMatcher.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/PayloadUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/ProjectUtils.java -text
+plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/SourceCodeTemplates.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/TemplateUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/TranslationUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtils.java -text
