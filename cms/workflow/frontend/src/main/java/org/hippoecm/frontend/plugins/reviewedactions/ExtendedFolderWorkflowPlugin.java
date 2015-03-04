@@ -36,13 +36,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -77,8 +76,6 @@ import org.slf4j.LoggerFactory;
  * serious, but you do want to keep track of them.
  */
 public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(ExtendedFolderWorkflowPlugin.class);
 
@@ -231,11 +228,12 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     }
 
     public class ConfirmBulkWorkflowDialog extends AbstractWorkflowDialog {
-        private IModel title;
+        private IModel<String> title;
 
         private Label affectedComponent;
 
-        public ConfirmBulkWorkflowDialog(IWorkflowInvoker action, IModel dialogTitle, IModel dialogText, IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
+        public ConfirmBulkWorkflowDialog(IWorkflowInvoker action, IModel<String> dialogTitle, IModel dialogText,
+                                         IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
             super(ExtendedFolderWorkflowPlugin.this.getModel(), action);
             this.title = dialogTitle;
 
@@ -283,13 +281,13 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         }
 
         @Override
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return title;
         }
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
 
         @Override

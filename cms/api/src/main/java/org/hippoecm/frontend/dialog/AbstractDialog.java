@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
@@ -71,16 +70,8 @@ import wicket.contrib.input.events.key.KeyType;
  * default, and has support for fullscreen mode which is enabled by overriding {@code isFullscreenEnabled}.
  */
 public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
-
-    @Deprecated
-    protected final static IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
-    @Deprecated
-    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
-    @Deprecated
-    protected final static IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
 
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
@@ -88,7 +79,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private boolean fullscreen = false;
 
     protected static class PersistentFeedbackMessagesModel extends FeedbackMessagesModel {
-        private static final long serialVersionUID = 1L;
+
         private List<FeedbackMessage> messages;
 
         private PersistentFeedbackMessagesModel(Component component) {
@@ -99,20 +90,17 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             messages = null;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected List processMessages(final List messages) {
+        protected List<FeedbackMessage> processMessages(final List<FeedbackMessage> messages) {
             if (this.messages == null) {
                 this.messages = messages;
             }
             return this.messages;
         }
-
     }
 
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
-        private static final long serialVersionUID = 1L;
 
         public Container(String id) {
             super(id);
@@ -134,18 +122,13 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 Markup markup = MarkupFactory.get().getMarkup(AbstractDialog.this, false);
 
                 // If we found markup for this container
-                if ((markup != null) && (markup != Markup.NO_MARKUP)) {
+                if (markup != null && markup != Markup.NO_MARKUP) {
                     return markup;
                 }
 
                 return null;
-            } catch (MarkupException ex) {
-                // re-throw it. The exception contains already all the information
-                // required.
-                throw ex;
-            } catch (MarkupNotFoundException ex) {
-                // re-throw it. The exception contains already all the information
-                // required.
+            } catch (MarkupException | MarkupNotFoundException ex) {
+                // Re-throw it. The exception already contains all the information required.
                 throw ex;
             } catch (WicketRuntimeException ex) {
                 // throw exception since there is no associated markup
@@ -159,7 +142,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected class ExceptionFeedbackPanel extends FeedbackPanel {
-        private static final long serialVersionUID = 1L;
 
         protected ExceptionFeedbackPanel(String id) {
             super(id);
@@ -167,15 +149,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
 
         protected class ExceptionLabel extends Panel {
-            private static final long serialVersionUID = 1L;
 
             protected ExceptionLabel(String id, IModel<String> model, final Exception ex, boolean escape) {
                 super(id);
                 setOutputMarkupId(true);
 
                 Link<String> link = new Link<String>("message") {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public void onClick() {
                         RequestCycle.get().scheduleRequestHandlerAfterCurrent(new ErrorDownloadRequestTarget(ex));
@@ -222,7 +201,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             key += ",class=${clazz}";
         }
         return new StringResourceModel(key, AbstractDialog.this, new Model<>(details), t.getLocalizedMessage(), parameters);
-
     }
 
     protected PersistentFeedbackMessagesModel fmm;
@@ -241,7 +219,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private boolean isRemoved = false;
 
     public AbstractDialog() {
-        this((IModel<T>) null);
+        this(null);
     }
 
     public AbstractDialog(IModel<T> model) {
@@ -254,10 +232,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         feedback.setOutputMarkupId(true);
         add(feedback);
 
-        buttons = new LinkedList<ButtonWrapper>();
+        buttons = new LinkedList<>();
         ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void populateItem(ListItem<ButtonWrapper> item) {
                 item.add(item.getModelObject().getButton());
@@ -268,19 +244,15 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         add(buttonsView);
 
         ok = new ButtonWrapper(new StringResourceModel("ok", AbstractDialog.this, null)) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onSubmit() {
                 handleSubmit();
             }
-
         };
         ok.setKeyType(KeyType.Enter);
         buttons.add(ok);
 
         cancel = new ButtonWrapper(new ResourceModel("cancel")) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onSubmit() {
@@ -307,7 +279,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 button.setDefaultFormProcessing(false);
                 return super.decorate(button);
             }
-
         };
         cancel.setKeyType(KeyType.Escape);
         buttons.add(cancel);
@@ -331,8 +302,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
 
         add(indicator = new AjaxIndicatorAppender() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected CharSequence getIndicatorUrl() {
                 return RequestCycle.get().urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
@@ -435,7 +404,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected void setOkLabel(String label) {
-        setOkLabel(new Model<String>(label));
+        setOkLabel(Model.of(label));
     }
 
     protected void setOkLabel(IModel<String> label) {
@@ -455,7 +424,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected void setCancelLabel(String label) {
-        setCancelLabel(new Model<String>(label));
+        setCancelLabel(Model.of(label));
     }
 
     protected void setCancelLabel(IModel<String> label) {
@@ -479,12 +448,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      */
     public void setDialogService(IDialogService dialogService) {
         this.dialogService = dialogService;
-    }
-
-    @Deprecated
-    protected String getButtonId() {
-        log.warn("getButtonId is deprecated, use DialogConstants.BUTTON instead");
-        return DialogConstants.BUTTON;
     }
 
     /**

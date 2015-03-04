@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -54,8 +55,6 @@ import org.slf4j.LoggerFactory;
 
 public class PublishAllShortcutPlugin extends RenderPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     private static Logger log = LoggerFactory.getLogger(PublishAllShortcutPlugin.class);
 
     private final static String QUERY_LANGUAGE_PUBLISH = Query.SQL;
@@ -71,8 +70,6 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         super(context, config);
 
         AjaxLink<String> link = new AjaxLink<String>("link") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
@@ -88,9 +85,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
     public static class Dialog extends AbstractDialog {
 
-        private static final long serialVersionUID = 1L;
-
-        private Set<String> handles = new HashSet<String>();
+        private Set<String> handles = new HashSet<>();
         private String mode = MODE_PUBLISH;
         private IPluginConfig config;
 
@@ -108,7 +103,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             } else {
                 setOkLabel(new ResourceModel("button-execute"));
             }
-            
+
             try {
                 Session session = UserSession.get().getJcrSession();
                 QueryManager qMgr = session.getWorkspace().getQueryManager();
@@ -134,7 +129,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             }
 
             Label countLabel = new Label("count");
-            countLabel.setDefaultModel(new Model<String>(Integer.toString(handles.size())));
+            countLabel.setDefaultModel(Model.of(Integer.toString(handles.size())));
             add(countLabel);
         }
 
@@ -187,7 +182,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return SMALL;
+            return DialogConstants.SMALL;
         }
     }
 }

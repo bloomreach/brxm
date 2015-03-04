@@ -22,9 +22,6 @@ import javax.jcr.Value;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -47,6 +44,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
 
 public class UpdaterEditor extends Panel {
 
@@ -442,7 +442,7 @@ public class UpdaterEditor extends Panel {
 
     protected void deleteUpdater() {
         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-        dialogService.show(new DeleteUpdaterDialog(getDefaultModel(), container));
+        dialogService.show(new DeleteUpdaterDialog((IModel<Node>) getDefaultModel(), container));
     }
 
     private boolean saveUpdater() {

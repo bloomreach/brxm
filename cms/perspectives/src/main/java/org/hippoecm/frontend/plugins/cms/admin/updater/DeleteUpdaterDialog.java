@@ -26,6 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -37,15 +38,15 @@ public class DeleteUpdaterDialog extends AbstractDialog<Node> {
 
     private final Panel container;
 
-    public DeleteUpdaterDialog(final IModel<?> defaultModel, Panel container) {
-        super((IModel<Node>) defaultModel);
+    public DeleteUpdaterDialog(final IModel<Node> defaultModel, Panel container) {
+        super(defaultModel);
         this.container = container;
         add(new Label("message", "Are you sure you want to delete updater '" + getUpdaterName() + "'?"));
     }
 
     @Override
-    public IModel getTitle() {
-        return new Model<String>("Delete Updater");
+    public IModel<String> getTitle() {
+        return Model.of("Delete Updater");
     }
 
     @Override
@@ -84,7 +85,7 @@ public class DeleteUpdaterDialog extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return SMALL;
+        return DialogConstants.SMALL;
     }
 
     private String getUpdaterName() {
