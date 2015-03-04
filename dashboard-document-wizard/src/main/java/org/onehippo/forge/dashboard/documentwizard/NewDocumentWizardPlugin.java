@@ -1,5 +1,5 @@
 /**
- * Copyright 2001-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2001-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,14 @@
  */
 package org.onehippo.forge.dashboard.documentwizard;
 
-/**
- * Copyright 2001-2013 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
-
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -54,7 +34,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -71,19 +50,14 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.validation.IErrorMessageSource;
-import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.IValidationError;
-import org.apache.wicket.validation.IValidator;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrItemModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -102,8 +76,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHeaderContributor {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(NewDocumentWizardPlugin.class);
 
@@ -139,7 +111,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         if (localeConfig != null) {
             String labelText = localeConfig.getString(PARAM_SHORTCUT_LINK_LABEL, "Warning: label not found: " + PARAM_SHORTCUT_LINK_LABEL);
-            labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL, new Model<String>(labelText));
+            labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL, Model.of(labelText));
         } else {
             labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL, new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this, null));
         }
@@ -182,7 +154,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      * The link that opens a dialog window.
      */
     private class Link extends AjaxLink<Object> {
-        private static final long serialVersionUID = 1L;
 
         private final IPluginContext context;
         private final IPluginConfig config;
@@ -206,7 +177,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      */
     protected class Dialog extends AbstractDialog<Object> {
 
-        private static final long serialVersionUID = 1L;
         private static final String DIALOG_NAME_LABEL = "name-label";
         private static final String DIALOG_LIST_LABEL = "list-label";
         private static final String DIALOG_DATE_LABEL = "date-label";
@@ -262,7 +232,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             ValueList categories;
             String valuelistPath = config.getString(PARAM_VALUELIST_PATH);
             try {
-                categories = provider.getValueList(valuelistPath);
+                categories = provider.getValueList(valuelistPath, null);
             } catch (IllegalStateException ise) {
                 if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
                     log.warn("ValueList not found for parameter " + PARAM_VALUELIST_PATH + " with value " + valuelistPath);
@@ -273,20 +243,14 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             // add name text field
             final Label nameLabel = getLabel(DIALOG_NAME_LABEL, config);
             add(nameLabel);
-            IModel<String> nameModel = new PropertyModel<String>(this, "documentName");
-            TextField<String> nameField = new TextField<String>("name", nameModel);
+            IModel<String> nameModel = new PropertyModel<>(this, "documentName");
+            TextField<String> nameField = new TextField<>("name", nameModel);
             nameField.setRequired(true);
             final StringResourceModel errorMsgModel = new StringResourceModel("invalid.name", this, null);
-            nameField.add(new IValidator<String>() {
-                public void validate(final IValidatable<String> strValue) {
-                    String value = strValue.getValue();
-                    if (!isValidName(value)) {
-                        strValue.error(new IValidationError() {
-                            public String getErrorMessage(final IErrorMessageSource messageSource) {                                
-                                return errorMsgModel.getString();
-                            }
-                        });
-                    }
+            nameField.add(strValue -> {
+                String value = strValue.getValue();
+                if (!isValidName(value)) {
+                    strValue.error(messageSource -> errorMsgModel.getString());
                 }
             });
             nameField.setLabel(new StringResourceModel(DIALOG_NAME_LABEL, this, null));
@@ -296,9 +260,9 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             Label listLabel = getLabel(DIALOG_LIST_LABEL, config);
             add(listLabel);
 
-            final PropertyModel<Object> propModel = new PropertyModel<Object>(this, "list");
+            final PropertyModel<Object> propModel = new PropertyModel<>(this, "list");
             final IChoiceRenderer<Object> choiceRenderer = new ListChoiceRenderer(categories);
-            DropDownChoice<Object> listField = new DropDownChoice<Object>("list", propModel, categories, choiceRenderer);
+            DropDownChoice<Object> listField = new DropDownChoice<>("list", propModel, categories, choiceRenderer);
             listField.setRequired(true);
             listField.setLabel(new StringResourceModel(DIALOG_LIST_LABEL, this, null));
             add(listField);
@@ -310,7 +274,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
             // add date field
             final Label dateLabel = getLabel(DIALOG_DATE_LABEL, config);
-            AjaxDateTimeField dateField = new AjaxDateTimeField("date", new PropertyModel<Date>(this, "date"), true);
+            AjaxDateTimeField dateField = new AjaxDateTimeField("date", new PropertyModel<>(this, "date"), true);
             dateField.setRequired(true);
             final StringResourceModel dateLabelModel = new StringResourceModel(DIALOG_DATE_LABEL, this, null);
             dateField.setLabel(dateLabelModel);
@@ -354,7 +318,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             if (localeConfig != null) {
                 String label = localeConfig.getString(PARAM_SHORTCUT_LINK_LABEL);
                 if (StringUtils.isNotBlank(label)) {
-                    return new Model<String>(label);
+                    return Model.of(label);
                 }
             }
             return new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this, null);
@@ -362,12 +326,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
 
         @Override
         protected void onOk() {
-            Session session = ((UserSession) getSession()).getJcrSession();
+            Session session = getSession().getJcrSession();
             HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
             try {
                 WorkflowManager workflowMgr = workspace.getWorkflowManager();
@@ -391,7 +355,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
                     // create the new document
                     String encodedDocumentName = getNodeNameCodec().encode(documentName);
-                    Map<String, String> arguments = new TreeMap<String, String>();
+                    Map<String, String> arguments = new TreeMap<>();
                     arguments.put("name", encodedDocumentName);
                     if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
                         arguments.put("list", list);
@@ -405,8 +369,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     log.debug("Query used: " + query);
                     String path = fw.add(query, documentType, arguments);
 
-                    Node document = folderNode.getNode(encodedDocumentName);
-                    JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+                    JcrNodeModel nodeModel = new JcrNodeModel(path);
                     select(nodeModel);
 
                     // add the not-encoded document name as translation
@@ -417,13 +380,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                         }
                     }
                 }
-            } catch (RepositoryException e) {
-                log.error("Error occurred while creating new document: "
-                        + e.getClass().getName() + ": " + e.getMessage());
-            } catch (RemoteException e) {
-                log.error("Error occurred while creating new document: "
-                        + e.getClass().getName() + ": " + e.getMessage());
-            } catch (WorkflowException e) {
+            } catch (RepositoryException | RemoteException | WorkflowException e) {
                 log.error("Error occurred while creating new document: "
                         + e.getClass().getName() + ": " + e.getMessage());
             }
@@ -535,7 +492,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     }
 
     protected HippoNode createFolder(HippoNode parentNode, String name) throws RepositoryException, RemoteException, WorkflowException {
-        Session session = ((UserSession) getSession()).getJcrSession();
+        Session session = getSession().getJcrSession();
         HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
         WorkflowManager workflowMgr = workspace.getWorkflowManager();
 
@@ -548,8 +505,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             // create the new folder
             String category = "new-folder";
             NodeType[] mixinNodeTypes = parentNode.getMixinNodeTypes();
-            for (int i = 0; i < mixinNodeTypes.length; i++) {
-                NodeType mixinNodeType = mixinNodeTypes[i];
+            for (NodeType mixinNodeType : mixinNodeTypes) {
                 if (mixinNodeType.getName().equals("hippotranslation:translated")) {
                     category = "new-translated-folder";
                     break;
@@ -573,12 +529,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
     }
 
+    @SuppressWarnings("unused")
     protected void reorderFolder(final FolderWorkflow folderWorkflow, final HippoNode parentNode) {
         // intentional stub
     }
 
     private static class ListChoiceRenderer implements IChoiceRenderer<Object> {
-        private static final long serialVersionUID = 1L;
         private final ValueList list;
 
         public ListChoiceRenderer(ValueList list) {
