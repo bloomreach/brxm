@@ -44,8 +44,8 @@
         "id": "blogPlugin",
         "name": "Blog",
         "icon" : "/essentials/images/icons/blog.png",
-        "introduction": "With Blog, you add complete Blog functionality to your project. This Feature will be installed as a  set of drag-and-drop components in the document template editor. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
-        "description": "<ul><li>This feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocuments&gt; and blog/authors/&lt;authors&gt;. On root level in the CMS, the entry 'administration' is created.</li><li>Several drag-and-drop components are added to the Document template editor: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
+        "introduction": "With Blog, you add complete blog functionality to your project. This feature will be installed as a set of drag-and-drop components in the component library of the Channel Manager. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
+        "description": "<ul><li>This feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocument&gt; and blog/authors/&lt;author&gt;.</li><li>Several drag-and-drop components are added to the component library in the Channel Manager: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
         "imageUrls": [
             "/essentials/images/screenshots/blog01.png",
             "/essentials/images/screenshots/blog02.png",
@@ -465,7 +465,7 @@
         "id": "searchPlugin",
         "name": "Search",
         "icon" : "/essentials/images/icons/search.png",
-        "introduction": "This feature adds search functionality to your site by providing a search box in the form of a document template component that can be dragged-and-dropped into your template.",
+        "introduction": "This feature adds search functionality to your site by providing a search box in the form of a library component in the Channel Manager. That search component can be dragged-and-dropped into your project.",
         "imageUrls": [
             "/essentials/images/screenshots/search01.png",
             "/essentials/images/screenshots/search02.png"
@@ -492,7 +492,7 @@
         "id": "imageComponentPlugin",
         "name": "Images",
         "icon" : "/essentials/images/icons/images.png",
-        "introduction": "With Images, you can easily place single images in your document template. This Feature will be installed as a drag-and-drop component in the document template editor. You can select in the CMS what image from the repository needs to be shown.",
+        "introduction": "With Images, you can easily use single images in your project. This feature will be installed as a drag-and-drop component in the component library of the Channel Manager. You can select in the CMS what image from the repository needs to be shown.",
         "imageUrls": [
             "/essentials/images/screenshots/image01.png",
             "/essentials/images/screenshots/image02.png"
@@ -519,8 +519,8 @@
         "id": "videoComponentPlugin",
         "name": "Videos",
         "icon" : "/essentials/images/icons/videos.png",
-        "introduction": "The Video feature adds a new drag-and-drop component in the document template editor, enabling you to add video in your document template.",
-        "description": "The feature adds the new document type 'video' to the project. You can choose to include a sample video when you configure the feature. The feature uses youtube video links instead of the video itself.",
+        "introduction": "The Video feature adds a new drag-and-drop component to the component library of the Channel Manager, enabling you to add video to your project.",
+        "description": "The feature adds the new document type 'Video' to the project. You can choose to install a sample video document. The feature is based on linking to external video, e.g. hosted on youtube, rather than serving the video itself by the CMS.",
         "imageUrls": [
             "/essentials/images/screenshots/video01.png",
             "/essentials/images/screenshots/video02.png",
@@ -548,8 +548,8 @@
         "id": "faqPlugin",
         "name": "FAQ",
         "icon" : "/essentials/images/icons/faq.png",
-        "introduction": "With FAQ, you add complete FAQ section to your project. This Feature will be installed as a drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This feature installs two new document types: 'faqdocument' and 'faqlistdocument' in the CMS.</li><li>A structured document tree is created in the project: faq/about FAQ items</li><li>A drag-and-drop component 'Faq' is added to the Document template editor.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
+        "introduction": "With FAQ, you add a FAQ section to your project. This feature will be installed as a drag-and-drop component in the component library of the Channel manager.",
+        "description": "<ul><li>This feature installs two new document types: 'FAQ Item' and 'FAQ List' in the CMS.</li><li>A structured document tree is created in the project: faq/&lt;faqlist&gt;</li><li>A drag-and-drop component 'FAQ' is added to the component library of the Channel Manager.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
         "imageUrls": [
             "/essentials/images/screenshots/faq01.png",
             "/essentials/images/screenshots/faq02.png",
@@ -577,7 +577,7 @@
         "id": "bannerPlugin",
         "name": "Banners",
         "icon" : "/essentials/images/icons/bundle.png",
-        "introduction": "With Banner, you add banners and carousels to your project. Two drag-and-drop components will be added in the document template editor: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
+        "introduction": "With Banners, you add banners and carousels to your project. Two drag-and-drop components will be added to the component library in the Channel Manager: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
         "documentationLink": "http://www.onehippo.org/library/setup/hst-components/document-component.html",
         "imageUrls": [
             "/essentials/images/screenshots/banner01.png",
@@ -604,7 +604,7 @@
         "id": "menuPlugin",
         "name": "Menus",
         "icon" : "/essentials/images/icons/menu.png",
-        "introduction": "With Menus, you add a customizable menu in the document template editor. It will be available as drag-and-drop component for you to add to your template.",
+        "introduction": "With Menus, you add a customisable menu component to the component library of the Channel Manager. It will be available as drag-and-drop component for you to drag into your project.",
         "imageUrls": [
             "/essentials/images/screenshots/menu01.png"
         ],
@@ -628,7 +628,7 @@
         "id": "simpleContent",
         "name": "Simple content",
         "icon" : "/essentials/images/icons/simple-content.png",
-        "introduction": "The Simple content feature adds a new drag-and-drop component to the document template editor (with the name \"Simple content\"). In the CMS, you can configure this component by selecting a single document to be shown in your template.",
+        "introduction": "The Simple content feature installs a new document type 'Simple Document' and adds a new drag-and-drop component to the component library in the Channel Manager. In the CMS, you can configure this component to show a single document in your project.",
         "imageUrls": [
             "/essentials/images/screenshots/simplecontent01.png"
         ],
@@ -678,8 +678,8 @@
         "id": "eventsPlugin",
         "name": "Events",
         "icon" : "/essentials/images/icons/events.png",
-        "introduction": "With Events, you can easily integrate events functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This feature installs a new document type 'eventsdocument' in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocuments&gt;</li><li>A drag-and-drop component 'events list' is added to the Document template editor. This events list component can be configured.</li><li>Some sample events articles are installed and a page (with corresponding menu entry) with an example eventslist is created.</li></ul>",
+        "introduction": "With Events, you add events functionality to the project. This feature will be installed as a drag-and-drop component in the component library of the Channel Manager.",
+        "description": "<ul><li>This feature installs a new document type 'Event' in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocument&gt;</li><li>A configurable drag-and-drop component 'Event List' is added to the Channel Manager component library.</li><li>Some sample event articles are installed and a page (with corresponding menu entry) with an example event list is created.</li></ul>",
         "documentationLink": "http://www.onehippo.org/library/setup/hst-components/events-component.html",
         "imageUrls": [
             "/essentials/images/screenshots/events01.png",
@@ -707,7 +707,7 @@
         "id": "listPlugin",
         "name": "List",
         "icon" : "/essentials/images/icons/list.png",
-        "introduction": "This feature installs a new component in the document template editor: \"Generic List\". With this component, you can add paginated lists to your template. You will need to edit the page rendering templates (JSP or FreeMarker) to use this feature.",
+        "introduction": "This feature installs a new drag-and-drop component in the component library in the Channel Manager: 'Generic List'. With this component, you can add paginated lists to your project. You will need to edit the page rendering templates (JSP or FreeMarker) to use this feature.",
         "imageUrls": [
             "/essentials/images/screenshots/genericlist01.png"
         ],
@@ -733,8 +733,8 @@
         "id": "newsPlugin",
         "name": "News",
         "icon" : "/essentials/images/icons/news.png",
-        "introduction": "With News, you can easily integrate news functionality in the CMS. This Feature will be installed as a  drag-and-drop component in the document template editor.",
-        "description": "<ul><li>This feature installs a new document type 'newsdocument' in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A drag-and-drop component 'newslist' is added to the Document template editor. This newslist component can be configured.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example newslist is created.</li></ul>",
+        "introduction": "With News, you add news functionality to the project. This feature will be installed as a drag-and-drop component in the component library of the Channel manager.",
+        "description": "<ul><li>This feature installs a new document type 'News Item' in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A configurable drag-and-drop component 'News List' is added to the component library in the Channel Manager.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example news list is created.</li></ul>",
         "documentationLink": "http://www.onehippo.org/library/setup/hst-components/news-component.html",
         "imageUrls": [
                 "/essentials/images/screenshots/news01.png",

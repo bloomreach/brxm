@@ -23,7 +23,7 @@
     <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
-    <sv:value>Faq</sv:value>
+    <sv:value>FAQ</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
     <sv:value>images/essentials/catalog-component-icons/faq.png</sv:value>
