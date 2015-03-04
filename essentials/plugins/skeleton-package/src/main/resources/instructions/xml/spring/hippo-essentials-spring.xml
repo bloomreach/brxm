@@ -19,7 +19,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <!--Override the default pageable factory-->
-  <!--<bean id="org.onehippo.cms7.essentials.components.ext.PageableFactory" class="org.example.CustomPageableFactory"/>-->
+    <!--Override the default pageable factory-->
+    <bean id="org.onehippo.cms7.essentials.components.ext.PageableFactory"
+          class="org.onehippo.cms7.essentials.components.ext.DefaultPageableFactory"/>
 
 </beans>
