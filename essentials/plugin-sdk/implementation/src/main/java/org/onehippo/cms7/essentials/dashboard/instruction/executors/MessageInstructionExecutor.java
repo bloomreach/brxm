@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.CndInstruction;
+import org.onehippo.cms7.essentials.dashboard.instruction.DirectoryInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.ExecuteInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.FreemarkerInstruction;
@@ -70,6 +71,8 @@ public class MessageInstructionExecutor {
                 processXmlInstruction(retVal, placeholderData, (XmlInstruction) instruction);
             }   else if (instruction instanceof ExecuteInstruction) {
                 processXmlInstruction(retVal, placeholderData, (ExecuteInstruction) instruction);
+            }  else if (instruction instanceof DirectoryInstruction) {
+                processXmlInstruction(retVal, placeholderData, (DirectoryInstruction) instruction);
             } else {
                 retVal.put(MessageGroup.UNKNOWN, new MessageRestful(instruction.getMessage()));
             }
@@ -82,6 +85,21 @@ public class MessageInstructionExecutor {
     private void processXmlInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final ExecuteInstruction instruction) {
         final Instruction executeInstruction = GlobalUtils.newInstance(instruction.getClazz());
         retVal.put(MessageGroup.EXECUTE, new MessageRestful(executeInstruction.getMessage()));
+    }
+
+    private void processXmlInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final DirectoryInstruction instruction) {
+        final String action = instruction.getAction();
+        if (action.equals("create")) {
+            final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
+            final String userMessage = MessageFormat.format("New directory will be created: {0}", replacedData);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.FILE_CREATE, keyValueRestful);
+        } else if (action.equals("delete")) {
+            final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
+            final String userMessage = MessageFormat.format("Following directory will be deleted: {0}", replacedData);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.FILE_DELETE, keyValueRestful);
+        }
     }
 
 
