@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.onehippo.taxonomy.plugin;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.taxonomy.plugin.model.Classification;
@@ -34,11 +34,6 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
-
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TaxonomyPickerDialog.class);
 
@@ -61,7 +56,8 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
      * @param model
      * @param preferredLocale
      */
-    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model, String preferredLocale) {
+    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
+                                String preferredLocale) {
         super(model);
 
         setOkEnabled(true);
@@ -69,14 +65,14 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
 
         viewType = config.getString(CONFIG_TYPE, TREE);
         if (PALETTE.equals(viewType)) {
-            add(browser = new TaxonomyPalette("content", new Model<Classification>(model.getObject()),
+            add(browser = new TaxonomyPalette("content", new Model<>(model.getObject()),
                     new TaxonomyModel(context, config), preferredLocale));
         } else {
             if (!TREE.equals(viewType)) {
                 log.warn("Invalid taxonomy picker type " + viewType + ", falling back to 'tree'");
             }
 
-            add(browser = new TaxonomyBrowser("content", new Model<Classification>(model.getObject()),
+            add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
                     new TaxonomyModel(context, config), preferredLocale));
         }
     }
@@ -84,14 +80,14 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
     @Override
     public IValueMap getProperties() {
         if (TREE.equals(viewType)) {
-            return LARGE;
+            return DialogConstants.LARGE;
         } else {
             return new ValueMap("width=500,height=368");
         }
     }
 
     public IModel<String> getTitle() {
-        return new StringResourceModel("taxonomy-picker", this, null);
+        return Model.of(getString("taxonomy-picker"));
     }
 
     @Override
