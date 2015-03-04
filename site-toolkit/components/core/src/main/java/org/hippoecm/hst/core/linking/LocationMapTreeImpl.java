@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -322,7 +323,7 @@ public class LocationMapTreeImpl implements LocationMapTree {
                 }
                 // add variants as well
                 for (String prefix : config.getParameterPrefixes()) {
-                    final String prefixedParam = createPrefixedParameterName(prefix, param);
+                    final String prefixedParam = ConfigurationUtils.createPrefixedParameterName(prefix, param);
                     String variantDocumentPath = config.getParameter(prefixedParam);
                     if (StringUtils.isNotEmpty(variantDocumentPath)) {
                         populate.add(variantDocumentPath);
@@ -335,10 +336,6 @@ public class LocationMapTreeImpl implements LocationMapTree {
         for (HstComponentConfiguration child : config.getChildren().values()) {
             findDocumentPathsRecursive(child, populate);
         }
-    }
-
-    private static String createPrefixedParameterName(String prefix, String parameterName) {
-        return prefix + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER + parameterName;
     }
 
     private void optimize() {

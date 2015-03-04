@@ -773,6 +773,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfo
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelManagerOtherContextPathIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtilsTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/menu/HstMenuModelsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/model/BrokenModelConfigurationsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/mount/MountServiceIT.java -text
