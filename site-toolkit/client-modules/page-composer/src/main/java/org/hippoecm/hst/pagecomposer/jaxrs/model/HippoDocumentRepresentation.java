@@ -37,7 +37,7 @@ public class HippoDocumentRepresentation {
     private boolean folder;
     private boolean hasFolders;
     private boolean hasDocuments;
-    private List<HippoDocumentRepresentation> children = new ArrayList<>();
+    private List<HippoDocumentRepresentation> items = new ArrayList<>();
 
     public HippoDocumentRepresentation() {
         super();
@@ -81,12 +81,12 @@ public class HippoDocumentRepresentation {
 
     private void addFolder(final Node child) throws RepositoryException {
         HippoDocumentRepresentation folder =  new HippoDocumentRepresentation(child, false, true);
-        children.add(folder);
+        items.add(folder);
     }
 
     private void addDocument(final Node child) throws RepositoryException {
         HippoDocumentRepresentation document =  new HippoDocumentRepresentation(child, false, false);
-        children.add(document);
+        items.add(document);
     }
 
     public String getId() {
@@ -153,11 +153,11 @@ public class HippoDocumentRepresentation {
         this.hasDocuments = hasDocuments;
     }
 
-    public List<HippoDocumentRepresentation> getChildren() {
-        return children;
+    public List<HippoDocumentRepresentation> getItems() {
+        return items;
     }
 
-    public void setChildren(final List<HippoDocumentRepresentation> children) {
-        this.children = children;
+    public void setItems(final List<HippoDocumentRepresentation> items) {
+        this.items = items;
     }
 }
