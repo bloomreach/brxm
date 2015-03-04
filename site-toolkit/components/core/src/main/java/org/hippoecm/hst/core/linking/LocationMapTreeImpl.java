@@ -318,8 +318,15 @@ public class LocationMapTreeImpl implements LocationMapTree {
             for (String param : parameterNames) {
                 String documentPath = config.getParameter(param);
                 if (StringUtils.isNotEmpty(documentPath)) {
-                    // TODO possibly later improvement is to even included targeted locations (prefix parameter names)
                     populate.add(documentPath);
+                }
+                // add variants as well
+                for (String prefix : config.getParameterPrefixes()) {
+                    final String prefixedParam = createPrefixedParameterName(prefix, param);
+                    String variantDocumentPath = config.getParameter(prefixedParam);
+                    if (StringUtils.isNotEmpty(variantDocumentPath)) {
+                        populate.add(variantDocumentPath);
+                    }
                 }
             }
 
@@ -328,6 +335,10 @@ public class LocationMapTreeImpl implements LocationMapTree {
         for (HstComponentConfiguration child : config.getChildren().values()) {
             findDocumentPathsRecursive(child, populate);
         }
+    }
+
+    private static String createPrefixedParameterName(String prefix, String parameterName) {
+        return prefix + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER + parameterName;
     }
 
     private void optimize() {
