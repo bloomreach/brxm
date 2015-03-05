@@ -146,6 +146,7 @@
 
                     // child properties haven't changed, so don't send them
                     delete savedMenuItem.items;
+                    delete savedMenuItem.isNew;
 
                     $scope.isSaving[propertyName] = true;
 
