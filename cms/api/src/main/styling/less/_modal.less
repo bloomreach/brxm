@@ -51,8 +51,11 @@
     right: 14px;
     top: 12px;
     overflow: visible;
-    color: @modal-header-color;
     background: url("@{images}/icons/delete-tiny.svg") no-repeat left;
+
+    &:hover {
+      background: url("@{images}/icons/delete-hover-tiny.svg") no-repeat left;
+    }
   }
 
   // Header styling
@@ -90,7 +93,6 @@
     border-radius: 4px;
     background-color: @modal-button-bgcolor;
     min-width: 64px;
-    padding: 4px;
     margin-right: 8px;
 
     &:hover,

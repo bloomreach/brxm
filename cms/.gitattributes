@@ -1100,6 +1100,7 @@ api/src/main/styling/images/icons/add-document-tiny.svg -text
 api/src/main/styling/images/icons/add-folder-tiny.svg -text
 api/src/main/styling/images/icons/arrow-down-tiny.svg -text
 api/src/main/styling/images/icons/arrow-up-tiny.svg -text
+api/src/main/styling/images/icons/delete-hover-tiny.svg -text
 api/src/main/styling/images/icons/delete-tiny.svg -text
 api/src/main/styling/images/icons/depublish-scheduled-tiny.svg -text
 api/src/main/styling/images/icons/depublish-tiny.svg -text
