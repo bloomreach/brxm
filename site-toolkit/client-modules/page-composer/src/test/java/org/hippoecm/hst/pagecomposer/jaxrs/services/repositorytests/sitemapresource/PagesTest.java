@@ -45,7 +45,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_get_hostname() throws Exception {
+    public void get_hostname() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getMountRepresentation();
@@ -57,7 +57,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_pages_sorted_by_pathInfo() throws Exception {
+    public void pages_sorted_by_pathInfo() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
@@ -77,7 +77,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_homepage_is_first_and_pathInfo_equals_slash() throws Exception {
+    public void homepage_is_first_and_pathInfo_equals_slash() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
@@ -90,7 +90,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
 
 
     @Test
-    public void test_sitemap_item_page_title() throws Exception {
+    public void sitemap_item_page_title() throws Exception {
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE, "foo");
         session.save();
@@ -107,7 +107,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_sitemap_contains_host_and_mountPath() throws Exception {
+    public void sitemap_contains_host_and_mountPath() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
