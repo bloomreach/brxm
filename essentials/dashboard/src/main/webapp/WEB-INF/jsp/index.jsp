@@ -53,7 +53,7 @@
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages" ng-class="{'log-visible':feedbackMessages.length && addLogClass}"></essentials-notifier>
 
 
-<div class="hippo-navbar navbar navbar-default navbar-fixed-top" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
+<div class="hippo-navbar hippo-navbar-with-sidenav navbar navbar-default navbar-fixed-top" ng-controller="navbarCtrl" ng-hide="INTRODUCTION_DISPLAYED">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -112,18 +112,18 @@
 
 
 
-<div class="container-fluid container-has-hippo-navbar">
+<div class="main-content">
+  <div class="container-fluid">
   <div class="row">
     <div class="col-lg-12" ui-view autoscroll="false">
       <h2>initializing...</h2>
     </div>
   </div>
-  <div class="row">
     <div class="col-lg-12">
-      <p class="text-center" id="footer">
-        <em>version: ${project.version}</em>
-      </p>
-    </div>
+    <p class="text-center" id="footer">
+      <em>version: ${project.version}</em>
+    </p>
+  </div>
   </div>
 </div>
 <!-- Include the loader.js script -->
