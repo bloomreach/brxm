@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function () {
-  "use strict";
 
-  angular.module('hippo.channel.menu')
-      .controller('hippo.channel.menu.PickerCtrl', [
+(function () {
+    "use strict";
+
+    angular.module('hippo.channel.menu')
+
+      .controller('hippo.channel.menu.PickerDocCtrl', [
         '$scope',
         '$state',
         '$stateParams',
-        'hippo.channel.menu.PickerService',
-        function ($scope, $state, $stateParams, PickerService) {
-          $scope.cancelPicker = function() {
-            $state.go('menu-item.edit', {
-              menuItemId: $stateParams.menuItemId
-            });
-          };
-          $scope.pickerTreeItems = PickerService.getTree();
-          PickerService.getInitialData('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+        function ($scope, $state, $stateParams) {
+            $scope.selectedItem = $stateParams.pickerItemId;
         }
-      ]);
+    ]);
 }());

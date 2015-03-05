@@ -16,20 +16,17 @@
 (function () {
   "use strict";
 
-  angular.module('hippo.channel.menu')
-      .controller('hippo.channel.menu.PickerCtrl', [
-        '$scope',
-        '$state',
-        '$stateParams',
-        'hippo.channel.menu.PickerService',
-        function ($scope, $state, $stateParams, PickerService) {
-          $scope.cancelPicker = function() {
-            $state.go('menu-item.edit', {
-              menuItemId: $stateParams.menuItemId
+  angular.module("hippo.channel.menu")
+      .directive('stopPropogation', function () {
+        return {
+          restrict: 'A',
+          link: function (scope, element) {
+            element.bind('click', function (e) {
+              console.log('stopPropagation');
+              e.stopPropagation();
             });
-          };
-          $scope.pickerTreeItems = PickerService.getTree();
-          PickerService.getInitialData('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
-        }
-      ]);
+          }
+        };
+      });
 }());
+
