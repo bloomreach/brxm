@@ -497,13 +497,6 @@ dashboard/src/main/webapp/js/.idea
 dashboard/src/main/webapp/js/atlassian-ide-plugin.xml
 dashboard/src/main/webapp/js/classes
 dashboard/src/main/webapp/js/hippo-plugins.iws
-dashboard/src/main/webapp/js/lib/*.iml
-dashboard/src/main/webapp/js/lib/.DS_Store
-dashboard/src/main/webapp/js/lib/.idea
-dashboard/src/main/webapp/js/lib/atlassian-ide-plugin.xml
-dashboard/src/main/webapp/js/lib/classes
-dashboard/src/main/webapp/js/lib/hippo-plugins.iws
-dashboard/src/main/webapp/js/lib/target
 dashboard/src/main/webapp/js/target
 dashboard/src/main/webapp/pages/*.iml
 dashboard/src/main/webapp/pages/.DS_Store

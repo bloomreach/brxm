@@ -316,6 +316,13 @@
                 },
                 templateUrl: 'directives/essentials-plugin.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                    $scope.slides = [];
+                    angular.forEach($scope.plugin.imageUrls, function(url) {
+                        $scope.slides.push({
+                            image: url
+                        });
+                    });
+                    $scope.interval = 5000; // carousel change interval
                     $scope.showDescription = false;
                     $scope.toggleDescription = function ($event) {
                         $event.preventDefault();

@@ -56,27 +56,11 @@
             </div>
             <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length" style="max-width: 720px">
                 <div class="panel-body">
-                    <div id="plugincarousel{{plugin.id}}" class="carousel slide" data-ride="carousel">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators">
-                            <li ng-repeat="imageUrl in plugin.imageUrls" data-target="#plugincarousel{{plugin.id}}" data-slide-to="{{$index}}">
-                                <img ng-src="{{imageUrl}}" alt="" style="max-height:90px;">
-                            </li>
-                        </ol>
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner">
-                            <div ng-class="$index==0 ? 'item active' :'item'" ng-repeat="imageUrl in plugin.imageUrls">
-                                <img ng-src="{{imageUrl}}" alt="">
-                            </div>
-                        </div>
-                        <!-- Controls -->
-                        <a class="left carousel-control" href="#plugincarousel{{plugin.id}}" role="button" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left"></span>
-                        </a>
-                        <a class="right carousel-control" href="#plugincarousel{{plugin.id}}" role="button" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right"></span>
-                        </a>
-                    </div>
+                    <carousel interval="interval">
+                        <slide ng-repeat="slide in slides">
+                            <img ng-src="{{slide.image}}" style="margin:auto;">
+                        </slide>
+                    </carousel>
                 </div>
             </div>
         </div>
