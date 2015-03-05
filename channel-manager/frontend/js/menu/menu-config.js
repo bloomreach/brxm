@@ -53,7 +53,14 @@
                         url: '/:menuItemId/picker',
                         controller: 'hippo.channel.menu.PickerCtrl',
                         templateUrl: 'states/picker/picker.html'
+                    })
+
+                    .state('picker.docs', {
+                        url: '/:pickerItemId/picker/doc',
+                        controller: 'hippo.channel.menu.PickerDocCtrl',
+                        templateUrl: 'states/picker/pickerDoc.html'
                     });
+
                 // translations
                 $translateProvider.useStaticFilesLoader({
                     prefix: 'i18n/',
