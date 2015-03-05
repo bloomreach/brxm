@@ -28,9 +28,6 @@
   <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-chosen-localytics/chosen.js?v=${project.version}"></script>
-
-  <%--TODO: now that we're using the Angular UI Bootstrap carousel, do we still need bootstrap.js?--%>
-  <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-ui-router/release/angular-ui-router.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.min.js?v=${project.version}"></script>

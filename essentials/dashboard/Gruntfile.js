@@ -50,7 +50,6 @@ module.exports = function (grunt) {
                             'angular-chosen-localytics/**',
                             'angular-ui-router/**',
                             'angular-ui-tree/**',
-                            'bootstrap/**',
                             'chosen/**',
                             'es5-shim/**',
                             'hippo-theme/**',
