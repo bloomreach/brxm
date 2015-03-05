@@ -88,7 +88,7 @@
                 };
 
                 $scope.saveTitle = function (form) {
-                    if($scope.selectedMenuItem.isNew === true) {
+                    if($scope.selectedMenuItem.isNew) {
                         form.title.$dirty = true;
                         delete $scope.selectedMenuItem.isNew;
                     }
@@ -146,7 +146,6 @@
 
                     // child properties haven't changed, so don't send them
                     delete savedMenuItem.items;
-                    delete savedMenuItem.isNew;
 
                     $scope.isSaving[propertyName] = true;
 
