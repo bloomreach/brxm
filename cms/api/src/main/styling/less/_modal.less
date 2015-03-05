@@ -1,0 +1,223 @@
+// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Overlay on full application modal
+.hippo-root .wicket-mask-dark {
+  opacity: @modal-mask-opacity;
+  filter: ~"alpha(opacity = @modal-mask-opacity * 100)";
+}
+
+.hippo-root .wicket-modal {
+
+  // Set border width, height and color
+  .w_topLeft,
+  .w_top,
+  .w_topRight,
+  .w_bottomLeft,
+  .w_bottom,
+  .w_bottomRight {
+    background-color: @modal-border-color;
+    height: @modal-border-width;
+  }
+
+  .w_left,
+  .w_right {
+    background-color: @modal-border-color;
+  }
+
+  .w_content_1 {
+    margin-right: @modal-border-width;
+  }
+
+  .w_right_1 {
+    margin-left: @modal-border-width;
+  }
+
+  .w_close,
+  .w_close:hover {
+    width: 16px;
+    height: 16px;
+    right: 14px;
+    top: 12px;
+    overflow: visible;
+    color: @modal-header-color;
+    background: url("@{images}/icons/delete-tiny.svg") no-repeat left;
+  }
+
+  // Header styling
+  .w_caption {
+    background: @modal-header-bgcolor;
+    color: @modal-header-color;
+    height: 41px;
+    text-align: left;
+
+    span {
+      //color: white;
+      font-size: 15px;
+      //font-weight: bold;
+      margin: 0;
+      padding-left: 16px;
+      line-height: 41px;
+      //position: relative;
+    }
+  }
+
+  .w_content {
+    background-color: @modal-bgcolor;
+  }
+}
+
+// Window buttons
+.hippo-window-buttons {
+  display: flex;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+
+  input {
+    border: 1px solid @modal-button-border;
+    border-radius: 4px;
+    background-color: @modal-button-bgcolor;
+    min-width: 64px;
+    padding: 4px;
+    margin-right: 8px;
+
+    &:hover,
+    &:focus {
+      background-color: @modal-button-focus-bgcolor;
+      border-color: @modal-button-focus-border;
+      color: @modal-button-focus-color;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+/* Windows */
+/* ================================================ */
+.hippo-window,
+.hippo-window .hippo-root {
+  background: none
+}
+
+.hippo-window .hippo-root table.modal-contents {
+  margin: 10px 25px 0 25px;
+}
+
+.hippo-window .hippo-root table.modal-contents td {
+  padding: 2px 5px 2px 5px;
+}
+
+.hippo-window h1, .hippo-window h1 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar {
+  padding-top: 10px;
+}
+
+
+/* forms inside windows */
+table.hippo-window-form {
+  width: 100%;
+}
+
+.hippo-window-form {
+  //background: #f4f4f4;
+  padding: 5px;
+}
+
+.hippo-window-form td input {
+  background: white;
+  border: 1px solid #afafaf;
+  padding: 3px;
+  line-height: 18px;
+}
+
+.hippo-window-form td {
+  padding: 5px;
+}
+
+.hippo-window-form .hippo-form-select {
+  width: 300px;
+}
+
+.hippo-window-form .hippo-form-input {
+  width: 300px;
+}
+
+.hippo-window-form .hippo-window-navigator {
+  padding: 0;
+}
+
+.hippo-window .notification {
+  display: block;
+  margin: 11px;
+  padding: 12px;
+  text-align: center;
+  background: #ffccaa;
+  border: 1px solid #ff9900;
+}
+
+.hippo-window .hippo-dialog-container {
+  padding: 10px;
+}
+
+/* Dialogs, mini windows that ask a question */
+.hippo-window-dialog {
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  padding: 5px;
+  padding-left: 75px;
+  padding-top: 20px;
+  min-height: 200px;
+}
+
+.hippo-window-dialog-title {
+  font-size: 11px;
+}
+
+.hippo-window-dialog-question {
+  font-weight: bold
+}
+
+.hippo-root div.wicket-modal .w_content_3 {
+  border: none
+}
+
+.hippo-root div.wicket-modal .w_content_2 {
+  padding-top: 0;
+}
+
+// copied from hippo-modal.css
+
+.hippo-root div.modal_fullscreen .w_top_1, .hippo-root div.modal_fullscreen .w_bottom_1, .hippo-root div.modal_fullscreen .w_caption {
+  display: none;
+}
+
+.hippo-root div.modal_fullscreen div.w_right_1 {
+  margin-left: 0;
+}
+
+.hippo-root div.modal_fullscreen div.w_content_1 {
+  margin-right: 0;
+}
+
+.exception-dialog-message {
+  padding: 5px;
+  font-size: 1.1em;
+}
+
