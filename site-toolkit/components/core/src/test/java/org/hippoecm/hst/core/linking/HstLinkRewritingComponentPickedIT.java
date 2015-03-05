@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.linking;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -436,5 +437,48 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
             assertEquals("contact", hstLink.getPath());
         }
     }
+
+    @Test
+    public void component_document_link_containing_parameterized_path_with_placeholder_from_sitemap_item() throws Exception {
+        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
+        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
+        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
+
+        // property-foo should get substitude by the contactSiteMapItem parameter value for 'property-foo'
+        contactPage.setProperty("hst:parametervalues", new String[]{"${property-foo}"});
+
+        // add relative hst:relativecontentpath = tmpdoc to existing sitemap item for '/contact/thankyou' which is a deeper
+        // path than for 'contactpage' (/contact)
+        final Node contactSiteMapItem = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/contact");
+
+        contactSiteMapItem.setProperty("hst:parameternames", new String[]{"property-foo"});
+        contactSiteMapItem.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
+
+        session.save();
+
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
+        final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
+        assertEquals("contact", hstLink.getPath());
+    }
+
+    @Test
+    public void component_document_link_containing_unresolvable_parameterized_path_is_skipped() throws Exception {
+
+        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
+        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
+        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
+
+        // property-foo should get substitude by the contactSiteMapItem parameter value for 'property-foo'
+        contactPage.setProperty("hst:parametervalues", new String[]{"${unresolvable-property-foo}"});
+
+        session.save();
+
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
+        final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
+        assertEquals("pagenotfound", hstLink.getPath());
+    }
+
 
 }
