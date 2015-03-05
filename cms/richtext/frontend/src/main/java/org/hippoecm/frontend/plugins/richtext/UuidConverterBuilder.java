@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import java.util.HashSet;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -76,8 +75,7 @@ public class UuidConverterBuilder implements IDetachable {
     }
 
     private void convertLinkForRetrieval(TagNode tag) throws RepositoryException, RichTextException {
-        final Map<String, String> attributes = tag.getAttributes();
-        final String href = attributes.get(ATTRIBUTE_HREF);
+        final String href = tag.getAttributeByName(ATTRIBUTE_HREF);
 
         if (StringUtils.isEmpty(href)) {
             return;
@@ -91,14 +89,13 @@ public class UuidConverterBuilder implements IDetachable {
         final String uuid = RichTextFacetHelper.getChildDocBaseOrNull(node, name);
 
         if (uuid != null) {
-            attributes.put(ATTRIBUTE_HREF, RichTextProcessor.INTERNAL_LINK_DEFAULT_HREF);
-            attributes.put(ATTRIBUTE_DATA_UUID, uuid);
+            tag.addAttribute(ATTRIBUTE_HREF, RichTextProcessor.INTERNAL_LINK_DEFAULT_HREF);
+            tag.addAttribute(ATTRIBUTE_DATA_UUID, uuid);
         }
     }
 
     private void convertImageForRetrieval(TagNode tag) throws RepositoryException {
-        final Map<String, String> attributes = tag.getAttributes();
-        final String src = attributes.get(ATTRIBUTE_SRC);
+        final String src = tag.getAttributeByName(ATTRIBUTE_SRC);
 
         if (StringUtils.isEmpty(src)) {
             return;
@@ -129,10 +126,10 @@ public class UuidConverterBuilder implements IDetachable {
         }
 
         if (uuid != null) {
-            attributes.put(ATTRIBUTE_SRC, url);
-            attributes.put(ATTRIBUTE_DATA_UUID, uuid);
+            tag.addAttribute(ATTRIBUTE_SRC, url);
+            tag.addAttribute(ATTRIBUTE_DATA_UUID, uuid);
             if (type != null) {
-                attributes.put(ATTRIBUTE_DATA_TYPE, type);
+                tag.addAttribute(ATTRIBUTE_DATA_TYPE, type);
             }
         }
     }
@@ -159,14 +156,14 @@ public class UuidConverterBuilder implements IDetachable {
     }
 
     private void convertLinkForStorage(TagNode tag) throws RepositoryException, RichTextException {
-        final Map<String, String> attributes = tag.getAttributes();
-        final String href = attributes.get(ATTRIBUTE_HREF);
+        final String href = tag.getAttributeByName(ATTRIBUTE_HREF);
 
         if (StringUtils.isEmpty(href)) {
             return;
         }
 
-        final String uuid = attributes.remove(ATTRIBUTE_DATA_UUID);
+        final String uuid = tag.getAttributeByName(ATTRIBUTE_DATA_UUID);
+        tag.removeAttribute(ATTRIBUTE_DATA_UUID);
 
         if (RichTextProcessor.isExternalLink(href)) {
             return;
@@ -178,22 +175,23 @@ public class UuidConverterBuilder implements IDetachable {
 
         final String name = findOrCreateFacetNode(uuid);
         if (name != null) {
-            attributes.put(ATTRIBUTE_HREF, name);
+            tag.addAttribute(ATTRIBUTE_HREF, name);
         } else {
-            attributes.remove(ATTRIBUTE_HREF);
+            tag.removeAttribute(ATTRIBUTE_HREF);
         }
     }
 
     private void convertImageForStorage(TagNode tag) throws RepositoryException, RichTextException {
-        final Map<String, String> attributes = tag.getAttributes();
-        String src = attributes.get(ATTRIBUTE_SRC);
+        String src = tag.getAttributeByName(ATTRIBUTE_SRC);
 
         if (StringUtils.isEmpty(src)) {
             return;
         }
 
-        final String uuid = attributes.remove(ATTRIBUTE_DATA_UUID);
-        final String type = attributes.remove(ATTRIBUTE_DATA_TYPE);
+        final String uuid = tag.getAttributeByName(ATTRIBUTE_DATA_UUID);
+        tag.removeAttribute(ATTRIBUTE_DATA_UUID);
+        final String type = tag.getAttributeByName(ATTRIBUTE_DATA_TYPE);
+        tag.removeAttribute(ATTRIBUTE_DATA_TYPE);
 
         if (uuid == null) {
             return;
@@ -207,7 +205,7 @@ public class UuidConverterBuilder implements IDetachable {
         if (type != null) {
             src += IMAGE_SEPARATOR + IMAGE_DOCUMENT + IMAGE_SEPARATOR + type;
         }
-        attributes.put(ATTRIBUTE_SRC, src);
+        tag.addAttribute(ATTRIBUTE_SRC, src);
     }
 
     private String findOrCreateFacetNode(String uuid) throws RepositoryException {
