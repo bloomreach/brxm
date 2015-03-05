@@ -344,7 +344,6 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                             log.error("Cannot get node path", e);
                         }
                     }
-                    reloadChildren();
                     super.onEvent(events);
                 }
             };
