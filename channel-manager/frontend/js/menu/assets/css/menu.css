@@ -15,191 +15,184 @@
  */
 
 /* --- Loader --- */
+#ui-view {
+  height: 100%;
+}
+
 #loader {
-    width: 100%;
-    height: 480px;
+  width: 100%;
+  height: 480px;
 }
 
-/* --- Application container --- */
-#container {
-    max-width: none;
-    padding: 0;
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
-    display: table;
+.container {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+  height: 100%;
+}
+.row {
+  height: 100%;
+  position: relative;
 }
 
-#container > .row {
-    margin-left: 0;
-    margin-right: 0;
-    display: table-row;
-    width: 100%;
-    position: relative;
+.tree-col {
+  height: calc(100% - 51px);
 }
 
-/* prevent small margin between the left window border and the tree */
-#container > .row:before {
-    content: none;
+#panel-footer {
+  height: 51px;
+  padding: 8px;
+  background-color: #F3F3F3;
+  border-top: 1px solid #E3E3E3;
+  display: flex;
+  align-items: center;
 }
 
-/* --- Tree --- */
-#menu-tree {
-    padding: 0;
-    display: table-cell;
-    float: none;
-    vertical-align: top;
-    background: white;
-    border-right: none;
+#menu-panel {
+  height: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+#form-panel {
+  height: 100%;
+  border-left: 1px solid #E3E3E3;
+  background-color: #f4f4f4;
 }
 
 #form-panel {
-    padding-bottom: 10px;
-    display: table-cell;
-    float: none;
-    position: relative;
-    background-color: #f4f4f4;
-}
-
-.l-fixed-height {
-    max-height: 478px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .form-group .input-group .form-control-feedback {
-    top: 0;
-    right: 40px;
+  top: 0;
+  right: 40px;
 }
 
 #add, #actions {
-    display: table-cell;
-    float: none;
-    vertical-align: top;
-    border-top: 1px solid #dddddd;
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+  border-top: 1px solid #dddddd;
 }
 
 #add {
-    border-right: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
 }
 
 #add button,
 #actions button {
-    margin: 10px 0;
-}
-
-/* --- Panel component --- */
-.l-sidebar {
-    width: 300px;
-    height: 434px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 2px;
-}
-
-.panel-default {
-    border-radius: 0;
-    border-left: 0;
-    border-bottom: 0;
-    border-top: 0;
+  margin: 10px 0;
 }
 
 .panel-default .empty-tree {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hippo-tree-wrapper {
+  height: 100%;
+  padding: 2px;
+}
+
+#panel-wrap {
+  height: 100%;
+  /* Negative indent footer by its height */
+  margin: 0 auto -51px;
+  /* Pad bottom by footer height */
+  padding: 0 0 51px;
 }
 
 .panel-footer {
-    padding-top: 8px;
-    padding-bottom: 8px;
+  height: 60px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 form h4.page-header {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 hr {
-    border-top-color: #dddddd;
+  border-top-color: #dddddd;
 }
 
 h3.lead.item-title {
-    margin-top: 6px;
-    margin-bottom: 15px;
+  margin-top: 6px;
+  margin-bottom: 15px;
 }
 
 .radio.first {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 /* --- Confirmation message --- */
 .edit-menu-item-container {
-    position: relative;
+  position: relative;
 }
 
 .overlay {
-    margin-left: -292px;
-    top: 0;
-    background: white;
-    position: absolute;
-    z-index: 999999;
-    width: 840px;
-    height: 485px;
-    opacity: 0;
+  margin-left: -292px;
+  top: 0;
+  background: white;
+  position: absolute;
+  z-index: 999999;
+  width: 840px;
+  height: 485px;
+  opacity: 0;
 }
 
 .confirmation-dialog {
-    position: absolute;
-    z-index: 999999;
-    border-top: none;
-    margin-left: -100px;
-    width: 500px;
+  position: absolute;
+  z-index: 999999;
+  border-top: none;
+  margin-left: -100px;
+  width: 500px;
 }
 
 .confirmation-dialog.s-visible {
-    top: 0;
+  top: 0;
 }
 
 .confirmation-dialog.s-invisible {
-    /* set offscreen to allow it to scroll in. Should likely
-    change in the future to be calculated with js */
-    top: -240px;
+  /* set offscreen to allow it to scroll in. Should likely
+  change in the future to be calculated with js */
+  top: -240px;
 }
 
 .confirmation-dialog-title {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .confirmation-dialog-message {
-    /* prevent long titles from overflowing. Add scrollbar if they do */
-    max-height: 100px;
-    overflow-y: auto;
+  /* prevent long titles from overflowing. Add scrollbar if they do */
+  max-height: 100px;
+  overflow-y: auto;
 }
 
 #close-confirmation {
-    left: 0;
-    top: 0;
-    position: absolute;
+  left: 0;
+  top: 0;
+  position: absolute;
 }
 
 #close-confirmation .overlay {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 #close-confirmation .confirmation-dialog {
-    margin-left: 180px;
+  margin-left: 180px;
 }
 
 /* --- Top bar --- */
 #top-bar {
-    background-color: rgb(245, 245, 245);
-    border-bottom: 1px solid #dddddd;
-    padding: 5px 15px;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
+  background-color: rgb(245, 245, 245);
+  border-bottom: 1px solid #dddddd;
+  padding: 5px 15px;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
 }
