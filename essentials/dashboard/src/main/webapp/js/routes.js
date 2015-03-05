@@ -22,7 +22,7 @@
     "use strict";
 
     angular.module('hippo.essentials')
-        .config(function ($stateProvider, $routeProvider) {
+        .config(function ($stateProvider) {
             $stateProvider
                 .state('index', {
                     url: '',

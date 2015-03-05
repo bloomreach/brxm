@@ -35,6 +35,7 @@
     <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
 
     <!--***START temporary override of versions*** -->
+    <hippo.frontend.theme.version>1.02.01-SNAPSHOT</hippo.frontend.theme.version>
     <!-- ***END temporary override of versions*** -->
     <maven.plugin.release.version>2.5</maven.plugin.release.version>
 
@@ -268,7 +269,7 @@
                 <!-- essentials specific -->
                 <exclude>VERSIONS</exclude>
                 <exclude>dashboard/*.txt</exclude>
-                <exclude>dashboard/src/main/webapp/components/**</exclude>
+                <exclude>dashboard/node_modules/**</exclude>
                 <exclude>dashboard/src/main/webapp/js/lib/**</exclude>
                 <exclude>dashboard/src/main/webapp/docs/rest-api/**</exclude>
                 <exclude>archetype/**</exclude>

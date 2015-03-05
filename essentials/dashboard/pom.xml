@@ -41,6 +41,15 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7.frontend</groupId>
+      <artifactId>hippo-theme</artifactId>
+      <version>${hippo.frontend.theme.version}</version>
+      <classifier>distribution</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -55,6 +64,60 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven.plugin.dependency.version}</version>
+        <executions>
+          <execution>
+            <id>copy-hippo-theme-dependencies</id>
+            <phase>initialize</phase>
+            <goals><goal>copy-dependencies</goal></goals>
+            <configuration>
+              <includeGroupIds>org.onehippo.cms7</includeGroupIds>
+              <includeArtifactIds>hippo-theme</includeArtifactIds>
+              <stripClassifier>true</stripClassifier>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.plugin.exec.version}</version>
+        <executions>
+          <execution>
+            <id>npm-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>install</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bower-install</id>
+            <phase>process-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>bower</executable>
+              <commandlineArgs>install --no-color</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt-build</id>
+            <phase>process-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>grunt</executable>
+              <commandlineArgs>build --no-color</commandlineArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>

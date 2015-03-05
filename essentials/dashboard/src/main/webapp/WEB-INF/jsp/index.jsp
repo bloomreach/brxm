@@ -19,34 +19,24 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hippo setup</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css?v=${project.version}"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/components/hippo-theme/dist/css/main.css?v=${project.version}"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css?v=${project.version}"/>
   <script type="application/javascript">
     window.SERVER_URL = '<%=request.getServerName()+':'+request.getServerPort()%>';
   </script>
-  <script src="${pageContext.request.contextPath}/components/jquery/jquery.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/jquery/dist/jquery.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/underscore/underscore.js?v=${project.version}"></script>
-
+  <script src="${pageContext.request.contextPath}/components/angular-chosen-localytics/chosen.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js?v=${project.version}"></script>
 
-
-  <%--  NOTE: enable once R&D team upgrades version(s)--%>
-  <%--
-
-    <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-  --%>
+  <%-- TODO: Check if we can remove this once the carousel is angular-driven--%>
   <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-tpls.min.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/js/lib/angular-animate.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-ui-router/release/angular-ui-router.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-animate/angular-animate.js?v=${project.version}"></script>
 
   <%-- HIPPO THEME DEPS --%>
   <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js?v=${project.version}"></script>
 
   <%-- ESSENTIALS --%>
@@ -89,7 +79,7 @@
       </div>
     </div>
 
-    <div class="navbar-collapse collapse ng-scope" ng-controller="mainMenuCtrl" ng-hide="INTRODUCTION_DISPLAYED">
+    <div class="navbar-collapse collapse hippo-sidenav ng-scope" ng-controller="mainMenuCtrl" ng-hide="INTRODUCTION_DISPLAYED">
       <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">

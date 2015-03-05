@@ -29,7 +29,7 @@
  */
 (function () {
     "use strict";
-    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngAnimate', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
