@@ -110,12 +110,18 @@ public class EditPerspective extends Perspective {
 
     private void renderFeedbackIfNeeded(final AjaxRequestTarget target) {
         if (target != null && isVisibleInHierarchy()) {
-            if (!feedbackShown && feedback.anyMessage()) {
-                feedbackShown = true;
-                target.add(feedback);
-            } else if (feedbackShown && !feedback.anyMessage()) {
-                feedbackShown = false;
-                target.add(feedback);
+            if (target instanceof PluginRequestTarget) {
+                PluginRequestTarget pluginRequestTarget = (PluginRequestTarget) target;
+                // ignore updating feedback if refresh is from pinger
+                if (!pluginRequestTarget.hasPingComponent()) {
+                    boolean hasFeedbackMessage = feedback.anyMessage();
+                    if (hasFeedbackMessage || feedbackShown) {
+                        // update feedback panel if there's either any new feedback or validation state change
+                        // (cleanup old feedback)
+                        target.add(feedback);
+                    }
+                    feedbackShown = hasFeedbackMessage;
+                }
             }
         }
     }

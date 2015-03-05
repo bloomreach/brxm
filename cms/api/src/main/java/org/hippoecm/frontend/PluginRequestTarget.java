@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.frontend.widgets.Pinger;
 
 /**
  * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of
@@ -173,6 +174,14 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
         return false;
     }
 
+    /**
+     * Return true if there is a ping component to be rendered
+     * @return
+     */
+    public boolean hasPingComponent(){
+        return componentsToRender.hasPingComponent();
+    }
+
     private static class OnlyRenderComponentsOnPage implements ITargetRespondListener {
 
         private List<Component> components;
@@ -192,6 +201,13 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
                     target.add(component);
                 }
             }
+        }
+
+        public boolean hasPingComponent() {
+            if (components != null && !components.isEmpty()) {
+                return components.stream().anyMatch(c -> c instanceof Pinger);
+            }
+            return false;
         }
     }
 }
