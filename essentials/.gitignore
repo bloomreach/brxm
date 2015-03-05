@@ -254,6 +254,7 @@ dashboard/.idea
 dashboard/atlassian-ide-plugin.xml
 dashboard/classes
 dashboard/hippo-plugins.iws
+dashboard/node_modules
 dashboard/src/*.iml
 dashboard/src/.DS_Store
 dashboard/src/.idea
