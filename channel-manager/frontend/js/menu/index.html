@@ -31,7 +31,7 @@
 
 <body>
     <div data-ng-app="hippo.channel.menu" id="application" class="l-stretch">
-        <div ui-view></div>
+        <div ui-view id="ui-view"></div>
     </div>
 
     <script src="../components/jquery/dist/jquery.min.js"></script>
@@ -64,9 +64,12 @@
     <script src="states/menu-item/none/NoMenuItemCtrl.js"></script>
 
     <script src="states/picker/PickerCtrl.js"></script>
+    <script src="states/picker/PickerTreeCtrl.js"></script>
+    <script src="states/picker/PickerDocCtrl.js"></script>
 
     <script src="services/FocusService.js"></script>
     <script src="services/MenuService.js"></script>
+    <script src="services/PickerService.js"></script>
 
     <script src="directives/keepScrollPos.js"></script>
 
