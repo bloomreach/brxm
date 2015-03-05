@@ -67,7 +67,7 @@
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>
-      <div class="navbar-text navbar-icons">
+      <div class="navbar-text hippo-navbar-icons">
         <a href="#/build" class="navbar-link">
           <span class="fa fa-refresh"></span>
           <span class="hidden-xs">Rebuild</span>
