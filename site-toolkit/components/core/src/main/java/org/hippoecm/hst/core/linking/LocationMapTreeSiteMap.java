@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.linking;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +23,6 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
@@ -36,109 +33,57 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LocationMapTreeImpl implements LocationMapTree {
+public class LocationMapTreeSiteMap implements LocationMapTree {
 
     private static final String KEY_TO_PROPERTY_PREFIX = "key";
 
-    private final static Logger log = LoggerFactory.getLogger(LocationMapTreeImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(LocationMapTreeSiteMap.class);
     
     private Map<String, LocationMapTreeItem> children = new HashMap<>();
 
-    public LocationMapTreeImpl(final List<HstSiteMapItem> siteMapItems) {
-        this(siteMapItems, null, null);
-    }
 
-    public LocationMapTreeImpl(final List<HstSiteMapItem> siteMapItems,
-                               final HstComponentsConfiguration configuration,
-                               final String mountContentPath) {
+    public LocationMapTreeSiteMap(final List<HstSiteMapItem> siteMapItems) {
         for(HstSiteMapItem siteMapItem : siteMapItems ){
-            add2LocationMap(siteMapItem, configuration, mountContentPath);
+            add2LocationMap(siteMapItem);
         }
         optimize();
     }
 
-    public LocationMapTreeImpl(final HstSiteMapItem siteMapItem) {
-        this(siteMapItem, null, null);
-    }
 
-    public LocationMapTreeImpl(final HstSiteMapItem siteMapItem,
-                               final HstComponentsConfiguration configuration,
-                               final String mountContentPath) {
-        add2LocationMap(siteMapItem, configuration, mountContentPath);
+    public LocationMapTreeSiteMap(final HstSiteMapItem siteMapItem) {
+        add2LocationMap(siteMapItem);
         optimize();
     }
 
-    private void add2LocationMap(final HstSiteMapItem siteMapItem,
-                                 final HstComponentsConfiguration configuration,
-                                 final String mountContentPath) {
+    private void add2LocationMap(final HstSiteMapItem siteMapItem) {
 
         final String normPath = PathUtils.normalizePath(siteMapItem.getRelativeContentPath());
+
+        if (siteMapItem.isExcludedForLinkRewriting()){
+            log.debug("'{}' will not be used for linkrewriting as is configured to be excluded for linkrewriting.", siteMapItem);
+            for(HstSiteMapItem child : siteMapItem.getChildren()) {
+                add2LocationMap(child);
+            }
+            return;
+        }
+
         if (StringUtils.isNotEmpty(normPath)) {
             log.debug("Adding to location map path '{}' for sitemap item '{}'", normPath, siteMapItem.getQualifiedId());
             addSiteMapItem(normPath, siteMapItem);
         }
 
-        // for explicit sitemap item paths (no wildcards in it) include possible component item picked documents
-        if (configuration != null && siteMapItem.getComponentConfigurationId() != null && siteMapItem.isExplicitPath()) {
-            final HstComponentConfiguration cc = configuration.getComponentConfiguration(siteMapItem.getComponentConfigurationId());
-            if (cc == null) {
-                log.warn("Sitemap item '{}' for site '{}' contains unresolvable hst:componentconfigurationid '{}'.",
-                        siteMapItem.getQualifiedId(), siteMapItem.getHstSiteMap().getSite().getName(), siteMapItem.getComponentConfigurationId());
-            } else {
-
-                // find all extra document paths possibly stored in the components belonging to the page of this siteMapItem
-                final List<String> documentPaths =  DocumentParamsScanner.findDocumentPathsRecursive(cc);
-
-                final Properties siteMapItemParameters = new Properties();
-                for (Map.Entry<String, String> param : siteMapItem.getParameters().entrySet()) {
-                    siteMapItemParameters.put(param.getKey(), param.getValue());
-                }
-                final PropertyParser pp = new PropertyParser(siteMapItemParameters);
-                for (String documentPath : documentPaths) {
-                    // documentPath can have property place holders referring to a property from sitemap item, for example
-                    // images/${bannerlocation} hence we need to resolve these first
-                    String parsedDocumentPath = (String)pp.resolveProperty("documentPath", documentPath);
-
-                    if (parsedDocumentPath.startsWith("/")) {
-                        // absolute path, strip the current mount root path and if does not start with mount root path
-                        // skip the document link.
-                        if (mountContentPath == null) {
-                            continue;
-                        }
-                        if (!parsedDocumentPath.startsWith(mountContentPath)) {
-                            continue;
-                        }
-                        parsedDocumentPath = parsedDocumentPath.substring(mountContentPath.length());
-                    }
-                    final String normalizedParsedDocumentPath = PathUtils.normalizePath(parsedDocumentPath);
-                    if (StringUtils.isNotEmpty(normalizedParsedDocumentPath)) {
-                        log.debug("Adding document path '{}' from page to location map for sitemap item '{}'",
-                                normalizedParsedDocumentPath, siteMapItem.getQualifiedId());
-                        // TODO mark this item that it is linked via component document to be later in a position to
-                        // know the difference between sitemap item relative content path linked and component linked
-                        // items
-                        addSiteMapItem(normalizedParsedDocumentPath, siteMapItem);
-                    }
-                }
-            }
-        }
-
         for(HstSiteMapItem child : siteMapItem.getChildren()) {
-           add2LocationMap(child, configuration, mountContentPath);
+           add2LocationMap(child);
         }
     }
 
 
-    private void addSiteMapItem(final String unresolvedPath, final HstSiteMapItem hstSiteMapItem) {
+    private void addSiteMapItem(final String unresolvedPath, final HstSiteMapItem siteMapItem) {
         if(unresolvedPath == null) {
-            log.debug("HstSiteMapItem '{}' will not be used for linkrewriting as it has an empty relative content path.", hstSiteMapItem.getId());
+            log.debug("'{}' will not be used for linkrewriting as it has an empty relative content path.", siteMapItem);
             return;
         }
-        if(hstSiteMapItem.isExcludedForLinkRewriting()){
-            log.debug("HstSiteMapItem '{}' will not be used for linkrewriting as is configured to be excluded for linkrewriting.", hstSiteMapItem.getId());
-            return;
-        }
-        
+
         final List<String> propertyOrderList = new ArrayList<>();
         
         final Properties params = new Properties();
@@ -146,15 +91,15 @@ public class LocationMapTreeImpl implements LocationMapTree {
         
         // list of the sitemap items ancestors + the sitemap item itself. The last item in the list is the top parent
         final List<HstSiteMapItem> ancestorItems = new ArrayList<>();
-        ancestorItems.add(hstSiteMapItem);
-        HstSiteMapItem parent = hstSiteMapItem.getParentItem();
+        ancestorItems.add(siteMapItem);
+        HstSiteMapItem parent = siteMapItem.getParentItem();
         while (parent != null) {
             ancestorItems.add(parent);
             parent = parent.getParentItem();
         }
         
         // traverse the ancestors list now to see if there are wildcard or any matchers
-        if (!hstSiteMapItem.isExplicitPath()) {
+        if (!siteMapItem.isExplicitPath()) {
             int index = ancestorItems.size();
             while (index-- != 0) {
                 final HstSiteMapItemService s = (HstSiteMapItemService) ancestorItems.get(index);
@@ -206,7 +151,7 @@ public class LocationMapTreeImpl implements LocationMapTree {
                 keyNumber++;
             }
         }
-        ((HstSiteMapItemService)hstSiteMapItem).setKeyToPropertyPlaceHolderMap(keyToPropertyPlaceHolderMap);
+        ((HstSiteMapItemService)siteMapItem).setKeyToPropertyPlaceHolderMap(keyToPropertyPlaceHolderMap);
         
         final PropertyParser pp = new PropertyParser(params);
         
@@ -225,38 +170,37 @@ public class LocationMapTreeImpl implements LocationMapTree {
             final String propertyPlaceHolder = PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + param + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX;
             if(!unresolvedPath.contains(propertyPlaceHolder)) {
                 log.debug("The SiteMapItem with id '{}' and relative content path '{}' can only be used in a context aware link rewriting",
-                        hstSiteMapItem.getId(), hstSiteMapItem.getRelativeContentPath());
-                ((HstSiteMapItemService)hstSiteMapItem).setUseableInRightContextOnly(true);
+                        siteMapItem.getId(), siteMapItem.getRelativeContentPath());
+                ((HstSiteMapItemService)siteMapItem).setUseableInRightContextOnly(true);
             }
         }
         
         final String resolvedPath = (String)pp.resolveProperty("relative contentpath", unresolvedPath);
-       
-        if(resolvedPath == null) {
-            log.warn("Skipping sitemap item '{}' for linkrewriting : Unable to translate relative content path '{}' " +
-                    "because the wildcards in sitemap item path ('{}') do not match the property placeholders in the " +
-                    "relative content path. ",
-                    hstSiteMapItem.getQualifiedId(), unresolvedPath, hstSiteMapItem.getId());
+
+        if (resolvedPath == null) {
+            log.warn("Skipping '{}' for linkrewriting : Unable to translate relative content path '{}' " +
+                            "because the wildcards in '{}' do not match the property placeholders in the " +
+                            "relative content path. ",
+                    siteMapItem, unresolvedPath, siteMapItem);
             return;
         } 
         log.debug("Translated relative contentpath '{}' --> '{}'", unresolvedPath, resolvedPath);
-        
-        final List<String> pathFragment = new ArrayList<>(Arrays.asList(resolvedPath.split("/")));
-        
-        addSiteMapItem(pathFragment, hstSiteMapItem);
-    }
-    
-    private void addSiteMapItem(final List<String> pathFragment, final HstSiteMapItem hstSiteMapItem){
-        
-        LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getTreeItem(pathFragment.get(0));
-        if(child == null) {
-            child = new LocationMapTreeItemImpl();
-            this.children.put(StringPool.get(pathFragment.get(0)), child);
-        }
-        pathFragment.remove(0);
-        child.addSiteMapItem(pathFragment , hstSiteMapItem);
+
+        addSiteMapItem(resolvedPath.split("/"), siteMapItem);
     }
 
+    private void addSiteMapItem(final String[] pathFragments,
+                                final HstSiteMapItem siteMapItem){
+        if (pathFragments.length == 0) {
+            return;
+        }
+        LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getTreeItem(pathFragments[0]);
+        if(child == null) {
+            child = new LocationMapTreeItemImpl();
+            this.children.put(StringPool.get(pathFragments[0]), child);
+        }
+        child.addSiteMapItem(pathFragments, siteMapItem, 1);
+    }
 
     public LocationMapTreeItem getTreeItem(final String name) {
         return children.get(name);

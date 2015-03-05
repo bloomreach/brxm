@@ -671,8 +671,9 @@ components/core/src/main/java/org/hippoecm/hst/core/linking/DocumentParamsScanne
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkProcessorChain.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapResolver.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapTreeImpl.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapTreeComponentDocuments.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapTreeItemImpl.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapTreeSiteMap.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/ResolvedLocationMapTreeItem.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/ResolvedLocationMapTreeItemImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/containers/DefaultResourceContainer.java svneol=native#text/plain

@@ -32,7 +32,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -341,14 +340,12 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         assertTrue(hstLinkPreferredNews2.isNotFound());
 
 
-        final List<HstLink> hstLinks = linkCreator.createAll(tmpDoc, requestContext, false);
+        final List<HstLink> allLinks = linkCreator.createAll(tmpDoc, requestContext, false);
         // createAll order does not take sitemap or component precedence into account but just by depth and then lexical
-        assertEquals("", hstLinks.get(0).getPath());
-        assertEquals("contact", hstLinks.get(1).getPath());
+        assertEquals("", allLinks.get(0).getPath());
+        assertEquals("contact", allLinks.get(1).getPath());
     }
 
-
-    @Ignore(value = "Should pass after HSTTWO-3215 is done.")
     @Test
     public void document_linked_via_component_AND_via_sitemap_content_path_uses_sitemap_as_preferred_even_if_sitemap_path_deeper() throws Exception {
 
@@ -370,6 +367,37 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
         // contact/thankyou has preference since sitemap has precedence over component linked docs
         assertEquals("contact/thankyou", hstLink.getPath());
+
+        final List<HstLink> allLinks = linkCreator.createAll(tmpDoc, requestContext, false);
+
+        // createAll order does not take sitemap or component precedence into account but just by depth and then lexical
+        assertEquals("contact", allLinks.get(0).getPath());
+        assertEquals("contact/thankyou", allLinks.get(1).getPath());
+    }
+
+    @Test
+    public void document_linked_via_component_AND_via_sitemap_content_path_uses_sitemap_as_preferred_even_if_sitemapItem_contains_wildcards() throws Exception {
+
+        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
+        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
+        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
+        contactPage.setProperty("hst:parametervalues", new String[]{"News/News1"});
+
+        session.save();
+
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        Node newsDoc = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
+
+        final HstLink hstLink = linkCreator.create(newsDoc, requestContext);
+        // news/**.html has preference since sitemap has precedence over component linked docs
+        assertEquals("news/News1.html", hstLink.getPath());
+
+        final List<HstLink> allLinks = linkCreator.createAll(newsDoc, requestContext, false);
+
+        // createAll order does not take sitemap or component precedence into account but just by depth and then lexical
+        assertEquals("contact", allLinks.get(0).getPath());
+        assertEquals("news/News1.html", allLinks.get(1).getPath());
+        assertEquals("alsonews/news2/News1.html", allLinks.get(2).getPath());
 
     }
 

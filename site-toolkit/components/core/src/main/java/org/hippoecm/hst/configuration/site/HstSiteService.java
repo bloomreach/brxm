@@ -33,7 +33,8 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
-import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
+import org.hippoecm.hst.core.linking.LocationMapTreeComponentDocuments;
+import org.hippoecm.hst.core.linking.LocationMapTreeSiteMap;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class HstSiteService implements HstSite {
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     volatile Optional<HstSiteMap> siteMap;
     volatile LocationMapTree locationMapTree;
+    volatile LocationMapTree locationMapTreeComponentDocuments;
     volatile Optional<HstSiteMapItemHandlersConfiguration> siteMapItemHandlersConfigurationService;
     volatile Optional<HstComponentsConfiguration> componentsConfiguration;
     volatile Optional<HstSiteMenusConfiguration> siteMenusConfigurations;
@@ -245,10 +247,23 @@ public class HstSiteService implements HstSite {
                 return locationMapTree;
             }
 
-            locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems(),
-                    getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
-
+            locationMapTree = new LocationMapTreeSiteMap(getSiteMap().getSiteMapItems());
             return locationMapTree;
+        }
+    }
+
+    @Override
+    public LocationMapTree getLocationMapTreeComponentDocuments() {
+        if (locationMapTreeComponentDocuments != null) {
+            return locationMapTreeComponentDocuments;
+        }
+        synchronized (hstModelMutex) {
+            if (locationMapTreeComponentDocuments != null) {
+                return locationMapTreeComponentDocuments;
+            }
+            locationMapTreeComponentDocuments = new LocationMapTreeComponentDocuments(getSiteMap().getSiteMapItems(),
+                    getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
+            return locationMapTreeComponentDocuments;
         }
     }
 

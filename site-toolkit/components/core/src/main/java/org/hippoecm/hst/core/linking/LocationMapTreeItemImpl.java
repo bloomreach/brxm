@@ -27,34 +27,33 @@ import org.hippoecm.hst.core.internal.StringPool;
 
 public class LocationMapTreeItemImpl implements LocationMapTreeItem {
 
-    private List<HstSiteMapItem> hstSiteMapItems = new ArrayList<HstSiteMapItem>();
+    private List<HstSiteMapItem> hstSiteMapItems = new ArrayList<>();
     
-    private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
+    private Map<String, LocationMapTreeItem> children = new HashMap<>();
     
     private LocationMapTreeItem parentItem;
     
     private boolean isWildCard;
     private boolean isAny;
     
-    void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem) {
-        if(pathFragment.isEmpty()) {
-            // when the pathFragments are empty, the entire relative content path is processed.
+    void addSiteMapItem(final String[] pathFragments, final HstSiteMapItem hstSiteMapItem, final int position) {
+        if(pathFragments.length == position) {
+            // when the pathFragments are empty, the entire path is processed.
             hstSiteMapItems.add(hstSiteMapItem);
             return;
         }
-        LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getChild(pathFragment.get(0));
+        LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getChild(pathFragments[position]);
         if(child == null) {
             child = new LocationMapTreeItemImpl();
-            children.put(StringPool.get(pathFragment.get(0)), child);
+            children.put(StringPool.get(pathFragments[position]), child);
             child.setParentItem(this);
-            if(HstNodeTypes.WILDCARD.equals(pathFragment.get(0))){
+            if(HstNodeTypes.WILDCARD.equals(pathFragments[position])){
                 child.isWildCard = true;
-            } else if (HstNodeTypes.ANY.equals(pathFragment.get(0))){
+            } else if (HstNodeTypes.ANY.equals(pathFragments[position])){
                 child.isAny =true;
             }
         }
-        pathFragment.remove(0);
-        child.addSiteMapItem(pathFragment , hstSiteMapItem);
+        child.addSiteMapItem(pathFragments , hstSiteMapItem, position + 1);
     }
     
     
