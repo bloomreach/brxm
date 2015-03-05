@@ -16,6 +16,7 @@ as described below:
 ------------------------------------------------------------------------------------------------------------------------
 components/angular/*
 components/angular-animate/*
+components/angular-sanitize/*
 
     The MIT License
 

@@ -45,6 +45,7 @@ module.exports = function (grunt) {
                         src: [
                             'angular/**',
                             'angular-animate/**',
+                            'angular-sanitize/**',
                             'angular-bootstrap/**',
                             'angular-chosen-localytics/**',
                             'angular-ui-router/**',

@@ -28,14 +28,14 @@
             {{message.date}} - <span class="fa fa-fw"
            ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}">
 
-        </span> <span ng-bind-html="message.message"></span>
+        </span> {{message.message}}
 
         </p>
         <div class="log-messages ng-hide" ng-show="archiveOpen">
             <p ng-repeat="message in archiveMessages">{{message.date}} - <span
                     ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}"
                     class="fa fa-fw">
-                </span><span ng-bind-html="message.message"></span></p>
+                </span>{{message.message}}</p>
         </div>
     </div>
 </div>
