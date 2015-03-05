@@ -13,7 +13,53 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="picker-container">
-  <div>TODO: show picker</div>
-  <button class="btn btn-default" type="button" data-ng-click="cancelPicker()">{{ 'CANCEL' | translate }}</button>
+
+<div class="container">
+  <div class="row">
+    <div id="panel-wrap">
+      <div id="menu-panel" class="col-sm-4" data-ng-controller="hippo.channel.menu.PickerTreeCtrl">
+        <div class="tree-col">
+          <div class="hippo-tree-wrapper" data-keep-scroll-pos>
+            <div data-hippo.theme.tree data-items="pickerTreeItems" data-callbacks="callbacks" drag="false">
+              <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propogation data-ng-show="childNodes().length > 0 || item.hasFolders">
+                <span class="fa" data-ng-class="{'fa-caret-down': !collapsed, 'fa-caret-right': collapsed}"></span>
+              </a>
+              <span class="spacer" data-ng-hide="childNodes().length > 0 || item.hasFolders"></span>
+              <span class="angular-ui-tree-title-wrapper">
+                <span class="fa folder" data-ng-class="{'fa-folder-open-o': !collapsed, 'fa-folder-o': collapsed}"></span>
+                <span class="angular-ui-tree-title">{{ item.displayName }}</span>
+              </span>
+            </div>
+            <div class="empty-tree" data-ng-if="pickerTreeItems.length == 0">{{ 'EMPTY_MENU' | translate }}</div>
+          </div>
+        </div>
+      </div>
+      <div data-ui-view class="col-sm-8" id="form-panel">
+        <button class="btn btn-default" type="button" data-ng-click="cancelPicker()">{{ 'CANCEL' | translate }}</button>
+      </div>
+    </div>
+    <div id="panel-footer">
+      footer
+    </div>
+
+
+    <!-- START general confirmation dialog -->
+    <div data-ng-controller="hippo.channel.menu.CloseConfirmationCtrl" id="close-confirmation">
+      <div class="overlay" data-ng-show="dialog.visible">&#160;</div>
+      <div hippo.theme.confirmation-dialog
+           data-show="dialog.visible"
+           data-perform-confirmation="confirm()"
+           data-perform-cancel="cancel()"
+           data-confirm-label="{{ 'CLOSE' | translate }}"
+           data-cancel-label="{{ 'CANCEL' | translate }}">
+        <p class="confirmation-dialog-title">
+          {{ 'CLOSE_PANEL_TITLE' | translate }}
+        </p>
+        <p class="confirmation-dialog-message">
+          {{ 'CLOSE_PANEL_CONFIRMATION' | translate }}
+        </p>
+      </div>
+    </div>
+    <!-- END confirmation dialog -->
+  </div>
 </div>
