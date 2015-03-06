@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 (function () {
-  "use strict";
+    "use strict";
 
-  angular.module('hippo.channel.menu')
-      .controller('hippo.channel.menu.PickerCtrl', [
-        '$scope',
-        '$state',
-        '$stateParams',
-        'hippo.channel.menu.PickerService',
-        function ($scope, $state, $stateParams, PickerService) {
-          $scope.cancelPicker = function() {
-            $state.go('menu-item.edit', {
-              menuItemId: $stateParams.menuItemId
-            });
-          };
-          $scope.pickerTreeItems = PickerService.getTree();
-          PickerService.getInitialData('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
-        }
-      ]);
+    angular.module('hippo.channel.menu')
+        .controller('hippo.channel.menu.PickerCtrl', [
+            '$scope',
+            '$state',
+            '$stateParams',
+            'hippo.channel.menu.PickerService',
+            function ($scope, $state, $stateParams, PickerService) {
+                $scope.cancelPicker = function() {
+                    $state.go('menu-item.edit', {
+                        menuItemId: $stateParams.menuItemId
+                    });
+                };
+                $scope.pickerTreeItems = PickerService.getTree();
+                PickerService.getInitialData('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+            }
+        ]);
 }());

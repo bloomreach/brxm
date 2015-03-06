@@ -15,69 +15,65 @@
  */
 
 (function () {
-  "use strict";
+    "use strict";
 
-  angular.module('hippo.channel.menu')
+    angular.module('hippo.channel.menu')
 
-      .service('hippo.channel.menu.PickerService', [
-        'hippo.channel.ConfigService',
-        '$http',
-        function (ConfigService, $http) {
-          var menuData = {
-                items: []
-            }, callObj = {
-              method: 'GET',
-              params: {
-                'FORCE_CLIENT_HOST': true,
-                'antiCache': 1424352715097
-              }
-            };
-          function getInitialData (id) {
-            callObj.url = '/site/_rp/' + id;
-            return $http(callObj).success(function (returnedData) {
-              addCollapsedProperties(returnedData.data, true);
-              menuData.items.push(returnedData.data);
-            });
+        .service('hippo.channel.menu.PickerService', [
+            'hippo.channel.ConfigService',
+            '$http',
+            function (ConfigService, $http) {
+                var menuData = {
+                        items: []
+                    }, callObj = {
+                        method: 'GET',
+                        params: {
+                            'FORCE_CLIENT_HOST': true,
+                            'antiCache': 1424352715097
+                        }
+                    };
+                function getInitialData (id) {
+                    callObj.url = '/site/_rp/' + id;
+                    return $http(callObj).success(function (returnedData) {
+                        addCollapsedProperties(returnedData.data, true);
+                        menuData.items.push(returnedData.data);
+                    });
 
-          }
-
-          function getData (item) {
-            callObj.url = '/site/_rp/' + item.id;
-            return $http(callObj).success(function (returnedData) {
-              addCollapsedProperties(returnedData.data, true);
-              item.items = returnedData.data.items;
-            });
-          }
-
-          function addCollapsedProperties(items, collapsed) {
-            if(Array.isArray(items)) {
-              angular.forEach(items, function (item) {
-                if(item.items && item.hasFolders) {
-                  item.collapsed = collapsed;
-                  addCollapsedProperties(item.items, collapsed);
                 }
-              });
-            } else {
-              items.collapsed = collapsed;
-              addCollapsedProperties(items.items, collapsed);
 
+                function getData (item) {
+                    callObj.url = '/site/_rp/' + item.id;
+                    return $http(callObj).success(function (returnedData) {
+                        addCollapsedProperties(returnedData.data, true);
+                        item.items = returnedData.data.items;
+                    });
+                }
+
+                function addCollapsedProperties(items, collapsed) {
+                    if(Array.isArray(items)) {
+                        angular.forEach(items, function (item) {
+                            if(item.items && item.hasFolders) {
+                                item.collapsed = collapsed;
+                                addCollapsedProperties(item.items, collapsed);
+                            }
+                        });
+                    } else {
+                        items.collapsed = collapsed;
+                        addCollapsedProperties(items.items, collapsed);
+                    }
+                }
+
+                return {
+                    getTree: function() {
+                        return menuData.items;
+                    },
+                    getInitialData: function(id) {
+                        return getInitialData(id);
+                    },
+                    getData: function(item) {
+                        return getData(item);
+                    }
+                };
             }
-
-          }
-
-          return {
-            getTree: function() {
-              return menuData.items;
-            },
-            getInitialData: function(id) {
-              return getInitialData(id);
-            },
-            getData: function(item) {
-              return getData(item);
-            }
-
-          };
-        }
-
-      ]);
+        ]);
 }());

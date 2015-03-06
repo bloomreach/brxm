@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 (function () {
-  "use strict";
+    "use strict";
 
-  angular.module("hippo.channel.menu")
-      .directive('stopPropogation', function () {
-        return {
-          restrict: 'A',
-          link: function (scope, element) {
-            element.bind('click', function (e) {
-              console.log('stopPropagation');
-              e.stopPropagation();
-            });
-          }
-        };
-      });
+    angular.module("hippo.channel.menu")
+        .directive('stopPropogation', function () {
+            return {
+                restrict: 'A',
+                link: function (scope, element) {
+                    element.bind('click', function (e) {
+                        console.log('stopPropagation');
+                        e.stopPropagation();
+                    });
+                }
+            };
+        });
 }());
 

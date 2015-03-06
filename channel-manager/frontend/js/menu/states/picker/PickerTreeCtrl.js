@@ -15,30 +15,30 @@
  */
 
 (function () {
-  "use strict";
+    "use strict";
 
-  angular.module('hippo.channel.menu')
-      .controller('hippo.channel.menu.PickerTreeCtrl', [
-        '$scope',
-        '$state',
-        '$stateParams',
-        'hippo.channel.menu.PickerService',
-        function ($scope, $state, $stateParams, PickerService) {
-          $scope.$watch('selectedItem', function(itemId) {
-            console.log('new selected item', itemId);
-            $state.go('picker.docs', {
-              pickerItemId: itemId
-            });
-          });
+    angular.module('hippo.channel.menu')
+        .controller('hippo.channel.menu.PickerTreeCtrl', [
+            '$scope',
+            '$state',
+            '$stateParams',
+            'hippo.channel.menu.PickerService',
+            function ($scope, $state, $stateParams, PickerService) {
+                $scope.$watch('selectedItem', function(itemId) {
+                    console.log('new selected item', itemId);
+                    $state.go('picker.docs', {
+                        pickerItemId: itemId
+                    });
+                });
 
-          $scope.callbacks = {
-            toggleItem: function(item) {
-              if(item.collapsed === false && item.items.length === 0) {
-                PickerService.getData(item);
-              }
+                $scope.callbacks = {
+                    toggleItem: function(item) {
+                        if(item.collapsed === false && item.items.length === 0) {
+                            PickerService.getData(item);
+                        }
+                    }
+                };
             }
-          };
-        }
-      ]);
+        ]);
 }());
 
