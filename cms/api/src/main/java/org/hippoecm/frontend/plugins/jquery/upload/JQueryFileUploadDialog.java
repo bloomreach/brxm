@@ -57,7 +57,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
     private FileUploadWidget fileUploadWidget;
 
     private final FileUploadValidationService validator;
-    private final Button ajaxOkButton;
+    private final Button uploadButton;
 
     protected JQueryFileUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig){
         setOutputMarkupId(true);
@@ -65,9 +65,10 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
         setOkVisible(false);
         setOkEnabled(false);
+        setCancelLabel(new StringResourceModel("button-close-label", this, null));
 
-        // create custom OK button to call javascript uploading
-        ajaxOkButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("ok", this, null)){
+        // create custom upload button to call javascript uploading
+        uploadButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("button-upload-label", this, null)){
             private boolean isUploading = false;
 
             @Override
@@ -84,11 +85,16 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
             public boolean isEnabled(){
                 return !isUploading;
             }
+
+            @Override
+            public boolean isVisible() {
+                return !isUploading;
+            }
         };
-        ajaxOkButton.setEnabled(true);
-        ajaxOkButton.setVisible(true);
-        ajaxOkButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
-        this.addButton(ajaxOkButton);
+        uploadButton.setEnabled(true);
+        uploadButton.setVisible(true);
+        uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
+        this.addButton(uploadButton);
 
         this.pluginContext = pluginContext;
         this.pluginConfig = pluginConfig;
