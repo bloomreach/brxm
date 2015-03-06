@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.taxonomy.plugin;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,16 +38,28 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -94,7 +107,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 }
 
                 public IModel<String> next() {
-                    return new Model<String>(upstream.next());
+                    return new Model<>(upstream.next());
                 }
 
                 public void remove() {
@@ -144,23 +157,31 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 item.add(label = new Label("key", new ResourceModel("invalid.taxonomy.key")));
             }
             switch (change.getType()) {
-            case ADDED:
-                label.add(new AttributeAppender("class", new Model("hippo-diff-added"), " "));
-                break;
-            case REMOVED:
-                label.add(new AttributeAppender("class", new Model("hippo-diff-removed"), " "));
-                break;
+                case ADDED:
+                    label.add(new AttributeAppender("class", new Model("hippo-diff-added"), " "));
+                    break;
+                case REMOVED:
+                    label.add(new AttributeAppender("class", new Model("hippo-diff-removed"), " "));
+                    break;
             }
         }
     }
 
+    private final Mode mode;
     private ClassificationDao dao;
 
     public TaxonomyPickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        String captionKey = config.getString("captionKey", "title");
+        final String captionKey = config.getString("captionKey", "title");
         add(new Label("title", new ResourceModel(captionKey)));
+
+        final Label requiredMarker = new Label("required", "*");
+        final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
+        if ((fieldDescriptor == null) || (!fieldDescriptor.getValidators().contains("required"))) {
+            requiredMarker.setVisible(false);
+        }
+        add(requiredMarker);
 
         dao = context.getService(config.getString(ClassificationDao.SERVICE_ID), ClassificationDao.class);
         if (dao == null) {
@@ -168,7 +189,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                     config.getString(ClassificationDao.SERVICE_ID));
         }
 
-        final Mode mode = Mode.fromString(config.getString("mode", "view"));
+        mode = Mode.fromString(config.getString("mode", "view"));
         if (dao != null && mode == Mode.EDIT) {
             add(new CategoryListView("keys"));
             final ClassificationModel model = new ClassificationModel(dao, getModel());
@@ -206,7 +227,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             };
 
             add(new CategoryCompareView("keys", changesModel));
-            add(new Label("edit",changesModel).setVisible(false));
+            add(new Label("edit", changesModel).setVisible(false));
         } else {
             add(new CategoryListView("keys"));
             add(new Label("edit").setVisible(false));
@@ -253,6 +274,35 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         redraw();
     }
 
+    @Override
+    public void render(final PluginRequestTarget target) {
+
+        // in edit mode, check the validation service for any results for this field
+        if ((target != null) && isActive()) {
+            if (IEditor.Mode.EDIT == mode) {
+                if (getPluginConfig().containsKey(IValidationService.VALIDATE_ID)) {
+
+                    final String validatorId = getPluginConfig().getString(IValidationService.VALIDATE_ID);
+                    final IValidationService validationService = getPluginContext().getService(validatorId, IValidationService.class);
+
+                    if (validationService != null) {
+                        if (!isTaxonomyFieldValid(validationService.getValidationResult())) {
+                            target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
+                        }
+                    }
+                    else {
+                        log.debug("ValidationService for taxonomy field not found based on {} {}", IValidationService.VALIDATE_ID, validatorId);
+                    }
+                }
+                else {
+                    log.debug("Key {} not found in the configuration for taxonomy field, config={}", IValidationService.VALIDATE_ID, getPluginConfig());
+                }
+            }
+        }
+
+        super.render(target);
+    }
+
     /**
      * Creates and returns taxonomy picker dialog instance.
      * <p>
@@ -284,7 +334,34 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         return getLocale().getLanguage();
     }
 
-    private Taxonomy getTaxonomy() {
+    /**
+     * Get the field descriptor object for this field
+     */
+    protected IFieldDescriptor getTaxonomyFieldDescriptor() {
+
+        final ITemplateEngine templateEngine = getPluginContext().getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
+        if (templateEngine != null) {
+            try {
+                final String fieldName = getPluginConfig().getString(AbstractFieldPlugin.FIELD, "keys");
+
+                // get field in current document type, which is either directly configured field or the hippotaxonomy:classifiable
+                final ITypeDescriptor type = templateEngine.getType(getModel());
+                final IFieldDescriptor field = type.getField(fieldName);
+                if (field != null) {
+                    return field;
+                }
+                log.warn("Cannot find taxonomy field '{}' for type {}", fieldName, type.getName());
+
+            } catch (TemplateEngineException e) {
+                log.error("Cannot determine type for taxonomy field", e);
+            }
+        } else {
+            log.error("Cannot find template engine, plugin config is {}", getPluginConfig());
+        }
+        return null;
+    }
+
+    protected Taxonomy getTaxonomy() {
         IPluginConfig config = getPluginConfig();
         ITaxonomyService service = getPluginContext()
                 .getService(config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID), ITaxonomyService.class);
@@ -297,5 +374,37 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         }
 
         return service.getTaxonomy(taxonomyName);
+    }
+
+    /**
+     * Checks if the taxonomy field has any violations attached to it.
+     *
+     * @param validationResult The IValidationResult that contains all violations that occurred for this editor
+     * @return true if there are no violations present or non of the validation belong to the current field
+     */
+    protected boolean isTaxonomyFieldValid(final IValidationResult validationResult) {
+
+        if (!validationResult.isValid()) {
+            final IFieldDescriptor field = getTaxonomyFieldDescriptor();
+            if (field == null) {
+                return true;
+            }
+
+            for (Violation violation : validationResult.getViolations()) {
+                Set<ModelPath> paths = violation.getDependentPaths();
+                for (ModelPath path : paths) {
+                    if (path.getElements().length > 0) {
+                        final ModelPathElement first = path.getElements()[0];
+                        // matching on path (property name) since the violation comes from the classifiable mixin
+                        // and the field can be configured at doc type level
+                        if (first.getField().getPath().equals(field.getPath())) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }
