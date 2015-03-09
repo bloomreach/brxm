@@ -45,7 +45,7 @@
     <hippo.commons.version>1.05.00-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
     <hippo.frontend.plugins.version>1.02.00-SNAPSHOT</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>1.02.00-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.frontend.theme.version>1.02.01-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>2.27.00-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.10.0-SNAPSHOT</hippo.release.version>
