@@ -22,14 +22,20 @@
             '$state',
             '$stateParams',
             'hippo.channel.menu.PickerService',
-            function ($scope, $state, $stateParams, PickerService) {
+            'hippo.channel.menu.MenuService',
+            function ($scope, $state, $stateParams, PickerService, MenuService) {
                 $scope.cancelPicker = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId
                     });
                 };
                 $scope.treeItems = PickerService.getTree();
-                PickerService.getDataById('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+                if(MenuService.getMenuData().siteContentIdentifier) {
+                    PickerService.getDataById(MenuService.getMenuData().siteContentIdentifier);
+                } else {
+                    PickerService.getDataById('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+                }
             }
         ]);
 }());
