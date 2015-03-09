@@ -47,6 +47,12 @@
   display: flex;
   align-items: center;
 }
+#panel-footer div {
+  display: inline-block;
+}
+#panel-footer #buttons-wrap {
+  margin-left: auto;
+}
 
 #menu-panel {
   height: 100%;
@@ -57,10 +63,13 @@
   height: 100%;
   border-left: 1px solid #E3E3E3;
   background-color: #f4f4f4;
+  padding-bottom: 10px;
 }
 
-#form-panel {
-  padding-bottom: 10px;
+.picker-container #form-panel{
+  background: #fff;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .form-group .input-group .form-control-feedback {
@@ -103,12 +112,6 @@
   margin: 0 auto -51px;
   /* Pad bottom by footer height */
   padding: 0 0 51px;
-}
-
-.panel-footer {
-  height: 60px;
-  padding-top: 8px;
-  padding-bottom: 8px;
 }
 
 form h4.page-header {
@@ -195,4 +198,8 @@ h3.lead.item-title {
   margin-left: 0;
   margin-right: 0;
   width: 100%;
+}
+
+.document-picker thead {
+  background: #f4f4f4;
 }

@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div class="container">
+<div class="container picker-container">
   <div class="row">
     <div id="panel-wrap">
       <div id="menu-panel" class="col-sm-4" data-ng-controller="hippo.channel.menu.PickerTreeCtrl">
@@ -34,12 +34,16 @@
           </div>
         </div>
       </div>
-      <div data-ui-view class="col-sm-8" id="form-panel">
-        <button class="btn btn-default" type="button" data-ng-click="cancelPicker()">{{ 'CANCEL' | translate }}</button>
-      </div>
+      <div data-ui-view class="col-sm-8" id="form-panel"></div>
     </div>
     <div id="panel-footer">
-      footer
+      <div id="breadcrumbs">
+        Breadcrumbs
+      </div>
+      <div id="buttons-wrap">
+        <button class="btn btn-primary" type="button" data-ng-click="">{{ 'OK' | translate }}</button>
+        <button class="btn btn-default" type="button" data-ng-click="cancelPicker()">{{ 'CANCEL' | translate }}</button>
+      </div>
     </div>
 
 
