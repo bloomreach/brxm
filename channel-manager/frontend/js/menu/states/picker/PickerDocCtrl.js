@@ -24,7 +24,7 @@
         '$state',
         '$stateParams',
         function ($scope, $state, $stateParams) {
-            $scope.selectedItem = $stateParams.pickerItemId;
+            $scope.selectedItem = $stateParams.pickerItem;
         }
     ]);
 }());

@@ -32,16 +32,15 @@
                             'antiCache': 1424352715097
                         }
                     };
-                function getInitialData (id) {
+                function getDataById(id) {
                     callObj.url = '/site/_rp/' + id;
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
                         menuData.items.push(returnedData.data);
                     });
-
                 }
 
-                function getData (item) {
+                function getData(item) {
                     callObj.url = '/site/_rp/' + item.id;
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
@@ -67,8 +66,8 @@
                     getTree: function() {
                         return menuData.items;
                     },
-                    getInitialData: function(id) {
-                        return getInitialData(id);
+                    getDataById: function(id) {
+                        return getDataById(id);
                     },
                     getData: function(item) {
                         return getData(item);

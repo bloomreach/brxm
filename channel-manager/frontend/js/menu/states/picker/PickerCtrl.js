@@ -28,8 +28,8 @@
                         menuItemId: $stateParams.menuItemId
                     });
                 };
-                $scope.pickerTreeItems = PickerService.getTree();
-                PickerService.getInitialData('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+                $scope.treeItems = PickerService.getTree();
+                PickerService.getDataById('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
             }
         ]);
 }());

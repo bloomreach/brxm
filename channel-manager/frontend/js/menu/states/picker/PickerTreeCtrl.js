@@ -24,14 +24,17 @@
             '$stateParams',
             'hippo.channel.menu.PickerService',
             function ($scope, $state, $stateParams, PickerService) {
-                $scope.$watch('selectedItem', function(itemId) {
-                    console.log('new selected item', itemId);
+                $scope.$watch('selectedItem', function(item) {
+                    console.log('selectedItem', item);
                     $state.go('picker.docs', {
-                        pickerItemId: itemId
+                        pickerItem: item
                     });
                 });
 
                 $scope.callbacks = {
+                    selectItem: function(item) {
+                        PickerService.getData(item);
+                    },
                     toggleItem: function(item) {
                         if(item.collapsed === false && item.items.length === 0) {
                             PickerService.getData(item);
@@ -41,4 +44,3 @@
             }
         ]);
 }());
-
