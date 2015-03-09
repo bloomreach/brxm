@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,20 +23,15 @@ import javax.jcr.Session;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 
 public class ModuleRegistryTest {
 
-    @Test
+    @Test (expected = RepositoryException.class)
     public void testDetectCircularDependencies() throws Exception {
         ModuleRegistry registry = new ModuleRegistry();
         registry.registerModule("test1", new Test1Module());
         registry.registerModule("test2", new Test2Module());
-        try {
-            registry.registerModule("circularTest3", new CircularTest3Module());
-            fail("Circular dependencies not detected");
-        } catch (RepositoryException expected) {
-        }
+        registry.registerModule("circularTest3", new CircularTest3Module());
     }
 
     @Test
@@ -45,6 +40,7 @@ public class ModuleRegistryTest {
         registry.registerModule("test", new TestModule());
         registry.registerModule("test4", new Test4Module());
 
+        registry.checkDependencyGraph(true);
         final List<ModuleRegistration> registrations = registry.getModuleRegistrations();
 
         assertEquals(2, registrations.size());
@@ -59,6 +55,7 @@ public class ModuleRegistryTest {
         registry.registerModule("test2", new Test2Module());
         registry.registerModule("test3", new Test3Module());
 
+        registry.checkDependencyGraph(true);
         final List<ModuleRegistration> registrations = registry.getModuleRegistrations();
 
         assertEquals(3, registrations.size());
@@ -67,11 +64,28 @@ public class ModuleRegistryTest {
         assertEquals("test1", registrations.get(2).getModuleName());
 
         final List<ModuleRegistration> reverse = registry.getModuleRegistrationsReverseOrder();
+        registry.checkDependencyGraph(true);
 
         assertEquals(3, registrations.size());
         assertEquals("test1", reverse.get(0).getModuleName());
         assertEquals("test2", reverse.get(1).getModuleName());
         assertEquals("test3", reverse.get(2).getModuleName());
+    }
+
+    @Test (expected = RepositoryException.class)
+    public void testUnsatisfiedNonOptionalDependency() throws Exception {
+        ModuleRegistry registry = new ModuleRegistry();
+        registry.registerModule("test1", new Test1Module());
+        registry.getModuleRegistrations();
+        registry.checkDependencyGraph(true);
+    }
+
+    @Test
+    public void testUnsatisfiedOptionalDependency() throws Exception {
+        ModuleRegistry registry = new ModuleRegistry();
+        registry.registerModule("test2", new Test2Module());
+        registry.getModuleRegistrations();
+        registry.checkDependencyGraph(true);
     }
 
     public static class TestModule implements DaemonModule {
@@ -86,7 +100,7 @@ public class ModuleRegistryTest {
     public static class Test1Module extends TestModule {}
 
     @ProvidesService(types = Test2.class)
-    @RequiresService(types = Test3.class)
+    @RequiresService(types = Test3.class, optional = true)
     public static class Test2Module extends TestModule {}
 
     @ProvidesService(types = Test3.class)

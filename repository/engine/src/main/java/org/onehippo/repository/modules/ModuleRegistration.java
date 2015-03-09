@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,12 @@ package org.onehippo.repository.modules;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import javax.jcr.Session;
+
+import org.apache.commons.lang.ArrayUtils;
 
 class ModuleRegistration {
 
@@ -58,7 +61,7 @@ class ModuleRegistration {
         return Collections.emptyList();
     }
 
-    Collection<Class<?>> requirements() {
+    List<Class<?>> requirements() {
         final RequiresService annotation = moduleClass.getAnnotation(RequiresService.class);
         if (annotation != null) {
             return Arrays.asList(annotation.types());
@@ -70,6 +73,31 @@ class ModuleRegistration {
         final After annotation = moduleClass.getAnnotation(After.class);
         if (annotation != null) {
             return Arrays.asList(annotation.modules());
+        }
+        return Collections.emptyList();
+    }
+
+    Boolean optional(Class<?> type) {
+        final List<Class<?>> requirements = requirements();
+        final int i = requirements.indexOf(type);
+        final List<Boolean> optional = optional();
+        if (optional.size() <= i) {
+            if (optional.size() == 1) {
+                return optional.get(0);
+            } else {
+                return false;
+            }
+        }
+        return optional.get(i);
+    }
+
+    List<Boolean> optional() {
+        final RequiresService annotation = moduleClass.getAnnotation(RequiresService.class);
+        if (annotation != null) {
+            final Boolean[] optional = ArrayUtils.toObject(annotation.optional());
+            if (optional != null) {
+                return Arrays.asList(optional);
+            }
         }
         return Collections.emptyList();
     }

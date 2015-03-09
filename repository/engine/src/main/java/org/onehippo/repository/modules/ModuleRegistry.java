@@ -43,7 +43,7 @@ class ModuleRegistry {
     private void addRegistration(final ModuleRegistration registration) throws RepositoryException {
         final List<ModuleRegistration> updated = new ArrayList<ModuleRegistration>(registrations);
         updated.add(registration);
-        checkDependencyGraph(updated);
+        checkDependencyGraph(updated, false);
         registrations = updated;
     }
 
@@ -99,6 +99,13 @@ class ModuleRegistry {
                 }
             }
         }
+        // add registrations with unsatisfied requirements (because they are optional)
+        for (ModuleRegistration reg : regs) {
+            if (!result.contains(reg)) {
+                result.add(reg);
+            }
+        }
+
         return result;
     }
 
@@ -114,7 +121,11 @@ class ModuleRegistry {
         return Collections.unmodifiableList(moduleRegistrations);
     }
 
-    void checkDependencyGraph(List<ModuleRegistration> registrations) throws RepositoryException {
+    void checkDependencyGraph(boolean failOnUnsatisfiedRequirement) throws RepositoryException {
+        checkDependencyGraph(registrations, failOnUnsatisfiedRequirement);
+    }
+
+    private void checkDependencyGraph(List<ModuleRegistration> registrations, boolean failOnUnsatisfiedRequirement) throws RepositoryException {
         final Map<Class<?>, ModuleRegistration> provided = new HashMap<Class<?>, ModuleRegistration>();
         for (ModuleRegistration registration : registrations) {
             for (Class<?> aClass : registration.provides()) {
@@ -127,12 +138,14 @@ class ModuleRegistry {
             for (Class<?> requiredClass : registration.requirements()) {
                 if (provided.containsKey(requiredClass)) {
                     requires.add(provided.get(requiredClass));
+                } else if (failOnUnsatisfiedRequirement && !registration.optional(requiredClass)) {
+                    throw new RepositoryException("Unsatisfied dependency: " + registration.getModuleName() + " requires " + requiredClass);
                 }
             }
             requirements.put(registration, requires);
         }
         for (ModuleRegistration registration : registrations) {
-            detectCircularDependency(registration, requirements, new HashSet<ModuleRegistration>());
+            detectCircularDependency(registration, requirements, new HashSet<>());
         }
     }
 
@@ -150,7 +163,7 @@ class ModuleRegistry {
         }
         registrations.add(registration);
         for (ModuleRegistration requirement : requirements.get(registration)) {
-            detectCircularDependency(requirement, requirements, new HashSet<ModuleRegistration>(registrations));
+            detectCircularDependency(requirement, requirements, new HashSet<>(registrations));
         }
     }
 

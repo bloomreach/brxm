@@ -72,7 +72,7 @@ public class ModuleManager {
     }
 
     private void registerModules() throws RepositoryException {
-        for (DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
+        for (DaemonModule module : new Modules<>(Modules.getModules(), DaemonModule.class)) {
             registerModule(module);
         }
         final Node modules = JcrUtils.getNodeIfExists(MODULES_PATH, session);
@@ -81,6 +81,7 @@ public class ModuleManager {
                 registerModule(node);
             }
         }
+        registry.checkDependencyGraph(true);
     }
 
     ModuleRegistration registerModule(DaemonModule module) throws RepositoryException {
