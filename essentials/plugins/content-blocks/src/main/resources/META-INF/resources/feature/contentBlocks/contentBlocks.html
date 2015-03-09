@@ -50,16 +50,16 @@
         </div>
         <form ng-show="documentTypes.length > 0" class="form-horizontal" novalidate name="contentBlocksForm">
           <div class="form-group row">
-            <label class="col-sm-4 control-label">Document Type:</label>
+            <label class="col-sm-4 control-label" for="contentBlocksDocumentType">Document Type:</label>
             <div class="col-sm-4">
-              <select name="documentType" hippo.theme.select-box
+              <select id="contentBlocksDocumentType" chosen
                       class="form-control"
                       ng-disabled="!contentBlocksForm.$valid"
                       ng-model="selectedDocumentType"
                       ng-selected="selectedDocumentType"
                       ng-options="type.name for type in documentTypes"
-                      data-options="documentTypes"
-                      data-placeholder="Choose a document type...">
+                      data-placeholder="Choose a document type..."
+                      width="'100%'">
               </select>
             </div>
             <div class="col-sm-4 form-control-static">
@@ -95,26 +95,24 @@
                   <button class="btn btn-danger" ng-click="deleteField(field)">Delete</button>
                 </td>
                 <td>
-                  <select hippo.theme.select-box
+                  <select chosen
                           class="form-control"
                           ng-model="field.pickerType"
                           ng-selected="field.pickerType"
                           ng-options="pickerType for pickerType in pickerTypes"
-                          data-options="pickerTypes"></select>
+                          width="'100%'"></select>
                 </td>
                 <td>
                   <input class="form-control" type="text" ng-model="field.maxItems" ng-pattern="/^\d+$/" placeholder="No limit"/>
                 </td>
                 <td>
-                  <select hippo.theme.select-box
+                  <select chosen multiple required
                           class="form-control"
-                          multiple="multiple"
-                          required
                           ng-model="field.compounds"
                           ng-selected="field.compounds"
                           ng-options="compound.name for compound in compounds"
-                          data-options="compounds"
-                          data-placeholder="Select compound types"></select>
+                          data-placeholder="Select compound types"
+                          width="'100%'"></select>
                 </td>
               </tr>
             </table>
@@ -132,13 +130,13 @@
             <div class="row">
               <div class="col-sm-4" ng-show="copyChoices.length > 0">
                 <p>
-                  <select hippo.theme.select-box
+                  <select chosen
                           class="form-control"
                           ng-model="copyChoice"
                           ng-selected="copyChoice"
                           ng-options="choice.name for choice in copyChoices"
-                          data-options="copyChoices"
-                          data-placeholder="Select field to copy"></select>
+                          data-placeholder="Select field to copy"
+                          width="'100%'"></select>
                 </p>
               </div>
             </div>

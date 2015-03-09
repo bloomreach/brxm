@@ -31,7 +31,6 @@
             ];
 
             // Since the tabs use transclusive scopes, we need to put our two-way bound variables into data structure.
-            $scope.selectBoxWidth = '100%';
             $scope.data = {};
             $scope.initializing = true;
 
