@@ -23,8 +23,9 @@
         '$scope',
         '$state',
         '$stateParams',
-        function ($scope, $state, $stateParams) {
-            $scope.selectedItem = $stateParams.pickerItem;
+        '$filter',
+        function ($scope, $state, $stateParams, $filter) {
+            $scope.selectedItem = $filter('getByProperty')($scope.treeItems, 'id', $stateParams.pickerItemId, 'items');
         }
     ]);
 }());
