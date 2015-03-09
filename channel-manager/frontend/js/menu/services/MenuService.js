@@ -73,7 +73,7 @@
                             .success(function (response) {
                                 if (!angular.equals(menuData.items, response.data.items)) {
                                     var oldMenuItems = menuData.items;
-                                    menuData.items = response.data.items;
+                                    menuData = response.data;
                                     addCollapsedProperties(menuData.items, true);
                                     copyCollapsedProperties(oldMenuItems, menuData.items);
                                 }
@@ -224,6 +224,10 @@
 
                     getMenu : function () {
                         return loadMenu();
+                    },
+
+                    getMenuData : function () {
+                        return menuData;
                     },
 
                     getPathToMenuItem : function(menuItemId) {
