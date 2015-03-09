@@ -17,52 +17,47 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
   <!--
     DOCUMENT TYPES REGISTRATION
   -->
   <instructionSet>
     <!-- cnd-->
     <cnd documentType="bannerdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
-
     <!-- templates-->
     <xml action="copy" source="xml/namespaces/bannerdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
-
     <!-- beans-->
     <file action="copy" source="java/Banner.txt" target="{{beansFolder}}/Banner.java"/>
     <!-- queries -->
     <xml action="copy" source="xml/configuration/new-banner-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/configuration/new-banner-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-
-
   </instructionSet>
+
   <!--
     //############################################
     // CAROUSEL COMPONENT
     //############################################
-
   -->
   <instructionSet group="jsp">
-
     <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/hstdefault/essentials-carousel.jsp"/>
     <file action="copy" source="jsp/essentials-banner.jsp" target="{{jspRoot}}/hstdefault/essentials-banner.jsp"/>
     <xml action="copy" source="hst/carousel-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/banner-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
-  <instructionSet group="freemarker, repository">
+
+  <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/essentials-carousel.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-carousel.ftl"/>
     <freemarker action="copy" source="freemarker/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftl"/>
-  </instructionSet>
-  <instructionSet group="freemarker">
     <xml action="copy" source="hst/carousel-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/banner-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
+
   <instructionSet>
     <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/banner.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/banner.png"/>
     <file action="copy" binary="true" source="images/carousel.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/carousel.png"/>
   </instructionSet>
-
 
   <!--
     SAMPLE DATA
@@ -73,6 +68,5 @@
     <xml action="copy" source="xml/data/banner_entry_2.xml" target="/content/documents/{{namespace}}/banners"/>
     <xml action="copy" source="xml/data/banner_images.xml" target="/content/gallery/{{namespace}}"/>
   </instructionSet>
-
 
 </instructions>

@@ -30,8 +30,6 @@
 
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/template-seo-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-  <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="instructions/seo.ftl" target="{{freemarkerRoot}}/hstdefault/seo.ftl"/>
   </instructionSet>
 

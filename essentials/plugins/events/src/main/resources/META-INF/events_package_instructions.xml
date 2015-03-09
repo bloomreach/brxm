@@ -19,12 +19,10 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
-
   <instructionSet>
     <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
   </instructionSet>
-
 
   <instructionSet group="jsp">
     <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-eventslist.jsp"/>
@@ -33,11 +31,9 @@
     <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
-  <instructionSet group="freemarker, repository">
+  <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
     <freemarker action="copy" source="freemarker/eventspage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/eventspage-main.ftl"/>
-  </instructionSet>
-  <instructionSet group="freemarker">
     <xml action="copy" source="xml/hst/templates/events-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
@@ -51,7 +47,6 @@
     <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/events-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/events-list.png"/>
   </instructionSet>
-
 
   <!--
     //############################################
@@ -70,10 +65,10 @@
     <xml action="copy" source="xml/samples/content/documents/events/sample_workshop.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
   </instructionSet>
+
   <!--
     CONFIG DATA
   -->
-
   <instructionSet>
     <xml action="copy" source="xml/folderoptions/new-events-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
@@ -81,6 +76,5 @@
   <instructionSet>
     <file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
   </instructionSet>
-
 
 </instructions>

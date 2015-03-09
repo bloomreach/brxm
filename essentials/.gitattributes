@@ -873,7 +873,6 @@ plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
 plugins/sitemap/pom.xml -text
 plugins/sitemap/src/main/java/org/onehippo/cms7/essentials/plugins/sitemap/SitemapParameterService.java -text
 plugins/sitemap/src/main/resources/META-INF/resources/feature/sitemapPlugin/sitemapPlugin.html -text
-plugins/sitemap/src/main/resources/META-INF/sitemap_instructions.xml -text
 plugins/sitemap/src/main/resources/META-INF/web-fragment.xml -text
 plugins/skeleton-package/pom.xml -text
 plugins/skeleton-package/src/main/appended-resources/META-INF/LICENSE -text

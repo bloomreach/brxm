@@ -45,8 +45,7 @@
     <file action="copy" source="instructions/jsp/base-footer.jsp" target="{{jspRoot}}/{{namespace}}/base-footer.jsp"/>
     <file action="copy" source="instructions/jsp/homepage-main.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main.jsp"/>
     <file action="copy" source="instructions/jsp/pagenotfound-main.jsp" target="{{jspRoot}}/{{namespace}}/pagenotfound-main.jsp"/>
-  </instructionSet>
-  <instructionSet group="jsp">
+
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-footer-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
@@ -54,7 +53,7 @@
     <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
-  <instructionSet group="freemarker, repository">
+  <instructionSet group="freemarker">
     <!-- include -->
     <freemarker action="copy" source="instructions/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
@@ -64,8 +63,7 @@
     <freemarker action="copy" source="instructions/freemarker/base-footer.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/homepage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/pagenotfound-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/pagenotfound-main.ftl"/>
-  </instructionSet>
-  <instructionSet group="freemarker">
+
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/templates/base-footer-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

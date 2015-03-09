@@ -18,7 +18,6 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
-
   <instructionSet>
     <cnd documentType="faqdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <cnd documentType="faqlistdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
@@ -32,9 +31,6 @@
     <xml action="copy" source="instructions/folderoptions/new-faq-document-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-list-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-list-document-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-
-
-
     <xml action="copy" source="instructions/hst/faq-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
     <xml action="copy" source="instructions/hst/faq-sitemap-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <!-- HST pages-->
@@ -42,15 +38,11 @@
     <xml action="copy" source="instructions/hst/faq-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- workspace-->
     <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-
   </instructionSet>
-
 
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/hst/faq-faq-template-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-  <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="instructions/freemarker/faq-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/faq-main.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/faqlist-main.ftl" target="{{freemarkerRoot}}/hstdefault/faqlist-main.ftl"/>
   </instructionSet>
@@ -60,13 +52,11 @@
     <file action="copy" source="instructions/jsp/faqlist-main.jsp" target="{{jspRoot}}/hstdefault/faqlist-main.jsp"/>
     <xml action="copy" source="instructions/hst/faq-faq-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/hst/faq-list-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-
   </instructionSet>
 
   <instructionSet group="sampleData">
     <xml action="copy" source="instructions/hst/faqlist-workspace-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers/faqlist/main"/>
     <xml action="copy" source="instructions/xml/faq-sample.xml" target="/content/documents/{{namespace}}"/>
   </instructionSet>
-
 </instructions>
 
