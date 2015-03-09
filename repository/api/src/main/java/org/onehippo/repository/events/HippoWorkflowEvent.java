@@ -57,6 +57,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         super(event);
     }
 
+    /**
+     * The name of the workflow class
+     */
     public String className() {
         return get(CLASS_NAME);
     }
@@ -81,6 +84,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(METHOD_NAME, methodName);
     }
 
+    /**
+     * The JCR node identifier of the workflow subject
+     */
     public String subjectId() {
         return get(SUBJECT_ID);
     }
@@ -105,6 +111,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(HANDLE_UUID, handleUuid);
     }
 
+    /**
+     * The java type of the object returned by the workflow action, if any
+     */
     public String returnType() {
         return get(RETURN_TYPE);
     }
@@ -113,6 +122,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(RETURN_TYPE, returnType);
     }
 
+    /**
+     * The value returned by the workflow action, if any
+     */
     public String returnValue() {
         return get(RETURN_VALUE);
     }
@@ -121,6 +133,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(RETURN_VALUE, returnValue);
     }
 
+    /**
+     * The JCR node path of the workflow subject
+     */
     public String subjectPath() {
         return get(SUBJECT_PATH);
     }
@@ -145,6 +160,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(DOCUMENT_PATH, documentPath);
     }
 
+    /**
+     * The arguments passed to the workflow invocation
+     */
     public List<String> arguments() {
         List<String> arguments =  get(ARGUMENTS);
         if (arguments != null) {
@@ -157,10 +175,19 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(ARGUMENTS, new ArrayList<String>(arguments));
     }
 
+    /**
+     * A workflow invocation can result in nested workflow invocations if the workflow action
+     * in turn invokes another workflow. In this case these workflow actions have the same interaction id
+     * in order to identify them as part of the same user-level workflow action.
+     */
     public String interactionId() {
         return get(INTERACTION_ID);
     }
 
+    /**
+     * The value of the interaction property is a combination of the category, name, and action of the root
+     * invocation of the invocation hierarchy.
+     */
     public String interaction() {
         return get(INTERACTION);
     }
@@ -173,6 +200,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(INTERACTION, interaction);
     }
 
+    /**
+     * The workflow category
+     */
     public String workflowCategory() {
         return get(WORKFLOW_CATEGORY);
     }
@@ -181,6 +211,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(WORKFLOW_CATEGORY, category);
     }
 
+    /**
+     * The workflow name
+     */
     public String workflowName() {
         return get(WORKFLOW_NAME);
     }
@@ -189,6 +222,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(WORKFLOW_NAME, workflowName);
     }
 
+    /**
+     * The exception if any occurred during the invocation of the workflow
+     */
     public Throwable exception() {
         return get(EXCEPTION);
     }
@@ -197,10 +233,16 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(EXCEPTION, e);
     }
 
+    /**
+     * Whether the workflow invocation was successful
+     */
     public Boolean success() {
         return get(EXCEPTION) == null;
     }
 
+    /**
+     * The type of document the workflow was called on, if any
+     */
     public String documentType() {
         return get(DOCUMENT_TYPE);
     }
