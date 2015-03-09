@@ -15,5 +15,20 @@
   -->
 
 <div data-ng-controller="hippo.channel.menu.PickerDocCtrl">
-    {{selectedItem}}
+  <table class="table document-picker">
+    <thead>
+      <tr>
+        <td>icon</td>
+        <td>Name</td>
+        <td>Date</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable">
+        <td>icon</td>
+        <td>{{item.displayName}}</td>
+        <td>date</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
