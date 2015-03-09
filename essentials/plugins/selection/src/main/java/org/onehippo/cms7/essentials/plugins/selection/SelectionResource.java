@@ -321,8 +321,6 @@ public class SelectionResource extends BaseResource {
         // Put the new field to the default location
         values.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
 
-        log.error("allowOrdering is {}.", values.get("allowOrdering"));
-
         String presentationType = "DynamicDropdown";
         if ("single".equals(values.get("selectionType"))) {
             if ("radioboxes".equals(values.get("presentation"))) {
@@ -379,7 +377,7 @@ public class SelectionResource extends BaseResource {
     {
         final InputStream stream = getClass().getResourceAsStream(resourcePath);
         final String processedXml = TemplateUtils.replaceStringPlaceholders(GlobalUtils.readStreamAsText(stream), placeholderMap);
-        log.error("Imported XML is '{}'.", processedXml);
+
         destination.getSession().importXML(destination.getPath(), IOUtils.toInputStream(processedXml),
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }
