@@ -25,15 +25,18 @@
             'hippo.channel.menu.PickerService',
             function ($scope, $state, $stateParams, PickerService) {
                 $scope.$watch('selectedItem', function(item) {
-                    console.log('selectedItem', item);
-                    $state.go('picker.docs', {
-                        pickerItem: item
-                    });
+                    if(item) {
+                        $state.go('picker.docs', {
+                            pickerItemId: item.id
+                        });
+                    }
                 });
 
                 $scope.callbacks = {
                     selectItem: function(item) {
-                        PickerService.getData(item);
+                        if((item.hasFolders || item.hasDocuments) && item.items.length < 1) {
+                            PickerService.getData(item);
+                        }
                     },
                     toggleItem: function(item) {
                         if(item.collapsed === false && item.items.length === 0) {
