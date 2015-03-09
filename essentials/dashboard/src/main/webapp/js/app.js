@@ -16,7 +16,7 @@
 
 /**
  * NOTE: when creating classes which are part of the "hippo.essentials" module,
- * do not include dependnecies like below, but add them to this (app.js) module). An example:
+ * do not include dependencies like below, but add them to this (app.js) module). An example:
  * <pre>
  (function () {
     "use strict";
@@ -42,7 +42,7 @@
                 }
                 // avoid error messages if pinging fails
                 var url = error.config.url;
-                if (url.substring(url.length - 6, url.length) === '/ping/') {
+                if (url.substring(url.length - 5, url.length) === '/ping') {
                     return;
                 }
                 if (error.data) {
