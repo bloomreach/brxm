@@ -41,11 +41,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Taxonomy Name:</label>
                         <div class="col-sm-8">
-                            <input ng-model="taxonomyName" ng-required="true"/>
+                            <input ng-model="taxonomyName" ng-required="true" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Taxonomy locale:</label>
+                        <label class="col-sm-4 control-label">Taxonomy locale:</label>
                         <div class="col-sm-8">
                             <p style="display: inline; margin-right: 20px;" ng-repeat="loc in locales">
                                 <span style="padding-right: 5px; cursor: default"><input type="checkbox" checked="{{loc.checked}}" ng-model="loc.checked"/></span><span>{{loc.name}}</span>
@@ -78,13 +78,16 @@
                             </td>
                             <td>{{doc.name}}</td>
                             <td class="{{documentsForm.taxonomyField.$invalid ? 'danger':''}}">
-                                <select hippo.theme.select-box
-                                      name="taxonomyField" ng-required="doc.checked"
+                                <select chosen
+                                      name="taxonomyField"
+                                      class="form-control"
+                                      ng-required="doc.checked"
                                       ng-model="doc.selectedTaxonomy"
-                                      no-results-text="No Taxonomies found"
+                                      no-results-text="'No Taxonomies found'"
                                       ng-options="taxonomy.name for taxonomy in taxonomies"
-                                      data-options="taxonomies"
-                                      data-placeholder="Select a taxonomy"></select>
+                                      data-placeholder="Select a taxonomy"
+                                      width="'100%'">
+                                </select>
                             </td>
                             <td>
                               {{doc.taxonomiesString}}

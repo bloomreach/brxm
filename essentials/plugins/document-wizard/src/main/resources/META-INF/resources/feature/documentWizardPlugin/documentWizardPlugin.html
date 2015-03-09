@@ -56,41 +56,38 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Document type:</label>
                     <div class="col-sm-4">
-                        <select name="selectedDocument" hippo.theme.select-box
+                        <select name="selectedDocument" chosen
                                 ng-model="selectedDocument"
                                 ng-selected="selectedDocument"
                                 ng-required="true"
                                 ng-options="option.fullName for option in documentTypes"
-                                data-options="documentTypes"
                                 data-placeholder="Document type"
-                                >
+                                width="'100%'">
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Document query name:</label>
                     <div class="col-sm-4">
-                        <select name="documentQuery" hippo.theme.select-box
+                        <select name="documentQuery" chosen
                                 ng-model="documentQuery"
                                 ng-required="false"
                                 ng-options="option.key for option in queries | orderBy:documentFirstSorting"
-                                data-options="queries"
                                 data-placeholder="Document query name"
-                                >
+                                width="'100%'">
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Type:</label>
                     <div class="col-sm-4">
-                        <select name="classificationType" hippo.theme.select-box
+                        <select name="classificationType" chosen
                                 ng-model="classificationType"
                                 ng-selected="classificationType"
                                 ng-required="true"
                                 ng-options="option for option in classificationTypes"
-                                data-options="classificationTypes"
                                 data-placeholder="Type"
-                                >
+                                width="'100%'">
                         </select>
                     </div>
                 </div>
@@ -103,13 +100,12 @@
                 <div ng-show="classificationType == 'list'" class="form-group">
                     <label class="col-sm-4 control-label">Value list document:</label>
                     <div class="col-sm-4">
-                        <select name="valueListPath" hippo.theme.select-box
+                        <select name="valueListPath" chosen
                                 ng-model="valueListPath"
                                 ng-required="classificationType == 'list'"
                                 ng-options="option.value for option in valueLists"
-                                data-options="valueLists"
                                 data-placeholder="Valuelist document"
-                                >
+                                width="'100%'">
                             <option value=""></option>
                         </select>
                     </div>

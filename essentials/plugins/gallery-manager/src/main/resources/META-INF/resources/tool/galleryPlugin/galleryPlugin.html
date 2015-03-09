@@ -52,13 +52,13 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Select image set</label>
                     <div class="col-sm-4">
-                        <select hippo.theme.select-box
+                        <select chosen
+                                class="form-control"
                                 ng-model="selectedImageSet"
-                                no-results-text="No results found for"
+                                no-results-text="'No results found for'"
                                 ng-options="option.name for option in imageSets"
-                                data-options="imageSets"
                                 data-placeholder="Select existing image set"
-                                >
+                                width="'100%'">
                         </select>
                     </div>
                 </div>
@@ -79,15 +79,13 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Select image variant:</label>
                         <div class="col-sm-4">
-                            <select
-                                    hippo.theme.select-box
+                            <select chosen
                                     name="selectedImageModel"
                                     class="chosen-select"
                                     ng-model="selectedImageModel"
                                     ng-options="option.name for option in selectedImageSet.models"
-                                    data-options="selectedImageSet.models"
                                     data-placeholder="Select existing variant"
-                                    >
+                                    width="'100%'">
                                 <option value=""></option>
                             </select>
                         </div>
@@ -143,10 +141,10 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Upscale:</label>
                             <div class="col-sm-4">
-                                <select class="chosen-select" hippo.theme.select-box
+                                <select class="chosen-select" chosen
                                         ng-model="selectedImageModel.upscaling"
                                         ng-options="v.value as v.description for v in upscalingValues"
-                                        >
+                                        width="'100%'">
                                     <option value=""></option>
                                 </select>
                             </div>
@@ -155,10 +153,10 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Speed vs Quality</label>
                             <div class="col-sm-4">
-                                <select class="chosen-select" hippo.theme.select-box
+                                <select class="chosen-select" chosen
                                         ng-model="selectedImageModel.optimize"
                                         ng-options="o.value as o.description for o in optimizeValues"
-                                        >
+                                        width="'100%'">
                                     <option value=""></option>
                                 </select>
                             </div>
@@ -167,10 +165,10 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">JPEG Quality</label>
                             <div class="col-sm-4">
-                                <select class="chosen-select" hippo.theme.select-box
+                                <select class="chosen-select" chosen
                                         ng-model="selectedImageModel.compression"
                                         ng-options="c.value as c.description for c in compressionValues"
-                                        >
+                                        width="'100%'">
                                     <option value=""></option>
                                 </select>
                             </div>
