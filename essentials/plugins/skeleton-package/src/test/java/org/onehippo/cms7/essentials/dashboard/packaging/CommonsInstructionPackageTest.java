@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 public class CommonsInstructionPackageTest extends BaseRepositoryTest{
 
 
-    public static final int INSTRUCTIONS_SIZE = 7;
+    public static final int INSTRUCTIONS_SIZE = 5;
 
     @Test
     public void testGroupNames() throws Exception {
