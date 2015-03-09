@@ -30,7 +30,7 @@ import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherJcrConfig;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.RequiresService;
 
-@RequiresService(types = { AutoReloadService.class })
+@RequiresService(types = AutoReloadService.class, optional = true )
 public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
 
     private WebFilesServiceImpl service;
