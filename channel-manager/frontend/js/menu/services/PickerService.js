@@ -32,7 +32,7 @@
                     callObj.url = ConfigService.apiUrlPrefix + '/' + id;
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
-                      pickerData.items.push(returnedData.data);
+                        pickerData.items.push(returnedData.data);
                     });
                 }
 
