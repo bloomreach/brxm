@@ -207,6 +207,11 @@ h3.lead.item-title {
   padding: 3px;
 }
 
+.status {
+  width: 32px;
+  padding: 10px;
+}
+
 #picker-type select {
   width: 100%;
   padding: 3px;

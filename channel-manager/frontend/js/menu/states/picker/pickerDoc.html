@@ -25,7 +25,9 @@
     </thead>
     <tbody>
       <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable">
-        <td>icon</td>
+        <td class="status">
+          <hippo-icon name="document" size="small"></hippo-icon>
+        </td>
         <td>{{item.displayName}}</td>
         <td>date</td>
       </tr>

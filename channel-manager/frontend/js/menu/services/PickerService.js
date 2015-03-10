@@ -53,7 +53,6 @@
                             }
                         });
                     } else {
-                        items.collapsed = collapsed;
                         addCollapsedProperties(items.items, collapsed);
                     }
                 }
