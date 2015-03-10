@@ -117,7 +117,8 @@ public interface HstNodeTypes {
     String SITEMAPITEM_PROPERTY_SCHEME = "hst:scheme";
     String SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID = "hst:resourcebundleid";
     String SITEMAPITEM_PAGE_TITLE = "hst:pagetitle";
-    String SITEMAPITEM_CONTAINER_RESOURCE = "hst:containerresource";
+    String SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE = "hst:containerresource";
+    String SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER = "hst:hiddeninchannelmanager";
 
     String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM = "hst:referencesitemapitem";
     String SITEMENUITEM_PROPERTY_EXTERNALLINK = "hst:externallink";

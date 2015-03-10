@@ -31,8 +31,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -129,7 +127,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
     private Node createContainerResourceSiteMapItem(final String siteMapItemName, final String parent) throws RepositoryException {
         final Node parentNode = session.getRootNode().getNode(parent);
         final Node child = parentNode.addNode(siteMapItemName, HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-        child.setProperty(HstNodeTypes.SITEMAPITEM_CONTAINER_RESOURCE,true);
+        child.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE,true);
         return child;
     }
 

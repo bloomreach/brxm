@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,12 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SiteMapRepresentation {
+
+private static final Logger log = LoggerFactory.getLogger(SiteMapRepresentation.class);
 
     private String id;
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
@@ -38,6 +42,11 @@ public class SiteMapRepresentation {
         id = ((CanonicalInfo) siteMap).getCanonicalIdentifier();
 
         for (HstSiteMapItem childItem : siteMap.getSiteMapItems()) {
+            if (childItem.isContainerResource() || childItem.isHiddenInChannelManager()) {
+                log.debug("Skip '{}' from page overview because represents container resource or is marked " +
+                        "explicitly to be hidden in channel manager", childItem);
+                continue;
+            }
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
             child.represent(childItem, previewConfigurationPath, componentsConfiguration, homePagePath);
             children.add(child);

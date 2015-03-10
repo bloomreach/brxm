@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,12 @@ import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SiteMapItemRepresentation {
+
+    private static final Logger log = LoggerFactory.getLogger(SiteMapItemRepresentation.class);
 
     private String name;
     private String id;
@@ -64,8 +68,7 @@ public class SiteMapItemRepresentation {
     public SiteMapItemRepresentation representShallow(final HstSiteMapItem item,
                                                       final String previewConfigurationPath,
                                                       final HstComponentsConfiguration hstComponentsConfiguration,
-                                                      final String homePagePathInfo)
-            throws IllegalArgumentException {
+                                                      final String homePagePathInfo) throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -116,6 +119,10 @@ public class SiteMapItemRepresentation {
         representShallow(item, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
 
         for (HstSiteMapItem childItem : item.getChildren()) {
+            if (childItem.isContainerResource() || childItem.isHiddenInChannelManager()) {
+                log.debug("Skip '{}' from page overview because represents container resource or is marked " +
+                        "explicitly to be hidden in channel manager", childItem);
+            }
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
             child.represent(childItem, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
             children.add(child);

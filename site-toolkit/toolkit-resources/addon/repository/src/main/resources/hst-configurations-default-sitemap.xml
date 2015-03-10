@@ -191,6 +191,9 @@
     <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:containerresource" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
     <sv:node sv:name="_default_">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>

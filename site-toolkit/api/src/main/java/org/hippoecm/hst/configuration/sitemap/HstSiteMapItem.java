@@ -373,4 +373,11 @@ public interface HstSiteMapItem {
      */
     boolean isContainerResource();
 
+    /**
+     * @return <code>true</code> when this {@link HstSiteMapItem} is explicitly marked to be hidden in the channel mngr pages
+     * overview. When not explicitly configured, <code>false</code> is returned. This does not imply per se the sitemap
+     * item is shown as page in the channel mngr overview page. For example a sitemap item that contains wildcars or
+     *  is a container resource, see {@link #isContainerResource()}, is not shown either
+     */
+    boolean isHiddenInChannelManager();
 }

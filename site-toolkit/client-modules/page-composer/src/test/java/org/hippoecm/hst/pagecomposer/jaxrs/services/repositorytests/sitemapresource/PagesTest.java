@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -88,6 +89,58 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         assertEquals("home", siteMapPagesRepresentation.getPages().get(0).getName());
     }
 
+    @Test
+    public void skip_page_by_sitemap_item_property_hiddeninchannelmanager() throws Exception {
+        // mark homepage to be hidden from pages in channel manager
+        final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
+        home.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER, true);
+        session.save();
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        assertFalse("home".equals(siteMapPagesRepresentation.getPages().get(0).getName()));
+    }
+
+    @Test
+    public void skip_page_for_webfiles_because_container_resource_is_true() throws Exception {
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
+            // hst:default/hst:siteap/webfiles sitemap item has hst:containerresource = true hence not part of pages overview
+            assertFalse("webfiles".equals(siteMapPageRepresentation.getPathInfo()));
+        }
+    }
+
+    @Test
+    public void dont_skip_page_for_webfiles_if_container_resource_set_to_false() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/webfiles")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE, false);
+        session.save();
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        boolean found = false;
+        for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
+            // hst:default/hst:siteap/webfiles sitemap item has now hst:containerresource = false hence should be part of pages overview
+            if ("webfiles".equals(siteMapPageRepresentation.getPathInfo())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("page with pathInfo 'webfiles' expected", found);
+    }
+
+    // If set to 'false' the /webfiles sitemap
+    // item should become visible as channel mngr page
 
     @Test
     public void sitemap_item_page_title() throws Exception {
