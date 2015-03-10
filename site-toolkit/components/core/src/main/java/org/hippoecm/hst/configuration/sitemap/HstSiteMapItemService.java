@@ -442,8 +442,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
                 throw new ModelLoadingException(msg);
             }
             log.info("Sitemap item '{}' is a container resource item. Default the properties '{}' will be" +
-                            " set to '{}', '{}' = true and '{}' = true, unless the properties are explicitly configured on the item" +
-                            " to have a different value",
+                            " set to '{}', '{}' = true and '{}' = true, unless the properties are explicitly configured on this item" +
+                            " or a parent item to have a different value",
                     canonicalPath, SITEMAPITEM_PROPERTY_NAMEDPIPELINE, PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME,
                     SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING, GENERAL_PROEPRTY_SCHEME_AGNOSTIC
             );
@@ -456,22 +456,24 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER)) {
             hiddenInChannelManager = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER);
         } else if(parentItem != null) {
-            hiddenInChannelManager = parentItem.isContainerResource();
+            hiddenInChannelManager = parentItem.isHiddenInChannelManager();
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
             isExcludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+        } else if (parentItem != null) {
+            isExcludedForLinkRewriting = parentItem.isExcludedForLinkRewriting();
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             namedPipeline = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
-        } else if (!containerResource) {
-            if (this.parentItem != null) {
-                namedPipeline = parentItem.getNamedPipeline();
-            } else {
-                // inherit the namedPipeline from the mount (can be null)
-                namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
-            }
+        } else if (parentItem != null) {
+            namedPipeline = parentItem.getNamedPipeline();
+        }
+
+        if (namedPipeline == null) {
+            // inherit the namedPipeline from the mount (can be null)
+            namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
         }
 
         namedPipeline = StringPool.get(namedPipeline);
@@ -494,8 +496,10 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(node.getValueProvider().hasProperty(GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
             schemeAgnostic = node.getValueProvider().getBoolean(GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
+        } else if (parentItem != null) {
+            schemeAgnostic =  parentItem.isSchemeAgnostic();
         } else if (!containerResource) {
-            schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mountSiteMapConfiguration.isSchemeAgnostic();
+            schemeAgnostic = mountSiteMapConfiguration.isSchemeAgnostic();
         }
 
         if(node.getValueProvider().hasProperty(GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
