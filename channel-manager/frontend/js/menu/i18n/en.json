@@ -41,5 +41,6 @@
     "CLOSE_PANEL_CONFIRMATION": "The latest changes will be discarded.",
     "CLOSE": "Close",
 
-    "EMPTY_MENU": "No items in the menu"
+    "EMPTY_MENU": "No items in the menu",
+    "EMPTY_DOCUMENT_PICKER": "No documents are available"
 }
