@@ -98,7 +98,13 @@
       display: list-item;
       list-style-position: inside;
       line-height: 1em;
+
+      &.non-breaking {
+        line-height: 15px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
     }
   }
 }
-
