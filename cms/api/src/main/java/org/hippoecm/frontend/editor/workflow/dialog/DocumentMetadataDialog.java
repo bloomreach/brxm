@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
@@ -79,7 +81,7 @@ public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
         add(publicationheader);
         add(publicationDataList);
 
-        if(publicationMetadata.size() == 0) {
+        if (publicationMetadata.size() == 0) {
             publicationDataList.setVisible(false);
             publicationheader.setVisible(false);
         }
@@ -96,7 +98,7 @@ public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
         try {
             final Node node = getNode();
 
-                // add translation names
+            // add translation names
             final Map<String, String> names = getNames(node);
             String namesLabel;
             if (names.size() > 1) {
@@ -142,26 +144,25 @@ public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
         try {
             final Node node = getNode();
             for (Node variant : new NodeIterable(node.getNodes(node.getName()))) {
-                if (variant.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)
-                        && variant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 0) {
-                    String state = variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                    switch (state) {
-                        case HippoStdNodeType.UNPUBLISHED:
-                            publicationMetadata.add(new DocumentMetadataEntry(getString("created-by"),
-                                    variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY).getString()));
-                            publicationMetadata.add(new DocumentMetadataEntry(getString("creationdate"),
-                                    formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE).getDate(), DATE_STYLE)));
-                            publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodifiedby"),
-                                    variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString()));
-                            publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodificationdate"),
-                                    formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate(), DATE_STYLE)));
-                            break;
+                String state = variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                switch (state) {
+                    case HippoStdNodeType.UNPUBLISHED:
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("created-by"),
+                                variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY).getString()));
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("creationdate"),
+                                formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE).getDate(), DATE_STYLE)));
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodifiedby"),
+                                variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString()));
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodificationdate"),
+                                formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate(), DATE_STYLE)));
+                        break;
 
-                        case HippoStdNodeType.PUBLISHED:
+                    case HippoStdNodeType.PUBLISHED:
+                        if (isLive(variant)) {
                             publicationMetadata.add(new DocumentMetadataEntry(getString("publicationdate"),
                                     formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE).getDate(), DATE_STYLE)));
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
         } catch (RepositoryException e) {
@@ -169,6 +170,18 @@ public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
         }
 
         return publicationMetadata;
+    }
+
+    private boolean isLive(Node variant) throws RepositoryException {
+        if (variant.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
+            Property property = variant.getProperty(HippoNodeType.HIPPO_AVAILABILITY);
+            for (Value value : property.getValues()) {
+                if ("live".equals(value.getString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private Map<String, String> getNames(final Node node) throws RepositoryException {
