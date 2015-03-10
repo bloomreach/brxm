@@ -200,6 +200,18 @@ h3.lead.item-title {
   width: 100%;
 }
 
+#picker-type {
+  height: 33px;
+  border-bottom: 1px solid #dddddd;
+  background: #f4f4f4;
+  padding: 3px;
+}
+
+#picker-type select {
+  width: 100%;
+  padding: 3px;
+}
+
 .document-picker thead {
   background: #f4f4f4;
 }

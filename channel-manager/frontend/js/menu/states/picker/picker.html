@@ -17,7 +17,12 @@
 <div class="container picker-container">
   <div class="row">
     <div id="panel-wrap">
-      <div id="menu-panel" class="col-sm-4" data-ng-controller="hippo.channel.menu.PickerTreeCtrl">
+      <div id="menu-panel" class="col-sm-3" data-ng-controller="hippo.channel.menu.PickerTreeCtrl">
+        <div id="picker-type">
+          <select ng-model="pickerType"
+                  ng-options="option.name for option in pickerTypes">
+          </select>
+        </div>
         <div class="tree-col">
           <div class="hippo-tree-wrapper" data-keep-scroll-pos>
             <div hippo-tree data-items="treeItems" data-callbacks="callbacks" data-selected-item-id="selectedItem.id" drag="false">

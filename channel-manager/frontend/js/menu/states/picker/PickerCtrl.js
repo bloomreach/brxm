@@ -30,6 +30,12 @@
                     });
                 };
                 $scope.treeItems = PickerService.getTree();
+                $scope.pickerTypes = [
+                    {
+                        name: 'Documents'
+                    }
+                ];
+                $scope.pickerType = $scope.pickerTypes[0];
 
                 var menuData = MenuService.getMenuData();
                 if(angular.isArray(menuData.items)) {
