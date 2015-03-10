@@ -123,7 +123,6 @@
     <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
-    <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
     <hippo.ckeditor.version>4.4.6-h2-SNAPSHOT</hippo.ckeditor.version>

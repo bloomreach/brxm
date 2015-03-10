@@ -56,18 +56,6 @@
     </dependency>
 
     <dependency>
-      <groupId>hippo</groupId>
-      <artifactId>htmlcleaner</artifactId>
-      <version>${hippo.htmlcleaner.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
       <groupId>net.sourceforge.htmlcleaner</groupId>
       <artifactId>htmlcleaner</artifactId>
       <version>${sf.htmlcleaner.version}</version>
