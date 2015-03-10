@@ -31,10 +31,15 @@
                 };
                 $scope.treeItems = PickerService.getTree();
 
-                if(MenuService.getMenuData().siteContentIdentifier) {
-                    PickerService.getDataById(MenuService.getMenuData().siteContentIdentifier);
+                var menuData = MenuService.getMenuData();
+                if(angular.isArray(menuData.items)) {
+                    PickerService.getDataById(menuData.siteContentIdentifier);
                 } else {
-                    PickerService.getDataById('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+                    MenuService.getMenu().then(
+                        function(menuData){
+                            PickerService.getDataById(menuData.siteContentIdentifier);
+                        }
+                    );
                 }
             }
         ]);
