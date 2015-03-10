@@ -23,7 +23,7 @@
             'hippo.channel.ConfigService',
             '$http',
             function (ConfigService, $http) {
-                var menuData = {
+                var pickerData = {
                         items: []
                     }, callObj = {
                         method: 'GET'
@@ -32,7 +32,7 @@
                     callObj.url = ConfigService.apiUrlPrefix + '/' + id;
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
-                        menuData.items.push(returnedData.data);
+                      pickerData.items.push(returnedData.data);
                     });
                 }
 
@@ -60,7 +60,7 @@
 
                 return {
                     getTree: function() {
-                        return menuData.items;
+                        return pickerData.items;
                     },
                     getDataById: function(id) {
                         return getDataById(id);
