@@ -84,8 +84,7 @@
                     }
                 };
 
-                $scope.fieldFeedbackMessage = {
-                };
+                $scope.fieldFeedbackMessage = {};
 
                 $scope.saveTitle = function (form) {
                     if($scope.selectedMenuItem.isNew) {
@@ -160,6 +159,7 @@
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
                             FormStateService.setValid(false);
+                            $scope.feedback = FeedbackService.getFeedback(errorResponse);
                         });
                 }
 
