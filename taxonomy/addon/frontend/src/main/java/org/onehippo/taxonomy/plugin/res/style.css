@@ -132,12 +132,6 @@ div.taxonomy-details a:hover {
     margin-bottom: 6px;
 }
 
-.taxonomy-value {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
 .taxonomy-selected {
     margin-left: 10px;
     margin-top: 15px;
