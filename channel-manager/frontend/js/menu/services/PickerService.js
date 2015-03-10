@@ -26,14 +26,10 @@
                 var menuData = {
                         items: []
                     }, callObj = {
-                        method: 'GET',
-                        params: {
-                            'FORCE_CLIENT_HOST': true,
-                            'antiCache': 1424352715097
-                        }
+                        method: 'GET'
                     };
                 function getDataById(id) {
-                    callObj.url = '/site/_rp/' + id;
+                    callObj.url = ConfigService.apiUrlPrefix + '/' + id;
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
                         menuData.items.push(returnedData.data);
@@ -41,7 +37,7 @@
                 }
 
                 function getData(item) {
-                    callObj.url = '/site/_rp/' + item.id;
+                    callObj.url = ConfigService.apiUrlPrefix + '/' + item.id;
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
                         item.items = returnedData.data.items;
