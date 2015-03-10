@@ -17,7 +17,7 @@
 <div class="edit-menu-item-container">
     <!-- START confirmation dialogs -->
     <div class="overlay" data-ng-show="remove.isVisible || externalLink.isVisible">&#160;</div>
-    <div hippo.theme.confirmation-dialog
+    <div hippo-confirmation-dialog
          confirm-icon="trash-o"
          data-show="remove.isVisible"
          data-perform-confirmation="remove.execute()"
@@ -31,7 +31,7 @@
             {{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}
         </p>
     </div>
-    <div hippo.theme.confirmation-dialog
+    <div hippo-confirmation-dialog
          confirm-icon="external-link"
          data-show="externalLink.isVisible"
          data-perform-confirmation="externalLink.execute()"

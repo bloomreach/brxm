@@ -106,7 +106,7 @@
                 };
 
                 $scope.saveTitle = function (form) {
-                    if($scope.selectedMenuItem.isNew === true) {
+                    if($scope.selectedMenuItem.isNew) {
                         form.title.$dirty = true;
                         delete $scope.selectedMenuItem.isNew;
                     }

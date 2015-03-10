@@ -19,6 +19,10 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
+    function getVariantName(variant) {
+        return variant.variantName || variant.name;
+    }
+
     /**
      * Renders the properties of all variants of a component in separate tabs. When the config property
      * 'variantsUuid' is not defined, no tabs will be shown and only a single variant 'hippo-default' will be used.
@@ -222,7 +226,7 @@
                 componentId: this.componentId,
                 locale: this.locale,
                 skipVariantIds: skipVariantIds,
-                title: variant.name,
+                title: getVariantName(variant),
                 variantsUuid: this.variantsUuid,
                 listeners: {
                     'save': function(variant) {
@@ -292,7 +296,7 @@
                 componentId: this.componentId,
                 variant: variant,
                 allVariants: variants.slice(0, variants.length - 1),
-                title: variant.name,
+                title: getVariantName(variant),
                 propertiesForm: propertiesForm
             });
 
@@ -301,11 +305,11 @@
             }, this);
 
             editor.on('variantDirty', function() {
-                this.setTitle('* ' + variant.name);
+                this.setTitle('* ' + getVariantName(variant));
             }, editor);
 
             editor.on('variantPristine', function() {
-                this.setTitle(variant.name);
+                this.setTitle(getVariantName(variant));
             }, editor);
 
             editor.on('beforeactivate', function() {

@@ -245,6 +245,9 @@
                     saveMenuItem : function (menuItem) {
                         var deferred = $q.defer();
                         var menuItemCopy = angular.copy(menuItem);
+                        if(menuItemCopy.isNew) {
+                            delete menuItemCopy.isNew;
+                        }
                         removeCollapsedProperties(menuItemCopy);
                         extractLinkFromSitemapLinkOrExternalLink(menuItemCopy);
                         post(menuServiceUrl(), menuItemCopy).then(function() {

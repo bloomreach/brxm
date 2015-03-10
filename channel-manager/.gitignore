@@ -11,11 +11,11 @@ frontend-api/*.iml
 frontend-api/.project
 frontend-api/target
 frontend/*.iml
+frontend/*.log
 frontend/.classpath
 frontend/.idea
 frontend/.project
 frontend/.settings
-frontend/js/components
 frontend/node_modules
 frontend/target
 repository/*.iml

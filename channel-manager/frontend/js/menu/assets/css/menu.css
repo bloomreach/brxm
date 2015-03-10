@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-/* --- Loader --- */
 #ui-view {
   height: 100%;
 }
 
+/* --- Loader --- */
 #loader {
   width: 100%;
   height: 480px;

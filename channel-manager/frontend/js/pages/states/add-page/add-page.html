@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -73,14 +73,13 @@
 
                 <div class="form-group" id="template">
                     <label for="page-prototype">{{ 'PAGE_TEMPLATE' | translate }}</label>
-                    <select hippo.theme.select-box
-                            class="form-control"
+                    <select class="form-control"
                             id="page-prototype"
+                            data-chosen
                             data-ng-options="prototype.displayName for prototype in prototypes"
-                            data-options="prototypes"
                             data-ng-model="page.prototype"
-                            data-no-results-text="{{ 'NO_RESULTS' | translate }}"
-                            data-ng-attr-placeholder="{{ 'SELECT_OPTION' | translate }}">
+                            data-no-results-text="'NO_RESULTS' | translate"
+                            data-placeholder="'SELECT_OPTION' | translate">
                     </select>
                 </div>
 
