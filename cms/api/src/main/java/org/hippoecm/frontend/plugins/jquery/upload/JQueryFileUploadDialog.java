@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.upload.FileUploadException;
@@ -67,33 +65,14 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
         setOkEnabled(false);
         setCancelLabel(new StringResourceModel("button-close-label", this, null));
 
-        // create custom upload button to call javascript uploading
         uploadButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("button-upload-label", this, null)){
-            private boolean isUploading = false;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                log.debug("Submitting files");
-                isUploading = true;
-            }
-
             @Override
             protected String getOnClickScript(){
                 return UPLOADING_SCRIPT;
             }
-            @Override
-            public boolean isEnabled(){
-                return !isUploading;
-            }
-
-            @Override
-            public boolean isVisible() {
-                return !isUploading;
-            }
         };
-        uploadButton.setEnabled(true);
-        uploadButton.setVisible(true);
         uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
+        uploadButton.setOutputMarkupId(true);
         this.addButton(uploadButton);
 
         this.pluginContext = pluginContext;

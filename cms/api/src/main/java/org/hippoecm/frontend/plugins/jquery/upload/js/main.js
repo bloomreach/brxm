@@ -21,7 +21,6 @@ jqueryFileUploadImpl = {
     hasError: false,
     fileuploadWidget: {},
     init: function () {
-        console.log('init jquery fileupload');
         this.hasError = false;
         this.numberOfCompletedFiles = 0;
 
@@ -37,55 +36,52 @@ jqueryFileUploadImpl = {
             // this event is fired after each file uploading is sent
             var widget = $('#${componentMarkupId}').fileupload("instance"),
                     filesList = widget.options.filesContainer,
-                    isError = false,
-                    numberOfSentFiles = Math.min(filesList.children().length, widget.options.maxNumberOfFiles);
+                    numberOfFiles = filesList.children().length;
 
             if (data.result.files && data.result.files.length) {
                 jqueryFileUploadImpl.numberOfCompletedFiles += data.result.files.length;
-            } else {
-                console.error('Invalid jquery fileupload response from server');
             }
-            console.log('Complete %s/%s', jqueryFileUploadImpl.numberOfCompletedFiles, numberOfSentFiles);
             $.each(data.result.files, function (idx, file) {
                 if (file.error) {
                     console.error('uploading error: %s', file.error);
-                    isError = true;
+                    jqueryFileUploadImpl.hasError = true;
                 }
             });
 
-            if (!jqueryFileUploadImpl.hasError && isError) {
-                jqueryFileUploadImpl.hasError = true;
+            if (jqueryFileUploadImpl.numberOfCompletedFiles === numberOfFiles && !jqueryFileUploadImpl.hasError) {
+                Wicket.Window.get().close();
             }
-            if (jqueryFileUploadImpl.numberOfCompletedFiles >= numberOfSentFiles) {
-                if (jqueryFileUploadImpl.hasError) {
-                    $('#${componentMarkupId} .files').prepend($('#${componentMarkupId} .files .error').parents('tr'));
-                } else {
-                    Wicket.Window.get().close();
-                }
+        }).bind('fileuploadalways', function (e, data) {
+            $('#${componentMarkupId}').find('button').prop('disabled',true);
+            if (jqueryFileUploadImpl.hasError) {
+                $('#${componentMarkupId} .files').prepend($('#${componentMarkupId} .files .error').parents('tr'));
             }
         });
     },
-    // upload all files in the container simultaneously, each in a POST request
+
     uploadFiles: function () {
         var widget = $('#${componentMarkupId}').fileupload("instance"),
-            filesList = widget.options.filesContainer,
-            numberOfSentFiles = 0;
+                filesList = widget.options.filesContainer,
+                numberOfSentFiles = 0;
+
+        if (filesList.children().length > widget.options.maxNumberOfFiles) {
+            $('#${componentMarkupId} .fileupload-process').text(widget.options.i18n('maxNumberOfFiles')).show();
+            return;
+        }
+        $('#${componentMarkupId} .fileupload-process').hide();
+        $('#${componentMarkupId}').closest('form').find('input[type=submit]').prop('disabled',true);
 
         $.each(filesList.children(), function (idx, template) {
-            if (numberOfSentFiles < widget.options.maxNumberOfFiles) {
-                var data = $.data(template, 'data');
-                if (data && data.submit) {
-                    console.log("uploading #%s", idx);
-                    data.submit();
-                    numberOfSentFiles++;
-                }
+            var data = $.data(template, 'data');
+            if (data && data.submit) {
+                data.submit();
+                numberOfSentFiles++;
             }
         });
-        // disable inputs
-        $('#${componentMarkupId}').find('input').prop('disabled', true);
 
         this.notifyUpload(numberOfSentFiles);
     },
+
     /**
      * Notify server on number of uploading files. The message format:
      * {
@@ -101,7 +97,6 @@ jqueryFileUploadImpl = {
     notifyUpload: function (numberOfFiles){
         var notificationData = {};
         notificationData.total = numberOfFiles;
-        console.log("total uploaded: %s", numberOfFiles);
 
         $.ajax({
             url: '${fileUploadDoneUrl}',
@@ -111,9 +106,7 @@ jqueryFileUploadImpl = {
             dataType: 'json',
             data: JSON.stringify(notificationData),
             success: function (json) {
-                if (json.status === 'OK') {
-                    console.log('Sent notification successfully');
-                } else {
+                if (json.status !== 'OK') {
                     console.error('Failed to send notification');
                 }
             },
