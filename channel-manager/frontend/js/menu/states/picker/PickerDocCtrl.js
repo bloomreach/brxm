@@ -25,7 +25,7 @@
         '$stateParams',
         '$filter',
         function ($scope, $state, $stateParams, $filter) {
-            $scope.selectedItem = $filter('getByProperty')($scope.treeItems, 'id', $stateParams.pickerItemId, 'items');
+            $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'id', $stateParams.pickerItemId, 'items');
         }
     ]);
 }());
