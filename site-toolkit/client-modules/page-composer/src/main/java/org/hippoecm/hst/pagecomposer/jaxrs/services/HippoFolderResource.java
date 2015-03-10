@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import javax.jcr.Node;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -34,12 +35,30 @@ public class HippoFolderResource extends AbstractConfigResource {
 
     @GET
     @Path("/")
-    public Response getFolder() {
+    public Response get() {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Node hippoFolderNode = getPageComposerContextService().getRequestConfigNode(HippoNodeType.NT_DOCUMENT);
-                HippoDocumentRepresentation representation = new HippoDocumentRepresentation(hippoFolderNode);
+                HippoDocumentRepresentation representation = new HippoDocumentRepresentation(getPageComposerContextService());
+                return ok("Folder loaded successfully", representation);
+            }
+        });
+    }
+
+    /**
+     * @param pathInfo
+     * @return the rest response to create the client tree for <code>pathInfo</code> : the response contains all
+     * ancestor nodes + their siblings up to the 'channel content root node' plus the siblings for <code>pathInfo</code>
+     * plus its direct children.
+     */
+    @GET
+    @Path("{pathInfo}")
+    public Response getSubTree(final @PathParam("pathInfo") String pathInfo) {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                HippoDocumentRepresentation representation = new HippoDocumentRepresentation()
+                        .represent(getPageComposerContextService(), pathInfo);
                 return ok("Folder loaded successfully", representation);
             }
         });
