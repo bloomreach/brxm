@@ -24,7 +24,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable">
+      <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable" ng-class="{active: $parent.$parent.selectedDocument == item}" ng-click="selectDocument(item)">
         <td class="status">
           <hippo-icon name="document" size="small"></hippo-icon>
         </td>
