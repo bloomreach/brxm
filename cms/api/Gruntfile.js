@@ -54,6 +54,16 @@ module.exports = function (grunt) {
             reloadCompiledCss: {
                 files: ['<%= build.skin %>/**/*.css']
             },
+            extjsLess: {
+                options: {
+                    livereload: false
+                },
+                files: ['<%= build.extjs.src %>'],
+                tasks: ['less:extjs']
+            },
+            reloadCompiledExtJsCss: {
+                files: ['<%= build.extjs.target %>']
+            },
             images: {
                 files: ['<%= build.src %>/images/**'],
                 tasks: ['newer:copy:binaries', 'svgmin:theme', 'svgstore:theme' ]
