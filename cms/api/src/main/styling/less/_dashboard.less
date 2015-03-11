@@ -16,3 +16,79 @@
 .hippo-todo td {
    padding: 4px;
 }
+
+.hippo-perspective-dashboard {
+  .hippo-perspective-dashboard-panel {
+    background: #ffffff;
+
+    &.left-border {
+      border-left: 1px solid @light-shade;
+    }
+
+    h2 {
+      color: @darkest-shade;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: normal;
+      padding: 11px 16px 12px 16px;
+      background-color: @light-shade;
+
+      .truncate();
+    }
+  }
+
+  .hippo-list-details {
+    width: 100%;
+
+    tr td {
+      padding: 6px;
+      color: #666666;
+    }
+
+    tr.even td {
+      background: #e5ebf0
+    }
+
+    tr td a {
+      color: black;
+      display: block;
+    }
+
+    tr td a:hover {
+      text-decoration: underline
+    }
+
+    .good {
+      color: #1c9e16;
+      font-weight: normal;
+    }
+
+    .bad {
+      color: #bb1d24;
+      font-weight: bold;
+    }
+
+    .strong {
+      color: #000000;
+      font-weight: bold;
+    }
+
+    .light {
+      color: #999999;
+      font-weight: lighter;
+    }
+  }
+}
+
+/* Dashboard shortcuts */
+.hippo-perspective-dashboard-shorcuts {
+  padding: 15px;
+  padding-top: 5px;
+}
+
+.hippo-perspective-dashboard-shorcuts div div a {
+  border-bottom: 1px solid #f2f2f2;
+  display: block;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}

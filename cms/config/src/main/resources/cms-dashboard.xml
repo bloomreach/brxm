@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -34,19 +34,19 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=0px 1px 1px 0px</sv:value>
+        <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="client.class.name" sv:type="String">
         <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=left,width=33%,body=left-body,gutter=0px 1px 1px 1px,scroll=true</sv:value>
+        <sv:value>id=left,width=33%,body=left-body,gutter=0px 0px 0px 0px,scroll=true</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="right" sv:type="String">
-        <sv:value>id=right,width=33%,body=right-body,scroll=true,gutter=0px 1px 1px 0px</sv:value>
+        <sv:value>id=right,width=33%,body=right-body,scroll=true,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>dashboard-perspective-wrapper</sv:value>
