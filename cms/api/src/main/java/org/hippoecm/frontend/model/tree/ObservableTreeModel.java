@@ -266,11 +266,14 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                 @Override
                 public ObservableTreeModelEvent createEvent(final JcrEvent jcrEvent) {
                     try {
-                        if (jcrEvent.getSource().getNode().isNodeType(HippoNodeType.HIPPO_TRANSLATION)) {
+                        Node node = jcrEvent.getSource().getNode();
+                        if (node != null && node.isNodeType(HippoNodeType.HIPPO_TRANSLATION)) {
                             return new TranslationEvent(jcrEvent);
                         }
-                    } catch (RepositoryException | NullPointerException e) {
-                        log.error("Failed to get node from JcrEvent", e);
+                    } catch (RepositoryException e) {
+                        if (log.isDebugEnabled()){
+                            log.debug("Failed to get node from JcrEvent", e);
+                        }
                     }
                     return new ObservableTreeModelEvent(jcrEvent);
                 }
