@@ -19,13 +19,17 @@
 
     angular.module('hippo.channel.menu')
 
-      .controller('hippo.channel.menu.PickerDocCtrl', [
-        '$scope',
-        '$state',
-        '$stateParams',
-        '$filter',
-        function ($scope, $state, $stateParams, $filter) {
-            $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'id', $stateParams.pickerItemId, 'items');
-        }
-    ]);
+        .controller('hippo.channel.menu.PickerDocCtrl', [
+            '$scope',
+            '$state',
+            '$stateParams',
+            '$filter',
+            function ($scope, $state, $stateParams, $filter) {
+                $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'id', $stateParams.pickerItemId, 'items');
+
+                $scope.selectDocument = function(item) {
+                    $scope.$parent.$parent.selectedDocument = item;
+                };
+            }
+        ]);
 }());
