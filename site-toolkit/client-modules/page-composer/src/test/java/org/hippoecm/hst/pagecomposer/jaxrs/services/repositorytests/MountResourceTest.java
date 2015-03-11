@@ -47,7 +47,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
 
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         final HstRequestContext ctx = pccs.getRequestContext();
@@ -74,7 +74,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
 
         assertTrue(pccs.getEditingPreviewSite().getConfigurationPath().equals(pccs.getEditingLiveConfigurationPath() + "-preview"));
         assertTrue(pccs.getEditingPreviewConfigurationPath().equals(pccs.getEditingLiveConfigurationPath() + "-preview"));
@@ -162,7 +162,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         Thread.sleep(200);
 
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
 
         assertEquals("/hst:hst/hst:configurations/7_8", pccs.getRequestContext().getResolvedMount().getMount().getHstSite().getConfigurationPath());
 
@@ -172,7 +172,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
 
         final String previewContainerNodeUUID = session.getNode(pccs.getEditingPreviewSite().getConfigurationPath())
                 .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();

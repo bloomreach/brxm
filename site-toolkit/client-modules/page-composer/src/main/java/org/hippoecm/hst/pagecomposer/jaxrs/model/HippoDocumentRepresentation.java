@@ -16,8 +16,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpSession;
 
-import com.fasterxml.jackson.annotation.JacksonAnnotation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -40,6 +40,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
@@ -58,8 +59,8 @@ public class HippoDocumentRepresentation {
     private boolean selectable;
     private boolean selected;
     private boolean folder;
-    private boolean hasFolders;
-    private boolean hasDocuments;
+    private boolean containsFolders;
+    private boolean containsDocuments;
     private List<HippoDocumentRepresentation> items = new ArrayList<>();
 
     @JsonIgnore
@@ -87,17 +88,17 @@ public class HippoDocumentRepresentation {
 
                 String selectedNodePath = pageComposerContextService.getEditingMount().getContentPath() + "/" + resolvedSiteMapItem.getRelativeContentPath();
                 final Node selectedNode = pageComposerContextService.getRequestContext().getSession().getNode(selectedNodePath);
-                final Node rootContentNode = pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT);
+                final Node requestConfigNode = pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT);
 
-                if (!selectedNode.getPath().startsWith(rootContentNode.getPath()) && !selectedNode.getPath().equals(rootContentNode.getPath())) {
+                if (!selectedNode.getPath().startsWith(requestConfigNode.getPath()) && !selectedNode.getPath().equals(requestConfigNode.getPath())) {
                     throw new IllegalStateException(String.format("Expected selected node '%s' to be a equal to or a descendant of '%s'.",
-                            selectedNode.getPath(), rootContentNode.getPath()));
+                            selectedNode.getPath(), requestConfigNode.getPath()));
                 }
 
                 List<Node> representNodes = new ArrayList<>();
                 Node currentNode = selectedNode;
                 representNodes.add(currentNode);
-                while (!currentNode.isSame(rootContentNode)) {
+                while (!currentNode.isSame(requestConfigNode)) {
                     currentNode = currentNode.getParent();
                     representNodes.add(0, currentNode);
                 }
@@ -154,29 +155,41 @@ public class HippoDocumentRepresentation {
         final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
 
-        final HstLink hstLink = linkCreator.create(node, pageComposerContextService.getEditingMount());
-        if (hstLink.isNotFound()) {
+        final Mount editingMount = pageComposerContextService.getEditingMount();
+        final HstLink hstLink = linkCreator.create(node, editingMount);
+        if (hstLink.isNotFound() || node.isSame(node.getSession().getNode(editingMount.getContentPath()))) {
             selectable = false;
         } else {
             selectable = true;
             pathInfo = hstLink.getPath();
+            if (StringUtils.isEmpty(pathInfo)) {
+                // homepage. However we need the sitemap reference path to the homepage sitemap item
+                pathInfo = HstSiteMapUtils.getPath(editingMount, editingMount.getHomePage());
+            }
         }
 
         for (Node child : new NodeIterable(node.getNodes())) {
             if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                hasFolders = true;
+                containsFolders = true;
                 if (includeChildren) {
                     addFolder(pageComposerContextService, child);
                 }
             }
             if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                hasDocuments = true;
+                containsDocuments = true;
                 if (includeChildren) {
                     addDocument(pageComposerContextService, child);
                 }
             }
             // else ignore
         }
+
+        final boolean jcrOrder = node.getPrimaryNodeType().hasOrderableChildNodes();
+        if (!jcrOrder && isFolder()) {
+            // order alphabetically, first folders then documents
+            Collections.sort(items, new HippoDocumentRepresentationComparator());
+        }
+
         return this;
     }
 
@@ -256,20 +269,20 @@ public class HippoDocumentRepresentation {
         this.folder = folder;
     }
 
-    public boolean isHasFolders() {
-        return hasFolders;
+    public boolean isContainsFolders() {
+        return containsFolders;
     }
 
-    public void setHasFolders(final boolean hasFolders) {
-        this.hasFolders = hasFolders;
+    public void setContainsFolders(final boolean containsFolders) {
+        this.containsFolders = containsFolders;
     }
 
-    public boolean isHasDocuments() {
-        return hasDocuments;
+    public boolean isContainsDocuments() {
+        return containsDocuments;
     }
 
-    public void setHasDocuments(final boolean hasDocuments) {
-        this.hasDocuments = hasDocuments;
+    public void setContainsDocuments(final boolean containsDocuments) {
+        this.containsDocuments = containsDocuments;
     }
 
     public List<HippoDocumentRepresentation> getItems() {
@@ -278,5 +291,25 @@ public class HippoDocumentRepresentation {
 
     public void setItems(final List<HippoDocumentRepresentation> items) {
         this.items = items;
+    }
+
+    class HippoDocumentRepresentationComparator implements Comparator<HippoDocumentRepresentation> {
+        @Override
+        public int compare(final HippoDocumentRepresentation o1, final HippoDocumentRepresentation o2) {
+            if (o1.isFolder()) {
+                if (!o2.isFolder()) {
+                    // folders are ordered first
+                    return -1;
+                }
+            }
+            if (o2.isFolder()) {
+                if (!o1.isFolder()) {
+                    // folders are ordered first
+                    return 1;
+                }
+            }
+            // both are a folder or both are a document. Return lexical sorting on displayname
+            return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
+        }
     }
 }

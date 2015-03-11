@@ -31,7 +31,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
 @Produces(MediaType.APPLICATION_JSON)
-public class HippoFolderResource extends AbstractConfigResource {
+public class HippoDocumentResource extends AbstractConfigResource {
 
     @GET
     @Path("/")

@@ -136,7 +136,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.HippoFolderResource"  parent="abstractConfigResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource"  parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

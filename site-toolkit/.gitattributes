@@ -320,7 +320,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerComponentResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ExceptionResource.java -text svneol=unset#text/plain
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/HippoFolderResource.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/HippoDocumentResource.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/MountResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/RootResource.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/SiteMapResource.java -text
@@ -368,6 +368,9 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/AbstractMountResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/MountResourcePrototypesTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/MountResourceTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/hippodocumentresource/AbstractHippoDocumentResourceTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/hippodocumentresource/CommonFolderContentHippoDocumentResourceTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/hippodocumentresource/RootContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/AbstractSiteMapResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/CRUDPageAndModifyContainerTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/CreateAndPublicationTest.java -text

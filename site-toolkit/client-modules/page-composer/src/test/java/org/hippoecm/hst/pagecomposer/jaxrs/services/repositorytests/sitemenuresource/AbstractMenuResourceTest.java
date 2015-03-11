@@ -121,7 +121,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     }
 
     protected void createPreviewWithSiteMenuWorkspace() throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
 
         final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
         assertFalse("Preview config node should not exist yet.",
@@ -181,7 +181,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     }
 
     private HstSiteMenuConfiguration getHstSiteMenuConfiguration(final Session requestSession, final String menuName) throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSite editingPreviewHstSite = mountResource.getPageComposerContextService().getEditingPreviewSite();
         final HstSiteMenuConfiguration siteMenuConfiguration = editingPreviewHstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menuName);

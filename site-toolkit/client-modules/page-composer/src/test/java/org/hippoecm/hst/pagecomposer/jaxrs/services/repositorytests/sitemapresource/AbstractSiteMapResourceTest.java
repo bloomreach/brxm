@@ -129,7 +129,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     protected void createPreviewWithSiteMapWorkspace() throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
 
         final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
         assertFalse("Preview config node should not exist yet.",
@@ -189,7 +189,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     public SiteMapRepresentation getSiteMapRepresentation(final Session requestSession) throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSite site = mountResource.getPageComposerContextService().getEditingPreviewSite();
         final HstSiteMap siteMap = site.getSiteMap();

@@ -203,7 +203,6 @@ public class AbstractPageComposerTest {
         mockRequest.setContextPath("/site");
         mockRequest.setRequestURI("/site" + pathInfo);
 
-        mockRequest.setRequestURI(pathInfo);
         if (queryString != null) {
             mockRequest.setQueryString(queryString);
         }

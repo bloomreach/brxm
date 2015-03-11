@@ -39,7 +39,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
         final Response response = mountResource.getPrototypePages();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
@@ -48,7 +48,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_prototype_pages() throws Exception {
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());
         assertEquals("prototype-page", representation.getPrototypes().get(0).getName());
@@ -61,7 +61,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container1").remove();
         prototypeNode.getNode("main/container2").remove();
         session.save();
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());
         assertFalse(representation.getPrototypes().get(0).getHasContainerInPageDefinition());
@@ -76,7 +76,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(2, representation.getPrototypes().size());
     }
@@ -107,7 +107,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
         // give time for jcr events to evict model
         Thread.sleep(200);
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
         PrototypeRepresentation prev = null;
@@ -138,7 +138,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
         // give time for jcr events to evict model
         Thread.sleep(200);
-        mockNewRequest(session, "localhost", "/home");
+        mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
         PrototypeRepresentation prev = null;
