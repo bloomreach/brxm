@@ -1419,7 +1419,7 @@ a.x-menu-item {
 }
 
 .x-panel-ghost {
-  background-color: #cbddf3;
+  background-color: @lighter-shade;
 }
 
 .x-panel-ghost ul {
@@ -1431,7 +1431,7 @@ a.x-menu-item {
 }
 
 .x-panel-fbar td, .x-panel-fbar span, .x-panel-fbar input, .x-panel-fbar div, .x-panel-fbar select, .x-panel-fbar label {
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
+  font: normal 11px @font-family-base;
 }
 
 .x-window-proxy {
@@ -1439,47 +1439,120 @@ a.x-menu-item {
   border-color: #b3b3b3;
 }
 
-.x-window-tl .x-window-header {
-  color: #333333;
-  font: bold 11px tahoma, arial, helvetica, sans-serif;
+.x-window:not(.x-window-noborder) {
+  border: @modal-border-width solid @modal-border-color;
+  background-color: @modal-bgcolor;
+
+  .x-window-tl .x-window-header {
+    color: @darker-shade;
+    font: normal @modal-header-font-size @font-family-base;
+    text-align: left;
+    height: @modal-header-height;
+
+    padding: 0 @modal-header-padding;
+
+    .x-window-header-text {
+      display: table-cell;
+      height: @modal-header-height;
+      vertical-align: middle;
+    }
+    .x-tool-close {
+      width: 16px;
+      height: 16px;
+      margin-top: @modal-header-padding - 4;
+      background: url("@{images_extjs}/icons/delete-tiny.svg") no-repeat left;
+      &:hover {
+        background: url("@{images_extjs}/icons/delete-hover-tiny.svg") no-repeat left;
+      }
+    }
+
+  }
+
+  .x-window-tl,
+  .x-window-tm,
+  .x-window-tr {
+    background-color: @modal-header-bgcolor;
+    height: @modal-header-height;
+  }
+
+  .x-window-tl,
+  .x-window-ml,
+  .x-window-bl {
+    padding-left: 0;
+  }
+
+  .x-window-tr,
+  .x-window-mr,
+  .x-window-br {
+    padding-right: 0;
+  }
+
+  .x-window-mc {
+    border: none;
+    background-color: @modal-bgcolor;
+  }
+
+  .x-window-bc .x-window-footer {
+    padding: 16px 0;
+
+    .x-toolbar-cell {
+      padding: 0 4px;
+    }
+
+    .x-toolbar-right-row .x-toolbar-cell:last-child {
+      padding-right: @modal-footer-padding;
+    }
+
+    .x-toolbar-left-row .x-toolbar-cell:first-child {
+      padding-left: @modal-footer-padding;
+    }
+
+    .x-btn {
+      border: 1px solid @modal-button-border;
+      border-collapse: separate;
+      border-radius: @modal-button-border-radius;
+
+      &:hover,
+      &:focus {
+        background-color: @modal-button-focus-bgcolor;
+        border-color: @modal-button-focus-border;
+        color: @modal-button-focus-color;
+      }
+
+      em {
+        padding: 0 3px;
+      }
+
+      button {
+        color: inherit;
+        font: normal @font-size-base @font-family-base;
+        height: 22px;
+      }
+
+    }
+
+    .x-btn-tl,
+    .x-btn-tc,
+    .x-btn-tr,
+    .x-btn-ml,
+    .x-btn-mc,
+    .x-btn-mr,
+    .x-btn-bl,
+    .x-btn-bc,
+    .x-btn-br {
+      background: none;
+      width: auto;
+      height: auto;
+      i {
+        width: 0;
+        height: 0;
+      }
+    }
+  }
 }
 
-.x-window-tc {
-  background-image: url(images/window/top-bottom.gif);
-}
-
-.x-window-tl {
-  background-image: url(images/window/left-corners.gif);
-}
-
-.x-window-tr {
-  background-image: url(images/window/right-corners.gif);
-}
-
-.x-window-bc {
-  background-image: url(images/window/top-bottom.gif);
-}
-
-.x-window-bl {
-  background-image: url(images/window/left-corners.gif);
-}
-
-.x-window-br {
-  background-image: url(images/window/right-corners.gif);
-}
-
-.x-window-mc {
-  border-color: #b3b3b3;
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
-  background-color: #fff;
-}
-
-.x-window-ml {
-  background-image: url(images/window/left-right.gif);
-}
-
-.x-window-mr {
-  background-image: url(images/window/left-right.gif);
+.x-panel-nofooter .x-window-bc {
+  height: 0;
 }
 
 .x-window-maximized .x-window-tc {
@@ -1512,7 +1585,8 @@ a.x-menu-item {
 }
 
 body.x-body-masked .x-window-plain .x-window-mc {
-  background-color: #fff;
+  background-color: @modal-bgcolor;
+  padding-top: @modal-body-top-padding;
 }
 
 .x-html-editor-wrap {
@@ -1674,11 +1748,16 @@ body.x-body-masked .x-window-plain .x-window-mc {
 
 .x-window-dlg .ext-mb-text,
 .x-window-dlg .x-window-header-text {
-  font-size: 12px;
+  font-size: @font-size-base;
+  text-align: left;
+}
+
+.x-window-dlg .x-window-body {
+  padding: @modal-body-top-padding @modal-body-padding @modal-body-padding @modal-body-padding;
 }
 
 .x-window-dlg .ext-mb-textarea {
-  font: normal 12px tahoma, arial, helvetica, sans-serif;
+  font: normal @font-size-base @font-family-base;
 }
 
 .x-window-dlg .x-msg-box-wait {

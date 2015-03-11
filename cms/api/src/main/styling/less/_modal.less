@@ -62,15 +62,15 @@
   .w_caption {
     background: @modal-header-bgcolor;
     color: @modal-header-color;
-    height: 41px;
+    height: @modal-header-height;
     text-align: left;
 
     span {
       //color: white;
-      font-size: 15px;
+      font-size: @modal-header-font-size;
       //font-weight: bold;
       margin: 0;
-      padding-left: 16px;
+      padding-left: @modal-header-padding;
       line-height: 41px;
       //position: relative;
     }
@@ -85,12 +85,12 @@
 .hippo-window-buttons {
   display: flex;
   position: absolute;
-  right: 16px;
-  bottom: 16px;
+  right: @modal-footer-padding;
+  bottom: @modal-footer-padding;
 
   input {
     border: 1px solid @modal-button-border;
-    border-radius: 4px;
+    border-radius: @modal-button-border-radius;
     background-color: @modal-button-bgcolor;
     min-width: 64px;
     margin-right: 8px;
