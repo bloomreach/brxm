@@ -37,7 +37,7 @@
                         return item.folder;
                     },
                     selectItem: function(item) {
-                        if((item.hasFolders || item.hasDocuments) && item.items.length < 1) {
+                        if((item.containsFolders || item.containsDocuments) && item.items.length < 1) {
                             PickerService.getData(item);
                         }
                     },

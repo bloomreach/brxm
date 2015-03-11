@@ -47,7 +47,7 @@
                 function addCollapsedProperties(items, collapsed) {
                     if(Array.isArray(items)) {
                         angular.forEach(items, function (item) {
-                            if(item.items && item.hasFolders) {
+                            if(item.items && item.containsFolders) {
                                 item.collapsed = collapsed;
                                 addCollapsedProperties(item.items, collapsed);
                             }
