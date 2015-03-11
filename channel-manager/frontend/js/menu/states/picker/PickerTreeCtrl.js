@@ -33,6 +33,9 @@
                 });
 
                 $scope.callbacks = {
+                    displayTreeItem: function(item) {
+                        return item.folder;
+                    },
                     selectItem: function(item) {
                         if((item.hasFolders || item.hasDocuments) && item.items.length < 1) {
                             PickerService.getData(item);
