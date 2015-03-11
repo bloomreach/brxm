@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.javascript.host.Node;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gson.Gson;
 
+import org.hippoecm.frontend.extjs.ExtUtilsHeaderItem;
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
@@ -58,8 +59,8 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
 
     }
 
-    protected List<Message> hostToIFrameMessages = new ArrayList<Message>();
-    protected List<Message> iframeToHostMessages = new ArrayList<Message>();
+    protected List<Message> hostToIFrameMessages = new ArrayList<>();
+    protected List<Message> iframeToHostMessages = new ArrayList<>();
 
     @Override
     public void setUp(String name) throws Exception {
@@ -81,7 +82,8 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
         injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
-        injectJavascript(TemplateComposerApiHeaderItem.class, "MessageBus.js");
+        injectJavascript(ExtUtilsHeaderItem.class, "MessageBus.js");
+        injectJavascript(ExtUtilsHeaderItem.class, "IFramePanel.js");
         injectJavascript(TemplateComposerApiHeaderItem.class, "IFramePanel.js");
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
@@ -130,12 +132,12 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
 
     protected void initializeTemplateComposer(final boolean debug, final boolean previewMode) {
         ResourceBundle resourceBundle = ResourceBundle.getBundle(PageEditor.class.getName());
-        final Map<String, String> resourcesMap = new HashMap<String, String>();
+        final Map<String, String> resourcesMap = new HashMap<>();
         for (String key : resourceBundle.keySet()) {
             resourcesMap.put(key, resourceBundle.getString(key));
         }
 
-        Map<String, Object> argument = new HashMap<String, Object>();
+        Map<String, Object> argument = new HashMap<>();
         argument.put("debug", debug);
         argument.put("previewMode", previewMode);
         argument.put("resources", resourcesMap);
