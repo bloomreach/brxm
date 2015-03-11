@@ -24,6 +24,12 @@
             'hippo.channel.menu.PickerService',
             'hippo.channel.menu.MenuService',
             function ($scope, $state, $stateParams, PickerService, MenuService) {
+                $scope.selectDocument = function() {
+                    $state.go('menu-item.edit', {
+                        menuItemId: $stateParams.menuItemId,
+                        selectedDocumentPath: $scope.selectedDocument.pathInfo
+                    });
+                };
                 $scope.cancelPicker = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId
@@ -36,6 +42,7 @@
                     }
                 ];
                 $scope.pickerType = $scope.pickerTypes[0];
+                $scope.selectedDocument = null;
 
                 var menuData = MenuService.getMenuData();
                 if(angular.isArray(menuData.items)) {
