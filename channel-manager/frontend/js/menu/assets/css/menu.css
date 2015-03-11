@@ -220,3 +220,11 @@ h3.lead.item-title {
 .document-picker thead {
   background: #f4f4f4;
 }
+
+.picker-item {
+  cursor: pointer;
+}
+
+.picker-item:hover {
+  background: #f4f4f4;
+}
