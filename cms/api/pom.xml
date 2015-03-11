@@ -193,6 +193,9 @@
           <include>**/*.ttf</include>
           <include>**/*.woff</include>
         </includes>
+        <excludes>
+          <exclude>**/*.less</exclude>
+        </excludes>
       </resource>
     </resources>
     <plugins>

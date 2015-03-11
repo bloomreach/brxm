@@ -78,6 +78,11 @@ module.exports = function (grunt) {
                 files: {
                     '<%= build.tmp %>/css/open-sans.css':    '<%= build.src %>/less/lib/open-sans.less'
                 }
+            },
+            extjs: {
+                files: {
+                    '<%= build.extjs.target %>': '<%= build.extjs.src %>'
+                }
             }
         },
 
