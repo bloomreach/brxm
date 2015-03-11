@@ -17,7 +17,7 @@
 
 <div ng-show="hasDraftDocuments">
     <div class="alert alert-danger">
-        <h4><i class="fa fa-warning"></i> Warning!</h4>
+        <h4><i class="fa fa-exclamation-triangle"></i> Warning!</h4>
         Your project contains document template(s) which still contain pending changes.
         <p>Please commit those changes before proceeding.</p>
 
@@ -37,8 +37,6 @@
                             name-space="{{doc.prefix}}"
                             document-name="{{doc.name}}">
                     </essentials-cms-document-type-deep-link>
-
-
                 </td>
             </tr>
             </tbody>

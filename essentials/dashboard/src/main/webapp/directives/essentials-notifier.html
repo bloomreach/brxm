@@ -24,18 +24,23 @@
         <p class="feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
            <span ng-show="$index == 0" class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span>
            <span ng-show="$index != 0" style="margin-left: 13px;"></span>
-
-            {{message.date}} - <span class="fa fa-fw"
-           ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}">
-
-        </span> <span ng-bind-html="message.message"></span>
+           {{message.date}} - <span class="fa fa-fw"
+                                    ng-class="{
+                                        'fa-check-square-o': message.type === 'info',
+                                        'fa-flag'          : message.type === 'warning',
+                                        'fa-exclamation'   : message.type === 'error'
+                                    }"></span><span ng-bind-html="message.message"></span>
 
         </p>
         <div class="log-messages ng-hide" ng-show="archiveOpen">
-            <p ng-repeat="message in archiveMessages">{{message.date}} - <span
-                    ng-class="{'fa-check-square-o fa-success': message.type === 'info', 'fa-exclamation fa-danger': message.type === 'error', 'fa-flag fa-warning': message.type === 'warning'}"
-                    class="fa fa-fw">
-                </span><span ng-bind-html="message.message"></span></p>
+            <p ng-repeat="message in archiveMessages">
+                {{message.date}} - <span class="fa fa-fw"
+                                         ng-class="{
+                                             'fa-check-square-o': message.type === 'info',
+                                             'fa-flag'          : message.type === 'warning',
+                                             'fa-exclamation'   : message.type === 'error'
+                                         }"></span><span ng-bind-html="message.message"></span>
+            </p>
         </div>
     </div>
 </div>
