@@ -35,6 +35,8 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
         TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
         rootContentRepresentationAssertions(representation);
 
+        assertEquals(getRootContentRequestConfigIdentifier(), representation.getId());
+        assertEquals("unittestproject", representation.getDisplayName());
     }
 
     private void addContent() throws RepositoryException {

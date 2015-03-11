@@ -387,6 +387,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/CommonFolderContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedParentTreeContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/RootContentHippoDocumentResourceTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/TreePickerRepresentationGetterSetterTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/PathInfoValidatorTest.java -text
 client-modules/page-composer/src/test/resources/log4j.dtd -text
 client-modules/page-composer/src/test/resources/log4j.xml -text
