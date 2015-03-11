@@ -41,7 +41,10 @@
                     .state('menu-item.edit', {
                         url: '/:menuItemId/edit',
                         controller: 'hippo.channel.menu.EditMenuItemCtrl',
-                        templateUrl: 'states/menu-item/edit/edit-menu-item.html'
+                        templateUrl: 'states/menu-item/edit/edit-menu-item.html',
+                        params: {
+                            selectedDocumentPath: null
+                        }
                     })
 
                     .state('menu-item.none', {
