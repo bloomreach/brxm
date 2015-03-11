@@ -15,8 +15,8 @@
  */
 
 /* Channel manager specific font */
-.channel-manager button,
-.channel-manager input {
+.channel-manager .x-toolbar button,
+.channel-manager .x-toolbar input {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 14px !important;
 }
