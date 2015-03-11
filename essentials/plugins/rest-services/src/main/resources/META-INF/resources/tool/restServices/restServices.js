@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,86 +19,64 @@
     angular.module('hippo.essentials')
         .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
-            $scope.resultMessages = [];
-            $scope.restType = null;
-            $scope.selectedType = "Choose REST type";
-            $scope.restName = "restapi";
-            $scope.showDocuments = false;
+            $scope.restName = "";
             $scope.documentTypes = [];
+            $scope.checkedDocuments = 0;
 
             $scope.onChangeRestName = function () {
                 updateEndPoints();
             };
-            $scope.onChangeType = function (restType) {
-                $scope.restType = restType;
-                if (restType == 'plain') {
-                    // fetch documents:
-                    $http.get($rootScope.REST.documents).success(function (data) {
-                        $scope.documentTypes = [];
-                        angular.forEach(data, function (docType) {
-                            if (docType.fullPath) {
-                                $scope.documentTypes.push(docType);
-                            }
-                        });
-                        updateEndPoints();
-                    });
-                } else {
-                    $scope.documentTypes = [];
-                }
-            };
-            $scope.checked = function (item) {
-                var valid = checkValid();
-                if (!valid) {
-                } else {
-                    $scope.restForm.myDocument.$setValidity("checked", true);
-                }
+            $scope.checked = function (doc) {
+                updateCheckedDocuments();
+                return doc.checked;
             };
             $scope.runRestSetup = function () {
                 // check if we have selected documents:
-                if ($scope.restType == 'plain') {
-                    var valid = checkValid();
-                    if (!valid) {
-                        $scope.restForm.myDocument.$setValidity("checked", false);
-                        displayError("Please select at least one document type");
-                        return;
-                    }
-                }
-
                 var files = [];
-                angular.forEach($scope.documentTypes, function (value) {
-                    if (value.checked && value.fullPath) {
-                        files.push(value.fullPath);
+                angular.forEach($scope.documentTypes, function (docType) {
+                    if (docType.checked && docType.fullPath) {
+                        files.push(docType.fullPath);
                     }
                 });
                 var fileString = files.join(',');
                 var payload = Essentials.addPayloadData("restName", $scope.restName, null);
-                Essentials.addPayloadData("restType", $scope.restType, payload);
+                Essentials.addPayloadData("restType", "plain", payload);
                 Essentials.addPayloadData("javaFiles", fileString, payload);
                 $http.post($scope.endpoint, payload).success(function (data) {
                     // TODO: display reboot message and instruction sets executed
                 });
             };
+
+            $http.get($rootScope.REST.documents).success(function (data) {
+                angular.forEach(data, function (docType) {
+                    if (docType.fullPath) {
+                        $scope.documentTypes.push(docType);
+                    }
+                });
+                updateEndPoints();
+            });
+
             //############################################
             // UTIL
             //############################################
-            function displayError(msg) {
-                $rootScope.feedbackMessages.push({type: 'error', message: msg});
-            }
-
-            function checkValid() {
-                var valid = false;
-                angular.forEach($scope.documentTypes, function (value) {
-                    if (value.checked) {
-                        valid = true;
+            function updateCheckedDocuments() {
+                var checkedDocuments = 0;
+                angular.forEach($scope.documentTypes, function (docType) {
+                    if (docType.checked) {
+                        checkedDocuments++;
                     }
                 });
-                return valid;
+                $scope.checkedDocuments = checkedDocuments;
             }
             function updateEndPoints() {
                 angular.forEach($scope.documentTypes, function (docType) {
                     if (docType.javaName) {
-                        docType.endpoint = "http://localhost:8080/site/"
-                                + $scope.restName + "/" + docType.javaName.split('.')[0] + '/';
+                        if ($scope.restName) {
+                            docType.endpoint = "http://localhost:8080/site/"
+                            + $scope.restName + "/" + docType.javaName.split('.')[0] + '/';
+                        } else {
+                            delete docType.endpoint;
+                        }
                     }
                 });
             }

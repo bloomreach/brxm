@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
   limitations under the License.
   -->
 
-
 <div class="panel panel-default" ng-controller="restServicesCtrl">
     <div class="panel-heading">REST services setup plugin</div>
     <div class="list-group">
@@ -23,51 +22,39 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <td>Choose endpoint name and REST type</td>
-
+                        <td>Choose endpoint name for REST service of type
+                            <a href="http://www.onehippo.org/library/concepts/rest/restful-api-support---plain-jax-rs-services.html" target="_blank">
+                                plain <span class="fa fa-external-link"></span>
+                            </a>.
+                        </td>
                     </tr>
-
                     </thead>
                     <tr>
-
                         <td>
                             <div class="input-group">
                                 <span class="input-group-addon">http://localhost:8080/site/</span>
-                                <input type="hidden" ng-model="restType" class="form-control" ng-required="true"/>
-                                <input type="text" ng-model="restName" ng-pattern="/^[a-z]{1,}$/" class="form-control" ng-required="true" ng-change="onChangeRestName()"/>
-                                <div class="input-group-btn">
-                                    <button type="button" class="btn btn-default" tabindex="-1">{{selectedType}}</button>
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-                                        <span class="caret"></span>
-                                        <span class="sr-only">Rest Type</span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <!--
-                                        <li>
-                                            <a ng-click="onChangeType('content')" href="javascript:void(0)">Content REST</a>
-                                        </li>
-                                        -->
-                                        <li>
-                                            <a ng-click="onChangeType('plain')" href="javascript:void(0)">Plain REST</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <input type="text" ng-model="restName" ng-pattern="/^[a-z]{1,}$/" class="form-control" ng-required="true" ng-change="onChangeRestName()" placeholder="<Endpoint name>"/>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <div ng-show="documentTypes.length">
-                                <p>Select document(s) to expose through REST</p>
+                                <p>Select document type(s) to expose through REST</p>
                                 <ul class="list-group">
                                     <li ng-repeat="doc in documentTypes" style="cursor: move; height: 28px; padding-top: 2px" class="list-group-item">
-                                        <span style="padding-right: 20px; cursor: default"><input type="checkbox" ng-checked="checked(doc)" name="myDocument" checked="{{doc.checked}}" ng-model="doc.checked"/></span>
+                                        <span style="padding-right: 20px; cursor: default">
+                                            <input type="checkbox" ng-checked="checked(doc)" name="myDocument" ng-model="doc.checked" ng-required="checkedDocuments == 0"/>
+                                        </span>
                                         {{doc.name}}
                                         <span style="padding-left: 40px; cursor: default" class="pull-right" ng-show="doc.checked && doc.endpoint">
-                                          <a target="_blank" href="{{doc.endpoint}}">{{doc.endpoint}}</a>
+                                            <a target="_blank" href="{{doc.endpoint}}">{{doc.endpoint}}</a>
                                         </span>
                                     </li>
                                 </ul>
+                            </div>
+                            <div class="alert alert-danger" ng-hide="checkedDocuments > 0">
+                                You need to select at least one document type in order to set up the REST API.
                             </div>
                         </td>
                     </tr>
@@ -77,32 +64,7 @@
                         </td>
                     </tr>
                 </table>
-
             </form>
-        </div>
-    </div>
-
-
-    <div class="list-group-item" ng-show="resultMessages.items.length > 0">
-        <div class="alert alert-info">
-            <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
-                <div ng-switch-when="PRE">
-                    <pre>{{message.value}}</pre>
-                </div>
-                <div ng-switch-when="A">
-                    <a href="{{message.value}}">{{message.value}}</a>
-                </div>
-                <div ng-switch-when="H3">
-                    <h3>{{message.value}}</h3>
-                </div>
-                <div ng-switch-when="H4">
-                    <h3>{{message.value}}</h3>
-                </div>
-                <div ng-switch-when="STRONG">
-                    <strong>{{message.value}}</strong>
-                </div>
-                <div ng-switch-default>{{message.value}}</div>
-            </div>
         </div>
     </div>
 </div>
