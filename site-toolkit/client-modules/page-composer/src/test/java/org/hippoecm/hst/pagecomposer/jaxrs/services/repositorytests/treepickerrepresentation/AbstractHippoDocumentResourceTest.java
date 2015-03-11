@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.hippodocumentresource;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerrepresentation;
 
-import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
@@ -26,24 +26,39 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.HippoDocumentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.site.HstServices;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest {
 
-    protected HippoDocumentRepresentation createRootContentRepresentation(final String pathInfo, final String requestConfigContentIdentifier) throws Exception {
+    protected TreePickerRepresentation createRootContentRepresentation(final String pathInfo, final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final HippoDocumentResource resource = createResource();
         final Response response = resource.get();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-        return (HippoDocumentRepresentation) representation.getData();
+        return (TreePickerRepresentation) representation.getData();
+    }
+
+    protected TreePickerRepresentation createPartialTreeRepresentation(final String pathInfo,
+                                                                          final String requestConfigContentIdentifier,
+                                                                          final String siteMapPathInfo) throws Exception {
+        mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
+        final HippoDocumentResource resource = createResource();
+        final Response response = resource.getExpandedParentTree(siteMapPathInfo);
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        return (TreePickerRepresentation) representation.getData();
     }
 
     protected void mockNewRequest(Session jcrSession, String host, String pathInfo, final String requestConfigContentIdentifier) throws Exception {
@@ -59,4 +74,29 @@ public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest 
         hippoDocumentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
         return hippoDocumentResource;
     }
+
+    protected String getRootContentRequestConfigIdentifier() throws RepositoryException {
+        return session.getNode("/unittestcontent/documents/unittestproject").getIdentifier();
+    }
+
+    protected String getCommonFolderRequestConfigIdentifier() throws RepositoryException {
+        return session.getNode("/unittestcontent/documents/unittestproject/common").getIdentifier();
+    }
+
+
+    protected void rootContentRepresentationAssertions(final TreePickerRepresentation representation) {
+        assertEquals("unittestproject",representation.getNodeName());
+        assertFalse("The root content folder is not selectable", representation.isSelectable());
+        assertNull(representation.getPathInfo());
+        assertFalse("The root content folder is never selected", representation.isSelected());
+        assertFalse("The root content folder does not have documents", representation.isContainsDocuments());
+        assertTrue("The root content folder does have folders", representation.isContainsFolders());
+
+        for (TreePickerRepresentation child : representation.getItems()) {
+            assertEquals("Children should *not* be populated as they should be lazily loaded",
+                    0, child.getItems().size());
+        }
+    }
+
+
 }

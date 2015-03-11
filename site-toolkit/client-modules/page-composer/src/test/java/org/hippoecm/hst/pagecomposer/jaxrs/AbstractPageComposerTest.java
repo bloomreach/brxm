@@ -143,13 +143,6 @@ public class AbstractPageComposerTest {
         return new PropertiesConfiguration();
     }
 
-    protected void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
-        final MockHttpSession httpSession = new MockHttpSession();
-        httpSession.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
-        request.setSession(httpSession);
-    }
-
-
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final String hostAndPort,
                                                                                         final String pathInfo) throws Exception {
         return getRequestContextWithResolvedSiteMapItemAndContainerURL(null, hostAndPort, pathInfo, null);
@@ -220,7 +213,8 @@ public class AbstractPageComposerTest {
 
         final String mountId = mount.getMount().getIdentifier();
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
-        setMountIdOnHttpSession(mockRequest, mountId);
+        mockRequest.getSession().setAttribute(ContainerConstants.RENDERING_HOST, host);
+        mockRequest.getSession().setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
         return hstURLFactory.getContainerURLProvider().parseURL(mockRequest, response, mount);
     }

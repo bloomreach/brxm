@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.concurrent.Callable;
 
-import javax.jcr.Node;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -26,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.HippoDocumentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
@@ -39,26 +38,26 @@ public class HippoDocumentResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                HippoDocumentRepresentation representation = new HippoDocumentRepresentation(getPageComposerContextService());
+                TreePickerRepresentation representation = new TreePickerRepresentation(getPageComposerContextService());
                 return ok("Folder loaded successfully", representation);
             }
         });
     }
 
     /**
-     * @param pathInfo
-     * @return the rest response to create the client tree for <code>pathInfo</code> : the response contains all
-     * ancestor nodes + their siblings up to the 'channel content root node' plus the siblings for <code>pathInfo</code>
+     * @param siteMapPathInfo
+     * @return the rest response to create the client tree for <code>siteMapPathInfo</code> : the response contains all
+     * ancestor nodes + their siblings up to the 'channel content root node' plus the siblings for <code>siteMapPathInfo</code>
      * plus its direct children.
      */
     @GET
-    @Path("{pathInfo}")
-    public Response getSubTree(final @PathParam("pathInfo") String pathInfo) {
+    @Path("{siteMapPathInfo}")
+    public Response getExpandedParentTree(final @PathParam("siteMapPathInfo") String siteMapPathInfo) {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                HippoDocumentRepresentation representation = new HippoDocumentRepresentation()
-                        .represent(getPageComposerContextService(), pathInfo);
+                TreePickerRepresentation representation = new TreePickerRepresentation()
+                        .representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
                 return ok("Folder loaded successfully", representation);
             }
         });

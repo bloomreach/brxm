@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.hippodocumentresource;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerrepresentation;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.HippoDocumentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
@@ -29,27 +29,11 @@ import static org.junit.Assert.assertTrue;
 
 public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentResourceTest {
 
-
-    private String getRootContentRequestConfigIdentifier() throws RepositoryException {
-        return session.getNode("/unittestcontent/documents/unittestproject").getIdentifier();
-    }
-
     @Test
     public void root_content_representation_assertions() throws Exception {
         // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-        HippoDocumentRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
-        assertEquals("unittestproject",representation.getNodeName());
-        assertFalse("The root content folder is not selectable", representation.isSelectable());
-        assertNull(representation.getPathInfo());
-        assertFalse("The root content folder is never selected", representation.isSelected());
-        assertFalse("The root content folder does not have documents", representation.isContainsDocuments());
-        assertTrue("The root content folder does have folders", representation.isContainsFolders());
-
-        for (HippoDocumentRepresentation child : representation.getItems()) {
-            assertEquals("Children should *not* be populated as they should be lazily loaded",
-                    0, child.getItems().size());
-        }
-
+        TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
+        rootContentRepresentationAssertions(representation);
 
     }
 
@@ -97,7 +81,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
             session.save();
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-            HippoDocumentRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
+            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
 
             assertEquals("common", representation.getItems().get(0).getDisplayName());
             assertEquals("News", representation.getItems().get(1).getDisplayName());
@@ -132,7 +116,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
             session.save();
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-            HippoDocumentRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
+            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
 
             assertEquals("aaa", representation.getItems().get(0).getDisplayName());
             assertEquals("bbb", representation.getItems().get(1).getDisplayName());

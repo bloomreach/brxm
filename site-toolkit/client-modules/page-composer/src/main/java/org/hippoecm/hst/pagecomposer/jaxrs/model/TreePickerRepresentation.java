@@ -23,14 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -47,9 +50,9 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoDocumentRepresentation {
+public class TreePickerRepresentation {
 
-    private static final Logger log = LoggerFactory.getLogger(HippoDocumentRepresentation.class);
+    private static final Logger log = LoggerFactory.getLogger(TreePickerRepresentation.class);
 
     private String id;
     private String nodeName;
@@ -61,22 +64,22 @@ public class HippoDocumentRepresentation {
     private boolean folder;
     private boolean containsFolders;
     private boolean containsDocuments;
-    private List<HippoDocumentRepresentation> items = new ArrayList<>();
+    private List<TreePickerRepresentation> items = new ArrayList<>();
 
     @JsonIgnore
-    transient private Map<String, HippoDocumentRepresentation> childMap = new HashMap<>();
+    transient private Map<String, TreePickerRepresentation> childMap = new HashMap<>();
 
 
-    public HippoDocumentRepresentation() {
+    public TreePickerRepresentation() {
         super();
     }
 
-    public HippoDocumentRepresentation(final PageComposerContextService pageComposerContextService) throws RepositoryException {
+    public TreePickerRepresentation(final PageComposerContextService pageComposerContextService) throws RepositoryException {
         represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT), true);
     }
 
-
-    public HippoDocumentRepresentation represent(final PageComposerContextService pageComposerContextService, final String siteMapPathInfo) throws RepositoryException {
+    public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
+                                                                   final String siteMapPathInfo) throws RepositoryException {
 
         HttpSession session = pageComposerContextService.getRequestContext().getServletRequest().getSession(false);
         try {
@@ -84,37 +87,54 @@ public class HippoDocumentRepresentation {
                 String renderingHost = (String) session.getAttribute(ContainerConstants.RENDERING_HOST);
                 final VirtualHost virtualHost = pageComposerContextService.getRequestContext().getResolvedMount().getMount().getVirtualHost();
                 final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, siteMapPathInfo);
+
                 final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(siteMapPathInfo);
 
-                String selectedNodePath = pageComposerContextService.getEditingMount().getContentPath() + "/" + resolvedSiteMapItem.getRelativeContentPath();
-                final Node selectedNode = pageComposerContextService.getRequestContext().getSession().getNode(selectedNodePath);
-                final Node requestConfigNode = pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT);
-
-                if (!selectedNode.getPath().startsWith(requestConfigNode.getPath()) && !selectedNode.getPath().equals(requestConfigNode.getPath())) {
-                    throw new IllegalStateException(String.format("Expected selected node '%s' to be a equal to or a descendant of '%s'.",
-                            selectedNode.getPath(), requestConfigNode.getPath()));
+                if (resolvedSiteMapItem.getPathInfo().equals(resolvedMount.getMount().getPageNotFound())) {
+                    // siteMapPathInfo item is resolved to the page not found item. this is an invalid item in the sitemap
+                    // item tree
+                    final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' is the page not " +
+                                    "found sitemap item for which no tree picker representation can be created.",
+                            siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
+                    throw new IllegalStateException(msg);
                 }
+
+                if (StringUtils.isEmpty(resolvedSiteMapItem.getRelativeContentPath())) {
+                    // if explicit sitemap item, return sitemap item representation
+                    // if sitemap item contains wildcards, the siteMapPathInfo is invalid as it cannot be represented in the
+                    // document OR sitemap tree
+                    if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitElement()) {
+                        return representExpandedParentTree(pageComposerContextService, resolvedSiteMapItem.getHstSiteMapItem());
+                    }
+                    final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
+                            "is not an explicit sitemap item hence no tree picker representation can be created for it be " +
+                            "created for it.", siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
+                    throw new IllegalStateException(msg);
+                }
+
+                final Node rootContentNode = pageComposerContextService.getRequestContext().getSession().getNode(pageComposerContextService.getEditingMount().getContentPath());
+                final Node selectedNode = rootContentNode.getNode(resolvedSiteMapItem.getRelativeContentPath());
 
                 List<Node> representNodes = new ArrayList<>();
                 Node currentNode = selectedNode;
                 representNodes.add(currentNode);
-                while (!currentNode.isSame(requestConfigNode)) {
+                while (!currentNode.isSame(rootContentNode)) {
                     currentNode = currentNode.getParent();
                     representNodes.add(0, currentNode);
                 }
 
-                HippoDocumentRepresentation parent = null;
-                HippoDocumentRepresentation root = null;
+                TreePickerRepresentation parent = null;
+                TreePickerRepresentation root = null;
                 for (Node representNode : representNodes) {
                     boolean loadChildren = !representNode.isNodeType(HippoNodeType.NT_HANDLE);
-                    HippoDocumentRepresentation presentation = new HippoDocumentRepresentation().represent(pageComposerContextService, representNode, loadChildren);
+                    TreePickerRepresentation presentation = new TreePickerRepresentation().represent(pageComposerContextService, representNode, loadChildren);
                     if (parent == null) {
                         root = presentation;
                         if (representNode.isSame(selectedNode)) {
                             root.selected = true;
                         }
                     } else {
-                        final HippoDocumentRepresentation unPopulatedChildPresentation = parent.childMap.get(representNode.getPath());
+                        final TreePickerRepresentation unPopulatedChildPresentation = parent.childMap.get(representNode.getPath());
                         // replace this representation with the populated presentation we have here
                         unPopulatedChildPresentation.items = presentation.items;
                         if (representNode.isSame(selectedNode)) {
@@ -125,30 +145,46 @@ public class HippoDocumentRepresentation {
                 }
                 return root;
             }
-        } catch (Exception e) {
+        } catch (PathNotFoundException | MatchException | IllegalStateException e) {
             if (log.isDebugEnabled()) {
-                String msg = String.format("Exception trying to return document representation for pathInfo '%s'. Return root " +
+                String msg = String.format("Exception trying to return document representation for siteMapPathInfo '%s'. Return root " +
                         "content folder representation instead", siteMapPathInfo);
                 log.info(msg, e);
             } else {
-                log.info("Exception trying to return document representation for pathInfo '{}' : {}. Return root " +
+                log.info("Exception trying to return document representation for siteMapPathInfo '{}' : {}. Return root " +
+                        "content folder representation instead", siteMapPathInfo, e.toString());
+            }
+        }
+          catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                String msg = String.format("Exception trying to return document representation for siteMapPathInfo '%s'. Return root " +
+                        "content folder representation instead", siteMapPathInfo);
+                log.warn(msg, e);
+            } else {
+                log.warn("Exception trying to return document representation for siteMapPathInfo '{}' : {}. Return root " +
                         "content folder representation instead", siteMapPathInfo, e.toString());
             }
         }
         return represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT), true);
     }
 
+    private TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
+                                                                 final HstSiteMapItem hstSiteMapItem) {
+        // TODO HSTTWO-3225
+        return new TreePickerRepresentation();
+    }
 
-    private HippoDocumentRepresentation represent(final PageComposerContextService pageComposerContextService,
-                           final Node node,
-                           final boolean includeChildren) throws RepositoryException {
+
+    private TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
+                                                  final Node node,
+                                                  final boolean includeChildren) throws RepositoryException {
         if (!(node instanceof HippoNode)) {
             throw new ClientException("Expected object of class HippoNode but was of class " + node.getClass().getName(),
                     ClientError.UNKNOWN);
         }
         id = node.getIdentifier();
         nodeName = node.getName();
-        displayName = ((HippoNode)node).getLocalizedName();
+        displayName = ((HippoNode) node).getLocalizedName();
         nodePath = node.getPath();
         this.folder = !node.isNodeType(HippoNodeType.NT_HANDLE);
 
@@ -194,13 +230,13 @@ public class HippoDocumentRepresentation {
     }
 
     private void addFolder(final PageComposerContextService pageComposerContextService, final Node child) throws RepositoryException {
-        HippoDocumentRepresentation folder =  new HippoDocumentRepresentation().represent(pageComposerContextService, child, false);
+        TreePickerRepresentation folder = new TreePickerRepresentation().represent(pageComposerContextService, child, false);
         items.add(folder);
         childMap.put(child.getPath(), folder);
     }
 
     private void addDocument(final PageComposerContextService pageComposerContextService, final Node child) throws RepositoryException {
-        HippoDocumentRepresentation document =  new HippoDocumentRepresentation().represent(pageComposerContextService, child, false);
+        TreePickerRepresentation document = new TreePickerRepresentation().represent(pageComposerContextService, child, false);
         items.add(document);
         childMap.put(child.getPath(), document);
     }
@@ -285,17 +321,17 @@ public class HippoDocumentRepresentation {
         this.containsDocuments = containsDocuments;
     }
 
-    public List<HippoDocumentRepresentation> getItems() {
+    public List<TreePickerRepresentation> getItems() {
         return items;
     }
 
-    public void setItems(final List<HippoDocumentRepresentation> items) {
+    public void setItems(final List<TreePickerRepresentation> items) {
         this.items = items;
     }
 
-    class HippoDocumentRepresentationComparator implements Comparator<HippoDocumentRepresentation> {
+    class HippoDocumentRepresentationComparator implements Comparator<TreePickerRepresentation> {
         @Override
-        public int compare(final HippoDocumentRepresentation o1, final HippoDocumentRepresentation o2) {
+        public int compare(final TreePickerRepresentation o1, final TreePickerRepresentation o2) {
             if (o1.isFolder()) {
                 if (!o2.isFolder()) {
                     // folders are ordered first
