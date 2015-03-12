@@ -151,9 +151,12 @@
                 $scope.$watch(function() {
                     return $stateParams.selectedDocumentPath;
                 }, function() {
-                    $scope.selectedMenuItem.link = $scope.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
-                    $scope.linkToFocus = 'sitemapLink';
-                    $scope.saveSelectedMenuItem('link');
+                    if($stateParams.selectedDocumentPath) {
+                        $scope.selectedMenuItem.link = $scope.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
+                        $scope.linkToFocus = 'sitemapLink';
+                        $scope.saveSelectedMenuItem('link');
+                        $stateParams.selectedDocumentPath = null;
+                    }
                 });
 
                 function shouldSaveSelectedMenuItemProperty() {
