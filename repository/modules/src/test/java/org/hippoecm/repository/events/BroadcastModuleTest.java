@@ -140,7 +140,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     }
 
     private void waitForEvent(final TestEventListener listener) throws Exception {
-        int n = 51;
+        int n = 101;
         while (n-- > 0) {
             Thread.sleep(100);
             if (listener.event != null) {
@@ -148,6 +148,6 @@ public class BroadcastModuleTest extends RepositoryTestCase {
                 return;
             }
         }
-        throw new Exception("Event not received within 5 seconds");
+        throw new Exception("Event not received within 10 seconds");
     }
 }
