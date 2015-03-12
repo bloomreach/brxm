@@ -414,13 +414,19 @@ public class TreePickerRepresentation {
                 log.info("Cannot find childName '{}' for node '{}'.", childName, parent.node.getPath());
                 return;
             }
-            ExpandedNodeHierarchy child = new ExpandedNodeHierarchy();
-            child.node = parent.node.getNode(childName);
-            parent.children.put(child.node.getPath(), child);
+
+            Node child = parent.node.getNode(childName);
+
+            ExpandedNodeHierarchy childHierarchy = parent.children.get(child.getPath());
+            if (childHierarchy == null) {
+                childHierarchy = new ExpandedNodeHierarchy();
+                childHierarchy.node = child;
+                parent.children.put(child.getPath(), childHierarchy);
+            }
 
             final String remaining = StringUtils.substringAfter(relativePath, "/");
             if (StringUtils.isNotEmpty(remaining)) {
-                child.appendChild(remaining, child);
+                childHierarchy.appendChild(remaining, childHierarchy);
             }
         }
 
