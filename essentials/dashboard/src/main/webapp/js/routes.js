@@ -74,11 +74,8 @@
                 });
         });
 
-    var dispatchProcessed = false;
+    var setupCompleted = false;
     var initAndDispatch = function ($q, $rootScope, $location, $http, $log, $timeout, modalService, pluginTypeFilter) {
-        // Determine the correct location path to start.
-        // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
-        var deferred = $q.defer();
         var startPinger = function () {
             var PING_RUNNING_TIMER = 7000;
             var PING_DOWN_TIMER = 10000;
@@ -129,14 +126,14 @@
 
             })();
         };
-        var dispatch = function () {
-            // return at once if already initialized
-            if (dispatchProcessed) {
-                deferred.resolve(true);
-                return;
-            }
-            dispatchProcessed = true;
+        // Determine the correct location path to start.
+        // we do this using the Deferred API, such that the path gets resolved before the controller is initialized.
+        var deferred = $q.defer();
+        var completeInitialization = function () {
+            setupCompleted = true;
             startPinger();
+
+            // Dispatch to appropriate initial location
             $http.get($rootScope.REST.project + '/status')
                 .success(function (response) {
                     if ($location.url() == '') { // only dispatch if not on specific "page".
@@ -155,9 +152,10 @@
                     deferred.resolve(true);
                 });
         };
-        $http.post($rootScope.REST.plugins + '/autosetup').success(dispatch).error(dispatch);
-
-        return deferred.promise;
+        if (!setupCompleted) {
+            $http.post($rootScope.REST.plugins + '/autosetup').then(completeInitialization, completeInitialization);
+            return deferred.promise;
+        }
     }
 })();
 
