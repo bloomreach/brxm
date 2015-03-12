@@ -21,9 +21,10 @@
             '$scope',
             '$state',
             '$stateParams',
+            '$filter',
             'hippo.channel.menu.PickerService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $state, $stateParams, PickerService, MenuService) {
+            function ($scope, $state, $stateParams, $filter, PickerService, MenuService) {
                 $scope.selectDocument = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId,
@@ -44,16 +45,29 @@
                 $scope.pickerType = $scope.pickerTypes[0];
                 $scope.selectedDocument = null;
 
-                var menuData = MenuService.getMenuData();
+                var menuData = MenuService.getMenuData(),
+                    siteContentIdentifier;
+
                 if(angular.isArray(menuData.items)) {
-                    PickerService.getDataById(menuData.siteContentIdentifier);
+                    siteContentIdentifier = menuData.siteContentIdentifier;
                 } else {
                     MenuService.getMenu().then(
                         function(menuData){
-                            PickerService.getDataById(menuData.siteContentIdentifier);
+                            siteContentIdentifier = menuData.siteContentIdentifier;
                         }
                     );
                 }
+                if($stateParams.link) {
+                    var removeCollapseOfSelected = function() {
+                        $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'selected', true, 'items');
+                    };
+                    PickerService.getInitialData(siteContentIdentifier, $stateParams.link).then(
+                        removeCollapseOfSelected()
+                    );
+                } else {
+                    PickerService.getInitialData(siteContentIdentifier);
+                }
+
             }
         ]);
 }());
