@@ -53,7 +53,7 @@
                         $http.get(menuServiceUrl())
                             .success(function (response) {
                                 if (!angular.equals(menuData.items, response.data.items)) {
-                                    menuData.items = response.data.items;
+                                    menuData = response.data;
                                     addCollapsedProperties(menuData.items, true);
                                 }
                                 menuData.id = response.data.id;
