@@ -1,4 +1,4 @@
-/*
+package org.onehippo.addon.frontend.gallerypicker;/*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.addon.frontend.gallerypicker;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFormatException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -29,6 +32,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -44,22 +48,26 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * The GalleryPickerPlugin provides a Wicket dialog that allows a content editor to select
+ * The org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin provides a Wicket dialog that allows a content editor to select
  * an image from the image gallery.
  *
  * @author Jeroen Reijn
  */
 public class GalleryPickerPlugin extends RenderPlugin<Node> {
+
     private static final long serialVersionUID = 2965577252486600004L;
 
-    static final Logger log = LoggerFactory.getLogger(GalleryPickerPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(GalleryPickerPlugin.class);
 
     private static final String DEFAULT_THUMBNAIL_WIDTH = "50";
     private static final String JCR_ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
@@ -67,7 +75,8 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private static final String HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME = "hippogallery:exampleImageSet";
     private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
     private static final String SUPPORTED_PATHS_KEY = "supported.paths";
-    private static final CssResourceReference GALLERY_PICKER_CSS = new CssResourceReference(GalleryPickerPlugin.class, "GalleryPickerPlugin.css");
+    private static final CssResourceReference GALLERY_PICKER_CSS =
+            new CssResourceReference(GalleryPickerPlugin.class, GalleryPickerPlugin.class.getSimpleName()+".css");
 
     private IModel<String> valueModel;
     private JcrNodeModel currentNodeModel;
@@ -126,6 +135,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 DialogLink select = new DialogLink("select", new StringResourceModel("picker.select", this, null),
                         createDialogFactory(), getDialogService());
                 fragment.add(select);
+                addOpenButton(fragment);
 
                 remove = new AjaxLink<Void>("remove") {
                     private static final long serialVersionUID = 6966047483487193607L;
@@ -175,7 +185,6 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         return config.getString("preview.height");
     }
 
-
     private static IModel<String> getValueModel(IModel<Node> nodeModel) {
         Node node = nodeModel.getObject();
         if (node != null) {
@@ -187,6 +196,40 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
             }
         } else {
             return new Model<String>("");
+        }
+    }
+
+    private void addOpenButton(Fragment fragment) {
+        AjaxLink openButton = new AjaxLink("open") {
+
+            private static final long serialVersionUID = -7214708709986794120L;
+
+            @Override
+            public boolean isVisible() {
+                return isValidDisplaySelection();
+            }
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                open();
+            }
+        };
+        openButton.setOutputMarkupId(true);
+        fragment.add(openButton);
+    }
+
+    private void open() {
+        final IPluginConfig config = getPluginConfig();
+        final IPluginContext context = getPluginContext();
+        final IModel<String> displayModel= getPathModel();
+        final String browserId = config.getString("browser.id", "service.browse");
+        final IBrowseService browseService = context.getService(browserId, IBrowseService.class);
+        final String location = config.getString("option.location", displayModel.getObject());
+        if (browseService != null) {
+            //noinspection unchecked
+            browseService.browse(new JcrNodeModel(location));
+        } else {
+            log.warn("no browse service found with id '{}', cannot browse to '{}'", browserId, location);
         }
     }
 
@@ -311,7 +354,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
      *
      * @param node the JCR Node for which to lookup the node type name
      * @return the String representation of the current primary node type name
-     * @throws RepositoryException if something goes wrong while trying to get the node type name
+     * @throws javax.jcr.RepositoryException if something goes wrong while trying to get the node type name
      */
     private String getNodeTypeName(Node node) throws RepositoryException {
         return node.getPrimaryNodeType().getName();
@@ -333,6 +376,50 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
             }
         }
         return false;
+    }
+
+    private String getMirrorPath() {
+        Node node = GalleryPickerPlugin.this.getModelObject();
+        try {
+            if (node != null && node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                return getPath(node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+            }
+        } catch (ValueFormatException e) {
+            log.warn("Invalid value format for docbase " + e.getMessage());
+            log.debug("Invalid value format for docbase ", e);
+        } catch (PathNotFoundException e) {
+            log.warn("Docbase not found " + e.getMessage());
+            log.debug("Docbase not found ", e);
+        } catch (ItemNotFoundException e) {
+            log.info("Docbase " + e.getMessage() + " could not be dereferenced");
+        } catch (RepositoryException e) {
+            log.error("Invalid docbase " + e.getMessage(), e);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private String getPath(final String docbaseUUID) {
+        String path = StringUtils.EMPTY;
+        try {
+            if (!(docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.equals(JCR_ROOT_NODE_UUID))) {
+                path = getJCRSession().getNodeByIdentifier(docbaseUUID).getPath();
+            }
+        } catch (RepositoryException e) {
+            log.error("Invalid docbase " + e.getMessage(), e);
+        }
+        return path;
+    }
+
+    IModel<String> getPathModel() {
+        return new LoadableDetachableModel<String>() {
+
+            private static final long serialVersionUID = 6356059402455045185L;
+
+            @Override
+            protected String load() {
+                return getMirrorPath();
+            }
+        };
     }
 
     @Override
