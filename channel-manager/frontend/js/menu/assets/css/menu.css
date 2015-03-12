@@ -228,3 +228,7 @@ h3.lead.item-title {
 .picker-item:hover {
   background: #f4f4f4;
 }
+
+.document-picker .picker-item td {
+  vertical-align: middle;
+}
