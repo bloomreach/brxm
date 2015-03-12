@@ -36,7 +36,6 @@
                     }
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
-                        navigateToSelected(returnedData.data);
                         angular.copy([returnedData.data], pickerData.items);
                     });
                 }
