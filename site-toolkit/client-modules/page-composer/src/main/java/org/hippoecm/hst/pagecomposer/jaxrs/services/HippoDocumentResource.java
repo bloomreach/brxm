@@ -51,7 +51,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
      * plus its direct children.
      */
     @GET
-    @Path("{siteMapPathInfo}")
+    @Path("{siteMapPathInfo: .*}")
     public Response getExpandedParentTree(final @PathParam("siteMapPathInfo") String siteMapPathInfo) {
         return tryGet(new Callable<Response>() {
             @Override
