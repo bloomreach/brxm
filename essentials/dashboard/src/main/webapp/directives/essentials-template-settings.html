@@ -15,35 +15,33 @@
   -->
 
 <div>
-    <div class="alert alert-info">
-        <form novalidate name="templateForm">
-            <div ng-hide="hasNoTemplates">
-                <div class="form-group">
-                    <label>Please select templating language:</label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" ng-model="templateName" required value="jsp"/>
-                        JSP template
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" ng-model="templateName" required value="freemarker"/>
-                        FreeMarker template
-                    </label>
-                </div>
+    <form novalidate name="templateForm">
+        <div ng-hide="hasNoTemplates">
+            <div class="form-group">
+                <label>Please select templating language:</label>
             </div>
-            <div ng-show="hasSampleData">
-                <div class="form-group">
-                    <label> Content: </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" ng-model="sampleData"/> Add sample content
-                    </label>
-                </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="jsp"/>
+                    JSP template
+                </label>
             </div>
-        </form>
-    </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="freemarker"/>
+                    FreeMarker template
+                </label>
+            </div>
+        </div>
+        <div ng-show="hasSampleData">
+            <div class="form-group">
+                <label> Content: </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="sampleData"/> Add sample content
+                </label>
+            </div>
+        </div>
+    </form>
 </div>
