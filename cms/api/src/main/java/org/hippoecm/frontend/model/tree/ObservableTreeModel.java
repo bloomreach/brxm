@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model.tree;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,6 +28,7 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.observation.Event;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -107,6 +109,20 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
             while (events.hasNext()) {
                 IEvent<ObservableTreeModel> treeModelEvent = createEvent((JcrEvent) events.next());
                 treeModelEvents.add(treeModelEvent);
+            }
+
+            if (log.isDebugEnabled()){
+                List<String> outputEvents = new ArrayList<>();
+                for (IEvent<ObservableTreeModel> e : treeModelEvents) {
+                    final Event event = ((ObservableTreeModelEvent) e).getJcrEvent().getEvent();
+                    try {
+                        outputEvents.add(String.format("path = %s, type=0x%02x", event.getPath(), event.getType()));
+                    } catch (RepositoryException e1) {
+                        // blank
+                    }
+
+                }
+                log.debug("Receive events: {}", outputEvents);
             }
             observationContext.notifyObservers(treeModelEvents);
         }

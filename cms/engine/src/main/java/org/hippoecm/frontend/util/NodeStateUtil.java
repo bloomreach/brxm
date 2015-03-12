@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package org.hippoecm.frontend.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 public class NodeStateUtil {
 
@@ -83,4 +86,24 @@ public class NodeStateUtil {
         return moved;
     }
 
+    /**
+     * Check if there's any renamed node (same id but different names)
+     *
+     * @param nodes
+     * @param newNodes
+     * @return UUIDs of renamed nodes or null if no renamed node is found
+     */
+    public static List<String> renamed(final Map<String, String> nodes, final Map<String, String> newNodes) {
+        List<String> result = new ArrayList<>();
+        for (String uuid : nodes.keySet()) {
+            if (newNodes.containsKey(uuid)) {
+                final String oldName = nodes.get(uuid);
+                final String newName = newNodes.get(uuid);
+                if (!StringUtils.equals(oldName, newName)) {
+                    result.add(uuid);
+                }
+            }
+        }
+        return result.isEmpty() ? null : result;
+    }
 }

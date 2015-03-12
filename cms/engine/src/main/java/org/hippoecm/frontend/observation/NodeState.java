@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -204,6 +204,13 @@ class NodeState {
         if (moved != null) {
             for (String child : moved) {
                 events.add(new NodeEvent(nodes.get(child), Event.NODE_MOVED));
+            }
+        }
+
+        List<String> renamed = NodeStateUtil.renamed(this.nodes, newNodes);
+        if (renamed != null){
+            for (String child : renamed) {
+                events.add(new NodeEvent(newNodes.get(child), Event.NODE_MOVED));
             }
         }
 
