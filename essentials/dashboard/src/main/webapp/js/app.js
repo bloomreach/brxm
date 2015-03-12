@@ -41,9 +41,11 @@
                     return;
                 }
                 // avoid error messages if pinging fails
-                var url = error.config.url;
-                if (url.substring(url.length - 5, url.length) === '/ping') {
-                    return;
+                if (error.config && error.config.url) {
+                    var url = error.config.url;
+                    if (url.substring(url.length - 5, url.length) === '/ping') {
+                        return;
+                    }
                 }
                 if (error.data) {
                     if (error.data.value) {
