@@ -53,7 +53,7 @@
                     var removeCollapseOfSelected = function() {
                         $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'selected', true, 'items');
                     };
-                    PickerService.getInitialData(siteContentIdentifier, $stateParams.link).then(
+                    PickerService.getInitialData(menuData.siteContentIdentifier, $stateParams.link).then(
                         removeCollapseOfSelected()
                     );
                 } else if(angular.isArray(menuData.items)) {
