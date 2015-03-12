@@ -44,7 +44,7 @@ public class DependencyUtilsTest extends BaseResourceTest {
     public void testRepositoryAdd() throws Exception {
         final Repository repository = new RepositoryRestful();
         repository.setTargetPom(TargetPom.PROJECT.getName());
-        repository.setUrl("http://maven.onehippo.com/maven2/");
+        repository.setUrl("https://maven.onehippo.com/maven2/");
         repository.setId("hippo");
         assertEquals(TargetPom.PROJECT, repository.getDependencyTargetPom());
         boolean hasRepo = DependencyUtils.hasRepository(getContext(), repository);
