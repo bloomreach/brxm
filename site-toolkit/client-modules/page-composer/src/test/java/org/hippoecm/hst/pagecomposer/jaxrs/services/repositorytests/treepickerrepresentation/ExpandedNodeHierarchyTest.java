@@ -165,7 +165,7 @@ public class ExpandedNodeHierarchyTest {
         assertEquals("/content/documents/myproject/folderA", folderA.getNode().getPath());
         assertEquals(2, folderA.getChildren().size());
 
-       assertTrue(folderA.getChildren().containsKey("/content/documents/myproject/folderA/folderAA"));
+        assertTrue(folderA.getChildren().containsKey("/content/documents/myproject/folderA/folderAA"));
         assertTrue(folderA.getChildren().containsKey("/content/documents/myproject/folderA/folderAB"));
 
     }
