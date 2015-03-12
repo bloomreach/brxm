@@ -31,7 +31,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // about-us sitemap item as relative contentpath 'common/aboutfolder/about-us' and that path should be expanded
 
         TreePickerRepresentation representation =
-                createPartialTreeRepresentation("", getRootContentRequestConfigIdentifier(), "about-us");
+                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "about-us");
 
         aboutUsRepresentationAssertions(representation);
 
@@ -74,7 +74,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // 'matching_to_default_siteMapItem' will match _default_ which does not have a relative content path and as a result,
         // should return 'root content representation' since a wildcard site map item cannot be picked in the sitemap representation either
         TreePickerRepresentation representation =
-                createPartialTreeRepresentation("", getRootContentRequestConfigIdentifier(), "matching_to_default_siteMapItem");
+                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "matching_to_default_siteMapItem");
 
         rootContentRepresentationAssertions(representation);
     }
@@ -83,7 +83,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     public void representation_for_siteMapPathInfo_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
 
         TreePickerRepresentation representation =
-                createPartialTreeRepresentation("", getRootContentRequestConfigIdentifier(), "contact");
+                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "contact");
 
         assertNotNull(representation);
         // TODO HSTTWO-3225
@@ -93,7 +93,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     public void representation_for_siteMapPathInfo_that_cannot_be_matched_in_sitemap_results_in_root_content_presentation() throws Exception {
 
         TreePickerRepresentation representation =
-                createPartialTreeRepresentation("", getRootContentRequestConfigIdentifier(), "path/that/cannot/be/matched");
+                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "path/that/cannot/be/matched");
 
         rootContentRepresentationAssertions(representation);
 
@@ -103,7 +103,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     public void representation_for_siteMapPathInfo_for_non_root_content_request_config_identifier_uses_root_content_config_identifier() throws Exception {
 
         TreePickerRepresentation representation =
-                createPartialTreeRepresentation("", getCommonFolderRequestConfigIdentifier(), "about-us");
+                createExpandedTreeRepresentation("", getCommonFolderRequestConfigIdentifier(), "about-us");
 
         aboutUsRepresentationAssertions(representation);
     }

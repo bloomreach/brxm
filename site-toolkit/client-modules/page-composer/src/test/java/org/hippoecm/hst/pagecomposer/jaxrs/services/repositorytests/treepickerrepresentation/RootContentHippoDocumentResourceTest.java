@@ -22,10 +22,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentResourceTest {
 
@@ -76,7 +75,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
              * unittestcontent/documents/unittestproject is of type hippostd:directory which is an *unordered* cms folder,
              * hence we need to set the primary typp to hippostd:folder which is "ordered"
              */
-            session.getNode(absRootContentPath).setPrimaryType("hippostd:folder");
+            session.getNode(absRootContentPath).setPrimaryType(NT_FOLDER);
 
             addContent();
 
@@ -111,7 +110,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
             /**
              * unittestcontent/documents/unittestproject is must now be of type hippostd:directory which is an *unordered* cms folder
              */
-            session.getNode(absRootContentPath).setPrimaryType("hippostd:directory");
+            session.getNode(absRootContentPath).setPrimaryType(NT_DIRECTORY);
 
             addContent();
 

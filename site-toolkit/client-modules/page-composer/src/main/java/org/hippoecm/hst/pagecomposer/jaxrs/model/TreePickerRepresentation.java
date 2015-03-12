@@ -25,9 +25,8 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
@@ -43,12 +42,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,16 +70,13 @@ public class TreePickerRepresentation {
     private boolean containsDocuments;
     private List<TreePickerRepresentation> items = new ArrayList<>();
 
-    @JsonIgnore
-    transient private Map<String, TreePickerRepresentation> childMap = new HashMap<>();
-
-
     public TreePickerRepresentation() {
         super();
     }
 
     public TreePickerRepresentation(final PageComposerContextService pageComposerContextService) throws RepositoryException {
-        represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(NT_DOCUMENT), true);
+        final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
+        represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
 
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
@@ -120,38 +113,12 @@ public class TreePickerRepresentation {
                     throw new IllegalStateException(msg);
                 }
 
-                final Node rootContentNode = pageComposerContextService.getRequestContext().getSession().getNode(pageComposerContextService.getEditingMount().getContentPath());
-                final Node selectedNode = rootContentNode.getNode(resolvedSiteMapItem.getRelativeContentPath());
-
-                List<Node> representNodes = new ArrayList<>();
-                Node currentNode = selectedNode;
-                representNodes.add(currentNode);
-                while (!currentNode.isSame(rootContentNode)) {
-                    currentNode = currentNode.getParent();
-                    representNodes.add(0, currentNode);
-                }
-
-                TreePickerRepresentation parent = null;
-                TreePickerRepresentation root = null;
-                for (Node representNode : representNodes) {
-                    boolean loadChildren = !representNode.isNodeType(NT_HANDLE);
-                    TreePickerRepresentation presentation = new TreePickerRepresentation().represent(pageComposerContextService, representNode, loadChildren);
-                    if (parent == null) {
-                        root = presentation;
-                        if (representNode.isSame(selectedNode)) {
-                            root.selected = true;
-                        }
-                    } else {
-                        final TreePickerRepresentation unPopulatedChildPresentation = parent.childMap.get(representNode.getPath());
-                        // replace this representation with the populated presentation we have here
-                        unPopulatedChildPresentation.items = presentation.items;
-                        if (representNode.isSame(selectedNode)) {
-                            unPopulatedChildPresentation.selected = true;
-                        }
-                    }
-                    parent = presentation;
-                }
-                return root;
+                final String contentRootPath = pageComposerContextService.getEditingMount().getContentPath();
+                final Session jcrSession = pageComposerContextService.getRequestContext().getSession();
+                final String selectedPath = contentRootPath + "/" + resolvedSiteMapItem.getRelativeContentPath();
+                final ExpandedNodeHierarchy expandedNodeHierarchy = ExpandedNodeHierarchy.createExpandedNodeHierarchy(jcrSession,
+                        contentRootPath, Collections.singletonList(selectedPath));
+                return represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
             }
         } catch (PathNotFoundException | MatchException | IllegalStateException e) {
             if (log.isDebugEnabled()) {
@@ -172,7 +139,8 @@ public class TreePickerRepresentation {
                         "content folder representation instead", siteMapPathInfo, e.toString());
             }
         }
-        return represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(NT_DOCUMENT), true);
+        final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
+        return represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
 
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
@@ -181,10 +149,23 @@ public class TreePickerRepresentation {
         return new TreePickerRepresentation();
     }
 
+    public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
+                                              final HstSiteMap hstSiteMap) {
+        // TODO HSTTWO-3225
+        return new TreePickerRepresentation();
+    }
+
+    public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
+                                              final HstSiteMapItem hstSiteMapItem) {
+        // TODO HSTTWO-3225
+        return new TreePickerRepresentation();
+    }
 
     private TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
-                                               final Node node,
-                                               final boolean includeChildren) throws RepositoryException {
+                                               final ExpandedNodeHierarchy expandedNodeHierarchy,
+                                               final boolean includeChildren, final String selectedPath) throws RepositoryException {
+
+        final Node node = expandedNodeHierarchy.getNode();
         if (node.isNodeType(NT_DOCUMENT) && node.getParent().isNodeType(NT_HANDLE)) {
             throw new IllegalArgumentException(String.format("Node '%s' is document node. Representation only gets done until the '%s' node",
                     node.getPath(), NT_HANDLE));
@@ -195,6 +176,9 @@ public class TreePickerRepresentation {
         displayName = ((HippoNode) node).getLocalizedName();
         nodePath = node.getPath();
 
+        if (nodePath.equals(selectedPath)) {
+            selected = true;
+        }
         if (node.isNodeType(NT_HANDLE)) {
             final Node document = JcrUtils.getNodeIfExists(node, node.getName());
             if (document != null &&
@@ -223,18 +207,27 @@ public class TreePickerRepresentation {
 
         for (Node child : new NodeIterable(node.getNodes())) {
             try {
+                ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
                 if (child.isNodeType(NT_DOCUMENT)) {
                     containsFolders = true;
-                    if (includeChildren) {
-                        addFolder(pageComposerContextService, child);
-                    }
                 }
                 if (child.isNodeType(NT_HANDLE)) {
                     containsDocuments = true;
-                    if (includeChildren) {
-                        addDocument(pageComposerContextService, child);
-                    }
                 }
+                if (childHierarchy == null) {
+                    if (includeChildren) {
+                        ExpandedNodeHierarchy childOnly = ExpandedNodeHierarchy.createSingleNodeHierarchy(child);
+                        TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
+                                .represent(pageComposerContextService, childOnly, false, selectedPath);
+                        items.add(childRepresentation);
+                    }
+                } else {
+                    boolean includeChildrenForChild = !child.isNodeType(NT_HANDLE);
+                    TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
+                            .represent(pageComposerContextService, childHierarchy, includeChildrenForChild, selectedPath);
+                    items.add(childRepresentation);
+                }
+
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Exception while trying to add child '{}'.", child.getPath(), e);
@@ -252,18 +245,6 @@ public class TreePickerRepresentation {
         }
 
         return this;
-    }
-
-    private void addFolder(final PageComposerContextService pageComposerContextService, final Node child) throws RepositoryException {
-        TreePickerRepresentation folder = new TreePickerRepresentation().represent(pageComposerContextService, child, false);
-        items.add(folder);
-        childMap.put(child.getPath(), folder);
-    }
-
-    private void addDocument(final PageComposerContextService pageComposerContextService, final Node child) throws RepositoryException {
-        TreePickerRepresentation document = new TreePickerRepresentation().represent(pageComposerContextService, child, false);
-        items.add(document);
-        childMap.put(child.getPath(), document);
     }
 
     public String getId() {
@@ -362,7 +343,7 @@ public class TreePickerRepresentation {
         this.items = items;
     }
 
-    class HippoDocumentRepresentationComparator implements Comparator<TreePickerRepresentation> {
+    static class HippoDocumentRepresentationComparator implements Comparator<TreePickerRepresentation> {
         @Override
         public int compare(final TreePickerRepresentation o1, final TreePickerRepresentation o2) {
             if (o1.isFolder()) {
@@ -380,5 +361,67 @@ public class TreePickerRepresentation {
             // both are a folder or both are a document. Return lexical sorting on displayname
             return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
         }
+    }
+
+
+    static class ExpandedNodeHierarchy {
+
+        private Node node;
+        private final Map<String, ExpandedNodeHierarchy> children = new HashMap<>();
+
+        private ExpandedNodeHierarchy() {
+        }
+
+        public static ExpandedNodeHierarchy createSingleNodeHierarchy(final Node node) {
+            ExpandedNodeHierarchy single = new ExpandedNodeHierarchy();
+            single.node = node;
+            return single;
+        }
+
+        public static ExpandedNodeHierarchy createExpandedNodeHierarchy(final Session session,
+                                                                        final String rootContentPath,
+                                                                        final List<String> expandedPaths) throws RepositoryException {
+            ExpandedNodeHierarchy hierarchy = new ExpandedNodeHierarchy();
+
+            hierarchy.node = session.getNode(rootContentPath);
+            for (String expandedPath : expandedPaths) {
+                if (expandedPath.equals(rootContentPath)) {
+                    continue;
+                }
+                if (!expandedPath.startsWith(rootContentPath + "/")) {
+                    log.warn("Cannot expand hierarchy to path '{}' because not a descendant of '{}'", expandedPath, rootContentPath);
+                    continue;
+                }
+
+                String relativePath = expandedPath.substring(rootContentPath.length() + 1);
+                appendChild(relativePath, hierarchy);
+            }
+            return hierarchy;
+        }
+
+        public Node getNode() {
+            return node;
+        }
+
+        public Map<String, ExpandedNodeHierarchy> getChildren() {
+            return children;
+        }
+
+        private static void appendChild(final String relativePath, final ExpandedNodeHierarchy parent) throws RepositoryException {
+            String childName = StringUtils.substringBefore(relativePath, "/");
+            if (!parent.node.hasNode(childName)) {
+                log.info("Cannot find childName '{}' for node '{}'.", childName, parent.node.getPath());
+                return;
+            }
+            ExpandedNodeHierarchy child = new ExpandedNodeHierarchy();
+            child.node = parent.node.getNode(childName);
+            parent.children.put(child.node.getPath(), child);
+
+            final String remaining = StringUtils.substringAfter(relativePath, "/");
+            if (StringUtils.isNotEmpty(remaining)) {
+                child.appendChild(remaining, child);
+            }
+        }
+
     }
 }
