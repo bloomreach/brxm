@@ -25,24 +25,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
 @Produces(MediaType.APPLICATION_JSON)
 public class HippoDocumentResource extends AbstractConfigResource {
-
-    @GET
-    @Path("/")
-    public Response get() {
-        return tryGet(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                TreePickerRepresentation representation = new TreePickerRepresentation(getPageComposerContextService());
-                return ok("Folder loaded successfully", representation);
-            }
-        });
-    }
 
     /**
      * @param siteMapPathInfo
@@ -52,12 +41,18 @@ public class HippoDocumentResource extends AbstractConfigResource {
      */
     @GET
     @Path("{siteMapPathInfo: .*}")
-    public Response getExpandedParentTree(final @PathParam("siteMapPathInfo") String siteMapPathInfo) {
+    public Response get(final @PathParam("siteMapPathInfo") String siteMapPathInfo) {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                TreePickerRepresentation representation = new TreePickerRepresentation()
-                        .representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
+                final TreePickerRepresentation representation;
+                if (StringUtils.isEmpty(siteMapPathInfo)) {
+                    representation = new TreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
+
+                } else {
+                    representation  = new TreePickerRepresentation()
+                            .representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
+                }
                 return ok("Folder loaded successfully", representation);
             }
         });

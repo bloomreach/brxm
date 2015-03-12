@@ -44,7 +44,7 @@ public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest 
     protected TreePickerRepresentation createRootContentRepresentation(final String pathInfo, final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final HippoDocumentResource resource = createResource();
-        final Response response = resource.get();
+        final Response response = resource.get("");
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (TreePickerRepresentation) representation.getData();
@@ -55,7 +55,7 @@ public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest 
                                                                         final String siteMapPathInfo) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final HippoDocumentResource resource = createResource();
-        final Response response = resource.getExpandedParentTree(siteMapPathInfo);
+        final Response response = resource.get(siteMapPathInfo);
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (TreePickerRepresentation) representation.getData();

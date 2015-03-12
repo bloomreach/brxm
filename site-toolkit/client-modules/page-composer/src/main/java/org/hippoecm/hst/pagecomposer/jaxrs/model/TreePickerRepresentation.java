@@ -75,9 +75,9 @@ public class TreePickerRepresentation {
     public TreePickerRepresentation() {
     }
 
-    public TreePickerRepresentation(final PageComposerContextService pageComposerContextService) throws RepositoryException {
+    public TreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService)  throws RepositoryException {
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
-        represent(pageComposerContextService, singleNodeHierarchy, true, null);
+        return represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
 
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
