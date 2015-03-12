@@ -28,11 +28,14 @@
                     }, callObj = {
                         method: 'GET'
                     };
-                function getDataById(id) {
+                function getInitialData(id, link) {
                     callObj.url = ConfigService.apiUrlPrefix + '/' + id;
+                    if(link) {
+                        callObj.url += './' + link;
+                    }
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
-                        angular.copy(returnedData.data.items, pickerData.items);
+                        angular.copy([returnedData.data], pickerData.items);
                     });
                 }
 
@@ -61,8 +64,8 @@
                     getTree: function() {
                         return pickerData.items;
                     },
-                    getDataById: function(id) {
-                        return getDataById(id);
+                    getInitialData: function(id, link) {
+                        return getInitialData(id, link);
                     },
                     getData: function(item) {
                         return getData(item);
