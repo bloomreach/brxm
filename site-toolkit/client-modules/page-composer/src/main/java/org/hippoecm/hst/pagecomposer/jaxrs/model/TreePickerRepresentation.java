@@ -30,9 +30,11 @@ import javax.servlet.http.HttpSession;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -44,11 +46,16 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLESUMMARY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public class TreePickerRepresentation {
 
@@ -62,6 +69,7 @@ public class TreePickerRepresentation {
     private boolean selectable;
     private boolean selected;
     private boolean folder;
+    private String state;
     private boolean containsFolders;
     private boolean containsDocuments;
     private List<TreePickerRepresentation> items = new ArrayList<>();
@@ -75,11 +83,11 @@ public class TreePickerRepresentation {
     }
 
     public TreePickerRepresentation(final PageComposerContextService pageComposerContextService) throws RepositoryException {
-        represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT), true);
+        represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(NT_DOCUMENT), true);
     }
 
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
-                                                                   final String siteMapPathInfo) throws RepositoryException {
+                                                                final String siteMapPathInfo) throws RepositoryException {
 
         HttpSession session = pageComposerContextService.getRequestContext().getServletRequest().getSession(false);
         try {
@@ -126,7 +134,7 @@ public class TreePickerRepresentation {
                 TreePickerRepresentation parent = null;
                 TreePickerRepresentation root = null;
                 for (Node representNode : representNodes) {
-                    boolean loadChildren = !representNode.isNodeType(HippoNodeType.NT_HANDLE);
+                    boolean loadChildren = !representNode.isNodeType(NT_HANDLE);
                     TreePickerRepresentation presentation = new TreePickerRepresentation().represent(pageComposerContextService, representNode, loadChildren);
                     if (parent == null) {
                         root = presentation;
@@ -154,8 +162,7 @@ public class TreePickerRepresentation {
                 log.info("Exception trying to return document representation for siteMapPathInfo '{}' : {}. Return root " +
                         "content folder representation instead", siteMapPathInfo, e.toString());
             }
-        }
-          catch (Exception e) {
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 String msg = String.format("Exception trying to return document representation for siteMapPathInfo '%s'. Return root " +
                         "content folder representation instead", siteMapPathInfo);
@@ -165,28 +172,38 @@ public class TreePickerRepresentation {
                         "content folder representation instead", siteMapPathInfo, e.toString());
             }
         }
-        return represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(HippoNodeType.NT_DOCUMENT), true);
+        return represent(pageComposerContextService, pageComposerContextService.getRequestConfigNode(NT_DOCUMENT), true);
     }
 
-    private TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
-                                                                 final HstSiteMapItem hstSiteMapItem) {
+    public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
+                                                                final HstSiteMapItem hstSiteMapItem) {
         // TODO HSTTWO-3225
         return new TreePickerRepresentation();
     }
 
 
     private TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
-                                                  final Node node,
-                                                  final boolean includeChildren) throws RepositoryException {
-        if (!(node instanceof HippoNode)) {
-            throw new ClientException("Expected object of class HippoNode but was of class " + node.getClass().getName(),
-                    ClientError.UNKNOWN);
+                                               final Node node,
+                                               final boolean includeChildren) throws RepositoryException {
+        if (node.isNodeType(NT_DOCUMENT) && node.getParent().isNodeType(NT_HANDLE)) {
+            throw new IllegalArgumentException(String.format("Node '%s' is document node. Representation only gets done until the '%s' node",
+                    node.getPath(), NT_HANDLE));
         }
+
         id = node.getIdentifier();
         nodeName = node.getName();
         displayName = ((HippoNode) node).getLocalizedName();
         nodePath = node.getPath();
-        this.folder = !node.isNodeType(HippoNodeType.NT_HANDLE);
+
+        if (node.isNodeType(NT_HANDLE)) {
+            final Node document = JcrUtils.getNodeIfExists(node, node.getName());
+            if (document != null &&
+                    (document.isNodeType(NT_PUBLISHABLESUMMARY) || document.isNodeType(NT_PUBLISHABLESUMMARY))) {
+                state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
+            }
+        } else {
+            folder = true;
+        }
 
         final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
@@ -205,16 +222,24 @@ public class TreePickerRepresentation {
         }
 
         for (Node child : new NodeIterable(node.getNodes())) {
-            if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                containsFolders = true;
-                if (includeChildren) {
-                    addFolder(pageComposerContextService, child);
+            try {
+                if (child.isNodeType(NT_DOCUMENT)) {
+                    containsFolders = true;
+                    if (includeChildren) {
+                        addFolder(pageComposerContextService, child);
+                    }
                 }
-            }
-            if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                containsDocuments = true;
-                if (includeChildren) {
-                    addDocument(pageComposerContextService, child);
+                if (child.isNodeType(NT_HANDLE)) {
+                    containsDocuments = true;
+                    if (includeChildren) {
+                        addDocument(pageComposerContextService, child);
+                    }
+                }
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception while trying to add child '{}'.", child.getPath(), e);
+                } else {
+                    log.warn("Exception while trying to add child '{}' : {}", child.getPath(), e.toString());
                 }
             }
             // else ignore
@@ -303,6 +328,14 @@ public class TreePickerRepresentation {
 
     public void setFolder(final boolean folder) {
         this.folder = folder;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(final String state) {
+        this.state = state;
     }
 
     public boolean isContainsFolders() {

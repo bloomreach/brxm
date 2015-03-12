@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TreePickerRepresentationGetterSetterTest {
@@ -32,6 +33,7 @@ public class TreePickerRepresentationGetterSetterTest {
         TreePickerRepresentation presentation = new TreePickerRepresentation();
         assertNotNull(presentation.getItems());
         assertEquals(0, presentation.getItems().size());
+        assertNull(presentation.getState());
 
         presentation.setContainsDocuments(true);
         presentation.setContainsFolders(true);
@@ -45,6 +47,8 @@ public class TreePickerRepresentationGetterSetterTest {
         presentation.setPathInfo("/foo/bar");
         presentation.setSelectable(true);
         presentation.setSelected(true);
+        presentation.setFolder(true);
+        presentation.setState("new");
         assertTrue(presentation.isContainsDocuments());
         assertTrue(presentation.isContainsFolders());
         assertEquals("DisplayName", presentation.getDisplayName());
@@ -54,5 +58,7 @@ public class TreePickerRepresentationGetterSetterTest {
         assertEquals("/foo/bar", presentation.getPathInfo());
         assertTrue(presentation.isSelectable());
         assertTrue(presentation.isSelected());
+        assertTrue(presentation.isFolder());
+        assertEquals("new", presentation.getState());
     }
 }

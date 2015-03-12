@@ -34,6 +34,7 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoD
 
         final TreePickerRepresentation homePageRepresentation = representation.getItems().get(0);
         assertFalse(homePageRepresentation.isFolder());
+        assertEquals("live", homePageRepresentation.getState());
 
         final TreePickerRepresentation aboutFolderRepresentation = representation.getItems().get(1);
         assertTrue(aboutFolderRepresentation.isFolder());
