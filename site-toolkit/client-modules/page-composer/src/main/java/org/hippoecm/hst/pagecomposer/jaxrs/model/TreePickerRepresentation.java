@@ -209,11 +209,13 @@ public class TreePickerRepresentation {
         for (Node child : new NodeIterable(node.getNodes())) {
             try {
                 ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
-                if (child.isNodeType(NT_DOCUMENT)) {
+                if (child.isNodeType(NT_DOCUMENT) && !child.getParent().isNodeType(NT_HANDLE)) {
                     containsFolders = true;
-                }
-                if (child.isNodeType(NT_HANDLE)) {
+                } else if (child.isNodeType(NT_HANDLE)) {
                     containsDocuments = true;
+                } else {
+                    log.debug("Skipping child node '{}' that is not a folder or handle.", child.getPath());
+                    continue;
                 }
                 if (childHierarchy == null) {
                     if (includeChildren) {
