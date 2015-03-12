@@ -17,23 +17,23 @@
 <accordion close-others="oneAtATime">
     <accordion-group is-open="isopen">
         <accordion-heading ng-class="active">
-            {{label ? label : "Display changes made by this plugin"}}
+            Changes made by this plugin
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i>
         </accordion-heading>
-        <div class="alert-info" ng-repeat="message in packageMessages.items" ng-switch="message.group">
-            <div ng-switch-when="FILE_CREATE">{{message.value}}</div>
-        </div>
-        <div class="alert-success" ng-repeat="message in packageMessages.items" ng-switch="message.group">
-            <div ng-switch-when="DOCUMENT_REGISTER">{{message.value}}</div>
-        </div>
-        <div class="alert-warning" ng-repeat="message in packageMessages.items" ng-switch="message.group">
-            <div ng-switch-when="XML_NODE_CREATE">{{message.value}}</div>
-        </div>
-        <div class="alert-danger" ng-repeat="message in packageMessages.items" ng-switch="message.group">
-            <div ng-switch-when="XML_NODE_FOLDER_CREATE">{{message.value}}</div>
-        </div>
-        <div class="alert-success" ng-repeat="message in packageMessages.items" ng-switch="message.group">
-            <div ng-switch-when="EXECUTE">{{message.value}}</div>
-        </div>
+        <p ng-repeat="message in packageMessages.items | filter: { group: 'FILE_CREATE' }">
+            <span class="fa fa-fw fa-file"></span>{{message.value}}
+        </p>
+        <p ng-repeat="message in packageMessages.items | filter: { group: 'DOCUMENT_REGISTER' }">
+            <span class="fa fa-fw fa-file-text-o"></span>{{message.value}}
+        </p>
+        <p ng-repeat="message in packageMessages.items | filter: { group: 'XML_NODE_CREATE' }">
+            <span class="fa fa-fw fa-plus-square"></span>{{message.value}}
+        </p>
+        <p ng-repeat="message in packageMessages.items | filter: { group: 'XML_NODE_FOLDER_CREATE' }">
+            <span class="fa fa-fw fa-folder-open-o"></span>{{message.value}}
+        </p>
+        <p ng-repeat="message in packageMessages.items | filter: { group: 'EXECUTE' }">
+            <span class="fa fa-fw fa-plus-circle"></span>{{message.value}}
+        </p>
     </accordion-group>
 </accordion>

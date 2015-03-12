@@ -140,7 +140,6 @@
                 replace: false,
                 restrict: 'E',
                 scope: {
-                    label: '@',
                     pluginId: '=',
                     payload: '='
                 },
