@@ -39,6 +39,7 @@
                     selectItem: function(item) {
                         if((item.containsFolders || item.containsDocuments) && item.items.length < 1) {
                             PickerService.getData(item);
+                            $scope.$parent.selectedDocument = null;
                         }
                     },
                     toggleItem: function(item) {
