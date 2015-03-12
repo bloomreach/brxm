@@ -1,0 +1,15 @@
+span.mirrortemplate_button a {
+    background-color: #f2f2f2;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 3px;
+    float: left;
+    clear: right;
+    display: block;
+}
+
+span.mirrortemplate_link {
+    float: left;
+    margin-right: 5px;
+    cursor:pointer;
+}

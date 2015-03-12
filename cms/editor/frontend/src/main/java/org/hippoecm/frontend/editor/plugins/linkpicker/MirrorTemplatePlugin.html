@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -14,7 +14,31 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <div class="hippo-editor-field-value" wicket:id="docbase"></div>
-  </wicket:panel>
+<wicket:panel>
+    <wicket:container wicket:id="fragment"/>
+</wicket:panel>
+
+<wicket:fragment wicket:id="edit">
+    <div class="hippo-editor-field-value">
+        <span class="hippo-editor-field-value-container mirrortemplate_link" wicket:id="openLinkPickerLink"></span>
+        <span class="mirrortemplate_button" wicket:id="select"></span>
+        <span class="mirrortemplate_button">
+            <a wicket:id="open" href="#">
+                <label><wicket:message key="open">[Open]</wicket:message></label>
+            </a>
+        </span>
+        <span class="mirrortemplate_button">
+            <a wicket:id="clear" href="#">
+                <label><wicket:message key="clear">[Clear]</wicket:message></label>
+            </a>
+        </span>
+    </div>
+</wicket:fragment>
+<wicket:fragment wicket:id="viewCompare">
+    <div class="hippo-editor-field-value" wicket:id="openLink">
+        <span class="hippo-editor-field-value-container">
+            <label wicket:id="value">[localizedName]</label>
+        </span>
+    </div>
+</wicket:fragment>
 </html>
