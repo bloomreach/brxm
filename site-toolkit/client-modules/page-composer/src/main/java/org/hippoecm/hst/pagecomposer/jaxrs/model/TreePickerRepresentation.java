@@ -57,6 +57,8 @@ public class TreePickerRepresentation {
 
     private static final Logger log = LoggerFactory.getLogger(TreePickerRepresentation.class);
 
+    private static final TreePickerRepresentationComparator comparator = new TreePickerRepresentationComparator();
+
     private String id;
     private String nodeName;
     private String displayName;
@@ -71,7 +73,6 @@ public class TreePickerRepresentation {
     private List<TreePickerRepresentation> items = new ArrayList<>();
 
     public TreePickerRepresentation() {
-        super();
     }
 
     public TreePickerRepresentation(final PageComposerContextService pageComposerContextService) throws RepositoryException {
@@ -241,7 +242,7 @@ public class TreePickerRepresentation {
         final boolean jcrOrder = node.getPrimaryNodeType().hasOrderableChildNodes();
         if (!jcrOrder && isFolder()) {
             // order alphabetically, first folders then documents
-            Collections.sort(items, new HippoDocumentRepresentationComparator());
+            Collections.sort(items, comparator);
         }
 
         return this;
@@ -343,7 +344,7 @@ public class TreePickerRepresentation {
         this.items = items;
     }
 
-    static class HippoDocumentRepresentationComparator implements Comparator<TreePickerRepresentation> {
+    public static class TreePickerRepresentationComparator implements Comparator<TreePickerRepresentation> {
         @Override
         public int compare(final TreePickerRepresentation o1, final TreePickerRepresentation o2) {
             if (o1.isFolder()) {
@@ -364,7 +365,7 @@ public class TreePickerRepresentation {
     }
 
 
-    static class ExpandedNodeHierarchy {
+    public static class ExpandedNodeHierarchy {
 
         private Node node;
         private final Map<String, ExpandedNodeHierarchy> children = new HashMap<>();
