@@ -79,7 +79,8 @@
                 $scope.internalLink = {
                     openPicker: function() {
                         $state.go('picker', {
-                            menuItemId: $scope.selectedMenuItem.id
+                            menuItemId: $scope.selectedMenuItem.id,
+                            link: $scope.selectedMenuItem.link
                         });
                     },
                     showPage: function() {
