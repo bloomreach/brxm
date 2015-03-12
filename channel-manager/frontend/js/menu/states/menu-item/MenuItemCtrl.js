@@ -26,23 +26,23 @@
             '$state',
             'hippo.channel.menu.MenuService',
             function ($scope, $filter, $rootScope, $state, MenuService) {
-                $scope.list = [];
+                $scope.treeItems = [];
                 $scope.selectedMenuItem = {};
                 $scope.feedback = {};
 
                 // initial load of menu tree structure
                 MenuService.getMenu().then(function (menuData) {
-                    $scope.list = menuData.items;
-                    $scope.selectedMenuItem = $scope.list.length > 0 ? $scope.list[0] : undefined;
+                    $scope.treeItems = menuData.items;
+                    $scope.selectedMenuItem = $scope.treeItems.length > 0 ? $scope.treeItems[0] : undefined;
 
                     $scope.$watch(function() {
                         return menuData.items;
                     }, function() {
-                        $scope.list = menuData.items;
+                        $scope.treeItems = menuData.items;
                         $scope.$broadcast('menu-items-changed');
 
                         // merge pending changes into newly loaded tree
-                        if ($scope.list.length > 0 && $scope.selectedMenuItem) {
+                        if ($scope.treeItems.length > 0 && $scope.selectedMenuItem) {
                             MenuService.getMenuItem($scope.selectedMenuItem.id).then(function(item) {
                                 if ($scope.selectedMenuItem != item) {
                                     delete $scope.selectedMenuItem.items;

@@ -19,7 +19,7 @@
     <div id="menu-panel" class="col-sm-4" data-ng-controller="hippo.channel.menu.TreeCtrl">
       <div class="tree-col">
         <div class="hippo-tree-wrapper" data-keep-scroll-pos>
-          <div hippo-tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id" drag="true">
+          <div hippo-tree data-items="treeItems" data-callbacks="callbacks" class="hippo-tree" data-selected-item-id="selectedMenuItem.id" drag="true">
             <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propagation data-ng-hide="childNodes().length === 0">
               <hippo-icon name="{{collapsed ? 'caret-right-medium' : 'caret-down-medium'}}" size="tiny"></hippo-icon>
             </a>
