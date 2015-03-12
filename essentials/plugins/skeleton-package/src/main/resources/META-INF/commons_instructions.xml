@@ -34,8 +34,6 @@
   </instructionSet>
 
   <instructionSet group="jsp">
-    <!-- CREATE EMPTY FOLDER SO ECLIPSE DOESN'T COMPLAIN-->
-    <directory action="create" target="{{siteWebInfRoot}}/tags"/>
     <!-- include-->
     <file action="copy" source="instructions/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>
     <file action="copy" source="instructions/jsp/pagination.jsp" target="{{jspRoot}}/include/pagination.jsp"/>
