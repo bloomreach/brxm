@@ -115,7 +115,7 @@
                 var myPath = $location.path();
 
                 // Map plugin-specific pages to the corresponding plugin-type page
-                if (myPath.slice(0, "/plugins".length) == "/plugins") {
+                if (myPath.slice(0, "/features".length) == "/features") {
                     myPath = '/installed-features';
                 }
                 else if (myPath.slice(0, "/tools".length) == "/tools") {
