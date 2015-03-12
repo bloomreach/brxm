@@ -47,35 +47,14 @@
                     });
                 }
 
-                function createItemMap(items, map) {
-                    angular.forEach(items, function(item) {
-                        map[item.id] = item;
-                        createItemMap(item.items, map);
-                    });
-                    return map;
-                }
-
-                function copyCollapsedProperties(fromItems, toItems) {
-                    var fromItemMap = createItemMap(fromItems, {}),
-                        toItemMap = createItemMap(toItems, {});
-                    angular.forEach(fromItemMap, function(fromItem) {
-                        var toItem = toItemMap[fromItem.id];
-                        if (toItem) {
-                            toItem.collapsed = fromItem.collapsed;
-                        }
-                    });
-                }
-
                 function loadMenu() {
                     if (menuLoader === null) {
                         var loader = $q.defer();
                         $http.get(menuServiceUrl())
                             .success(function (response) {
                                 if (!angular.equals(menuData.items, response.data.items)) {
-                                    var oldMenuItems = menuData.items;
-                                    menuData = response.data;
+                                    menuData.items = response.data.items;
                                     addCollapsedProperties(menuData.items, true);
-                                    copyCollapsedProperties(oldMenuItems, menuData.items);
                                 }
                                 menuData.id = response.data.id;
                                 loader.resolve(menuData);
@@ -245,9 +224,7 @@
                     saveMenuItem : function (menuItem) {
                         var deferred = $q.defer();
                         var menuItemCopy = angular.copy(menuItem);
-                        if(menuItemCopy.isNew) {
-                            delete menuItemCopy.isNew;
-                        }
+                        delete menuItemCopy.isNew;
                         removeCollapsedProperties(menuItemCopy);
                         extractLinkFromSitemapLinkOrExternalLink(menuItemCopy);
                         post(menuServiceUrl(), menuItemCopy).then(function() {
