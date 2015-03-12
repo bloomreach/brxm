@@ -31,7 +31,7 @@
               </a>
               <span class="spacer" data-ng-hide="item.containsFolders"></span>
               <span class="angular-ui-tree-title-wrapper">
-                <hippo-icon name="{{collapsed ? 'folder' : 'folder-open'}}" size="tiny"></hippo-icon>
+                <hippo-icon name="{{collapsed || !item.containsFolders ? 'folder' : 'folder-open'}}" size="tiny"></hippo-icon>
                 <span class="angular-ui-tree-title">{{ item.displayName }}</span>
               </span>
             </div>
