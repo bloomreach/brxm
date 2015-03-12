@@ -48,15 +48,7 @@
                 var menuData = MenuService.getMenuData(),
                     siteContentIdentifier;
 
-                if(angular.isArray(menuData.items)) {
-                    siteContentIdentifier = menuData.siteContentIdentifier;
-                } else {
-                    MenuService.getMenu().then(
-                        function(menuData){
-                            siteContentIdentifier = menuData.siteContentIdentifier;
-                        }
-                    );
-                }
+
                 if($stateParams.link) {
                     var removeCollapseOfSelected = function() {
                         $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'selected', true, 'items');
@@ -64,8 +56,14 @@
                     PickerService.getInitialData(siteContentIdentifier, $stateParams.link).then(
                         removeCollapseOfSelected()
                     );
+                } else if(angular.isArray(menuData.items)) {
+                    PickerService.getInitialData(menuData.siteContentIdentifier);
                 } else {
-                    PickerService.getInitialData(siteContentIdentifier);
+                    MenuService.getMenu().then(
+                        function(menuData){
+                            PickerService.getInitialData(menuData.siteContentIdentifier);
+                        }
+                    );
                 }
 
             }
