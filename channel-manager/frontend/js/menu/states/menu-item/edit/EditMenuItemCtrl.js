@@ -102,8 +102,7 @@
                     }
                 };
 
-                $scope.fieldFeedbackMessage = {
-                };
+                $scope.fieldFeedbackMessage = {};
 
                 $scope.saveTitle = function (form) {
                     if($scope.selectedMenuItem.isNew) {
@@ -148,6 +147,14 @@
                 };
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
+
+                $scope.$watch(function() {
+                    return $stateParams.selectedDocumentPath;
+                }, function() {
+                    $scope.selectedMenuItem.link = $scope.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
+                    $scope.linkToFocus = 'sitemapLink';
+                    $scope.saveSelectedMenuItem('link');
+                });
 
                 function shouldSaveSelectedMenuItemProperty() {
                     $scope.dismissFeedback();
