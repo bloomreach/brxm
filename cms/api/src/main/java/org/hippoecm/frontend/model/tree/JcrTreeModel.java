@@ -82,29 +82,18 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
 
     private TreeModelEvent fromTranslationEvent(final TranslationEvent event) throws RepositoryException {
         final JcrNodeModel notifiedJcrModel = new JcrNodeModel(event.getJcrEvent().getEvent().getPath());
-        JcrNodeModel translationNodeModel = notifiedJcrModel;
+        JcrNodeModel translationNodeModel = notifiedJcrModel.getParentModel();
         Node translationNode = translationNodeModel.getNode();
-        if (translationNode == null) {
-            log.warn("Cannot find translation node from the TranslationEvent");
-            return null;
-        }
-
-        if (!translationNode.isNodeType(HippoNodeType.HIPPO_TRANSLATION)) {
-            translationNodeModel = translationNodeModel.getParentModel();
-            translationNode = translationNodeModel.getNode();
-        }
-
         if (translationNode != null && translationNode.isNodeType(HippoNodeType.HIPPO_TRANSLATION)) {
             TreePath parentPath = lookup(translationNodeModel.getParentModel());
             if (parentPath != null) {
                 TreeNode parentNode = (TreeNode) parentPath.getLastPathComponent();
                 if ((parentNode instanceof IJcrTreeNode)
-                        && ((IJcrTreeNode) parentNode).getNodeModel().equals(translationNodeModel.getParentModel())) {
+                    && ((IJcrTreeNode) parentNode).getNodeModel().equals(translationNodeModel.getParentModel())) {
                     return new TreeModelEvent(this, parentPath);
                 }
             }
         }
-        log.warn("Cannot find translation node from the TranslationEvent");
         return null;
     }
 
