@@ -141,19 +141,21 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
+                    pluginId: '=',
                     payload: '='
                 },
                 templateUrl: 'directives/essentials-messages.html',
-                controller: function ($scope, installerFactory) {
+                controller: function ($scope, $rootScope, installerFactory) {
                     // refresh messages when changes are made:
+                    var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
                     $scope.$watch('payload', function (newValue) {
                         if (newValue) {
-                            return installerFactory.packageMessages(newValue).success(function (data) {
+                            return installerFactory.packageMessages(url, newValue).success(function (data) {
                                 return $scope.packageMessages = data;
                             });
                         }
                     }, true);
-                    return installerFactory.packageMessages($scope.payload).success(function (data) {
+                    return installerFactory.packageMessages(url, $scope.payload).success(function (data) {
                         return $scope.packageMessages = data;
                     });
                 }

@@ -222,8 +222,8 @@
         //############################################
 
         .factory('installerFactory', function ($http, $rootScope) {
-            var packageMessages = function (payload) {
-                return $http.post($rootScope.REST.packageMessages, payload);
+            var packageMessages = function (url, payload) {
+                return $http.post(url, payload);
             };
             return {
                 packageMessages: packageMessages
