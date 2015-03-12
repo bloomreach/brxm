@@ -22,7 +22,8 @@
         .service('hippo.channel.menu.PickerService', [
             'hippo.channel.ConfigService',
             '$http',
-            function (ConfigService, $http) {
+            '$state',
+            function (ConfigService, $http, $state) {
                 var pickerData = {
                         items: []
                     }, callObj = {
@@ -35,6 +36,7 @@
                     }
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
+                        navigateToSelected(returnedData.data);
                         angular.copy([returnedData.data], pickerData.items);
                     });
                 }

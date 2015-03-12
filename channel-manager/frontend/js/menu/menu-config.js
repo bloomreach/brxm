@@ -62,7 +62,7 @@
                     })
 
                     .state('picker.docs', {
-                        url: '/:pickerItemId/picker/doc',
+                        url: '/:pickerTreeItemId/picker/doc',
                         controller: 'hippo.channel.menu.PickerDocCtrl',
                         templateUrl: 'states/picker/pickerDoc.html'
                     });

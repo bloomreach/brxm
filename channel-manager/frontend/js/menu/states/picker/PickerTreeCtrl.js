@@ -27,7 +27,7 @@
                 $scope.$watch('selectedItem', function(item) {
                     if(item) {
                         $state.go('picker.docs', {
-                            pickerItemId: item.id
+                            pickerTreeItemId: item.id
                         });
                     }
                 });
