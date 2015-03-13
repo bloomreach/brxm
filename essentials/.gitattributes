@@ -628,6 +628,7 @@ plugins/events/src/main/resources/META-INF/events_package_instructions.xml -text
 plugins/events/src/main/resources/META-INF/resources/feature/eventsPlugin/eventsPlugin.html -text
 plugins/events/src/main/resources/META-INF/web-fragment.xml -text
 plugins/events/src/main/resources/freemarker/eventslist-main-eventslist.ftl -text
+plugins/events/src/main/resources/freemarker/eventslist-main-eventslist/eventslist-main-eventslist-styled.ftl -text
 plugins/events/src/main/resources/freemarker/eventspage-main.ftl -text
 plugins/events/src/main/resources/icons/new-folder-16.png -text
 plugins/events/src/main/resources/images/events-list.png -text

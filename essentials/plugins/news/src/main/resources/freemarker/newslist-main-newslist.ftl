@@ -15,7 +15,7 @@
         <p>${item.introduction}</p>
     </article>
     </#list>
-    <#if cparam.showPagination??>
+    <#if cparam.showPagination>
     <#include "../include/pagination.ftl">
     </#if>
 <#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->

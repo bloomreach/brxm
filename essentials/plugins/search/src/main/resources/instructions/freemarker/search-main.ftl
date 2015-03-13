@@ -12,7 +12,7 @@
         <h3><a href="${link}">${item.title}</a></h3>
       </article>
     </#list>
-    <#if cparam.showPagination??>
+    <#if cparam.showPagination>
     <#include "../include/pagination.ftl">
 
     </#if>
