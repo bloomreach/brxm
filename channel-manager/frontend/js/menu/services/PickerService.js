@@ -32,7 +32,7 @@
                 function getInitialData(id, link) {
                     callObj.url = ConfigService.apiUrlPrefix + '/' + id;
                     if(link) {
-                        callObj.url += './' + link;
+                        callObj.url += './picker/' + link;
                     }
                     return $http(callObj).success(function (returnedData) {
                         addCollapsedProperties(returnedData.data, true);
