@@ -27,12 +27,11 @@
                 var pickerData = {
                         items: []
                     }, callObj = {
-                        method: 'GET',
-                        url: ConfigService.apiUrlPrefix + './picker/'
+                        method: 'GET'
                     };
 
                 function getInitialData(id, link) {
-                    callObj.url += id;
+                    callObj.url = ConfigService.apiUrlPrefix + '/' + id + './picker/';
                     if(link) {
                         callObj.url += link;
                     }
@@ -42,7 +41,7 @@
                 }
 
                 function getData(item) {
-                    callObj.url += item.id;
+                    callObj.url = ConfigService.apiUrlPrefix + '/' + item.id + './picker/';
                     return $http(callObj).success(function (returnedData) {
                         item.items = returnedData.data.items;
                     });
