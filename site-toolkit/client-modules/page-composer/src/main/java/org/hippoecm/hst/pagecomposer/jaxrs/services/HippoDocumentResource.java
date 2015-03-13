@@ -33,6 +33,20 @@ import org.hippoecm.repository.api.HippoNodeType;
 @Produces(MediaType.APPLICATION_JSON)
 public class HippoDocumentResource extends AbstractConfigResource {
 
+
+    @GET
+    @Path("/picker")
+    public Response getRoot() {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final TreePickerRepresentation representation;
+                representation = new TreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
+                return ok("Folder loaded successfully", representation);
+            }
+        });
+    }
+
     /**
      * @param siteMapPathInfo
      * @return the rest response to create the client tree for <code>siteMapPathInfo</code> : the response contains all
