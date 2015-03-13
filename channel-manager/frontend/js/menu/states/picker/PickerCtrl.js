@@ -52,7 +52,6 @@
                         navigateToSelected($scope.treeItems);
                         function navigateToSelected(items, parent) {
                             angular.forEach(items, function (item) {
-                                console.log('item', item, parent);
                                 if (item.selected) {
                                     $state.go('picker.docs', {
                                         pickerTreeItemId: parent.id
