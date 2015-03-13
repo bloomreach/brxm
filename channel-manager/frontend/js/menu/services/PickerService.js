@@ -27,38 +27,25 @@
                 var pickerData = {
                         items: []
                     }, callObj = {
-                        method: 'GET'
+                        method: 'GET',
+                        url: ConfigService.apiUrlPrefix + './picker/'
                     };
+
                 function getInitialData(id, link) {
-                    callObj.url = ConfigService.apiUrlPrefix + '/' + id;
+                    callObj.url += id;
                     if(link) {
-                        callObj.url += './picker/' + link;
+                        callObj.url += link;
                     }
                     return $http(callObj).success(function (returnedData) {
-                        addCollapsedProperties(returnedData.data, true);
                         angular.copy([returnedData.data], pickerData.items);
                     });
                 }
 
                 function getData(item) {
-                    callObj.url = ConfigService.apiUrlPrefix + '/' + item.id;
+                    callObj.url += item.id;
                     return $http(callObj).success(function (returnedData) {
-                        addCollapsedProperties(returnedData.data, true);
                         item.items = returnedData.data.items;
                     });
-                }
-
-                function addCollapsedProperties(items, collapsed) {
-                    if(Array.isArray(items)) {
-                        angular.forEach(items, function (item) {
-                            if(item.items && item.containsFolders) {
-                                item.collapsed = collapsed;
-                                addCollapsedProperties(item.items, collapsed);
-                            }
-                        });
-                    } else {
-                        addCollapsedProperties(items.items, collapsed);
-                    }
                 }
 
                 return {
