@@ -66,6 +66,7 @@ public class TreePickerRepresentation {
     private String pathInfo;
     private boolean selectable;
     private boolean selected;
+    private boolean collapsed = true;
     private boolean folder;
     private String state;
     private boolean containsFolders;
@@ -180,6 +181,11 @@ public class TreePickerRepresentation {
         if (nodePath.equals(selectedPath)) {
             selected = true;
         }
+
+        if (includeChildren && !selected) {
+            collapsed = false;
+        }
+
         if (node.isNodeType(NT_HANDLE)) {
             final Node document = JcrUtils.getNodeIfExists(node, node.getName());
             if (document != null &&
@@ -206,39 +212,45 @@ public class TreePickerRepresentation {
             }
         }
 
-        for (Node child : new NodeIterable(node.getNodes())) {
-            try {
-                ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
-                if (child.isNodeType(NT_DOCUMENT) && !child.getParent().isNodeType(NT_HANDLE)) {
-                    containsFolders = true;
-                } else if (child.isNodeType(NT_HANDLE)) {
-                    containsDocuments = true;
-                } else {
-                    log.debug("Skipping child node '{}' that is not a folder or handle.", child.getPath());
-                    continue;
-                }
-                if (childHierarchy == null) {
-                    if (includeChildren) {
-                        ExpandedNodeHierarchy childOnly = ExpandedNodeHierarchy.createSingleNodeHierarchy(child);
+        if (!node.isNodeType(NT_HANDLE)) {
+            for (Node child : new NodeIterable(node.getNodes())) {
+                try {
+                    ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
+                    if (child.isNodeType(NT_DOCUMENT)) {
+                        containsFolders = true;
+                    } else if (child.isNodeType(NT_HANDLE)) {
+                        containsDocuments = true;
+                    } else {
+                        log.debug("Skipping child node '{}' that is not a folder or handle.", child.getPath());
+                        continue;
+                    }
+                    if (selected) {
+                        log.debug("Item '{}' is selected so we do not load the children.", node.getPath());
+                        continue;
+                    }
+                    if (childHierarchy == null) {
+                        if (includeChildren) {
+                            ExpandedNodeHierarchy childOnly = ExpandedNodeHierarchy.createSingleNodeHierarchy(child);
+                            TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
+                                    .represent(pageComposerContextService, childOnly, false, selectedPath);
+                            items.add(childRepresentation);
+                        }
+                    } else {
+                        boolean includeChildrenForChild = !child.isNodeType(NT_HANDLE);
                         TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
-                                .represent(pageComposerContextService, childOnly, false, selectedPath);
+                                .represent(pageComposerContextService, childHierarchy, includeChildrenForChild, selectedPath);
                         items.add(childRepresentation);
                     }
-                } else {
-                    boolean includeChildrenForChild = !child.isNodeType(NT_HANDLE);
-                    TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
-                            .represent(pageComposerContextService, childHierarchy, includeChildrenForChild, selectedPath);
-                    items.add(childRepresentation);
-                }
 
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Exception while trying to add child '{}'.", child.getPath(), e);
-                } else {
-                    log.warn("Exception while trying to add child '{}' : {}", child.getPath(), e.toString());
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception while trying to add child '{}'.", child.getPath(), e);
+                    } else {
+                        log.warn("Exception while trying to add child '{}' : {}", child.getPath(), e.toString());
+                    }
                 }
+                // else ignore
             }
-            // else ignore
         }
 
         final boolean jcrOrder = node.getPrimaryNodeType().hasOrderableChildNodes();
@@ -302,6 +314,14 @@ public class TreePickerRepresentation {
         return selectable;
     }
 
+    public boolean isCollapsed() {
+        return collapsed;
+    }
+
+    public void setCollapsed(final boolean collapsed) {
+        this.collapsed = collapsed;
+    }
+
     public void setSelectable(final boolean selectable) {
         this.selectable = selectable;
     }
@@ -321,6 +341,7 @@ public class TreePickerRepresentation {
     public void setState(final String state) {
         this.state = state;
     }
+
 
     public boolean isContainsFolders() {
         return containsFolders;
@@ -365,7 +386,6 @@ public class TreePickerRepresentation {
             return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
         }
     }
-
 
     public static class ExpandedNodeHierarchy {
 

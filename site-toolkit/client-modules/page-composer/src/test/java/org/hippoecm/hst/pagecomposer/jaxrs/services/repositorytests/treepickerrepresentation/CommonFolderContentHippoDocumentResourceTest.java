@@ -36,6 +36,7 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoD
         TreePickerRepresentation representation = createRootContentRepresentation("", getCommonFolderRequestConfigIdentifier());
 
         assertEquals("common", representation.getDisplayName());
+        assertFalse(representation.isCollapsed());
         assertEquals(2, representation.getItems().size());
 
         final TreePickerRepresentation homePageRepresentation = representation.getItems().get(0);
@@ -44,6 +45,8 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoD
 
         final TreePickerRepresentation aboutFolderRepresentation = representation.getItems().get(1);
         assertTrue(aboutFolderRepresentation.isFolder());
+        // only common should be expanded
+        assertTrue(aboutFolderRepresentation.isCollapsed());
 
         assertEquals("Children of about folder should not have been loaded yet", 0, aboutFolderRepresentation.getItems().size());
     }

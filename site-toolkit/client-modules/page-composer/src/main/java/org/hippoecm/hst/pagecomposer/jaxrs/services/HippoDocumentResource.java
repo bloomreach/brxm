@@ -40,7 +40,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
      * plus its direct children.
      */
     @GET
-    @Path("{siteMapPathInfo: .*}")
+    @Path("/picker/{siteMapPathInfo: .*}")
     public Response get(final @PathParam("siteMapPathInfo") String siteMapPathInfo) {
         return tryGet(new Callable<Response>() {
             @Override

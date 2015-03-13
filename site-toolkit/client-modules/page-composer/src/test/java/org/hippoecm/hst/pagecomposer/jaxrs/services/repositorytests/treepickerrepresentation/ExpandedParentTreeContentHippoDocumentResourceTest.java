@@ -39,26 +39,30 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
 
     private void aboutUsRepresentationAssertions(final TreePickerRepresentation representation) {
         assertEquals("unittestproject",representation.getNodeName());
+        assertFalse(representation.isCollapsed());
         assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
 
         // news folder should not be expanded!
         assertEquals("Folder News' should not be loaded/expanded ", 0, representation.getItems().get(1).getItems().size());
-
+        assertTrue(representation.getItems().get(1).isCollapsed());
 
         // 'common' should be expanded
         final TreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
 
         assertEquals("Folder 'common' should loaded/expanded ", 2, commonFolderRepresentation.getItems().size());
+        assertFalse(commonFolderRepresentation.isCollapsed());
         assertFalse("Folder 'common' should not be able to be matched in sitemap ",commonFolderRepresentation.isSelectable());
 
         // ordered folder, home page first
         assertEquals("Home Page", commonFolderRepresentation.getItems().get(0).getDisplayName());
+        assertTrue("Documents should never be expanded", commonFolderRepresentation.getItems().get(0).isCollapsed());
         assertFalse("Document 'Home Page' is not the selected one according 'about-us' sitemapPathInfo",
                 commonFolderRepresentation.getItems().get(0).isSelected());
 
         final TreePickerRepresentation aboutFolderRepresentation = commonFolderRepresentation.getItems().get(1);
         assertEquals("aboutfolder", aboutFolderRepresentation.getDisplayName());
         assertFalse("Folder 'aboutfolder' should not be able to be matched in sitemap ", aboutFolderRepresentation.isSelectable());
+        assertFalse("'aboutfolder' should be expanded", aboutFolderRepresentation.isCollapsed());
 
         final TreePickerRepresentation aboutDocumentRepresentation = aboutFolderRepresentation.getItems().get(0);
 
@@ -66,6 +70,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         assertTrue(aboutDocumentRepresentation.isSelectable());
         assertTrue("Document 'About Us' is *selected* one according 'about-us' sitemapPathInfo",
                 aboutDocumentRepresentation.isSelected());
+        assertTrue("The selected item should not be expanded", aboutDocumentRepresentation.isCollapsed());
     }
 
     @Test
@@ -106,5 +111,34 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
                 createExpandedTreeRepresentation("", getCommonFolderRequestConfigIdentifier(), "about-us");
 
         aboutUsRepresentationAssertions(representation);
+    }
+
+    @Test
+    public void representation_for_siteMapPathInfo_to_selecetd_news_folder() throws Exception {
+
+        // news sitemap item as relative contentpath 'News' and that path should be expanded but 'News' folder
+        // representation is still collapsed
+
+        TreePickerRepresentation representation =
+                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "news");
+
+        System.out.println(representation);
+
+        assertEquals("unittestproject",representation.getNodeName());
+        assertFalse(representation.isCollapsed());
+        assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
+
+        // 'common' should not be expanded
+        final TreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
+        assertEquals("common", commonFolderRepresentation.getDisplayName());
+        assertTrue(commonFolderRepresentation.isCollapsed());
+
+        // news folder should be selected *but* not expanded!!
+        final TreePickerRepresentation newsRepresentation = representation.getItems().get(1);
+        assertEquals("News", newsRepresentation.getDisplayName());
+        assertTrue("News folder should be selected", newsRepresentation.isSelected());
+        assertTrue("News folder should be collapsed since selected", newsRepresentation.isCollapsed());
+        assertEquals("Folder News' should not be expanded ", 0, newsRepresentation.getItems().size());
+
     }
 }

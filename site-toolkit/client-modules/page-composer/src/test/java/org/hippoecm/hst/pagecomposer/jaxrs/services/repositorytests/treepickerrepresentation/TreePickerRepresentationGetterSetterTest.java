@@ -22,6 +22,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +35,7 @@ public class TreePickerRepresentationGetterSetterTest {
         assertNotNull(presentation.getItems());
         assertEquals(0, presentation.getItems().size());
         assertNull(presentation.getState());
+        assertTrue("Default collapsed",presentation.isCollapsed());
 
         presentation.setContainsDocuments(true);
         presentation.setContainsFolders(true);
@@ -46,9 +48,12 @@ public class TreePickerRepresentationGetterSetterTest {
         presentation.setNodeName("nodeName");
         presentation.setPathInfo("/foo/bar");
         presentation.setSelectable(true);
+        presentation.setCollapsed(false);
         presentation.setSelected(true);
         presentation.setFolder(true);
         presentation.setState("new");
+
+
         assertTrue(presentation.isContainsDocuments());
         assertTrue(presentation.isContainsFolders());
         assertEquals("DisplayName", presentation.getDisplayName());
@@ -58,6 +63,7 @@ public class TreePickerRepresentationGetterSetterTest {
         assertEquals("/foo/bar", presentation.getPathInfo());
         assertTrue(presentation.isSelectable());
         assertTrue(presentation.isSelected());
+        assertFalse(presentation.isCollapsed());
         assertTrue(presentation.isFolder());
         assertEquals("new", presentation.getState());
     }
