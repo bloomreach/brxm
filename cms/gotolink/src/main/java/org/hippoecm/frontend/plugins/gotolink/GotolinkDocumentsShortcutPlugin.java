@@ -35,9 +35,6 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private static final CssResourceReference GOTOLINK_CSS = new CssResourceReference(
-            GotolinkDocumentsShortcutPlugin.class, "gotolink.css");
-
     public GotolinkDocumentsShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -57,11 +54,5 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
             }
         };
         add(link);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(GOTOLINK_CSS));
     }
 }
