@@ -26,15 +26,15 @@ import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.junit.Assert.assertEquals;
 
-public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentResourceTest {
+public class RootContentHippoDocumentResourceTest extends AbstractTreePickerRepresentationTest {
 
     @Test
     public void root_content_representation_assertions() throws Exception {
         // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-        TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
+        TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
         rootContentRepresentationAssertions(representation);
 
-        assertEquals(getRootContentRequestConfigIdentifier(), representation.getId());
+        assertEquals(getRootContentConfigIdentifier(), representation.getId());
         assertEquals("unittestproject", representation.getDisplayName());
     }
 
@@ -82,7 +82,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
             session.save();
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
+            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
 
             assertEquals("common", representation.getItems().get(0).getDisplayName());
             assertEquals("News", representation.getItems().get(1).getDisplayName());
@@ -117,7 +117,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractHippoDocumentR
             session.save();
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentRequestConfigIdentifier());
+            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
 
             assertEquals("aaa", representation.getItems().get(0).getDisplayName());
             assertEquals("bbb", representation.getItems().get(1).getDisplayName());

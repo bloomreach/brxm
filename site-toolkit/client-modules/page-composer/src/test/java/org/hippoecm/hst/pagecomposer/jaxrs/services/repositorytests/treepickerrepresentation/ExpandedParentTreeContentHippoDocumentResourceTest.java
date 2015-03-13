@@ -21,7 +21,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class ExpandedParentTreeContentHippoDocumentResourceTest extends AbstractHippoDocumentResourceTest {
+public class ExpandedParentTreeContentHippoDocumentResourceTest extends AbstractTreePickerRepresentationTest {
 
     @Test
     public void representation_for_siteMapPathInfo_returns_tree_containing_ancestors_with_siblings_and_direct_children() throws Exception {
@@ -39,7 +38,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // about-us sitemap item as relative contentpath 'common/aboutfolder/about-us' and that path should be expanded
 
         TreePickerRepresentation representation =
-                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "about-us");
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "about-us");
 
         aboutUsRepresentationAssertions(representation);
 
@@ -92,7 +91,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // 'matching_to_default_siteMapItem' will match _default_ which does not have a relative content path and as a result,
         // should return 'root content representation' since a wildcard site map item cannot be picked in the sitemap representation either
         TreePickerRepresentation representation =
-                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "matching_to_default_siteMapItem");
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "matching_to_default_siteMapItem");
 
         rootContentRepresentationAssertions(representation);
     }
@@ -101,7 +100,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     public void representation_for_siteMapPathInfo_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
 
         TreePickerRepresentation representation =
-                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "contact");
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "contact");
 
         assertNotNull(representation);
         assertEquals(representation.getPickerType(), "pages");
@@ -112,7 +111,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     public void representation_for_siteMapPathInfo_that_cannot_be_matched_in_sitemap_results_in_root_content_presentation() throws Exception {
 
         TreePickerRepresentation representation =
-                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "path/that/cannot/be/matched");
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "path/that/cannot/be/matched");
 
         rootContentRepresentationAssertions(representation);
 
@@ -121,8 +120,8 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     @Test
     public void representation_for_siteMapPathInfo_for_non_root_content_request_config_identifier_throws_clientException() throws Exception {
 
-        mockNewRequest(session, "localhost", "about-us", getCommonFolderRequestConfigIdentifier());
-        final HippoDocumentResource resource = createResource();
+        mockNewRequest(session, "localhost", "about-us", getCommonFolderConfigIdentifier());
+        final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get("about-us");
 
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
@@ -133,8 +132,8 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     @Test
     public void representation_for_unmatchable_siteMapPathInfo_for_non_root_content_request_config_identifier_throws_clientException() throws Exception {
 
-        mockNewRequest(session, "localhost", "about-us", getCommonFolderRequestConfigIdentifier());
-        final HippoDocumentResource resource = createResource();
+        mockNewRequest(session, "localhost", "about-us", getCommonFolderConfigIdentifier());
+        final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get("path/that/cannot/be/matched");
 
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
@@ -149,7 +148,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // representation is still collapsed
 
         TreePickerRepresentation representation =
-                createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "news");
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "news");
 
         System.out.println(representation);
 

@@ -36,6 +36,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
@@ -117,6 +118,33 @@ public class SiteMapResource extends AbstractConfigResource {
                                 getHomePagePath());
 
                 return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
+            }
+        });
+    }
+
+    @GET
+    @Path("/picker")
+    public Response getSiteMapTreePicker() {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+                final HstSiteMap siteMap = site.getSiteMap();
+                TreePickerRepresentation representation = new TreePickerRepresentation().represent(siteMap);
+                return ok("Sitemap item loaded successfully", representation);
+            }
+        });
+    }
+
+    @GET
+    @Path("/picker/{siteMapItemUuid}")
+    public Response getSiteMapItemTreePicker(@PathParam("siteMapItemUuid") final String siteMapItemUuid) {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
+                TreePickerRepresentation representation = new TreePickerRepresentation().represent(siteMapItem);
+                return ok("Sitemap item loaded successfully", representation);
             }
         });
     }

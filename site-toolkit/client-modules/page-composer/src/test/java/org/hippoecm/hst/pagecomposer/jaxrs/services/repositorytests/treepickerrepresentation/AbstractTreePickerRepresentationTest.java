@@ -29,7 +29,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -39,23 +43,53 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest {
+public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTest {
 
     protected TreePickerRepresentation createRootContentRepresentation(final String pathInfo, final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
-        final HippoDocumentResource resource = createResource();
+        final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get("");
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (TreePickerRepresentation) representation.getData();
     }
 
-    protected TreePickerRepresentation createExpandedTreeRepresentation(final String pathInfo,
-                                                                        final String requestConfigContentIdentifier,
-                                                                        final String siteMapPathInfo) throws Exception {
+    protected TreePickerRepresentation createExpandedTreeContentRepresentation(final String pathInfo,
+                                                                               final String requestConfigContentIdentifier,
+                                                                               final String siteMapPathInfo) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
-        final HippoDocumentResource resource = createResource();
+        final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get(siteMapPathInfo);
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        return (TreePickerRepresentation) representation.getData();
+    }
+
+    protected TreePickerRepresentation createSiteMapRepresentation(final String pathInfo,
+                                                                   final String requestConfigContentIdentifier) throws Exception {
+        mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
+        final SiteMapResource siteMapResource = createSiteMapResource();
+        final Response response = siteMapResource.getSiteMapTreePicker();
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        return (TreePickerRepresentation) representation.getData();
+    }
+
+    protected TreePickerRepresentation createSiteMapItemRepresentation(final String pathInfo,
+                                                                       final String requestConfigContentIdentifier) throws Exception {
+        mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
+        final SiteMapResource siteMapResource = createSiteMapResource();
+        final Response response = siteMapResource.getSiteMapItemTreePicker(requestConfigContentIdentifier);
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        return (TreePickerRepresentation) representation.getData();
+    }
+
+    protected TreePickerRepresentation createExpandedTreeSiteMapItemRepresentation(final String pathInfo,
+                                                                       final String requestConfigContentIdentifier) throws Exception {
+        mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
+        final SiteMapResource siteMapResource = createSiteMapResource();
+        final Response response = siteMapResource.getSiteMapItemTreePicker(requestConfigContentIdentifier);
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (TreePickerRepresentation) representation.getData();
@@ -68,26 +102,50 @@ public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest 
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, requestConfigContentIdentifier);
     }
 
-    protected HippoDocumentResource createResource() {
+    protected HippoDocumentResource createHippoDocumentResource() {
         MountResource mountResource = AbstractMountResourceTest.createResource();
         final HippoDocumentResource hippoDocumentResource = new HippoDocumentResource();
         hippoDocumentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
         return hippoDocumentResource;
     }
 
-    protected String getRootContentRequestConfigIdentifier() throws RepositoryException {
+    protected SiteMapResource createSiteMapResource() {
+
+        MountResource mountResource = AbstractMountResourceTest.createResource();
+        final PagesHelper pagesHelper = new PagesHelper();
+        pagesHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        final SiteMapHelper siteMapHelper = new SiteMapHelper();
+        siteMapHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMapHelper.setPagesHelper(pagesHelper);
+
+        final SiteMapResource siteMapResource = new SiteMapResource();
+        siteMapResource.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMapResource.setSiteMapHelper(siteMapHelper);
+        siteMapResource.setValidatorFactory(new ValidatorFactory());
+        return siteMapResource;
+    }
+
+    protected String getRootContentConfigIdentifier() throws RepositoryException {
         return session.getNode("/unittestcontent/documents/unittestproject").getIdentifier();
     }
 
-    protected String getCommonFolderRequestConfigIdentifier() throws RepositoryException {
+    protected String getCommonFolderConfigIdentifier() throws RepositoryException {
         return session.getNode("/unittestcontent/documents/unittestproject/common").getIdentifier();
     }
 
+    protected String getSiteMapIdentifier() throws RepositoryException {
+        return session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").getIdentifier();
+    }
+
+
+    protected String getSiteMapItemIdentifier(final String pathInfo) throws RepositoryException {
+        return session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/" + pathInfo).getIdentifier();
+    }
 
     protected void rootContentRepresentationAssertions(final TreePickerRepresentation representation) {
 
         assertEquals(representation.getPickerType(), "documents");
-        assertEquals("unittestproject",representation.getNodeName());
+        assertEquals("unittestproject", representation.getNodeName());
         assertFalse("The root content folder is not selectable", representation.isSelectable());
         assertNull(representation.getPathInfo());
         assertFalse("The root content folder is never selected", representation.isSelected());
