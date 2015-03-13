@@ -39,6 +39,8 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
 
     private void aboutUsRepresentationAssertions(final TreePickerRepresentation representation) {
         assertEquals("unittestproject",representation.getNodeName());
+
+        assertEquals(representation.getPickerType(), "documents");
         assertFalse(representation.isCollapsed());
         assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
 
@@ -49,6 +51,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // 'common' should be expanded
         final TreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
 
+        assertEquals(commonFolderRepresentation.getPickerType(), "documents");
         assertEquals("Folder 'common' should loaded/expanded ", 2, commonFolderRepresentation.getItems().size());
         assertFalse(commonFolderRepresentation.isCollapsed());
         assertFalse("Folder 'common' should not be able to be matched in sitemap ",commonFolderRepresentation.isSelectable());
@@ -66,8 +69,10 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
 
         final TreePickerRepresentation aboutDocumentRepresentation = aboutFolderRepresentation.getItems().get(0);
 
+        assertEquals(aboutDocumentRepresentation.getPickerType(), "documents");
         assertEquals("About Us", aboutDocumentRepresentation.getDisplayName());
         assertTrue(aboutDocumentRepresentation.isSelectable());
+
         assertTrue("Document 'About Us' is *selected* one according 'about-us' sitemapPathInfo",
                 aboutDocumentRepresentation.isSelected());
         assertTrue("The selected item should not be expanded", aboutDocumentRepresentation.isCollapsed());
@@ -91,6 +96,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
                 createExpandedTreeRepresentation("", getRootContentRequestConfigIdentifier(), "contact");
 
         assertNotNull(representation);
+        assertEquals(representation.getPickerType(), "pages");
         // TODO HSTTWO-3225
     }
 

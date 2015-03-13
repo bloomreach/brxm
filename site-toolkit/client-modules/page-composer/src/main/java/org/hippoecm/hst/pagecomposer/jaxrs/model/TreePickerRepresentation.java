@@ -59,6 +59,29 @@ public class TreePickerRepresentation {
 
     private static final TreePickerRepresentationComparator comparator = new TreePickerRepresentationComparator();
 
+    public enum PickerType {
+        DOCUMENTS("documents"),
+        PAGES("pages");
+
+        private final String name;
+        PickerType(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static PickerType fromName(String name) {
+            if ("pages".equals(name)) {
+                return PickerType.PAGES;
+            } else {
+                return PickerType.DOCUMENTS;
+            }
+        }
+    }
+
+    private PickerType pickerType = PickerType.DOCUMENTS;
     private String id;
     private String nodeName;
     private String displayName;
@@ -74,6 +97,10 @@ public class TreePickerRepresentation {
     private List<TreePickerRepresentation> items = new ArrayList<>();
 
     public TreePickerRepresentation() {
+    }
+
+    private TreePickerRepresentation(final PickerType pickerType) {
+        this.pickerType = pickerType;
     }
 
     public TreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService)  throws RepositoryException {
@@ -148,19 +175,19 @@ public class TreePickerRepresentation {
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
                                                                 final HstSiteMapItem hstSiteMapItem) {
         // TODO HSTTWO-3225
-        return new TreePickerRepresentation();
+        return new TreePickerRepresentation(PickerType.PAGES);
     }
 
     public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
                                               final HstSiteMap hstSiteMap) {
         // TODO HSTTWO-3225
-        return new TreePickerRepresentation();
+        return new TreePickerRepresentation(PickerType.PAGES);
     }
 
     public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
                                               final HstSiteMapItem hstSiteMapItem) {
         // TODO HSTTWO-3225
-        return new TreePickerRepresentation();
+        return new TreePickerRepresentation(PickerType.PAGES);
     }
 
     private TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
@@ -260,6 +287,14 @@ public class TreePickerRepresentation {
         }
 
         return this;
+    }
+
+    public String getPickerType() {
+        return pickerType.getName();
+    }
+
+    public void setPickerType(final String pickerTypeName) {
+        this.pickerType = PickerType.fromName(pickerTypeName);
     }
 
     public String getId() {

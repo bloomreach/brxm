@@ -36,6 +36,7 @@ public class TreePickerRepresentationGetterSetterTest {
         assertEquals(0, presentation.getItems().size());
         assertNull(presentation.getState());
         assertTrue("Default collapsed",presentation.isCollapsed());
+        assertEquals(TreePickerRepresentation.PickerType.DOCUMENTS.getName(), presentation.getPickerType());
 
         presentation.setContainsDocuments(true);
         presentation.setContainsFolders(true);
@@ -66,5 +67,15 @@ public class TreePickerRepresentationGetterSetterTest {
         assertFalse(presentation.isCollapsed());
         assertTrue(presentation.isFolder());
         assertEquals("new", presentation.getState());
+
+        presentation.setPickerType("non-existing");
+        assertEquals(TreePickerRepresentation.PickerType.DOCUMENTS.getName(), presentation.getPickerType());
+
+        presentation.setPickerType("pages");
+        assertEquals(TreePickerRepresentation.PickerType.PAGES.getName(), presentation.getPickerType());
+
+        presentation.setPickerType("documents");
+        assertEquals(TreePickerRepresentation.PickerType.DOCUMENTS.getName(), presentation.getPickerType());
+
     }
 }

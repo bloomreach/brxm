@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoDocumentResourceTest {
@@ -35,6 +36,7 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoD
         // homepage has pathInfo = ""
         TreePickerRepresentation representation = createRootContentRepresentation("", getCommonFolderRequestConfigIdentifier());
 
+        assertEquals(representation.getPickerType(), "documents");
         assertEquals("common", representation.getDisplayName());
         assertFalse(representation.isCollapsed());
         assertEquals(2, representation.getItems().size());
@@ -42,8 +44,11 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoD
         final TreePickerRepresentation homePageRepresentation = representation.getItems().get(0);
         assertFalse(homePageRepresentation.isFolder());
         assertEquals("live", homePageRepresentation.getState());
+        assertEquals(homePageRepresentation.getPickerType(), "documents");
 
         final TreePickerRepresentation aboutFolderRepresentation = representation.getItems().get(1);
+
+        assertEquals(aboutFolderRepresentation.getPickerType(), "documents");
         assertTrue(aboutFolderRepresentation.isFolder());
         // only common should be expanded
         assertTrue(aboutFolderRepresentation.isCollapsed());
