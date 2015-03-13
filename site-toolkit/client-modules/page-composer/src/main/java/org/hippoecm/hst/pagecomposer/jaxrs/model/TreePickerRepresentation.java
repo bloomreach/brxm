@@ -42,6 +42,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
@@ -64,6 +66,7 @@ public class TreePickerRepresentation {
         PAGES("pages");
 
         private final String name;
+
         PickerType(final String name) {
             this.name = name;
         }
@@ -103,7 +106,7 @@ public class TreePickerRepresentation {
         this.pickerType = pickerType;
     }
 
-    public TreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService)  throws RepositoryException {
+    public TreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService) throws RepositoryException {
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
         return represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
@@ -117,6 +120,15 @@ public class TreePickerRepresentation {
                 String renderingHost = (String) session.getAttribute(ContainerConstants.RENDERING_HOST);
                 final VirtualHost virtualHost = pageComposerContextService.getRequestContext().getResolvedMount().getMount().getVirtualHost();
                 final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, siteMapPathInfo);
+
+
+                final Session jcrSession = pageComposerContextService.getRequestContext().getSession();
+                if (!jcrSession.getNode(resolvedMount.getMount().getContentPath()).getIdentifier()
+                        .equals(pageComposerContextService.getRequestConfigIdentifier())) {
+                    final String msg = String.format("Representing an expanded parent tree through './%s' is only supported with request " +
+                            "identifier equal to the channel root content identifier", siteMapPathInfo);
+                    throw new ClientException(msg, ClientError.INVALID_UUID);
+                }
 
                 final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(siteMapPathInfo);
 
@@ -143,12 +155,13 @@ public class TreePickerRepresentation {
                 }
 
                 final String contentRootPath = pageComposerContextService.getEditingMount().getContentPath();
-                final Session jcrSession = pageComposerContextService.getRequestContext().getSession();
                 final String selectedPath = contentRootPath + "/" + resolvedSiteMapItem.getRelativeContentPath();
                 final ExpandedNodeHierarchy expandedNodeHierarchy = ExpandedNodeHierarchy.createExpandedNodeHierarchy(jcrSession,
                         contentRootPath, Collections.singletonList(selectedPath));
                 return represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
             }
+        } catch (ClientException e) {
+            throw e;
         } catch (PathNotFoundException | MatchException | IllegalStateException e) {
             if (log.isDebugEnabled()) {
                 String msg = String.format("Exception trying to return document representation for siteMapPathInfo '%s'. Return root " +

@@ -15,12 +15,20 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerrepresentation;
 
+import javax.ws.rs.core.Response;
+
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ExpandedParentTreeContentHippoDocumentResourceTest extends AbstractHippoDocumentResourceTest {
@@ -111,12 +119,27 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     }
 
     @Test
-    public void representation_for_siteMapPathInfo_for_non_root_content_request_config_identifier_uses_root_content_config_identifier() throws Exception {
+    public void representation_for_siteMapPathInfo_for_non_root_content_request_config_identifier_throws_clientException() throws Exception {
 
-        TreePickerRepresentation representation =
-                createExpandedTreeRepresentation("", getCommonFolderRequestConfigIdentifier(), "about-us");
+        mockNewRequest(session, "localhost", "about-us", getCommonFolderRequestConfigIdentifier());
+        final HippoDocumentResource resource = createResource();
+        final Response response = resource.get("about-us");
 
-        aboutUsRepresentationAssertions(representation);
+        assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertEquals(ClientError.INVALID_UUID.toString(), representation.getErrorCode());
+    }
+
+    @Test
+    public void representation_for_unmatchable_siteMapPathInfo_for_non_root_content_request_config_identifier_throws_clientException() throws Exception {
+
+        mockNewRequest(session, "localhost", "about-us", getCommonFolderRequestConfigIdentifier());
+        final HippoDocumentResource resource = createResource();
+        final Response response = resource.get("path/that/cannot/be/matched");
+
+        assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertEquals(ClientError.INVALID_UUID.toString(), representation.getErrorCode());
     }
 
     @Test
