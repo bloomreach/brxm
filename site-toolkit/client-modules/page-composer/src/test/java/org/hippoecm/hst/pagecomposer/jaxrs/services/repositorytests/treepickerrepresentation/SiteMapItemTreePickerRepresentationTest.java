@@ -21,16 +21,22 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepresentationTest {
+public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerRepresentationTest {
 
     @Test
-    public void siteMap_treePicker_representation() throws Exception {
+    public void siteMapItem_treePicker_representation() throws Exception {
 
-        TreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
+        TreePickerRepresentation representation = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("about-us"));
 
         assertEquals("pages", representation.getPickerType());
         assertEquals("page", representation.getType());
-
     }
 
+
+
+    @Test
+    public void invisible_siteMapItem_treePicker_representation_results_siteMapItem_nonetheless() throws Exception {
+
+
+    }
 }

@@ -136,19 +136,6 @@ public class SiteMapResource extends AbstractConfigResource {
         });
     }
 
-    @GET
-    @Path("/picker/{siteMapItemUuid}")
-    public Response getSiteMapItemTreePicker(@PathParam("siteMapItemUuid") final String siteMapItemUuid) {
-        return tryGet(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
-                TreePickerRepresentation representation = new TreePickerRepresentation().represent(siteMapItem);
-                return ok("Sitemap item loaded successfully", representation);
-            }
-        });
-    }
-
     @POST
     @Path("/update")
     public Response update(final SiteMapItemRepresentation siteMapItem) {

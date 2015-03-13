@@ -29,6 +29,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapItemResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -78,8 +79,8 @@ public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTe
     protected TreePickerRepresentation createSiteMapItemRepresentation(final String pathInfo,
                                                                        final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
-        final SiteMapResource siteMapResource = createSiteMapResource();
-        final Response response = siteMapResource.getSiteMapItemTreePicker(requestConfigContentIdentifier);
+        final SiteMapItemResource siteMapItemResource = createSiteMapItemResource();
+        final Response response = siteMapItemResource.getSiteMapItemTreePicker();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (TreePickerRepresentation) representation.getData();
@@ -88,8 +89,8 @@ public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTe
     protected TreePickerRepresentation createExpandedTreeSiteMapItemRepresentation(final String pathInfo,
                                                                        final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
-        final SiteMapResource siteMapResource = createSiteMapResource();
-        final Response response = siteMapResource.getSiteMapItemTreePicker(requestConfigContentIdentifier);
+        final SiteMapItemResource siteMapItemResource = createSiteMapItemResource();
+        final Response response = siteMapItemResource.getSiteMapItemTreePicker();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (TreePickerRepresentation) representation.getData();
@@ -123,6 +124,21 @@ public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTe
         siteMapResource.setSiteMapHelper(siteMapHelper);
         siteMapResource.setValidatorFactory(new ValidatorFactory());
         return siteMapResource;
+    }
+
+    protected SiteMapItemResource createSiteMapItemResource() {
+
+        MountResource mountResource = AbstractMountResourceTest.createResource();
+        final PagesHelper pagesHelper = new PagesHelper();
+        pagesHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        final SiteMapHelper siteMapHelper = new SiteMapHelper();
+        siteMapHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMapHelper.setPagesHelper(pagesHelper);
+
+        final SiteMapItemResource siteMapItemResource = new SiteMapItemResource();
+        siteMapItemResource.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMapItemResource.setSiteMapHelper(siteMapHelper);
+        return siteMapItemResource;
     }
 
     protected String getRootContentConfigIdentifier() throws RepositoryException {
