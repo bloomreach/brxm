@@ -14,7 +14,7 @@
       </article>
     </#if>
   </#list>
-  <#if pageable.showPagination>
+  <#if cparam.showPagination>
     <#include "../include/pagination.ftl">
   </#if>
 <#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->

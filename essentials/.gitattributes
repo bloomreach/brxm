@@ -723,6 +723,8 @@ plugins/menu/src/main/resources/META-INF/menu_instructions.xml -text
 plugins/menu/src/main/resources/META-INF/resources/feature/menuPlugin/menuPlugin.html -text
 plugins/menu/src/main/resources/META-INF/web-fragment.xml -text
 plugins/menu/src/main/resources/freemarker/essentials-menu.ftl -text
+plugins/menu/src/main/resources/freemarker/essentials-menu/essentials-menu-navbar.ftl -text
+plugins/menu/src/main/resources/freemarker/essentials-menu/essentials-menu-vertical.ftl -text
 plugins/menu/src/main/resources/hst/catalog/menu-catalog-item.xml -text
 plugins/menu/src/main/resources/hst/menu-template-freemarker.xml -text
 plugins/menu/src/main/resources/hst/menu-template-jsp.xml -text
@@ -735,7 +737,9 @@ plugins/news/src/main/resources/META-INF/news_package_instructions.xml -text
 plugins/news/src/main/resources/META-INF/resources/feature/newsPlugin/newsPlugin.html -text
 plugins/news/src/main/resources/META-INF/web-fragment.xml -text
 plugins/news/src/main/resources/freemarker/newslist-main-newslist.ftl -text
+plugins/news/src/main/resources/freemarker/newslist-main-newslist/newslist-main-newslist-styled.ftl -text
 plugins/news/src/main/resources/freemarker/newspage-main.ftl -text
+plugins/news/src/main/resources/freemarker/newspage-main/newspage-main-styled.ftl -text
 plugins/news/src/main/resources/icons/new-folder-16.png -text
 plugins/news/src/main/resources/images/news-list.png -text
 plugins/news/src/main/resources/java/NewsDocument.txt -text

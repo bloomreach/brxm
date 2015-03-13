@@ -13,7 +13,7 @@
         <p>${item.introduction}</p>
     </article>
     </#list>
-    <#if pageable.showPagination??>
+    <#if cparam.showPagination??>
 
     <#include "../../include/pagination.ftl">
 

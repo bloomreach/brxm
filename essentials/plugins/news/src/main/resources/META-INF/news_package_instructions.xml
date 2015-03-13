@@ -29,7 +29,10 @@
     <xml action="copy" source="xml/hst/templates/news-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/newslist-main-newslist-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
-
+  <instructionSet group="extraTemplates">
+  <freemarker action="copy" source="freemarker/newslist-main-newslist/newslist-main-newslist-styled.ftl" target="{{freemarkerRoot}}/hstdefault//newslist-main-newslist/newslist-main-newslist-styled.ftl"/>
+  <freemarker action="copy" source="freemarker/newspage-main/newspage-main-styled.ftl" target="{{freemarkerRoot}}/{{namespace}}/newspage-main/newspage-main-styled.ftl"/>
+  </instructionSet>
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/newslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
     <freemarker action="copy" source="freemarker/newspage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/newspage-main.ftl"/>

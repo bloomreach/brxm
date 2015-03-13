@@ -13,7 +13,7 @@
     </article>
   </c:if>
 </c:forEach>
-<c:if test="${pageable.showPagination}">
+<c:if test="${cparam.showPagination}">
   <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
 </c:if>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>

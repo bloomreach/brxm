@@ -17,7 +17,7 @@
             <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
           </article>
         </c:forEach>
-        <c:if test="${pageable.showPagination}">
+        <c:if test="${cparam.showPagination}">
           <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
         </c:if>
       </c:otherwise>

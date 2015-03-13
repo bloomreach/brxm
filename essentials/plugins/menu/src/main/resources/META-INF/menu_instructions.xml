@@ -23,6 +23,10 @@
     <xml action="copy" source="hst/menu-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy" source="freemarker/essentials-menu/essentials-menu-navbar.ftl"   target="{{freemarkerRoot}}/hstdefault/essentials-menu/essentials-menu-navbar.ftl"/>
+    <freemarker action="copy" source="freemarker/essentials-menu/essentials-menu-vertical.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu/essentials-menu-vertical.ftl"/>
+  </instructionSet>
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/essentials-menu.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu.ftl"/>
     <xml action="copy" source="hst/menu-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>

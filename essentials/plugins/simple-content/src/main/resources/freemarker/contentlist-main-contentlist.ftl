@@ -21,6 +21,6 @@
     </article>
     </#list>
 </#if>
-<#if pageable.showPagination>
+<#if cparam.showPagination>
     <#include "../include/pagination.ftl">
 </#if>

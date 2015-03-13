@@ -172,9 +172,12 @@ public final class EssentialConst {
     public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
     public static final String PROP_TEMPLATE_NAME = "templateName";
     public static final String PROP_SAMPLE_DATA = "sampleData";
+    public static final String PROP_EXTRA_TEMPLATES = "extraTemplates";
     public static final String METHOD_RELATED_DOCUMENTS = "getRelatedDocuments";
     public static final String RELATED_DOCUMENTS_BEAN = "RelatedDocumentsBean";
     public static final String RELATEDDOCS_DOCS = "relateddocs:docs";
+    public static final String TEMPLATE_FREEMARKER = "freemarker";
+    public static final String TEMPLATE_JSP = "jsp";
 
 
     private EssentialConst() {
