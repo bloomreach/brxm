@@ -23,6 +23,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.junit.Test;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.TreePickerRepresentationComparator;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.Type.DOCUMENT;
 import static org.junit.Assert.assertTrue;
 
 public class TreePickerRepresentationComparatorTest {
@@ -72,7 +73,9 @@ public class TreePickerRepresentationComparatorTest {
     private TreePickerRepresentation createTreePickerRepresentation(final String displayName, final boolean folder) {
         TreePickerRepresentation presentation = new TreePickerRepresentation();
         presentation.setDisplayName(displayName);
-        presentation.setFolder(folder);
+        if (!folder) {
+            presentation.setType(DOCUMENT.getName());
+        }
         return presentation;
     }
 

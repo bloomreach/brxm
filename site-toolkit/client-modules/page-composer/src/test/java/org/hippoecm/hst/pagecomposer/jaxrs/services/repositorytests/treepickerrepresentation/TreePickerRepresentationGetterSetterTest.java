@@ -21,10 +21,15 @@ import java.util.List;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.junit.Test;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.PickerType.DOCUMENTS;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.PickerType.PAGES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.Type.DOCUMENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.Type.FOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class TreePickerRepresentationGetterSetterTest {
@@ -35,8 +40,9 @@ public class TreePickerRepresentationGetterSetterTest {
         assertNotNull(presentation.getItems());
         assertEquals(0, presentation.getItems().size());
         assertNull(presentation.getState());
-        assertTrue("Default collapsed",presentation.isCollapsed());
-        assertEquals(TreePickerRepresentation.PickerType.DOCUMENTS.getName(), presentation.getPickerType());
+        assertTrue("Default collapsed", presentation.isCollapsed());
+        assertEquals(DOCUMENTS.getName(), presentation.getPickerType());
+        assertEquals(FOLDER.getName(), presentation.getType());
 
         presentation.setContainsDocuments(true);
         presentation.setContainsFolders(true);
@@ -51,7 +57,6 @@ public class TreePickerRepresentationGetterSetterTest {
         presentation.setSelectable(true);
         presentation.setCollapsed(false);
         presentation.setSelected(true);
-        presentation.setFolder(true);
         presentation.setState("new");
 
 
@@ -65,17 +70,23 @@ public class TreePickerRepresentationGetterSetterTest {
         assertTrue(presentation.isSelectable());
         assertTrue(presentation.isSelected());
         assertFalse(presentation.isCollapsed());
-        assertTrue(presentation.isFolder());
         assertEquals("new", presentation.getState());
 
+        presentation.setType(DOCUMENT.getName());
+        assertEquals(DOCUMENT.getName(), presentation.getType());
+
+        presentation.setType("non-existing");
+        assertEquals(FOLDER.getName(), presentation.getType());
+
+
         presentation.setPickerType("non-existing");
-        assertEquals(TreePickerRepresentation.PickerType.DOCUMENTS.getName(), presentation.getPickerType());
+        assertEquals(DOCUMENTS.getName(), presentation.getPickerType());
 
         presentation.setPickerType("pages");
-        assertEquals(TreePickerRepresentation.PickerType.PAGES.getName(), presentation.getPickerType());
+        assertEquals(PAGES.getName(), presentation.getPickerType());
 
         presentation.setPickerType("documents");
-        assertEquals(TreePickerRepresentation.PickerType.DOCUMENTS.getName(), presentation.getPickerType());
+        assertEquals(DOCUMENTS.getName(), presentation.getPickerType());
 
     }
 }

@@ -42,14 +42,16 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractHippoD
         assertEquals(2, representation.getItems().size());
 
         final TreePickerRepresentation homePageRepresentation = representation.getItems().get(0);
-        assertFalse(homePageRepresentation.isFolder());
+
+        assertEquals("document",homePageRepresentation.getType());
+
         assertEquals("live", homePageRepresentation.getState());
         assertEquals(homePageRepresentation.getPickerType(), "documents");
 
         final TreePickerRepresentation aboutFolderRepresentation = representation.getItems().get(1);
 
         assertEquals(aboutFolderRepresentation.getPickerType(), "documents");
-        assertTrue(aboutFolderRepresentation.isFolder());
+        assertEquals("folder",aboutFolderRepresentation.getType());
         // only common should be expanded
         assertTrue(aboutFolderRepresentation.isCollapsed());
 

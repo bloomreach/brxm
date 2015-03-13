@@ -84,6 +84,31 @@ public class TreePickerRepresentation {
         }
     }
 
+    public enum Type {
+        FOLDER("folder"),
+        DOCUMENT("document"),
+        PAGE("page");
+        private final String name;
+
+        Type(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Type fromName(String name) {
+            if ("page".equals(name)) {
+                return Type.PAGE;
+            } else if ("document".equals(name)) {
+                return Type.DOCUMENT;
+            } else {
+                return Type.FOLDER;
+            }
+        }
+    }
+
     private PickerType pickerType = PickerType.DOCUMENTS;
     private String id;
     private String nodeName;
@@ -93,7 +118,7 @@ public class TreePickerRepresentation {
     private boolean selectable;
     private boolean selected;
     private boolean collapsed = true;
-    private boolean folder;
+    private Type type = Type.FOLDER;
     private String state;
     private boolean containsFolders;
     private boolean containsDocuments;
@@ -102,13 +127,9 @@ public class TreePickerRepresentation {
     public TreePickerRepresentation() {
     }
 
-    private TreePickerRepresentation(final PickerType pickerType) {
-        this.pickerType = pickerType;
-    }
-
     public TreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService) throws RepositoryException {
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
-        return represent(pageComposerContextService, singleNodeHierarchy, true, null);
+        return represent(pageComposerContextService, singleNodeHierarchy, true, null, PickerType.DOCUMENTS);
     }
 
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
@@ -158,7 +179,7 @@ public class TreePickerRepresentation {
                 final String selectedPath = contentRootPath + "/" + resolvedSiteMapItem.getRelativeContentPath();
                 final ExpandedNodeHierarchy expandedNodeHierarchy = ExpandedNodeHierarchy.createExpandedNodeHierarchy(jcrSession,
                         contentRootPath, Collections.singletonList(selectedPath));
-                return represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
+                return represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath, PickerType.DOCUMENTS);
             }
         } catch (ClientException e) {
             throw e;
@@ -182,37 +203,50 @@ public class TreePickerRepresentation {
             }
         }
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
-        return represent(pageComposerContextService, singleNodeHierarchy, true, null);
+        return represent(pageComposerContextService, singleNodeHierarchy, true, null, PickerType.DOCUMENTS);
     }
 
     public TreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
                                                                 final HstSiteMapItem hstSiteMapItem) {
         // TODO HSTTWO-3225
-        return new TreePickerRepresentation(PickerType.PAGES);
+        TreePickerRepresentation picker = new TreePickerRepresentation();
+        // TODO
+        picker.pickerType = PickerType.PAGES;
+        return picker;
     }
 
     public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
                                               final HstSiteMap hstSiteMap) {
         // TODO HSTTWO-3225
-        return new TreePickerRepresentation(PickerType.PAGES);
+
+        TreePickerRepresentation picker = new TreePickerRepresentation();
+        // TODO
+        picker.pickerType = PickerType.PAGES;
+        return picker;
     }
 
     public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
                                               final HstSiteMapItem hstSiteMapItem) {
         // TODO HSTTWO-3225
-        return new TreePickerRepresentation(PickerType.PAGES);
+
+        TreePickerRepresentation picker = new TreePickerRepresentation();
+        // TODO
+        picker.pickerType = PickerType.PAGES;
+        return picker;
     }
 
     private TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
                                                final ExpandedNodeHierarchy expandedNodeHierarchy,
-                                               final boolean includeChildren, final String selectedPath) throws RepositoryException {
+                                               final boolean includeChildren,
+                                               final String selectedPath,
+                                               final PickerType pickerType) throws RepositoryException {
 
         final Node node = expandedNodeHierarchy.getNode();
         if (node.isNodeType(NT_DOCUMENT) && node.getParent().isNodeType(NT_HANDLE)) {
             throw new IllegalArgumentException(String.format("Node '%s' is document node. Representation only gets done until the '%s' node",
                     node.getPath(), NT_HANDLE));
         }
-
+        this.pickerType = pickerType;
         id = node.getIdentifier();
         nodeName = node.getName();
         displayName = ((HippoNode) node).getLocalizedName();
@@ -226,14 +260,19 @@ public class TreePickerRepresentation {
             collapsed = false;
         }
 
-        if (node.isNodeType(NT_HANDLE)) {
-            final Node document = JcrUtils.getNodeIfExists(node, node.getName());
-            if (document != null &&
-                    (document.isNodeType(NT_PUBLISHABLESUMMARY) || document.isNodeType(NT_PUBLISHABLESUMMARY))) {
-                state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
-            }
+        if (pickerType == PickerType.PAGES) {
+            type = Type.PAGE;
         } else {
-            folder = true;
+            if (node.isNodeType(NT_HANDLE)) {
+                final Node document = JcrUtils.getNodeIfExists(node, node.getName());
+                if (document != null &&
+                        (document.isNodeType(NT_PUBLISHABLESUMMARY) || document.isNodeType(NT_PUBLISHABLESUMMARY))) {
+                    state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
+                }
+                type = Type.DOCUMENT;
+            } else {
+                type = Type.FOLDER;
+            }
         }
 
         final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
@@ -272,13 +311,13 @@ public class TreePickerRepresentation {
                         if (includeChildren) {
                             ExpandedNodeHierarchy childOnly = ExpandedNodeHierarchy.createSingleNodeHierarchy(child);
                             TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
-                                    .represent(pageComposerContextService, childOnly, false, selectedPath);
+                                    .represent(pageComposerContextService, childOnly, false, selectedPath, pickerType);
                             items.add(childRepresentation);
                         }
                     } else {
                         boolean includeChildrenForChild = !child.isNodeType(NT_HANDLE);
                         TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
-                                .represent(pageComposerContextService, childHierarchy, includeChildrenForChild, selectedPath);
+                                .represent(pageComposerContextService, childHierarchy, includeChildrenForChild, selectedPath, pickerType);
                         items.add(childRepresentation);
                     }
 
@@ -294,7 +333,7 @@ public class TreePickerRepresentation {
         }
 
         final boolean jcrOrder = node.getPrimaryNodeType().hasOrderableChildNodes();
-        if (!jcrOrder && isFolder()) {
+        if (!jcrOrder && type == Type.FOLDER) {
             // order alphabetically, first folders then documents
             Collections.sort(items, comparator);
         }
@@ -374,12 +413,12 @@ public class TreePickerRepresentation {
         this.selectable = selectable;
     }
 
-    public boolean isFolder() {
-        return folder;
+    public String getType() {
+        return type.getName();
     }
 
-    public void setFolder(final boolean folder) {
-        this.folder = folder;
+    public void setType(final String type) {
+        this.type = Type.fromName(type);
     }
 
     public String getState() {
@@ -418,14 +457,14 @@ public class TreePickerRepresentation {
     public static class TreePickerRepresentationComparator implements Comparator<TreePickerRepresentation> {
         @Override
         public int compare(final TreePickerRepresentation o1, final TreePickerRepresentation o2) {
-            if (o1.isFolder()) {
-                if (!o2.isFolder()) {
+            if (o1.type == Type.FOLDER) {
+                if (o2.type != Type.FOLDER) {
                     // folders are ordered first
                     return -1;
                 }
             }
-            if (o2.isFolder()) {
-                if (!o1.isFolder()) {
+            if (o2.type == Type.FOLDER) {
+                if (o1.type != Type.FOLDER) {
                     // folders are ordered first
                     return 1;
                 }
