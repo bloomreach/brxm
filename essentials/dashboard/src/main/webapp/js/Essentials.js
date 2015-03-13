@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-'use strict';
+/* jshint browser: true */
 (function (Essentials, undefined) {
+    'use strict';
     // {"values":{"entry":[{"key":"foo2","value":"bar"},{"key":"foo","value":"bar"}]}}
 
     //############################################
@@ -61,7 +62,7 @@
      * @returns
      */
     Essentials.addPayloadData = function (key, value, payload) {
-        if (payload === undefined || payload == null) {
+        if (payload === undefined || payload === null) {
             payload = {"values":{}};
 
         }
@@ -134,7 +135,7 @@
     };
 
     Essentials.isEmpty = function (str) {
-        return typeof str === "undefined" || str == null || str.trim().length == 0;
+        return typeof str === "undefined" || str === null || str.trim().length === 0;
     };
      Essentials.keyValueAsDict = function (keyValArray) {
          var dict = {};
@@ -149,7 +150,7 @@
 
     Essentials.asArray = function (obj) {
         var array = [];
-        if (typeof obj === "undefined" || obj == null) {
+        if (typeof obj === "undefined" || obj === null) {
             return array;
         }
         if (typeof obj === "object") {
@@ -158,6 +159,5 @@
         }
         return array;
     };
-
 
 })(window.Essentials = window.Essentials || {}, undefined);

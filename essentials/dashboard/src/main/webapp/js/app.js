@@ -125,9 +125,9 @@
                     if (toState && toState.url) {
                         // disable caching of pages:
                         $templateCache.remove(toState.url);
-                        if(toState.templateUrl){
-                            $templateCache.remove(toState.templateUrl)
-                        };
+                        if (toState.templateUrl){
+                            $templateCache.remove(toState.templateUrl);
+                        }
 
                         // if introduction, hide menu:
                         if (toState.url.indexOf('/introduction') != -1) {
@@ -247,7 +247,7 @@
                     }
                 });
                 return retVal;
-            }
+            };
         }).filter('splitString', function () {
             return function (input, splitOn, idx) {
                 if (input) {
@@ -257,7 +257,7 @@
                     }
                 }
                 return "";
-            }
+            };
         })
         .filter('startsWith', function () {
             return function (inputCollection, inputString) {
@@ -271,7 +271,7 @@
                     return collection;
                 }
                 return collection;
-            }
+            };
         })
 
         //############################################
@@ -341,7 +341,7 @@
                             $modalInstance.dismiss('cancel');
                         };
                         myOptions = $scope.modalOptions;
-                    }
+                    };
                 }
                 var myResult = $modal.open(myDefaults).result;
                 myResult.options = myOptions;

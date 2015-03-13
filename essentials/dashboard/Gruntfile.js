@@ -34,6 +34,15 @@ module.exports = function (grunt) {
             }
         },
 
+        jshint: {
+            files: 'src/main/webapp/js/*.js'//,
+            //options: {
+            //    globals: {
+            //        jQuery: true
+            //    }
+            //}
+        },
+
         // copy files to target folder
         copy: {
             components: {
@@ -63,6 +72,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', 'Build everything', [
         'clean:target',
+        'jshint',
         'copy:components'
     ]);
 };

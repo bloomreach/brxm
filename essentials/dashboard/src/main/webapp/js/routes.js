@@ -94,7 +94,7 @@
                 };
 
                 function openModal() {
-                    if (pingModal == null) {
+                    if (pingModal === null) {
                         pingModal = modalService.showModal({}, modalOptions);
                         pingModal.then(function () {
                             // discard modal
@@ -136,7 +136,7 @@
             // Dispatch to appropriate initial location
             $http.get($rootScope.REST.project + '/status')
                 .success(function (response) {
-                    if ($location.url() == '') { // only dispatch if not on specific "page".
+                    if ($location.url() === '') { // only dispatch if not on specific "page".
                         if (!response.projectInitialized) {
                             $location.path("/introduction");
                         } else if (response.pluginsInstalled > 0) {
@@ -156,6 +156,6 @@
             $http.post($rootScope.REST.plugins + '/autosetup').then(completeInitialization, completeInitialization);
             return deferred.promise;
         }
-    }
+    };
 })();
 

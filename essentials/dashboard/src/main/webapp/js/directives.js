@@ -98,7 +98,7 @@
 
                     };
                 }
-            }
+            };
         }).directive("essentialsTemplateSettings", function () {
             return {
                 replace: false,
@@ -118,7 +118,7 @@
                         $scope.sampleData   = data.useSamples;
                     });
                 }
-            }
+            };
         })
         .directive("essentialsHelp", function () {
             return {
@@ -133,7 +133,7 @@
                 controller: function ($scope) {
                     $scope.text = $scope.helpText ? $scope.helpText : $scope.helpReference;
                 }
-            }
+            };
         })
         .directive("essentialsMessages", function () {
             return {
@@ -150,15 +150,15 @@
                     $scope.$watch('payload', function (newValue) {
                         if (newValue) {
                             return installerFactory.packageMessages(url, newValue).success(function (data) {
-                                return $scope.packageMessages = data;
+                                $scope.packageMessages = data;
                             });
                         }
                     }, true);
                     return installerFactory.packageMessages(url, $scope.payload).success(function (data) {
-                        return $scope.packageMessages = data;
+                        $scope.packageMessages = data;
                     });
                 }
-            }
+            };
         }).directive("essentialsSimpleInstallPlugin", function () {
             return {
                 replace: true,
@@ -195,7 +195,7 @@
                         $scope.plugin = plugin;
                     });
                 }
-            }
+            };
         }).directive("essentialsCmsDocumentTypeDeepLink", function () {
             return {
                 replace: true,
@@ -210,7 +210,7 @@
                     $scope.label = 'CMS Document Type Editor';
                     $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
                 }
-            }
+            };
         }).directive("essentialsNotifier", function () {
             return {
                 replace: false,
@@ -264,8 +264,8 @@
                                 value.fullDate = date;
                             }
                         });
-                        if ($scope.archiveMessages.length == 0) {
-                            $scope.archiveMessages.push({type: "info", message: 'No archived messages', visible: true, date: now, fullDate: date})
+                        if ($scope.archiveMessages.length === 0) {
+                            $scope.archiveMessages.push({type: "info", message: 'No archived messages', visible: true, date: now, fullDate: date});
                         }
                         // newer messages first:
                         $scope.archiveMessages.reverse();
@@ -307,7 +307,7 @@
                         $scope.$apply();
                     });
                 }
-            }
+            };
         }).directive("essentialsPlugin", function () {
             return {
                 replace: false,
@@ -336,9 +336,9 @@
                         return $scope.plugin.installState === 'boarding' || $scope.plugin.installState === 'installing';
                     };
                     $scope.isOnBoard = function() {
-                        return $scope.plugin.type === 'tool'
-                               || $scope.plugin.installState === 'onBoard'
-                               || $scope.plugin.installState === 'installed';
+                        return $scope.plugin.type === 'tool' ||
+                               $scope.plugin.installState === 'onBoard' ||
+                               $scope.plugin.installState === 'installed';
                     };
                     $scope.installPlugin = function () {
                         $scope.installButtonDisabled = true; // avoid double-clicking
@@ -352,7 +352,7 @@
                         });
                     };
                 }
-            }
+            };
         }).directive("essentialsInstalledFeature", function () {
             return {
                 replace: false,
@@ -373,7 +373,7 @@
                         return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
                     };
                 }
-            }
+            };
         }).directive("essentialsInstalledTool", function () {
             return {
                 replace: false,
@@ -387,7 +387,7 @@
                         $location.path('/tools/' + $scope.plugin.id);
                     };
                 }
-            }
+            };
         }).directive("essentialsFeatureFooter", function () {
             return {
                 replace: true,
@@ -429,7 +429,7 @@
                     $scope.showChanges = false;
                     $scope.hasMessages = !!$scope.plugin.packageFile;
                 }
-            }
+            };
         }).directive("essentialsDraftWarning", function () {
             return {
                 replace: false,
@@ -455,7 +455,6 @@
                     });
 
                 }
-            }
-        })
-
+            };
+        });
 })();
