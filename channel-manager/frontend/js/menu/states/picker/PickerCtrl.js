@@ -57,7 +57,7 @@
                                     $state.go('picker.docs', {
                                         pickerTreeItemId: parent.id
                                     });
-                                    console.log('$scope.selectedItem', $scope.selectedItem);
+                                    $scope.selectedItem = parent;
                                     $scope.selectedDocument = item;
                                 }
                                 if(item.items) {
