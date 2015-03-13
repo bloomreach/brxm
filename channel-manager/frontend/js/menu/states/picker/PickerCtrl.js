@@ -45,8 +45,7 @@
                 $scope.pickerType = $scope.pickerTypes[0];
                 $scope.selectedDocument = null;
 
-                var menuData = MenuService.getMenuData(),
-                    siteContentIdentifier;
+                var menuData = MenuService.getMenuData();
 
                 if($stateParams.link) {
                     PickerService.getInitialData(menuData.siteContentIdentifier, $stateParams.link).then(function() {
