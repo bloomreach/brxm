@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -155,10 +155,10 @@
             Ext.apply(config, {
                 title: this.resources['manage-changes-title'],
                 cls: 'channel-manager-window-manage-changes',
-                width: 400,
-                height: 300,
+                width: 500,
+                height: 350,
                 modal: true,
-                padding: 10,
+                padding: 16,
                 layout: 'vbox',
                 layoutConfig: {
                     align: 'stretch'

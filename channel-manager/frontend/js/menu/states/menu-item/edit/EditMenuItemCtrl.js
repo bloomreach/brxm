@@ -184,6 +184,7 @@
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
                             FormStateService.setValid(false);
+                            $scope.feedback = FeedbackService.getFeedback(errorResponse);
                         });
                 }
 

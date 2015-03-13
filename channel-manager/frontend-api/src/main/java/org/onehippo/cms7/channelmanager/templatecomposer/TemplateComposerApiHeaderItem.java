@@ -23,6 +23,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
+import org.hippoecm.frontend.extjs.ExtUtilsHeaderItem;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistryHeaderItem;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
@@ -35,7 +36,6 @@ public class TemplateComposerApiHeaderItem extends HeaderItem {
             "PlainPropertiesEditor.js",
             "VariantAdder.js",
             "PlainVariantAdder.js",
-            "MessageBus.js",
             "IFramePanel.js",
             "IFrameWindow.js"
     };
@@ -61,7 +61,7 @@ public class TemplateComposerApiHeaderItem extends HeaderItem {
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
-        return Arrays.asList(ExtResourcesHeaderItem.get(), CmsHeaderItem.get(), ExtWidgetRegistryHeaderItem.get());
+        return Arrays.asList(ExtResourcesHeaderItem.get(), CmsHeaderItem.get(), ExtWidgetRegistryHeaderItem.get(), ExtUtilsHeaderItem.get());
     }
 
     @Override
