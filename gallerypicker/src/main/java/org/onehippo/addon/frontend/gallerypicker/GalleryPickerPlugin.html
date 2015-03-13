@@ -27,10 +27,14 @@
           <span wicket:id="select" class="gallerypickerlinkspan">[select]</span>
           <span class="gallerypickerlinkspan">
             <a wicket:id="open" href="#" >
-              <label><wicket:message key="picker.open">[Open]</wicket:message></label>
+              <span><wicket:message key="picker.open">[Open]</wicket:message></span>
             </a>
           </span>
-          <span class="gallerypickerlinkspan"><a href="#" wicket:id="remove"><span wicket:id="remove-link-text"/></a></span>
+          <span class="gallerypickerlinkspan">
+              <a href="#" wicket:id="remove">
+                  <span wicket:id="remove-link-text"/>
+              </a>
+          </span>
         </td>
       </tr>
     </table>
