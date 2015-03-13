@@ -2183,7 +2183,6 @@ google-analytics/pom.xml -text
 gotolink/pom.xml svneol=native#text/plain
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_de.properties -text
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_it.properties -text
-gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/images/dashboard-goto-button.png -text svneol=unset#image/png
 jquery/src/main/appended-resources/META-INF/LICENSE -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.11.0.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js -text
