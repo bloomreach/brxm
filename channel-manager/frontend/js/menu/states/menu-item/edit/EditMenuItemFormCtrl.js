@@ -22,12 +22,13 @@
         .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
             '$rootScope',
             '$scope',
+            '$stateParams',
             '$filter',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
             'hippo.channel.menu.MenuService',
-            function ($rootScope, $scope, $filter, FormStateService, ContainerService, FocusService, MenuService) {
+            function ($rootScope, $scope, $stateParams, $filter, FormStateService, ContainerService, FocusService, MenuService) {
                 var translate = $filter('translate');
 
                 $scope.focus = FocusService.focusElementWithId;
@@ -40,6 +41,12 @@
 
                         FormStateService.setDirty(true);
                         deregisterNewItemListener();
+                    }
+                    if($stateParams.selectedDocumentPath) {
+                        $scope.selectedMenuItem.link = $scope.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
+                        $scope.linkToFocus = 'sitemapLink';
+                        $scope.saveSelectedMenuItem('link');
+                        $stateParams.selectedDocumentPath = null;
                     }
                 });
 

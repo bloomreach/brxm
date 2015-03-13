@@ -149,17 +149,6 @@
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
 
-                $scope.$watch(function() {
-                    return $stateParams.selectedDocumentPath;
-                }, function() {
-                    if($stateParams.selectedDocumentPath) {
-                        $scope.selectedMenuItem.link = $scope.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
-                        $scope.linkToFocus = 'sitemapLink';
-                        $scope.saveSelectedMenuItem('link');
-                        $stateParams.selectedDocumentPath = null;
-                    }
-                });
-
                 function shouldSaveSelectedMenuItemProperty() {
                     $scope.dismissFeedback();
                     return angular.isDefined($scope.selectedMenuItem);
