@@ -120,8 +120,7 @@ public class TreePickerRepresentation {
     private boolean collapsed = true;
     private Type type = Type.FOLDER;
     private String state;
-    private boolean containsFolders;
-    private boolean containsDocuments;
+    private boolean expandable;
     private List<TreePickerRepresentation> items = new ArrayList<>();
 
     public TreePickerRepresentation() {
@@ -296,9 +295,9 @@ public class TreePickerRepresentation {
                 try {
                     ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
                     if (child.isNodeType(NT_DOCUMENT)) {
-                        containsFolders = true;
+                        expandable = true;
                     } else if (child.isNodeType(NT_HANDLE)) {
-                        containsDocuments = true;
+                        // do nothing
                     } else {
                         log.debug("Skipping child node '{}' that is not a folder or handle.", child.getPath());
                         continue;
@@ -429,21 +428,12 @@ public class TreePickerRepresentation {
         this.state = state;
     }
 
-
-    public boolean isContainsFolders() {
-        return containsFolders;
+    public boolean isExpandable() {
+        return expandable;
     }
 
-    public void setContainsFolders(final boolean containsFolders) {
-        this.containsFolders = containsFolders;
-    }
-
-    public boolean isContainsDocuments() {
-        return containsDocuments;
-    }
-
-    public void setContainsDocuments(final boolean containsDocuments) {
-        this.containsDocuments = containsDocuments;
+    public void setExpandable(final boolean expandable) {
+        this.expandable = expandable;
     }
 
     public List<TreePickerRepresentation> getItems() {

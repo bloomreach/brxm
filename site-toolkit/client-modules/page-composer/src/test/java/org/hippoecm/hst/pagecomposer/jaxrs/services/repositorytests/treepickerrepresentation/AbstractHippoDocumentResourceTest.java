@@ -91,8 +91,7 @@ public class AbstractHippoDocumentResourceTest extends AbstractPageComposerTest 
         assertFalse("The root content folder is not selectable", representation.isSelectable());
         assertNull(representation.getPathInfo());
         assertFalse("The root content folder is never selected", representation.isSelected());
-        assertFalse("The root content folder does not have documents", representation.isContainsDocuments());
-        assertTrue("The root content folder does have folders", representation.isContainsFolders());
+        assertTrue("The root content folder does have folders", representation.isExpandable());
         assertFalse("Root should always be expanded.",representation.isCollapsed());
         for (TreePickerRepresentation child : representation.getItems()) {
             assertEquals(child.getPickerType(), "documents");

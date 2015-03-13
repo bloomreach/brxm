@@ -43,9 +43,9 @@ public class TreePickerRepresentationGetterSetterTest {
         assertTrue("Default collapsed", presentation.isCollapsed());
         assertEquals(DOCUMENTS.getName(), presentation.getPickerType());
         assertEquals(FOLDER.getName(), presentation.getType());
+        assertFalse(presentation.isExpandable());
 
-        presentation.setContainsDocuments(true);
-        presentation.setContainsFolders(true);
+        presentation.setExpandable(true);
         presentation.setDisplayName("DisplayName");
         presentation.setId("my-uuid");
         List<TreePickerRepresentation> items = new ArrayList<>();
@@ -60,8 +60,7 @@ public class TreePickerRepresentationGetterSetterTest {
         presentation.setState("new");
 
 
-        assertTrue(presentation.isContainsDocuments());
-        assertTrue(presentation.isContainsFolders());
+        assertTrue(presentation.isExpandable());
         assertEquals("DisplayName", presentation.getDisplayName());
         assertEquals("my-uuid", presentation.getId());
         assertEquals(2, presentation.getItems().size());
