@@ -267,6 +267,7 @@ public class TreePickerRepresentation {
         expandable = hstSiteMapItem.getChildren().size() > 0;
         leaf = !expandable;
         selectable = true;
+        pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem, null);
         return this;
     }
 
