@@ -26,7 +26,7 @@
     <tbody>
       <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable" ng-class="{active: $parent.$parent.selectedDocument == item}" ng-click="selectDocument(item)">
         <td class="status">
-          <hippo-icon name="{{item.folder ? 'folder' : 'file-text'}}" size="small"></hippo-icon>
+          <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" size="small"></hippo-icon>
         </td>
         <td>{{item.displayName}}</td>
         <td>date</td>

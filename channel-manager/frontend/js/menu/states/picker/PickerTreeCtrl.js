@@ -34,7 +34,7 @@
 
                 $scope.callbacks = {
                     displayTreeItem: function(item) {
-                        return item.folder;
+                        return item.type === 'folder';
                     },
                     selectItem: function(item) {
                         if(!item.leaf && item.items.length < 1) {
