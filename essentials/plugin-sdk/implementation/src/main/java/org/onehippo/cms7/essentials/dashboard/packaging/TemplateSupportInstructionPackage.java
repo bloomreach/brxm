@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Used for template (& extra templates & sample data InstructionPackage). Properties for templates and sample data are:
@@ -48,33 +48,22 @@ public class TemplateSupportInstructionPackage extends DefaultInstructionPackage
 
     @Override
     public Set<String> groupNames() {
+        final Boolean extraTemplates = Boolean.valueOf((String) getProperties().get(EssentialConst.PROP_EXTRA_TEMPLATES));
         final Boolean sampleData = Boolean.valueOf((String) getProperties().get(EssentialConst.PROP_SAMPLE_DATA));
         final String templateName = (String) getProperties().get(EssentialConst.PROP_TEMPLATE_NAME);
         final String templateGroup = Strings.isNullOrEmpty(templateName) ? EssentialConst.TEMPLATE_JSP : templateName;
         final boolean freemarker = templateGroup.equals(EssentialConst.TEMPLATE_FREEMARKER);
+        final Set<String> names = new HashSet<>();
+        names.add(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
+        names.add(templateGroup);
         if (sampleData) {
-            if (freemarker) {
-                return new ImmutableSet.Builder<String>()
-                        .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                        .add(EssentialConst.PROP_SAMPLE_DATA)
-                        .add(EssentialConst.PROP_EXTRA_TEMPLATES)
-                        .add(templateGroup).build();
-
-            }
-            return new ImmutableSet.Builder<String>()
-                    .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                    .add(EssentialConst.PROP_SAMPLE_DATA)
-                    .add(templateGroup).build();
+            names.add(EssentialConst.PROP_SAMPLE_DATA);
         }
-        if (freemarker) {
-            return new ImmutableSet.Builder<String>()
-                    .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                    .add(EssentialConst.PROP_EXTRA_TEMPLATES)
-                    .add(templateGroup).build();
+        // add extra templates only in case freemarker is used
+        if (extraTemplates && freemarker) {
+            names.add(EssentialConst.PROP_EXTRA_TEMPLATES);
         }
-        return new ImmutableSet.Builder<String>()
-                .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                .add(templateGroup).build();
+        return names;
     }
 
 }

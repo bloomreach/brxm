@@ -65,6 +65,14 @@
                     <input type="checkbox" ng-model="projectSettings.useSamples"/>Add sample content when installing features
                 </label>
             </div>
+            <div class="form-group" ng-show="projectSettings.templateLanguage=='freemarker'">
+                <label>Extra templates: </label>
+            </div>
+            <div class="checkbox" ng-show="projectSettings.templateLanguage=='freemarker'">
+                <label>
+                    <input type="checkbox" ng-model="projectSettings.extraTemplates"/>Add extra freemarker templates (template switching)
+                </label>
+            </div>
 
             <h3>Setup Process</h3>
             <p>

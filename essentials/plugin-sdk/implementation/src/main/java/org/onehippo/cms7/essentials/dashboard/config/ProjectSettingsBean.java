@@ -50,6 +50,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String templateLanguage;
     private boolean useSamples;
     private boolean confirmParams;
+    private boolean extraTemplates;
 
     private String siteModule;
     private String cmsModule;
@@ -235,5 +236,14 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         pluginRepositories.add(path);
     }
 
+    @Override
+    public boolean isExtraTemplates() {
+        return extraTemplates;
+    }
+
+    @Override
+    public void setExtraTemplates(final boolean extraTemplates) {
+        this.extraTemplates = extraTemplates;
+    }
 }
 
