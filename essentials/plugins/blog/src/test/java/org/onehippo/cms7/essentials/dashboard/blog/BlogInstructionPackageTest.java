@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.blog;
 
 import java.io.File;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -26,24 +25,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @version "$Id$"
  */
 public class BlogInstructionPackageTest extends BaseRepositoryTest {
 
-
-    public static final int TOTAL_INSTRUCTIONS = 12;
-    public static final int TOTAL_FILES = 4;
     @Inject
     private AutowireCapableBeanFactory injector;
 
@@ -53,18 +45,9 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT) + File.separator + "essentials" + File.separator +"blog");
+        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT)
+                + File.separator + "essentials" + File.separator +"blog");
         createHstRootConfig();
-
-    }
-
-    @Test
-    public void testParseInstructions() throws Exception {
-        final InstructionPackage instructionPackage = new TemplateSupportInstructionPackage("/META-INF/blog_instructions.xml");
-        injector.autowireBean(instructionPackage);
-        final Instructions instructions = instructionPackage.getInstructions();
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        assertEquals(TOTAL_INSTRUCTIONS, instructionSets.size());
     }
 
     @Test
@@ -76,10 +59,7 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
         //assertEquals(InstructionStatus.SKIPPED, status);
         // TODO fix jspDir
         //assertEquals(TOTAL_FILES, jspDirectory.listFiles().length);
-
-
     }
-
 
     @Override
     @After
@@ -90,6 +70,5 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
         if (jspDirectory != null && jspDirectory.exists()) {
             FileUtils.deleteDirectory(jspDirectory);
         }
-
     }
 }
