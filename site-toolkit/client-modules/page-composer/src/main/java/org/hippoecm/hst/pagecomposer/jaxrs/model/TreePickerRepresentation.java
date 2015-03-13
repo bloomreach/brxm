@@ -247,6 +247,7 @@ public class TreePickerRepresentation {
 //                continue;
 //            }
             TreePickerRepresentation childRepresentation = new TreePickerRepresentation().represent(child);
+            childRepresentation.collapsed = true;
             items.add(childRepresentation);
         }
         return this;
