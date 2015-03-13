@@ -23,9 +23,11 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,11 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
                 }
             }
         };
+
         add(link);
+
+        /* TODO: a medium size icon needs to be created */
+        final HippoIcon icon = HippoIcon.fromSprite("gotolink-icon", Icon.FOLDER_OPEN_TINY);
+        link.add(icon);
     }
 }

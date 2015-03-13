@@ -81,23 +81,48 @@
 }
 
 /* Dashboard shortcuts */
-.hippo-perspective-dashboard-shorcuts {
+.hippo-perspective-dashboard-shortcuts {
   padding: 16px;
-}
 
-.hippo-perspective-dashboard-shorcuts div div a {
-  border-bottom: 1px solid #f2f2f2;
-  display: block;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  .goto-block {
+    border: 1px solid @light-gray;
+    text-decoration: none;
+    padding: 10px 16px 10px 16px;
+
+    &:hover {
+     background-color: @lightest-shade;
+
+     span {
+        text-decoration: underline;
+      }
+    }
+
+    svg {
+      /* TODO: a larger icon needs to be created so the following line can be removed */
+      .hi-medium();
+      vertical-align: middle;
+    }
+
+    span {
+      vertical-align: middle;
+      padding-left: 4px;
+      font-size: 14px;
+      color: @text-color;
+    }
+  }
+
+  div div a {
+    display: block;
+    width: 66%;
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
 }
 
 /* GotoLinks  */
 /* ================================================ */
-.hippo-gotolinks li.documents-32 a {
-  background: url("images/dashboard-goto-button.png") no-repeat;
-}
 
+/*
 .hippo-gotolinks li a {
   display: block;
   height: 52px;
@@ -115,3 +140,4 @@
 .hippo-gotolinks li.documents-32 {
   background-image: none
 }
+*/
