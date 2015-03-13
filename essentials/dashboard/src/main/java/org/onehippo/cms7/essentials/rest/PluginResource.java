@@ -218,7 +218,7 @@ public class PluginResource extends BaseResource {
             return new ErrorMessageRestful(msg);
         }
 
-        return new MessageRestful("Plugin <strong>" + plugin + "<.strong> successfully set up.");
+        return new MessageRestful("Plugin <strong>" + plugin + "</strong> successfully set up.");
     }
 
 
