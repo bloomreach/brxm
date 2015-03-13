@@ -119,6 +119,7 @@ public class TreePickerRepresentation {
     private boolean selectable;
     private boolean selected;
     private boolean collapsed = true;
+    private boolean leaf;
     private Type type = Type.FOLDER;
     private String state;
     private boolean expandable;
@@ -234,7 +235,9 @@ public class TreePickerRepresentation {
         collapsed = false;
         expandable = true;
         selectable = false;
+
         for (HstSiteMapItem child : hstSiteMap.getSiteMapItems()) {
+            leaf = false;
             if (isInVisiblePage(child)) {
                 continue;
             }
@@ -262,6 +265,7 @@ public class TreePickerRepresentation {
         nodePath = ((CanonicalInfo)hstSiteMapItem).getCanonicalPath();
         collapsed = false;
         expandable = hstSiteMapItem.getChildren().size() > 0;
+        leaf = !expandable;
         selectable = true;
         return this;
     }
@@ -318,14 +322,17 @@ public class TreePickerRepresentation {
             }
         }
 
+        leaf = true;
         if (!node.isNodeType(NT_HANDLE)) {
             for (Node child : new NodeIterable(node.getNodes())) {
                 try {
                     ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
                     if (child.isNodeType(NT_DOCUMENT)) {
                         expandable = true;
+                        leaf = false;
                     } else if (child.isNodeType(NT_HANDLE)) {
                         // do nothing
+                        leaf = false;
                     } else {
                         log.debug("Skipping child node '{}' that is not a folder or handle.", child.getPath());
                         continue;
@@ -434,6 +441,14 @@ public class TreePickerRepresentation {
 
     public void setCollapsed(final boolean collapsed) {
         this.collapsed = collapsed;
+    }
+
+    public boolean isLeaf() {
+        return leaf;
+    }
+
+    public void setLeaf(final boolean leaf) {
+        this.leaf = leaf;
     }
 
     public void setSelectable(final boolean selectable) {

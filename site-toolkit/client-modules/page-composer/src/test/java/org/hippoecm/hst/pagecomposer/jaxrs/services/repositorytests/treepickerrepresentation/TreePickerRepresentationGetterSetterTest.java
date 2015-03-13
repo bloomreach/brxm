@@ -44,6 +44,8 @@ public class TreePickerRepresentationGetterSetterTest {
         assertEquals(DOCUMENTS.getName(), presentation.getPickerType());
         assertEquals(FOLDER.getName(), presentation.getType());
         assertFalse(presentation.isExpandable());
+        assertFalse(presentation.isLeaf());
+
 
         presentation.setExpandable(true);
         presentation.setDisplayName("DisplayName");
@@ -58,6 +60,7 @@ public class TreePickerRepresentationGetterSetterTest {
         presentation.setCollapsed(false);
         presentation.setSelected(true);
         presentation.setState("new");
+        presentation.setLeaf(true);
 
 
         assertTrue(presentation.isExpandable());
@@ -69,6 +72,7 @@ public class TreePickerRepresentationGetterSetterTest {
         assertTrue(presentation.isSelectable());
         assertTrue(presentation.isSelected());
         assertFalse(presentation.isCollapsed());
+        assertTrue(presentation.isLeaf());
         assertEquals("new", presentation.getState());
 
         presentation.setType(DOCUMENT.getName());
