@@ -30,12 +30,12 @@ import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -50,6 +50,7 @@ import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,9 @@ public class EditPerspective extends Perspective {
         super(context, config);
 
         add(CssClass.append("hippo-editor"));
+
+        // keep all messages after each request cycle
+        getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
         feedback = new FeedbackPanel("feedback", message -> {
             final String serviceId = config.getString(RenderService.FEEDBACK);
@@ -95,34 +99,34 @@ public class EditPerspective extends Perspective {
                 public void onValidation(IValidationResult result) {
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        renderFeedbackIfNeeded(target);
+                        boolean hasMessage = false;
+                        if (result != null && result.getViolations() != null){
+                            hasMessage = !result.getViolations().isEmpty();
+                        }
+                        renderFeedbackIfNeeded(target, hasMessage);
                     }
                 }
 
             }, config.getString(IValidationService.VALIDATE_ID));
         }
     }
+
     @Override
-    public void render(PluginRequestTarget target) {
-        super.render(target);
-        renderFeedbackIfNeeded(target);
+    public void onEvent(IEvent event) {
+        // handle notified validation events from wicket fields
+        if(event.getPayload() instanceof UpdateFeedbackInfo) {
+            final UpdateFeedbackInfo ufi = (UpdateFeedbackInfo) event.getPayload();
+            renderFeedbackIfNeeded(ufi.getTarget(), feedback.anyMessage());
+        }
     }
 
-    private void renderFeedbackIfNeeded(final AjaxRequestTarget target) {
+    private void renderFeedbackIfNeeded(final AjaxRequestTarget target, final boolean hasFeedbackMessage) {
         if (target != null && isVisibleInHierarchy()) {
-            if (target instanceof PluginRequestTarget) {
-                PluginRequestTarget pluginRequestTarget = (PluginRequestTarget) target;
-                // ignore updating feedback if refresh is from pinger
-                if (!pluginRequestTarget.hasPingComponent()) {
-                    boolean hasFeedbackMessage = feedback.anyMessage();
-                    if (hasFeedbackMessage || feedbackShown) {
-                        // update feedback panel if there's either any new feedback or validation state change
-                        // (cleanup old feedback)
-                        target.add(feedback);
-                    }
-                    feedbackShown = hasFeedbackMessage;
-                }
+            // only render if there is any change in the feedback panel
+            if (hasFeedbackMessage || feedbackShown) {
+                target.add(feedback);
             }
+            feedbackShown = hasFeedbackMessage;
         }
     }
 

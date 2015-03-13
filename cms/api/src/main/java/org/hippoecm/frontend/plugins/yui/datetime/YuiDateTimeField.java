@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -33,6 +34,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -122,9 +124,20 @@ public class YuiDateTimeField extends DateTimeField {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     updateDateTime();
+                    send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
+                }
+
+                protected void onError(AjaxRequestTarget target, RuntimeException e){
+                    super.onError(target, e);
+                    send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
                 }
             });
         }
+    }
+
+    // handle for error events
+    protected void onError(final AjaxRequestTarget target, final RuntimeException e) {
+
     }
 
     private int calculateDateLength() {
