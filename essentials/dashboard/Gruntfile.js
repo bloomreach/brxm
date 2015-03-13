@@ -35,12 +35,7 @@ module.exports = function (grunt) {
         },
 
         jshint: {
-            files: 'src/main/webapp/js/*.js'//,
-            //options: {
-            //    globals: {
-            //        jQuery: true
-            //    }
-            //}
+            files: 'src/main/webapp/js/*.js'
         },
 
         // copy files to target folder
