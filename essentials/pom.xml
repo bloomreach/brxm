@@ -35,7 +35,7 @@
     <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
 
     <!--***START temporary override of versions*** -->
-    <hippo.frontend.theme.version>1.02.01-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.frontend.theme.version>1.02.02-SNAPSHOT</hippo.frontend.theme.version>
     <!-- ***END temporary override of versions*** -->
     <maven.plugin.release.version>2.5</maven.plugin.release.version>
 
