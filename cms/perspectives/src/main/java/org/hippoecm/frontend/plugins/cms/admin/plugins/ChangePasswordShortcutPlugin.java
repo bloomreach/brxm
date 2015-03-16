@@ -44,9 +44,11 @@ import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordVali
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +146,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         label.setOutputMarkupId(true);
         add(label);
 
+        final HippoIcon icon = HippoIcon.fromSprite("change-password-icon", Icon.EDIT_TINY);
+        link.add(icon);
     }
 
     /**

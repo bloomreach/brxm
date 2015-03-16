@@ -92,6 +92,8 @@
     border: 1px solid @light-gray;
     text-decoration: none;
     padding: 10px 16px 10px 16px;
+    display: block;
+    width: 66%;
 
     &:hover {
      background-color: @lightest-shade;
@@ -115,11 +117,30 @@
     }
   }
 
-  div div a {
+  .password-expiration-label {
+    padding-top: 6px;
     display: block;
-    width: 66%;
+  }
+
+  .quick-link {
+    display: inline-block;
     padding-bottom: 8px;
     padding-top: 8px;
+    text-decoration: none;
+
+    &:hover span {
+      text-decoration: underline;
+    }
+
+    svg {
+      vertical-align: middle;
+      fill: @link-color;
+    }
+
+    span {
+      vertical-align: middle;
+      color: @link-color;
+    }
   }
 }
 
