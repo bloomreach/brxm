@@ -27,10 +27,9 @@ import org.hippoecm.hst.util.HstSiteMapUtils;
 
 public class SiteMapTreePickerRepresentation extends AbstractTreePickerRepresentation {
 
-    public AbstractTreePickerRepresentation representExpandedParentTree(final HstSiteMapItem hstSiteMapItem) {
-        // TODO HSTTWO-3225
+    public static AbstractTreePickerRepresentation representExpandedParentTree(final HstSiteMapItem expandToItem) {
         AbstractTreePickerRepresentation picker = new SiteMapTreePickerRepresentation();
-        // TODO
+
         picker.setPickerType(PickerType.PAGES.getName());
         return picker;
     }

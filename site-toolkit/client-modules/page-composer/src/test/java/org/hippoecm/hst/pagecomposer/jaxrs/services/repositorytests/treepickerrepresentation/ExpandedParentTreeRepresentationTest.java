@@ -19,6 +19,8 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Test;
@@ -40,6 +42,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "about-us");
 
+        assertTrue(representation instanceof DocumentTreePickerRepresentation);
         aboutUsRepresentationAssertions(representation);
 
     }
@@ -93,6 +96,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "matching_to_default_siteMapItem");
 
+        assertTrue(representation instanceof DocumentTreePickerRepresentation);
         rootContentRepresentationAssertions(representation);
     }
 
@@ -102,8 +106,14 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "contact");
 
-        assertNotNull(representation);
+
+        assertFalse("contact sitemap pathinfo matches sitemap item that does not have a relative content path, hence a " +
+                "fallback to SiteMapTreePickerRepresentation should be done", representation instanceof DocumentTreePickerRepresentation);
+
+        assertTrue(representation instanceof SiteMapTreePickerRepresentation);
+
         assertEquals(representation.getPickerType(), "pages");
+
         // TODO HSTTWO-3225
     }
 
@@ -114,7 +124,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "path/that/cannot/be/matched");
 
         rootContentRepresentationAssertions(representation);
-
+        assertTrue(representation instanceof DocumentTreePickerRepresentation);
     }
 
     @Test
@@ -150,7 +160,8 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "news");
 
-        System.out.println(representation);
+
+        assertTrue(representation instanceof DocumentTreePickerRepresentation);
 
         assertEquals("unittestproject",representation.getNodeName());
         assertFalse(representation.isCollapsed());

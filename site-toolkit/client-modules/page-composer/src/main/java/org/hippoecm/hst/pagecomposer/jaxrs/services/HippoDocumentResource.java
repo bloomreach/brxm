@@ -30,6 +30,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRe
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representExpandedParentTree;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representRequestConfigNode;
+
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
 @Produces(MediaType.APPLICATION_JSON)
 public class HippoDocumentResource extends AbstractConfigResource {
@@ -42,7 +45,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final AbstractTreePickerRepresentation representation;
-                representation = new DocumentTreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
+                representation =  representRequestConfigNode(getPageComposerContextService());
                 return ok("Folder loaded successfully", representation);
             }
         });
@@ -62,11 +65,10 @@ public class HippoDocumentResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final AbstractTreePickerRepresentation representation;
                 if (StringUtils.isEmpty(siteMapPathInfo)) {
-                    representation = new DocumentTreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
+                    representation = representRequestConfigNode(getPageComposerContextService());
 
                 } else {
-                    representation  = new DocumentTreePickerRepresentation()
-                            .representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
+                    representation = representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
                 }
                 return ok("Folder loaded successfully", representation);
             }

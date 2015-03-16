@@ -47,6 +47,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.ExpandedNodeHierarchy.createExpandedNodeHierarchy;
 import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
@@ -55,9 +56,9 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
     private static final Logger log = LoggerFactory.getLogger(DocumentTreePickerRepresentation.class);
 
-    public AbstractTreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService) throws RepositoryException {
+    public static AbstractTreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService) throws RepositoryException {
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
-        return represent(pageComposerContextService, singleNodeHierarchy, true, null);
+        return new DocumentTreePickerRepresentation().represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
 
     /**
@@ -66,7 +67,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
      * have a relative content path at all. In that case, instead of the current {@link DocumentTreePickerRepresentation}
      * instance is returned, a <strong>new</strong> instance {@link SiteMapTreePickerRepresentation} is returned!
      */
-    public AbstractTreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
+    public static AbstractTreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
                                                                         final String siteMapPathInfo) throws RepositoryException {
 
         HttpSession session = pageComposerContextService.getRequestContext().getServletRequest().getSession(false);
@@ -100,9 +101,9 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
                     // if explicit sitemap item, return sitemap item representation
                     // if sitemap item contains wildcards, the siteMapPathInfo is invalid as it cannot be represented in the
                     // document OR sitemap tree
+
                     if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitPath()) {
-                        SiteMapTreePickerRepresentation siteMapTreePickerRepresentation = new SiteMapTreePickerRepresentation();
-                        return siteMapTreePickerRepresentation.representExpandedParentTree(resolvedSiteMapItem.getHstSiteMapItem());
+                        return SiteMapTreePickerRepresentation.representExpandedParentTree(resolvedSiteMapItem.getHstSiteMapItem());
                     }
                     final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
                             "is not an explicit sitemap item hence no tree picker representation can be created for it be " +
@@ -112,9 +113,9 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
                 final String contentRootPath = pageComposerContextService.getEditingMount().getContentPath();
                 final String selectedPath = contentRootPath + "/" + resolvedSiteMapItem.getRelativeContentPath();
-                final ExpandedNodeHierarchy expandedNodeHierarchy = ExpandedNodeHierarchy.createExpandedNodeHierarchy(jcrSession,
+                final ExpandedNodeHierarchy expandedNodeHierarchy = createExpandedNodeHierarchy(jcrSession,
                         contentRootPath, Collections.singletonList(selectedPath));
-                return represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
+                return new DocumentTreePickerRepresentation().represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
             }
         } catch (ClientException e) {
             throw e;
@@ -138,7 +139,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
             }
         }
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
-        return represent(pageComposerContextService, singleNodeHierarchy, true, null);
+        return new DocumentTreePickerRepresentation().represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
 
     private AbstractTreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
