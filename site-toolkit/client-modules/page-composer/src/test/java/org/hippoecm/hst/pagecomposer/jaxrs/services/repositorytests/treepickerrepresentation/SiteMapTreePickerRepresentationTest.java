@@ -40,7 +40,6 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepre
         assertFalse("Root sitemap is expanded", representation.isCollapsed());
         assertFalse("Root sitemap is not selectable", representation.isSelectable());
         assertFalse("Root sitemap is never selected", representation.isSelected());
-
         assertNull("Root sitemap has path info null", representation.getPathInfo());
 
         for (TreePickerRepresentation child : representation.getItems()) {
@@ -67,9 +66,7 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepre
                 // contact has thankyou child
                 assertTrue(child.isExpandable());
             }
-
         }
-
     }
 
     @Test
