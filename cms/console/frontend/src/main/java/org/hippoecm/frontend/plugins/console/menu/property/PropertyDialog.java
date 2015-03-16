@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
@@ -57,13 +56,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.editor.PropertiesEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +70,10 @@ import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
 public class PropertyDialog extends AbstractDialog<Node> {
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
 
-    private static final List<String> ALL_TYPES = new ArrayList<>(8);
+    private static final List<String> ALL_TYPES = new ArrayList<>(11);
     static {
         ALL_TYPES.add(PropertyType.TYPENAME_BOOLEAN);
         ALL_TYPES.add(PropertyType.TYPENAME_DATE);
@@ -90,8 +86,9 @@ public class PropertyDialog extends AbstractDialog<Node> {
         ALL_TYPES.add(PropertyType.TYPENAME_DECIMAL);
         ALL_TYPES.add(PropertyType.TYPENAME_URI);
         ALL_TYPES.add(PropertyType.TYPENAME_WEAKREFERENCE);
-
     }
+
+    private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=420,height=300").makeImmutable();
 
     @SuppressWarnings("unused")
     private String name;
@@ -100,18 +97,17 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private List<String> values;
     private IModel<Map<String, List<PropertyDefinition>>> choiceModel;
     private final IModelReference<Node> modelReference;
-    
+
     private boolean focusOnLatestValue;
 
     public PropertyDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
         final IModel<Node> model = modelReference.getModel();
-        
+
         getParent().add(new AttributeAppender("class", Model.of("property-dialog"), " "));
 
         // list defined properties for automatic completion
         choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {
-            private static final long serialVersionUID = 1L;
 
             protected Map<String, List<PropertyDefinition>> load() {
                 Map<String, List<PropertyDefinition>> choices = new HashMap<>();
@@ -152,7 +148,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
         // checkbox for property ismultiple
         final CheckBox checkBox = new CheckBox("isMultiple", new Model<Boolean>() {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void setObject(Boolean multiple) {
@@ -181,7 +176,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
         // dropdown for property type
         final DropDownChoice<String> ddChoice = new DropDownChoice<String>("types") {
-            private static final long serialVersionUID = 1L;
             @Override
             public List<? extends String> getChoices() {
                 if (PropertyDialog.this.name != null) {
@@ -199,7 +193,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         };
         ddChoice.setModel(new Model<String>() {
-            private static final long serialVersionUID = 1L;
             @Override
             public void setObject(String object) {
                 type = object;
@@ -218,7 +211,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
         ddChoice.setRequired(true);
         ddChoice.setOutputMarkupId(true);
         ddChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
             @Override
             protected void onUpdate(AjaxRequestTarget target) {}
         });
@@ -232,8 +224,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         settings.setShowListOnEmptyInput(true);
 
         final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name",
-                new PropertyModel<String>(this, "name"), settings) {
-            private static final long serialVersionUID = 1L;
+                new PropertyModel<>(this, "name"), settings) {
 
             @Override
             protected Iterator<String> getChoices(String input) {
@@ -263,7 +254,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         final WebMarkupContainer valuesContainer = new WebMarkupContainer("valuesContainer");
         valuesContainer.setOutputMarkupId(true);
         add(valuesContainer);
-        
+
         valuesContainer.add(new ListView<String>("values", values) {
 
             @Override
@@ -298,8 +289,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                         return super.isVisible() && item.getIndex() > 0;
                     }
                 };
-                
-//                deleteLink.add(new Image("removeIcon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
+
                 deleteLink.add(new AttributeModifier("title", getString("property.value.remove")));
                 deleteLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
                     @Override
@@ -325,7 +315,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         };
         addLink.add(new AttributeModifier("title", getString("property.value.add")));
-        addLink.add(new Image("addIcon", new PackageResourceReference(PropertiesEditor.class, "list-add-16.png")));
         addLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
             @Override
             protected String getTarget() {
@@ -335,7 +324,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
         valuesContainer.add(addLink);
 
         checkBox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.add(valuesContainer);
@@ -349,7 +337,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
         // dynamic update of related components when name is updated
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -363,8 +350,9 @@ public class PropertyDialog extends AbstractDialog<Node> {
         setFocus(nameField);
     }
 
-    private boolean isResidual(final String propertyName) {
-        return propertyName.equals("*");
+    @Override
+    public IModel<String> getTitle() {
+        return Model.of("Add a new Property");
     }
 
     @Override
@@ -373,13 +361,13 @@ public class PropertyDialog extends AbstractDialog<Node> {
             final IModel<Node> nodeModel = modelReference.getModel();
             final Node node = nodeModel.getObject();
             final int propertyType = PropertyType.valueFromName(type);
-            
+
             if (isMultiple) {
                 node.setProperty(name, getJcrValues(propertyType), propertyType);
             } else {
                 node.setProperty(name, getJcrValue(propertyType), propertyType);
             }
-            
+
             modelReference.setModel(new JcrNodeModel(node));
 
         } catch (ConstraintViolationException e) {
@@ -391,8 +379,19 @@ public class PropertyDialog extends AbstractDialog<Node> {
         }
     }
 
-    public IModel<String> getTitle() {
-        return Model.of("Add a new Property");
+    @Override
+    public IValueMap getProperties() {
+        return DIALOG_PROPERTIES;
+    }
+
+    @Override
+    protected void onDetach() {
+        choiceModel.detach();
+        super.onDetach();
+    }
+
+    private boolean isResidual(final String propertyName) {
+        return propertyName.equals("*");
     }
 
     private Value getJcrValue(final int propertyType) {
@@ -423,16 +422,4 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private ValueFactory getValueFactory() throws RepositoryException {
         return UserSession.get().getJcrSession().getValueFactory();
     }
-
-    @Override
-       public IValueMap getProperties() {
-        return new ValueMap("width=420,height=300").makeImmutable();
-    }
-
-    @Override
-    protected void onDetach() {
-        choiceModel.detach();
-        super.onDetach();
-    }
-    
 }
