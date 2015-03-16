@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -119,17 +120,22 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         @Override
         protected void populateItem(Item<String> item) {
             Taxonomy taxonomy = getTaxonomy();
+            IModel<?> categoryTextModel;
+
             if (taxonomy != null) {
                 Category category = taxonomy.getCategoryByKey(item.getModelObject());
                 if (category != null) {
-                    item.add(new Label("key", new Model(TaxonomyHelper.getCategoryName(category, getPreferredLocale()))));
+                    categoryTextModel = new Model(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
                 } else {
-                    item.add(new Label("key", new ResourceModel("invalid.taxonomy.category.key")));
+                    categoryTextModel = new ResourceModel("invalid.taxonomy.category.key");
                 }
             } else {
-                item.add(new Label("key", new ResourceModel("invalid.taxonomy.key")));
+                categoryTextModel = new ResourceModel("invalid.taxonomy.key");
             }
 
+            Label label = new Label("key", categoryTextModel);
+            item.add(label);
+            label.add(new AttributeModifier("title", categoryTextModel));
         }
     }
 
@@ -145,17 +151,23 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         protected void populateItem(ListItem<Change<String>> item) {
             Taxonomy taxonomy = getTaxonomy();
             Change<String> change = item.getModelObject();
-            Label label;
+            IModel<?> categoryTextModel;
+
             if (taxonomy != null) {
                 Category category = taxonomy.getCategoryByKey(change.getValue());
                 if (category != null) {
-                    item.add(label = new Label("key", new Model(TaxonomyHelper.getCategoryName(category, getPreferredLocale()))));
+                    categoryTextModel = new Model(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
                 } else {
-                    item.add(label = new Label("key", new ResourceModel("invalid.taxonomy.category.key")));
+                    categoryTextModel = new ResourceModel("invalid.taxonomy.category.key");
                 }
             } else {
-                item.add(label = new Label("key", new ResourceModel("invalid.taxonomy.key")));
+                categoryTextModel = new ResourceModel("invalid.taxonomy.key");
             }
+
+            Label label = new Label("key", categoryTextModel);
+            item.add(label);
+            label.add(new AttributeModifier("title", categoryTextModel));
+
             switch (change.getType()) {
                 case ADDED:
                     label.add(new AttributeAppender("class", new Model("hippo-diff-added"), " "));
