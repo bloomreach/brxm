@@ -15,7 +15,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
-    <div class="hippo-perspective-dashboard smooth_load_workaround" yui:id="dashboard-perspective-wrapper">
+    <div class="hippo-perspective-dashboard" yui:id="dashboard-perspective-wrapper">
       <div class="hippo-perspective-dashboard-panel" yui:id="left">
         <div yui:id="left-body">
         <h2>
@@ -24,7 +24,7 @@
           <div class="hippo-perspective-dashboard-shortcuts" wicket:id="extension.shortcuts">[ Shortcuts ]</div>
           </div>
       </div>
-      <div class="hippo-perspective-dashboard-panel left-border" yui:id="center">
+      <div class="hippo-perspective-dashboard-panel" yui:id="center">
         <div yui:id="center-body">
           <h2>
             <span><wicket:message key="history">history message</wicket:message></span>
@@ -32,7 +32,7 @@
          <div wicket:id="extension.currentActivity">[ Whats going on plugin ]</div>
         </div>
       </div>
-      <div class="hippo-perspective-dashboard-panel left-border" yui:id="right">
+      <div class="hippo-perspective-dashboard-panel" yui:id="right">
         <div yui:id="right-body">
           <h2>
             <span class="task"><wicket:message key="todo">todo message</wicket:message></span>
@@ -41,7 +41,7 @@
             <div wicket:id="extension.todo">[ Todo plugin ]</div>
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   </wicket:panel>
 </html>

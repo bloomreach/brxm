@@ -19,7 +19,7 @@
 
 .hippo-perspective-dashboard {
   .yui-layout-unit {
-    border-left: 1px solid @light-shade;
+    border-left: 1px solid @dashboard-panel-border-color;
 
     &:first-child {
       border-left: 0;
@@ -27,15 +27,15 @@
   }
 
   .hippo-perspective-dashboard-panel {
-    background: #ffffff;
+    background: @dashboard-panel-bgcolor;
 
     h2 {
-      color: @darkest-shade;
+      color: @dashboard-panel-header-color;
       font-size: 15px;
       font-style: normal;
       font-weight: normal;
       padding: 11px 16px 12px 16px;
-      background-color: @light-shade;
+      background-color: @dashboard-panel-header-bgcolor;
 
       .truncate();
     }
