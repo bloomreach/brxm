@@ -18,12 +18,16 @@
 }
 
 .hippo-perspective-dashboard {
+  .yui-layout-unit {
+    border-left: 1px solid @light-shade;
+
+    &:first-child {
+      border-left: 0;
+    }
+  }
+
   .hippo-perspective-dashboard-panel {
     background: #ffffff;
-
-    &.left-border {
-      border-left: 1px solid @light-shade;
-    }
 
     h2 {
       color: @darkest-shade;
