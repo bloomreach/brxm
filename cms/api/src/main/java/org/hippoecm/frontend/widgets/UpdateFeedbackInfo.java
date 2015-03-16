@@ -21,10 +21,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 /**
  * The payload class used by wicket events to notify feedback messages changes from wicket fields to parent components.
  * If parent components have feedback panels, they can consume these events to redraw their feedback panels.
- *
- * @author cngo
- * @version $Id$
- * @since 2015-03-13
  */
 public class UpdateFeedbackInfo {
     private final AjaxRequestTarget target;

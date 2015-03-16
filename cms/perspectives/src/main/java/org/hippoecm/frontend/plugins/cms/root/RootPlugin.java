@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
@@ -95,6 +96,9 @@ public class RootPlugin extends TabsPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        // keep all feedback messages after each request cycle
+        getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
         if (config.containsKey("pinger.interval")) {
             add(new Pinger("pinger", config.getAsDuration("pinger.interval")));

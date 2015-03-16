@@ -67,9 +67,6 @@ public class EditPerspective extends Perspective {
 
         add(CssClass.append("hippo-editor"));
 
-        // keep all messages after each request cycle
-        getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
-
         feedback = new FeedbackPanel("feedback", message -> {
             final String serviceId = config.getString(RenderService.FEEDBACK);
             if (serviceId != null) {

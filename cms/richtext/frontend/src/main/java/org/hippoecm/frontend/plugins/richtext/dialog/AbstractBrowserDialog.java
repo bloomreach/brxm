@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.richtext.dialog;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -67,8 +68,8 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     }
 
     @Override
-    protected FeedbackPanel newFeedbackPanel(final String id) {
-        return new FeedbackPanel(id) {{
+    protected FeedbackPanel newFeedbackPanel(final String id, final IFeedbackMessageFilter filter) {
+        return new FeedbackPanel(id, filter) {{
             setOutputMarkupId(true);
         }};
     }
