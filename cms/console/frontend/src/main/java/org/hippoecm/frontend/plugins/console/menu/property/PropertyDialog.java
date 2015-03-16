@@ -222,6 +222,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
         settings.setUseSmartPositioning(true);
         settings.setShowCompleteListOnFocusGain(true);
         settings.setShowListOnEmptyInput(true);
+        // Setting a max height will trigger a correct recalculation of the height when the list of items is filtered
+        settings.setMaxHeightInPx(400);
 
         final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name",
                 new PropertyModel<>(this, "name"), settings) {

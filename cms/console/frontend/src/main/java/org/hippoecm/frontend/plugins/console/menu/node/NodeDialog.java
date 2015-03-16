@@ -108,6 +108,8 @@ public class NodeDialog extends AbstractDialog<Node> {
         settings.setUseSmartPositioning(true);
         settings.setShowCompleteListOnFocusGain(true);
         settings.setShowListOnEmptyInput(true);
+        // Setting a max height will trigger a correct recalculation of the height when the list of items is filtered
+        settings.setMaxHeightInPx(400);
 
         final Model<String> typeModel = new Model<String>() {
             private static final long serialVersionUID = 1L;
