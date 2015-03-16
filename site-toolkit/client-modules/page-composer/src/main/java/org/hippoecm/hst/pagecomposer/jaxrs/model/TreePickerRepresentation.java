@@ -122,6 +122,7 @@ public class TreePickerRepresentation {
     private boolean leaf;
     private Type type = Type.FOLDER;
     private String state;
+
     private boolean expandable;
     private List<TreePickerRepresentation> items = new ArrayList<>();
 
@@ -216,11 +217,7 @@ public class TreePickerRepresentation {
     }
 
 
-    private boolean isInVisiblePage(final HstSiteMapItem child) {
-        return !child.isExplicitElement() || child.isContainerResource() || child.isHiddenInChannelManager();
-    }
-
-    public TreePickerRepresentation represent(final HstSiteMap hstSiteMap) {
+    public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService, final HstSiteMap hstSiteMap) {
         if (!(hstSiteMap instanceof CanonicalInfo)) {
             throw new ClientException(String.format("hstSiteMap '%s' expected to be of type '%s'",
                     hstSiteMap, CanonicalInfo.class), ClientError.UNKNOWN);
@@ -238,7 +235,7 @@ public class TreePickerRepresentation {
 
         for (HstSiteMapItem child : hstSiteMap.getSiteMapItems()) {
             leaf = false;
-            if (isInVisiblePage(child)) {
+            if (isInVisibleItem(child, pageComposerContextService.getEditingMount().getPageNotFound())) {
                 continue;
             }
 
@@ -246,14 +243,14 @@ public class TreePickerRepresentation {
 //            if (child.getValue().equals(notfound)) {
 //                continue;
 //            }
-            TreePickerRepresentation childRepresentation = new TreePickerRepresentation().represent(child);
+            TreePickerRepresentation childRepresentation = new TreePickerRepresentation().represent(pageComposerContextService, child);
             childRepresentation.collapsed = true;
             items.add(childRepresentation);
         }
         return this;
     }
 
-    public TreePickerRepresentation represent(final HstSiteMapItem hstSiteMapItem) {
+    public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService, final HstSiteMapItem hstSiteMapItem) {
         if (!(hstSiteMapItem instanceof CanonicalInfo)) {
             throw new ClientException(String.format("hstSiteMapItem '%s' expected to be of type '%s'",
                     hstSiteMapItem, CanonicalInfo.class), ClientError.UNKNOWN);
@@ -264,13 +261,29 @@ public class TreePickerRepresentation {
         nodeName = hstSiteMapItem.getValue();
         displayName = hstSiteMapItem.getPageTitle() == null ? hstSiteMapItem.getValue() : hstSiteMapItem.getPageTitle();
         nodePath = ((CanonicalInfo)hstSiteMapItem).getCanonicalPath();
-        collapsed = false;
-        expandable = hstSiteMapItem.getChildren().size() > 0;
+        collapsed = true;
+        for (HstSiteMapItem child : hstSiteMapItem.getChildren()) {
+            if (!isInVisibleItem(child, pageComposerContextService.getEditingMount().getPageNotFound())) {
+                expandable = true;
+                break;
+            }
+        }
         leaf = !expandable;
         selectable = true;
         pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem, null);
         return this;
     }
+
+    private boolean isInVisibleItem(final HstSiteMapItem item, final String pageNotFound) {
+        if (!item.isExplicitElement() || item.isContainerResource() || item.isHiddenInChannelManager()) {
+            return true;
+        }
+        if (HstSiteMapUtils.getPath(item, null).equals(pageNotFound)) {
+            return true;
+        }
+        return false;
+    }
+
 
     private TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
                                                final ExpandedNodeHierarchy expandedNodeHierarchy,

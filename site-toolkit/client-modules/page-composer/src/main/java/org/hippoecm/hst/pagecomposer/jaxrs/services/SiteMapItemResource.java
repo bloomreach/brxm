@@ -45,7 +45,7 @@ public class SiteMapItemResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(getPageComposerContextService().getRequestConfigIdentifier());
-                TreePickerRepresentation representation = new TreePickerRepresentation().represent(siteMapItem);
+                TreePickerRepresentation representation = new TreePickerRepresentation().represent(getPageComposerContextService(), siteMapItem);
                 return ok("Sitemap item loaded successfully", representation);
             }
         });

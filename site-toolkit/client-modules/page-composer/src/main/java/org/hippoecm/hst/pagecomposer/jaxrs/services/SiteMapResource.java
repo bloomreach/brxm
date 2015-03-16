@@ -130,7 +130,7 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
-                TreePickerRepresentation representation = new TreePickerRepresentation().represent(siteMap);
+                TreePickerRepresentation representation = new TreePickerRepresentation().represent(getPageComposerContextService(), siteMap);
                 return ok("Sitemap loaded successfully", representation);
             }
         });
