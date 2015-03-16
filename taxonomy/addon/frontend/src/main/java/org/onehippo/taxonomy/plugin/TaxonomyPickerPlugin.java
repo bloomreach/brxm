@@ -46,6 +46,7 @@ import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -194,6 +195,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             requiredMarker.setVisible(false);
         }
         add(requiredMarker);
+
+        add(new FieldHint("hint-panel", config.getString("hint")));
 
         dao = context.getService(config.getString(ClassificationDao.SERVICE_ID), ClassificationDao.class);
         if (dao == null) {
