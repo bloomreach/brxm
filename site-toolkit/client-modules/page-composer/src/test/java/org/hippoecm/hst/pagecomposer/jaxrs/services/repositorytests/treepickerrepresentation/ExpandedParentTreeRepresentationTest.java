@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +51,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
     private void aboutUsRepresentationAssertions(final AbstractTreePickerRepresentation representation) {
         assertEquals("unittestproject",representation.getNodeName());
 
-        assertEquals(representation.getPickerType(), "documents");
+        assertEquals("documents", representation.getPickerType());
         assertFalse(representation.isCollapsed());
         assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
 
@@ -61,7 +62,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         // 'common' should be expanded
         final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
 
-        assertEquals(commonFolderRepresentation.getPickerType(), "documents");
+        assertEquals("documents", commonFolderRepresentation.getPickerType());
         assertEquals("Folder 'common' should loaded/expanded ", 2, commonFolderRepresentation.getItems().size());
         assertFalse(commonFolderRepresentation.isCollapsed());
         assertFalse("Folder 'common' should not be able to be matched in sitemap ",commonFolderRepresentation.isSelectable());
@@ -79,7 +80,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
 
         final AbstractTreePickerRepresentation aboutDocumentRepresentation = aboutFolderRepresentation.getItems().get(0);
 
-        assertEquals(aboutDocumentRepresentation.getPickerType(), "documents");
+        assertEquals("documents", aboutDocumentRepresentation.getPickerType());
         assertEquals("About Us", aboutDocumentRepresentation.getDisplayName());
         assertTrue(aboutDocumentRepresentation.isSelectable());
 
@@ -101,21 +102,83 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
     }
 
     @Test
-    public void representation_for_siteMapPathInfo_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
+    public void representation_for_contact_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
 
         AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "contact");
-
 
         assertFalse("contact sitemap pathinfo matches sitemap item that does not have a relative content path, hence a " +
                 "fallback to SiteMapTreePickerRepresentation should be done", representation instanceof DocumentTreePickerRepresentation);
 
         assertTrue(representation instanceof SiteMapTreePickerRepresentation);
 
-        assertEquals(representation.getPickerType(), "pages");
+        assertEquals("pages", representation.getPickerType());
+        assertEquals("page", representation.getType());
+        assertNull("root sitemap representation must have path info null",representation.getPathInfo());
 
-        // TODO HSTTWO-3225
+        assertFalse(representation.isCollapsed());
+        assertFalse(representation.isSelected());
+
+        AbstractTreePickerRepresentation contactRepresentation = null;
+        for (AbstractTreePickerRepresentation childRepresentation : representation.getItems()) {
+            if ("contact".equals(childRepresentation.getPathInfo())) {
+                contactRepresentation = childRepresentation;
+                break;
+            }
+        }
+
+        assertNotNull("contact representation should be available at the root",contactRepresentation);
+        assertTrue("contactRepresentation which is the selected item must *not* be expanded", contactRepresentation.isCollapsed());
+        assertEquals("contact", contactRepresentation.getPathInfo());
+        assertTrue(contactRepresentation.isExpandable());
+        assertTrue("'contact' item should be the selected one",contactRepresentation.isSelected());
+        assertFalse(contactRepresentation.isLeaf());
+        assertEquals("contact should *not* be expanded but seleceted only",0,contactRepresentation.getItems().size());
+
     }
+
+    @Test
+    public void representation_for_contact_thankyou_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
+        AbstractTreePickerRepresentation representation =
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "contact/thankyou");
+
+        assertFalse("contact/thankyou sitemap pathinfo matches sitemap item that does not have a relative content path, hence a " +
+                "fallback to SiteMapTreePickerRepresentation should be done", representation instanceof DocumentTreePickerRepresentation);
+
+        assertTrue(representation instanceof SiteMapTreePickerRepresentation);
+
+        assertEquals("pages", representation.getPickerType());
+        assertEquals("page", representation.getType());
+        assertNull("root sitemap representation must have path info null",representation.getPathInfo());
+
+        assertFalse(representation.isCollapsed());
+        assertFalse(representation.isSelected());
+
+        AbstractTreePickerRepresentation contactRepresentation = null;
+        for (AbstractTreePickerRepresentation childRepresentation : representation.getItems()) {
+            if ("contact".equals(childRepresentation.getPathInfo())) {
+                contactRepresentation = childRepresentation;
+                break;
+            }
+        }
+
+        assertNotNull("contact representation should be available at the root",contactRepresentation);
+        assertFalse("contactRepresentation should be expanded", contactRepresentation.isCollapsed());
+        assertEquals("contact", contactRepresentation.getPathInfo());
+        assertTrue(contactRepresentation.isExpandable());
+        assertFalse("'contact' item should be not be the selected one",contactRepresentation.isSelected());
+        assertFalse(contactRepresentation.isLeaf());
+        assertEquals("contact/thankyou should *not* loaded ",1,contactRepresentation.getItems().size());
+
+        final AbstractTreePickerRepresentation thankYou = contactRepresentation.getItems().get(0);
+        assertEquals("contact/thankyou", thankYou.getPathInfo());
+        assertFalse(thankYou.isExpandable());
+        assertTrue(thankYou.isCollapsed());
+        assertEquals(0, thankYou.getItems().size());
+        assertTrue(thankYou.isLeaf());
+        assertTrue(thankYou.isSelected());
+    }
+
 
     @Test
     public void representation_for_siteMapPathInfo_that_cannot_be_matched_in_sitemap_results_in_root_content_presentation() throws Exception {
@@ -152,7 +215,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
     }
 
     @Test
-    public void representation_for_siteMapPathInfo_to_selecetd_news_folder() throws Exception {
+    public void representation_for_siteMapPathInfo_to_selected_news_folder() throws Exception {
 
         // news sitemap item as relative contentpath 'News' and that path should be expanded but 'News' folder
         // representation is still collapsed

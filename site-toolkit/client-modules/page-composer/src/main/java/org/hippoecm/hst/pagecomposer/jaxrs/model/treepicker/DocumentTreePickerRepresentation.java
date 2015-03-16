@@ -56,7 +56,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
     private static final Logger log = LoggerFactory.getLogger(DocumentTreePickerRepresentation.class);
 
-    public static AbstractTreePickerRepresentation representRequestConfigNode(final PageComposerContextService pageComposerContextService) throws RepositoryException {
+    public static AbstractTreePickerRepresentation representRequestContentNode(final PageComposerContextService pageComposerContextService) throws RepositoryException {
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));
         return new DocumentTreePickerRepresentation().represent(pageComposerContextService, singleNodeHierarchy, true, null);
     }
@@ -103,7 +103,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
                     // document OR sitemap tree
 
                     if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitPath()) {
-                        return SiteMapTreePickerRepresentation.representExpandedParentTree(resolvedSiteMapItem.getHstSiteMapItem());
+                        return SiteMapTreePickerRepresentation.representExpandedParentTree(pageComposerContextService, resolvedSiteMapItem.getHstSiteMapItem());
                     }
                     final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
                             "is not an explicit sitemap item hence no tree picker representation can be created for it be " +

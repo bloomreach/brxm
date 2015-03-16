@@ -79,6 +79,7 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTestTreePic
         assertEquals("contact", contact.getPathInfo());
         assertTrue(contact.isExpandable());
         assertFalse(contact.isLeaf());
+        assertFalse(contact.isSelected());
         assertEquals(1,contact.getItems().size());
 
         final AbstractTreePickerRepresentation thankYou = contact.getItems().get(0);
@@ -86,6 +87,7 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTestTreePic
         assertFalse(thankYou.isExpandable());
         assertTrue(thankYou.isCollapsed());
         assertEquals(0, thankYou.getItems().size());
+        assertFalse(thankYou.isSelected());
         assertTrue(thankYou.isLeaf());
     }
 

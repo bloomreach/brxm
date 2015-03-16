@@ -24,7 +24,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -45,9 +44,8 @@ public class SiteMapItemResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(getPageComposerContextService().getRequestConfigIdentifier());
-                AbstractTreePickerRepresentation representation = new SiteMapTreePickerRepresentation()
-                        .represent(getPageComposerContextService(), siteMapItem, true);
+                AbstractTreePickerRepresentation representation = SiteMapTreePickerRepresentation
+                        .representRequestSiteMapItem(getPageComposerContextService(), siteMapHelper);
                 return ok("Sitemap item loaded successfully", representation);
             }
         });

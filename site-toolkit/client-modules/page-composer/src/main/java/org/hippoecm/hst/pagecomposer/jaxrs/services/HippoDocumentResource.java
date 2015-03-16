@@ -27,11 +27,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representExpandedParentTree;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representRequestConfigNode;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representRequestContentNode;
 
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,7 +44,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final AbstractTreePickerRepresentation representation;
-                representation =  representRequestConfigNode(getPageComposerContextService());
+                representation =  representRequestContentNode(getPageComposerContextService());
                 return ok("Folder loaded successfully", representation);
             }
         });
@@ -65,7 +64,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final AbstractTreePickerRepresentation representation;
                 if (StringUtils.isEmpty(siteMapPathInfo)) {
-                    representation = representRequestConfigNode(getPageComposerContextService());
+                    representation = representRequestContentNode(getPageComposerContextService());
 
                 } else {
                     representation = representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
