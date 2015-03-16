@@ -22,8 +22,7 @@
         .service('hippo.channel.menu.PickerService', [
             'hippo.channel.ConfigService',
             '$http',
-            '$state',
-            function (ConfigService, $http, $state) {
+            function (ConfigService, $http) {
                 var pickerData = {
                         items: []
                     }, callObj = {

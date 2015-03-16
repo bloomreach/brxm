@@ -21,10 +21,9 @@
             '$scope',
             '$state',
             '$stateParams',
-            '$filter',
             'hippo.channel.menu.PickerService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $state, $stateParams, $filter, PickerService, MenuService) {
+            function ($scope, $state, $stateParams, PickerService, MenuService) {
                 $scope.selectDocument = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId,
