@@ -210,7 +210,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
             remove.setVisible(false);
         }
 
-        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.DELETE_TINY);
+        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
         remove.add(removeIcon);
 
         controls.add(remove);
@@ -227,7 +227,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         }
         upLink.setEnabled(!isFirst);
 
-        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP_TINY);
+        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
         upLink.add(upIcon);
 
         controls.add(upLink);
@@ -246,7 +246,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         }
         downLink.setEnabled(!isLast);
 
-        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN_TINY);
+        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         downLink.add(downIcon);
 
         controls.add(downLink);
@@ -273,7 +273,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
           final Label addLink = new Label("add-label", getString("add-label"));
           link.add(addLink);
 
-          final HippoIcon addIcon = HippoIcon.fromSprite("add-icon", Icon.PLUS_TINY);
+          final HippoIcon addIcon = HippoIcon.fromSprite("add-icon", Icon.PLUS);
           link.add(addIcon);
 
           return link;

@@ -99,7 +99,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DOCUMENT_UNLOCKED_TINY);
+                return HippoIcon.fromSprite(id, Icon.FILE_UNLOCKED);
             }
 
             @Override

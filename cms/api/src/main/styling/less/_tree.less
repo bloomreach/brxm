@@ -62,13 +62,17 @@
         color: @tree-text-color;
 
         // Folder icon
-        .hi-folder {
+        .hi-folder,
+        .hi-folder-open {
           position: relative;
           top: 3px;
           left: 0;
-          fill: @tree-folder-color;
           width: 15px;
           height: 15px;
+        }
+
+        .hi-folder {
+          color: @tree-folder-color;
         }
 
         // Text label
@@ -109,7 +113,7 @@
       color: @tree-hover-color;
 
       svg {
-        fill: @tree-hover-color
+        color: @tree-hover-color
       }
     }
 
@@ -125,17 +129,7 @@
       // white SVGs when node is selected
       .hippo-tree-node-link svg.hi-folder,
       svg.hi {
-        fill: @white;
-      }
-
-      .hippo-tree-dropdown-icon-container .hi-context-menu {
-        .hi-shape-bg {
-          fill: @primary;
-        }
-        .hi-shape-circle,
-        .hi-shape-arrow {
-          fill: @white;
-        }
+        color: @white;
       }
     }
 
@@ -155,22 +149,7 @@
 
       .hi {
         position: relative;
-        fill: @tree-junction-color;
-      }
-
-      .hi-bullet {
-        top: 1px;
-        width: 9px;
-        height: 9px;
-      }
-
-      .hi-caret {
-        width: 9px;
-        height: 9px;
-      }
-
-      .hi-caret-down {
-        top: 1px;
+        color: @tree-junction-color;
       }
     }
   }

@@ -114,7 +114,7 @@ public class YuiDateTimeField extends DateTimeField {
             }
         });
 
-        today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE_TINY));
+        today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE));
 
         //Add change behavior to super fields
         for (String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {

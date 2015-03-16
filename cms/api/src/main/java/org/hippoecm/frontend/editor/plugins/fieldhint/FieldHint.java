@@ -43,7 +43,7 @@ public class FieldHint extends Panel {
             // Check if there's a translation of the hint, use the untranslated hint as default
             IModel<String> translatedHintModel = new StringResourceModel(hint, this, null, hint);
             hintContainer.add(new Label("hint-text", translatedHintModel));
-            hintContainer.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE_TINY));
+            hintContainer.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
         }
         return hintContainer;
     }

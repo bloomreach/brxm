@@ -49,7 +49,7 @@ public final class FolderTranslationsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.TRANSLATE_TINY);
+                return HippoIcon.fromSprite(id, Icon.TRANSLATE);
             }
 
             @Override

@@ -114,7 +114,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.EDIT_TINY);
+                return HippoIcon.fromSprite(id, Icon.PENCIL_SQUARE);
             }
 
             @Override
@@ -148,7 +148,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.RENAME_TINY);
+                return HippoIcon.fromSprite(id, Icon.TYPE);
             }
 
             @Override
@@ -197,7 +197,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILES_TINY);
+                return HippoIcon.fromSprite(id, Icon.FILES);
             }
 
             @Override
@@ -319,7 +319,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MOVE_TINY);
+                return HippoIcon.fromSprite(id, Icon.MOVE_INTO);
             }
 
             @Override
@@ -395,7 +395,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
+                return HippoIcon.fromSprite(id, Icon.TIMES);
             }
 
             @Override
@@ -422,7 +422,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.URL_NAVIGATION_TINY);
+                return HippoIcon.fromSprite(id, Icon.LINK);
             }
 
             @Override

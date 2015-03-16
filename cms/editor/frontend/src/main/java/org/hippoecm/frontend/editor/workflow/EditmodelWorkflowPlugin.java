@@ -77,7 +77,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.EDIT_TINY);
+                return HippoIcon.fromSprite(id, Icon.PENCIL_SQUARE);
             }
 
             @Override
@@ -137,7 +137,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILES_TINY);
+                return HippoIcon.fromSprite(id, Icon.FILES);
             }
 
             @Override

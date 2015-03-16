@@ -121,6 +121,6 @@ public class NewDocumentTypeAction extends Action {
 
     @Override
     protected Component getIcon(final String id) {
-        return HippoIcon.fromSprite(id, Icon.NEW_DOCUMENT_TINY);
+        return HippoIcon.fromSprite(id, Icon.FILE_PLUS);
     }
 }

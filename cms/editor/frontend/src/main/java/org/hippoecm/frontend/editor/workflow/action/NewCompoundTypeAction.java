@@ -78,6 +78,6 @@ public class NewCompoundTypeAction extends Action {
 
     @Override
     protected Component getIcon(final String id) {
-        return HippoIcon.fromSprite(id, Icon.NEW_COMPOUND_TINY);
+        return HippoIcon.fromSprite(id, Icon.FILE_COMPOUND_PLUS);
     }
 }

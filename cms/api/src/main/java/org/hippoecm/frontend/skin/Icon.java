@@ -30,76 +30,108 @@ import org.slf4j.LoggerFactory;
  * References to icons.
  */
 public enum Icon {
-    ADD_DOCUMENT_TINY,
-    ADD_FOLDER_TINY,
-    ADD_OVERLAY_TINY,
-    ARROW_DOWN_TINY,
-    ARROW_UP_TINY,
+    ARROW_DOWN,
+    ARROW_UP,
+    BULLET_EXTRA_LARGE,
     BULLET_LARGE,
-    BULLET_TINY,
-    CALENDAR_MONTH_TINY,
-    CARET_UP_TINY,
-    CARET_RIGHT_TINY,
-    CARET_DOWN_TINY,
-    CARET_LEFT_TINY,
-    CLOSE_TINY,
-    COLLAPSE_TINY,
-    CONFIGURATION_TINY,
-    CONTEXT_MENU_TINY,
-    DELETE_TINY,
-    DEPUBLISH_SCHEDULED_TINY,
-    DEPUBLISH_TINY,
-    DOCUMENT_COMPOUND_SMALL,
-    DOCUMENT_COMPOUND_TINY,
-    DOCUMENT_FILE_SMALL,
-    DOCUMENT_FILE_TINY,
-    DOCUMENT_IMAGE_TINY,
-    DOCUMENT_TINY,
-    DOCUMENT_SMALL,
-    DOCUMENT_FILES_TINY,
-    DOCUMENT_UNLOCKED_TINY,
-    DROPDOWN_TINY,
-    EDIT_TINY,
-    EMPTY_TINY,
+    BULLET_MEDIUM,
+    BULLET_SMALL,
+    BULLHORN_THINNER,
+    CALENDAR_DAY,
+    CALENDAR_MONTH,
+    CARET_DOWN_CIRCLE,
+    CARET_DOWN_EXTRA_LARGE,
+    CARET_DOWN_LARGE,
+    CARET_DOWN_MEDIUM,
+    CARET_DOWN_SMALL,
+    CARET_RIGHT_EXTRA_LARGE,
+    CARET_RIGHT_LARGE,
+    CARET_RIGHT_MEDIUM,
+    CARET_RIGHT_SMALL,
+    CARET_UP_CIRCLE,
+    CHECK_CIRCLE,
+    CHECK_CIRCLE_CLOCK,
+    CHECK_SQUARE,
+    CHEVRON_DOWN,
+    CHEVRON_DOWN_THICK,
+    CHEVRON_DOWN_THIN,
+    CHEVRON_DOWN_CIRCLE,
+    CHEVRON_LEFT,
+    CHEVRON_LEFT_THICK,
+    CHEVRON_LEFT_THIN,
+    CHEVRON_RIGHT,
+    CHEVRON_RIGHT_THICK,
+    CHEVRON_RIGHT_THIN,
+    CHEVRON_UP,
+    CHEVRON_UP_THICK,
+    CHEVRON_UP_THIN,
+    CHEVRON_UP_CIRCLE,
+    CODE,
+    COMPONENT,
+    COMPRESS,
+    CROP,
+    EMPTY,
     EMPTY_SMALL,
-    EXPAND_TINY,
-    FOLDER_TINY,
-    FOLDER_SMALL,
-    FOLDER_OPEN_TINY,
-    GLOBAL_TINY,
-    HISTORY_TINY,
-    INFO_CIRCLE_TINY,
-    LIST_TINY,
-    MOVE_TINY,
-    NEW_COLLECTION_TINY,
-    NEW_COMPOUND_TINY,
-    NEW_DOCUMENT_TINY,
-    NEW_FILE_FOLDER_TINY,
-    NEW_FOLDER_TINY,
-    NEW_IMAGE_FOLDER_TINY,
-    NEW_IMAGE_TINY,
-    NEW_TRANSLATED_FOLDER_TINY,
-    ORDER_TINY,
-    PLUS_TINY,
-    PUBLISH_SCHEDULED_TINY,
-    PUBLISH_TINY,
-    RENAME_TINY,
-    RESTORE_TINY,
-    SAVE_TINY,
-    SAVE_CLOSE_TINY,
-    SEARCH_TINY,
-    STATE_CHANGED_SMALL,
-    STATE_LIVE_SMALL,
-    STATE_NEW_SMALL,
-    THUMBNAILS_TINY,
-    TRANSLATE_TINY,
-    UNLOCKED_TINY,
-    URL_NAVIGATION_TINY;
+    EXCLAMATION,
+    EXCLAMATION_CIRCLE,
+    EXCLAMATION_TRIANGLE,
+    EXPAND,
+    FILE,
+    FILES,
+    FILE_COMPOUND,
+    FILE_COMPOUND_PLUS,
+    FILE_IMAGE,
+    FILE_IMAGE_PLUS,
+    FILE_NEWS,
+    FILE_PENCIL,
+    FILE_PLUS,
+    FILE_TEXT,
+    FILE_TEXT_THIN,
+    FILE_THIN,
+    FILE_UNLOCKED,
+    FLASK,
+    FLOPPY,
+    FLOPPY_TIMES_CIRCLE,
+    FOLDER,
+    FOLDER_OPEN,
+    FOLDER_PLUS,
+    FOLDER_THIN,
+    FONT,
+    FORWARD,
+    GEAR,
+    GLOBE,
+    GLOBE_ABSTRACT,
+    INFO_CIRCLE,
+    LINK,
+    LIST_UL,
+    LOCKED,
+    MINUS_CIRCLE,
+    MINUS_CIRCLE_CLOCK,
+    MOVE_INTO,
+    OVERLAY_CHECK_CIRCLE_THIN,
+    OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE_THIN,
+    OVERLAY_MINUS_CIRCLE_THIN,
+    OVERLAY_PLUS,
+    PENCIL_SQUARE,
+    PLUS,
+    PLUS_SQUARE,
+    REFRESH,
+    RESTORE,
+    SEARCH,
+    SORT,
+    STEP_BACKWARD,
+    STEP_FORWARD,
+    THUMBNAILS,
+    TIMES,
+    TIMES_CIRCLE,
+    TRANSLATE,
+    TYPE,
+    UNLOCKED;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 
     private static final String ICONS_DIR = "images/icons/";
-    private static final String SPRITE_FILE_NAME = ICONS_DIR + "hippo-icons.svg";
+    private static final String SPRITE_FILE_NAME = ICONS_DIR + "hippo-icon-sprite.svg";
 
     public static String getIconSprite() {
         PackageResourceReference hippoIcons = getIconSpriteReference();
@@ -159,35 +191,48 @@ public enum Icon {
 
     /**
      * @return the id of this icon in the generated icon sprint.
-     * For example, the icon {@link CARET_DOWN_TINY} will have the
-     * icon sprite id "hi-caret-down-tiny".
+     * For example, the icon {@link FOLDER_OPEN} will have the
+     * icon sprite id "hi-folder-open".
      */
     String getSpriteId() {
         return "hi-" + getFileName();
     }
 
     /**
-     * @return all CSS helper classes to identify an icon. For example, the icon {@link CARET_DOWN_TINY}
-     * will get the CSS classes "hi hi-caret hi-caret-down hi-tiny".
+     * @return all CSS helper classes to identify an icon. For example, the icon {@link FOLDER_OPEN_THIN}
+     * will get the CSS classes "hi hi-folder-open hi-small".
      */
     private String getCssClasses() {
         final String[] nameParts = StringUtils.split(name().toLowerCase(), '_');
         final StringBuilder cssClasses = new StringBuilder("hi");
 
+        final String lastNamePart = nameParts[nameParts.length -1];
+        // Map thickness of lines in svg to dimensions of svg element
+        switch (lastNamePart) {
+            case "thick":
+                cssClasses.append(" hi-mini");
+                break;
+            case "thin":
+                cssClasses.append(" hi-small");
+                break;
+            case "thinner":
+                cssClasses.append(" hi-medium");
+                break;
+            default:
+                cssClasses.append(" hi-tiny");
+                break;
+        }
+
         String name = null;
         for (int i = 0; i < nameParts.length; i++) {
-            if (i == nameParts.length - 1) {
-                // Last name part is always the size e.g. 'tiny' in CARET_DOWN_TINY
-                cssClasses.append(" hi-").append(nameParts[i]);
-            } else {
-                if (name == null) {
-                    name = " hi-" + nameParts[i];
-                } else {
-                    name += "-" + nameParts[i];
-                }
-                cssClasses.append(name);
+            if (name == null) {
+                name = " hi-" + nameParts[i];
+            } else if (!nameParts[i].equals("thick") && !nameParts[i].equals("thin") && !nameParts[i].equals("thinner")) {
+                name += "-" + nameParts[i];
             }
         }
+        cssClasses.append(name);
+
         return cssClasses.toString();
     }
 }

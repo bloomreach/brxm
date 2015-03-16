@@ -111,7 +111,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.SAVE_TINY);
+                return HippoIcon.fromSprite(id, Icon.FLOPPY);
             }
 
             @Override
@@ -133,7 +133,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.SAVE_CLOSE_TINY);
+                return HippoIcon.fromSprite(id, Icon.FLOPPY_TIMES_CIRCLE);
             }
 
             @Override

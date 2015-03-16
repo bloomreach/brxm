@@ -116,7 +116,7 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.EDIT_TINY);
+                return HippoIcon.fromSprite(id, Icon.PENCIL_SQUARE);
             }
 
             @Override

@@ -96,7 +96,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE);
             }
 
             @Override
@@ -153,7 +153,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE);
             }
 
             @Override

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -280,7 +280,7 @@ public class TabbedPanel extends WebMarkupContainer {
         WebMarkupContainer container = new WebMarkupContainer("container", new Model<>(index));
         final TabsPlugin.Tab tab = getTabs().get(index);
         final IModel<TabsPlugin.Tab> tabModel = new Model<>(tab);
-        
+
         if (tab.isEditorTab()) {
             CloseLink closeLink = new CloseLink<TabsPlugin.Tab>("close", tabModel, tab.getForm()) {
 
@@ -291,11 +291,11 @@ public class TabbedPanel extends WebMarkupContainer {
 
             };
             container.add(closeLink);
-            closeLink.add(HippoIcon.fromSprite("close-icon", Icon.CLOSE_TINY));
+            closeLink.add(HippoIcon.fromSprite("close-icon", Icon.TIMES_CIRCLE));
         } else {
             EmptyPanel hidden = new EmptyPanel("close");
             hidden.setVisible(false);
-            hidden.add(HippoIcon.fromSprite("close-icon", Icon.EMPTY_TINY));
+            hidden.add(HippoIcon.fromSprite("close-icon", Icon.EMPTY));
             container.add(hidden);
         }
 

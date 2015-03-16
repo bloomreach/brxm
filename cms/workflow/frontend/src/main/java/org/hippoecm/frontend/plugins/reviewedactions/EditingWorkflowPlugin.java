@@ -48,7 +48,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.SAVE_TINY);
+                return HippoIcon.fromSprite(id, Icon.FLOPPY);
             }
 
             @Override
@@ -81,7 +81,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, Icon.SAVE_CLOSE_TINY);
+                return HippoIcon.inline(id, Icon.FLOPPY_TIMES_CIRCLE);
             }
 
             @Override

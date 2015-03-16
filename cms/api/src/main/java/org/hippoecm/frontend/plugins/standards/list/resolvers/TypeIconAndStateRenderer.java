@@ -76,9 +76,9 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
 
         private Component getTypeIcon(final String id) {
             if (isCompound()) {
-                return HippoIcon.fromSprite(id, Icon.DOCUMENT_COMPOUND_SMALL);
+                return HippoIcon.fromSprite(id, Icon.FILE);
             } else {
-                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILE_SMALL);
+                return HippoIcon.fromSprite(id, Icon.FILE_THIN);
             }
         }
 
@@ -153,11 +153,11 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                 }
 
                 if (current == null && draft != null) {
-                    return Icon.STATE_NEW_SMALL;
+                    return Icon.OVERLAY_MINUS_CIRCLE_THIN;
                 } else if (current != null && draft == null) {
-                    return Icon.STATE_LIVE_SMALL;
+                    return Icon.OVERLAY_CHECK_CIRCLE_THIN;
                 } else if (current != null && draft != null) {
-                    return Icon.STATE_CHANGED_SMALL;
+                    return Icon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE_THIN;
                 }
             }
             return null;

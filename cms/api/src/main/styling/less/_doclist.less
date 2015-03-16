@@ -237,10 +237,11 @@
       color: @doclist-row-selected-color;
 
       svg {
+        color: @doclist-row-selected-color;
         fill: @doclist-row-selected-color;
       }
 
-      .hi-state-new {
+      .hi-overlay-minus-circle {
         .hi-shape-circle {
           fill: @doclist-row-selected-color;
         }
@@ -249,7 +250,7 @@
         }
       }
 
-      .hi-state-live {
+      .hi-overlay-check-circle {
         .hi-shape-circle {
           fill: @doclist-row-selected-color;
         }
@@ -258,7 +259,7 @@
         }
       }
 
-      .hi-state-changed {
+      .hi-overlay-check-circle-exclamation-triangle {
         .hi-shape-circle,
         .hi-shape-triangle,
         .hi-shape-triangle-border {
@@ -359,7 +360,7 @@
     }
 
     &:hover .hi {
-      fill: @primary;
+      color: @primary;
     }
   }
 }

@@ -108,7 +108,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected Component getIcon(final String id) {
-                        return HippoIcon.fromSprite(id, Icon.RENAME_TINY);
+                        return HippoIcon.fromSprite(id, Icon.TYPE);
                     }
 
                     @Override
@@ -164,7 +164,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected Component getIcon(final String id) {
-                        return HippoIcon.fromSprite(id, Icon.ORDER_TINY);
+                        return HippoIcon.fromSprite(id, Icon.SORT);
                     }
 
                     @Override
@@ -186,7 +186,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected Component getIcon(final String id) {
-                        return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
+                        return HippoIcon.fromSprite(id, Icon.TIMES);
                     }
 
                     @Override
@@ -312,7 +312,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                             // Fallback to default icon
                             return HippoIcon.fromSprite(id,
-                                    category.endsWith("-folder") ? Icon.NEW_FOLDER_TINY : Icon.NEW_DOCUMENT_TINY);
+                                    category.endsWith("-folder") ? Icon.FOLDER_PLUS : Icon.FILE_PLUS);
                         }
 
                         private boolean resourceExists(final ResourceReference reference) {

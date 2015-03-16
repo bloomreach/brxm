@@ -151,7 +151,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
                             }
                         });
                     } else {
-                        icon = HippoIcon.fromSprite(ICON_ID, Icon.CONFIGURATION_TINY);
+                        icon = HippoIcon.fromSprite(ICON_ID, Icon.GEAR);
                     }
                 }
                 add(icon);

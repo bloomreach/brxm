@@ -82,7 +82,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.RENAME_TINY);
+                return HippoIcon.fromSprite(id, Icon.TYPE);
             }
 
             @Override
@@ -164,7 +164,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILES_TINY);
+                return HippoIcon.fromSprite(id, Icon.FILES);
             }
 
             @Override
@@ -248,7 +248,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MOVE_TINY);
+                return HippoIcon.fromSprite(id, Icon.MOVE_INTO);
             }
 
             @Override
@@ -303,7 +303,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
+                return HippoIcon.fromSprite(id, Icon.TIMES);
             }
 
             @Override
@@ -341,7 +341,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DELETE_TINY);
+                return HippoIcon.fromSprite(id, Icon.TIMES);
             }
 
             @Override
@@ -370,7 +370,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.URL_NAVIGATION_TINY);
+                return HippoIcon.fromSprite(id, Icon.LINK);
             }
 
             @Override
@@ -394,7 +394,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.HISTORY_TINY);
+                return HippoIcon.fromSprite(id, Icon.RESTORE);
             }
 
             @Override

@@ -63,7 +63,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE);
             }
 
             @Override
@@ -92,7 +92,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_TINY);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE);
             }
 
             @Override
@@ -123,7 +123,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_SCHEDULED_TINY);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
             }
 
             @Override
@@ -160,7 +160,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.DEPUBLISH_SCHEDULED_TINY);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
             }
 
             @Override
@@ -196,7 +196,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE);
             }
 
             @Override
@@ -234,7 +234,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.PUBLISH_TINY);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE);
             }
 
             @Override
@@ -273,7 +273,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.PUBLISH_SCHEDULED_TINY);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
             }
 
             @Override
@@ -311,7 +311,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.PUBLISH_SCHEDULED_TINY);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
             }
 
             @Override

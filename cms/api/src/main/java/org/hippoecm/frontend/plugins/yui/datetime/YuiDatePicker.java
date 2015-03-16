@@ -155,7 +155,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
      * @return the icon to use for the popup button
      */
     protected Icon getIcon() {
-        return Icon.CALENDAR_MONTH_TINY;
+        return Icon.CALENDAR_MONTH;
     }
 
     /**

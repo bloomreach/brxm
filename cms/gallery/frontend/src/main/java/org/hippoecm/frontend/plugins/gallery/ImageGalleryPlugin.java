@@ -72,8 +72,8 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
             }
         }));
 
-        addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_TINY));
-        addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS_TINY));
+        addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_UL));
+        addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS));
     }
 
     @Override

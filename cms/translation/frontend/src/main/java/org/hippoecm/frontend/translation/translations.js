@@ -54,7 +54,7 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
             }
 
             text += '<span class="hi-stack hi-tiny ' + iconClass + '">'
-                    + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder-tiny"></use></svg>'
+                    + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder"></use></svg>'
                     + '<span class="hi hi-tiny hippo-translation-country ' + countryClass + '"></span>'
                     + '</span> ';
             text += path[i].name;

@@ -43,7 +43,7 @@ public class DocMetaDataPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.INFO_CIRCLE_TINY);
+                return HippoIcon.fromSprite(id, Icon.INFO_CIRCLE);
             }
 
             @Override

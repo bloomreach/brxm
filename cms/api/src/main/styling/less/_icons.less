@@ -18,10 +18,14 @@
 
 .hi {
   display: inline-block;
+  vertical-align: text-bottom;
+  width: 0;
+  height: 0;
 }
 
 //TINY(16), LITTLE(24), SMALL(32), MEDIUM(48), LARGE(64), XLARGE(96), HUGE(128),
 
+.hi-mini,
 .hi-tiny {
   width: 16px;
   height: 16px;
@@ -57,23 +61,6 @@
   height: 128px;
 }
 
-// Caret
-.hi-caret-up {
-  transform: rotate(270deg);
-}
-
-.hi-caret-down {
-  transform: rotate(90deg);
-}
-
-.hi-caret-left {
-  transform: rotate(180deg);
-}
-
-.hi-caret-right {
-  transform: rotate(0deg);
-}
-
 // Stacked icons
 .hi-stack {
   position: relative;
@@ -87,13 +74,17 @@
 }
 
 // Shift stacked document state icons a bit
-.hi-stack > .hi-document + .hi-state {
-  top: -2px;
-  left: -2px;
+.hi-stack > .hi-file-text {
+  + .hi-minus-circle,
+  + .hi-check-circle {
+    top: -2px;
+    left: -2px;
+  }
 }
 
 // Shift stacked translation flags a bit
-.hi-stack > .hi-folder + img {
+.hi-stack > .hi-folder + img,
+.hi-stack > .hi-folder-open + img {
   top: auto;
   left: auto;
   bottom: -3px;
@@ -101,27 +92,25 @@
 }
 
 // Default colors of shapes in icons
-.hi-document,
+.hi-file-text,
 .hi-folder {
-  fill: @primary;
+  color: @primary;
 }
 
 .hi-expand,
-.hi-collapse {
-  fill: @dark-gray;
+.hi-compress {
+  color: @dark-gray;
 }
 
-.hi-context-menu {
-  .hi-shape-bg {
-    fill: @white;
-  }
-  .hi-shape-circle,
-  .hi-shape-arrow {
-    fill: @primary;
-  }
+.hi-move-into {
+  color: @dark-gray;
 }
 
-.hi-state-new {
+.hi-files {
+  color: @black;
+}
+
+.hi-overlay-minus-circle {
   .hi-shape-circle {
     fill: @danger;
   }
@@ -130,7 +119,7 @@
   }
 }
 
-.hi-state-live {
+.hi-overlay-check-circle {
   .hi-shape-circle {
     fill: @success;
   }
@@ -139,7 +128,7 @@
   }
 }
 
-.hi-state-changed {
+.hi-overlay-check-circle-exclamation-triangle {
   .hi-shape-circle {
     fill: @success;
   }
@@ -157,16 +146,8 @@
   }
 }
 
-.hi-move {
-  fill: transparent;
-}
-
-.hi-document-files {
-  fill: @black;
-}
-
 // TODO: decide if we need a hi-add-configuration icon and remove this if so
-.hi-configuration + .hi-add-overlay {
+.hi-configuration + .hi-overlay-plus {
   position: relative;
   top: 1px;
   left: 1px;
@@ -178,20 +159,21 @@
     color: @black;
   }
 
-  .hi-configuration {
-    fill: @primary;
+  .hi-gear {
+    color: @primary;
   }
 
-  .hi-delete {
+  .hi-times {
     color: @hippo-icon-delete-enabled;
   }
 
-  .hi-depublish {
-    fill: @danger;
+  .hi-minus-circle,
+  .hi-minus-circle-clock {
+    color: @danger;
   }
 
-  .hi-document-unlocked {
-    fill: @primary;
+  .hi-file-unlocked {
+    color: @primary;
     color: @black;
   }
 
@@ -199,8 +181,9 @@
     color: @primary;
   }
 
-  .hi-publish {
-    fill: @success;
+  .hi-check-circle,
+  .hi-check-circle-clock {
+    color: @success;
   }
 }
 
@@ -211,32 +194,32 @@
   }
 
   .hi-add-overlay {
-    fill: @dark-gray;
+    color: @dark-gray;
   }
 
-  .hi-configuration {
-    fill: @hippo-menu-disabled-color;
-  }
-
-  .hi-depublish,
-  .hi-publish {
-    fill:  @dark-gray;
+  .hi-gear {
     color: @hippo-menu-disabled-color;
   }
 
-  .hi-document-files {
-    fill: @hippo-menu-disabled-color;
+  .hi-minus-circle,
+  .hi-check-circle {
+    color:  @dark-gray;
+    color: @hippo-menu-disabled-color;
   }
 
-  .hi-document-unlocked {
-    fill: @hippo-menu-disabled-color;
+  .hi-files {
+    color: @hippo-menu-disabled-color;
+  }
+
+  .hi-file-unlocked {
+    color: @hippo-menu-disabled-color;
   }
 
   .hi-new {
-    fill: @hippo-menu-disabled-color;
+    color: @hippo-menu-disabled-color;
   }
 
   .hi-rename {
-    fill: @hippo-menu-disabled-color;
+    color: @hippo-menu-disabled-color;
   }
 }

@@ -1096,27 +1096,11 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/images/warning.png -text svneol=unset#image/png
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
-api/src/main/styling/images/icons/add-document-tiny.svg -text
-api/src/main/styling/images/icons/add-folder-tiny.svg -text
-api/src/main/styling/images/icons/arrow-down-tiny.svg -text
-api/src/main/styling/images/icons/arrow-up-tiny.svg -text
-api/src/main/styling/images/icons/delete-hover-tiny.svg -text
-api/src/main/styling/images/icons/delete-tiny.svg -text
-api/src/main/styling/images/icons/depublish-scheduled-tiny.svg -text
-api/src/main/styling/images/icons/depublish-tiny.svg -text
-api/src/main/styling/images/icons/document-files-tiny.svg -text
-api/src/main/styling/images/icons/global-tiny.svg -text
-api/src/main/styling/images/icons/history-tiny.svg -text
-api/src/main/styling/images/icons/info-circle-tiny.svg -text
-api/src/main/styling/images/icons/move-tiny.svg -text
-api/src/main/styling/images/icons/order-tiny.svg -text
-api/src/main/styling/images/icons/plus-tiny.svg -text
-api/src/main/styling/images/icons/publish-scheduled-tiny.svg -text
-api/src/main/styling/images/icons/publish-tiny.svg -text
-api/src/main/styling/images/icons/rename-tiny.svg -text
-api/src/main/styling/images/icons/translate-tiny.svg -text
-api/src/main/styling/images/icons/unlocked-tiny.svg -text
-api/src/main/styling/images/icons/url-navigation-tiny.svg -text
+api/src/main/styling/images/icons/bullet-extra-large.svg -text
+api/src/main/styling/images/icons/floppy-times-circle.svg -text
+api/src/main/styling/images/icons/overlay-check-circle-exclamation-triangle-thin.svg -text
+api/src/main/styling/images/icons/overlay-check-circle-thin.svg -text
+api/src/main/styling/images/icons/overlay-minus-circle-thin.svg -text
 api/src/main/styling/images/loading.gif -text
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png

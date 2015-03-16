@@ -422,7 +422,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
             @Override
             protected Icon load() {
-                return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.DELETE_TINY : Icon.SEARCH_TINY;
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.TIMES : Icon.SEARCH;
             }
         };
         return HippoIcon.fromSprite(id, iconModel);

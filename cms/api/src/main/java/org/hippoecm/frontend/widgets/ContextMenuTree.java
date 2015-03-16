@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ContextMenuTree extends DefaultAbstractTree {
     private static final long serialVersionUID = 1L;
-    
+
     public static final Logger log = LoggerFactory.getLogger(ContextMenuTree.class);
 
     private boolean dirty;
@@ -61,7 +61,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
         treeState.expandNode(model.getRoot());
-        
+
         model.addTreeModelListener(new ContextMenuTreeListener());
 
         treeState.addTreeStateListener(new ITreeStateListener() {
@@ -116,7 +116,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     protected Component newMenuIcon(MarkupContainer parent, String id, final TreeNode node) {
-        return HippoIcon.inline(id, Icon.CONTEXT_MENU_TINY);
+        return HippoIcon.fromSprite(id, Icon.CARET_DOWN_CIRCLE);
     }
 
     protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
@@ -145,8 +145,8 @@ public class ContextMenuTree extends DefaultAbstractTree {
 
             @Override
             public void collapse(final AjaxRequestTarget target) {
-                // mouseLeave is never triggered when opening the context menu. Because of this the tree has to be 
-                // marked dirty so that the mouse listeners on the current item are reset 
+                // mouseLeave is never triggered when opening the context menu. Because of this the tree has to be
+                // marked dirty so that the mouse listeners on the current item are reset
                 dirty = true;
                 super.collapse(target);
             }
@@ -271,7 +271,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
             }
         }
     }
-    
+
     public class ContextMenuTreeListener implements TreeModelListener, IClusterable {
 
         @Override

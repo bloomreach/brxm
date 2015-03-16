@@ -81,18 +81,18 @@ public class EditorTabIconProvider implements IClusterable {
     }
 
     private Component getAssetIcon(final String id) {
-        return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILE_TINY);
+        return HippoIcon.fromSprite(id, Icon.FILE);
     }
 
     private Component getImageIcon(final String id) {
-        return HippoIcon.fromSprite(id, Icon.DOCUMENT_IMAGE_TINY);
+        return HippoIcon.fromSprite(id, Icon.FILE_IMAGE);
     }
 
     private Component getTemplateIcon(final Node node, final String id) throws RepositoryException {
         if (isCompoundTemplate(node)) {
-            return HippoIcon.fromSprite(id, Icon.DOCUMENT_COMPOUND_TINY);
+            return HippoIcon.fromSprite(id, Icon.FILE_COMPOUND);
         } else {
-            return HippoIcon.fromSprite(id, Icon.DOCUMENT_FILE_TINY);
+            return HippoIcon.fromSprite(id, Icon.FILE);
         }
     }
 
@@ -109,7 +109,7 @@ public class EditorTabIconProvider implements IClusterable {
                 log.info("Locale '{}' was not found in locale provider", localeName);
             }
         }
-        return HippoIcon.fromSprite(id, Icon.DOCUMENT_TINY);
+        return HippoIcon.fromSprite(id, Icon.FILE_TEXT);
     }
 
     private boolean isCompoundTemplate(final Node templateType) throws RepositoryException {

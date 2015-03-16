@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -138,10 +138,10 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
 
-                final Icon icon = node.isLeaf() ? Icon.BULLET_LARGE : 
-                        isNodeExpanded(node) ? Icon.CARET_DOWN_TINY : Icon.CARET_RIGHT_TINY;
+                final Icon icon = node.isLeaf() ? Icon.BULLET_SMALL :
+                        isNodeExpanded(node) ? Icon.CARET_DOWN_SMALL : Icon.CARET_RIGHT_SMALL;
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
-  
+
                 final Response response = RequestCycle.get().getResponse();
                 response.write("<span class=\"" + cssClassOuter + "\">");
                 response.write(icon.getSpriteReference());

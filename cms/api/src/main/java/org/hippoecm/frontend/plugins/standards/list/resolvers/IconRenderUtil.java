@@ -46,7 +46,7 @@ public class IconRenderUtil {
                 try {
                     canonical = ((HippoNode) node).getCanonicalNode();
                     if (canonical == null) {
-                        return HippoIcon.fromSprite(id, Icon.FOLDER_SMALL);
+                        return HippoIcon.fromSprite(id, Icon.FOLDER_THIN);
                     }
                 } catch (ItemNotFoundException ex) {
                     return HippoIcon.fromSprite(id, Icon.EMPTY_SMALL);
@@ -54,32 +54,32 @@ public class IconRenderUtil {
                 Node parent = canonical.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                     if (!canonical.isSame(node)) {
-                        return HippoIcon.fromSprite(id, Icon.DOCUMENT_SMALL);
+                        return HippoIcon.fromSprite(id, Icon.FILE_TEXT_THIN);
                     } else {
-                        return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.DOCUMENT_SMALL, IconSize.TINY);
+                        return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT_THIN, IconSize.TINY);
                     }
                 }
             } else {
                 Node parent = node.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.DOCUMENT_SMALL, IconSize.TINY);
+                    return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT_THIN, IconSize.TINY);
                 }
             }
         }
 
         String type = node.getPrimaryNodeType().getName();
         if (type.equals(HippoNodeType.NT_TEMPLATETYPE)) {
-            return HippoIcon.fromSprite(id, Icon.DOCUMENT_SMALL);
+            return HippoIcon.fromSprite(id, Icon.FILE_TEXT_THIN);
         }
-        return HippoIcon.fromSprite(id, Icon.FOLDER_SMALL);
+        return HippoIcon.fromSprite(id, Icon.FOLDER_THIN);
     }
 
     private static HippoIcon getIconForHandle(final String id, final Node node) throws RepositoryException {
         if (node.hasNode(node.getName())) {
             Node child = node.getNode(node.getName());
-            return getIconForNodeType(id, child.getPrimaryNodeType(), Icon.DOCUMENT_SMALL, IconSize.SMALL);
+            return getIconForNodeType(id, child.getPrimaryNodeType(), Icon.FILE_TEXT_THIN, IconSize.SMALL);
         }
-        return HippoIcon.fromSprite(id, Icon.DOCUMENT_SMALL);
+        return HippoIcon.fromSprite(id, Icon.FILE_TEXT_THIN);
     }
 
     public static HippoIcon getIconForNodeType(final String id, final NodeType type, final Icon defaultIcon, final IconSize size) {

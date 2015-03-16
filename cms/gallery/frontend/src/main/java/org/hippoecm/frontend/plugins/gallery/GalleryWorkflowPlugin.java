@@ -213,7 +213,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
             @Override
             protected Component getIcon(final String id) {
-                final Icon icon = option.equals("add-image") ? Icon.NEW_IMAGE_TINY : Icon.NEW_DOCUMENT_TINY;
+                final Icon icon = option.equals("add-image") ? Icon.FILE_IMAGE_PLUS : Icon.FILE_PLUS;
                 return HippoIcon.fromSprite(id, icon);
             }
 
