@@ -168,7 +168,7 @@ public class TreePickerRepresentation {
                     // if explicit sitemap item, return sitemap item representation
                     // if sitemap item contains wildcards, the siteMapPathInfo is invalid as it cannot be represented in the
                     // document OR sitemap tree
-                    if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitElement()) {
+                    if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitPath()) {
                         return representExpandedParentTree(resolvedSiteMapItem.getHstSiteMapItem());
                     }
                     final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
@@ -239,18 +239,19 @@ public class TreePickerRepresentation {
                 continue;
             }
 
-            // TODO
-//            if (child.getValue().equals(notfound)) {
-//                continue;
-//            }
-            TreePickerRepresentation childRepresentation = new TreePickerRepresentation().represent(pageComposerContextService, child);
+            TreePickerRepresentation childRepresentation = new TreePickerRepresentation()
+                    .represent(pageComposerContextService, child, false);
             childRepresentation.collapsed = true;
             items.add(childRepresentation);
         }
+        Collections.sort(items, comparator);
         return this;
     }
 
-    public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService, final HstSiteMapItem hstSiteMapItem) {
+
+    public TreePickerRepresentation represent(final PageComposerContextService pageComposerContextService,
+                                              final HstSiteMapItem hstSiteMapItem,
+                                              final boolean loadChildren) {
         if (!(hstSiteMapItem instanceof CanonicalInfo)) {
             throw new ClientException(String.format("hstSiteMapItem '%s' expected to be of type '%s'",
                     hstSiteMapItem, CanonicalInfo.class), ClientError.UNKNOWN);
@@ -261,21 +262,30 @@ public class TreePickerRepresentation {
         nodeName = hstSiteMapItem.getValue();
         displayName = hstSiteMapItem.getPageTitle() == null ? hstSiteMapItem.getValue() : hstSiteMapItem.getPageTitle();
         nodePath = ((CanonicalInfo)hstSiteMapItem).getCanonicalPath();
-        collapsed = true;
+        if (loadChildren) {
+            collapsed = false;
+        }
+        final String pageNotFound = pageComposerContextService.getEditingMount().getPageNotFound();
         for (HstSiteMapItem child : hstSiteMapItem.getChildren()) {
-            if (!isInVisibleItem(child, pageComposerContextService.getEditingMount().getPageNotFound())) {
+            if (!isInVisibleItem(child, pageNotFound)) {
                 expandable = true;
-                break;
+                if (loadChildren) {
+                    TreePickerRepresentation childRepresentation = new TreePickerRepresentation().represent(pageComposerContextService, child, false);
+                    items.add(childRepresentation);
+                } else {
+                    break;
+                }
             }
         }
         leaf = !expandable;
         selectable = true;
         pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem, null);
+        Collections.sort(items, comparator);
         return this;
     }
 
     private boolean isInVisibleItem(final HstSiteMapItem item, final String pageNotFound) {
-        if (!item.isExplicitElement() || item.isContainerResource() || item.isHiddenInChannelManager()) {
+        if (!item.isExplicitPath() || item.isContainerResource() || item.isHiddenInChannelManager()) {
             return true;
         }
         if (HstSiteMapUtils.getPath(item, null).equals(pageNotFound)) {

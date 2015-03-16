@@ -16,6 +16,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerrepresentation;
 
+import javax.jcr.Node;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
 import org.junit.Test;
 
@@ -28,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerRepresentationTest {
 
     @Test
-    public void siteMapItem_treePicker_representation() throws Exception {
+    public void siteMapItem_leaf_treePicker_representation() throws Exception {
         TreePickerRepresentation representation = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("about-us"));
         assertEquals("pages", representation.getPickerType());
         assertEquals("page", representation.getType());
@@ -42,9 +45,8 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerR
     }
 
 
-
     @Test
-    public void invisible_siteMapItem_treePicker_representation_results_siteMapItem_nonetheless() throws Exception {
+    public void invisible_siteMapItem_results_in_treePicker_representation_nonetheless() throws Exception {
         // if for some reason the UUID points to, say /news/**.html, this is normally not possibly to pick via the sitemap,
         // but we then show the representation nonetheless to at least give webmasters the possibility to select a different one
 
@@ -55,4 +57,36 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerR
         assertEquals(0, representation.getItems().size());
         assertTrue(representation.isLeaf());
     }
+
+    @Test
+    public void invisible_siteMapItem_presentation_skips_explicit_children() throws Exception {
+        final String anyIdentifier = getSiteMapItemIdentifier("news/_any_");
+        final Node any = session.getNodeByIdentifier(anyIdentifier);
+        final Node child = any.addNode("2011", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        child.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "news/2011");
+        session.save();
+        TreePickerRepresentation representation = createSiteMapItemRepresentation("", anyIdentifier);
+        assertFalse(representation.isExpandable());
+        assertTrue(representation.isCollapsed());
+        assertEquals(0, representation.getItems().size());
+        assertTrue(representation.isLeaf());
+    }
+
+    @Test
+    public void explicit_siteMapItem_presentation_includes_children() throws Exception {
+        TreePickerRepresentation contact = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("contact"));
+        assertFalse("sitemap item that is requested for presentation must be expanded", contact.isCollapsed());
+        assertEquals("contact", contact.getPathInfo());
+        assertTrue(contact.isExpandable());
+        assertFalse(contact.isLeaf());
+        assertEquals(1,contact.getItems().size());
+
+        final TreePickerRepresentation thankYou = contact.getItems().get(0);
+        assertEquals("contact/thankyou", thankYou.getPathInfo());
+        assertFalse(thankYou.isExpandable());
+        assertTrue(thankYou.isCollapsed());
+        assertEquals(0, thankYou.getItems().size());
+        assertTrue(thankYou.isLeaf());
+    }
+
 }

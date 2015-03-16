@@ -73,6 +73,18 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepre
     }
 
     @Test
+    public void siteMap_treePicker_child_representations_are_sorted_on_displayName() throws Exception {
+        TreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
+        TreePickerRepresentation prev = null;
+        for (TreePickerRepresentation child : representation.getItems()) {
+            if (prev != null) {
+                assertTrue(prev.getDisplayName().compareTo(child.getDisplayName()) <= 0);
+            }
+            prev = child;
+        }
+    }
+
+    @Test
     public void siteMapItem_marked_as_hidden_in_channel_mngr_not_part_of_representation() throws Exception {
         // mark homepage to be hidden from pages in channel manager
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
