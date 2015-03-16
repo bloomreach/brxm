@@ -18,13 +18,13 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.junit.Test;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.PickerType.DOCUMENTS;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.PickerType.PAGES;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.Type.DOCUMENT;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.Type.FOLDER;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.PickerType.DOCUMENTS;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.PickerType.PAGES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.Type.DOCUMENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.Type.FOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -36,7 +36,7 @@ public class TreePickerRepresentationGetterSetterTest {
 
     @Test
     public void TreePickerRepresentation_pojo_test() {
-        TreePickerRepresentation presentation = new TreePickerRepresentation();
+        AbstractTreePickerRepresentation presentation = new AbstractTreePickerRepresentation(){};
         assertNotNull(presentation.getItems());
         assertEquals(0, presentation.getItems().size());
         assertNull(presentation.getState());
@@ -50,9 +50,9 @@ public class TreePickerRepresentationGetterSetterTest {
         presentation.setExpandable(true);
         presentation.setDisplayName("DisplayName");
         presentation.setId("my-uuid");
-        List<TreePickerRepresentation> items = new ArrayList<>();
-        items.add(new TreePickerRepresentation());
-        items.add(new TreePickerRepresentation());
+        List<AbstractTreePickerRepresentation> items = new ArrayList<>();
+        items.add(new AbstractTreePickerRepresentation(){});
+        items.add(new AbstractTreePickerRepresentation(){});
         presentation.setItems(items);
         presentation.setNodeName("nodeName");
         presentation.setPathInfo("/foo/bar");

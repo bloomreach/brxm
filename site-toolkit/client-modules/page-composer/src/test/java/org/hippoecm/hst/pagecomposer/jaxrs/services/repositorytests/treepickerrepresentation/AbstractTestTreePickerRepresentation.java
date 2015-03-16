@@ -26,7 +26,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapItemResource;
@@ -44,18 +44,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTest {
+public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTest {
 
-    protected TreePickerRepresentation createRootContentRepresentation(final String pathInfo, final String requestConfigContentIdentifier) throws Exception {
+    protected AbstractTreePickerRepresentation createRootContentRepresentation(final String pathInfo, final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get("");
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-        return (TreePickerRepresentation) representation.getData();
+        return (AbstractTreePickerRepresentation) representation.getData();
     }
 
-    protected TreePickerRepresentation createExpandedTreeContentRepresentation(final String pathInfo,
+    protected AbstractTreePickerRepresentation createExpandedTreeContentRepresentation(final String pathInfo,
                                                                                final String requestConfigContentIdentifier,
                                                                                final String siteMapPathInfo) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
@@ -63,37 +63,37 @@ public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTe
         final Response response = resource.get(siteMapPathInfo);
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-        return (TreePickerRepresentation) representation.getData();
+        return (AbstractTreePickerRepresentation) representation.getData();
     }
 
-    protected TreePickerRepresentation createSiteMapRepresentation(final String pathInfo,
+    protected AbstractTreePickerRepresentation createSiteMapRepresentation(final String pathInfo,
                                                                    final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final SiteMapResource siteMapResource = createSiteMapResource();
         final Response response = siteMapResource.getSiteMapTreePicker();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-        return (TreePickerRepresentation) representation.getData();
+        return (AbstractTreePickerRepresentation) representation.getData();
     }
 
-    protected TreePickerRepresentation createSiteMapItemRepresentation(final String pathInfo,
+    protected AbstractTreePickerRepresentation createSiteMapItemRepresentation(final String pathInfo,
                                                                        final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final SiteMapItemResource siteMapItemResource = createSiteMapItemResource();
         final Response response = siteMapItemResource.getSiteMapItemTreePicker();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-        return (TreePickerRepresentation) representation.getData();
+        return (AbstractTreePickerRepresentation) representation.getData();
     }
 
-    protected TreePickerRepresentation createExpandedTreeSiteMapItemRepresentation(final String pathInfo,
+    protected AbstractTreePickerRepresentation createExpandedTreeSiteMapItemRepresentation(final String pathInfo,
                                                                        final String requestConfigContentIdentifier) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final SiteMapItemResource siteMapItemResource = createSiteMapItemResource();
         final Response response = siteMapItemResource.getSiteMapItemTreePicker();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-        return (TreePickerRepresentation) representation.getData();
+        return (AbstractTreePickerRepresentation) representation.getData();
     }
 
     protected void mockNewRequest(Session jcrSession, String host, String pathInfo, final String requestConfigContentIdentifier) throws Exception {
@@ -158,7 +158,7 @@ public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTe
         return session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/" + pathInfo).getIdentifier();
     }
 
-    protected void rootContentRepresentationAssertions(final TreePickerRepresentation representation) {
+    protected void rootContentRepresentationAssertions(final AbstractTreePickerRepresentation representation) {
 
         assertEquals(representation.getPickerType(), "documents");
         assertEquals("unittestproject", representation.getNodeName());
@@ -167,7 +167,7 @@ public class AbstractTreePickerRepresentationTest extends AbstractPageComposerTe
         assertFalse("The root content folder is never selected", representation.isSelected());
         assertTrue("The root content folder does have folders", representation.isExpandable());
         assertFalse("Root should always be expanded.",representation.isCollapsed());
-        for (TreePickerRepresentation child : representation.getItems()) {
+        for (AbstractTreePickerRepresentation child : representation.getItems()) {
             assertEquals(child.getPickerType(), "documents");
             assertEquals("Children should *not* be populated as they should be lazily loaded",
                     0, child.getItems().size());

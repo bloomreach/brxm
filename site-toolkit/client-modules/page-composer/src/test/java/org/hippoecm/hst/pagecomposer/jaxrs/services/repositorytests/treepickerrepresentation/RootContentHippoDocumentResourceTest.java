@@ -18,7 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
@@ -26,12 +26,12 @@ import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.junit.Assert.assertEquals;
 
-public class RootContentHippoDocumentResourceTest extends AbstractTreePickerRepresentationTest {
+public class RootContentHippoDocumentResourceTest extends AbstractTestTreePickerRepresentation {
 
     @Test
     public void root_content_representation_assertions() throws Exception {
         // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-        TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
+        AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
         rootContentRepresentationAssertions(representation);
 
         assertEquals(getRootContentConfigIdentifier(), representation.getId());
@@ -82,7 +82,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractTreePickerRepr
             session.save();
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
+            AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
 
             assertEquals("common", representation.getItems().get(0).getDisplayName());
             assertEquals("News", representation.getItems().get(1).getDisplayName());
@@ -117,7 +117,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractTreePickerRepr
             session.save();
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
-            TreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
+            AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
 
             assertEquals("aaa", representation.getItems().get(0).getDisplayName());
             assertEquals("bbb", representation.getItems().get(1).getDisplayName());

@@ -19,7 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,12 +27,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepresentationTest {
+public class SiteMapTreePickerRepresentationTest extends AbstractTestTreePickerRepresentation {
 
     @Test
     public void siteMap_treePicker_representation() throws Exception {
 
-        TreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
+        AbstractTreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
 
         assertEquals("pages", representation.getPickerType());
         assertEquals("page", representation.getType());
@@ -42,7 +42,7 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepre
         assertFalse("Root sitemap is never selected", representation.isSelected());
         assertNull("Root sitemap has path info null", representation.getPathInfo());
 
-        for (TreePickerRepresentation child : representation.getItems()) {
+        for (AbstractTreePickerRepresentation child : representation.getItems()) {
             assertFalse("Only explicit sitemap items can be picked", child.getPathInfo().contains("_default_"));
             assertFalse("Only explicit sitemap items can be picked", child.getPathInfo().contains("_any_"));
             assertFalse("Page not found item cannot be picked", child.getPathInfo().contains("pagenotfound"));
@@ -71,9 +71,9 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepre
 
     @Test
     public void siteMap_treePicker_child_representations_are_sorted_on_displayName() throws Exception {
-        TreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
-        TreePickerRepresentation prev = null;
-        for (TreePickerRepresentation child : representation.getItems()) {
+        AbstractTreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
+        AbstractTreePickerRepresentation prev = null;
+        for (AbstractTreePickerRepresentation child : representation.getItems()) {
             if (prev != null) {
                 assertTrue(prev.getDisplayName().compareTo(child.getDisplayName()) <= 0);
             }
@@ -88,8 +88,8 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTreePickerRepre
         home.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER, true);
         session.save();
 
-        TreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
-        for (TreePickerRepresentation child : representation.getItems()) {
+        AbstractTreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
+        for (AbstractTreePickerRepresentation child : representation.getItems()) {
             assertFalse("'home' should be skipped", "home".equals(child.getPathInfo()));
         }
     }

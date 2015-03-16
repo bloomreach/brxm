@@ -19,7 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -28,11 +28,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerRepresentationTest {
+public class SiteMapItemTreePickerRepresentationTest extends AbstractTestTreePickerRepresentation {
 
     @Test
     public void siteMapItem_leaf_treePicker_representation() throws Exception {
-        TreePickerRepresentation representation = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("about-us"));
+        AbstractTreePickerRepresentation representation = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("about-us"));
         assertEquals("pages", representation.getPickerType());
         assertEquals("page", representation.getType());
 
@@ -50,7 +50,7 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerR
         // if for some reason the UUID points to, say /news/**.html, this is normally not possibly to pick via the sitemap,
         // but we then show the representation nonetheless to at least give webmasters the possibility to select a different one
 
-        TreePickerRepresentation representation = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("news/_any_"));
+        AbstractTreePickerRepresentation representation = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("news/_any_"));
         assertEquals("news/_any_", representation.getPathInfo());
         assertFalse(representation.isExpandable());
         assertTrue(representation.isCollapsed());
@@ -65,7 +65,7 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerR
         final Node child = any.addNode("2011", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
         child.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "news/2011");
         session.save();
-        TreePickerRepresentation representation = createSiteMapItemRepresentation("", anyIdentifier);
+        AbstractTreePickerRepresentation representation = createSiteMapItemRepresentation("", anyIdentifier);
         assertFalse(representation.isExpandable());
         assertTrue(representation.isCollapsed());
         assertEquals(0, representation.getItems().size());
@@ -74,14 +74,14 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTreePickerR
 
     @Test
     public void explicit_siteMapItem_presentation_includes_children() throws Exception {
-        TreePickerRepresentation contact = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("contact"));
+        AbstractTreePickerRepresentation contact = createSiteMapItemRepresentation("", getSiteMapItemIdentifier("contact"));
         assertFalse("sitemap item that is requested for presentation must be expanded", contact.isCollapsed());
         assertEquals("contact", contact.getPathInfo());
         assertTrue(contact.isExpandable());
         assertFalse(contact.isLeaf());
         assertEquals(1,contact.getItems().size());
 
-        final TreePickerRepresentation thankYou = contact.getItems().get(0);
+        final AbstractTreePickerRepresentation thankYou = contact.getItems().get(0);
         assertEquals("contact/thankyou", thankYou.getPathInfo());
         assertFalse(thankYou.isExpandable());
         assertTrue(thankYou.isCollapsed());

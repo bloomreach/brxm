@@ -25,9 +25,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.ExpandedNodeHierarchy;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.ExpandedNodeHierarchy.createExpandedNodeHierarchy;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.ExpandedNodeHierarchy.createSingleNodeHierarchy;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.ExpandedNodeHierarchy;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.ExpandedNodeHierarchy.createExpandedNodeHierarchy;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.ExpandedNodeHierarchy.createSingleNodeHierarchy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

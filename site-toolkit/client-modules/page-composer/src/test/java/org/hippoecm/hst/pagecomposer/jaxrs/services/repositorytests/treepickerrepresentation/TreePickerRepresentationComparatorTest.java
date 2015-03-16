@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.junit.Test;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.TreePickerRepresentationComparator;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation.Type.DOCUMENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.TreePickerRepresentationComparator;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.Type.DOCUMENT;
 import static org.junit.Assert.assertTrue;
 
 public class TreePickerRepresentationComparatorTest {
@@ -32,14 +32,14 @@ public class TreePickerRepresentationComparatorTest {
     @Test
     public void sorting_first_folders_then_documents_alphabetically_case_insensitive() {
 
-        TreePickerRepresentation folder1 = createTreePickerRepresentation("zzz", true);
-        TreePickerRepresentation folder2 = createTreePickerRepresentation("ZZZa", true);
-        TreePickerRepresentation doc1 = createTreePickerRepresentation("zzz", false);
-        TreePickerRepresentation doc2= createTreePickerRepresentation("ZZZa", false);
-        TreePickerRepresentation folder3 = createTreePickerRepresentation("aaa", true);
-        TreePickerRepresentation doc3= createTreePickerRepresentation("aaa", false);
+        AbstractTreePickerRepresentation folder1 = createTreePickerRepresentation("zzz", true);
+        AbstractTreePickerRepresentation folder2 = createTreePickerRepresentation("ZZZa", true);
+        AbstractTreePickerRepresentation doc1 = createTreePickerRepresentation("zzz", false);
+        AbstractTreePickerRepresentation doc2= createTreePickerRepresentation("ZZZa", false);
+        AbstractTreePickerRepresentation folder3 = createTreePickerRepresentation("aaa", true);
+        AbstractTreePickerRepresentation doc3= createTreePickerRepresentation("aaa", false);
 
-        final List<TreePickerRepresentation> presentations = new ArrayList();
+        final List<AbstractTreePickerRepresentation> presentations = new ArrayList();
         presentations.add(folder1);
         presentations.add(folder2);
         presentations.add(folder3);
@@ -62,16 +62,16 @@ public class TreePickerRepresentationComparatorTest {
 
     @Test(expected = NullPointerException.class)
     public void sorting_displayName_null_results_in_NPE() {
-        TreePickerRepresentation folder1 = createTreePickerRepresentation(null, true);
-        TreePickerRepresentation folder2 = createTreePickerRepresentation("ZZZ", true);
-        final List<TreePickerRepresentation> presentations = new ArrayList();
+        AbstractTreePickerRepresentation folder1 = createTreePickerRepresentation(null, true);
+        AbstractTreePickerRepresentation folder2 = createTreePickerRepresentation("ZZZ", true);
+        final List<AbstractTreePickerRepresentation> presentations = new ArrayList();
         presentations.add(folder1);
         presentations.add(folder2);
         Collections.sort(presentations, comparator);
     }
 
-    private TreePickerRepresentation createTreePickerRepresentation(final String displayName, final boolean folder) {
-        TreePickerRepresentation presentation = new TreePickerRepresentation();
+    private AbstractTreePickerRepresentation createTreePickerRepresentation(final String displayName, final boolean folder) {
+        AbstractTreePickerRepresentation presentation = new AbstractTreePickerRepresentation(){};
         presentation.setDisplayName(displayName);
         if (!folder) {
             presentation.setType(DOCUMENT.getName());

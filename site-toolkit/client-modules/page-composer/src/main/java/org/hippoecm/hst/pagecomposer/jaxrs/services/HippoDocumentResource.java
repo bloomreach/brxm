@@ -26,7 +26,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 @Path("/"+ HippoNodeType.NT_DOCUMENT+"/")
@@ -40,8 +41,8 @@ public class HippoDocumentResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final TreePickerRepresentation representation;
-                representation = new TreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
+                final AbstractTreePickerRepresentation representation;
+                representation = new DocumentTreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
                 return ok("Folder loaded successfully", representation);
             }
         });
@@ -59,12 +60,12 @@ public class HippoDocumentResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final TreePickerRepresentation representation;
+                final AbstractTreePickerRepresentation representation;
                 if (StringUtils.isEmpty(siteMapPathInfo)) {
-                    representation = new TreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
+                    representation = new DocumentTreePickerRepresentation().representRequestConfigNode(getPageComposerContextService());
 
                 } else {
-                    representation  = new TreePickerRepresentation()
+                    representation  = new DocumentTreePickerRepresentation()
                             .representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
                 }
                 return ok("Folder loaded successfully", representation);

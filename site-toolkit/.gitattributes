@@ -314,7 +314,9 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMenuItemRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMenuRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ToolkitRepresentation.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/TreePickerRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/treepicker/AbstractTreePickerRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/treepicker/DocumentTreePickerRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/treepicker/SiteMapTreePickerRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactory.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/AbstractConfigResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerComponentResource.java -text svneol=unset#text/plain
@@ -384,10 +386,10 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemenuresource/MenuCRUDTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemenuresource/MenuDiscardTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemenuresource/MenuPublicationTest.java -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/AbstractTreePickerRepresentationTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/AbstractTestTreePickerRepresentation.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/CommonFolderContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedNodeHierarchyTest.java -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedParentTreeContentHippoDocumentResourceTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedParentTreeRepresentationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/RootContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/SiteMapItemTreePickerRepresentationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/SiteMapTreePickerRepresentationTest.java -text

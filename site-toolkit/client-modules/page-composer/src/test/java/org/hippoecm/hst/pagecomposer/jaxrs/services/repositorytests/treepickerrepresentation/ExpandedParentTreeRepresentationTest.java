@@ -18,7 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Test;
@@ -30,21 +30,21 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class ExpandedParentTreeContentHippoDocumentResourceTest extends AbstractTreePickerRepresentationTest {
+public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePickerRepresentation {
 
     @Test
     public void representation_for_siteMapPathInfo_returns_tree_containing_ancestors_with_siblings_and_direct_children() throws Exception {
 
         // about-us sitemap item as relative contentpath 'common/aboutfolder/about-us' and that path should be expanded
 
-        TreePickerRepresentation representation =
+        AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "about-us");
 
         aboutUsRepresentationAssertions(representation);
 
     }
 
-    private void aboutUsRepresentationAssertions(final TreePickerRepresentation representation) {
+    private void aboutUsRepresentationAssertions(final AbstractTreePickerRepresentation representation) {
         assertEquals("unittestproject",representation.getNodeName());
 
         assertEquals(representation.getPickerType(), "documents");
@@ -56,7 +56,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         assertTrue(representation.getItems().get(1).isCollapsed());
 
         // 'common' should be expanded
-        final TreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
+        final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
 
         assertEquals(commonFolderRepresentation.getPickerType(), "documents");
         assertEquals("Folder 'common' should loaded/expanded ", 2, commonFolderRepresentation.getItems().size());
@@ -69,12 +69,12 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         assertFalse("Document 'Home Page' is not the selected one according 'about-us' sitemapPathInfo",
                 commonFolderRepresentation.getItems().get(0).isSelected());
 
-        final TreePickerRepresentation aboutFolderRepresentation = commonFolderRepresentation.getItems().get(1);
+        final AbstractTreePickerRepresentation aboutFolderRepresentation = commonFolderRepresentation.getItems().get(1);
         assertEquals("aboutfolder", aboutFolderRepresentation.getDisplayName());
         assertFalse("Folder 'aboutfolder' should not be able to be matched in sitemap ", aboutFolderRepresentation.isSelectable());
         assertFalse("'aboutfolder' should be expanded", aboutFolderRepresentation.isCollapsed());
 
-        final TreePickerRepresentation aboutDocumentRepresentation = aboutFolderRepresentation.getItems().get(0);
+        final AbstractTreePickerRepresentation aboutDocumentRepresentation = aboutFolderRepresentation.getItems().get(0);
 
         assertEquals(aboutDocumentRepresentation.getPickerType(), "documents");
         assertEquals("About Us", aboutDocumentRepresentation.getDisplayName());
@@ -90,7 +90,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
 
         // 'matching_to_default_siteMapItem' will match _default_ which does not have a relative content path and as a result,
         // should return 'root content representation' since a wildcard site map item cannot be picked in the sitemap representation either
-        TreePickerRepresentation representation =
+        AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "matching_to_default_siteMapItem");
 
         rootContentRepresentationAssertions(representation);
@@ -99,7 +99,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     @Test
     public void representation_for_siteMapPathInfo_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
 
-        TreePickerRepresentation representation =
+        AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "contact");
 
         assertNotNull(representation);
@@ -110,7 +110,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
     @Test
     public void representation_for_siteMapPathInfo_that_cannot_be_matched_in_sitemap_results_in_root_content_presentation() throws Exception {
 
-        TreePickerRepresentation representation =
+        AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "path/that/cannot/be/matched");
 
         rootContentRepresentationAssertions(representation);
@@ -147,7 +147,7 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         // news sitemap item as relative contentpath 'News' and that path should be expanded but 'News' folder
         // representation is still collapsed
 
-        TreePickerRepresentation representation =
+        AbstractTreePickerRepresentation representation =
                 createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "news");
 
         System.out.println(representation);
@@ -157,12 +157,12 @@ public class ExpandedParentTreeContentHippoDocumentResourceTest extends Abstract
         assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
 
         // 'common' should not be expanded
-        final TreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
+        final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
         assertEquals("common", commonFolderRepresentation.getDisplayName());
         assertTrue(commonFolderRepresentation.isCollapsed());
 
         // news folder should be selected *but* not expanded!!
-        final TreePickerRepresentation newsRepresentation = representation.getItems().get(1);
+        final AbstractTreePickerRepresentation newsRepresentation = representation.getItems().get(1);
         assertEquals("News", newsRepresentation.getDisplayName());
         assertTrue("News folder should be selected", newsRepresentation.isSelected());
         assertTrue("News folder should be collapsed since selected", newsRepresentation.isCollapsed());

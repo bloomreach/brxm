@@ -25,7 +25,8 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAPITEM + "/")
@@ -45,7 +46,7 @@ public class SiteMapItemResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(getPageComposerContextService().getRequestConfigIdentifier());
-                TreePickerRepresentation representation = new TreePickerRepresentation()
+                AbstractTreePickerRepresentation representation = new SiteMapTreePickerRepresentation()
                         .represent(getPageComposerContextService(), siteMapItem, true);
                 return ok("Sitemap item loaded successfully", representation);
             }

@@ -36,7 +36,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.TreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
@@ -130,7 +131,7 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
-                TreePickerRepresentation representation = new TreePickerRepresentation().represent(getPageComposerContextService(), siteMap);
+                AbstractTreePickerRepresentation representation = new SiteMapTreePickerRepresentation().represent(getPageComposerContextService(), siteMap);
                 return ok("Sitemap loaded successfully", representation);
             }
         });
