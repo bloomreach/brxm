@@ -33,6 +33,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -75,9 +76,6 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version $Id$
- */
 public class GalleryPickerDialog extends LinkPickerDialog {
     @SuppressWarnings({"UnusedDeclaration"})
     private static Logger log = LoggerFactory.getLogger(GalleryPickerDialog.class);
@@ -115,8 +113,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
     }
 
     @Override
-    protected FeedbackPanel newFeedbackPanel(final String id) {
-        return new FeedbackPanel(id) {{
+    protected FeedbackPanel newFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
+        return new FeedbackPanel(id, filter) {{
             setOutputMarkupId(true);
         }};
     }
