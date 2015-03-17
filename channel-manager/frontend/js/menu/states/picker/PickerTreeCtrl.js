@@ -39,7 +39,7 @@
                     selectItem: function(item) {
                         if(!item.leaf && item.items.length < 1) {
                             PickerService.getData(item);
-                            $scope.$parent.selectedDocument = null;
+                            $scope.PickerCtrl.selectedDocument = null;
                         }
                     },
                     toggleItem: function(item) {

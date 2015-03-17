@@ -18,42 +18,42 @@
 
     angular.module('hippo.channel.menu')
         .controller('hippo.channel.menu.PickerCtrl', [
-            '$scope',
             '$state',
             '$stateParams',
             'hippo.channel.menu.PickerService',
-            function ($scope, $state, $stateParams, PickerService) {
-                $scope.selectDocument = function() {
+            function ($state, $stateParams, PickerService) {
+                var PickerCtrl = this;
+                PickerCtrl.selectDocument = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId,
-                        selectedDocumentPath: $scope.selectedDocument.pathInfo
+                        selectedDocumentPath: PickerCtrl.selectedDocument.pathInfo
                     });
                 };
-                $scope.cancelPicker = function() {
+                PickerCtrl.cancelPicker = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId
                     });
                 };
-                $scope.treeItems = PickerService.getTree();
-                $scope.pickerTypes = [
+                PickerCtrl.treeItems = PickerService.getTree();
+                PickerCtrl.pickerTypes = [
                     {
                         name: 'Documents'
                     }
                 ];
-                $scope.pickerType = $scope.pickerTypes[0];
-                $scope.selectedDocument = null;
+                PickerCtrl.pickerType = PickerCtrl.pickerTypes[0];
+                PickerCtrl.selectedDocument = null;
 
                 if($stateParams.link) {
                     PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
-                        navigateToSelected($scope.treeItems);
+                        navigateToSelected(PickerCtrl.treeItems);
                         function navigateToSelected(items, parent) {
                             angular.forEach(items, function (item) {
                                 if (item.selected) {
                                     $state.go('picker.docs', {
                                         pickerTreeItemId: parent.id
                                     });
-                                    $scope.selectedItem = parent;
-                                    $scope.selectedDocument = item;
+                                    PickerCtrl.selectedItem = parent;
+                                    PickerCtrl.selectedDocument = item;
                                 }
                                 if(item.items) {
                                     navigateToSelected(item.items, item);

@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div data-ng-controller="hippo.channel.menu.PickerDocCtrl">
+<div data-ng-controller="hippo.channel.menu.PickerDocCtrl as PickerDocCtrl">
   <table class="table document-picker">
     <thead>
       <tr>
@@ -24,7 +24,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable" ng-class="{active: $parent.$parent.selectedDocument == item}" ng-click="selectDocument(item)">
+      <tr class="picker-item" ng-repeat="item in PickerDocCtrl.selectedItem.items" ng-if="item.selectable" ng-class="{active: PickerCtrl.selectedDocument == item}" ng-click="PickerDocCtrl.selectDocument(item)">
         <td class="status">
           <div class="hi-stack">
             <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" size="small"></hippo-icon>

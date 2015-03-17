@@ -25,10 +25,11 @@
             '$stateParams',
             '$filter',
             function ($scope, $state, $stateParams, $filter) {
-                $scope.selectedItem = $filter('hippoGetByProperty')($scope.treeItems, 'id', $stateParams.pickerTreeItemId, 'items');
+                var PickerDocCtrl = this;
+                PickerDocCtrl.selectedItem = $filter('hippoGetByProperty')($scope.PickerCtrl.treeItems, 'id', $stateParams.pickerTreeItemId, 'items');
 
-                $scope.selectDocument = function(item) {
-                    $scope.$parent.$parent.selectedDocument = item;
+                PickerDocCtrl.selectDocument = function(item) {
+                    $scope.PickerCtrl.selectedDocument = item;
                 };
             }
         ]);
