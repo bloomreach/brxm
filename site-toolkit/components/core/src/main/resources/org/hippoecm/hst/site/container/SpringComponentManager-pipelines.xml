@@ -221,8 +221,8 @@
             </property>
             <property name="cleanupValves">
               <list>
-                <ref bean="cleanupValve" />
                 <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
               </list>
             </property>
           </bean>
@@ -248,8 +248,8 @@
             </property>
             <property name="cleanupValves">
               <list>
-                <ref bean="cleanupValve" />
                 <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
               </list>
             </property>
           </bean>
@@ -294,8 +294,8 @@
             </property>
             <property name="cleanupValves">
               <list>
-                <ref bean="cleanupValve" />
                 <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
               </list>
             </property>
           </bean>

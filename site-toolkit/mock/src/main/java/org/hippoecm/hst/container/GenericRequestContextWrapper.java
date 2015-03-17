@@ -407,4 +407,9 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     public HstQueryManager getQueryManager(final Session session) throws IllegalStateException {
         return context.getQueryManager(session);
     }
+
+    @Override
+    public void dispose() {
+        context.dispose();
+    }
 }

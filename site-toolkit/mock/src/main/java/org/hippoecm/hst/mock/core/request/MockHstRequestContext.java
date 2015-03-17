@@ -99,8 +99,10 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private HstQueryManager defaultHstQueryManager;
     private Map<Session, HstQueryManager> nonDefaultHstQueryManagers;
 
+    private boolean disposed;
 
     public boolean isPreview() {
+        checkStateValidity();
         return this.resolvedMount.getMount().isPreview();
     }
 
@@ -129,116 +131,143 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     public Object getAttribute(String name) {
+        checkStateValidity();
         return this.attributes.get(name);
     }
 
     public Enumeration<String> getAttributeNames() {
+        checkStateValidity();
         return this.attributes.keys();
     }
 
     public Map<String, Object> getAttributes() {
+        checkStateValidity();
         return Collections.unmodifiableMap(attributes);
     }
 
     public HstContainerURL getBaseURL() {
+        checkStateValidity();
         return this.baseURL;
     }
 
     public void setBaseURL(HstContainerURL baseURL) {
+        checkStateValidity();
         this.baseURL = baseURL;
     }
 
     public Credentials getDefaultCredentials() {
+        checkStateValidity();
         return defaultCredentials;
     }
 
     public void setDefaultCredentials(Credentials defaultCredentials) {
+        checkStateValidity();
         this.defaultCredentials = defaultCredentials;
     }
 
     public HstSiteMapMatcher getSiteMapMatcher() {
+        checkStateValidity();
         return this.siteMapMatcher;
     }
 
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
+        checkStateValidity();
         this.siteMapMatcher = siteMapMatcher;
     }
 
     public HstLinkCreator getHstLinkCreator() {
+        checkStateValidity();
         return this.linkCreator;
     }
 
     public void setHstLinkCreator(HstLinkCreator linkCreator) {
+        checkStateValidity();
         this.linkCreator = linkCreator;
     }
 
     public HstQueryManagerFactory getHstQueryManagerFactory() {
+        checkStateValidity();
         return hstQueryManagerFactory;
     }
 
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
+        checkStateValidity();
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
 
     public void setHstSiteMenus(HstSiteMenus siteMenus) {
+        checkStateValidity();
         this.siteMenus = siteMenus;
     }
 
     public HstSiteMenus getHstSiteMenus() {
+        checkStateValidity();
         return this.siteMenus;
     }
 
     public ResolvedMount getResolvedMount() {
+        checkStateValidity();
         return this.resolvedMount;
     }
 
     public void setResolvedMount(ResolvedMount resolvedMount) {
+        checkStateValidity();
         this.resolvedMount = resolvedMount;
     }
 
     public ResolvedSiteMapItem getResolvedSiteMapItem() {
+        checkStateValidity();
         return this.resolvedSiteMapItem;
     }
 
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
+        checkStateValidity();
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
 
     public void setSession(Session session) {
+        checkStateValidity();
         this.session = session;
     }
 
     public Session getSession() throws LoginException, RepositoryException {
+        checkStateValidity();
         return this.session;
     }
 
     public Session getSession(boolean create) throws LoginException, RepositoryException {
+        checkStateValidity();
         return this.session;
     }
 
     public HstURLFactory getURLFactory() {
+        checkStateValidity();
         return this.urlFactory;
     }
 
     public void setURLFactory(HstURLFactory urlFactory) {
+        checkStateValidity();
         this.urlFactory = urlFactory;
     }
 
     @Override
     public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
+        checkStateValidity();
         return parameterInfoProxyFactory;
     }
 
-
     public HstContainerURLProvider getContainerURLProvider() {
+        checkStateValidity();
         return urlFactory != null ? urlFactory.getContainerURLProvider() : null;
     }
 
     public void removeAttribute(String name) {
+        checkStateValidity();
         this.attributes.remove(name);
     }
 
     public void setAttribute(String name, Object value) {
+        checkStateValidity();
         if (value == null) {
             removeAttribute(name);
         } else {
@@ -247,62 +276,77 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     public ContainerConfiguration getContainerConfiguration() {
+        checkStateValidity();
         return this.containerConfiguration;
     }
 
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
+        checkStateValidity();
         this.containerConfiguration = containerConfiguration;
     }
 
     public VirtualHost getVirtualHost() {
+        checkStateValidity();
         return virtualHost;
     }
 
     public void setVirtualHost(VirtualHost virtualHost) {
+        checkStateValidity();
         this.virtualHost = virtualHost;
     }
 
     public ContextCredentialsProvider getContextCredentialsProvider() {
+        checkStateValidity();
         return contextCredentialsProvider;
     }
 
     public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider) {
+        checkStateValidity();
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
 
     public Subject getSubject() {
+        checkStateValidity();
         return subject;
     }
 
     public void setSubject(Subject subject) {
+        checkStateValidity();
         this.subject = subject;
     }
 
     public Locale getPreferredLocale() {
+        checkStateValidity();
         return preferredLocale;
     }
 
     public void setPreferredLocale(Locale preferredLocale) {
+        checkStateValidity();
         this.preferredLocale = preferredLocale;
     }
 
     public Enumeration<Locale> getLocales() {
+        checkStateValidity();
         return Collections.enumeration(locales);
     }
 
     public void setLocales(List<Locale> locales) {
+        checkStateValidity();
         this.locales = locales;
     }
 
     public void setPathSuffix(String pathSuffix) {
+        checkStateValidity();
         this.pathSuffix = pathSuffix;
     }
 
     public String getPathSuffix() {
+        checkStateValidity();
         return pathSuffix;
     }
 
     public Mount getMount(String alias) {
+        checkStateValidity();
         if (aliasMountMap.containsKey(alias)) {
             return aliasMountMap.get(alias);
         }
@@ -311,14 +355,17 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     public void addMount(String alias, Mount mount) {
+        checkStateValidity();
         aliasMountMap.put(alias, mount);
     }
 
     public void removeMount(String alias) {
+        checkStateValidity();
         aliasMountMap.remove(alias);
     }
 
     public Mount getMount(String type, String alias) {
+        checkStateValidity();
         String key = alias + '\uFFFF' + type;
 
         if (typeAndAliasMountMap.containsKey(key)) {
@@ -329,29 +376,33 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     public void addMount(String type, String alias, Mount mount) {
+        checkStateValidity();
         String key = alias + '\uFFFF' + type;
         typeAndAliasMountMap.put(key, mount);
     }
 
     public void removeMount(String type, String alias) {
+        checkStateValidity();
         String key = alias + '\uFFFF' + type;
         typeAndAliasMountMap.remove(key);
     }
 
     public void setComponentFilterTags(final Set<String> componentFilterTags) {
+        checkStateValidity();
         this.componentFilterTags = componentFilterTags;
     }
 
     public Set<String> getComponentFilterTags() {
+        checkStateValidity();
         if (componentFilterTags == null) {
             return Collections.emptySet();
         }
         return Collections.unmodifiableSet(componentFilterTags);
     }
 
-
     @Override
     public List<HstComponentWindowFilter> getComponentWindowFilters() {
+        checkStateValidity();
         if (filters == null) {
             return Collections.emptyList();
         }
@@ -364,6 +415,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
      */
     @Override
     public void addComponentWindowFilter(HstComponentWindowFilter filter) {
+        checkStateValidity();
         if (filters == null) {
             filters = new ArrayList<HstComponentWindowFilter>();
         }
@@ -372,128 +424,201 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     @Override
     public boolean isFullyQualifiedURLs() {
+        checkStateValidity();
         return fullyQualifiedURLs;
     }
 
     @Override
     public String getRenderHost() {
+        checkStateValidity();
         return renderHost;
     }
 
     @Override
     public boolean isCmsRequest() {
+        checkStateValidity();
         return cmsRequest;
     }
 
     @Override
     public void setLinkCreator(HstLinkCreator linkCreator) {
+        checkStateValidity();
         this.linkCreator = linkCreator;
     }
 
     @Override
     public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory) {
+        checkStateValidity();
         this.parameterInfoProxyFactory = parameterInfoProxyFactory;
     }
 
     @Override
     public void setFullyQualifiedURLs(boolean fullyQualifiedURLs) {
+        checkStateValidity();
         this.fullyQualifiedURLs = fullyQualifiedURLs;
     }
 
     @Override
     public void setRenderHost(String renderHost) {
+        checkStateValidity();
         this.renderHost = renderHost;
     }
 
     @Override
     public void setCmsRequest(boolean cmsRequest) {
+        checkStateValidity();
         this.cmsRequest = cmsRequest;
     }
 
     @Override
     public HippoBean getContentBean() {
+        checkStateValidity();
         return contentBean;
     }
 
     @Override
     public <T extends HippoBean> T getContentBean(final Class<T> beanMappingClass) {
+        checkStateValidity();
         return (T)getContentBean();
     }
 
     public void setContentBean(final HippoBean contentBean) {
+        checkStateValidity();
         this.contentBean = contentBean;
     }
 
     public HippoBean getSiteContentBaseBean() {
+        checkStateValidity();
         return siteContentBean;
     }
 
     public void setSiteContentBaseBean(final HippoBean siteContentBean) {
+        checkStateValidity();
         this.siteContentBean = siteContentBean;
     }
 
     @Override
     public ContentBeansTool getContentBeansTool() {
+        checkStateValidity();
         return contentBeansTool;
     }
 
     public void setContentBeansTool(final ContentBeansTool contentBeansTool) {
+        checkStateValidity();
         this.contentBeansTool = contentBeansTool;
     }
 
     @Override
     public void setCachingObjectConverter(final boolean enabled) {
+        checkStateValidity();
         this.cachingObjectConverterEnabled = enabled;
     }
 
     @Override
     public String getSiteContentBasePath() {
+        checkStateValidity();
         return siteContentBasePath;
     }
 
     public void setSiteContentBasePath(final String siteContentBasePath) {
+        checkStateValidity();
         this.siteContentBasePath = siteContentBasePath;
     }
 
 
     public void setDefaultObjectBeanManager(final ObjectBeanManager defaultObjectBeanManager) {
+        checkStateValidity();
         this.defaultObjectBeanManager = defaultObjectBeanManager;
     }
 
     public void setNonDefaultObjectBeanManagers(final Map<Session, ObjectBeanManager> nonDefaultObjectBeanManagers) {
+        checkStateValidity();
         this.nonDefaultObjectBeanManagers = nonDefaultObjectBeanManagers;
     }
 
     public void setDefaultHstQueryManager(final HstQueryManager defaultHstQueryManager) {
+        checkStateValidity();
         this.defaultHstQueryManager = defaultHstQueryManager;
     }
 
     public void setNonDefaultHstQueryManagers(final Map<Session, HstQueryManager> nonDefaultHstQueryManagers) {
+        checkStateValidity();
         this.nonDefaultHstQueryManagers = nonDefaultHstQueryManagers;
     }
 
     @Override
     public ObjectBeanManager getObjectBeanManager() throws IllegalStateException {
+        checkStateValidity();
         return defaultObjectBeanManager;
     }
 
     @Override
     public ObjectBeanManager getObjectBeanManager(final Session session) throws IllegalStateException {
+        checkStateValidity();
         return nonDefaultObjectBeanManagers.get(session);
     }
 
     @Override
     public HstQueryManager getQueryManager() throws IllegalStateException {
+        checkStateValidity();
         return defaultHstQueryManager;
     }
 
     @Override
     public HstQueryManager getQueryManager(final Session session) throws IllegalStateException {
+        checkStateValidity();
         return nonDefaultHstQueryManagers.get(session);
     }
 
     @Override
     public void clearObjectAndQueryManagers() {
+        checkStateValidity();
+    }
+
+    @Override
+    public void dispose() {
+        attributes = null;
+        session = null;
+        baseURL = null;
+        urlFactory = null;
+        resolvedMount = null;
+        resolvedSiteMapItem = null;
+        linkCreator = null;
+        parameterInfoProxyFactory = null;
+        siteMapMatcher = null;
+        siteMenus = null;
+        hstQueryManagerFactory = null;
+        defaultCredentials = null;
+        containerConfiguration = null;
+        contextCredentialsProvider = null;
+        subject = null;
+        preferredLocale = null;
+        locales = null;
+        pathSuffix = null;
+        virtualHost = null;
+        aliasMountMap = null;
+        typeAndAliasMountMap = null;
+        componentFilterTags = null;
+        filters = null;
+        renderHost = null;
+        contentBeansTool = null;
+        contentBean = null;
+        siteContentBean = null;
+        siteContentBasePath = null;
+        defaultObjectBeanManager = null;
+        nonDefaultObjectBeanManagers = null;
+        defaultHstQueryManager = null;
+        nonDefaultHstQueryManagers = null;
+
+        disposed = true;
+    }
+
+    private void checkStateValidity() {
+        if (disposed) {
+            throw new IllegalStateException("Invocation on an invalid HstRequestContext instance. \n" +
+                    "An HstRequestContext instance MUST not be used after a request processing cycle.\n" +
+                    "Check if your component implementation is thread-safe!!!");
+        }
     }
 
 }

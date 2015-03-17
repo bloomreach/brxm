@@ -810,6 +810,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/ContainerURLProvid
 components/core/src/test/java/org/hippoecm/hst/core/container/DefaultPipelineIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/PageCachingValveIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/RequestContextDisposedIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowFilter.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerConfiguration.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericResponseHeadersValve.java -text
@@ -900,6 +901,7 @@ components/core/src/test/resources/org/hippoecm/hst/core/container/AbstractPipel
 components/core/src/test/resources/org/hippoecm/hst/core/container/DefaultPipelineIT.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/PageCachingValveIT.xml -text
+components/core/src/test/resources/org/hippoecm/hst/core/container/RequestContextDisposedIT.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/site/container/SystemDefaultSessionPoolConfigurationsIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/AbstractTestConfigurations.xml -text
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain

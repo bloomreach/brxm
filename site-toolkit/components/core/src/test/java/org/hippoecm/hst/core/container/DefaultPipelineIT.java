@@ -37,12 +37,10 @@ public class DefaultPipelineIT extends AbstractPipelineTestCase {
     @Override
     public void setUp() throws Exception{
         super.setUp();
-        this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
-        this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
-
+        this.servletRequest = getComponent(HttpServletRequest.class.getName());
+        this.servletResponse = getComponent(HttpServletResponse.class.getName());
     }
-    
-    
+
     @Test
     public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
