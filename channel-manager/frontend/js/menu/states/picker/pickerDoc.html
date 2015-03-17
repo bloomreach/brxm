@@ -26,7 +26,13 @@
     <tbody>
       <tr class="picker-item" ng-repeat="item in selectedItem.items" ng-if="item.selectable" ng-class="{active: $parent.$parent.selectedDocument == item}" ng-click="selectDocument(item)">
         <td class="status">
-          <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" size="small"></hippo-icon>
+          <div class="hi-stack">
+            <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" size="small"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'live' || item.state == 'changed'" name="check-circle" class="{{item.state}}" size="tiny" location="foreground" position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'new'" name="minus-circle" class="{{item.state}}" size="tiny" location="foreground" position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'changed'" name="exclamation-triangle" class="{{item.state}}" size="tiny" location="foreground" position="bottom left"></hippo-icon>
+          </div>
+
         </td>
         <td>{{item.displayName}}</td>
         <td>date</td>
