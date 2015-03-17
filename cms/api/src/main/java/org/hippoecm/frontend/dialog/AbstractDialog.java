@@ -241,7 +241,17 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
 
-        feedback = newFeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
+        feedback = newFeedbackPanel("feedback");
+        IFeedbackMessageFilter filter = feedback.getFilter();
+
+        if (filter == null) {
+            // make sure the feedback filters out messages unrelated to this dialog
+            feedback.setFilter(new ContainerFeedbackMessageFilter(this));
+        } else if (!(filter instanceof ContainerFeedbackMessageFilter)) {
+            log.warn("The dialog '{}' uses a feedback panel with a filter that does not extend ContainerFeedbackMessageFilter." +
+                    "As a result, this dialog may show unrelated feedback messages.", getClass());
+        }
+
         feedback.setOutputMarkupId(true);
         add(feedback);
 
@@ -379,20 +389,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     /**
      * Create a feedback panel and display only messages from children components.
-     *
-     * @deprecated since version 2.28.00, the method is replaced by {@link #newFeedbackPanel(String, IFeedbackMessageFilter)}.
      */
-    @Deprecated
     protected FeedbackPanel newFeedbackPanel(String id) {
         return new ExceptionFeedbackPanel(id);
-    }
-
-    /**
-     * Create a feedback panel and apply a <code>filter</code> so that only messages accepted by the
-     * filter are visible.
-     */
-    protected FeedbackPanel newFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
-        return new ExceptionFeedbackPanel(id, filter);
     }
 
     protected final FeedbackMessagesModel getFeedbackMessagesModel() {
