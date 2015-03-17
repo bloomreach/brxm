@@ -56,8 +56,10 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -117,6 +119,9 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         }
 
         link.add(labelComponent);
+
+        final HippoIcon icon = HippoIcon.fromSprite("shortcut-icon", Icon.PLUS);
+        link.add(icon);
     }
 
     /**
