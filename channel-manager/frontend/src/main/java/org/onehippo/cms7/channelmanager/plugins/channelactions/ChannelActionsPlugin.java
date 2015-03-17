@@ -225,7 +225,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         @Override
         protected Component getIcon(final String id) {
-            return HippoIcon.fromSprite(id, Icon.GLOBAL_TINY);
+            return HippoIcon.fromSprite(id, Icon.GLOBE);
         }
 
         @Override
@@ -258,7 +258,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         @Override
         protected Component getIcon(final String id) {
-            return HippoIcon.fromSprite(id, Icon.GLOBAL_TINY);
+            return HippoIcon.fromSprite(id, Icon.GLOBE);
         }
 
         @Override
