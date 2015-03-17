@@ -146,7 +146,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         label.setOutputMarkupId(true);
         add(label);
 
-        final HippoIcon icon = HippoIcon.fromSprite("change-password-icon", Icon.EDIT_TINY);
+        final HippoIcon icon = HippoIcon.fromSprite("change-password-icon", Icon.PENCIL_SQUARE);
         link.add(icon);
     }
 
