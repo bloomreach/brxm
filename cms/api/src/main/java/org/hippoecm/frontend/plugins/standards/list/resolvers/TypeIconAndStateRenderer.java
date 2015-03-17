@@ -48,7 +48,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
 
     public Component getViewer(final String id, final Node node) {
         if (node == null) {
-            return HippoIcon.fromSprite(id, Icon.EMPTY_SMALL);
+            return HippoIcon.fromSprite(id, Icon.EMPTY);
         } else {
             return new Container(id, node);
         }

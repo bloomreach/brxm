@@ -71,7 +71,6 @@ public enum Icon {
     COMPRESS,
     CROP,
     EMPTY,
-    EMPTY_SMALL,
     EXCLAMATION,
     EXCLAMATION_CIRCLE,
     EXCLAMATION_TRIANGLE,

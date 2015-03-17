@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class IconRenderUtil {
                         return HippoIcon.fromSprite(id, Icon.FOLDER_THIN);
                     }
                 } catch (ItemNotFoundException ex) {
-                    return HippoIcon.fromSprite(id, Icon.EMPTY_SMALL);
+                    return HippoIcon.fromSprite(id, Icon.EMPTY);
                 }
                 Node parent = canonical.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {

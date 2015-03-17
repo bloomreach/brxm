@@ -36,7 +36,7 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
 
-    private HippoIcon(final String id, IModel model) {
+    private HippoIcon(final String id, IModel<?> model) {
         super(id, model);
     }
 
@@ -94,7 +94,7 @@ public class HippoIcon extends Panel {
     }
 
     /**
-     * Renders an icon stored in a resource, including 'width' and 'height' atrtibutes.
+     * Renders an icon stored in a resource, including 'width' and 'height' attributes.
      * When the icon's file extension is '.svg', the icon is rendered as an inline SVG image.
      * @param id the Wicket id of the icon
      * @param reference the resource to render
