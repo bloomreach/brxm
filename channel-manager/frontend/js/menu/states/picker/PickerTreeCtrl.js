@@ -24,6 +24,7 @@
             '$stateParams',
             'hippo.channel.menu.PickerService',
             function ($scope, $state, $stateParams, PickerService) {
+                var PickerTreeCtrl = this;
                 $scope.$watch('selectedItem', function(item) {
                     if(item) {
                         $state.go('picker.docs', {
@@ -32,7 +33,7 @@
                     }
                 });
 
-                $scope.callbacks = {
+                PickerTreeCtrl.callbacks = {
                     displayTreeItem: function(item) {
                         return item.type === 'folder';
                     },
