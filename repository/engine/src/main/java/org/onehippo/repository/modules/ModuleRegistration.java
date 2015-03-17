@@ -25,8 +25,12 @@ import java.util.concurrent.Semaphore;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ModuleRegistration {
+
+    private static final Logger log = LoggerFactory.getLogger(ModuleRegistration.class);
 
     private final String moduleName;
     private final Class<? extends DaemonModule> moduleClass;
@@ -81,12 +85,12 @@ class ModuleRegistration {
         final List<Class<?>> requirements = requirements();
         final int i = requirements.indexOf(type);
         final List<Boolean> optional = optional();
-        if (optional.size() <= i) {
-            if (optional.size() == 1) {
-                return optional.get(0);
-            } else {
-                return false;
+        if (i > optional.size()) {
+            if (!optional.isEmpty()) {
+                log.warn("The optional attribute of @RequiresService should be " +
+                        "absent or equal to the length of the types attribute");
             }
+            return false;
         }
         return optional.get(i);
     }

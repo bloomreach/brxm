@@ -27,6 +27,12 @@ import java.lang.annotation.Target;
  * and which are provided by other {@link DaemonModule}s.
  * Together with the {@link ProvidesService} annotation, this annotation
  * determines the order in which modules are started.
+ * <p>
+ *   The optional optional attribute informs the system not to fail loading the module in the absence of the service.
+ *   I.e. if there is no module that provides the service.
+ *   If you specify the optional attribute it needs to be an array of booleans that is equal in length to the array
+ *   of types that is specified in the types attribute.
+ * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
