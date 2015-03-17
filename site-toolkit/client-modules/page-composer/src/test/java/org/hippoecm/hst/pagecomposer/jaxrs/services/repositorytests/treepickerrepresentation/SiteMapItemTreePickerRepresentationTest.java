@@ -65,6 +65,7 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTestTreePic
         final Node child = any.addNode("2011", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
         child.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "news/2011");
         session.save();
+        Thread.sleep(100);
         AbstractTreePickerRepresentation representation = createSiteMapItemRepresentation("", anyIdentifier);
         assertFalse(representation.isExpandable());
         assertTrue(representation.isCollapsed());

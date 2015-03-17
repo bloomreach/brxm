@@ -80,6 +80,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
             addContent();
 
             session.save();
+            Thread.sleep(100);
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
@@ -115,6 +116,7 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
             addContent();
 
             session.save();
+            Thread.sleep(100);
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());

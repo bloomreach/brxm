@@ -81,7 +81,7 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractTestTr
             translation.setProperty(HippoNodeType.HIPPO_LANGUAGE, "en");
             translation.setProperty(HippoNodeType.HIPPO_MESSAGE, "Common Folder");
             session.save();
-
+            Thread.sleep(100);
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getCommonFolderConfigIdentifier());
             assertEquals("Common Folder", representation.getDisplayName());
             // translation node does not result in extra child representation
