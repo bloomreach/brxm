@@ -135,11 +135,6 @@ public class YuiDateTimeField extends DateTimeField {
         }
     }
 
-    // handle for error events
-    protected void onError(final AjaxRequestTarget target, final RuntimeException e) {
-
-    }
-
     private int calculateDateLength() {
         return settings.getDatePattern().length() + 2;
     }
