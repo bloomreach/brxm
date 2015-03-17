@@ -33,7 +33,6 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -113,8 +112,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
     }
 
     @Override
-    protected FeedbackPanel newFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
-        return new FeedbackPanel(id, filter) {{
+    protected FeedbackPanel newFeedbackPanel(final String id) {
+        return new FeedbackPanel(id) {{
             setOutputMarkupId(true);
         }};
     }
