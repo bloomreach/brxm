@@ -85,7 +85,7 @@ class ModuleRegistration {
         final List<Class<?>> requirements = requirements();
         final int i = requirements.indexOf(type);
         final List<Boolean> optional = optional();
-        if (i > optional.size()) {
+        if (i >= optional.size()) {
             if (!optional.isEmpty()) {
                 log.warn("The optional attribute of @RequiresService should be " +
                         "absent or equal to the length of the types attribute");
