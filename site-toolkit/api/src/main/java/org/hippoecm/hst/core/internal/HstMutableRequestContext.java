@@ -136,4 +136,11 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setCachingObjectConverter(boolean enabled);
 
     public void clearObjectAndQueryManagers();
+
+    /**
+     * Dispose all the internal objects maintained for the current request processing state.
+     * After disposed, this request context will be in an illegal state to use.
+     */
+    public void dispose();
+
 }

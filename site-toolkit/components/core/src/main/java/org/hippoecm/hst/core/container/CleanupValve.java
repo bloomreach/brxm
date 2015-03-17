@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,26 +50,26 @@ public class CleanupValve extends AbstractBaseOrderableValve {
                 resourceLifecycleManagement.disposeAllResources();
             }
         }
-        
+
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
         boolean subjectBasedSession = resolvedMount.isSubjectBasedSession();
         boolean sessionStateful = resolvedMount.isSessionStateful();
-        
+
         if (subjectBasedSession) {
             clearSubjectSession(context, requestContext, sessionStateful);
         }
-        
-    	// ensure Session isn't tried to reuse again (it has been returned to the pool anyway)
+
+        // ensure Session isn't tried to reuse again (it has been returned to the pool anyway)
         ((HstMutableRequestContext) requestContext).setSession(null);
-        
-        if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
-            getRequestContextComponent().release(requestContext);
-        }
 
         if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
             sessionSecurityDelegation.cleanupSessionDelegates(requestContext);
+        }
+
+        if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
+            getRequestContextComponent().release(requestContext);
         }
 
         // continue
