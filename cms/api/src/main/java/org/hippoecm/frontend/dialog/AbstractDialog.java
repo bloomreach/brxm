@@ -145,6 +145,17 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     protected class ExceptionFeedbackPanel extends FeedbackPanel {
 
+        /**
+         * Create a feedback panel and display only messages of children components.
+         */
+        protected ExceptionFeedbackPanel(String id) {
+            this(id, new ContainerFeedbackMessageFilter(AbstractDialog.this));
+        }
+
+        /**
+         * Create a feedback panel and apply a <code>filter</code> so that only messages accepted by the
+         * filter are visible.
+         */
         protected ExceptionFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
             super(id, filter);
             setOutputMarkupId(true);
@@ -366,6 +377,20 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         super.onDetach();
     }
 
+    /**
+     * Create a feedback panel and display only messages from children components.
+     *
+     * @deprecated since version 2.28.00, the method is replaced by {@link #newFeedbackPanel(String, IFeedbackMessageFilter)}.
+     */
+    @Deprecated
+    protected FeedbackPanel newFeedbackPanel(String id) {
+        return new ExceptionFeedbackPanel(id);
+    }
+
+    /**
+     * Create a feedback panel and apply a <code>filter</code> so that only messages accepted by the
+     * filter are visible.
+     */
     protected FeedbackPanel newFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
         return new ExceptionFeedbackPanel(id, filter);
     }
