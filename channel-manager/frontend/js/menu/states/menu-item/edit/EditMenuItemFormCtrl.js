@@ -34,7 +34,9 @@
 
                 EditMenuItemFormCtrl.focus = FocusService.focusElementWithId;
 
-                $scope.$watch('EditMenuItemFormCtrl.form', function () {
+                $scope.$watch(function() {
+                    return $scope.form;
+                }, function () {
                     var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
                     function afternewItem() {
                         $scope.MenuItemCtrl.selectedMenuItem.title = '';
@@ -54,73 +56,91 @@
                 // The following logic will check the client-side validation of the
                 // edit menu item form. When a field is invalid, the FormStateService
                 // will be updated, so the window can't be closed.
-                $scope.$watch('form.title.$valid', function () {
+                $scope.$watch(function() {
+                    return $scope.form.title.$valid;
+                }, function () {
                     checkFormValidity();
                 });
 
-                $scope.$watch('MenuItemCtrl.selectedMenuItem.linkType', function () {
+                $scope.$watch(function() {
+                    return $scope.MenuItemCtrl.selectedMenuItem.linkType;
+                }, function () {
                     checkFormValidity();
                 });
 
-                $scope.$watch('form.sitemapItem.$valid', function () {
+                $scope.$watch(function() {
+                    return $scope.form.sitemapItem.$valid;
+                }, function () {
                     checkFormValidity();
                 });
 
-                $scope.$watch('form.url.$valid', function () {
+                $scope.$watch(function() {
+                    return $scope.form.url.$valid;
+                }, function () {
                     checkFormValidity();
                 });
 
                 function checkFormValidity() {
-                    var isValid = EditMenuItemFormCtrl.form.title.$valid &&
-                        EditMenuItemFormCtrl.form.destination.$valid;
+                    var isValid = $scope.form.title.$valid &&
+                        $scope.form.destination.$valid;
 
                     if ($scope.MenuItemCtrl.selectedMenuItem) {
                         if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL') {
-                            isValid = isValid && (EditMenuItemFormCtrl.form.url.$valid);
+                            isValid = isValid && ($scope.form.url.$valid);
                         } else if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'SITEMAPITEM') {
-                            isValid = isValid && (EditMenuItemFormCtrl.form.sitemapItem.$valid);
+                            isValid = isValid && ($scope.form.sitemapItem.$valid);
                         }
                     }
 
                     FormStateService.setValid(isValid);
                 }
 
-                $scope.$watch('form.$dirty', function () {
-                    FormStateService.setDirty(EditMenuItemFormCtrl.form.$dirty);
+                $scope.$watch(function() {
+                    return $scope.form.$dirty;
+                }, function () {
+                    FormStateService.setDirty($scope.form.$dirty);
                 });
 
                 // The following logic will set the correct error messages when the
                 // client-side validation status updates.
-                $scope.$watch('form.title.$error.required', function () {
+                $scope.$watch(function() {
+                    return $scope.form.title.$error.required;
+                }, function () {
                     $scope.EditMenuItemCtrl.fieldFeedbackMessage.title = translate('LABEL_REQUIRED');
                 });
 
-                $scope.$watch('form.title.$valid', function (value) {
+                $scope.$watch(function() {
+                    return $scope.form.title.$valid;
+                }, function (value) {
                     if (value) {
                         $scope.EditMenuItemCtrl.fieldFeedbackMessage.title = '';
                     }
                 });
 
-                $scope.$watch('form.url.$error.required', function () {
-                    if (!EditMenuItemFormCtrl.form.url.$pristine) {
+                $scope.$watch(function() {
+                    return $scope.form.url.$error.required;
+                }, function () {
+                    if (!$scope.form.url.$pristine) {
                         $scope.EditMenuItemCtrl.fieldFeedbackMessage.link = translate('EXTERNAL_LINK_REQUIRED');
                     }
                 });
 
-                $scope.$watch('form.url.$valid', function (value) {
+                $scope.$watch(function() {
+                    return $scope.form.url.$valid;
+                }, function (value) {
                     if (value) {
                         $scope.EditMenuItemCtrl.fieldFeedbackMessage.link = '';
                     }
                 });
 
                 function saveFieldIfDirty(fieldName, propertyName) {
-                    if (EditMenuItemFormCtrl.form[fieldName].$dirty) {
+                    if ($scope.form[fieldName].$dirty) {
                         $scope.EditMenuItemCtrl.saveSelectedMenuItem(propertyName);
                     }
                 }
 
                 $scope.$on('container:before-close', function () {
-                    if (EditMenuItemFormCtrl.form.$dirty) {
+                    if ($scope.form.$dirty) {
                         saveFieldIfDirty('title', 'title');
                         saveFieldIfDirty('sitemapItem', 'link');
                         saveFieldIfDirty('url', 'link');

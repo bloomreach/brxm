@@ -48,7 +48,7 @@
     <!-- END confirmation dialog -->
 
     <!-- START edit form -->
-    <form name="EditMenuItemFormCtrl.form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channel.menu.EditMenuItemFormCtrl as EditMenuItemFormCtrl">
+    <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channel.menu.EditMenuItemFormCtrl as EditMenuItemFormCtrl">
         <h1><strong>{{ MenuItemCtrl.selectedMenuItem.title | hippoChannelPlaceholder:'UNTITLED' }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
         <p class="alert alert-danger alert-dismissable" data-ng-show="MenuItemCtrl.feedback.message">
             <button type="button" class="close" data-ng-click="EditMenuItemCtrl.dismissFeedback()" aria-hidden="true">&times;</button>
@@ -66,7 +66,7 @@
                    data-ng-model="MenuItemCtrl.selectedMenuItem.title"
                    data-ng-required="true"
                    data-ng-blur="EditMenuItemFormCtrl.saveTitle(form)"
-                   data-tooltip="{{ EditMenuItemFormCtrl.fieldFeedbackMessage.title }}"
+                   data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.title }}"
                    data-tooltip-trigger="show"
                    data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
@@ -86,7 +86,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="MenuItemCtrl.selectedMenuItem.linkType"
                            value="SITEMAPITEM"
-                           data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(EditMenuItemFormCtrl.form)">
+                           data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(form)">
                     {{ 'INTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -95,7 +95,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="MenuItemCtrl.selectedMenuItem.linkType"
                            value="EXTERNAL"
-                           data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(EditMenuItemFormCtrl.form)">
+                           data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(form)">
                     {{ 'EXTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -120,7 +120,7 @@
                 <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
                        data-ng-model="MenuItemCtrl.selectedMenuItem.sitemapLink"
                        data-show-focus="EditMenuItemCtrl.linkToFocus == 'sitemapLink'"
-                       data-ng-blur="EditMenuItemCtrl.updateLinkDestination(EditMenuItemFormCtrl.form)">
+                       data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.sitemapItem.$dirty"
                    data-ng-class="{
@@ -155,8 +155,8 @@
                        data-ng-model="MenuItemCtrl.selectedMenuItem.externalLink"
                        data-ng-required="true"
                        data-show-focus="EditMenuItemCtrl.linkToFocus == 'externalLink'"
-                       data-ng-blur="EditMenuItemCtrl.updateLinkDestination(EditMenuItemFormCtrl.form)"
-                       data-tooltip="{{ fieldFeedbackMessage.link }}"
+                       data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
+                       data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.link }}"
                        data-tooltip-trigger="show"
                        data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
