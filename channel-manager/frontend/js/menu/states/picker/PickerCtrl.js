@@ -22,8 +22,7 @@
             '$state',
             '$stateParams',
             'hippo.channel.menu.PickerService',
-            'hippo.channel.menu.MenuService',
-            function ($scope, $state, $stateParams, PickerService, MenuService) {
+            function ($scope, $state, $stateParams, PickerService) {
                 $scope.selectDocument = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId,
@@ -44,10 +43,8 @@
                 $scope.pickerType = $scope.pickerTypes[0];
                 $scope.selectedDocument = null;
 
-                var menuData = MenuService.getMenuData();
-
                 if($stateParams.link) {
-                    PickerService.getInitialData(menuData.siteContentIdentifier, $stateParams.link).then(function() {
+                    PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
                         navigateToSelected($scope.treeItems);
                         function navigateToSelected(items, parent) {
                             angular.forEach(items, function (item) {
@@ -64,14 +61,9 @@
                             });
                         }
                     });
-                } else if(angular.isArray(menuData.items)) {
-                    PickerService.getInitialData(menuData.siteContentIdentifier);
                 } else {
-                    MenuService.getMenu().then(
-                        function(menuData){
-                            PickerService.getInitialData(menuData.siteContentIdentifier);
-                        }
-                    );
+                    PickerService.getInitialData($stateParams.siteContentIdentifier);
+
                 }
 
             }

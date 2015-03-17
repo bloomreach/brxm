@@ -80,6 +80,7 @@
                     openPicker: function() {
                         $state.go('picker', {
                             menuItemId: $scope.selectedMenuItem.id,
+                            siteContentIdentifier: MenuService.getMenuData().siteContentIdentifier,
                             link: $scope.selectedMenuItem.link
                         });
                     },
