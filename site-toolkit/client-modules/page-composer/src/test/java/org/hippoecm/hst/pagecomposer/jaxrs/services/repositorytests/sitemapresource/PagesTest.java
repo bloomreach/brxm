@@ -122,6 +122,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/webfiles")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE, false);
         session.save();
+        Thread.sleep(200);
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
