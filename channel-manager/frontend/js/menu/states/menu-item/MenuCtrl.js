@@ -28,16 +28,17 @@
             'hippo.channel.FormStateService',
             'hippo.channel.menu.MenuService',
             function ($rootScope, $scope, $filter, $state, $stateParams, FeedbackService, FormStateService, MenuService) {
-                $scope.isSaving = {};
+                var MenuCtrl = this;
+                MenuCtrl.isSaving = {};
 
-                $scope.addItem = function () {
+                MenuCtrl.addItem = function () {
                     if (FormStateService.isDirty()) {
                         if (FormStateService.isValid()) {
-                            MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
+                            MenuService.saveMenuItem($scope.MenuItemCtrl.selectedMenuItem).then(function() {
                                     addItemAfterCheckingValidity();
                                 },
                                 function (errorResponse) {
-                                    $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                                    $scope.MenuItemCtrl.feedback = FeedbackService.getFeedback(errorResponse);
                                 });
                         }
                     } else {
@@ -45,7 +46,7 @@
                     }
 
                     function addItemAfterCheckingValidity () {
-                        $scope.isSaving.newItem = true;
+                        MenuCtrl.isSaving.newItem = true;
                         MenuService.getMenu().then(function (menuData) {
                             var blankMenuItem = {
                                 linkType: 'SITEMAPITEM',
@@ -83,8 +84,8 @@
                                     function (menuItemId) {
                                         FormStateService.setValid(true);
 
-                                        if ($scope.$parent.selectedMenuItem) {
-                                            $scope.$parent.selectedMenuItem.collapsed = false;
+                                        if ($scope.MenuItemCtrl.selectedMenuItem) {
+                                            $scope.MenuItemCtrl.selectedMenuItem.collapsed = false;
                                         }
 
                                         $state.go('menu-item.edit', {
@@ -93,14 +94,14 @@
 
                                         var deregisterListener = $scope.$on('menu-items-changed', afterItemIsAddedToList);
                                         function afterItemIsAddedToList() {
-                                            $scope.isSaving.newItem = false;
+                                            MenuCtrl.isSaving.newItem = false;
                                             $rootScope.$broadcast('new-menu-item');
                                             deregisterListener();
                                         }
                                     },
                                     function (errorResponse) {
-                                        $scope.isSaving.newItem = false;
-                                        $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                                        MenuCtrl.isSaving.newItem = false;
+                                        $scope.MenuItemCtrl.feedback = FeedbackService.getFeedback(errorResponse);
                                     }
                                 );
                             }

@@ -34,13 +34,13 @@
 
                     .state('menu-item', {
                         abstract: true,
-                        controller: 'hippo.channel.menu.MenuItemCtrl',
+                        controller: 'hippo.channel.menu.MenuItemCtrl as MenuItemCtrl',
                         templateUrl: 'states/menu-item/menu-item.html'
                     })
 
                     .state('menu-item.edit', {
                         url: '/:menuItemId/edit',
-                        controller: 'hippo.channel.menu.EditMenuItemCtrl',
+                        controller: 'hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl',
                         templateUrl: 'states/menu-item/edit/edit-menu-item.html',
                         params: {
                             selectedDocumentPath: null
