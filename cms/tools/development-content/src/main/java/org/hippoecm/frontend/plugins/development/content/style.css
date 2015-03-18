@@ -1,12 +1,12 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,31 +14,33 @@
  * limitations under the License.
  */
 .wicket-modal .hippo-yui-tree {
-	padding-top: 10px;
+	padding-top: 4px;
+	padding-left: 8px;
 	overflow:auto;
-	height:220px;
+	height:214px;
+    background-color: #fff;
 }
 
 .modal-contents {
-  margin-left: 10px;
-  margin-top: 5px; 
+  padding: 16px 16px 0 16px;
 }
 
 .modal-contents .development-content-wizard {
-  width: 450px;
-  height:350px;
+  width: 100%;
 }
 .development-content-wizard .wicketExtensionsWizardOuterTable , .modal-contents .development-content-wizard .wicketExtensionsWizardInnerTable{
   width: 100%;
 }
 
 .development-content-wizard .wicketExtensionsWizardViewInner {
-  height:240px;
-  padding-top: 10px;
+  overflow: auto;
+  height:228px;
+  padding-top: 8px;
 }
 
 .development-content-wizard .wicketExtensionsWizardHeaderTitle {
-  padding-top: 10px;
+  padding-top: 8px;
+  height: 32px;
 }
 
 .development-content-wizard fieldset {
@@ -53,4 +55,29 @@
 .modal-contents .select-types {
   margin-left: 25px;
   margin-top: 20px;
+}
+
+.hippo-window .development-content-wizard .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar {
+    padding-top: 8px;
+}
+
+.wicketExtensionsWizardButtonBar .hippo-window-buttons {
+    display: inline;
+    bottom: 0;
+    position: relative;
+    right: 0;
+}
+
+.wicketExtensionsWizardButtonBar .hippo-window-buttons input {
+  margin-right: 0;
+  margin-left: 8px;
+}
+.wicketExtensionsWizardButtonBar .hippo-window-buttons input:first-child{
+  margin-left: 0;
+}
+
+.hippo-window .hippo-root .add-folders-dialog + .wicket-ajax-indicator,
+.hippo-window .hippo-root .add-documents-dialog + .wicket-ajax-indicator {
+    left: 90px;
+    bottom: 5px;
 }

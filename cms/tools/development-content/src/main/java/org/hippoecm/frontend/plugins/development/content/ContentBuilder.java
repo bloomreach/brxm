@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -250,50 +250,9 @@ public class ContentBuilder implements IClusterable {
     }
 
     interface NodeDecorator extends IClusterable {
-        void decorate(Node node);    
+        void decorate(Node node);
     }
 
-    @Deprecated
-    private String createNode(String category, String[] typeAr, NameSettings settings, FolderWorkflow folderWorkflow, List<NodeDecorator> decorators) {
-        int index = generator.nextInt(typeAr.length);
-        String prototype = typeAr[index];
-        String targetName = generateName(settings.minLength, settings.maxLength);
-        String name = NodeNameCodec.encode(targetName, true);
-        String path = null;
-        try {
-            path = folderWorkflow.add(category, prototype, name);
-        } catch (RemoteException | RepositoryException | WorkflowException e) {
-            log.error(String.format("Failed to create node of category='%s', prototype='%s' and name = '%s'", 
-                    category, prototype, name), e);
-        }
-
-        if (path != null) {
-            Session jcrSession = UserSession.get().getJcrSession();
-            Node newNode = null;
-            try {
-                newNode = jcrSession.getRootNode().getNode(path.substring(1));
-                WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                ((EditableWorkflow) manager.getWorkflow("default", newNode)).commitEditableInstance();
-
-            } catch (RepositoryException | RemoteException | WorkflowException e) {
-                log.error(String.format("Error creating new node of category='%s'", category), e);
-            }
-
-            if (newNode != null && decorators != null) {
-                for (NodeDecorator decorator : decorators) {
-                    decorator.decorate(newNode);
-                }
-                try {
-                    jcrSession.save();
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
-                }
-            }
-            return name;
-        }
-        return null;
-    }    
-    
     private String createNode(CategoryType[] cts, NameSettings settings, FolderWorkflow folderWorkflow, List<NodeDecorator> decorators) {
         int index = generator.nextInt(cts.length);
         final CategoryType ct = cts[index];
@@ -304,7 +263,7 @@ public class ContentBuilder implements IClusterable {
         try {
             path = folderWorkflow.add(ct.category, ct.type, name);
         } catch (RemoteException | RepositoryException | WorkflowException e) {
-            log.error(String.format("Failed to create node of category='%s', type='%s' and name = '%s'", 
+            log.error(String.format("Failed to create node of category='%s', type='%s' and name = '%s'",
                     ct.category, ct.type, name), e);
         }
 
@@ -371,7 +330,7 @@ public class ContentBuilder implements IClusterable {
     public void createFolders(FolderSettings settings, int depth) {
         createFolders(settings, depth, getFolderWorkflow(settings.folderUUID));
     }
-    
+
     public void createFolders(FolderSettings settings, int depth, FolderWorkflow workflow) {
         updateFolder(settings.folderUUID);
 
@@ -438,38 +397,25 @@ public class ContentBuilder implements IClusterable {
         List<String> categories = new LinkedList<>();
         Session session = UserSession.get().getJcrSession();
         try {
-            Node node = session.getRootNode().getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
+            Node root = session.getRootNode();
+            Node node = root.getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
+            Node templates = root.getNode("hippo:configuration/hippo:queries/hippo:templates");
             for (Value v : node.getProperty("hippostd:foldertype").getValues()) {
-                if (v.getString().contains(hint)) {
-                    categories.add(v.getString());
+                String category = v.getString();
+                if (templates.hasNode(category) && templates.getNode(category).hasProperty("hippostd:icon")) {
+                    Node template = templates.getNode(category);
+                    if (template.getProperty("hippostd:icon").getString().contains(hint)) {
+                        categories.add(category);
+                    }
+                } else if (category.contains(hint)) {
+                    //fallback
+                    categories.add(category);
                 }
             }
         } catch ( RepositoryException e) {
             log.error("Failed to retrieve foldertype", e);
         }
         return categories;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> getTypes(List<String> categories, FolderWorkflow folderWorkflow) {
-        List<String> types = new LinkedList<>();
-        if (folderWorkflow != null) {
-            Map<String, Serializable> hints;
-            try {
-                hints = folderWorkflow.hints();
-                final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
-                for (String category : categories) {
-                    if (prototypes.containsKey(category)) {
-                        for (String s : prototypes.get(category)) {
-                            types.add(s);
-                        }
-                    }
-                }
-            } catch (WorkflowException | RepositoryException | RemoteException e) {
-                log.error("Failed to retrieve hints from folderWorkflow", e);
-            }
-        }
-        return types;
     }
 
     @SuppressWarnings("unchecked")
@@ -495,8 +441,8 @@ public class ContentBuilder implements IClusterable {
     public String generateName(int minLength, int maxLength) {
 
         StringBuilder name = new StringBuilder();
-        int targetLength = generator.nextInt((maxLength + 1) - minLength) + minLength; 
-        
+        int targetLength = generator.nextInt((maxLength + 1) - minLength) + minLength;
+
         do {
             names.setMaximumLength(targetLength - name.length());
             String newName = names.generate();
@@ -574,7 +520,7 @@ public class ContentBuilder implements IClusterable {
         }
         return null;
     }
-    
+
     public static class CategoryType implements IClusterable {
         String category;
         String type;
