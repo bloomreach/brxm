@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,15 @@ module.exports = function (grunt) {
             }
         },
 
+        // Compile LessCSS to CSS.
+        less: {
+            menu: {
+                files: {
+                    '<%= build.ngtarget %>/menu/assets/css/menu.css': '<%= build.ngsource %>/menu/assets/less/menu.less'
+                }
+            }
+        },
+
         // copy files to target folder
         copy: {
             apps: {
@@ -70,6 +79,7 @@ module.exports = function (grunt) {
                             '**/*.js',
                             '!**/*.spec.js',
                             '**/assets/css/*',
+                            '!**/assets/less/*',
                             '**/assets/images/*',
                             '**/i18n/*.json'
                         ]
@@ -191,6 +201,7 @@ module.exports = function (grunt) {
         'jshint:apps',
         'declutter',
         'clean:target',
+        'less',
         'copy',
         'filerev',
         'usemin'

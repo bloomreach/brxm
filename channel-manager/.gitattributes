@@ -18,7 +18,7 @@ frontend/.bowerrc -text
 frontend/.jshintrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
-frontend/js/menu/assets/css/menu.css -text
+frontend/js/menu/assets/less/menu.less -text
 frontend/js/menu/i18n/de.json -text
 frontend/js/menu/i18n/en.json -text
 frontend/js/menu/i18n/fr.json -text
