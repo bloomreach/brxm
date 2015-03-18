@@ -31,14 +31,10 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(GotolinkDocumentsShortcutPlugin.class);
 
-    private static final long serialVersionUID = 1L;
-
     public GotolinkDocumentsShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         AjaxLink link = new AjaxLink("link") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 final String browserId = config.getString("browser.id");

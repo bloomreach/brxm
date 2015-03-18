@@ -91,25 +91,23 @@
   .goto-block {
     text-decoration: none;
     padding: 10px 16px 10px 16px;
-    display: block;
     width: 66%;
     background-color: @light-shade;
     margin-bottom: 8px;
+    display: flex;
+    align-items: center;
 
     &:hover {
       background-color: @lighter-shade;
-      span {
-      }
     }
 
     svg {
       color: @text-color;
-      vertical-align: middle;
+      flex-shrink: 0;
     }
 
     span {
-      vertical-align: middle;
-      padding-left: 4px;
+      padding-left: 8px;
       font-size: 14px;
       color: @text-color;
     }
@@ -144,26 +142,3 @@
     }
   }
 }
-
-/* GotoLinks  */
-/* ================================================ */
-
-/*
-.hippo-gotolinks li a {
-  display: block;
-  height: 52px;
-  padding-left: 75px;
-  width: 192px;
-  padding-top: 25px;
-  font-weight: bold;
-  font-size: 11px
-}
-
-.hippo-gotolinks li a:hover {
-  background-position: -267px 0
-}
-
-.hippo-gotolinks li.documents-32 {
-  background-image: none
-}
-*/
