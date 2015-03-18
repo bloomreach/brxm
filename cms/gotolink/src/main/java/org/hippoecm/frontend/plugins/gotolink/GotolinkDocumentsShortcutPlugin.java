@@ -54,7 +54,6 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
 
         add(link);
 
-        /* TODO: a medium size icon needs to be created */
         final HippoIcon icon = HippoIcon.fromSprite("gotolink-icon", Icon.FOLDER_OPEN_THINNER);
         link.add(icon);
     }
