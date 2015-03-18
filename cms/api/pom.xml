@@ -54,6 +54,14 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.frontend</groupId>
+      <artifactId>hippo-theme</artifactId>
+      <version>${hippo.frontend.theme.version}</version>
+      <classifier>distribution</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- FIXME: these versions need to be in sync with the repository dependencies -->
     <dependency>
@@ -263,6 +271,26 @@
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+
+      <!-- Fetch Hippo-specific Bower dependencies using Maven -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven.plugin.dependency.version}</version>
+        <executions>
+          <execution>
+            <id>fetch-bower-dependencies</id>
+            <phase>initialize</phase>
+            <goals><goal>copy-dependencies</goal></goals>
+            <configuration>
+              <includeGroupIds>org.onehippo.cms7.frontend</includeGroupIds>
+              <includeArtifactIds>hippo-theme</includeArtifactIds>
+              <stripClassifier>true</stripClassifier>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- Use NPM/Bower to install/build Hippo theme -->
