@@ -93,6 +93,7 @@ public enum Icon {
     FLOPPY_TIMES_CIRCLE,
     FOLDER,
     FOLDER_OPEN,
+    FOLDER_OPEN_THINNER,
     FOLDER_PLUS,
     FOLDER_THIN,
     FONT,
