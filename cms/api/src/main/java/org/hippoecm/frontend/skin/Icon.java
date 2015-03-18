@@ -78,6 +78,7 @@ public enum Icon {
     FILE,
     FILES,
     FILE_COMPOUND,
+    FILE_COMPOUND_THIN,
     FILE_COMPOUND_PLUS,
     FILE_IMAGE,
     FILE_IMAGE_PLUS,
