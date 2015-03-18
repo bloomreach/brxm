@@ -18,24 +18,22 @@
   <table class="table document-picker">
     <thead>
       <tr>
-        <td>icon</td>
+        <td></td>
         <td>Name</td>
-        <td>Date</td>
       </tr>
     </thead>
     <tbody>
       <tr class="picker-item" ng-repeat="item in PickerDocCtrl.selectedItem.items" ng-if="item.selectable" ng-class="{active: PickerCtrl.selectedDocument == item}" ng-click="PickerDocCtrl.selectDocument(item)">
         <td class="status">
           <div class="hi-stack">
-            <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" size="small"></hippo-icon>
-            <hippo-icon ng-if="item.state == 'live' || item.state == 'changed'" name="check-circle" class="{{item.state}}" size="tiny" location="foreground" position="top left"></hippo-icon>
-            <hippo-icon ng-if="item.state == 'new'" name="minus-circle" class="{{item.state}}" size="tiny" location="foreground" position="top left"></hippo-icon>
-            <hippo-icon ng-if="item.state == 'changed'" name="exclamation-triangle" class="{{item.state}}" size="tiny" location="foreground" position="bottom left"></hippo-icon>
+            <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" class="file-type" size="small"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'live' || item.state == 'changed'" name="check-circle" class="state-live" size="tiny" location="foreground" position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'new'" name="minus-circle" class="state-new" size="tiny" location="foreground" position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'changed'" name="exclamation-triangle" class="state-changed" size="tiny" location="foreground" position="bottom left"></hippo-icon>
           </div>
 
         </td>
         <td>{{item.displayName}}</td>
-        <td>date</td>
       </tr>
     </tbody>
   </table>
