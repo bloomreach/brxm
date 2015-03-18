@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@import "../../../../target/bower/components/hippo-theme/src/less/_variables.less";
+
 #ui-view {
   height: 100%;
 }
@@ -36,7 +38,7 @@
 }
 
 .tree-col {
-  height: calc(100% - 51px);
+  height: ~"calc(100% - 51px)";
 }
 
 #panel-footer {
@@ -67,7 +69,7 @@
 }
 
 .picker-container #form-panel{
-  background: #fff;
+  background: @white;
   padding-left: 0;
   padding-right: 0;
 }
@@ -192,7 +194,7 @@ h3.lead.item-title {
 /* --- Top bar --- */
 #top-bar {
   background-color: rgb(245, 245, 245);
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid @dark-gray;
   padding: 5px 15px;
   max-width: none;
   margin-left: 0;
@@ -201,10 +203,13 @@ h3.lead.item-title {
 }
 
 #picker-type {
-  height: 33px;
-  border-bottom: 1px solid #dddddd;
+  height: 32px;
   background: #f4f4f4;
   padding: 3px;
+  select {
+    width: 100%;
+    padding: 3px;
+  }
 }
 
 .status {
@@ -212,23 +217,47 @@ h3.lead.item-title {
   padding: 10px;
 }
 
-#picker-type select {
-  width: 100%;
-  padding: 3px;
-}
-
-.document-picker thead {
-  background: #f4f4f4;
+.document-picker {
+  thead {
+    background: #f4f4f4;
+  }
+  tbody tr:first-child td {
+    border-top: 0;
+  }
+  .picker-item.active > td {
+    background-color: @primary;
+    color: @white;
+  }
+  .picker-item td {
+    vertical-align: middle;
+  }
 }
 
 .picker-item {
   cursor: pointer;
+  &:hover {
+    background: @light-gray;
+  }
 }
 
-.picker-item:hover {
-  background: #f4f4f4;
+.active {
+  .file-type {
+    color: @white;
+  }
+  .state-live, .state-new, .state-changed {
+    color: @primary;
+    fill: @white;
+  }
 }
-
-.document-picker .picker-item td {
-  vertical-align: middle;
+.state-live {
+  color: @white;
+  fill: @success;
+}
+.state-new {
+  color: @white;
+  fill: @danger;
+}
+.state-changed {
+  color: @black;
+  fill: @warning;
 }
