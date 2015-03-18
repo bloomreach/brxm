@@ -1445,10 +1445,10 @@ a.x-menu-item {
 
 .x-window:not(.x-window-noborder),
 .x-panel-ghost {
-  border: @modal-border-width solid @modal-border-color;
-  background-color: @modal-bgcolor;
+  background-color: @modal-border-color;
 
   .x-window-tl .x-window-header {
+    background-color: @modal-header-bgcolor;
     color: @darker-shade;
     font: normal @modal-header-font-size @font-family-base;
     text-align: left;
@@ -1473,23 +1473,30 @@ a.x-menu-item {
 
   }
 
-  .x-window-tl,
-  .x-window-tm,
+  .x-window-tl {
+    padding-top: @modal-border-width;
+    padding-left: @modal-border-width;
+  }
+
   .x-window-tr {
-    background-color: @modal-header-bgcolor;
-    height: @modal-header-height;
+    padding-right: @modal-border-width;
   }
+}
 
-  .x-window-tl,
-  .x-window-ml,
-  .x-window-bl {
-    padding-left: 0;
-  }
+.x-window:not(.x-window-noborder) {
 
-  .x-window-tr,
   .x-window-mr,
   .x-window-br {
-    padding-right: 0;
+    padding-right: @modal-border-width;
+  }
+
+  .x-window-ml,
+  .x-window-bl {
+    padding-left: @modal-border-width;
+  }
+
+  .x-window-bl {
+    padding-bottom: @modal-border-width;
   }
 
   .x-window-mc {
@@ -1497,7 +1504,17 @@ a.x-menu-item {
     background-color: @modal-bgcolor;
   }
 
+  // Give the east resize handler the same width as the visible border
+  // to prevent it from overlapping with the scrollbar. The other resize handler
+  // are slightly wider/higher than the visible border, but that just improves
+  // usability because the border is easier to 'grab' that way.
+  .x-resizable-handle-east,
+  .x-resizable-handle-southeast {
+    width: @modal-border-width;
+  }
+
   .x-window-bc .x-window-footer {
+    background-color: @modal-bgcolor;
     padding: 16px 0;
 
     .x-toolbar-cell {
@@ -1554,6 +1571,12 @@ a.x-menu-item {
       }
     }
   }
+}
+
+.x-panel-ghost ul {
+  background-color: @modal-bgcolor;
+  border: @modal-border-width solid @modal-border-color;
+  border-top: 0;
 }
 
 .x-panel-nofooter .x-window-bc {
