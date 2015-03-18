@@ -320,6 +320,8 @@ public class DefaultPluginContext implements PluginContext {
         final Calendar today = Calendar.getInstance();
         setFolderPlaceholders(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM, EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM, today);
         setDatePlaceholder(EssentialConst.PLACEHOLDER_JCR_TODAY_DATE, today);
+        placeholderData.put(EssentialConst.PLACEHOLDER_CURRENT_YEAR, today.get(Calendar.YEAR));
+        placeholderData.put(EssentialConst.PLACEHOLDER_CURRENT_MONTH, today.get(Calendar.MONTH) + 1);
         // next month
         final Calendar nextMonth = Calendar.getInstance();
         nextMonth.add(Calendar.MONTH, 1);

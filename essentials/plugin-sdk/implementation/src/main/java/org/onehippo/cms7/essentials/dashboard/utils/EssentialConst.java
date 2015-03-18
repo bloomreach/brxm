@@ -79,6 +79,8 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_JCR_TODAY_DATE = "jcrDate";
     public static final String PLACEHOLDER_JCR_DATE_NEXT_MONTH = "jcrDateNextMonth";
     public static final String PLACEHOLDER_JCR_DATE_NEXT_YEAR = "jcrDateNextYear";
+    public static final String PLACEHOLDER_CURRENT_YEAR = "currentYear";
+    public static final String PLACEHOLDER_CURRENT_MONTH = "currentMonth";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */
