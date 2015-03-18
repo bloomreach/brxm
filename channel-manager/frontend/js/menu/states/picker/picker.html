@@ -27,11 +27,11 @@
           <div class="hippo-tree-wrapper" data-keep-scroll-pos>
             <div hippo-tree data-items="PickerCtrl.treeItems" data-callbacks="PickerTreeCtrl.callbacks" data-selected-item-id="selectedItem.id" drag="false">
               <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propagation data-ng-if="item.expandable">
-                <hippo-icon name="{{collapsed ? 'caret-right-medium' : 'caret-down-medium'}}" size="tiny"></hippo-icon>
+                <hippo-icon name="{{collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
               </a>
               <span class="spacer" data-ng-if="!item.expandable"></span>
               <span class="angular-ui-tree-title-wrapper">
-                <hippo-icon name="{{collapsed || !item.expandable ? 'folder' : 'folder-open'}}" size="tiny"></hippo-icon>
+                <hippo-icon name="{{collapsed || !item.expandable ? 'folder' : 'folder-open'}}" size="m"></hippo-icon>
                 <span class="angular-ui-tree-title">{{ item.displayName }}</span>
               </span>
             </div>
