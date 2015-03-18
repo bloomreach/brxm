@@ -76,7 +76,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
 
         private Component getTypeIcon(final String id) {
             if (isCompound()) {
-                return HippoIcon.fromSprite(id, Icon.FILE);
+                return HippoIcon.fromSprite(id, Icon.FILE_COMPOUND_THIN);
             } else {
                 return HippoIcon.fromSprite(id, Icon.FILE_THIN);
             }
