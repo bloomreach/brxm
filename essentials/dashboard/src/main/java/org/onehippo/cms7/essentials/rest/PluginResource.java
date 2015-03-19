@@ -50,6 +50,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.plugin.InstallState;
@@ -150,8 +151,7 @@ public class PluginResource extends BaseResource {
             return list;
         }
 
-        final Map<String, String> values = payload.getValues();
-        final Map<String, Object> properties = new HashMap<String, Object>(values);
+        final Map<String, Object> properties = makeSetupPropertiesFromValues(payload.getValues());
         instructionPackage.setProperties(properties);
         final PluginContext context = PluginContextFactory.getContext();
         context.addPlaceholderData(properties);
@@ -212,7 +212,7 @@ public class PluginResource extends BaseResource {
             return new ErrorMessageRestful("Setup failed: Plugin with ID '" + pluginId + "' was not found.");
         }
 
-        final Map<String, Object> properties = new HashMap<String, Object>(payloadRestful.getValues());
+        final Map<String, Object> properties = makeSetupPropertiesFromValues(payloadRestful.getValues());
         final String msg = setupPlugin(plugin, properties);
         if (msg != null) {
             return new ErrorMessageRestful(msg);
@@ -320,9 +320,7 @@ public class PluginResource extends BaseResource {
         }
 
         final Map<String, Object> properties = new HashMap<>();
-
-        properties.put("sampleData", Boolean.valueOf(settings.isUseSamples()).toString());
-        properties.put("templateName", settings.getTemplateLanguage());
+        preProcessSetupProperties(properties);
 
         return setupPlugin(plugin, properties);
     }
@@ -348,6 +346,43 @@ public class PluginResource extends BaseResource {
         }
 
         return updateInstallStateAfterSetup(plugin);
+    }
+
+    private void preProcessSetupProperties(final Map<String, Object> properties) {
+        final ProjectSettings settings = pluginStore.getProjectSettings();
+
+        if (!properties.containsKey(EssentialConst.PROP_SAMPLE_DATA)) {
+            properties.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
+        }
+        if (!properties.containsKey(EssentialConst.PROP_TEMPLATE_NAME)) {
+            properties.put(EssentialConst.PROP_TEMPLATE_NAME, settings.getTemplateLanguage());
+        }
+        if (!properties.containsKey(EssentialConst.PROP_EXTRA_TEMPLATES)) {
+            properties.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
+        }
+    }
+
+    /**
+     * Convert String values to Booleans if possible.
+     * Doing this here helps avoiding additional conversions downstream.
+     *
+     * TODO: check if we can refactor the PostPayloadRestful so this happens automatically?
+     */
+    private Map<String, Object> makeSetupPropertiesFromValues(final Map<String, String> values) {
+        final Map<String, Object> properties = new HashMap<>();
+
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            if ("true".equalsIgnoreCase(entry.getValue()) ||
+                "false".equalsIgnoreCase(entry.getValue())) {
+                properties.put(entry.getKey(), Boolean.valueOf(entry.getValue()));
+            } else {
+                properties.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        preProcessSetupProperties(properties);
+
+        return properties;
     }
 
     private String updateInstallStateAfterSetup(final Plugin plugin) {

@@ -84,7 +84,7 @@ public interface ProjectSettings extends Document {
 
     void setPluginRepositories(Set<String> pluginRepositories);
 
-   boolean isExtraTemplates();
+    boolean isExtraTemplates();
 
     void setExtraTemplates(boolean extraTemplates);
 

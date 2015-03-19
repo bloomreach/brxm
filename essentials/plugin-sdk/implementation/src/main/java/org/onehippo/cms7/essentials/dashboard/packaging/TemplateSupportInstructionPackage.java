@@ -48,8 +48,8 @@ public class TemplateSupportInstructionPackage extends DefaultInstructionPackage
 
     @Override
     public Set<String> groupNames() {
-        final Boolean extraTemplates = Boolean.valueOf((String) getProperties().get(EssentialConst.PROP_EXTRA_TEMPLATES));
-        final Boolean sampleData = Boolean.valueOf((String) getProperties().get(EssentialConst.PROP_SAMPLE_DATA));
+        final Boolean extraTemplates = (Boolean) getProperties().get(EssentialConst.PROP_EXTRA_TEMPLATES);
+        final Boolean sampleData = (Boolean) getProperties().get(EssentialConst.PROP_SAMPLE_DATA);
         final String templateName = (String) getProperties().get(EssentialConst.PROP_TEMPLATE_NAME);
         final String templateGroup = Strings.isNullOrEmpty(templateName) ? EssentialConst.TEMPLATE_JSP : templateName;
         final boolean freemarker = templateGroup.equals(EssentialConst.TEMPLATE_FREEMARKER);

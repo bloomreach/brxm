@@ -20,6 +20,7 @@
 
         .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
             // just sets a hide screen boolean flag to true
+            $scope.showAdvanced = false;
             $scope.addUrl = function () {
                 $scope.projectSettings.pluginRepositories.push('');
             };
@@ -42,6 +43,10 @@
                 $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                     $scope.projectSettings = data;
                 });
+            };
+            $scope.toggleAdvanced = function($event) {
+                $event.preventDefault();
+                $scope.showAdvanced = !$scope.showAdvanced;
             };
             // initialize
             $scope.setup();
@@ -125,8 +130,8 @@
                 return  '#' + myPath == path;
             };
         }])
-        .controller('navbarCtrl', ['$scope', '$rootScope', '$location', '$log',
-                          function ($scope,   $rootScope,   $location,   $log) {
+        .controller('navbarCtrl', ['$scope', '$rootScope', '$location',
+                          function ($scope,   $rootScope,   $location) {
             $scope.getPageTitle = function() {
                 var myPath = $location.path();
 
