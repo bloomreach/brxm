@@ -35,9 +35,6 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TemplateSupportInstructionPackageTest extends BaseTest {
 
-
-    public static final int EXPECTED = 2;
-
     @Test
     public void testInstructionPackage() throws Exception {
         InstructionPackage instructionPackage = new TemplateSupportInstructionPackage();
@@ -47,13 +44,12 @@ public class TemplateSupportInstructionPackageTest extends BaseTest {
         final Map<String, Object> properties = instructionPackage.getProperties();
         assertEquals("Expected empty property set", 0, properties.size());
         final Set<String> groupNames = instructionPackage.groupNames();
-        assertEquals("Expected default group names", EXPECTED, groupNames.size());
+        assertEquals("Expected default group names", 3, groupNames.size());
         final InstructionParser parser = instructionPackage.getInstructionParser();
         assertNotNull(parser);
         final EventBus bus = instructionPackage.getEventBus();
         assertNotNull(bus);
         final Instructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
-
     }
 }

@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -48,9 +49,12 @@ public class TemplateSupportInstructionPackage extends DefaultInstructionPackage
 
     @Override
     public Set<String> groupNames() {
-        final Boolean extraTemplates = (Boolean) getProperties().get(EssentialConst.PROP_EXTRA_TEMPLATES);
-        final Boolean sampleData = (Boolean) getProperties().get(EssentialConst.PROP_SAMPLE_DATA);
-        final String templateName = (String) getProperties().get(EssentialConst.PROP_TEMPLATE_NAME);
+        final Map<String, Object> props = getProperties();
+        final Boolean extraTemplates = props.containsKey(EssentialConst.PROP_EXTRA_TEMPLATES)
+                                     ? (Boolean) props.get(EssentialConst.PROP_EXTRA_TEMPLATES) : true;
+        final Boolean sampleData = props.containsKey(EssentialConst.PROP_SAMPLE_DATA)
+                                 ? (Boolean) props.get(EssentialConst.PROP_SAMPLE_DATA) : true;
+        final String templateName = (String) props.get(EssentialConst.PROP_TEMPLATE_NAME);
         final String templateGroup = Strings.isNullOrEmpty(templateName) ? EssentialConst.TEMPLATE_JSP : templateName;
         final boolean freemarker = templateGroup.equals(EssentialConst.TEMPLATE_FREEMARKER);
         final Set<String> names = new HashSet<>();
