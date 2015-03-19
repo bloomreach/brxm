@@ -2411,7 +2411,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/Dash
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_de.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_it.properties -text
