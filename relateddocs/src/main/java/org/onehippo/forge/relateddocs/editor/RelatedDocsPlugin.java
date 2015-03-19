@@ -181,7 +181,7 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                     deleteLink.setVisible(false);
                 }
 
-                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.DELETE_TINY));
+                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.TIMES));
                 item.add(deleteLink);
             }
         };
@@ -194,7 +194,7 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
 
             @Override
             protected Iterator<IModel<Change<RelatedDoc>>> getItemModels() {
-                final List<IModel<Change<RelatedDoc>>> itemModels = new LinkedList<IModel<Change<RelatedDoc>>>();
+                final List<IModel<Change<RelatedDoc>>> itemModels = new LinkedList<>();
 
                 RelatedDoc[] baseDocs = new RelatedDoc[(int) baseCollection.size()];
                 Iterator<RelatedDoc> baseIter = baseCollection.iterator(0, baseCollection.size());
@@ -269,7 +269,7 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                 };
 
                 deleteLink.setVisible(false);
-                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.DELETE_TINY));
+                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.TIMES));
                 item.add(deleteLink);
             }
         };
