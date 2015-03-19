@@ -39,7 +39,6 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferenc
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -122,7 +121,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, CmsIcon.MINUS_CIRCLE_CLOCK);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
             }
 
             @Override
@@ -162,7 +161,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, CmsIcon.MINUS_CIRCLE_CLOCK);
+                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
             }
 
             @Override
@@ -276,7 +275,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, CmsIcon.CHECK_CIRCLE_CLOCK);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
             }
 
             @Override
@@ -315,7 +314,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, CmsIcon.CHECK_CIRCLE_CLOCK);
+                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
             }
 
             @Override

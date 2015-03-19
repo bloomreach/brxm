@@ -30,13 +30,9 @@ import org.slf4j.LoggerFactory;
  */
 public enum CmsIcon {
 
-    CHECK_CIRCLE_CLOCK,
     DELETE,
     DELETE_HOVER,
-    FILE_PLUS,
-    FILE_UNLOCKED,
     FLOPPY_TIMES_CIRCLE,
-    MINUS_CIRCLE_CLOCK,
     OVERLAY_CHECK_CIRCLE,
     OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE,
     OVERLAY_MINUS_CIRCLE,
@@ -70,7 +66,8 @@ public enum CmsIcon {
     /**
      * @return all CSS helper classes to identify an icon. For example, the icon {@link #DELETE_HOVER}
      * will get the CSS classes "hi hi-delete-hover".
-     * @param size
+     *
+     * @param size The size of the icon
      */
     String getCssClasses(final IconSize size) {
         return "hi hi-" + getFileName() +  " hi-" + size.name().toLowerCase();

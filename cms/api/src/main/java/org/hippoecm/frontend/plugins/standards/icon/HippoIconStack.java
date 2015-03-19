@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.icon;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -32,6 +30,10 @@ import org.hippoecm.frontend.skin.Icon;
 public class HippoIconStack extends Panel {
 
     private RepeatingView icons;
+
+    public HippoIconStack(final String id) {
+        this(id, IconSize.M);
+    }
 
     public HippoIconStack(final String id, final IconSize size) {
         super(id);
