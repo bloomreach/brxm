@@ -70,13 +70,22 @@
                    data-tooltip-trigger="show"
                    data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
-            <i class="fa form-control-feedback"
-               data-ng-show="form.title.$dirty"
-               data-ng-class="{
-                'fa-spinner fa-spin': isSaving.title,
-                'fa-check': form.title.$valid && isSaved.title,
-                'fa-times': form.title.$invalid || !isSaved.title
-               }"></i>
+            <span class="form-control-feedback" data-ng-show="form.title.$dirty">
+              <hippo-icon ng-if="isSaving.title"
+                          name="spinner"
+                          size="m">
+              </hippo-icon>
+              <hippo-icon ng-if="form.title.$valid && isSaved.title"
+                          name="check-circle"
+                          size="m"
+                          class="hi-color-white hi-fill-success">
+              </hippo-icon>
+              <hippo-icon ng-if="form.title.$invalid || !isSaved.title"
+                          name="minus-circle"
+                          size="m"
+                          class="hi-color-white hi-fill-danger">
+              </hippo-icon>
+            </span>
         </div>
 
         <div class="form-group has-feedback" id="hippo.channel.menu.menuItem.edit.linkType">
@@ -121,13 +130,22 @@
                        data-ng-model="selectedMenuItem.sitemapLink"
                        data-show-focus="linkToFocus == 'sitemapLink'"
                        data-ng-blur="updateLinkDestination(form)">
-                <i class="fa form-control-feedback"
-                   data-ng-show="form.sitemapItem.$dirty"
-                   data-ng-class="{
-                'fa-spinner fa-spin': isSaving.link,
-                'fa-check': form.sitemapItem.$valid && isSaved.link,
-                'fa-times': form.sitemapItem.$invalid || !isSaved.link
-               }"></i>
+                <span class="form-control-feedback" data-ng-show="form.sitemapItem.$dirty">
+                  <hippo-icon ng-if="isSaving.link"
+                              name="spinner"
+                              size="m">
+                  </hippo-icon>
+                  <hippo-icon ng-if="form.sitemapItem.$valid && isSaved.link"
+                              name="check-circle"
+                              size="m"
+                              class="hi-color-white hi-fill-success">
+                  </hippo-icon>
+                  <hippo-icon ng-if="form.sitemapItem.$invalid || !isSaved.link"
+                              name="minus-circle"
+                              size="m"
+                              class="hi-color-white hi-fill-danger">
+                  </hippo-icon>
+                </span>
                 <span class="input-group-btn">
                     <div data-tooltip
                           data-placement="left"
@@ -136,7 +154,7 @@
                           data-ng-mouseleave="hideTooltip()">
                         <button class="btn btn-default" type="button"
                                 data-ng-click="showPage()">
-                            <i class="fa fa-external-link"></i>
+                            <hippo-icon name="link" size="m"></hippo-icon>
                         </button>
                     </div>
                 </span>
@@ -160,21 +178,34 @@
                        data-tooltip-trigger="show"
                        data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
-                <i class="fa form-control-feedback"
-                   data-ng-show="form.url.$dirty"
-                   data-ng-class="{
-                    'fa-spinner fa-spin': isSaving.link,
-                    'fa-check': form.url.$valid && isSaved.link,
-                    'fa-times': form.url.$invalid || !isSaved.link
-                   }"></i>
+                <span class="form-control-feedback" data-ng-show="form.url.$dirty">
+                  <hippo-icon ng-if="isSaving.link"
+                              name="spinner"
+                              size="m">
+                  </hippo-icon>
+                  <hippo-icon ng-if="form.url.$valid && isSaved.link"
+                              name="check-circle"
+                              size="m"
+                              class="hi-color-white hi-fill-success">
+                  </hippo-icon>
+                  <hippo-icon ng-if="form.url.$invalid || !isSaved.link"
+                              name="minus-circle"
+                              size="m"
+                              class="hi-color-white hi-fill-danger">
+                  </hippo-icon>
+                </span>
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="external.show()"><i class="fa fa-external-link"></i></button>
+                    <button class="btn btn-default" type="button" ng-click="external.show()">
+                      <hippo-icon name="link" size="m"></hippo-icon>
+                    </button>
                 </span>
             </div>
         </div>
 
         <hr />
 
-        <button type="button" class="btn btn-default" data-ng-click="remove.show()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
+        <button type="button" class="btn btn-default" data-ng-click="remove.show()">
+          <hippo-icon name="trash" size="m"></hippo-icon> {{ 'DELETE_MENU_ITEM' | translate }}
+        </button>
     </form>
 </div>

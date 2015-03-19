@@ -21,7 +21,7 @@
                 <div class="panel-content l-sidebar">
                     <div hippo-tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">
                         <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" data-ng-hide="childNodes().length === 0">
-                            <hippo-icon name="{{collapsed ? 'caret-right-medium' : 'caret-down-medium'}}" size="tiny"></hippo-icon>
+                            <hippo-icon name="{{collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
                         </a>
                         <div class="spacer" data-ng-show="childNodes().length === 0">&#9679;</div>
                         {{ item.title }}
@@ -30,11 +30,7 @@
                 </div>
                 <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl">
                     <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()" data-ng-disabled="isSaving.newItem">
-                        <i class="fa"
-                           data-ng-class="{
-                            'fa-spinner fa-spin': isSaving.newItem,
-                            'fa-plus': !isSaving.newItem
-                            }"></i>
+                        <hippo-icon name="{{isSaving.newItem ? 'spinner' : 'plus'}}" size="m"></hippo-icon>
                         {{ 'ADD_MENU_ITEM' | translate }}
                     </button>
                 </div>

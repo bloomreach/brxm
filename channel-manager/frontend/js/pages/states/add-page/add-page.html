@@ -40,11 +40,18 @@
                            data-tooltip-trigger="show"
                            data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
                            data-tooltip-placement="top">
-                    <i class="fa form-control-feedback"
-                       data-ng-class="{
-                        'fa-check': form.title.$dirty && form.title.$valid,
-                        'fa-times': form.title.$dirty && form.title.$invalid
-                       }"></i>
+                    <span class="form-control-feedback">
+                      <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
+                                  name="check-circle"
+                                  size="m"
+                                  class="hi-color-white hi-fill-success">
+                      </hippo-icon>
+                      <hippo-icon ng-if="form.title.$dirty && form.title.$invalid"
+                                  name="minus-circle"
+                                  size="m"
+                                  class="hi-color-white hi-fill-danger">
+                      </hippo-icon>
+                    </span>
                 </div>
 
                 <div class="form-group has-feedback" id="url" data-ng-class="{
@@ -64,11 +71,18 @@
                                data-hippo-channel-tooltip-show="form.url.$dirty && form.url.$invalid"
                                data-tooltip-placement="top">
                     </div>
-                    <i class="fa form-control-feedback"
-                       data-ng-class="{
-                        'fa-check': form.url.$dirty && form.url.$valid,
-                        'fa-times': form.url.$dirty && form.url.$invalid
-                       }"></i>
+                    <span class="form-control-feedback">
+                      <hippo-icon ng-if="form.url.$dirty && form.url.$valid"
+                                  name="check-circle"
+                                  size="m"
+                                  class="hi-color-white hi-fill-success">
+                      </hippo-icon>
+                      <hippo-icon ng-if="form.url.$dirty && form.url.$invalid"
+                                  name="minus-circle"
+                                  size="m"
+                                  class="hi-color-white hi-fill-danger">
+                      </hippo-icon>
+                    </span>
                 </div>
 
                 <div class="form-group" id="template">
