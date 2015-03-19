@@ -84,13 +84,13 @@ describe('Edit Menu Item Controller', function () {
 
     it('should select parent after delete if deleted item has no siblings left', function () {
 
-        $scope.selectedMenuItem = {
+        $scope.MenuItemCtrl.selectedMenuItem = {
             id: 'child1'
         };
 
         var controller = createController();
 
-        $scope.remove.execute();
+        $scope.EditMenuItemCtrl.remove.execute();
 
         $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
         $httpBackend.flush();
