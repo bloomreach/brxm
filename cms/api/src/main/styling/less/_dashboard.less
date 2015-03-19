@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-todo td {
-   padding: 4px;
-}
-
 .hippo-perspective-dashboard {
   .yui-layout-unit {
     border-left: 1px solid @dashboard-panel-border-color;
@@ -103,16 +99,20 @@
 }
 
 /* Activity stream */
-.hippo-perspective-dashboard .yui-layout-bd .center-body {
-  height: 100%;
+.hippo-perspective-dashboard .yui-layout-bd {
+  .right-body,
+  .center-body {
+    height: 100%;
 
-  > div {
-    height: ~"calc(100% - @{dashboard-header-height})";
-    overflow-y: auto;
+    > div {
+      height: ~"calc(100% - @{dashboard-header-height})";
+      overflow-y: auto;
+    }
   }
 }
 
-.hippo-currentactivity {
+.hippo-currentactivity,
+.hippo-todo {
 
   width: 100%;
 
