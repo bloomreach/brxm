@@ -32,6 +32,7 @@ import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 
 public class HippoIcon extends Panel {
@@ -41,45 +42,67 @@ public class HippoIcon extends Panel {
     }
 
     /**
-     * Renders a hippo icon via a reference to the icon sprite.
+     * Renders a hippo icon of size {@link IconSize#M} via a reference to the icon sprite.
      * @param id the Wicket id of the icon
      * @param icon the icon to render
      * @return the icon component
      */
     public static HippoIcon fromSprite(final String id, final Icon icon) {
-        return new SvgIcon(id, icon, false);
+        return fromSprite(id, icon, IconSize.M);
+    }
+
+    /**
+     * Renders a hippo icon via a reference to the icon sprite.
+     * @param id the Wicket id of the icon
+     * @param icon the icon to render
+     * @param size the size of the icon
+     * @return the icon component
+     */
+    public static HippoIcon fromSprite(final String id, final Icon icon, final IconSize size) {
+        return new SpriteIcon(id, icon, size);
+    }
+
+    /**
+     * Renders a hippo icon of size {@link IconSize#M} via a reference to the icon sprite.
+     * @param id the Wicket id of the icon
+     * @param model the model containing the icon to render
+     * @return the icon component
+     */
+    public static HippoIcon fromSprite(final String id, final IModel<Icon> model) {
+        return fromSprite(id, model, IconSize.M);
     }
 
     /**
      * Renders a hippo icon via a reference to the icon sprite.
      * @param id the Wicket id of the icon
      * @param model the model containing the icon to render
+     * @param size the size of the icon
      * @return the icon component
      */
-    public static HippoIcon fromSprite(final String id, final IModel<Icon> model) {
-        return new SvgIcon(id, model, false);
+    public static HippoIcon fromSprite(final String id, final IModel<Icon> model, final IconSize size) {
+        return new SpriteIcon(id, model, size);
     }
 
     /**
-     * Renders a hippo icon as an inline SVG. This makes it possible to, for example,
-     * style the individual shapes in the SVG via CSS.
+     * Renders a hippo icon of size {@link IconSize#M} as an inline SVG. This makes it possible to,
+     * for example, style the individual shapes in the SVG via CSS.
      * @param id the Wicket id of the icon
      * @param icon the icon to render
      * @return the icon component
      */
-    public static HippoIcon inline(final String id, final Icon icon) {
-        return new SvgIcon(id, icon, true);
+    public static HippoIcon inline(final String id, final CmsIcon icon) {
+        return new InlineSvgIcon(id, icon, IconSize.M);
     }
 
     /**
-     * Renders a hippo icon as an inline SVG. This makes it possible to, for example,
-     * style the individual shapes in the SVG via CSS.
+     * Renders a hippo icon of size {@link IconSize#M} as an inline SVG. This makes it possible
+     * to, for example, style the individual shapes in the SVG via CSS.
      * @param id the Wicket id of the icon
      * @param model the model containing the icon to render
      * @return the icon component
      */
-    public static HippoIcon inline(final String id, final IModel<Icon> model) {
-        return new SvgIcon(id, model, true);
+    public static HippoIcon inline(final String id, final IModel<CmsIcon> model) {
+        return new InlineSvgIcon(id, model, IconSize.M);
     }
 
     /**
@@ -160,33 +183,32 @@ public class HippoIcon extends Panel {
      * @return a copy of the given icon
      */
     public static HippoIcon copy(final HippoIcon icon, final String newId) {
-        if (icon instanceof SvgIcon) {
-            return new SvgIcon(newId, (SvgIcon)icon);
+        if (icon instanceof SpriteIcon) {
+            return new SpriteIcon(newId, (SpriteIcon)icon);
+        } else if (icon instanceof InlineSvgIcon) {
+            return new InlineSvgIcon(newId, (InlineSvgIcon)icon);
         } else if (icon instanceof ResourceIcon) {
             return new ResourceIcon(newId, (ResourceIcon)icon);
         }
-        throw new IllegalStateException("Expected HippoIcon's class to be either SvgIcon or ResourceIcon, but got " + icon.getClass());
+        throw new IllegalStateException("Expected HippoIcon's class to be either SpriteIcon, InlineSvgIcon or ResourceIcon, but got " + icon.getClass());
     }
 
-    private static class SvgIcon extends HippoIcon {
+    private static class SpriteIcon extends HippoIcon {
 
-        private final boolean inline;
+        private final IconSize size;
 
-        private SvgIcon(final String id, final IModel<Icon> model, final boolean inline) {
+        private SpriteIcon(final String id, final IModel<Icon> model, final IconSize size) {
             super(id, model);
 
-            this.inline = inline;
+            this.size = size;
+
             setRenderBodyOnly(true);
 
-            final WebMarkupContainer container = new WebMarkupContainer("svgIcon") {
+            final WebMarkupContainer container = new WebMarkupContainer("spriteIcon") {
                 @Override
                 protected void onComponentTag(final ComponentTag tag) {
                     final Response response = RequestCycle.get().getResponse();
-                    if (inline) {
-                        response.write(getIcon().getInlineSvg());
-                    } else {
-                        response.write(getIcon().getSpriteReference());
-                    }
+                    response.write(getIcon().getSpriteReference(size));
                     super.onComponentTag(tag);
                 }
             };
@@ -194,18 +216,53 @@ public class HippoIcon extends Panel {
             add(container);
         }
 
-        private SvgIcon(final String id, final Icon icon, final boolean inline) {
-            this(id, Model.of(icon), inline);
+        private SpriteIcon(final String id, final Icon icon, final IconSize size) {
+            this(id, Model.of(icon), size);
         }
 
-        private SvgIcon(final String newId, final SvgIcon original) {
-            this(newId, original.getIcon(), original.inline);
+        private SpriteIcon(final String newId, final SpriteIcon original) {
+            this(newId, original.getIcon(), original.size);
         }
 
         private Icon getIcon() {
             return (Icon) getDefaultModelObject();
         }
+    }
 
+    private static class InlineSvgIcon extends HippoIcon {
+
+        private final IconSize size;
+
+        private InlineSvgIcon(final String id, final IModel<CmsIcon> model, final IconSize size) {
+            super(id, model);
+
+            this.size = size;
+
+            setRenderBodyOnly(true);
+
+            final WebMarkupContainer container = new WebMarkupContainer("inlineSvgIcon") {
+                @Override
+                protected void onComponentTag(final ComponentTag tag) {
+                    final Response response = RequestCycle.get().getResponse();
+                    response.write(getIcon().getInlineSvg(size));
+                    super.onComponentTag(tag);
+                }
+            };
+            container.setRenderBodyOnly(true);
+            add(container);
+        }
+
+        private InlineSvgIcon(final String id, final CmsIcon icon, final IconSize size) {
+            this(id, Model.of(icon), size);
+        }
+
+        private InlineSvgIcon(final String newId, final InlineSvgIcon original) {
+            this(newId, original.getIcon(), original.size);
+        }
+
+        private CmsIcon getIcon() {
+            return (CmsIcon) getDefaultModelObject();
+        }
     }
 
     private static class ResourceIcon extends HippoIcon {
@@ -275,5 +332,4 @@ public class HippoIcon extends Panel {
             add(new CachedJcrImage("streamIcon", model.getObject(), width, height));
         }
     }
-
 }

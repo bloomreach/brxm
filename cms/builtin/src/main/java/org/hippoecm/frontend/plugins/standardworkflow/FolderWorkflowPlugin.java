@@ -54,6 +54,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -288,7 +289,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         @Override
                         protected Component getIcon(final String id) {
                             final String pngName = category + "-16";
-                            final String svgName = category + "-" + IconSize.TINY.name().toLowerCase();
+                            final String svgName = category + "-" + IconSize.M.name().toLowerCase();
 
                             // Override using inline SVG icon
                             ResourceReference iconResource = new PackageResourceReference(getClass(), svgName + ".svg");
@@ -311,8 +312,10 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             }
 
                             // Fallback to default icon
-                            return HippoIcon.fromSprite(id,
-                                    category.endsWith("-folder") ? Icon.FOLDER_PLUS : Icon.FILE_PLUS);
+                            HippoIconStack defaultIcon = new HippoIconStack(id, IconSize.M);
+                            defaultIcon.addFromSprite(category.endsWith("-folder") ? Icon.FOLDER : Icon.FILE);
+                            defaultIcon.addFromSprite(Icon.PLUS);
+                            return defaultIcon;
                         }
 
                         private boolean resourceExists(final ResourceReference reference) {

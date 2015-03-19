@@ -22,6 +22,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
 
         add(link);
 
-        final HippoIcon icon = HippoIcon.fromSprite("gotolink-icon", Icon.FOLDER_OPEN_THINNER);
+        final HippoIcon icon = HippoIcon.fromSprite("gotolink-icon", Icon.FOLDER_OPEN, IconSize.XL);
         link.add(icon);
     }
 }

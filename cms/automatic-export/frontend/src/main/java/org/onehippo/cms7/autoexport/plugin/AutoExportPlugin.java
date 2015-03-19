@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -76,7 +77,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             }
         });
         label.setOutputMarkupId(true);
-        
+
         add(AttributeModifier.append("class", new Model<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -88,7 +89,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
                 return isExportEnabled() ? "auto-export-state-enabled" : "auto-export-state-disabled";
             }
         }));
-        
+
         add(AttributeModifier.append("class", "auto-export-dev-extension"));
 
         AjaxLink<Void> link = new AjaxLink<Void>("link") {
@@ -109,7 +110,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         add(link);
 
         // set up icon component
-        final Component icon = HippoIcon.fromSprite("icon", Icon.BULLET_LARGE);
+        final Component icon = HippoIcon.fromSprite("icon", Icon.BULLET, IconSize.M);
         icon.setOutputMarkupId(true);
         icon.setVisible(isExportAvailable());
         link.add(icon);

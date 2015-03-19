@@ -23,6 +23,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 
 /**
@@ -55,7 +56,7 @@ public class HippoIconStack extends Panel {
         return spriteIcon;
     }
 
-    public HippoIcon addInline(final Icon icon) {
+    public HippoIcon addInline(final CmsIcon icon) {
         final HippoIcon inlineIcon = HippoIcon.inline(icons.newChildId(), icon);
         icons.add(inlineIcon);
         return inlineIcon;
@@ -79,7 +80,7 @@ public class HippoIconStack extends Panel {
         return newCopy;
     }
 
-    public HippoIcon replaceInline(final HippoIcon oldIcon, final Icon newIcon) {
+    public HippoIcon replaceInline(final HippoIcon oldIcon, final CmsIcon newIcon) {
         HippoIcon newCopy = HippoIcon.inline(oldIcon.getId(), newIcon);
         icons.replace(newCopy);
         return newCopy;

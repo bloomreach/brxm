@@ -26,8 +26,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -41,6 +39,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferenc
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -69,8 +68,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                IModel title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
-                IModel message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
+                IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
+                IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
                 return new DepublishDialog(title, message, getModel(), this, getEditorManager());
             }
 
@@ -123,14 +122,15 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
+                return HippoIcon.inline(id, CmsIcon.MINUS_CIRCLE_CLOCK);
             }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()),
+                            PropertyModel.of(this, "date"), getEditorManager());
                 } catch (RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
@@ -150,7 +150,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         final StdWorkflow requestScheduleDepublishAction;
-        add(requestScheduleDepublishAction = new StdWorkflow("requestScheduleDepublish", new StringResourceModel("schedule-request-depublish", this, null), context, getModel()) {
+        add(requestScheduleDepublishAction = new StdWorkflow("requestScheduleDepublish",
+                new StringResourceModel("schedule-request-depublish", this, null), context, getModel()) {
+
             public Date date = new Date();
 
             @Override
@@ -160,14 +162,15 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
+                return HippoIcon.inline(id, CmsIcon.MINUS_CIRCLE_CLOCK);
             }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()),
+                            PropertyModel.of(this, "date"), getEditorManager());
                 } catch (RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
@@ -273,7 +276,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
+                return HippoIcon.inline(id, CmsIcon.CHECK_CIRCLE_CLOCK);
             }
 
             @Override
@@ -281,7 +284,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
                     Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
-                    return new SchedulePublishDialog(this, new JcrNodeModel(unpublished), new PropertyModel<Date>(this, "date"), getEditorManager());
+                    return new SchedulePublishDialog(this, new JcrNodeModel(unpublished),
+                            PropertyModel.of(this, "date"), getEditorManager());
                 } catch (RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
@@ -311,7 +315,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
+                return HippoIcon.inline(id, CmsIcon.CHECK_CIRCLE_CLOCK);
             }
 
             @Override
@@ -319,7 +323,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 WorkflowDescriptorModel wdm = getModel();
                 try {
                     Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
-                    return new SchedulePublishDialog(this, new JcrNodeModel(unpublished), new PropertyModel<Date>(this, "date"), getEditorManager());
+                    return new SchedulePublishDialog(this, new JcrNodeModel(unpublished),
+                            PropertyModel.of(this, "date"), getEditorManager());
                 } catch (RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }

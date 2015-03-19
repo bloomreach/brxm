@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ class MenuButton extends Panel implements IContextMenu {
             link.add(label);
         }
 
-        link.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN_THICK));
+        link.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN));
     }
 
     protected IContextMenuManager getContextMenuManager() {

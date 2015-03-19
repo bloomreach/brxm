@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
@@ -95,7 +96,7 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, Icon.FLOPPY_TIMES_CIRCLE);
+                return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
             }
 
             @Override

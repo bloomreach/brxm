@@ -60,9 +60,9 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                final HippoIconStack icon = new HippoIconStack(id, IconSize.TINY);
+                final HippoIconStack icon = new HippoIconStack(id, IconSize.M);
                 icon.addFromSprite(Icon.GEAR);
-                icon.addFromSprite(Icon.OVERLAY_PLUS);
+                icon.addFromSprite(Icon.PLUS);
                 return icon;
             }
 

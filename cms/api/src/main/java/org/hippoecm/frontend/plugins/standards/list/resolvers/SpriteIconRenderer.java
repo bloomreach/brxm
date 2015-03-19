@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 
 /**
@@ -27,14 +28,16 @@ import org.hippoecm.frontend.skin.Icon;
 public class SpriteIconRenderer implements IListCellRenderer {
 
     private final Icon icon;
+    private final IconSize size;
 
-    public SpriteIconRenderer(final Icon icon) {
+    public SpriteIconRenderer(final Icon icon, final IconSize size) {
         this.icon = icon;
+        this.size = size;
     }
 
     @Override
     public Component getRenderer(final String id, final IModel model) {
-        return HippoIcon.fromSprite(id, icon);
+        return HippoIcon.fromSprite(id, icon, size);
     }
 
     @Override

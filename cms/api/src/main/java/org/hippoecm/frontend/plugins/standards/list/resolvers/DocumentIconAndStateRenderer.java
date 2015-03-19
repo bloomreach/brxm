@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -61,13 +62,13 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
             final JcrNodeModel nodeModel = new JcrNodeModel(node);
             stateIconAttributes = new StateIconAttributes(nodeModel);
 
-            icon = new HippoIconStack("icon", IconSize.SMALL);
+            icon = new HippoIconStack("icon", IconSize.L);
 
             // icon#addCopyOf generates a new ID, so use a dummy ID for the pluggable type icon
             final HippoIcon typeIcon = getTypeIcon("dummyId", node);
             icon.addCopyOf(typeIcon);
 
-            final Icon stateIconOrNull = stateIconAttributes.getIcon();
+            final CmsIcon stateIconOrNull = stateIconAttributes.getIcon();
             if (stateIconOrNull != null) {
                 this.stateIcon = icon.addInline(stateIconOrNull);
             }
@@ -94,7 +95,7 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
         }
 
         private void updateStateIcon() {
-            final Icon newStateIcon = this.stateIconAttributes.getIcon();
+            final CmsIcon newStateIcon = this.stateIconAttributes.getIcon();
             if (newStateIcon != null) {
                 stateIcon = icon.replaceInline(stateIcon, newStateIcon);
             }

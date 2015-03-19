@@ -18,11 +18,9 @@ package org.hippoecm.frontend.skin;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.io.IOUtils;
-import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.hippoecm.frontend.service.IconSize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,90 +28,60 @@ import org.slf4j.LoggerFactory;
  * References to icons.
  */
 public enum Icon {
+
     ARROW_DOWN,
     ARROW_UP,
-    BULLET_EXTRA_LARGE,
-    BULLET_LARGE,
-    BULLET_MEDIUM,
-    BULLET_SMALL,
-    BULLHORN_THINNER,
+    BELL,
+    BULLET,
+    BULLHORN,
     CALENDAR_DAY,
     CALENDAR_MONTH,
+    CARET_DOWN,
     CARET_DOWN_CIRCLE,
-    CARET_DOWN_EXTRA_LARGE,
-    CARET_DOWN_LARGE,
-    CARET_DOWN_MEDIUM,
-    CARET_DOWN_SMALL,
-    CARET_RIGHT_EXTRA_LARGE,
-    CARET_RIGHT_LARGE,
-    CARET_RIGHT_MEDIUM,
-    CARET_RIGHT_SMALL,
+    CARET_RIGHT,
     CARET_UP_CIRCLE,
     CHECK_CIRCLE,
-    CHECK_CIRCLE_CLOCK,
     CHECK_SQUARE,
-    CHEVRON_DOWN,
-    CHEVRON_DOWN_THICK,
-    CHEVRON_DOWN_THIN,
     CHEVRON_DOWN_CIRCLE,
+    CHEVRON_DOWN,
     CHEVRON_LEFT,
-    CHEVRON_LEFT_THICK,
-    CHEVRON_LEFT_THIN,
     CHEVRON_RIGHT,
-    CHEVRON_RIGHT_THICK,
-    CHEVRON_RIGHT_THIN,
-    CHEVRON_UP,
-    CHEVRON_UP_THICK,
-    CHEVRON_UP_THIN,
     CHEVRON_UP_CIRCLE,
+    CHEVRON_UP,
     CODE,
     COMPONENT,
     COMPRESS,
     CROP,
     EMPTY,
-    EXCLAMATION,
     EXCLAMATION_CIRCLE,
+    EXCLAMATION,
     EXCLAMATION_TRIANGLE,
     EXPAND,
-    FILE,
-    FILES,
     FILE_COMPOUND,
-    FILE_COMPOUND_THIN,
-    FILE_COMPOUND_PLUS,
     FILE_IMAGE,
-    FILE_IMAGE_PLUS,
+    FILE,
     FILE_NEWS,
     FILE_PENCIL,
-    FILE_PLUS,
     FILE_TEXT,
-    FILE_TEXT_THIN,
-    FILE_THIN,
-    FILE_UNLOCKED,
+    FILES,
     FLASK,
     FLOPPY,
-    FLOPPY_TIMES_CIRCLE,
     FOLDER,
     FOLDER_OPEN,
-    FOLDER_OPEN_THINNER,
-    FOLDER_PLUS,
-    FOLDER_THIN,
     FONT,
     FORWARD,
     GEAR,
-    GLOBE,
     GLOBE_ABSTRACT,
+    GLOBE,
     INFO_CIRCLE,
+    INFO,
     LINK,
     LIST_UL,
     LOCKED,
     MINUS_CIRCLE,
-    MINUS_CIRCLE_CLOCK,
     MOVE_INTO,
-    OVERLAY_CHECK_CIRCLE_THIN,
-    OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE_THIN,
-    OVERLAY_MINUS_CIRCLE_THIN,
-    OVERLAY_PLUS,
     PENCIL_SQUARE,
+    PIE_CHART,
     PLUS,
     PLUS_SQUARE,
     REFRESH,
@@ -124,116 +92,55 @@ public enum Icon {
     STEP_FORWARD,
     THUMBNAILS,
     TIMES,
-    TIMES_CIRCLE,
     TRANSLATE,
     TYPE,
+    UNLINK,
     UNLOCKED;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 
-    private static final String ICONS_DIR = "images/icons/";
-    private static final String SPRITE_FILE_NAME = ICONS_DIR + "hippo-icon-sprite.svg";
+    private static final String SPRITE_FILE_NAME = "images/icons/hippo-icon-sprite.svg";
 
     public static String getIconSprite() {
-        PackageResourceReference hippoIcons = getIconSpriteReference();
+        PackageResourceReference iconSprite = new PackageResourceReference(Icon.class, SPRITE_FILE_NAME);
         try {
-            return svgAsString(hippoIcons);
+            return IconUtil.svgAsString(iconSprite);
         } catch (ResourceStreamNotFoundException|IOException e) {
             log.warn("Cannot find Hippo icon sprite", e);
             return "";
         }
     }
 
-    private static PackageResourceReference getIconSpriteReference() {
-        return new PackageResourceReference(Icon.class, SPRITE_FILE_NAME);
-    }
-
-    private static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
-        final PackageResource resource = reference.getResource();
-        final IResourceStream resourceStream = resource.getResourceStream();
-        if (resourceStream == null) {
-            throw new NullPointerException("Failed to load SVG icon " + resource.toString());
-        }
-        String data = IOUtils.toString(resourceStream.getInputStream());
-        //skip everything (comments, xml declaration and dtd definition) before <svg element
-        return data.substring(data.indexOf("<svg "));
-    }
-
-    private String getFileName() {
-        return StringUtils.replace(name().toLowerCase(), "_", "-");
-    }
-
     /**
      * Returns an inline svg representation of this icon that refers to the icon in the sprite.
      * It is of the form <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
      *
-     * @see Icon#getSpriteId()
-     * @see Icon#getCssClasses()
-     */
-    public String getSpriteReference() {
-        return "<svg class=\"" + getCssClasses() + "\"><use xlink:href=\"#" + getSpriteId() + "\" /></svg>";
-    }
-
-    /**
-     * Returns an inline svg representation of this icon. All CSS classes of this icon will be set.
+     * @param size the size of the icon.
      *
-     * @see Icon#getCssClasses()
+     * @see Icon#getSpriteId(IconSize)
+     * @see Icon#getCssClasses(IconSize)
      */
-    public String getInlineSvg() {
-        final String iconPath = ICONS_DIR + getFileName() + ".svg";
-        final PackageResourceReference reference = new PackageResourceReference(Icon.class, iconPath);
-        try {
-            return "<svg class=\"" + getCssClasses() + "\" " + StringUtils.substringAfter(svgAsString(reference), "<svg ");
-        } catch (ResourceStreamNotFoundException|IOException e) {
-            log.warn("Cannot find inline svg of {}", name(), e);
-            return "";
-        }
+    public String getSpriteReference(IconSize size) {
+        return "<svg class=\"" + getCssClasses(size) + "\"><use xlink:href=\"#" + getSpriteId(size) + "\" /></svg>";
     }
 
     /**
      * @return the id of this icon in the generated icon sprint.
-     * For example, the icon {@link FOLDER_OPEN} will have the
+     * For example, the icon {@link #FOLDER_OPEN} will have the
      * icon sprite id "hi-folder-open".
      */
-    String getSpriteId() {
-        return "hi-" + getFileName();
+    String getSpriteId(final IconSize size) {
+        return "hi-"
+                + StringUtils.replace(name().toLowerCase(), "_", "-")
+                + "-"
+                + size.name().toLowerCase();
     }
 
     /**
-     * @return all CSS helper classes to identify an icon. For example, the icon {@link FOLDER_OPEN_THIN}
+     * @return all CSS helper classes to identify an icon. For example, the icon {@link #FOLDER_OPEN}
      * will get the CSS classes "hi hi-folder-open hi-small".
      */
-    private String getCssClasses() {
-        final String[] nameParts = StringUtils.split(name().toLowerCase(), '_');
-        final StringBuilder cssClasses = new StringBuilder("hi");
-
-        final String lastNamePart = nameParts[nameParts.length -1];
-        // Map thickness of lines in svg to dimensions of svg element
-        switch (lastNamePart) {
-            case "thick":
-                cssClasses.append(" hi-mini");
-                break;
-            case "thin":
-                cssClasses.append(" hi-small");
-                break;
-            case "thinner":
-                cssClasses.append(" hi-medium");
-                break;
-            default:
-                cssClasses.append(" hi-tiny");
-                break;
-        }
-
-        String name = null;
-        for (int i = 0; i < nameParts.length; i++) {
-            if (name == null) {
-                name = " hi-" + nameParts[i];
-            } else if (!nameParts[i].equals("thick") && !nameParts[i].equals("thin") && !nameParts[i].equals("thinner")) {
-                name += "-" + nameParts[i];
-            }
-        }
-        cssClasses.append(name);
-
-        return cssClasses.toString();
+    String getCssClasses(final IconSize size) {
+        return "hi hi-" + name().toLowerCase().replace("_", "-") + " hi-" + size.name().toLowerCase();
     }
 }

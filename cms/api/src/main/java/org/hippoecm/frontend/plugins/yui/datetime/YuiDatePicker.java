@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 import org.joda.time.DateTime;
 
@@ -90,7 +91,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         response.write("\" id=\"");
         response.write(getIconId());
         response.write("\">");
-        response.write(getIcon().getSpriteReference());
+        response.write(getIcon().getSpriteReference(IconSize.M));
         response.write("</a>");
 
         if (renderOnLoad()) {
@@ -150,7 +151,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     }
 
     /**
-     * Gets the {@link Icon} for the popup button. Users can override to provide their own icon.
+     * Gets the {@link org.hippoecm.frontend.skin.Icon} for the popup button. Users can override to provide their own icon.
 
      * @return the icon to use for the popup button
      */

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 
@@ -110,8 +111,8 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     @Override
     protected void decorateNodeLink(MarkupContainer nodeLink, final TreeNode node, int level) {
         if (treeNodeTranslator.hasTitle(node, level)) {
-            IModel<String> titleModel = new Model<String>(treeNodeTranslator.getTitleName(node));
-            nodeLink.add(new AttributeAppender("title", true, titleModel, " "));
+            IModel<String> titleModel = new Model<>(treeNodeTranslator.getTitleName(node));
+            nodeLink.add(new AttributeAppender("title", titleModel));
         }
 
         nodeLink.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
@@ -138,13 +139,13 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             {
                 super.onComponentTag(tag);
 
-                final Icon icon = node.isLeaf() ? Icon.BULLET_SMALL :
-                        isNodeExpanded(node) ? Icon.CARET_DOWN_SMALL : Icon.CARET_RIGHT_SMALL;
+                final Icon icon = node.isLeaf() ? Icon.BULLET :
+                        isNodeExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
                 final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
 
                 final Response response = RequestCycle.get().getResponse();
                 response.write("<span class=\"" + cssClassOuter + "\">");
-                response.write(icon.getSpriteReference());
+                response.write(icon.getSpriteReference(IconSize.M));
                 response.write("</span>");
             }
         }.setRenderBodyOnly(true);

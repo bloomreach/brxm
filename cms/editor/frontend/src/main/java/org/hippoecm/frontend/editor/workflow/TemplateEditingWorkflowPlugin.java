@@ -43,6 +43,7 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -133,7 +134,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.FLOPPY_TIMES_CIRCLE);
+                return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
             }
 
             @Override

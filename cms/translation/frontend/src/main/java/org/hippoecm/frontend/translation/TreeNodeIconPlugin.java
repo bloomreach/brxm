@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -117,15 +117,15 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
     }
 
     private HippoIconStack getTranslatedNodeIcon(final String id, final TreeNode treeNode, final ITreeState state, final String locale) {
-        final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.TINY);
+        final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.M);
         final HippoLocale hippoLocale = locales.getLocale(locale);
 
         if (state.isNodeExpanded(treeNode)) {
             nodeIcon.addFromSprite(Icon.FOLDER_OPEN);
-            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN));
+            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.M, LocaleState.FOLDER_OPEN));
         } else {
             nodeIcon.addFromSprite(Icon.FOLDER);
-            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER));
+            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.M, LocaleState.FOLDER));
         }
         return nodeIcon;
     }

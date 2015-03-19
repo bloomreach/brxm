@@ -54,7 +54,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -68,15 +67,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
-
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsFolderWorkflowPlugin.class);
 
@@ -84,22 +80,20 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
-    private static final List<String> EMPTY = new ArrayList<String>();
+    private static final List<String> EMPTY = new ArrayList<>();
 
     private String name;
     private String selected;
-    private final List<DisplayModel> folderTypesList = new ArrayList<DisplayModel>();
+    private final List<DisplayModel> folderTypesList = new ArrayList<>();
 
     public PermissionsFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(new StdWorkflow("queryModifier", new StringResourceModel("query-label", this, null), context, getModel()) {
 
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.FILE_UNLOCKED);
+                return HippoIcon.inline(id, CmsIcon.FILE_UNLOCKED);
             }
 
             @Override
@@ -144,8 +138,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                 session.save();
             }
         });
-
-
     }
 
     @Override
@@ -170,10 +162,11 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
     }
 
     public class PermissionsConfirmDialog extends AbstractWorkflowDialog {
-        private static final long serialVersionUID = 1L;
-        protected static final String EXCLUDE = "exclude";
-        private IModel folderName;
 
+        protected final IValueMap CUSTOM = new ValueMap("width=475,height=425").makeImmutable();
+        protected static final String EXCLUDE = "exclude";
+
+        private IModel folderName;
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         public PermissionsConfirmDialog(WorkflowDescriptorModel model, IWorkflowInvoker invoker, IModel folderName, Query query) {
@@ -190,7 +183,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             }
 
             //list of available queries:::
-            final List<String> modelList = new ArrayList<String>();
+            final List<String> modelList = new ArrayList<>();
             try {
                 if (query != null) {
                     QueryResult result = query.execute();
@@ -306,7 +299,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                 }
             };
 
-
             final DropDownChoice querySelection;
 
             add(querySelection = new DropDownChoice("query-selection", new PropertyModel(PermissionsFolderWorkflowPlugin.this, "selected"), modelList, folderTypeRenderer));
@@ -331,21 +323,14 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             response.render(CssHeaderItem.forReference(CSS));
         }
 
-        private boolean isEditable(DisplayModel valueModel) {
-            return false;
-        }
-
         @Override
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return new StringResourceModel("title", this, null, folderName.getObject());
         }
-
         @Override
         public IValueMap getProperties() {
             return CUSTOM;
         }
-
-        protected final IValueMap CUSTOM = new ValueMap("width=475,height=425").makeImmutable();
     }
 
     private class DisplayModel extends Model<String> {

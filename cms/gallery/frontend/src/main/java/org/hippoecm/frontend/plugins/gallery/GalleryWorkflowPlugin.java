@@ -49,8 +49,9 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.JQueryFileUploadDialog;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -213,8 +214,10 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
             @Override
             protected Component getIcon(final String id) {
-                final Icon icon = option.equals("add-image") ? Icon.FILE_IMAGE_PLUS : Icon.FILE_PLUS;
-                return HippoIcon.fromSprite(id, icon);
+                HippoIconStack iconStack = new HippoIconStack(id, IconSize.M);
+                iconStack.addFromSprite(option.equals("add-image") ? Icon.FILE_IMAGE : Icon.FILE);
+                iconStack.addFromSprite(Icon.PLUS);
+                return iconStack;
             }
 
             @Override

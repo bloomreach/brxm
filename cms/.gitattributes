@@ -1096,17 +1096,16 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/images/warning.png -text svneol=unset#image/png
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
-api/src/main/styling/images/icons/bullet-extra-large.svg -text
 api/src/main/styling/images/icons/floppy-times-circle.svg -text
-api/src/main/styling/images/icons/overlay-check-circle-exclamation-triangle-thin.svg -text
-api/src/main/styling/images/icons/overlay-check-circle-thin.svg -text
-api/src/main/styling/images/icons/overlay-minus-circle-thin.svg -text
-api/src/main/styling/images/icons/sort-ascending-tiny.svg -text
-api/src/main/styling/images/icons/sort-descending-tiny.svg -text
-api/src/main/styling/images/icons/stateorder-down-tiny.svg -text
-api/src/main/styling/images/icons/stateorder-hover-tiny.svg -text
-api/src/main/styling/images/icons/stateorder-none-tiny.svg -text
-api/src/main/styling/images/icons/stateorder-up-tiny.svg -text
+api/src/main/styling/images/icons/overlay-check-circle-exclamation-triangle.svg -text
+api/src/main/styling/images/icons/overlay-check-circle.svg -text
+api/src/main/styling/images/icons/overlay-minus-circle.svg -text
+api/src/main/styling/images/icons/sort-ascending.svg -text
+api/src/main/styling/images/icons/sort-descending.svg -text
+api/src/main/styling/images/icons/stateorder-down.svg -text
+api/src/main/styling/images/icons/stateorder-hover.svg -text
+api/src/main/styling/images/icons/stateorder-none.svg -text
+api/src/main/styling/images/icons/stateorder-up.svg -text
 api/src/main/styling/images/loading.gif -text
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png

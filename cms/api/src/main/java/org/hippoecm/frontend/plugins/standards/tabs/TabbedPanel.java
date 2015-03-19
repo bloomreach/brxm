@@ -54,6 +54,7 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
@@ -122,7 +123,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private final List<TabsPlugin.Tab> tabs;
     private MarkupContainer panelContainer;
     private MarkupContainer tabsContainer;
-    private IconSize iconType = IconSize.TINY;
+    private IconSize iconType = IconSize.M;
     private transient boolean redraw = false;
     private CardView cardView;
 
@@ -291,7 +292,11 @@ public class TabbedPanel extends WebMarkupContainer {
 
             };
             container.add(closeLink);
-            closeLink.add(HippoIcon.fromSprite("close-icon", Icon.TIMES_CIRCLE));
+
+            final HippoIconStack closeIcon = new HippoIconStack("close-icon", IconSize.M);
+            closeIcon.addFromSprite(Icon.BULLET);
+            closeIcon.addFromSprite(Icon.TIMES);
+            closeLink.add(closeIcon);
         } else {
             EmptyPanel hidden = new EmptyPanel("close");
             hidden.setVisible(false);

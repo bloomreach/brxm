@@ -256,13 +256,13 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         @Override
         protected Component getIcon(final String id) {
             final HippoLocale hippoLocale = localeModel.getObject();
-            final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.TINY);
+            final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.M);
 
-            final ResourceReference flagIcon = hippoLocale.getIcon(IconSize.TINY, LocaleState.EXISTS);
+            final ResourceReference flagIcon = hippoLocale.getIcon(IconSize.M, LocaleState.EXISTS);
             nodeIcon.addFromResource(flagIcon);
 
             if (!hasLocale(hippoLocale.getName())) {
-                nodeIcon.addInline(Icon.OVERLAY_PLUS);
+                nodeIcon.addFromSprite(Icon.PLUS);
             }
 
             return nodeIcon;
@@ -598,7 +598,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             public Component getLabel() {
                 Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
                 HippoLocale locale = localeProvider.getLocale(languageModel.getObject());
-                ResourceReference resourceRef = locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
+                ResourceReference resourceRef = locale.getIcon(IconSize.M, LocaleState.EXISTS);
                 fragment.add(new CachingImage("img", resourceRef));
                 fragment.add(new Label("current-language", locale.getDisplayName(getLocale())));
                 return fragment;

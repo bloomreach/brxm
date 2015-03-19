@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
  * full title.
  * <li><b>icon.size</b><br>
  * The size of the icon in the tab.  Can be one of the {@link IconSize}
- * sizes.  By default, 'tiny' will be used.
+ * sizes. By default, 'm' will be used.
  * </ul>
  */
 public class TabsPlugin extends RenderPlugin {
@@ -119,7 +119,7 @@ public class TabsPlugin extends RenderPlugin {
         tabs = new ArrayList<>();
         add(tabbedPanel = newTabbedPanel("tabs", tabs, tabsContainer));
         tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
-        tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, "tiny")));
+        tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, IconSize.M.name())));
 
         if (properties.containsKey("tabs.container.id")) {
             JavaPluginConfig containerConfig = new JavaPluginConfig(properties.getName() + "-tabs-container");

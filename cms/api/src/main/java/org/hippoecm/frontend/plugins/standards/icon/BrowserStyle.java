@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,16 +19,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.skin.Icon;
 
 public final class BrowserStyle {
 
-    private static final Map<String, Boolean> customPackageResourceExists = new ConcurrentHashMap<String, Boolean>();
+    private static final Map<String, Boolean> customPackageResourceExists = new ConcurrentHashMap<>();
 
     private BrowserStyle() {
     }
@@ -54,7 +52,7 @@ public final class BrowserStyle {
             customPackageResourceExists.put(customResourceKey, resourceExists);
             return resourceExists;
         } else {
-            return customPackageResourceExists.get(customResourceKey).booleanValue();
+            return customPackageResourceExists.get(customResourceKey);
         }
     }
 
@@ -70,7 +68,7 @@ public final class BrowserStyle {
      * @param name name part of the icon file
      * @param size size of the icon
      * @return reference to the icon
-     * @deprecated use an {@link Icon} value instead.
+     * @deprecated use an {@link org.hippoecm.frontend.skin.Icon} value instead.
      */
     @Deprecated
     public static ResourceReference getIcon(String name, IconSize size) {

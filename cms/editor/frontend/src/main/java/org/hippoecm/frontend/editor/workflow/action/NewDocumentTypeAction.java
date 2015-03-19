@@ -36,6 +36,8 @@ import org.hippoecm.frontend.editor.workflow.dialog.CreateDocumentTypeDialog;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
@@ -121,6 +123,9 @@ public class NewDocumentTypeAction extends Action {
 
     @Override
     protected Component getIcon(final String id) {
-        return HippoIcon.fromSprite(id, Icon.FILE_PLUS);
+        HippoIconStack iconStack = new HippoIconStack(id, IconSize.M);
+        iconStack.addFromSprite(Icon.FILE);
+        iconStack.addFromSprite(Icon.PLUS);
+        return iconStack;
     }
 }

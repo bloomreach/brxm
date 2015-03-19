@@ -31,6 +31,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 
@@ -81,7 +82,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, Icon.FLOPPY_TIMES_CIRCLE);
+                return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
             }
 
             @Override

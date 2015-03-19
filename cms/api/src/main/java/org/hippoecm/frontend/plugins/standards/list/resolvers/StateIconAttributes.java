@@ -32,6 +32,7 @@ import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -55,7 +56,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private transient String cssClass;
     private transient String summary;
-    private transient Icon icon;
+    private transient CmsIcon icon;
 
     public StateIconAttributes(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
@@ -72,7 +73,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
         return cssClass;
     }
 
-    public Icon getIcon() {
+    public CmsIcon getIcon() {
         load();
         return icon;
     }
@@ -152,14 +153,14 @@ public class StateIconAttributes implements IObservable, IDetachable {
         }
     }
 
-    private Icon getStateIcon(final String state) {
+    private CmsIcon getStateIcon(final String state) {
         switch(state) {
             case "new":
-                return Icon.OVERLAY_MINUS_CIRCLE_THIN;
+                return CmsIcon.OVERLAY_MINUS_CIRCLE;
             case "live":
-                return Icon.OVERLAY_CHECK_CIRCLE_THIN;
+                return CmsIcon.OVERLAY_CHECK_CIRCLE;
             case "changed":
-                return Icon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE_THIN;
+                return CmsIcon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE;
             default:
                 log.info("No icon available for document state '{}'", state);
                 return null;

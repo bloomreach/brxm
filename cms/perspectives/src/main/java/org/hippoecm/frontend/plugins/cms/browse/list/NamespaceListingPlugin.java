@@ -38,6 +38,7 @@ import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.SpriteIconRenderer;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.skin.Icon;
 
@@ -56,12 +57,12 @@ public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<No
         columns.add(createIconColumn());
         columns.add(createNameColumn());
         columns.add(createTypeColumn());
-        return new TableDefinition<Node>(columns);
+        return new TableDefinition<>(columns);
     }
 
     private ListColumn<Node> createIconColumn() {
         final ListColumn<Node> column = new ListColumn<>(Model.of(StringUtils.EMPTY), null);
-        column.setRenderer(new SpriteIconRenderer(Icon.FOLDER_THIN));
+        column.setRenderer(new SpriteIconRenderer(Icon.FOLDER, IconSize.L));
         column.setCssClass(DocumentListColumn.ICON.getCssClass());
         return column;
     }

@@ -28,6 +28,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -76,9 +78,9 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
 
         private Component getTypeIcon(final String id) {
             if (isCompound()) {
-                return HippoIcon.fromSprite(id, Icon.FILE_COMPOUND_THIN);
+                return HippoIcon.fromSprite(id, Icon.FILE_COMPOUND, IconSize.L);
             } else {
-                return HippoIcon.fromSprite(id, Icon.FILE_THIN);
+                return HippoIcon.fromSprite(id, Icon.FILE, IconSize.L);
             }
         }
 
@@ -116,7 +118,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
             final Node node = nodeModel.getNode();
             if (node != null) {
                 try {
-                    Icon stateIcon = determineStateIcon(node);
+                    CmsIcon stateIcon = determineStateIcon(node);
                     if (stateIcon != null) {
                         return HippoIcon.inline(id, stateIcon);
                     }
@@ -129,7 +131,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
             return noIcon;
         }
 
-        private Icon determineStateIcon(final Node node) throws RepositoryException {
+        private CmsIcon determineStateIcon(final Node node) throws RepositoryException {
             if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 String prefix = node.getParent().getName();
                 NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
@@ -153,11 +155,11 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                 }
 
                 if (current == null && draft != null) {
-                    return Icon.OVERLAY_MINUS_CIRCLE_THIN;
+                    return CmsIcon.OVERLAY_MINUS_CIRCLE;
                 } else if (current != null && draft == null) {
-                    return Icon.OVERLAY_CHECK_CIRCLE_THIN;
+                    return CmsIcon.OVERLAY_CHECK_CIRCLE;
                 } else if (current != null && draft != null) {
-                    return Icon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE_THIN;
+                    return CmsIcon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE;
                 }
             }
             return null;

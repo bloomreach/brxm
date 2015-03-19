@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ package org.hippoecm.frontend.skin;
 import java.util.regex.Pattern;
 
 import org.apache.wicket.util.tester.WicketTester;
-import org.apache.wicket.util.tester.WicketTesterHelper;
-import org.apache.wicket.util.tester.WicketTesterScope;
-import org.junit.Before;
+import org.hippoecm.frontend.service.IconSize;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class IconTest extends WicketTester {
@@ -31,9 +30,17 @@ public class IconTest extends WicketTester {
     public void sprite_contains_all_icons() {
         final String sprite = Icon.getIconSprite();
         for (Icon icon : Icon.values()) {
-            final Pattern iconId = Pattern.compile("<symbol[^>]+id=\"" + icon.getSpriteId() + "\">");
-            assertTrue("Sprite should contain icon '" + icon + "'", iconId.matcher(sprite).find());
+            for (IconSize size : IconSize.values()) {
+                final Pattern iconId = Pattern.compile("<symbol[^>]+id=\"" + icon.getSpriteId(size) + "\">");
+                assertTrue("Sprite does not contain icon '" + icon + "'", iconId.matcher(sprite).find());
+            }
         }
+    }
+
+    @Test
+    public void css_classes_are_set() {
+        assertEquals("hi hi-floppy hi-m", Icon.FLOPPY.getCssClasses(IconSize.M));
+        assertEquals("hi hi-arrow-up hi-xl", Icon.ARROW_UP.getCssClasses(IconSize.XL));
     }
 
 }
