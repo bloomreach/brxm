@@ -21,20 +21,20 @@
                 <label>Please select templating language</label>
                 <div class="radio">
                     <label>
-                        <input type="radio" ng-model="templateName" required value="jsp"/> JSP template
+                        <input type="radio" ng-model="params.templateName" required value="jsp"/> JSP template
                     </label>
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" ng-model="templateName" required value="freemarker"/> FreeMarker template
+                        <input type="radio" ng-model="params.templateName" required value="freemarker"/> FreeMarker template
                     </label>
                 </div>
             </div>
-            <div class="form-group" ng-show="templateName === 'freemarker'">
+            <div class="form-group" ng-show="params.templateName === 'freemarker'">
                 <label class="control-label">Presentation</label>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" ng-model="extraTemplates"/> Install extra template variants
+                        <input type="checkbox" ng-model="params.extraTemplates"/> Install extra template variants
                     </label>
                 </div>
             </div>
@@ -45,7 +45,7 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="sampleData"/> Add sample content
+                    <input type="checkbox" ng-model="params.sampleData"/> Add sample content
                 </label>
             </div>
         </div>

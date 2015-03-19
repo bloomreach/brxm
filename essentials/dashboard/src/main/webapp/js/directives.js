@@ -105,20 +105,12 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
-                    sampleData: '=',
-                    templateName: '=',
-                    extraTemplates: '=',
+                    params: '=',
                     hasNoTemplates: '@',
                     hasSampleData: '@'
                 },
                 templateUrl: 'directives/essentials-template-settings.html',
-                controller: function ($scope, $rootScope, $http) {
-                    // initialize fields to system defaults.
-                    $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                        $scope.templateName   = data.templateLanguage;
-                        $scope.sampleData     = data.useSamples;
-                        $scope.extraTemplates = data.extraTemplates;
-                    });
+                controller: function () {
                 }
             };
         })
@@ -143,22 +135,25 @@
                 restrict: 'E',
                 scope: {
                     pluginId: '=',
-                    payload: '='
+                    params: '='
                 },
                 templateUrl: 'directives/essentials-messages.html',
-                controller: function ($scope, $rootScope, installerFactory) {
+                controller: function ($scope, $rootScope, $http) {
                     // refresh messages when changes are made:
+                    $scope.$watch('params', function () {
+                        getMessages();
+                    }, true);
+                    getMessages();
+
                     var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
-                    $scope.$watch('payload', function (newValue) {
-                        if (newValue) {
-                            return installerFactory.packageMessages(url, newValue).success(function (data) {
+                    function getMessages() {
+                        if ($scope.params) {
+                            var payload = {values: $scope.params};
+                            $http.post(url, payload).success(function (data) {
                                 $scope.packageMessages = data;
                             });
                         }
-                    }, true);
-                    return installerFactory.packageMessages(url, $scope.payload).success(function (data) {
-                        $scope.packageMessages = data;
-                    });
+                    }
                 }
             };
         }).directive("essentialsSimpleInstallPlugin", function () {
@@ -173,18 +168,19 @@
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $location, $rootScope, $http) {
+                    // initialize fields to system defaults.
+                    $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
+                        var params = {};
 
-                    // create fields. The values don't matter, the template-settings directive will set them for us.
-                    $scope.sampleData = true;
-                    $scope.templateName = 'jsp';
-                    $scope.extraTemplates = true;
+                        params.templateName   = data.templateLanguage;
+                        params.sampleData     = data.useSamples;
+                        params.extraTemplates = data.extraTemplates;
 
-                    setPayload();
-                    $scope.$watchCollection("[sampleData, templateName, extraTemplates]", function () {
-                        setPayload();
+                        $scope.params = params;
                     });
+
                     $scope.apply = function () {
-                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), $scope.payload)
+                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), $scope.params)
                             .success(function () {
                                 $rootScope.$broadcast('update-plugin-install-state', {
                                     'pluginId': $scope.pluginId,
@@ -197,16 +193,6 @@
                         $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
                         $scope.plugin = plugin;
                     });
-
-                    function setPayload() {
-                        $scope.payload = {
-                            values: {
-                                sampleData: $scope.sampleData,
-                                templateName: $scope.templateName,
-                                extraTemplates: $scope.extraTemplates
-                            }
-                        };
-                    }
                 }
             };
         }).directive("essentialsCmsDocumentTypeDeepLink", function () {

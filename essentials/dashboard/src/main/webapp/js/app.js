@@ -80,7 +80,7 @@
 
             }
 
-            $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
+            $provide.factory('MyHttpInterceptor', function ($q, $rootScope) {
                 return {
                     //############################################
                     // REQUEST
@@ -217,19 +217,6 @@
             $rootScope.initData();
         })
 
-        //############################################
-        // FACTORIES
-        //############################################
-
-        .factory('installerFactory', function ($http, $rootScope) {
-            var packageMessages = function (url, payload) {
-                return $http.post(url, payload);
-            };
-            return {
-                packageMessages: packageMessages
-            };
-        })
-
 
 //############################################
 // FILTERS
@@ -337,7 +324,7 @@
                         $scope.modalOptions.ok = function (result) {
                             $modalInstance.close(result);
                         };
-                        $scope.modalOptions.close = function (result) {
+                        $scope.modalOptions.close = function () {
                             $modalInstance.dismiss('cancel');
                         };
                         myOptions = $scope.modalOptions;
