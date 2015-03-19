@@ -23,6 +23,21 @@
             '$state',
             'hippo.channel.menu.MenuService',
             function ($log, $state, MenuService) {
+                MenuService.getMenu().then(
+                    function (menuData) {
+                        if (menuData.items && menuData.items.length > 0) {
+                            $state.go('menu-item.edit', {
+                                menuItemId: menuData.items[0].id
+                            });
+                        } else {
+                            $state.go('menu-item.none');
+                        }
+                    },
+                    function (error) {
+                        // TODO: show error in UI
+                        $log.error(error);
+                    }
+                );
             }
         ]);
 }());
