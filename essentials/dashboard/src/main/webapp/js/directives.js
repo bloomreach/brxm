@@ -65,7 +65,7 @@
                     //############################################
                     // MODAL
                     //############################################
-                    var ModalInstanceCtrl = function ($scope, $modalInstance, endPoint, title, selectedPath) {
+                    var ModalInstanceCtrl = function ($scope, $modalInstance, endPoint, title) {
                         $scope.title = title;
                         $http.get(endPoint).success(function (data) {
                             $scope.treeItems = data.items;
@@ -107,6 +107,7 @@
                     label: '@',
                     sampleData: '=',
                     templateName: '=',
+                    extraTemplates: '=',
                     hasNoTemplates: '@',
                     hasSampleData: '@'
                 },
@@ -114,8 +115,9 @@
                 controller: function ($scope, $rootScope, $http) {
                     // initialize fields to system defaults.
                     $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                        $scope.templateName = data.templateLanguage;
-                        $scope.sampleData   = data.useSamples;
+                        $scope.templateName   = data.templateLanguage;
+                        $scope.sampleData     = data.useSamples;
+                        $scope.extraTemplates = data.extraTemplates;
                     });
                 }
             };
@@ -175,14 +177,15 @@
                     // create fields. The values don't matter, the template-settings directive will set them for us.
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
+                    $scope.extraTemplates = true;
 
-                    $scope.payload = {values: {sampleData: $scope.sampleData, templateName: $scope.templateName}};
-                    $scope.$watchCollection("[sampleData, templateName]", function () {
-                        $scope.payload = {values: {sampleData: $scope.sampleData, templateName: $scope.templateName}};
+                    setPayload();
+                    $scope.$watchCollection("[sampleData, templateName, extraTemplates]", function () {
+                        setPayload();
                     });
                     $scope.apply = function () {
                         $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), $scope.payload)
-                            .success(function (data) {
+                            .success(function () {
                                 $rootScope.$broadcast('update-plugin-install-state', {
                                     'pluginId': $scope.pluginId,
                                     'state': 'installing'
@@ -194,6 +197,16 @@
                         $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
                         $scope.plugin = plugin;
                     });
+
+                    function setPayload() {
+                        $scope.payload = {
+                            values: {
+                                sampleData: $scope.sampleData,
+                                templateName: $scope.templateName,
+                                extraTemplates: $scope.extraTemplates
+                            }
+                        };
+                    }
                 }
             };
         }).directive("essentialsCmsDocumentTypeDeepLink", function () {
@@ -206,7 +219,7 @@
                     label: '@'
                 },
                 templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
-                controller: function ($scope, $sce, $log, $rootScope, $http) {
+                controller: function ($scope, $sce, $log, $rootScope) {
                     $scope.label = 'CMS Document Type Editor';
                     $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
                 }
@@ -344,7 +357,7 @@
                         $scope.installButtonDisabled = true; // avoid double-clicking
                         $rootScope.pluginsCache = null;
                         var pluginId = $scope.plugin.id;
-                        $http.post($rootScope.REST.plugins + '/' + pluginId + '/install').success(function (data) {
+                        $http.post($rootScope.REST.plugins + '/' + pluginId + '/install').success(function () {
                             // reload because of install state change:
                             $http.get($rootScope.REST.PLUGINS.byId(pluginId)).success(function (data) {
                                 $scope.plugin = data;
@@ -361,7 +374,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-installed-feature.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                controller: function ($scope) {
                     $scope.needsRebuild = function() {
                         var state = $scope.plugin.installState;
                         return state === 'boarding' || state === 'installing';

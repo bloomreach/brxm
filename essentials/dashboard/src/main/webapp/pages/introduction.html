@@ -17,9 +17,9 @@
     <div class="col-sm-12 col-md-10 col-lg-8">
         <h2>Set up your Hippo Project</h2>
         <p>
-            This web application makes it easier to set up a new Hippo project. You can browse the Hippo
+            This web application helps you setting up a new Hippo project. You can browse the Hippo
             feature library, install features into your Hippo project and configure them. To get some basic
-            understanding of Hippo's setup application and how to use it, check the
+            understanding of Hippo's setup application and how to use it, check out our
             <a href="http://www.onehippo.org/library/setup/introduction.html">documentation</a>.
         </p>
         <h3>Important Notes</h3>
@@ -39,10 +39,10 @@
         </ul>
 
         <form name="settingsForm" novalidate>
-            <h3>Project Default Settings</h3>
+            <h3>Project Settings</h3>
             <p>
                 The setup application will apply several settings by default. You can set the desired values below.
-                We recommend selecting <em>add sample content</em> to get started.
+                We recommend using the default settings.
             </p>
             <div class="form-group">
                 <label class="control-label">Please select templating language</label>
@@ -66,29 +66,37 @@
                 </div>
             </div>
 
-            <div ng-show="projectSettings.templateLanguage=='freemarker'" class="form-control-static">
+            <div class="form-control-static">
                 <span class="fa" ng-class="{'fa-chevron-right': !showAdvanced, 'fa-chevron-down': showAdvanced}"></span>
                 <a href="#" ng-click="toggleAdvanced($event)">Advanced project settings</a>
             </div>
             <div ng-show="showAdvanced" class="panel panel-default">
                 <div class="panel-body">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="projectSettings.extraTemplates"/> Install extra template variants
-                        </label>
+                    <div class="form-group" ng-show="projectSettings.templateLanguage=='freemarker'">
+                        <label class="control-label">Presentation</label>
+                        <p>
+                            When using Freemarker templates, which reside in the repository, the CMS Template Composer
+                            allows you to switch the component template between different variants.
+                        </p>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="projectSettings.extraTemplates"/> Install extra template variants
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Setup process</label>
+                        <p>
+                            If you want to be able to adjust above settings on a per-feature basis, check this box. This will,
+                            however, result in more user interaction needed during the setup process.
+                        </p>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="projectSettings.confirmParams"/>Confirm / override settings on a per-feature basis
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <h3>Setup Process</h3>
-            <p>
-                If you want to be able to adjust above settings on a per-feature basis, check this box. This will,
-                however, result in more user interaction needed during the setup process.
-            </p>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" ng-model="projectSettings.confirmParams"/>Confirm / override settings on a per-feature basis
-                </label>
             </div>
 
             <!--
