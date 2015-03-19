@@ -51,6 +51,13 @@ public class NameUriField extends WebMarkupContainer {
 
     private boolean urlModified = false;
 
+    public NameUriField(String id, IModel<StringCodec> codecModel, final String url, final String name, final boolean urlModified) {
+        this(id, codecModel);
+        this.url = url;
+        this.name = name;
+        this.urlModified = urlModified;
+    }
+
     public NameUriField(String id, IModel<StringCodec> codecModel) {
         super(id);
         this.codecModel = codecModel;

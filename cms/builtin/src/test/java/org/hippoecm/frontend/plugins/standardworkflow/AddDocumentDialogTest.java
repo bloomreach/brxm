@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -43,7 +42,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onehippo.repository.mock.MockNode;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;

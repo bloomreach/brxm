@@ -48,8 +48,8 @@ import static org.mockito.Mockito.when;
 
 public class RenameDocumentDialogTest {
     public static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:0:button";
-    public static final String URL_INPUT = "uriinput";
-    public static final String NAME_INPUT = "name";
+    public static final String URL_INPUT = "name-url:url";
+    public static final String NAME_INPUT = "name-url:name";
 
     private MockNode root;
     private HippoTester tester;
