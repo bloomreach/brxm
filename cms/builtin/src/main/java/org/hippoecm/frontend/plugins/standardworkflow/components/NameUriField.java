@@ -42,8 +42,8 @@ public class NameUriField extends WebMarkupContainer {
     @SuppressWarnings("unused")
     private String name;
 
-    private final Component urlComponent;
-    private final Component nameComponent;
+    private final FormComponent urlComponent;
+    private final FormComponent nameComponent;
 
     private final PropertyModel<String> urlModel;
     private final PropertyModel<String> nameModel;
@@ -77,7 +77,7 @@ public class NameUriField extends WebMarkupContainer {
         return codecModel.getObject().encode(text.getObject());
     }
     
-    private Component createNameComponent(final PropertyModel<String> nameModel) {
+    private FormComponent createNameComponent(final PropertyModel<String> nameModel) {
         final FormComponent nameComponent = new TextField<>("name", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -116,7 +116,7 @@ public class NameUriField extends WebMarkupContainer {
         return nameComponent;
     }
 
-    private Component createUriComponent(final PropertyModel<String> urlModel) {
+    private FormComponent createUriComponent(final PropertyModel<String> urlModel) {
         FormComponent urlComponent = new TextField<String>("url", urlModel) {
             @Override
             public boolean isEnabled() {
@@ -141,6 +141,7 @@ public class NameUriField extends WebMarkupContainer {
                 urlModified = !urlModified;
                 if (!urlModified) {
                     urlModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : encode(nameModel));
+                    urlComponent.modelChanged();
                 } else {
                     target.focusComponent(urlComponent);
                 }
@@ -173,5 +174,17 @@ public class NameUriField extends WebMarkupContainer {
                 target.add(urlComponent);
             }
         }
+    }
+
+    public FormComponent[] getComponents() {
+        return new FormComponent[]{this.urlComponent, this.nameComponent};
+    }
+
+    public FormComponent getUrlComponent() {
+        return urlComponent;
+    }
+
+    public FormComponent getNameComponent(){
+        return nameComponent;
     }
 }

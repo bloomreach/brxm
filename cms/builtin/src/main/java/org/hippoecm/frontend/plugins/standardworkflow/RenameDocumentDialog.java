@@ -17,37 +17,50 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.Locale;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentArguments> {
+    private static Logger log = LoggerFactory.getLogger(RenameDocumentDialog.class);
 
     private final IModel<String> title;
     private final TextField nameComponent;
     private final TextField uriComponent;
+    private final String originalUriName;
+    private final String originalTargetName;
     private boolean uriModified;
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public RenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IModel<String> title,
-                                IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec) {
+                                IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec, final WorkflowDescriptorModel workflowDescriptorModel) {
         super(Model.of(renameDocumentModel), invoker);
         this.title = title;
         this.nodeNameCodecModel = nodeNameCodec;
@@ -55,9 +68,10 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
         final PropertyModel<String> nameModel = new PropertyModel<>(renameDocumentModel, "targetName");
         final PropertyModel<String> uriModel = new PropertyModel<>(renameDocumentModel, "uriName");
 
-        String s1 = nameModel.getObject();
-        String s2 = uriModel.getObject();
-        uriModified = !s1.equals(s2);
+        originalUriName = uriModel.getObject();
+        originalTargetName = nameModel.getObject();
+
+        uriModified = !StringUtils.equals(originalTargetName, originalUriName);
 
         nameComponent = new TextField<>("name", nameModel);
         nameComponent.setRequired(true);
@@ -128,6 +142,8 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
         if (message.shouldShow()) {
             warn(message.forFolder());
         }
+
+        add(new RenameDocumentValidator(uriComponent, nameComponent, workflowDescriptorModel));
     }
 
     @Override
@@ -148,5 +164,50 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
     protected void onDetach() {
         nodeNameCodecModel.detach();
         super.onDetach();
+    }
+
+    private class RenameDocumentValidator extends DocumentFormValidator {
+        private final TextField uriComponent;
+        private final TextField nameComponent;
+        private final WorkflowDescriptorModel workflowDescriptorModel;
+
+        public RenameDocumentValidator(final TextField uriComponent, final TextField nameComponent, WorkflowDescriptorModel workflowDescriptorModel) {
+            this.uriComponent = uriComponent;
+            this.nameComponent = nameComponent;
+            this.workflowDescriptorModel = workflowDescriptorModel;
+        }
+
+        @Override
+        public FormComponent<?>[] getDependentFormComponents() {
+            return new FormComponent<?>[]{uriComponent, nameComponent};
+        }
+
+        @Override
+        public void validate(final Form<?> form) {
+            String newUriName = uriComponent.getValue().toLowerCase();
+            String newLocalizedName = nameComponent.getValue();
+            try {
+                final Node parentNode = workflowDescriptorModel.getNode().getParent();
+
+                if (StringUtils.equals(newUriName, originalUriName)) {
+                    if (StringUtils.equals(newLocalizedName, originalTargetName)) {
+                        error(getString("error-same-names"));
+                    } else if (existedLocalizedName(parentNode, newLocalizedName)) {
+                        error(new StringResourceModel("error-localized-name-exists", RenameDocumentDialog.this,
+                                null, new Object[]{newLocalizedName}).getObject());
+                    }
+                } else if (parentNode.hasNode(newUriName)) {
+                    error(new StringResourceModel("error-sns-node-exists",
+                            RenameDocumentDialog.this, null, new Object[]{newUriName}).getObject());
+                } else if (!StringUtils.equals(newLocalizedName, originalTargetName) &&
+                            existedLocalizedName(parentNode, newLocalizedName)) {
+                    error(new StringResourceModel("error-localized-name-exists", RenameDocumentDialog.this,
+                            null, new Object[]{newLocalizedName}).getObject());
+                }
+            } catch (RepositoryException e) {
+                log.error("validation error", e);
+                error(getString("error-validation-names"));
+            }
+        }
     }
 }

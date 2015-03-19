@@ -21,91 +21,48 @@ import java.util.Set;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.time.Duration;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
+import org.hippoecm.frontend.plugins.standardworkflow.components.NameUriField;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArguments> {
+    private static Logger log = LoggerFactory.getLogger(AddDocumentDialog.class);
+
+    private final NameUriField nameUriContainer;
 
     private IModel<String> title;
-    private TextField nameComponent;
-    private TextField uriComponent;
-    private boolean uriModified = false;
     private LanguageField languageField;
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
                              Set<String> prototypes, boolean translated, final IWorkflowInvoker invoker,
-                             IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider) {
+                             IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider, final WorkflowDescriptorModel workflowDescriptorModel) {
         super(Model.of(addDocumentModel), invoker);
         this.title = title;
         this.nodeNameCodecModel = nodeNameCodec;
 
-        final PropertyModel<String> nameModel = new PropertyModel<>(addDocumentModel, "targetName");
-        final PropertyModel<String> uriModel = new PropertyModel<>(addDocumentModel, "uriName");
         final PropertyModel<String> prototypeModel = new PropertyModel<>(addDocumentModel, "prototype");
 
-        nameComponent = new TextField<>("name", new IModel<String>() {
-            private static final long serialVersionUID = 1L;
+        add(nameUriContainer = new NameUriField("name-url", this.nodeNameCodecModel));
 
-            public String getObject() {
-                return nameModel.getObject();
-            }
-
-            public void setObject(String object) {
-                nameModel.setObject(object);
-                if (!uriModified) {
-                    uriModel.setObject(getNodeNameCoded().encode(nameModel.getObject()));
-                }
-            }
-
-            public void detach() {
-                nameModel.detach();
-            }
-
-        });
-        nameComponent.setRequired(true);
-        nameComponent.setLabel(Model.of(getString("name-label")));
-        nameComponent.add(new OnChangeAjaxBehavior() {
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                if (!uriModified) {
-                    target.add(uriComponent);
-                }
-            }
-
-            @Override
-            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                super.updateAjaxAttributes(attributes);
-                attributes.setThrottlingSettings(new ThrottlingSettings(AddDocumentDialog.this.getPath(), Duration.milliseconds(500)));
-            }
-        });
-        nameComponent.setOutputMarkupId(true);
-        setFocus(nameComponent);
-        add(nameComponent);
-
-        final Model<String> documentType = Model.of(getString("document-type"));
+        final IModel<String> documentType = new StringResourceModel("document-type", this, null);
         final Label typeLabel = new Label("typelabel", documentType);
         add(typeLabel);
 
@@ -142,56 +99,31 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
             prototypeModel.setObject(null);
             add(new Label("notypes", "There are no types available for : [" + category
                     + "] First create document types please."));
-            nameComponent.setVisible(false);
+            nameUriContainer.getNameComponent().setVisible(false);
             typeLabel.setVisible(false);
         }
-
-        add(uriComponent = new TextField<String>("uriinput", uriModel) {
-            @Override
-            public boolean isEnabled() {
-                return uriModified;
-            }
-        });
-
-        uriComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return uriModified ? "grayedin" : "grayedout";
-            }
-        }));
-        uriComponent.setRequired(true);
-        uriComponent.setLabel(Model.of(getString("url-label")));
-        uriComponent.setOutputMarkupId(true);
-
-        AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                uriModified = !uriModified;
-                if (!uriModified) {
-                    uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCoded().encode(
-                            nameModel.getObject()));
-                    uriComponent.modelChanged();
-                } else {
-                    target.focusComponent(uriComponent);
-                }
-                target.add(AddDocumentDialog.this);
-            }
-        };
-        uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return uriModified ? getString("url-reset") : getString("url-edit");
-            }
-        }));
-        add(uriAction);
 
         languageField = new LanguageField("language", new PropertyModel<>(addDocumentModel, "language"), localeProvider);
         if (!translated) {
             languageField.setVisible(false);
         }
         add(languageField);
+
+        add(new AddDocumentValidator(nameUriContainer, workflowDescriptorModel) {
+            @Override
+            protected void showError(final String key, final Object... parameters) {
+                error(new StringResourceModel(key, AddDocumentDialog.this, null, parameters).getObject());
+            }
+        });
     }
 
+    @Override
+    protected void onOk() {
+        AddDocumentArguments addDocumentArguments = getModel().getObject();
+        addDocumentArguments.setUriName(nameUriContainer.getUrl());
+        addDocumentArguments.setTargetName(nameUriContainer.getName());
+        super.onOk();
+    }
     @Override
     public IModel<String> getTitle() {
         return title;
@@ -204,18 +136,6 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
 
     public LanguageField getLanguageField() {
         return languageField;
-    }
-
-    public TextField getUriComponent() {
-        return uriComponent;
-    }
-
-    public TextField getNameComponent() {
-        return nameComponent;
-    }
-
-    protected StringCodec getNodeNameCoded() {
-        return nodeNameCodecModel.getObject();
     }
 
     @Override

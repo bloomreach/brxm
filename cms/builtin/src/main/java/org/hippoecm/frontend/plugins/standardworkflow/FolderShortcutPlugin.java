@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -225,7 +226,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private LanguageField languageContainer;
 
         public Dialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
-
+            super();
             if (config.containsKey("option.first")) {
                 optionSelectFirst = config.getBoolean("option.first");
             }
@@ -366,6 +367,18 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 templateCategory = templates.keySet().iterator().next();
             }
             evaluateChoices();
+
+            add(new AddDocumentValidator(nameUriContainer, folderWorkflowDescriptorModel) {
+                @Override
+                protected void showError(final String key, final Object... parameters) {
+                    Dialog.this.error(new StringResourceModel(key, Dialog.this, null, parameters).getObject());
+                }
+            });
+        }
+
+        @Override
+        protected FeedbackPanel newFeedbackPanel(String id) {
+            return new FeedbackPanel(id);
         }
 
         private void evaluateChoices() {
