@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.standardworkflow.validators;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -47,4 +47,6 @@ abstract class DocumentFormValidator implements IFormValidator {
         }
         return false;
     }
+
+    protected abstract void showError(final String key, Object... parameters);
 }

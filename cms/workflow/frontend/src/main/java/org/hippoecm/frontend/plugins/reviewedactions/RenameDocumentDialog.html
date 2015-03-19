@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <table class="hippo-window-form">
-      <tr>
-        <td><wicket:message key="name-label">Name</wicket:message></td>
-        <td>
-          <input type="text" wicket:id="name" class="hippo-form-input"/>
-        </td>
-      </tr>
-      <tr>
-        <td width="75"><wicket:message key="url-label">Name</wicket:message></td>
-        <td>
-          <input wicket:id="uriinput" class="hippo-form-input"/>
-          <a wicket:id="uriAction" class="action">
-            <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
-          </a>
-        </td>
-      </tr>
+        <wicket:container wicket:id="name-url">
+            <tr>
+                <td><wicket:message key="name-label">Name</wicket:message></td>
+                <td>
+                    <input type="text" wicket:id="name" class="hippo-form-input"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="75"><wicket:message key="url-label">Name</wicket:message></td>
+                <td>
+                    <input wicket:id="url" class="hippo-form-input"/>
+                    <a wicket:id="uriAction" class="action">
+                        <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
+                    </a>
+                </td>
+            </tr>
+        </wicket:container>
     </table>
   </wicket:extend>
 </html>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.standardworkflow.validators;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -70,6 +70,4 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
             showError(ERROR_VALIDATION_NAMES, null);
         }
     }
-
-    protected abstract void showError(final String key, Object... parameters);
 }

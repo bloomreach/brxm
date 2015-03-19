@@ -17,12 +17,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.Locale;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -32,6 +27,7 @@ import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.components.NameUriField;
+import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
 import org.slf4j.Logger;
@@ -41,8 +37,6 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
     private static Logger log = LoggerFactory.getLogger(RenameDocumentDialog.class);
 
     private final IModel<String> title;
-    private final String originalUriName;
-    private final String originalTargetName;
     private final NameUriField nameUriContainer;
     private final IModel<StringCodec> nodeNameCodecModel;
 
@@ -52,8 +46,8 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
         this.title = title;
         this.nodeNameCodecModel = nodeNameCodec;
 
-        originalUriName = renameDocumentModel.getUriName();
-        originalTargetName = renameDocumentModel.getTargetName();
+        final String originalUriName = renameDocumentModel.getUriName();
+        final String originalTargetName = renameDocumentModel.getTargetName();
 
         final boolean uriModified = !StringUtils.equals(originalTargetName, originalUriName);
         add(nameUriContainer = new NameUriField("name-url", this.nodeNameCodecModel, originalUriName, originalTargetName, uriModified));
@@ -64,7 +58,12 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
             warn(message.forFolder());
         }
 
-        add(new RenameDocumentValidator(nameUriContainer, workflowDescriptorModel));
+        add(new RenameDocumentValidator(nameUriContainer, workflowDescriptorModel) {
+            @Override
+            protected void showError(final String key, final Object... parameters) {
+                error(new StringResourceModel(key, RenameDocumentDialog.this, null, parameters).getObject());
+            }
+        });
     }
 
     @Override
@@ -89,48 +88,5 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
     protected void onDetach() {
         nodeNameCodecModel.detach();
         super.onDetach();
-    }
-
-    private class RenameDocumentValidator extends DocumentFormValidator {
-        private final WorkflowDescriptorModel workflowDescriptorModel;
-        private final NameUriField nameUriContainer;
-
-        public RenameDocumentValidator(NameUriField nameUriContainer, WorkflowDescriptorModel workflowDescriptorModel) {
-            this.nameUriContainer = nameUriContainer;
-            this.workflowDescriptorModel = workflowDescriptorModel;
-        }
-
-        @Override
-        public FormComponent<?>[] getDependentFormComponents() {
-            return nameUriContainer.getComponents();
-        }
-
-        @Override
-        public void validate(final Form<?> form) {
-            String newUriName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
-            String newLocalizedName = nameUriContainer.getNameComponent().getValue();
-            try {
-                final Node parentNode = workflowDescriptorModel.getNode().getParent();
-
-                if (StringUtils.equals(newUriName, originalUriName)) {
-                    if (StringUtils.equals(newLocalizedName, originalTargetName)) {
-                        error(getString("error-same-names"));
-                    } else if (existedLocalizedName(parentNode, newLocalizedName)) {
-                        error(new StringResourceModel("error-localized-name-exists", RenameDocumentDialog.this,
-                                null, new Object[]{newLocalizedName}).getObject());
-                    }
-                } else if (parentNode.hasNode(newUriName)) {
-                    error(new StringResourceModel("error-sns-node-exists",
-                            RenameDocumentDialog.this, null, new Object[]{newUriName}).getObject());
-                } else if (!StringUtils.equals(newLocalizedName, originalTargetName) &&
-                            existedLocalizedName(parentNode, newLocalizedName)) {
-                    error(new StringResourceModel("error-localized-name-exists", RenameDocumentDialog.this,
-                            null, new Object[]{newLocalizedName}).getObject());
-                }
-            } catch (RepositoryException e) {
-                log.error("validation error", e);
-                error(getString("error-validation-names"));
-            }
-        }
     }
 }
