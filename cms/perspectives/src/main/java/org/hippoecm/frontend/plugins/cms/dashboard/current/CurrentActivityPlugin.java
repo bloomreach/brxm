@@ -29,7 +29,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -39,7 +38,6 @@ import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
 import org.hippoecm.frontend.plugins.standards.NodeFilter;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
@@ -157,14 +155,6 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
         @Override
         protected void populateItem(final Item item) {
-            // Add even/odd row css styling
-            item.add(CssClass.append(new AbstractReadOnlyModel() {
-                @Override
-                public Object getObject() {
-                    return (item.getIndex() % 2 == 1) ? "even" : "odd";
-                }
-            }));
-
             try {
                 final DocumentEvent documentEvent = new DocumentEvent((Node) item.getModelObject());
                 final IModel<String> nameModel = documentEvent.getName();
@@ -181,9 +171,8 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", target, label);
                     item.add(link);
                 } else {
-                    Label entryLabel = new Label("entry", label);
-                    entryLabel.setEscapeModelStrings(false);
-                    item.add(entryLabel);
+                    ActivityStreamItem asi = new ActivityStreamItem("entry", label);
+                    item.add(asi);
                 }
             } catch (RepositoryException e) {
                 log.error("Failed to create activity event item from log node", e);

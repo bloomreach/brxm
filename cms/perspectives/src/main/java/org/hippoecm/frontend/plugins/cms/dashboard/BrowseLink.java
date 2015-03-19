@@ -42,7 +42,6 @@ public class BrowseLink extends Panel {
         super(id);
 
         AjaxLink<Void> link = new AjaxLink<Void>("link") {
-            private static final long serialVersionUID = 1L;
 
             @SuppressWarnings("unchecked")
             @Override
@@ -68,7 +67,7 @@ public class BrowseLink extends Panel {
         linkLabel.setEscapeModelStrings(false);
         link.add(linkLabel);
 
-        link.add(new AttributeModifier("title", true, new PropertyModel(browseLinkTarget, "displayPath")));
+        link.add(new AttributeModifier("title", new PropertyModel(browseLinkTarget, "displayPath")));
     }
 
 

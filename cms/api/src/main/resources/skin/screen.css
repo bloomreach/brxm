@@ -1139,12 +1139,6 @@ table.hippo-defaultcontent td {
   position: absolute;
 }
 
-table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
-  display: table-row-group;
-  overflow-y: hidden;
-  height: 100%;
-}
-
 .hippo-revision-help {
   background-image: url("images/icons/dialog-information-32.png");
   background-repeat: no-repeat;

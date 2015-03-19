@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-currentactivity td,
 .hippo-todo td {
    padding: 4px;
 }
@@ -34,52 +33,12 @@
       font-size: 15px;
       font-style: normal;
       font-weight: normal;
-      padding: 11px 16px 12px 16px;
+      height: @dashboard-header-height;
+      line-height: @dashboard-header-height - 2;
+      padding: 0 16px;
       background-color: @dashboard-panel-header-bgcolor;
 
       .truncate();
-    }
-  }
-
-  .hippo-list-details {
-    width: 100%;
-
-    tr td {
-      padding: 6px;
-      color: #666666;
-    }
-
-    tr.even td {
-      background: #e5ebf0
-    }
-
-    tr td a {
-      color: black;
-      display: block;
-    }
-
-    tr td a:hover {
-      text-decoration: underline
-    }
-
-    .good {
-      color: #1c9e16;
-      font-weight: normal;
-    }
-
-    .bad {
-      color: #bb1d24;
-      font-weight: bold;
-    }
-
-    .strong {
-      color: #000000;
-      font-weight: bold;
-    }
-
-    .light {
-      color: #999999;
-      font-weight: lighter;
     }
   }
 }
@@ -141,4 +100,58 @@
       color: @link-color;
     }
   }
+}
+
+/* Activity stream */
+.hippo-perspective-dashboard .yui-layout-bd .center-body {
+  height: 100%;
+
+  > div {
+    height: ~"calc(100% - @{dashboard-header-height})";
+    overflow-y: auto;
+  }
+}
+
+.hippo-currentactivity {
+
+  width: 100%;
+
+  a {
+    display: block;
+    color: @text-color;
+    text-decoration: none;
+
+    > div {
+      padding: 14px 16px 14px 16px;
+
+      &:hover {
+        background-color: @lightest-shade;
+      }
+    }
+  }
+
+  tr:not(:last-child) {
+    border-bottom: 1px solid @light-gray;
+  }
+
+  .activity-stream-item {
+    padding: 14px 16px 14px 16px;
+  }
+
+  .good {
+    color: @success;
+  }
+
+  .bad {
+    color: @danger;
+  }
+
+  .strong {
+    font-weight: bold;
+  }
+
+  .light {
+    color: @dark-gray;
+  }
+
 }
