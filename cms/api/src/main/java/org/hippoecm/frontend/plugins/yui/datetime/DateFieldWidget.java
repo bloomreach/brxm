@@ -31,6 +31,7 @@ public class DateFieldWidget extends Panel {
     public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
         super(id, model);
         YuiDatePickerSettings settings = new YuiDatePickerSettings();
+        settings.setLanguage(getLocale().getLanguage());
         if (config.containsKey("datepicker")) {
             try {
                 PluginConfigMapper.populate(settings, config.getPluginConfig("datepicker"));

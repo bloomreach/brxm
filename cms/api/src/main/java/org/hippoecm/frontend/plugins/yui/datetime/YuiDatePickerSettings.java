@@ -25,6 +25,7 @@ public class YuiDatePickerSettings implements Serializable {
     public static final String DEFAULT_DATE_PATTERN = "M/d/yyyy";
 
     private String datePattern;
+    private String language;
     private boolean hideOnSelect = true;
     private boolean fireChangeEvent = true;
     private boolean close = true;
@@ -40,6 +41,14 @@ public class YuiDatePickerSettings implements Serializable {
 
     public void setDatePattern(String datePattern) {
         this.datePattern = datePattern;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public boolean isHideOnSelect() {

@@ -99,6 +99,7 @@ if (!YAHOO.hippo.DateTime) {
                 render = false;
                 if (this.picker === null || this.picker === undefined) {
                     this.picker = new YAHOO.widget.Calendar(this.config.dpJs, this.config.dp, this.config);
+                    this._localizeCalendar(this.picker, this.config.language);
                     this.picker.selectEvent.subscribe(this.selectHandler, this, true);
                     this.picker.hideEvent.subscribe(function() {this.picker.visible = false;}, this, true);
                     render = true;
@@ -276,6 +277,34 @@ if (!YAHOO.hippo.DateTime) {
             },
             
             update : function() {
+            },
+
+            _localizeCalendar : function(calendar, lang) {
+                var locale = {
+                    en: function(cfg) {
+                        // defaults to English
+                    },
+                    de: function(cfg) {
+                        cfg.setProperty("MONTHS_LONG",    ["Januar", "Februar", "M\u00E4rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]);
+                        cfg.setProperty("MONTHS_SHORT",   ["Jan", "Feb", "M\u00E4r", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["Son", "Mon", "Die", "Mit", "Don", "Fre", "Sam"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["S", "M", "D", "M", "D", "F", "S"]);
+                    },
+                    nl: function(cfg) {
+                        cfg.setProperty("MONTHS_LONG",    ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "october", "november", "december"]);
+                        cfg.setProperty("MONTHS_SHORT",   ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["maa", "din", "woe", "don", "vri", "zat", "zon"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["ma", "di", "wo", "do", "vr", "za", "zo"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["m", "d", "w", "d", "v", "z", "z"]);
+                    }
+                }[lang];
+
+                if (locale) {
+                    locale.apply(null, [calendar.cfg]);
+                }
             }
         };
 
