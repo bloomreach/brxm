@@ -54,6 +54,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
@@ -262,7 +263,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             nodeIcon.addFromResource(flagIcon);
 
             if (!hasLocale(hippoLocale.getName())) {
-                nodeIcon.addFromSprite(Icon.PLUS);
+                nodeIcon.addFromSprite(Icon.PLUS_SQUARE, IconSize.S, Position.BOTTOM_RIGHT);
             }
 
             return nodeIcon;

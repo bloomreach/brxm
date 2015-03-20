@@ -18,26 +18,36 @@ package org.hippoecm.frontend.skin;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 
-class IconUtil {
+public class IconUtil {
 
     private IconUtil() {
     }
 
-    static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
+    public static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
         final PackageResource resource = reference.getResource();
         final IResourceStream resourceStream = resource.getResourceStream();
         if (resourceStream == null) {
-            throw new NullPointerException("Failed to load SVG icon " + resource.toString());
+            throw new ResourceStreamNotFoundException("Cannot find SVG icon " + resource.toString());
         }
         String data = IOUtils.toString(resourceStream.getInputStream());
         //skip everything (comments, xml declaration and dtd definition) before <svg element
         return data.substring(data.indexOf("<svg "));
+    }
+
+    public static String cssClassesAsString(String... cssClasses) {
+        String result = ArrayUtils.isEmpty(cssClasses) ? StringUtils.EMPTY : " " + StringUtils.join(cssClasses, " ");
+        if (StringUtils.isBlank(result)) {
+            result = StringUtils.EMPTY;
+        }
+        return result;
     }
 
 }

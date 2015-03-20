@@ -114,16 +114,17 @@ public enum Icon {
     }
 
     /**
-     * Returns an inline svg representation of this icon that refers to the icon in the sprite.
-     * It is of the form <svg class="..css classes.."><use xlink:href="#spriteId"/></svg>
+     * Returns an inline svg representation of this icon that refers to the icon in the sprite. It is of the form <svg
+     * class="..css classes.."><use xlink:href="#spriteId"/></svg>
      *
-     * @param size the size of the icon.
-     *
+     * @param size       the size of the icon.
+     * @param cssClasses additional CSS classes to set on the SVG element.
      * @see Icon#getSpriteId(IconSize)
      * @see Icon#getCssClasses(IconSize)
      */
-    public String getSpriteReference(IconSize size) {
-        return "<svg class=\"" + getCssClasses(size) + "\"><use xlink:href=\"#" + getSpriteId(size) + "\" /></svg>";
+    public String getSpriteReference(IconSize size, String... cssClasses) {
+        return "<svg class=\"" + getCssClasses(size) + IconUtil.cssClassesAsString(cssClasses) + "\">" +
+                "<use xlink:href=\"#" + getSpriteId(size) + "\" /></svg>";
     }
 
     /**

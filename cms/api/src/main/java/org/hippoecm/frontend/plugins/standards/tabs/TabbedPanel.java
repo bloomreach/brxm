@@ -55,6 +55,7 @@ import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
@@ -293,9 +294,9 @@ public class TabbedPanel extends WebMarkupContainer {
             };
             container.add(closeLink);
 
-            final HippoIconStack closeIcon = new HippoIconStack("close-icon", IconSize.M);
+            final HippoIconStack closeIcon = new HippoIconStack("close-icon", IconSize.L);
             closeIcon.addFromSprite(Icon.BULLET);
-            closeIcon.addFromSprite(Icon.TIMES);
+            closeIcon.addFromSprite(Icon.TIMES, IconSize.M, Position.CENTER);
             closeLink.add(closeIcon);
         } else {
             EmptyPanel hidden = new EmptyPanel("close");

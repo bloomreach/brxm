@@ -62,38 +62,15 @@
         color: @tree-text-color;
 
         // Folder icon
-        .hi-folder,
-        .hi-folder-open {
-          position: relative;
-          top: 3px;
-          left: 0;
-          width: 15px;
-          height: 15px;
-        }
-
         .hi-folder {
           color: @tree-folder-color;
         }
 
         // Text label
-        svg + span {
-          padding-left: 1px;
-          padding-right: 4px;
+        > span + span {
+          display: inline-block;
           position: relative;
           top: 1px;
-        }
-
-        // Legacy icon
-        span.icon {
-          background-repeat: no-repeat;
-          background-position: 0 2px;
-        }
-
-        // Legacy text label
-        span + span {
-          display: inline-block;
-          padding-left: 1px;
-          padding-top: 4px;
         }
       }
 
@@ -101,6 +78,11 @@
         background: transparent;
         position: absolute;
         display: none;
+
+        // hide text below context-icon
+        svg {
+          background-color: @white;
+        }
       }
 
       .hippo-tree-dropdown-icon-container.container-selected {
@@ -131,11 +113,15 @@
       svg.hi {
         color: @white;
       }
+
+      .hippo-tree-dropdown-icon-container svg {
+        background-color: @primary;
+      }
     }
 
     .indent-line,   // tree whitespace
-    .indent-blank,  // tree whitespace
-    .icon {         // legacy icon
+    .indent-blank {  // tree whitespace
+    //.icon {         // legacy icon
       float: left;
       width: 18px;
       height: 1.5em;
@@ -146,9 +132,9 @@
     .junction,
     .junction-last,
     .corner {
-
       .hi {
         position: relative;
+        padding-top: 3px;
         color: @tree-junction-color;
       }
     }

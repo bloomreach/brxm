@@ -52,11 +52,12 @@ public enum CmsIcon {
      *
      * @see org.hippoecm.frontend.skin.CmsIcon#getCssClasses
      */
-    public String getInlineSvg(final IconSize size) {
+    public String getInlineSvg(final IconSize size, String... cssClasses) {
         final String iconPath = ICONS_DIR + getFileName() + ".svg";
         final PackageResourceReference reference = new PackageResourceReference(CmsIcon.class, iconPath);
         try {
-            return "<svg class=\"" + getCssClasses(size) + "\" " + StringUtils.substringAfter(IconUtil.svgAsString(reference), "<svg ");
+            return "<svg class=\"" + getCssClasses(size) + IconUtil.cssClassesAsString(cssClasses) + "\" "
+                    + StringUtils.substringAfter(IconUtil.svgAsString(reference), "<svg ");
         } catch (ResourceStreamNotFoundException|IOException e) {
             log.warn("Cannot find inline svg of {}", name(), e);
             return "";

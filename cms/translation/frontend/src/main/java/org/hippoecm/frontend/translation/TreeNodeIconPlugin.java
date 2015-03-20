@@ -26,6 +26,7 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.standards.tree.icon.AbstractJcrTreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.IconSize;
@@ -122,10 +123,10 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
 
         if (state.isNodeExpanded(treeNode)) {
             nodeIcon.addFromSprite(Icon.FOLDER_OPEN);
-            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.M, LocaleState.FOLDER_OPEN));
+            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.M, LocaleState.FOLDER_OPEN), Position.BOTTOM_RIGHT);
         } else {
             nodeIcon.addFromSprite(Icon.FOLDER);
-            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.M, LocaleState.FOLDER));
+            nodeIcon.addFromResource(hippoLocale.getIcon(IconSize.M, LocaleState.FOLDER), Position.BOTTOM_RIGHT);
         }
         return nodeIcon;
     }

@@ -65,6 +65,8 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -95,7 +97,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             protected Component getIcon(final String id) {
                 HippoIconStack iconStack = new HippoIconStack(id);
                 iconStack.addFromSprite(Icon.FILE);
-                iconStack.addFromSprite(Icon.UNLOCKED);
+                iconStack.addFromSprite(Icon.UNLOCKED, IconSize.S, Position.BOTTOM_RIGHT);
                 return iconStack;
             }
 

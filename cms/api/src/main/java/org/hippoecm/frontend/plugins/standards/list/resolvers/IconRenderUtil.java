@@ -86,9 +86,9 @@ public class IconRenderUtil {
         final String nodeTypeIconName = StringUtils.replace(type.getName(), ":", "-");
         final ResourceReference reference = BrowserStyle.getIconOrNull(nodeTypeIconName, size);
         if (reference != null) {
-            return HippoIcon.fromResource(id, reference);
+            return HippoIcon.fromResource(id, reference, size);
         }
-        return HippoIcon.fromSprite(id, defaultIcon);
+        return HippoIcon.fromSprite(id, defaultIcon, size);
     }
 
 }

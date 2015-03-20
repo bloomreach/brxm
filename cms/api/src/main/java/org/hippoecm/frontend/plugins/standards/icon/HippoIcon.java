@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.icon;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -30,12 +34,13 @@ import org.hippoecm.frontend.plugins.standards.image.CachedJcrImage;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 
-public class HippoIcon extends Panel {
+public abstract class HippoIcon extends Panel {
 
     private HippoIcon(final String id, IModel<?> model) {
         super(id, model);
@@ -193,27 +198,73 @@ public class HippoIcon extends Panel {
         throw new IllegalStateException("Expected HippoIcon's class to be either SpriteIcon, InlineSvgIcon or ResourceIcon, but got " + icon.getClass());
     }
 
-    private static class SpriteIcon extends HippoIcon {
+    /**
+     * Adds a CSS class to the top-level element of the rendered icon.
+     * @param cssClass the CSS class to add.
+     */
+    public abstract void addCssClass(final String cssClass);
+
+
+    private static abstract class BaseIcon<T> extends HippoIcon {
+
+        private List<String> extraCssClasses;
+
+        private BaseIcon(final String id, final IModel<T> model) {
+            super(id, model);
+            setRenderBodyOnly(true);
+        }
+
+        @Override
+        public void addCssClass(final String cssClass) {
+            if (extraCssClasses == null) {
+                extraCssClasses = new LinkedList<>();
+            }
+            extraCssClasses.add(cssClass);
+        }
+
+        protected String getExtraCssClasses() {
+            return extraCssClasses == null ? StringUtils.EMPTY : StringUtils.join(extraCssClasses, " ");
+        }
+
+        @SuppressWarnings("unchecked")
+        T getIcon() {
+            return (T) getDefaultModelObject();
+        }
+    }
+
+    private static abstract class BaseSvgIcon<T> extends BaseIcon<T> {
 
         private final IconSize size;
 
-        private SpriteIcon(final String id, final IModel<Icon> model, final IconSize size) {
+        private BaseSvgIcon(final String id, final IModel<T> model, final IconSize size) {
             super(id, model);
 
             this.size = size;
 
-            setRenderBodyOnly(true);
-
-            final WebMarkupContainer container = new WebMarkupContainer("spriteIcon") {
+            final WebMarkupContainer container = new WebMarkupContainer("iconContainer") {
                 @Override
                 protected void onComponentTag(final ComponentTag tag) {
                     final Response response = RequestCycle.get().getResponse();
-                    response.write(getIcon().getSpriteReference(size));
+                    final String svgMarkup = getSvgMarkup(size, getExtraCssClasses());
+                    response.write(svgMarkup);
                     super.onComponentTag(tag);
                 }
             };
             container.setRenderBodyOnly(true);
             add(container);
+        }
+
+        IconSize getSize() {
+            return size;
+        }
+
+        abstract String getSvgMarkup(final IconSize size, final String optionalCssClasses);
+    }
+
+    private static class SpriteIcon extends BaseSvgIcon<Icon> {
+
+        private SpriteIcon(final String id, final IModel<Icon> model, final IconSize size) {
+            super(id, model, size);
         }
 
         private SpriteIcon(final String id, final Icon icon, final IconSize size) {
@@ -221,35 +272,19 @@ public class HippoIcon extends Panel {
         }
 
         private SpriteIcon(final String newId, final SpriteIcon original) {
-            this(newId, original.getIcon(), original.size);
+            this(newId, original.getIcon(), original.getSize());
         }
 
-        private Icon getIcon() {
-            return (Icon) getDefaultModelObject();
+        @Override
+        String getSvgMarkup(final IconSize size, final String optionalCssClasses) {
+            return getIcon().getSpriteReference(size, optionalCssClasses);
         }
     }
 
-    private static class InlineSvgIcon extends HippoIcon {
-
-        private final IconSize size;
+    private static class InlineSvgIcon extends BaseSvgIcon<CmsIcon> {
 
         private InlineSvgIcon(final String id, final IModel<CmsIcon> model, final IconSize size) {
-            super(id, model);
-
-            this.size = size;
-
-            setRenderBodyOnly(true);
-
-            final WebMarkupContainer container = new WebMarkupContainer("inlineSvgIcon") {
-                @Override
-                protected void onComponentTag(final ComponentTag tag) {
-                    final Response response = RequestCycle.get().getResponse();
-                    response.write(getIcon().getInlineSvg(size));
-                    super.onComponentTag(tag);
-                }
-            };
-            container.setRenderBodyOnly(true);
-            add(container);
+            super(id, model, size);
         }
 
         private InlineSvgIcon(final String id, final CmsIcon icon, final IconSize size) {
@@ -257,15 +292,16 @@ public class HippoIcon extends Panel {
         }
 
         private InlineSvgIcon(final String newId, final InlineSvgIcon original) {
-            this(newId, original.getIcon(), original.size);
+            this(newId, original.getIcon(), original.getSize());
         }
 
-        private CmsIcon getIcon() {
-            return (CmsIcon) getDefaultModelObject();
+        @Override
+        String getSvgMarkup(final IconSize size, final String optionalCssClasses) {
+            return getIcon().getInlineSvg(size, optionalCssClasses);
         }
     }
 
-    private static class ResourceIcon extends HippoIcon {
+    private static class ResourceIcon extends BaseIcon<ResourceReference> {
 
         private static final String WICKET_ID_CONTAINER = "container";
         private static final String WICKET_ID_IMAGE = "image";
@@ -290,18 +326,22 @@ public class HippoIcon extends Panel {
         }
 
         private ResourceIcon(final String newId, final ResourceIcon original) {
-            this(newId, original.getReference(), original.width, original.height);
+            this(newId, original.getIcon(), original.width, original.height);
         }
 
         @Override
         protected void onBeforeRender() {
             Fragment fragment;
-            if (getReference().getExtension().equalsIgnoreCase("svg")) {
+
+            final ResourceReference icon = getIcon();
+            if (icon.getExtension().equalsIgnoreCase("svg")) {
                 fragment = new Fragment(WICKET_ID_CONTAINER, WICKET_FRAGMENT_SVG, this);
-                fragment.add(new InlineSvg(WICKET_ID_SVG, getReference()));
+                fragment.add(new InlineSvg(WICKET_ID_SVG, icon, getExtraCssClasses()));
             } else {
                 fragment = new Fragment (WICKET_ID_CONTAINER, WICKET_FRAGMENT_IMAGE, this);
-                Image image = new CachingImage(WICKET_ID_IMAGE, getReference());
+                final Image image = new CachingImage(WICKET_ID_IMAGE, icon);
+                image.add(CssClass.append(getExtraCssClasses()));
+
                 fragment.add(image);
 
                 if (width >= 0) {
@@ -317,19 +357,17 @@ public class HippoIcon extends Panel {
 
             super.onBeforeRender();
         }
-
-        private ResourceReference getReference() {
-            return (ResourceReference) getDefaultModelObject();
-        }
     }
 
-    private static class StreamIcon extends HippoIcon {
+    private static class StreamIcon extends BaseIcon<JcrResourceStream> {
 
         private StreamIcon(final String id, final IModel<JcrResourceStream> model, final int width, final int height) {
             super(id, model);
             setRenderBodyOnly(true);
 
-            add(new CachedJcrImage("streamIcon", model.getObject(), width, height));
+            final CachedJcrImage streamIcon = new CachedJcrImage("streamIcon", getIcon(), width, height);
+            streamIcon.add(CssClass.append(getExtraCssClasses()));
+            add(streamIcon);
         }
     }
 }

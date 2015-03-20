@@ -32,7 +32,7 @@ public class IconTest extends WicketTester {
         for (Icon icon : Icon.values()) {
             for (IconSize size : IconSize.values()) {
                 final Pattern iconId = Pattern.compile("<symbol[^>]+id=\"" + icon.getSpriteId(size) + "\">");
-                assertTrue("Sprite does not contain icon '" + icon + "'", iconId.matcher(sprite).find());
+                assertTrue("Sprite does not contain icon '" + icon + "' in size '" + size + "'", iconId.matcher(sprite).find());
             }
         }
     }
@@ -41,6 +41,16 @@ public class IconTest extends WicketTester {
     public void css_classes_are_set() {
         assertEquals("hi hi-floppy hi-m", Icon.FLOPPY.getCssClasses(IconSize.M));
         assertEquals("hi hi-arrow-up hi-xl", Icon.ARROW_UP.getCssClasses(IconSize.XL));
+    }
+
+    @Test
+    public void sprite_reference_is_rendered() {
+        assertEquals("<svg class=\"hi hi-bell hi-m\"><use xlink:href=\"#hi-bell-m\" /></svg>", Icon.BELL.getSpriteReference(IconSize.M));
+        assertEquals("<svg class=\"hi hi-bell hi-m\"><use xlink:href=\"#hi-bell-m\" /></svg>", Icon.BELL.getSpriteReference(IconSize.M, null));
+        assertEquals("<svg class=\"hi hi-bell hi-m\"><use xlink:href=\"#hi-bell-m\" /></svg>", Icon.BELL.getSpriteReference(IconSize.M, ""));
+        assertEquals("<svg class=\"hi hi-bell hi-m\"><use xlink:href=\"#hi-bell-m\" /></svg>", Icon.BELL.getSpriteReference(IconSize.M, " "));
+        assertEquals("<svg class=\"hi hi-bell hi-m foo\"><use xlink:href=\"#hi-bell-m\" /></svg>", Icon.BELL.getSpriteReference(IconSize.M, "foo"));
+        assertEquals("<svg class=\"hi hi-bell hi-m foo bar\"><use xlink:href=\"#hi-bell-m\" /></svg>", Icon.BELL.getSpriteReference(IconSize.M, "foo", "bar"));
     }
 
 }

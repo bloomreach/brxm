@@ -45,29 +45,66 @@
   position: relative;
   display: inline-block;
 
-  > .hi, img {
+  > .hi:not(:first-child),
+  > img:not(:first-child) {
     position: absolute;
-    top: 0;
-    left: 0;
   }
 }
 
+// Stack positions
+.hi-top {
+  top: 0;
+}
+
+.hi-vcenter {
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.hi-bottom {
+  bottom: 0;
+}
+
+.hi-left {
+  left: 0;
+}
+
+.hi-hcenter {
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hi-right {
+  right: 0;
+}
+
 // Shift stacked document state icons a bit
-.hi-stack > .hi-file-text {
-  + .hi-minus-circle,
-  + .hi-check-circle {
-    top: -2px;
+.hi-stack {
+  > .hi-file-text {
+    + .hi-minus-circle,
+    + .hi-check-circle {
+      top: -2px;
+      left: -2px;
+    }
+  }
+  > .hi-check-circle + .hi-exclamation-triangle {
     left: -2px;
   }
 }
 
 // Shift stacked translation flags a bit
-.hi-stack > .hi-folder + img,
-.hi-stack > .hi-folder-open + img {
-  top: auto;
-  left: auto;
-  bottom: -3px;
-  right: -1px;
+.hi-stack {
+  > .hi-folder + img,
+  > .hi-folder-open + img {
+    top: auto;
+    left: auto;
+    bottom: -1px;
+    right: -1px;
+  }
 }
 
 // Default colors of shapes in icons
@@ -89,47 +126,27 @@
   color: @black;
 }
 
-.hi-overlay-minus-circle {
-  .hi-shape-circle {
-    fill: @danger;
-  }
-  .hi-shape-stripe {
-    fill: @white;
-  }
+.hi-minus-circle {
+  fill: @danger;
+  color: @white;
 }
 
-.hi-overlay-check-circle {
-  .hi-shape-circle {
-    fill: @success;
-  }
-  .hi-shape-checkmark {
-    fill: @white;
-  }
+.hi-check-circle {
+  fill: @success;
+  color: @white;
 }
 
-.hi-overlay-check-circle-exclamation-triangle {
-  .hi-shape-circle {
-    fill: @success;
-  }
-  .hi-shape-checkmark {
-    fill: @white;
-  }
-  .hi-shape-triangle {
-    fill: @warning;
-  }
-  .hi-shape-triangle-border {
-    fill: darken(@warning, 30%);
-  }
-  .hi-shape-exclamation-mark {
-    fill: @darkest-shade;
-  }
+.hi-exclamation-triangle {
+  fill: @warning;
+  color: @darkest-shade;
 }
 
-// TODO: decide if we need a hi-add-configuration icon and remove this if so
-.hi-configuration + .hi-overlay-plus {
-  position: relative;
-  top: 1px;
-  left: 1px;
+// plus_square icon when stacked in lower-right and small
+.hi.hi-plus-square.hi-s.hi-bottom.hi-right:not(:first-child) {
+  width: 11px;
+  height: 11px;
+  bottom: -3px;
+  right: -4px;
 }
 
 // Enabled icons

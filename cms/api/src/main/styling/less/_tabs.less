@@ -76,13 +76,17 @@
         .hippo-tabs-documents-close {
           flex: none;
           text-decoration: none;
-          width: 16px;
-          height: 16px;
           margin-left: 2px;
           margin-right: 8px;
 
-          svg {
+          .hi-bullet {
             color: @document-tab-close-color;
+          }
+
+          .hi-times {
+            color: @white;
+            width: 12px;
+            height: 12px;
           }
         }
       }
@@ -91,10 +95,13 @@
         background-color: @document-tab-hover-bgcolor;
         cursor: pointer;
 
-        .hippo-tabs-documents-close svg {
+        .hippo-tabs-documents-close .hi-times {
           color: @document-tab-hover-close-color
         }
-        .hippo-tabs-documents-close:hover svg {
+        .hippo-tabs-documents-close:hover .hi-times {
+          color: @white;
+        }
+        .hippo-tabs-documents-close:hover .hi-bullet {
           color: @document-tab-close-hover-color;
         }
       }

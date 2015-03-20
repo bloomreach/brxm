@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -170,7 +170,7 @@
         var unit = this.getLayoutUnit(el);
         if (unit !== null) {
             var layoutRegion = YUID.getRegion(unit.get('element'));
-            var myY = YUID.getRegion(el).top + 4;
+            var myY = YUID.getRegion(el).top + 3;
             var myX = layoutRegion.right - 24;
             var layout = YUID.getAncestorByClassName(el, 'section-center');
 

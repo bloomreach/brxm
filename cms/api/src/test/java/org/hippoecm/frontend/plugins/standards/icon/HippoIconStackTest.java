@@ -13,22 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.skin;
+package org.hippoecm.frontend.plugins.standards.icon;
 
-import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
+public class HippoIconStackTest extends WicketTester {
 
-public class CmsIconTest extends WicketTester {
-
-    @Test
-    public void cms_contains_all_icons() {
-        for (CmsIcon icon : CmsIcon.values()) {
-            assertFalse("CMS does not contain icon '" + icon + "'",
-                    StringUtils.isEmpty(icon.getInlineSvg(IconSize.M)));
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void cannot_add_larger_icon_than_stack_size() {
+        HippoIconStack stack = new HippoIconStack("stack", IconSize.M);
+        stack.addFromSprite(Icon.EMPTY, IconSize.L);
     }
+
 }

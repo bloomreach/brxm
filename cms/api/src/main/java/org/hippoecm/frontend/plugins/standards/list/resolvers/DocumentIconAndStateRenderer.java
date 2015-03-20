@@ -24,8 +24,8 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
 
         private final HippoIconStack icon;
         private final StateIconAttributes stateIconAttributes;
-        private HippoIcon stateIcon;
+        private HippoIcon[] stateIcons = new HippoIcon[2];
 
         public Container(final String id, final Node node) {
             super(id);
@@ -68,9 +68,10 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
             final HippoIcon typeIcon = getTypeIcon("dummyId", node);
             icon.addCopyOf(typeIcon);
 
-            final CmsIcon stateIconOrNull = stateIconAttributes.getIcon();
+            final Icon[] stateIconOrNull = stateIconAttributes.getIcons();
             if (stateIconOrNull != null) {
-                this.stateIcon = icon.addInline(stateIconOrNull);
+                stateIcons[0] = icon.addFromSprite(stateIconOrNull[0], IconSize.M, Position.TOP_LEFT);
+                stateIcons[1] = icon.addFromSprite(stateIconOrNull[1], IconSize.M, Position.BOTTOM_LEFT);
             }
 
             add(icon);
@@ -95,9 +96,10 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
         }
 
         private void updateStateIcon() {
-            final CmsIcon newStateIcon = this.stateIconAttributes.getIcon();
-            if (newStateIcon != null) {
-                stateIcon = icon.replaceInline(stateIcon, newStateIcon);
+            final Icon[] newStateIcons = stateIconAttributes.getIcons();
+            if (newStateIcons != null) {
+                stateIcons[0] = icon.replaceFromSprite(stateIcons[0], newStateIcons[0], Position.TOP_LEFT);
+                stateIcons[1] = icon.replaceFromSprite(stateIcons[1], newStateIcons[1], Position.BOTTOM_LEFT);
             }
         }
 

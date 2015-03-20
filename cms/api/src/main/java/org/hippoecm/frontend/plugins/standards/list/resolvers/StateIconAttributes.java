@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -32,7 +31,6 @@ import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -56,7 +54,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private transient String cssClass;
     private transient String summary;
-    private transient CmsIcon icon;
+    private transient Icon[] icons;
 
     public StateIconAttributes(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
@@ -73,9 +71,9 @@ public class StateIconAttributes implements IObservable, IDetachable {
         return cssClass;
     }
 
-    public CmsIcon getIcon() {
+    public Icon[] getIcons() {
         load();
-        return icon;
+        return icons;
     }
 
     public void detach() {
@@ -83,7 +81,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
         summary = null;
         cssClass = null;
-        icon = null;
+        icons = null;
 
         nodeModel.detach();
         observable.detach();
@@ -146,21 +144,21 @@ public class StateIconAttributes implements IObservable, IDetachable {
                         HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
                         HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
 
-                icon = getStateIcon(state);
+                icons = getStateIcons(state);
 
                 observable.setTarget(new JcrNodeModel(document));
             }
         }
     }
 
-    private CmsIcon getStateIcon(final String state) {
+    private Icon[] getStateIcons(final String state) {
         switch(state) {
             case "new":
-                return CmsIcon.OVERLAY_MINUS_CIRCLE;
+                return new Icon[] {Icon.MINUS_CIRCLE, Icon.EMPTY};
             case "live":
-                return CmsIcon.OVERLAY_CHECK_CIRCLE;
+                return new Icon[] {Icon.CHECK_CIRCLE, Icon.EMPTY};
             case "changed":
-                return CmsIcon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE;
+                return new Icon[] {Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
             default:
                 log.info("No icon available for document state '{}'", state);
                 return null;
@@ -178,5 +176,6 @@ public class StateIconAttributes implements IObservable, IDetachable {
     public void stopObservation() {
         observable.stopObservation();
     }
+
 
 }

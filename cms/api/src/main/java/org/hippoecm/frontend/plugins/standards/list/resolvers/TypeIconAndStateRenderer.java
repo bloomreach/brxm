@@ -23,13 +23,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -58,30 +58,47 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
 
     private static class Container extends Panel implements IDetachable {
 
-        public static final String WICKET_ID_TYPE_ICON = "typeIcon";
-        public static final String WICKET_ID_STATE_ICON = "stateIcon";
+        private final HippoIconStack icon;
+        private HippoIcon[] stateIcons = new HippoIcon[2];
 
         public Container(final String id, final Node node) {
             super(id, new JcrNodeModel(node));
 
-            add(getTypeIcon(WICKET_ID_TYPE_ICON));
-            add(getStateIcon(WICKET_ID_STATE_ICON));
+            icon = new HippoIconStack("icon", IconSize.L);
+            if (isCompound()) {
+                icon.addFromSprite(Icon.FILE_COMPOUND, IconSize.L);
+            } else {
+                icon.addFromSprite(Icon.FILE, IconSize.L);
+            }
+
+            Icon[] newStateIcons = getStateIcons();
+            stateIcons[0] = icon.addFromSprite(newStateIcons[0], IconSize.M, Position.TOP_LEFT);
+            stateIcons[1] = icon.addFromSprite(newStateIcons[1], IconSize.M, Position.BOTTOM_LEFT);
+
+            add(icon);
         }
 
         @Override
         protected void onBeforeRender() {
             if (hasBeenRendered()) {
-                replace(getStateIcon(WICKET_ID_STATE_ICON));
+                Icon[] newIcons = getStateIcons();
+                stateIcons[0] = icon.replaceFromSprite(stateIcons[0], newIcons[0], Position.TOP_LEFT);
+                stateIcons[1] = icon.replaceFromSprite(stateIcons[1], newIcons[1], Position.BOTTOM_LEFT);
             }
             super.onBeforeRender();
         }
 
-        private Component getTypeIcon(final String id) {
-            if (isCompound()) {
-                return HippoIcon.fromSprite(id, Icon.FILE_COMPOUND, IconSize.L);
-            } else {
-                return HippoIcon.fromSprite(id, Icon.FILE, IconSize.L);
+        private Icon[] getStateIcons() {
+            final JcrNodeModel nodeModel = (JcrNodeModel)getDefaultModel();
+            final Node node = nodeModel.getNode();
+            if (node != null) {
+                try {
+                    return determineStateIcons(node);
+                } catch (RepositoryException e) {
+                    log.info("Unable to determine state icon of '{}'", JcrUtils.getNodePathQuietly(node), e);
+                }
             }
+            return new Icon[] {Icon.EMPTY, Icon.EMPTY};
         }
 
         private boolean isCompound() {
@@ -113,25 +130,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
             return false;
         }
 
-        private Component getStateIcon(final String id) {
-            final JcrNodeModel nodeModel = (JcrNodeModel)getDefaultModel();
-            final Node node = nodeModel.getNode();
-            if (node != null) {
-                try {
-                    CmsIcon stateIcon = determineStateIcon(node);
-                    if (stateIcon != null) {
-                        return HippoIcon.inline(id, stateIcon);
-                    }
-                } catch (RepositoryException e) {
-                    log.info("Unable to determine state icon of '{}'", JcrUtils.getNodePathQuietly(node), e);
-                }
-            }
-            EmptyPanel noIcon = new EmptyPanel(id);
-            noIcon.setRenderBodyOnly(true);
-            return noIcon;
-        }
-
-        private CmsIcon determineStateIcon(final Node node) throws RepositoryException {
+        private Icon[] determineStateIcons(final Node node) throws RepositoryException {
             if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 String prefix = node.getParent().getName();
                 NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
@@ -155,11 +154,11 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                 }
 
                 if (current == null && draft != null) {
-                    return CmsIcon.OVERLAY_MINUS_CIRCLE;
+                    return new Icon[] {Icon.MINUS_CIRCLE, Icon.EMPTY};
                 } else if (current != null && draft == null) {
-                    return CmsIcon.OVERLAY_CHECK_CIRCLE;
+                    return new Icon[] {Icon.CHECK_CIRCLE, Icon.EMPTY};
                 } else if (current != null && draft != null) {
-                    return CmsIcon.OVERLAY_CHECK_CIRCLE_EXCLAMATION_TRIANGLE;
+                    return new Icon[] {Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
                 }
             }
             return null;

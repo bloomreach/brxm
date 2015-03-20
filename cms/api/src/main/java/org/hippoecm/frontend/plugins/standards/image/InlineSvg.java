@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,31 @@ package org.hippoecm.frontend.plugins.standards.image;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.hippoecm.frontend.skin.IconUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InlineSvg extends WebComponent {
-    
+
     public static final Logger log = LoggerFactory.getLogger(InlineSvg.class);
-    
-    PackageResourceReference reference;
-    
-    public InlineSvg(final String id, final ResourceReference reference) {
+
+    final PackageResourceReference reference;
+    final String[] extraCssClasses;
+
+    public InlineSvg(final String id, final ResourceReference reference, final String... cssClasses) {
         super(id);
+
+        this.extraCssClasses = cssClasses;
+
         if (reference instanceof PackageResourceReference) {
-            this.reference = (PackageResourceReference) reference;   
+            this.reference = (PackageResourceReference) reference;
         } else {
             this.reference = new PackageResourceReference(reference.getKey());
         }
@@ -46,17 +51,15 @@ public class InlineSvg extends WebComponent {
     @Override
     protected void onComponentTag(final ComponentTag tag) {
         try {
-            final String svgData = svgAsString(reference);
+            String svgData = IconUtil.svgAsString(reference);
+            if (ArrayUtils.isNotEmpty(extraCssClasses)) {
+                svgData = "<svg class=\"" + IconUtil.cssClassesAsString(extraCssClasses) + "\" " + svgData.substring(5);
+            }
             RequestCycle.get().getResponse().write(svgData);
         } catch (IOException | ResourceStreamNotFoundException e) {
             log.error(String.format("Failed to load svg image[%s]", reference.getName()), e);
         }
         super.onComponentTag(tag);
     }
-    
-    public static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
-        String data = IOUtils.toString(reference.getResource().getResourceStream().getInputStream());
-        //skip everything (comments, xml declaration and dtd definition) before <svg element
-        return data.substring(data.indexOf("<svg "));
-    }
+
 }

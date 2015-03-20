@@ -235,38 +235,21 @@
       background-color: @doclist-row-selected-bgcolor;
       color: @doclist-row-selected-color;
 
-      svg {
+      .hi-stack > svg:first-child {
         color: @doclist-row-selected-color;
-        fill: @doclist-row-selected-color;
       }
 
-      .hi-overlay-minus-circle {
-        .hi-shape-circle {
+      .doclisting-icon {
+        .hi-minus-circle {
+          color: @primary;
           fill: @doclist-row-selected-color;
         }
-        .hi-shape-stripe {
-          fill: @doclist-row-selected-bgcolor;
-        }
-      }
-
-      .hi-overlay-check-circle {
-        .hi-shape-circle {
+        .hi-check-circle {
+          color: @primary;
           fill: @doclist-row-selected-color;
         }
-        .hi-shape-checkmark {
-          fill: @doclist-row-selected-bgcolor;
-        }
-      }
-
-      .hi-overlay-check-circle-exclamation-triangle {
-        .hi-shape-circle,
-        .hi-shape-triangle,
-        .hi-shape-triangle-border {
-          fill: @doclist-row-selected-color;
-        }
-        .hi-shape-checkmark,
-        .hi-shape-exclamation-mark {
-          fill: @doclist-row-selected-bgcolor;
+        .hi-exclamation-triangle {
+          fill: @white;
         }
       }
 
