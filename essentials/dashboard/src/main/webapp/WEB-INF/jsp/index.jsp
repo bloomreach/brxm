@@ -48,6 +48,7 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body id="container"  ng-cloak>
+<div class="hidden" ng-include="'${pageContext.request.contextPath}/components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
 <essentials-notifier ng-show="feedbackMessages.length" messages="feedbackMessages" ng-class="{'log-visible':feedbackMessages.length && addLogClass}"></essentials-notifier>
 
 
@@ -67,9 +68,9 @@
       </p>
       <div class="navbar-text hippo-navbar-icons">
         <a href="#/build" class="navbar-link">
-          <span class="fa fa-refresh"></span>
+          <hippo-icon name="refresh"></hippo-icon>
           <span class="hidden-xs">Rebuild</span>
-          <span class="fa fa-bell-o" ng-show="NEEDS_REBUILD"></span>
+          <hippo-icon name="bell" class="hi-color-danger" ng-show="NEEDS_REBUILD"></hippo-icon>
         </a>
         <a href="#" ng-click="showMessages($event)" ng-show="feedbackMessages.length && showMessagesNavbarLink">
           <span class="fa fa-info-circle"></span><span class="badge badge-info">{{feedbackMessages.length}}</span>

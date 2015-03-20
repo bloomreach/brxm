@@ -24,22 +24,19 @@
         <p class="feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
            <span ng-show="$index == 0" class="fa" ng-class="{'fa-chevron-right': !archiveOpen, 'fa-chevron-down': archiveOpen}"></span>
            <span ng-show="$index != 0" style="margin-left: 13px;"></span>
-           {{message.date}} - <span class="fa fa-fw"
-                                    ng-class="{
-                                        'fa-check-square-o': message.type === 'info',
-                                        'fa-flag'          : message.type === 'warning',
-                                        'fa-exclamation'   : message.type === 'error'
-                                    }"></span><span ng-bind-html="message.message"></span>
-
+           {{message.date}} - <span ng-switch="message.type">
+               <hippo-icon ng-switch-when="info" name="check-square" class="hi-fill-primary"></hippo-icon>
+               <!-- TODO: name not yet known... fa-flag <hippo-icon ng-switch-when="warning" name="???"></hippo-icon>-->
+               <hippo-icon ng-switch-when="error" name="exclamation"></hippo-icon>
+           </span><span ng-bind-html="message.message"></span>
         </p>
         <div class="log-messages ng-hide" ng-show="archiveOpen">
             <p ng-repeat="message in archiveMessages">
-                {{message.date}} - <span class="fa fa-fw"
-                                         ng-class="{
-                                             'fa-check-square-o': message.type === 'info',
-                                             'fa-flag'          : message.type === 'warning',
-                                             'fa-exclamation'   : message.type === 'error'
-                                         }"></span><span ng-bind-html="message.message"></span>
+                {{message.date}} - <span ng-switch="message.type">
+                    <hippo-icon ng-switch-when="info" name="check-square" class="hi-fill-primary"></hippo-icon>
+                    <!-- TODO: name not yet known... fa-flag <hippo-icon ng-switch-when="warning" name="???"></hippo-icon>-->
+                    <hippo-icon ng-switch-when="error" name="exclamation"></hippo-icon>
+                </span><span ng-bind-html="message.message"></span>
             </p>
         </div>
     </div>
