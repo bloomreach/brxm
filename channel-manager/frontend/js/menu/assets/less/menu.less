@@ -62,13 +62,14 @@
   padding-right: 0;
 }
 #form-panel {
-  height: 100%;
   border-left: 1px solid #E3E3E3;
   background-color: #f4f4f4;
-  padding-bottom: 10px;
+  height: 100%;
 }
 
 .picker-container #form-panel{
+  height: ~"calc(100% - 51px)";
+  overflow-y: auto;
   background: @white;
   padding-left: 0;
   padding-right: 0;
@@ -108,12 +109,16 @@
   padding: 2px;
 }
 
+.footer-container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
 #panel-wrap {
+  flex: 1;
   height: 100%;
-  /* Negative indent footer by its height */
-  margin: 0 auto -51px;
-  /* Pad bottom by footer height */
-  padding: 0 0 51px;
+  overflow: hidden;
 }
 
 form h4.page-header {
@@ -218,6 +223,7 @@ h3.lead.item-title {
 }
 
 .document-picker {
+  margin-bottom: 0;
   thead {
     background: #f4f4f4;
   }
