@@ -70,13 +70,22 @@
                    data-tooltip-trigger="show"
                    data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
-            <i class="fa form-control-feedback"
-               data-ng-show="form.title.$dirty"
-               data-ng-class="{
-                'fa-spinner fa-spin': EditMenuItemCtrl.isSaving.title,
-                'fa-check': form.title.$valid && EditMenuItemCtrl.isSaved.title,
-                'fa-times': form.title.$invalid || !EditMenuItemCtrl.isSaved.title
-               }"></i>
+            <span class="form-control-feedback" data-ng-show="form.title.$dirty">
+              <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title"
+                          name="spinner"
+                          size="m">
+              </hippo-icon>
+              <hippo-icon ng-if="form.title.$valid && EditMenuItemCtrl.isSaved.title"
+                          name="check-circle"
+                          size="m"
+                          class="hi-color-white hi-fill-success">
+              </hippo-icon>
+              <hippo-icon ng-if="form.title.$invalid || !EditMenuItemCtrl.isSaved.title"
+                          name="minus-circle"
+                          size="m"
+                          class="hi-color-white hi-fill-danger">
+              </hippo-icon>
+            </span>
         </div>
 
         <div class="form-group has-feedback" id="hippo.channel.menu.menuItem.edit.linkType">
@@ -121,23 +130,35 @@
                        data-ng-model="MenuItemCtrl.selectedMenuItem.sitemapLink"
                        data-show-focus="EditMenuItemCtrl.linkToFocus == 'sitemapLink'"
                        data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)">
-                <i class="fa form-control-feedback"
-                   data-ng-show="form.sitemapItem.$dirty"
-                   data-ng-class="{
-                'fa-spinner fa-spin': EditMenuItemCtrl.isSaving.link,
-                'fa-check': form.sitemapItem.$valid && EditMenuItemCtrl.isSaved.link,
-                'fa-times': form.sitemapItem.$invalid || !EditMenuItemCtrl.isSaved.link
-               }"></i>
+                
+              <span class="form-control-feedback" data-ng-show="form.sitemapItem.$dirty">
+                  <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
+                              name="spinner"
+                              size="m">
+                  </hippo-icon>
+                  <hippo-icon ng-if="form.sitemapItem.$valid && EditMenuItemCtrl.isSaved.link"
+                              name="check-circle"
+                              size="m"
+                              class="hi-color-white hi-fill-success">
+                  </hippo-icon>
+                  <hippo-icon ng-if="form.sitemapItem.$invalid || !EditMenuItemCtrl.isSaved.link"
+                              name="minus-circle"
+                              size="m"
+                              class="hi-color-white hi-fill-danger">
+                  </hippo-icon>
+                </span>
                 <span class="input-group-btn">
                     <div data-tooltip
-                         data-placement="left"
-                         data-title="{{ tooltip }}"
-                         data-ng-mouseenter="showTooltip()"
-                         data-ng-mouseleave="hideTooltip()">
-                      <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.openPicker()">Pick</button>
-                      <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.showPage()">
-                            <i class="fa fa-external-link"></i>
-                      </button>
+                          data-placement="left"
+                          data-title="{{ tooltip }}"
+                          data-ng-mouseenter="showTooltip()"
+                          data-ng-mouseleave="hideTooltip()">
+                        <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.openPicker()">
+                          Pick
+                        </button>
+                        <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.showPage()">
+                          <hippo-icon name="link" size="m"></hippo-icon>
+                        </button>
                     </div>
                 </span>
             </div>
@@ -160,21 +181,34 @@
                        data-tooltip-trigger="show"
                        data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
-                <i class="fa form-control-feedback"
-                   data-ng-show="form.url.$dirty"
-                   data-ng-class="{
-                    'fa-spinner fa-spin': EditMenuItemCtrl.isSaving.link,
-                    'fa-check': form.url.$valid && EditMenuItemCtrl.isSaved.link,
-                    'fa-times': form.url.$invalid || !EditMenuItemCtrl.isSaved.link
-                   }"></i>
+                <span class="form-control-feedback" data-ng-show="form.url.$dirty">
+                    <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
+                                name="spinner"
+                                size="m">
+                    </hippo-icon>
+                    <hippo-icon ng-if="form.url.$valid && EditMenuItemCtrl.isSaved.link"
+                                name="check-circle"
+                                size="m"
+                                class="hi-color-white hi-fill-success">
+                    </hippo-icon>
+                    <hippo-icon ng-if="form.url.$invalid || !EditMenuItemCtrl.isSaved.link"
+                                name="minus-circle"
+                                size="m"
+                                class="hi-color-white hi-fill-danger">
+                    </hippo-icon>
+                </span>
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="EditMenuItemCtrl.externalLink.show()"><i class="fa fa-external-link"></i></button>
+                    <button class="btn btn-default" type="button" ng-click="EditMenuItemCtrl.externalLink.show()">
+                      <hippo-icon name="link" size="m"></hippo-icon>
+                    </button>
                 </span>
             </div>
         </div>
 
         <hr />
 
-        <button type="button" class="btn btn-default" data-ng-click="EditMenuItemCtrl.remove.show()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
+        <button type="button" class="btn btn-default" data-ng-click="EditMenuItemCtrl.remove.show()">
+          <hippo-icon name="trash" size="m"></hippo-icon> {{ 'DELETE_MENU_ITEM' | translate }}
+        </button>
     </form>
 </div>

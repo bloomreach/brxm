@@ -33,10 +33,7 @@
       </div>
       <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl as MenuCtrl">
         <button type="button" class="btn btn-default btn-block" data-ng-click="MenuCtrl.addItem()" data-ng-disabled="MenuCtrl.isSaving.newItem">
-          <i class="fa" data-ng-class="{
-                                        'fa-spinner fa-spin': MenuCtrl.isSaving.newItem,
-                                        'fa-plus': !MenuCtrl.isSaving.newItem
-                                        }"></i>
+          <hippo-icon name="{{isSaving.newItem ? 'spinner' : 'plus'}}" size="m"></hippo-icon>
           {{ 'ADD_MENU_ITEM' | translate }}
         </button>
       </div>
