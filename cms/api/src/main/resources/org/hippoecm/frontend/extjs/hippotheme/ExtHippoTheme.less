@@ -1504,13 +1504,17 @@ a.x-menu-item {
     background-color: @modal-bgcolor;
   }
 
-  // Give the east resize handler the same width as the visible border
-  // to prevent it from overlapping with the scrollbar. The other resize handler
+  // Give the east and south resize handlers the same width as the visible border
+  // to prevent it from overlapping with the scrollbar. The other resize handlers
   // are slightly wider/higher than the visible border, but that just improves
   // usability because the border is easier to 'grab' that way.
   .x-resizable-handle-east,
   .x-resizable-handle-southeast {
     width: @modal-border-width;
+  }
+  .x-resizable-handle-southeast,
+  .x-resizable-handle-south {
+    height: @modal-border-width;
   }
 
   .x-window-bc .x-window-footer {
