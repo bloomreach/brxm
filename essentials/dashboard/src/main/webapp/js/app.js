@@ -235,49 +235,8 @@
                 });
                 return retVal;
             };
-        }).filter('splitString', function () {
-            return function (input, splitOn, idx) {
-                if (input) {
-                    var split = input.split(splitOn);
-                    if (split.length >= idx) {
-                        return split[idx];
-                    }
-                }
-                return "";
-            };
-        })
-        .filter('startsWith', function () {
-            return function (inputCollection, inputString) {
-                var collection = [];
-                if (inputCollection && inputString) {
-                    for (var i = 0; i < inputCollection.length; i++) {
-                        if (inputCollection[i].value.slice(0, inputString.length) == inputString) {
-                            collection.push(inputCollection[i]);
-                        }
-                    }
-                    return collection;
-                }
-                return collection;
-            };
         })
 
-        //############################################
-        // BROADCAST SERVICE
-        //############################################
-        .factory('eventBroadcastService', function ($rootScope) {
-            var broadcaster = {};
-            broadcaster.event = '';
-            broadcaster.eventName = '';
-            broadcaster.broadcast = function (eventName, event) {
-                this.event = event;
-                this.eventName = eventName;
-                this.broadcastItem();
-            };
-            broadcaster.broadcastItem = function () {
-                $rootScope.$broadcast(this.eventName);
-            };
-            return broadcaster;
-        })
         .service('modalService', function ($modal) {
             /**
              *
