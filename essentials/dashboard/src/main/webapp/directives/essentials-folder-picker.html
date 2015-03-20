@@ -31,7 +31,7 @@
                     <a class="btn btn-link btn-xs" data-nodrag
                        data-ng-click="toggleItem()"
                        data-ng-hide="childNodes().length === 0">
-                        <span class="fa" data-ng-class="{'fa-folder-open': !collapsed, 'fa-folder': collapsed}"></span>
+                        <hippo-icon name="{{collapsed ? 'folder' : 'folder-open'}}" size="m"></hippo-icon>
                     </a>
                     {{ item.title }}
                 </div>

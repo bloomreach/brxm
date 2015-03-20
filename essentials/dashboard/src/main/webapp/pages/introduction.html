@@ -67,7 +67,7 @@
             </div>
 
             <div class="form-control-static">
-                <span class="fa" ng-class="{'fa-chevron-right': !showAdvanced, 'fa-chevron-down': showAdvanced}"></span>
+                <hippo-icon name="{{showAdvanced ? 'chevron-down' : 'chevron-right'}}" size=""></hippo-icon>
                 <a href="#" ng-click="toggleAdvanced($event)">Advanced project settings</a>
             </div>
             <div ng-show="showAdvanced" class="panel panel-default">
