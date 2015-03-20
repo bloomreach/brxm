@@ -82,14 +82,14 @@ describe('Edit Menu Item Controller', function () {
         $httpBackend.flush();
     }
 
-    xit('should select parent after delete if deleted item has no siblings left', function () {
+    it('should select parent after delete if deleted item has no siblings left', function () {
 
         var controller = createController();
 
-        console.log('$scope', $scope);
-
-        $scope.MenuItemCtrl.selectedMenuItem = {
-            id: 'child1'
+        $scope.MenuItemCtrl = {
+            selectedMenuItem: {
+                id: 'child1'
+            }
         };
 
         $scope.EditMenuItemCtrl.remove.execute();

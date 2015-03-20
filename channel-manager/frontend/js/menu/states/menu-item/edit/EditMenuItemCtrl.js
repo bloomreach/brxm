@@ -45,7 +45,7 @@
                 var EditMenuItemCtrl = this,
                     savedMenuItem;
 
-                if (!$scope.MenuItemCtrl.selectedMenuItem || $stateParams.menuItemId !== $scope.MenuItemCtrl.selectedMenuItem.id) {
+                if ($scope.MenuItemCtrl && (!$scope.MenuItemCtrl.selectedMenuItem || $stateParams.menuItemId !== $scope.MenuItemCtrl.selectedMenuItem.id)) {
                     MenuService.getMenuItem($stateParams.menuItemId).then(function (item) {
                         $scope.MenuItemCtrl.selectedMenuItem = item;
                     });
@@ -149,7 +149,9 @@
                     EditMenuItemCtrl.fieldFeedbackMessage = {};
                 };
 
-                savedMenuItem = angular.copy($scope.MenuItemCtrl.selectedMenuItem);
+                if($scope.MenuItemCtrl) {
+                    savedMenuItem = angular.copy($scope.MenuItemCtrl.selectedMenuItem);
+                }
 
                 function shouldSaveSelectedMenuItemProperty() {
                     EditMenuItemCtrl.dismissFeedback();
