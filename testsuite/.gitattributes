@@ -59,6 +59,7 @@ components/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchPar
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/container/HttpsSchemeExampleValve.java -text
+components/src/main/java/org/hippoecm/hst/demo/events/ChannelManagerEventListener.java -text
 components/src/main/java/org/hippoecm/hst/demo/integration/spring/NewsController.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text

@@ -24,4 +24,7 @@
   <!-- register/unregister BasicPersistedWorkflowEventListener -->
   <bean class="org.hippoecm.hst.demo.events.BasicPersistedWorkflowEventListener" init-method="register" destroy-method="unregister"/>
 
+  <!-- register/unregister ChannelManagerEventListener -->
+  <bean class="org.hippoecm.hst.demo.events.ChannelManagerEventListener" init-method="register" destroy-method="unregister"/>
+
 </beans>
