@@ -112,7 +112,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             @Override
             public String getObject() {
                 if (user.isPasswordExpired()) {
-                    return getString("password-is-expired");
+                    return translate("password-is-expired");
                 } else if (isPasswordAboutToExpire(user)) {
                     final long expirationTime = user.getPasswordExpirationTime();
                     final Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
