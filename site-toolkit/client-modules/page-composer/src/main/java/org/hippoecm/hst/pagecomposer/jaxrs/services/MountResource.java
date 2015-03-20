@@ -62,12 +62,17 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource implements ComponentManagerAware {
     private static Logger log = LoggerFactory.getLogger(MountResource.class);
+
+    private static final String PUBLISH_ACTION = "publishMount";
 
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
@@ -280,6 +285,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
             componentManager.publishEvent(event);
 
             HstConfigurationUtils.persistChanges(session);
+
+            postPublicationEvent(liveConfigurationPath);
+
             log.info("Site is published");
             return ok("Site is published");
         } catch (RepositoryException e) {
@@ -571,6 +579,21 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                 new String[]{mainConfigNodeNames.toString(), fromConfig, toConfig});
     }
 
+    private void postPublicationEvent(final String liveConfigurationPath) {
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+
+        if (eventBus != null) {
+            try {
+                Session session = getPageComposerContextService().getRequestContext().getSession();
+                String currentUserId = session.getUserID();
+                final HippoEvent event = new HippoEvent("channel-manager");
+                event.category("channel-manager").action(PUBLISH_ACTION).user(currentUserId).set("liveConfigurationPath", liveConfigurationPath);
+                eventBus.post(event);
+            } catch (RepositoryException e) {
+                log.warn("Failed to get the current jcr session ID from request context.", e);
+            }
+        }
+    }
 
     private void discardChannelChanges(final Session session,
                                        final List<String> userIds) throws RepositoryException {
