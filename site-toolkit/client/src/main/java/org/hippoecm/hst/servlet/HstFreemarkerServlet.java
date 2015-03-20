@@ -158,7 +158,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
      * load a template from a classpath or repository
      */
     @Override
-    protected String requestUrlToTemplatePath(HttpServletRequest request) {
+    protected String requestUrlToTemplatePath(HttpServletRequest request) throws ServletException {
         String path = super.requestUrlToTemplatePath(request);
         if (request.getAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL) != null) {
             path = request.getAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL) + path;
