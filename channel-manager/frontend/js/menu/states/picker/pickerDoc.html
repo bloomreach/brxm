@@ -27,9 +27,9 @@
         <td class="status">
           <div class="hi-stack">
             <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" class="file-type" size="l"></hippo-icon>
-            <hippo-icon ng-if="item.state == 'live' || item.state == 'changed'" name="check-circle" class="state-live" size="m" location="foreground" position="top left"></hippo-icon>
-            <hippo-icon ng-if="item.state == 'new'" name="minus-circle" class="state-new" size="m" location="foreground" position="top left"></hippo-icon>
-            <hippo-icon ng-if="item.state == 'changed'" name="exclamation-triangle" class="state-changed" size="m" location="foreground" position="bottom left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'live' || item.state == 'changed'" name="check-circle" class="state-live" size="m" position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'new'" name="minus-circle" class="state-new" size="m" position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'changed'" name="exclamation-triangle" class="state-changed" size="m" position="bottom left"></hippo-icon>
           </div>
 
         </td>
