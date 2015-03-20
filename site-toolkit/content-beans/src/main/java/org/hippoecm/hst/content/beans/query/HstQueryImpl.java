@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,9 +51,9 @@ public class HstQueryImpl implements HstQuery {
     private int limit = DEFAULT_LIMIT;
     private int offset = -1;
     private BaseFilter filter;
-    private List<Node> scopes = new ArrayList<Node>();
-    private List<Node> excludeScopes = new ArrayList<Node>();
-    private List<String> orderByList = new ArrayList<String>();
+    private final List<Node> scopes = new ArrayList<>();
+    private final List<Node> excludeScopes = new ArrayList<>();
+    private final List<String> orderByList = new ArrayList<>();
     private NodeTypeFilter nodeTypeFilter;
     private IsNodeTypeFilter isNodeTypeFilter;
     private Session session;
@@ -70,7 +70,7 @@ public class HstQueryImpl implements HstQuery {
     public HstQueryImpl(Session session, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
         this.session = session;
         this.objectConverter = objectConverter;
-        if(scope != null) {
+        if (scope != null) {
             scopes.add(scope);
         }
         this.nodeTypeFilter = nodeTypeFilter; 
@@ -153,7 +153,7 @@ public class HstQueryImpl implements HstQuery {
 
     @Override
     public String getQueryAsString(boolean skipDefaultOrderBy) throws QueryException{
-        if(this.scopes == null || this.scopes.size() == 0) {
+        if(scopes.size() == 0) {
             throw new QueryException("There must be a scope for a search");
         }
         
@@ -192,9 +192,9 @@ public class HstQueryImpl implements HstQuery {
         // exclude frozen nodes if the version history would be indexed
         query.append(" and not(@jcr:primaryType='nt:frozenNode')");
 
-        if(this.excludeScopes != null && !this.excludeScopes.isEmpty()) {
+        if(!excludeScopes.isEmpty()) {
             StringBuilder excludeExpr = new StringBuilder(80);
-            for(Node excludeScope : this.excludeScopes) {
+            for(Node excludeScope : excludeScopes) {
                 String scopeUUID = null;
                 try {
                     if(excludeScope.isNodeType(HippoNodeType.NT_FACETSELECT)) {
@@ -232,7 +232,7 @@ public class HstQueryImpl implements HstQuery {
             }
          }
         
-        if(this.nodeTypeFilter != null && (jcrExpression = this.nodeTypeFilter.getJcrExpression()) != null) {
+        if(nodeTypeFilter != null && (jcrExpression = nodeTypeFilter.getJcrExpression()) != null) {
             if(query.length() == 0) {
                 query.append(jcrExpression);
             } else {
@@ -306,7 +306,7 @@ public class HstQueryImpl implements HstQuery {
             }
 
             QueryResult queryResult = jcrQuery.execute();
-            return new HstQueryResultImpl(this.objectConverter, queryResult);
+            return new HstQueryResultImpl(objectConverter, queryResult);
         } catch (InvalidQueryException e) {
             throw new QueryException(e.getMessage(), e);
         } catch (LoginException e) {
@@ -323,12 +323,10 @@ public class HstQueryImpl implements HstQuery {
     }
 
     private QueryManager getQueryManager() throws RepositoryException, QueryException {
-        for(Node scope : scopes) {
-            if(scope != null) {
-                return scope.getSession().getWorkspace().getQueryManager();
-            }
+        if (scopes.isEmpty()) {
+            throw new QueryException("Unable to get QueryManager");
         }
-        throw new QueryException("Unable to get QueryManager");
+        return scopes.get(0).getSession().getWorkspace().getQueryManager();
     }
 
     @Override
@@ -336,24 +334,18 @@ public class HstQueryImpl implements HstQuery {
         for(HippoBean scope : scopes) {
             if(scope != null) {
                 Node newScope = scope.getNode();
-                removeNodeFromList(newScope, this.excludeScopes);
+                removeNodeFromList(newScope, excludeScopes);
                 this.scopes.add(newScope);
-            } else {
-                this.scopes.add(null);
             }
         }
     }
 
     @Override
     public void addScopes(Node[] scopes) {
-       for(Node scope : scopes) {
-           if(scope != null) {
-               removeNodeFromList(scope, this.excludeScopes);
-               this.scopes.add(scope);
-           } else {
-               this.scopes.add(null);
-           }
-       }
+        for (Node scope : scopes) {
+            removeNodeFromList(scope, excludeScopes);
+            this.scopes.add(scope);
+        }
     }
 
     @Override
@@ -367,23 +359,21 @@ public class HstQueryImpl implements HstQuery {
             if(scope != null) {
                 Node scopeNode = scope.getNode();
                 removeNodeFromList(scopeNode, this.scopes);
-                this.excludeScopes.add(scopeNode);
+                excludeScopes.add(scopeNode);
             }
         }
     }
 
     @Override
     public void excludeScopes(Node[] scopes) {
-        for(Node scope : scopes) {
-            if(scope != null) {
-                removeNodeFromList(scope, this.scopes);
-                this.excludeScopes.add(scope);
-            } 
+        for (Node scope : scopes) {
+            removeNodeFromList(scope, this.scopes);
+            excludeScopes.add(scope);
         }
     }
     
     private void removeNodeFromList(Node remove, List<Node> fromList) {
-        List<Node> removeItems = new ArrayList<Node>();
+        List<Node> removeItems = new ArrayList<>();
         for(Node node : fromList) {
             try {
                 if(node.isSame(remove)) {
