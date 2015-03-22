@@ -2,23 +2,43 @@
 Prerequisites
 -------------
 
- - Java 7
- - Maven 3.x
- - Node Package Manager (http://npmjs.org)
+ - Java 8
+ - Maven 3.0.5 or higher
+ - Node.js 0.12 (http://nodejs.org)
  - Grunt (http://gruntjs.org)
  - Bower (http://bower.io)
  - Git (http://git-scm.org) - needed by Bower
 
-Grunt and Bower can be installed with Node Package Manager:
+Grunt and Bower can be installed with Node Package Manager (provided and installed with Node.js):
 
  $ sudo npm install -g grunt-cli bower
+
+-----------------------------
+Linux-specific instructions
+-----------------------------
+
+For installing Node.js 0.12 on Linux via package manager, see:
+
+  https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
+
+or (as currently linked to):
+
+  https://nodesource.com/blog/nodejs-v012-iojs-and-the-nodesource-linux-repositories
+
+  Note for Linux Mint users:
+    The referenced script from the above blog post might fail trying to uninstall the ppa:chris-lea/node.js repository!
+    See also: https://bugs.launchpad.net/linuxmint/+bug/1341617
+    In that case, first manually remove that repository configuration like this:
+
+       $ sudo rm /etc/apt/sources.list.d/chris-lea-node_js-*.list
 
 -----------------------------
 Windows-specific instructions
 -----------------------------
 
-You can automate the installation of NPM using Chocolatey package manager:
-https://chocolatey.org/
+You can automate the installation of Node.js using Chocolatey package manager:
+
+    https://chocolatey.org/
 
 The package for Node.js can be installed using:
 
