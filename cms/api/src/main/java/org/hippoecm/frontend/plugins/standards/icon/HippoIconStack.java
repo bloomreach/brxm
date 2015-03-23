@@ -114,14 +114,14 @@ public class HippoIconStack extends Panel {
         return inlineIcon;
     }
 
-    public HippoIconStack addFromResource(final ResourceReference reference) {
+    public HippoIcon addFromResource(final ResourceReference reference) {
         return addFromResource(reference, null);
     }
 
-    public HippoIconStack addFromResource(final ResourceReference reference, final Position position) {
+    public HippoIcon addFromResource(final ResourceReference reference, final Position position) {
         final HippoIcon resourceIcon = HippoIcon.fromResource(icons.newChildId(), reference);
         addIcon(resourceIcon, position);
-        return this;
+        return resourceIcon;
     }
 
     public HippoIcon addCopyOf(final HippoIcon icon) {
