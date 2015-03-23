@@ -89,11 +89,6 @@ engine/wdbp-error-log.txt
 engine/workspaces
 /hippo-repository.iml
 /jpox.log
-ldap/*.iml
-ldap/.classpath
-ldap/.project
-ldap/.settings
-ldap/target
 /log4j.log
 modules/*.iml
 modules/*.tmp
