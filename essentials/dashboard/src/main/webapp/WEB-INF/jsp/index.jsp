@@ -82,20 +82,20 @@
       <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">
-            <hippo-icon name="shopping-cart" size="m" class="hi-color-primary"></hippo-icon>
+            <hippo-icon name="shopping-cart" size="m"></hippo-icon>
            Library
           </a>
         </li>
         <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
           <a href="#/installed-features">
-            <hippo-icon name="arrow-fat-down-circle" size="m" class="success"></hippo-icon>
+            <hippo-icon name="arrow-fat-down-circle" size="m"></hippo-icon>
             Installed features&nbsp;&nbsp;
             <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-danger" style="position:fixed">{{TOTAL_NEEDS_ATTENTION}}</span>
           </a>
         </li>
         <li ng-class="{true:'active', false:''}[isPageSelected('#/tools')]">
           <a href="#/tools">
-            <hippo-icon name="wrench" size="m" class="hi-color-info"></hippo-icon>
+            <hippo-icon name="wrench" size="m"></hippo-icon>
               Tools
           </a>
         </li>

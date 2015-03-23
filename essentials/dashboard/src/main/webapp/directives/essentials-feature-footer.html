@@ -21,9 +21,9 @@
       <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
     </span>
 
-    <span class="feature-control pull-left" ng-show="hasMessages">
+    <span class="feature-control pull-left" ng-show="hasMessages" ng-click="toggleChanges($event)">
       <hippo-icon name="{{showChanges ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
-      <a href="#" ng-click="toggleChanges($event)">Changes made by this feature</a>
+      <a href="#">Changes made by this feature</a>
     </span>
   </div>
   <div class="log-messages" ng-show="showChanges">

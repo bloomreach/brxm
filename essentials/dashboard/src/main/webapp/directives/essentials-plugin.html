@@ -45,9 +45,9 @@
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short">
                     <p ng-bind-html="plugin.introduction"></p>
-                    <p ng-show="plugin.description || plugin.imageUrls.length">
+                    <p ng-show="plugin.description || plugin.imageUrls.length" data-ng-click="toggleDescription($event)">
                       <hippo-icon name="{{showDescription ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
-                      <a href="#" data-ng-click="toggleDescription($event)">Read more</a>
+                      <a href="#">Read more</a>
                     </p>
                 </div>
                 <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription && plugin.description">
