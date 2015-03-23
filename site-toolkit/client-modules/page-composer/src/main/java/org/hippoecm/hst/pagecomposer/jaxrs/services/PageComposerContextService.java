@@ -51,7 +51,8 @@ public class PageComposerContextService {
 
     public Node getRequestConfigNodeById(final String id, final String expectedNodeType, final Session session) throws RepositoryException {
         if (id == null) {
-            log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
+            throw new IllegalStateException(String.format("Cannot get requestConfigNode because no attr '%s' on request. Return null",
+                    CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER));
         }
         try {
             Node configNode = session.getNodeByIdentifier(id);
