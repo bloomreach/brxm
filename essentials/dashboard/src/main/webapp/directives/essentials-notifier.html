@@ -21,7 +21,7 @@
             <span class="sr-only">Close</span>
         </button>
 
-        <p class="feedbackanimation" ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
+        <p ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
             <hippo-icon name="{{archiveOpen ? 'chevron-down' : 'chevron-right'}}" size=""></hippo-icon>
             <span ng-show="$index != 0" style="margin-left: 13px;"></span>
             {{message.date}} -

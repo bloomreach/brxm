@@ -31,7 +31,6 @@
   <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-ui-router/release/angular-ui-router.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.min.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-animate/angular-animate.js?v=${project.version}"></script>
 
   <%-- HIPPO THEME DEPS --%>
   <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js?v=${project.version}"></script>
@@ -173,17 +172,6 @@
 
   div.chosen-container[style] {
     min-width: 100px;
-  }
-
-  .feedbackanimation.ng-enter {
-    -webkit-animation: feedback_sequence 1s linear;
-    -moz-transition: feedback_sequence 1s linear;
-    -o-transition: feedback_sequence 1s linear;
-    animation: feedback_sequence 1s linear;
-  }
-
-  .feedbackanimation.ng-enter.ng-enter-active {
-    opacity: 1;
   }
 
   @-webkit-keyframes feedback_sequence {
