@@ -180,11 +180,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-ldap</artifactId>
-        <version>${hippo.repository.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-modules</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
