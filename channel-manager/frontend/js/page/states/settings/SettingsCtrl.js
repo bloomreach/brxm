@@ -121,7 +121,7 @@
                     $scope.isConfirmationVisible = false;
 
                     PageService.deletePage($scope.page.id).then(function () {
-                        ContainerService.showPage('/');
+                        ContainerService.showPage($scope.mountPath);
                     }, setErrorFeedback);
                 };
 
