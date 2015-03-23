@@ -52,7 +52,7 @@
   // Left panel: goto documents, password and create document plugins
   .hippo-perspective-dashboard-shortcuts {
     padding: 16px;
-    
+
     .goto-block {
       text-decoration: none;
       padding: 10px 16px 10px 16px;
@@ -61,46 +61,46 @@
       margin-bottom: 8px;
       display: flex;
       align-items: center;
-    
+
       &:hover {
         background-color: @lighter-shade;
       }
-    
+
       svg {
         color: @text-color;
         flex-shrink: 0;
       }
-    
+
       span {
         padding-left: 8px;
         font-size: 14px;
         color: @text-color;
       }
     }
-    
+
     .password-expiration-label {
       display: inline-block;
       padding-top: 8px;
       padding-bottom: 6px;
       vertical-align: middle;
     }
-    
+
     .quick-link {
       display: inline-block;
       padding-top: 7px;
       padding-bottom: 7px;
       text-decoration: none;
       line-height: 13px;
-    
+
       &:hover span {
         text-decoration: underline;
       }
-    
+
       svg {
         vertical-align: middle;
         color: @link-color;
       }
-    
+
       span {
         vertical-align: middle;
         color: @link-color;
@@ -111,46 +111,50 @@
   // Middle and right panels: activity stream and todolist
   .hippo-currentactivity,
   .hippo-todo {
-    
+
     width: 100%;
-    
+
     a {
       display: block;
       color: @text-color;
       text-decoration: none;
-    
+
       > div {
         padding: 14px 16px 14px 16px;
-    
+
         &:hover {
           background-color: @lightest-shade;
         }
       }
     }
-    
+
     tr:not(:last-child) {
       border-bottom: 1px solid @light-gray;
     }
-    
+
     .activity-stream-item {
       padding: 14px 16px 14px 16px;
     }
-    
+
     .good {
       color: @success;
     }
-    
+
     .bad {
       color: @danger;
     }
-    
+
     .strong {
       font-weight: bold;
     }
-    
+
     .light {
       color: @dark-gray;
     }
+
+    .browse-link-label > div {
+      padding-top: 4px;
+    }
   }
-    
+
 }
