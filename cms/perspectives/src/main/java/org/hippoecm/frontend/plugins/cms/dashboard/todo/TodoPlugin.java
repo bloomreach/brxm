@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,17 +27,15 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TodoPlugin extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TodoPlugin.class);
 
@@ -56,7 +54,6 @@ public class TodoPlugin extends RenderPlugin {
     }
 
     private class TodoView extends RefreshingView {
-        private static final long serialVersionUID = 1L;
 
         public TodoView(String id, IModel model) {
             super(id, model);
@@ -71,9 +68,10 @@ public class TodoPlugin extends RenderPlugin {
         @Override
         protected void populateItem(final Item item) {
             try {
-                Node node = (Node) item.getModelObject();
-                BrowseLinkTarget target = new BrowseLinkTarget(node.getPath());
-                Request request = new Request(item.getModel(), this);
+                @SuppressWarnings("unchecked")
+                final IModel<Node> nodeModel = item.getModel();
+                final BrowseLinkTarget target = new BrowseLinkTarget(nodeModel.getObject().getPath());
+                final Request request = new Request(nodeModel, this);
                 item.add(new TodoLink(getPluginContext(), getPluginConfig(), "link", target,
                         new PropertyModel<>(request, "username"),
                         new PropertyModel<>(request, "localType")));
@@ -93,10 +91,12 @@ public class TodoPlugin extends RenderPlugin {
             this.container = container;
         }
 
+        @SuppressWarnings("unused")
         public String getLocalType() {
             try {
                 Node node = nodeModel.getObject();
-                return new StringResourceModel(node.getProperty("hippostdpubwf:type").getString(), container, null).getString();
+                String type = node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE).getString();
+                return container.getString(type);
             } catch (RepositoryException ignored) {
             }
             return null;
@@ -105,7 +105,7 @@ public class TodoPlugin extends RenderPlugin {
         public String getUsername() {
             try {
                 Node node = nodeModel.getObject();
-                return node.getProperty("hippostdpubwf:username").getString();
+                return node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME).getString();
             } catch (RepositoryException ignored) {
             }
             return null;
