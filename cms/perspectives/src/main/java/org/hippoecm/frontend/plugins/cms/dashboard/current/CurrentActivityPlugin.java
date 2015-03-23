@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,6 @@ import java.util.NoSuchElementException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -47,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
+
     private static final int DEFAULT_LIMIT = 15;
 
     private final int limit;
@@ -93,7 +93,6 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
     }
 
     private class CurrentActivityView extends RefreshingView {
-        private static final long serialVersionUID = 1L;
 
         private final DateFormat dateFormat;
 
@@ -171,8 +170,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", target, label);
                     item.add(link);
                 } else {
-                    ActivityStreamItem asi = new ActivityStreamItem("entry", label);
-                    item.add(asi);
+                    item.add(new ActivityStreamItem("entry", label));
                 }
             } catch (RepositoryException e) {
                 log.error("Failed to create activity event item from log node", e);
