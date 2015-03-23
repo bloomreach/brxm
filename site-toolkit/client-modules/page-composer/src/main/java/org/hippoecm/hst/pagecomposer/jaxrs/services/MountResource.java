@@ -37,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -62,12 +63,19 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource implements ComponentManagerAware {
     private static Logger log = LoggerFactory.getLogger(MountResource.class);
+
+    private static final String PUBLISH_ACTION = "publishMount";
+
+    private static final String DISCARD_ACTION = "discardMount";
 
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
@@ -280,6 +288,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
             componentManager.publishEvent(event);
 
             HstConfigurationUtils.persistChanges(session);
+
+            postChannelEvent(PUBLISH_ACTION, liveConfigurationPath, previewConfigurationPath, userIds);
+
             log.info("Site is published");
             return ok("Site is published");
         } catch (RepositoryException e) {
@@ -457,6 +468,8 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
 
             HstConfigurationUtils.persistChanges(session);
 
+            postChannelEvent(DISCARD_ACTION, liveConfigurationPath, previewConfigurationPath, userIds);
+
             log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
             return ok("Changes of user '"+session.getUserID()+"' for site '"+editingPreviewSite.getName()+"' are discarded.");
         } catch (RepositoryException e) {
@@ -571,7 +584,6 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                 new String[]{mainConfigNodeNames.toString(), fromConfig, toConfig});
     }
 
-
     private void discardChannelChanges(final Session session,
                                        final List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
@@ -638,6 +650,25 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
         }
         channelFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
         JcrUtils.copy(session, fromConfig, toConfig);
+    }
+
+    private void postChannelEvent(final String action, final String liveConfigurationPath, final String previewConfigurationPath, final List<String> contributors) {
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+
+        if (eventBus != null) {
+            try {
+                Session session = getPageComposerContextService().getRequestContext().getSession();
+                String currentUserId = session.getUserID();
+                final HippoEvent event = new HippoEvent("channel-manager");
+                event.category("channel-manager").action(action).user(currentUserId)
+                    .set("liveConfigurationPath", liveConfigurationPath)
+                    .set("previewConfigurationPath", previewConfigurationPath)
+                    .set("contributors", StringUtils.join(contributors, ','));
+                eventBus.post(event);
+            } catch (RepositoryException e) {
+                log.warn("Failed to get the current jcr session ID from request context.", e);
+            }
+        }
     }
 
 }
