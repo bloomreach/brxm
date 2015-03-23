@@ -88,7 +88,7 @@
         </li>
         <li ng-show="INSTALLED_FEATURES > 0" ng-class="{true:'active', false:''}[isPageSelected('#/installed-features')]">
           <a href="#/installed-features">
-            <hippo-icon name="arrow-fat-down-circle" size="m"></hippo-icon>
+            <hippo-icon name="arrow-fat-down-circle" size="m" class="hi-fill-white"></hippo-icon>
             Installed features&nbsp;&nbsp;
             <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-danger" style="position:fixed">{{TOTAL_NEEDS_ATTENTION}}</span>
           </a>
