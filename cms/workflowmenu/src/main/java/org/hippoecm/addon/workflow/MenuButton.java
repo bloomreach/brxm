@@ -35,6 +35,7 @@ import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 
 class MenuButton extends Panel implements IContextMenu {
@@ -115,7 +116,7 @@ class MenuButton extends Panel implements IContextMenu {
             link.add(label);
         }
 
-        link.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN));
+        link.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN, IconSize.S));
     }
 
     protected IContextMenuManager getContextMenuManager() {
