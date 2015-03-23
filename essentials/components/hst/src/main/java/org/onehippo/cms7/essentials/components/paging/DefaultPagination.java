@@ -43,7 +43,7 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
     /**
      * Returns empty immutable collection
      *
-     * @param <E> return type
+     * @param <T> return type
      * @return empty, immutable list
      */
     @SuppressWarnings({"unchecked"})

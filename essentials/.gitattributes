@@ -664,6 +664,7 @@ plugins/faq/src/main/resources/instructions/folderoptions/new-faq-list-document-
 plugins/faq/src/main/resources/instructions/folderoptions/new-faq-list-document.xml -text
 plugins/faq/src/main/resources/instructions/freemarker/faq-main.ftl -text
 plugins/faq/src/main/resources/instructions/freemarker/faqlist-main.ftl -text
+plugins/faq/src/main/resources/instructions/freemarker/faqlist-main/faqlist-main-styled.ftl -text
 plugins/faq/src/main/resources/instructions/hst/faq-component-catalog-item.xml -text
 plugins/faq/src/main/resources/instructions/hst/faq-faq-template-freemarker.xml -text
 plugins/faq/src/main/resources/instructions/hst/faq-faq-template-jsp.xml -text
