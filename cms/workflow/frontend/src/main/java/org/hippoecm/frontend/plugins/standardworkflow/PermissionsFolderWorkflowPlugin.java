@@ -64,12 +64,10 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
-import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,10 +93,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Component getIcon(final String id) {
-                HippoIconStack iconStack = new HippoIconStack(id);
-                iconStack.addFromSprite(Icon.FILE);
-                iconStack.addFromSprite(Icon.UNLOCKED, IconSize.S, Position.BOTTOM_RIGHT);
-                return iconStack;
+                return HippoIcon.inline(id, CmsIcon.FILE_UNLOCKED);
             }
 
             @Override
