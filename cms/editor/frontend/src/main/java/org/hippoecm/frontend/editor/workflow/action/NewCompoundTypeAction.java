@@ -28,8 +28,8 @@ import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateCompoundTypeDialog;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Workflow;
 
@@ -82,7 +82,7 @@ public class NewCompoundTypeAction extends Action {
     protected Component getIcon(final String id) {
         HippoIconStack iconStack = new HippoIconStack(id, IconSize.M);
         iconStack.addFromSprite(Icon.FILE_COMPOUND);
-        iconStack.addFromSprite(Icon.PLUS_SQUARE, IconSize.S, Position.BOTTOM_RIGHT);
+        iconStack.addFromCms(CmsIcon.OVERLAY_PLUS, IconSize.M, HippoIconStack.Position.TOP_LEFT);
         return iconStack;
     }
 }

@@ -1097,9 +1097,7 @@ api/src/main/resources/skin/images/warning.png -text svneol=unset#image/png
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
 api/src/main/styling/images/icons/floppy-times-circle.svg -text
-api/src/main/styling/images/icons/overlay-check-circle-exclamation-triangle.svg -text
-api/src/main/styling/images/icons/overlay-check-circle.svg -text
-api/src/main/styling/images/icons/overlay-minus-circle.svg -text
+api/src/main/styling/images/icons/overlay-plus.svg -text
 api/src/main/styling/images/icons/sort-ascending.svg -text
 api/src/main/styling/images/icons/sort-descending.svg -text
 api/src/main/styling/images/icons/stateorder-down.svg -text

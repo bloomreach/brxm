@@ -45,6 +45,10 @@
   position: relative;
   display: inline-block;
 
+  > .hi {
+    vertical-align: baseline;
+  }
+
   > .hi:not(:first-child),
   > img:not(:first-child) {
     position: absolute;
@@ -127,12 +131,10 @@
   color: @darkest-shade;
 }
 
-// plus_square icon when stacked in lower-right and small
-.hi.hi-plus-square.hi-s.hi-bottom.hi-right:not(:first-child) {
-  width: 11px;
-  height: 11px;
-  bottom: -3px;
-  right: -4px;
+.hi-overlay-plus {
+  .hi-shape-plus {
+    fill: @white;
+  }
 }
 
 // Enabled icons

@@ -34,9 +34,9 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -63,7 +63,7 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected Component getIcon(final String id) {
                 final HippoIconStack icon = new HippoIconStack(id, IconSize.M);
                 icon.addFromSprite(Icon.GEAR);
-                icon.addFromSprite(Icon.PLUS_SQUARE, IconSize.S, Position.BOTTOM_RIGHT);
+                icon.addFromCms(CmsIcon.OVERLAY_PLUS, IconSize.M, HippoIconStack.Position.TOP_LEFT);
                 return icon;
             }
 

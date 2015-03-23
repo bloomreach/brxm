@@ -39,6 +39,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeLocator;
@@ -125,7 +126,7 @@ public class NewDocumentTypeAction extends Action {
     protected Component getIcon(final String id) {
         HippoIconStack iconStack = new HippoIconStack(id, IconSize.M);
         iconStack.addFromSprite(Icon.FILE);
-        iconStack.addFromSprite(Icon.PLUS_SQUARE, IconSize.S, Position.BOTTOM_RIGHT);
+        iconStack.addFromCms(CmsIcon.OVERLAY_PLUS, IconSize.M, Position.TOP_LEFT);
         return iconStack;
     }
 }

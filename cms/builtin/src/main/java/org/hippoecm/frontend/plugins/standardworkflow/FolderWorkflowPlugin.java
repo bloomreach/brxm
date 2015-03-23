@@ -64,6 +64,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
@@ -315,7 +316,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             // Fallback to default icon
                             HippoIconStack defaultIcon = new HippoIconStack(id, IconSize.M);
                             defaultIcon.addFromSprite(category.endsWith("-folder") ? Icon.FOLDER : Icon.FILE);
-                            defaultIcon.addFromSprite(Icon.PLUS_SQUARE, IconSize.S, Position.BOTTOM_RIGHT);
+                            defaultIcon.addFromCms(CmsIcon.OVERLAY_PLUS, IconSize.M, Position.TOP_LEFT);
                             return defaultIcon;
                         }
 
