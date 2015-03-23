@@ -49,7 +49,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
@@ -198,7 +198,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 managedValidation = true;
                 if (!field.isMultiple()) {
-                    add(CssClass.append(filter));
+                    add(new CssClassAppender(filter));
                 }
             }
         }
@@ -450,7 +450,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     };
                     listener.setValid(itemRenderer.isValid());
                     addValidationFilter(item, listener);
-                    item.add(CssClass.append(listener));
+                    item.add(new CssClassAppender(listener));
                 }
                 C model = (C) itemRenderer.getModel();
                 populateEditItem(item, model);
@@ -572,5 +572,25 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     public int getNumberOfItems() {
         return provider.size();
+    }
+
+    /**
+     * Returns a key consisting of the super's cluster (tab) based translator id, plus the document type.
+     * The document type is added to not get translations mixed up in the Wicket cache for fields of different document
+     * types with the same name (e.g. title).
+     */
+    @Override
+    public String getResourceProviderKey() {
+        String key = super.getResourceProviderKey();
+        if (helper.getDocumentType() != null) {
+            key = (key == null) ? "" : (key + ".");
+            key += helper.getDocumentType().getName();
+            if (log.isDebugEnabled()) {
+                log.debug("For field {}/{}, enriched resource provider key with doc type, resulting in {}",
+                        new String[]{helper.getDocumentType().getName(),
+                                (helper.getField() != null) ? helper.getField().getName() : "[unknown]", key});
+            }
+        }
+        return key;
     }
 }

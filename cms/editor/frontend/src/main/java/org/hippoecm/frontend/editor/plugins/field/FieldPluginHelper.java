@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory;
  */
 public class FieldPluginHelper implements IDetachable {
 
-
     private static final long serialVersionUID = 3671506410576836811L;
 
     private static final Logger log = LoggerFactory.getLogger(FieldPluginHelper.class);
 
-    private IPluginContext context;
-    private IPluginConfig config;
+    private final IPluginContext context;
+    private final IPluginConfig config;
 
+    private ITypeDescriptor documentType;
     private IFieldDescriptor field;
     private ValidationModel validationModel;
 
@@ -54,25 +54,23 @@ public class FieldPluginHelper implements IDetachable {
         this.config = config;
 
         String typeName = config.getString(AbstractFieldPlugin.TYPE);
-
         String fieldName = config.getString(AbstractFieldPlugin.FIELD);
         if (fieldName == null) {
             log.error("No field was specified in the configuration");
         } else {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
-                ITypeDescriptor type;
                 try {
                     if (typeName == null) {
-                        type = engine.getType(getNodeModel());
+                        documentType = engine.getType(getNodeModel());
                     } else {
-                        type = engine.getType(typeName);
+                        documentType = engine.getType(typeName);
                     }
-                    field = type.getField(fieldName);
+                    field = documentType.getField(fieldName);
                     if (field == null) {
-                        log.warn("Could not find field with name " + fieldName + " in " + type.getName() + "; has the field been added without committing the type? Does the namespace uri correspond with the uri set in the CND?");
+                        log.warn("Could not find field with name " + fieldName + " in " + documentType.getName() + "; has the field been added without committing the document type?");
                     } else if ("*".equals(field.getPath())) {
-                        log.warn("Field path * is not supported, field name is " + fieldName + " in type " + type.getName());
+                        log.warn("Field path * is not supported, field name is " + fieldName + " in document type " + documentType.getName());
                         field = null;
                     } else if (field.getPath() == null) {
                         log.error("No path available for field " + fieldName);
@@ -92,6 +90,10 @@ public class FieldPluginHelper implements IDetachable {
         } else {
             log.info("No validation service available for " + fieldName);
         }
+    }
+
+    public ITypeDescriptor getDocumentType() {
+        return documentType;
     }
 
     public IFieldDescriptor getField() {
