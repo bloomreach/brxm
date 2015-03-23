@@ -94,6 +94,7 @@ public enum Icon {
     STEP_FORWARD,
     THUMBNAILS,
     TIMES,
+    TIMES_CIRCLE,
     TRANSLATE,
     TYPE,
     UNLINK,

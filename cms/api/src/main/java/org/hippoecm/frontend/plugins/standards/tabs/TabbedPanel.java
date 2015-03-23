@@ -294,9 +294,7 @@ public class TabbedPanel extends WebMarkupContainer {
             };
             container.add(closeLink);
 
-            final HippoIconStack closeIcon = new HippoIconStack("close-icon", IconSize.L);
-            closeIcon.addFromSprite(Icon.BULLET);
-            closeIcon.addFromSprite(Icon.TIMES, IconSize.M, Position.CENTER);
+            final HippoIcon closeIcon = HippoIcon.fromSprite("close-icon", Icon.TIMES_CIRCLE);
             closeLink.add(closeIcon);
         } else {
             EmptyPanel hidden = new EmptyPanel("close");

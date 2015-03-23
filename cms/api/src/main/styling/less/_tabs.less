@@ -79,14 +79,9 @@
           margin-left: 2px;
           margin-right: 8px;
 
-          .hi-bullet {
-            color: @document-tab-close-color;
-          }
-
-          .hi-times {
+          .hi-times-circle {
             color: @white;
-            width: 12px;
-            height: 12px;
+            fill: @document-tab-close-color;
           }
         }
       }
@@ -95,14 +90,11 @@
         background-color: @document-tab-hover-bgcolor;
         cursor: pointer;
 
-        .hippo-tabs-documents-close .hi-times {
-          color: @document-tab-hover-close-color
+        .hippo-tabs-documents-close .hi-times-circle {
+          fill: @document-tab-hover-close-color;
         }
-        .hippo-tabs-documents-close:hover .hi-times {
-          color: @white;
-        }
-        .hippo-tabs-documents-close:hover .hi-bullet {
-          color: @document-tab-close-hover-color;
+        .hippo-tabs-documents-close:hover .hi-times-circle {
+          fill: @document-tab-close-hover-color;
         }
       }
 
