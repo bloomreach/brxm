@@ -18,7 +18,7 @@
 
     <div hippo-confirmation-dialog
          class="confirmation-dialog"
-         data-confirm-icon="trash-o"
+         data-confirm-icon="trash"
          data-perform-confirmation="confirmDelete()"
          data-perform-cancel="cancelDelete()"
          data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
@@ -61,13 +61,11 @@
                 <span class="form-control-feedback">
                   <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.title.$dirty && form.title.$invalid"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
             </div>
@@ -93,13 +91,11 @@
                 <span class="form-control-feedback">
                   <hippo-icon ng-if="form.url.$dirty && form.url.$valid"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.url.$dirty && form.url.$invalid"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
             </div>

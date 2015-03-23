@@ -18,7 +18,7 @@
     <!-- START confirmation dialogs -->
     <div class="overlay" data-ng-show="remove.isVisible || external.isVisible">&#160;</div>
     <div hippo-confirmation-dialog
-         confirm-icon="trash-o"
+         confirm-icon="trash"
          data-show="remove.isVisible"
          data-perform-confirmation="remove.execute()"
          data-perform-cancel="remove.cancel()"
@@ -77,13 +77,11 @@
               </hippo-icon>
               <hippo-icon ng-if="form.title.$valid && isSaved.title"
                           name="check-circle"
-                          size="m"
-                          class="hi-color-white hi-fill-success">
+                          size="m">
               </hippo-icon>
               <hippo-icon ng-if="form.title.$invalid || !isSaved.title"
                           name="minus-circle"
-                          size="m"
-                          class="hi-color-white hi-fill-danger">
+                          size="m">
               </hippo-icon>
             </span>
         </div>
@@ -137,13 +135,11 @@
                   </hippo-icon>
                   <hippo-icon ng-if="form.sitemapItem.$valid && isSaved.link"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.sitemapItem.$invalid || !isSaved.link"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
                 <span class="input-group-btn">
@@ -154,7 +150,7 @@
                           data-ng-mouseleave="hideTooltip()">
                         <button class="btn btn-default" type="button"
                                 data-ng-click="showPage()">
-                            <hippo-icon name="link" size="m"></hippo-icon>
+                            <hippo-icon name="external-link" size="m"></hippo-icon>
                         </button>
                     </div>
                 </span>
@@ -185,18 +181,16 @@
                   </hippo-icon>
                   <hippo-icon ng-if="form.url.$valid && isSaved.link"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.url.$invalid || !isSaved.link"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button" ng-click="external.show()">
-                      <hippo-icon name="link" size="m"></hippo-icon>
+                      <hippo-icon name="external-link" size="m"></hippo-icon>
                     </button>
                 </span>
             </div>
