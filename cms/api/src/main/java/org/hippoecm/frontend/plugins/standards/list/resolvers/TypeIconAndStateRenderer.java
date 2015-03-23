@@ -38,8 +38,10 @@ import org.slf4j.LoggerFactory;
 
 public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
 
-    private static final TypeIconAndStateRenderer INSTANCE = new TypeIconAndStateRenderer();
     private static final Logger log = LoggerFactory.getLogger(TypeIconAndStateRenderer.class);
+
+    private static final TypeIconAndStateRenderer INSTANCE = new TypeIconAndStateRenderer();
+    private static final Icon[] EMPTY_STATE_ICONS = new Icon[]{Icon.EMPTY, Icon.EMPTY};
 
     private TypeIconAndStateRenderer() {
     }
@@ -65,11 +67,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
             super(id, new JcrNodeModel(node));
 
             icon = new HippoIconStack("icon", IconSize.L);
-            if (isCompound()) {
-                icon.addFromSprite(Icon.FILE_COMPOUND, IconSize.L);
-            } else {
-                icon.addFromSprite(Icon.FILE, IconSize.L);
-            }
+            icon.addFromSprite(isCompound() ? Icon.FILE_COMPOUND : Icon.FILE, IconSize.L);
 
             Icon[] newStateIcons = getStateIcons();
             stateIcons[0] = icon.addFromSprite(newStateIcons[0], IconSize.M, Position.TOP_LEFT);
@@ -98,7 +96,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                     log.info("Unable to determine state icon of '{}'", JcrUtils.getNodePathQuietly(node), e);
                 }
             }
-            return new Icon[] {Icon.EMPTY, Icon.EMPTY};
+            return EMPTY_STATE_ICONS;
         }
 
         private boolean isCompound() {
@@ -161,7 +159,7 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
                     return new Icon[] {Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
                 }
             }
-            return null;
+            return EMPTY_STATE_ICONS;
         }
 
     }
