@@ -59,6 +59,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -374,7 +375,8 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                     log.warn("Unexpected document path '{}'", docPath);
                     continue;
                 }
-                documentLocations.add(new DocumentRepresentation(docPath.substring(canonicalContentPath.length() + 1)));
+
+                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(docPath, canonicalContentPath));
             }
         } catch (RepositoryException e) {
             log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);

@@ -68,7 +68,7 @@ public enum ParameterType {
         return supportedReturnTypes.contains(returnType);
     }
 
-    static Annotation getTypeAnnotation(final Method method) {
+    public static Annotation getTypeAnnotation(final Method method) {
         for (Annotation annotation : method.getAnnotations()) {
             for (ParameterType type : ParameterType.values()) {
                 if (annotation.annotationType() == type.annotationType) {

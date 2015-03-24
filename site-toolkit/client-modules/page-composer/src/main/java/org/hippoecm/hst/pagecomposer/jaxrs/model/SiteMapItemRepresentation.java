@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +51,8 @@ public class SiteMapItemRepresentation {
     private Calendar lockedOn;
     private long versionStamp;
     private String relativeContentPath;
+    private DocumentRepresentation primaryDocumentRepresentation;
+    private Set<DocumentRepresentation> availableDocumentRepresentations;
     private String scheme;
     private boolean wildCard;
     private boolean any;
@@ -68,7 +71,9 @@ public class SiteMapItemRepresentation {
     public SiteMapItemRepresentation representShallow(final HstSiteMapItem item,
                                                       final String previewConfigurationPath,
                                                       final HstComponentsConfiguration hstComponentsConfiguration,
-                                                      final String homePagePathInfo) throws IllegalArgumentException {
+                                                      final String homePagePathInfo,
+                                                      final DocumentRepresentation primaryDocumentRepresentation,
+                                                      final Set<DocumentRepresentation> availableDocumentRepresentations) throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -87,9 +92,11 @@ public class SiteMapItemRepresentation {
 
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
+        final HstComponentConfiguration page = hstComponentsConfiguration.getComponentConfiguration(componentConfigurationId);
+        hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(page);
 
-        hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(
-                hstComponentsConfiguration.getComponentConfiguration(componentConfigurationId));
+        this.primaryDocumentRepresentation = primaryDocumentRepresentation;
+        this.availableDocumentRepresentations = availableDocumentRepresentations;
 
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
@@ -116,7 +123,7 @@ public class SiteMapItemRepresentation {
                                                final String previewConfigurationPath,
                                                final HstComponentsConfiguration hstComponentsConfiguration,
                                                final String homePagePathInfo) {
-        representShallow(item, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
+        representShallow(item, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo, null, Collections.emptySet());
 
         for (HstSiteMapItem childItem : item.getChildren()) {
             if (childItem.isContainerResource() || childItem.isHiddenInChannelManager()) {
@@ -253,6 +260,22 @@ public class SiteMapItemRepresentation {
 
     public void setRelativeContentPath(final String relativeContentPath) {
         this.relativeContentPath = relativeContentPath;
+    }
+
+    public DocumentRepresentation getPrimaryDocumentRepresentation() {
+        return primaryDocumentRepresentation;
+    }
+
+    public void setPrimaryDocumentRepresentation(final DocumentRepresentation primaryDocumentRepresentation) {
+        this.primaryDocumentRepresentation = primaryDocumentRepresentation;
+    }
+
+    public Set<DocumentRepresentation> getAvailableDocumentRepresentations() {
+        return availableDocumentRepresentations;
+    }
+
+    public void setAvailableDocumentRepresentations(final Set<DocumentRepresentation> availableDocumentRepresentations) {
+        this.availableDocumentRepresentations = availableDocumentRepresentations;
     }
 
     public String getScheme() {

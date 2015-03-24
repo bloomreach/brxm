@@ -15,10 +15,15 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,11 +33,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
@@ -44,11 +57,16 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAP + "/")
 @Produces(MediaType.APPLICATION_JSON)
 public class SiteMapResource extends AbstractConfigResource {
+
+    private static final Logger log = LoggerFactory.getLogger(SiteMapResource.class);
 
     private SiteMapHelper siteMapHelper;
     private ValidatorFactory validatorFactory;
@@ -114,14 +132,106 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+                final HstComponentsConfiguration componentsConfiguration = site.getComponentsConfiguration();
+
+                String componentConfigurationId = siteMapItem.getComponentConfigurationId();
+                final HstComponentConfiguration page = componentsConfiguration.getComponentConfiguration(componentConfigurationId);
+
+
+                DocumentRepresentation primaryDocumentRepresentation = null;
+                if (siteMapItem.getRelativeContentPath() != null) {
+                    final String rootContentPath = getPageComposerContextService().getEditingMount().getContentPath();
+                    primaryDocumentRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(rootContentPath + "/" + siteMapItem.getRelativeContentPath(), rootContentPath);
+                }
+                Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(page);
+
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
-                        .representShallow(siteMapItem, site.getConfigurationPath(), site.getComponentsConfiguration(),
-                                getHomePagePath());
+                        .representShallow(siteMapItem, site.getConfigurationPath(), componentsConfiguration,
+                                getHomePagePath(), primaryDocumentRepresentation, availableDocumentRepresentations);
 
                 return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
             }
         });
     }
+
+
+    private Set<DocumentRepresentation> findAvailableDocumentRepresentations(final HstComponentConfiguration page) throws RepositoryException {
+        Set<DocumentRepresentation> documentRepresentations = new HashSet<>();
+        populateDocumentRepresentationsRecursive(page, documentRepresentations);
+        return documentRepresentations;
+    }
+
+    private void populateDocumentRepresentationsRecursive(final HstComponentConfiguration item, final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
+        populateDocumentRepresentations(item, documentRepresentations);
+        for (HstComponentConfiguration child : item.getChildren().values()) {
+            populateDocumentRepresentationsRecursive(child, documentRepresentations);
+        }
+    }
+
+    private void populateDocumentRepresentations(final HstComponentConfiguration item,
+                                                 final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
+
+        if (item.getComponentClassName() == null ) {
+            return;
+        }
+        try {
+            Class<?> componentClass = Class.forName(item.getComponentClassName());
+            ParametersInfo info = componentClass.getAnnotation(ParametersInfo.class);
+            if (info != null) {
+
+                // we require a hst config user session that can read everywhere because we need to get the document names
+                // for all component picked documents, and the current webmaster might not have read access everywhere.
+
+                final String contentPath = getPageComposerContextService().getEditingMount().getContentPath();
+                final Class<?> classType = info.type();
+                if (classType == null) {
+                    return;
+                }
+                for (Method method : classType.getMethods()) {
+                    if (method.isAnnotationPresent(Parameter.class)) {
+                        final Parameter propAnnotation = method.getAnnotation(Parameter.class);
+                        final Annotation annotation = ParameterType.getTypeAnnotation(method);
+                        String propertyName = null;
+                        boolean absolutePath = true;
+                        if (annotation instanceof DocumentLink) {
+                            // for DocumentLink we need some extra processing
+                            final DocumentLink documentLink = (DocumentLink) annotation;
+                            propertyName = propAnnotation.name();
+                        } else if (annotation instanceof JcrPath) {
+                            // for JcrPath we need some extra processing too
+                            final JcrPath jcrPath = (JcrPath) annotation;
+                            propertyName = propAnnotation.name();
+                            absolutePath = !jcrPath.isRelative();
+                        }
+
+                        if (propertyName != null) {
+                            String documentLocation = item.getParameter(propertyName);
+                            if (documentLocation == null || "/".equals(documentLocation)) {
+                                continue;
+                            }
+
+                            if (absolutePath && !documentLocation.startsWith(contentPath + "/")) {
+                                continue;
+                            }
+
+                            if (!absolutePath) {
+                                if (documentLocation.startsWith("/")) {
+                                    documentLocation = contentPath + documentLocation;
+                                } else {
+                                    documentLocation = contentPath + "/" + documentLocation;
+                                }
+                            }
+                            documentRepresentations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(documentLocation, contentPath));
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            log.info("Cannot load component class '{}' for '{}'", item.getComponentClassName(), item);
+        }
+
+    }
+
 
     @GET
     @Path("/picker")
