@@ -38,6 +38,7 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -196,7 +197,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         return getString(key);
     }
 
-    private class ChangePasswordDialog extends AbstractDialog {
+    private class ChangePasswordDialog extends Dialog {
 
         private final PasswordWidget currentWidget;
         private final IPasswordValidationService passwordValidationService;
@@ -239,6 +240,13 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 info(validator.getDescription());
             }
         }
+
+/*
+        @Override
+        protected Component createBottomLeft(final String id) {
+            return new Label(id, Model.of("This is a test with a lot of words that should not push the buttons out of the thing"));
+        }
+*/
 
         @Override
         public void onOk() {

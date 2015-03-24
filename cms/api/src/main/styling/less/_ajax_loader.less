@@ -1,4 +1,4 @@
-// Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
   height: @hippo-logo-height;
   background-color: @hippo-logo-bgcolor;
   z-index: 2;
-  
+
   img {
     margin-top: 12px;
   }
@@ -35,4 +35,12 @@
   left: 12px;
   background: transparent;
   top: auto;
+}
+
+//TODO: Hide the ajax indicator in the new Dialog
+.hippo-dialog .wicket-ajax-indicator{
+  display: none;
+  position: absolute;
+  left: -2000px;
+  top: -2000px;
 }

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,16 +18,15 @@ package org.hippoecm.frontend.dialog;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
@@ -36,13 +35,9 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 
 public class DialogWindow extends ModalWindow implements IDialogService {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final ResourceReference MODAL_JS = new JavaScriptResourceReference(DialogWindow.class, "res/hippo-modal.js");
-    private static final ResourceReference MODAL_STYLESHEET = new CssResourceReference(DialogWindow.class, "res/hippo-modal.css");
+    private static final ResourceReference MODAL_JS = new JavaScriptResourceReference(DialogWindow.class, "hippo-modal.js");
 
     private class Callback implements ModalWindow.WindowClosedCallback {
-        private static final long serialVersionUID = 1L;
 
         Dialog dialog;
 
@@ -61,7 +56,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     public DialogWindow(String id) {
         super(id);
 
-        pending = new LinkedList<Dialog>();
+        pending = new LinkedList<>();
 
         add(new EventStoppingBehavior("onclick"));
     }
@@ -81,7 +76,6 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(CssHeaderItem.forReference(MODAL_STYLESHEET));
         response.render(JavaScriptHeaderItem.forReference(MODAL_JS));
     }
 
@@ -106,7 +100,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
      * Hides the dialog, if it is currently shown, or removes it from the list of to-be-shown dialogs.  The onClose()
      * method is not invoked on the dialog.
      *
-     * @param dialog
+     * @param dialog The dialog to hide
      */
     public void hide(Dialog dialog) {
         if (pending.contains(dialog)) {
@@ -141,7 +135,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     private void clear() {
-        setTitle(new Model<String>("title"));
+        setTitle(Model.of("title"));
         remove(getContent());
         dialog = null;
     }
@@ -182,9 +176,13 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         setInitialHeight(properties.getInt("height", 455));
         setInitialWidth(properties.getInt("width", 850));
         setResizable(properties.getAsBoolean("resizable", false));
-        String defaultCssClassName = isResizable() ? "w_grey_resize" : "w_grey";
-        String cssClassName = properties.getString("css-class-name", defaultCssClassName);
-        setCssClassName(cssClassName);
+
+        String cssClasses = "hippo-dialog";
+        if (isResizable()) {
+            cssClasses += " hippo-dialog-resizable";
+        }
+        cssClasses += properties.getString("css-class-name", StringUtils.EMPTY);
+        setCssClassName(cssClasses);
 
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {

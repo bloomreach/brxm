@@ -82,6 +82,88 @@
   }
 }
 
+// START NEW DIALOG STYLING
+
+.w_content_container > div {
+  height: 100%;
+}
+
+.hippo-dialog-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.hippo-dialog-top,
+.hippo-dialog-center {
+  padding: 16px;
+}
+
+.hippo-dialog-center {
+  padding: 16px 16px 0 16px;
+  flex: auto;
+  overflow: auto;
+  // IE10 scrollbars
+  -ms-flex-preferred-size: 0;
+
+  .hippo-dialog-feedback {
+    padding-bottom: 16px;
+  }
+}
+
+.hippo-dialog-bottom {
+  min-height: 48px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  //.hippo-dialog-bottom-left {}
+
+  .hippo-dialog-bottom-right {
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  .hippo-window-buttons {
+    bottom: 0;
+    right: 0;
+
+    display: inline;
+    padding-right: 16px;
+    padding-top: 12px;
+    position: relative;
+  }
+}
+
+// Hippo dialog feedback
+.hippo-dialog-feedback ul {
+  background-color: #fff8d5;
+  border: 1px solid #69849f;
+  color: #69849f;
+  font-weight: bold;
+  padding: 8px;
+  text-align: left;
+  word-wrap: break-word;
+
+  li {
+    list-style-type: none;
+    margin: 5px;
+    min-height: 35px;
+    padding-left: 40px;
+
+    &.feedbackPanelERROR {
+      background: url("@{images_legacy}/icons/dialog-error-32.png") no-repeat 0 center;
+    }
+
+    &.feedbackPanelINFO {
+      background: url("@{images_legacy}/icons/dialog-information-32.png") no-repeat 0 center;
+    }
+  }
+}
+
+// END NEW DIALOG STYLING
+
 // Window buttons
 .hippo-window-buttons {
   display: flex;
@@ -131,7 +213,6 @@
 .hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar {
   padding-top: 10px;
 }
-
 
 /* forms inside windows */
 table.hippo-window-form {
