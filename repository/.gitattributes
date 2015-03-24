@@ -175,6 +175,7 @@ engine/src/main/java/org/hippoecm/repository/security/user/DelegatingHippoUserMa
 engine/src/main/java/org/hippoecm/repository/security/user/DelegatingUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
+engine/src/main/java/org/onehippo/cms7/jaxrs/JaxrsApplication.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/InitializationProcessorImpl.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/InitializeInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/InitializeItem.java -text
