@@ -424,9 +424,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         final HstRequestContext requestContext = RequestContextProvider.get();
 
         if (requestContext != null) {
-            final HstRequestContextComponent rcc =
-HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
-            rcc.release(requestContext);
+            requestContextComponent.release(requestContext);
         }
     }
 
