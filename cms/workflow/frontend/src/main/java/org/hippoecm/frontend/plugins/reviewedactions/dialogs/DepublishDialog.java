@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
@@ -30,6 +28,8 @@ import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
+
+import javax.jcr.RepositoryException;
 
 public class DepublishDialog extends AbstractWorkflowDialog {
 
@@ -60,7 +60,7 @@ public class DepublishDialog extends AbstractWorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MINE;
+        return DialogConstants.MEDIUM;
     }
 
     @Override
