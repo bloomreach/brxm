@@ -15,6 +15,7 @@
     "SAVE": "Save",
     "CANCEL": "Cancel",
     "DELETE_PAGE": "Delete page",
+    "COPY_PAGE": "Copy page",
 
     "CONFIRM_DELETE_TITLE": "Confirm delete",
     "CONFIRM_DELETE_MESSAGE": "Are you sure you want to delete '{{ title }}'?",
@@ -25,6 +26,12 @@
     "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
 
     "TECHNICAL_ERROR": "A technical error has occurred",
-    "ITEM_ALREADY_LOCKED": "You cannot edit this page because '{{ lockedBy }}' is already editing it"
+    "ITEM_ALREADY_LOCKED": "You cannot edit this page because '{{ lockedBy }}' is already editing it",
+
+
+    "PRIMARY_DOCUMENT": "Primary page document",
+    "REMOVE_PRIMARY_DOCUMENT" : "Remove",
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE" : "Confirm remove",
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Are you sure you want to remove the primary document?"
 
 }

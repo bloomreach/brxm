@@ -18,7 +18,7 @@
 
     <div hippo-confirmation-dialog
          class="confirmation-dialog"
-         data-confirm-icon="trash-o"
+         data-confirm-icon="trash"
          data-perform-confirmation="confirmDelete()"
          data-perform-cancel="cancelDelete()"
          data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
@@ -29,6 +29,22 @@
         </p>
         <p class="confirmation-dialog-message">
             {{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}
+        </p>
+    </div>
+
+    <div hippo-confirmation-dialog
+         class="confirmation-dialog"
+         data-confirm-icon="trash-o"
+         data-perform-confirmation="confirmRemovePrimaryDocument()"
+         data-perform-cancel="cancelRemovePrimaryDocument()"
+         data-confirm-label="{{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}"
+         data-cancel-label="{{ 'CANCEL' | translate }}"
+         data-show="isConfirmationRemovePrimaryDocumentVisible">
+        <p class="confirmation-dialog-title">
+            {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE' | translate:page }}
+        </p>
+        <p class="confirmation-dialog-message">
+            {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE' | translate:page }}
         </p>
     </div>
 
@@ -61,15 +77,37 @@
                 <span class="form-control-feedback">
                   <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.title.$dirty && form.title.$invalid"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label>{{ 'PRIMARY_DOCUMENT' | translate }}</label>
+                <br/>
+                {{page.primaryDocumentRepresentation.displayName}}
+
+
+                <button class="btn btn-default btn-md"
+                        data-ng-click="removePrimaryDocument(page)"
+                        data-ng-show="page.primaryDocumentRepresentation">
+                    <hippo-icon name="trash" size="m"></hippo-icon> {{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}
+                </button>
+                <br/>
+                <select chosen
+                        data-ng-disabled="!state.isEditable || !page.availableDocumentRepresentations.length"
+                        data-ng-show="state.isEditable && page.availableDocumentRepresentations.length"
+                        data-ng-model="page.primaryDocumentRepresentation"
+                        data-ng-options="item as item.displayName for item in page.availableDocumentRepresentations"
+                        no-results-text="no results found for"
+                        data-placeholder="placeholder"
+                        width="selectBoxWidth"
+                        class="ng-pristine ng-untouched ng-valid localytics-chosen">
+                </select>
             </div>
 
             <div class="form-group has-feedback" id="url" data-ng-class="{
@@ -93,13 +131,11 @@
                 <span class="form-control-feedback">
                   <hippo-icon ng-if="form.url.$dirty && form.url.$valid"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.url.$dirty && form.url.$invalid"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
             </div>
@@ -144,10 +180,10 @@
     </div>
 
     <div class="panel-footer clearfix">
-         <div class="tooltip-newlines"
-              data-tooltip="{{ tooltips.deleteButton() }}"
-              data-tooltip-trigger="mouseenter"
-              data-tooltip-placement="top">
+        <div class="tooltip-newlines"
+             data-tooltip="{{ tooltips.deleteButton() }}"
+             data-tooltip-trigger="mouseenter"
+             data-tooltip-placement="top">
             <button class="btn btn-default btn-md"
                     data-ng-click="deletePage(page)"
                     data-ng-disabled="!state.isEditable || page.isHomepage">

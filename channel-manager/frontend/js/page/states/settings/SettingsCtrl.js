@@ -32,6 +32,8 @@
                 $scope.page = {
                     id: null,
                     title: '',
+                    primaryDocument: '',
+                    availableDocumentRepresentations: [],
                     url: '',
                     prototype: {
                         id: null
@@ -101,7 +103,8 @@
                         id: $scope.page.id,
                         pageTitle: $scope.page.title,
                         name: $scope.page.url,
-                        componentConfigurationId: $scope.page.prototype.id
+                        componentConfigurationId: $scope.page.prototype.id,
+                        primaryDocumentRepresentation: $scope.page.primaryDocumentRepresentation
                     };
 
                     PageService.updatePage(pageModel).then(function () {
@@ -129,6 +132,34 @@
                     $scope.isConfirmationVisible = false;
                 };
 
+
+                $scope.removePrimaryDocument = function () {
+                    $scope.isConfirmationRemovePrimaryDocumentVisible = true;
+                };
+
+                $scope.confirmRemovePrimaryDocument = function () {
+                    $scope.isConfirmationRemovePrimaryDocumentVisible = false;
+                    var pageModel = {
+                        id: $scope.page.id,
+                        pageTitle: $scope.page.title,
+                        name: $scope.page.url,
+                        componentConfigurationId: $scope.page.prototype.id,
+                        primaryDocumentRepresentation: {
+                            path:'',
+                            displayName: '',
+                            exists: false,
+                            document: false
+                        }
+                    };
+                    PageService.updatePage(pageModel).then(function () {
+                        ContainerService.showPage($scope.mountPath + '/' + $scope.page.url);
+                    }, setErrorFeedback);
+                };
+
+                $scope.cancelRemovePrimaryDocument = function () {
+                    $scope.isConfirmationRemovePrimaryDocumentVisible = false;
+                };
+
                 function loadHost() {
                     return PageService.getMountInfo()
                         .then(function (mountInfo) {
@@ -148,26 +179,28 @@
 
                 function loadPage() {
                     return PageService.getCurrentPage()
-                        .then(function (currentPage) {
-                            $scope.page.id = currentPage.id;
-                            $scope.page.title = currentPage.pageTitle;
-                            $scope.page.url = currentPage.name;
-                            $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
-                            $scope.page.isHomePage = currentPage.isHomePage;
+                            .then(function (currentPage) {
+                                $scope.page.id = currentPage.id;
+                                $scope.page.title = currentPage.pageTitle;
+                                $scope.page.primaryDocumentRepresentation = currentPage.primaryDocumentRepresentation;
+                                $scope.page.availableDocumentRepresentations = currentPage.availableDocumentRepresentations;
+                                $scope.page.url = currentPage.name;
+                                $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
+                                $scope.page.isHomePage = currentPage.isHomePage;
 
-                            // pages are only editable when the sitemap item is:
-                            // 1. located in the HST workspace
-                            // 2. the page is not the homepage
-                            // 3. the page is not locked by someone else
-                            $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-                            $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration;
+                                // pages are only editable when the sitemap item is:
+                                // 1. located in the HST workspace
+                                // 2. the page is not the homepage
+                                // 3. the page is not locked by someone else
+                                $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
+                                $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration;
 
-                            // lock information
-                            $scope.lock.owner = currentPage.lockedBy;
-                            $scope.lock.timestamp = currentPage.lockedOn;
+                                // lock information
+                                $scope.lock.owner = currentPage.lockedBy;
+                                $scope.lock.timestamp = currentPage.lockedOn;
 
-                            return currentPage;
-                        }, setErrorFeedback);
+                                return currentPage;
+                            }, setErrorFeedback);
                 }
             }
         ]);
