@@ -351,6 +351,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 if(resolvedMount.getNamedPipeline() == null) {
                     log.warn("'{}' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount", containerRequest);
                     sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                    return;
                 }
                 else {
                     if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
@@ -408,6 +409,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         finally {
+            request.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             // clears up the current thread's active request context object.
             if (requestContextSetToProvider) {
                 disposeHstRequestContext();
@@ -422,7 +424,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private void disposeHstRequestContext() {
         final HstRequestContext requestContext = RequestContextProvider.get();
-
         if (requestContext != null) {
             requestContextComponent.release(requestContext);
         }
@@ -551,7 +552,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
      * @param errorCode the error code to send
      */
     private static void sendError(HttpServletRequest request, HttpServletResponse response, int errorCode) throws IOException {
-        request.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         response.sendError(errorCode);
     }
 
