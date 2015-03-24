@@ -197,6 +197,17 @@
     <load-on-startup>5</load-on-startup>
   </servlet>
 
+  <servlet>
+    <servlet-name>CXFApplication</servlet-name>
+    <servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>org.onehippo.cms7.jaxrs.JaxrsApplication</param-value>
+    </init-param>
+    <load-on-startup>6</load-on-startup>
+  </servlet>
+
+
   <servlet-mapping>
     <servlet-name>LoggingServlet</servlet-name>
     <url-pattern>/logging/*</url-pattern>
@@ -225,6 +236,11 @@
   <servlet-mapping>
     <servlet-name>SkinResourceServlet</servlet-name>
     <url-pattern>/skin/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>CXFApplication</servlet-name>
+    <url-pattern>/ws/*</url-pattern>
   </servlet-mapping>
 
   <!-- Timeout in minutes -->
