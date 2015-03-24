@@ -29,4 +29,5 @@ public interface DialogConstants {
     IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
     IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
     IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
+    IValueMap MINE = new ValueMap("width=855").makeImmutable();
 }

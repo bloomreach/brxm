@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -33,6 +30,9 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class DialogWindow extends ModalWindow implements IDialogService {
 
@@ -179,7 +179,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         setWindowClosedCallback(new Callback(dialog));
 
         IValueMap properties = dialog.getProperties();
-        setInitialHeight(properties.getInt("height", 455));
+
+//        setInitialHeight(properties.getInt("height", 333));
+        setUseInitialHeight(false);
         setInitialWidth(properties.getInt("width", 850));
         setResizable(properties.getAsBoolean("resizable", false));
         String defaultCssClassName = isResizable() ? "w_grey_resize" : "w_grey";

@@ -60,7 +60,7 @@ public class DepublishDialog extends AbstractWorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.MINE;
     }
 
     @Override
