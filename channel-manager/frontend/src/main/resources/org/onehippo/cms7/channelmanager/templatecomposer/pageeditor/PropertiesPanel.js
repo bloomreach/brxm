@@ -63,7 +63,9 @@
             Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources = config.resources;
 
             config = Ext.apply(config, { activeTab: 0 });
-            Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
+            Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, Ext.apply(config, {
+                border: false
+            }));
         },
 
         initComponent: function() {
