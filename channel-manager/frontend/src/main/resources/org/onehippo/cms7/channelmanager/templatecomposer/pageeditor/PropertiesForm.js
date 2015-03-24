@@ -227,8 +227,10 @@
         },
 
         _initFields: function() {
+            var lastGroupLabel = null;
+
             this.store.each(function(record) {
-                var groupLabel, lastGroupLabel;
+                var groupLabel;
 
                 if (record.get('hiddenInChannelManager') === false) {
                     groupLabel = record.get('groupLabel');
