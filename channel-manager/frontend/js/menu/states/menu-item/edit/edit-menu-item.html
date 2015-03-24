@@ -71,7 +71,7 @@
                    data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
             <span class="form-control-feedback" data-ng-show="form.title.$dirty">
-              <hippo-icon ng-if="isSaving.title"
+              <hippo-icon ng-if="isSaving.title && !isSaved.title"
                           name="spinner"
                           size="m">
               </hippo-icon>
@@ -129,7 +129,7 @@
                        data-show-focus="linkToFocus == 'sitemapLink'"
                        data-ng-blur="updateLinkDestination(form)">
                 <span class="form-control-feedback" data-ng-show="form.sitemapItem.$dirty">
-                  <hippo-icon ng-if="isSaving.link"
+                  <hippo-icon ng-if="isSaving.link && !isSaved.link"
                               name="spinner"
                               size="m">
                   </hippo-icon>
@@ -175,7 +175,7 @@
                        data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
                 <span class="form-control-feedback" data-ng-show="form.url.$dirty">
-                  <hippo-icon ng-if="isSaving.link"
+                  <hippo-icon ng-if="isSaving.link && !isSaved.link"
                               name="spinner"
                               size="m">
                   </hippo-icon>
