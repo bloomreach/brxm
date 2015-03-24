@@ -4,6 +4,7 @@
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
+@import "../../../../../../../../target/bower/components/hippo-theme/src/less/_variables.less";
 @import "../../../../../../styling/less/_variables.less";
 
 .ext-el-mask {
@@ -41,17 +42,12 @@
 }
 
 .x-color-palette a {
-  border-color: #fff;
+  border-color: transparent;
 }
 
 .x-color-palette a:hover, .x-color-palette a.x-color-palette-sel {
-  border-color: #8bb8f3;
-  background-color: #deecfd;
+  border-color: @primary;
 }
-
-//.x-color-palette em:hover, .x-color-palette span:hover{
-//    background-color: #deecfd;
-//}
 
 .x-color-palette em {
   border-color: #aca899;
@@ -205,18 +201,23 @@ ul.x-tab-strip-bottom {
 }
 
 .x-form-field {
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
+  font: @font-size-extjs @font-family-base;
 }
 
 .x-form-text, textarea.x-form-field {
   background-color: #fff;
-  background-image: url(images/form/text-bg.gif);
-  border-color: #b5b8c8;
+  border-color: @input-border;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  transition: ~"border-color ease-in-out .15s, box-shadow ease-in-out .15s";
+}
+
+.ext-strict .x-form-text {
+  height: 20px;
 }
 
 .x-form-select-one {
   background-color: #fff;
-  border-color: #b5b8c8;
+  border-color: @input-border;
 }
 
 .x-form-check-group-label {
@@ -229,20 +230,26 @@ ul.x-tab-strip-bottom {
 }
 
 .x-form-field-wrap .x-form-trigger {
-  background-image: url(images/form/trigger.gif);
-  border-bottom-color: #b5b8c8;
+  background: @lighter-shade url(images/form/trigger.svg) no-repeat center;
+  border: 1px solid @input-border;
+  border-left: none;
+  width: 23px;
+  height: 22px;
+  &:hover {
+    background-color: @light-shade;
+  }
 }
 
 .x-form-field-wrap .x-form-date-trigger {
-  background-image: url(images/form/date-trigger.gif);
+  background-image: url(images/form/date-trigger.svg);
 }
 
 .x-form-field-wrap .x-form-clear-trigger {
-  background-image: url(images/form/clear-trigger.gif);
+  background-image: url(images/form/clear-trigger.svg);
 }
 
 .x-form-field-wrap .x-form-search-trigger {
-  background-image: url(images/form/search-trigger.gif);
+  background-image: url(images/form/search-trigger.svg);
 }
 
 .x-trigger-wrap-focus .x-form-trigger {
@@ -257,14 +264,16 @@ ul.x-tab-strip-bottom {
   border-bottom-color: #b5b8c8;
 }
 
-.x-form-focus, textarea.x-form-focus {
-  border-color: #737580;
+.x-form-focus,
+textarea.x-form-focus,
+.x-form-focus + .x-form-trigger {
+  border-color: darken(@primary, 10%);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@primary, 20%);
 }
 
 .x-form-invalid, textarea.x-form-invalid {
-  background-color: #ffc399;
-  background-image: url(images/form/invalid_line.gif);
-  border-color: #ff5500;
+  background-color: @danger-light;
+  border-color: @danger;
 }
 
 .x-form-invalid.x-form-composite {
@@ -273,14 +282,12 @@ ul.x-tab-strip-bottom {
 }
 
 .x-form-invalid.x-form-composite .x-form-invalid {
-  background-color: #ffc399;
-  background-image: url(images/form/invalid_line.gif);
-  border-color: #ff5500;
+  background-color: @danger-light;
+  border-color: @danger;
 }
 
 .x-form-inner-invalid, textarea.x-form-inner-invalid {
-  background-color: #ffc399;
-  background-image: url(images/form/invalid_line.gif);
+  background-color: @danger-light;
 }
 
 .x-form-grow-sizer {
@@ -288,11 +295,11 @@ ul.x-tab-strip-bottom {
 }
 
 .x-form-item {
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
+  font: @font-size-extjs @font-family-base;
 }
 
 .x-form-invalid-msg {
-  color: #c0272b;
+  color: @danger;
   font: normal 11px tahoma, arial, helvetica, sans-serif;
   background-image: url(images/shared/warning.gif);
 }
@@ -1033,9 +1040,11 @@ td.grid-hd-group-cell {
 }
 
 .x-date-inner .x-date-selected a {
-  background-color: #ffe29a;
-  /* background-image:url(images/shared/glass-bg.gif); */
-  border-color: #ffe29a;
+  &, &:hover {
+    background-color: @primary;
+    border-color: @primary;
+    color: @white;
+  }
 }
 
 .x-date-inner .x-date-today a {
@@ -1058,7 +1067,7 @@ td.grid-hd-group-cell {
 
 .x-date-inner a:hover, .x-date-inner .x-date-disabled a:hover {
   color: #000;
-  background-color: #fff6e0;
+  background-color: @lighter-shade;
 }
 
 .x-date-inner .x-date-disabled a {
@@ -1315,9 +1324,9 @@ a.x-menu-item {
 }
 
 .x-combo-list {
-  border-color: #b3b3b3; /* d4d4d4 */
+  border-color: #b3b3b3;
   background-color: #d4d4d4;
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
+  font: normal @font-size-extjs @font-family-base;
 }
 
 .x-combo-list-inner {
@@ -1502,6 +1511,7 @@ a.x-menu-item {
   .x-window-mc {
     border: none;
     background-color: @modal-bgcolor;
+    font: @font-size-extjs @font-family-base;
   }
 
   // Give the east and south resize handlers the same width as the visible border
