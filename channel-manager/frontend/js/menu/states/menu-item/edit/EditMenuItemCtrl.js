@@ -79,9 +79,11 @@
 
                 EditMenuItemCtrl.internalLink = {
                     openPicker: function() {
+                        var menuData = MenuService.getMenuData();
                         $state.go('picker', {
                             menuItemId: $scope.MenuItemCtrl.selectedMenuItem.id,
-                            siteContentIdentifier: MenuService.getMenuData().siteContentIdentifier,
+                            siteContentIdentifier: menuData.siteContentIdentifier,
+                            siteMapIdentifier: menuData.siteMapIdentifier,
                             link: $scope.MenuItemCtrl.selectedMenuItem.link
                         });
                     },

@@ -35,6 +35,14 @@
                         menuItemId: $stateParams.menuItemId
                     });
                 };
+                PickerCtrl.changePickerType = function() {
+                    if(PickerCtrl.pickerType.name == 'Pages') {
+                        PickerService.getInitialData($stateParams.siteMapIdentifier);
+                    } else {
+                        getDocumentData();
+                    }
+
+                };
                 PickerCtrl.treeItems = PickerService.getTree();
                 PickerCtrl.pickerTypes = [
                     {
@@ -47,27 +55,30 @@
                 PickerCtrl.pickerType = PickerCtrl.pickerTypes[0];
                 PickerCtrl.selectedDocument = null;
 
-                if($stateParams.link) {
-                    PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
-                        navigateToSelected(PickerCtrl.treeItems);
-                        function navigateToSelected(items, parent) {
-                            angular.forEach(items, function (item) {
-                                if (item.selected) {
-                                    $state.go('picker.docs', {
-                                        pickerTreeItemId: parent.id
-                                    });
-                                    PickerCtrl.selectedItem = parent;
-                                    PickerCtrl.selectedDocument = item;
-                                }
-                                if(item.items) {
-                                    navigateToSelected(item.items, item);
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    PickerService.getInitialData($stateParams.siteContentIdentifier);
-                }
+                var getDocumentData = function() {
+                    if($stateParams.link) {
+                        PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
+                            navigateToSelected(PickerCtrl.treeItems);
+                            function navigateToSelected(items, parent) {
+                                angular.forEach(items, function (item) {
+                                    if (item.selected) {
+                                        $state.go('picker.docs', {
+                                            pickerTreeItemId: parent.id
+                                        });
+                                        PickerCtrl.selectedItem = parent;
+                                        PickerCtrl.selectedDocument = item;
+                                    }
+                                    if(item.items) {
+                                        navigateToSelected(item.items, item);
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        PickerService.getInitialData($stateParams.siteContentIdentifier);
+                    }
+                };
+                getDocumentData();
             }
         ]);
 }());

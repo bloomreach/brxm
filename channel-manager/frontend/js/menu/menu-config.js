@@ -53,7 +53,7 @@
                     })
 
                     .state('picker', {
-                        url: '/:menuItemId/:siteContentIdentifier/picker',
+                        url: '/:menuItemId/:siteContentIdentifier/:siteMapIdentifier/picker',
                         controller: 'hippo.channel.menu.PickerCtrl as PickerCtrl',
                         templateUrl: 'states/picker/picker.html',
                         params: {
