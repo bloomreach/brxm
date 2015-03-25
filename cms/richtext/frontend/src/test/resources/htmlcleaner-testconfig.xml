@@ -21,9 +21,6 @@
   <sv:property sv:name="charset" sv:type="String">
     <sv:value>UTF-8</sv:value>
   </sv:property>
-  <sv:property sv:name="serializer" sv:type="String">
-    <sv:value>simple</sv:value>
-  </sv:property>
   <sv:node sv:name="whitelist">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>

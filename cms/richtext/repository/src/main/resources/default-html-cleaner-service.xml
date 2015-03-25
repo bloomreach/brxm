@@ -30,9 +30,6 @@
   <sv:property sv:name="plugin.class" sv:type="String">
     <sv:value>org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin</sv:value>
   </sv:property>
-  <sv:property sv:name="serializer" sv:type="String">
-    <sv:value>simple</sv:value>
-  </sv:property>
   <sv:property sv:name="service.id" sv:type="String">
     <sv:value>org.hippoecm.frontend.plugins.richtext.DefaultHtmlCleanerService</sv:value>
   </sv:property>

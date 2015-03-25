@@ -30,9 +30,6 @@
   <sv:property sv:name="filter" sv:type="Boolean">
     <sv:value>true</sv:value>
   </sv:property>
-  <sv:property sv:name="serializer" sv:type="String">
-    <sv:value>simple</sv:value>
-  </sv:property>
   <sv:property sv:name="omitComments" sv:type="String">
     <sv:value>false</sv:value>
   </sv:property>

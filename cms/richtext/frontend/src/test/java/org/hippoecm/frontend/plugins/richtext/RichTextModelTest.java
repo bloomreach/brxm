@@ -73,7 +73,7 @@ public class RichTextModelTest {
 
         IPluginConfig cleanerConfig = EasyMock.createMock(IPluginConfig.class);
         expect(cleanerConfig.getString(eq("charset"), eq("UTF-8"))).andReturn("UTF-8");
-        expect(cleanerConfig.getString(eq("serializer"), eq("compact"))).andReturn("compact");
+        expect(cleanerConfig.getString(eq("serializer"), eq("simple"))).andReturn("simple");
         expect(cleanerConfig.getBoolean(eq("omitComments"))).andReturn(false);
         expect(cleanerConfig.get(eq("filter"))).andReturn(false);
         replay(cleanerConfig);
@@ -157,7 +157,7 @@ public class RichTextModelTest {
 
         textModel.setObject("Two links: <a href=\"linked-node-1\">one</a> and <a href=\"linked-node-2\">two</a>");
 
-        assertEquals("Two links: \n<a href=\"http://\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">one</a> and \n<a href=\"http://\" data-uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\">two</a>", richTextModel.getObject());
+        assertEquals("Two links: <a href=\"http://\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">one</a> and <a href=\"http://\" data-uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\">two</a>", richTextModel.getObject());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class RichTextModelTest {
         addChildFacetNode("foo.jpg", "d1b804c0-cf19-451f-8c0f-184da74289e4");
         addChildFacetNode("bar.jpg", "eb40e696-67db-4d5b-a09a-987e6c49543d");
         textModel.setObject("Two images: <img src=\"foo.jpg/{_document}/hippogallery:original\" /> and <img src=\"bar.jpg/{_document}/hippogallery:original\" />");
-        assertEquals("Two images: \n<img src=\"/binaries/foo.jpg/{_document}/hippogallery:original\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\" data-type=\"hippogallery:original\" /> and \n<img src=\"/binaries/bar.jpg/{_document}/hippogallery:original\" data-uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
+        assertEquals("Two images: <img src=\"/binaries/foo.jpg/{_document}/hippogallery:original\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\" data-type=\"hippogallery:original\" /> and <img src=\"/binaries/bar.jpg/{_document}/hippogallery:original\" data-uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
     }
 
     @Test
@@ -378,7 +378,7 @@ public class RichTextModelTest {
         Node child = children.nextNode();
         assertEquals(document1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
-        assertEquals("Text with only one link to \n<a href=\"" + child.getName() + "\">document one</a>", textModel.getObject());
+        assertEquals("Text with only one link to <a href=\"" + child.getName() + "\">document one</a>", textModel.getObject());
     }
 
     @Test
@@ -397,7 +397,7 @@ public class RichTextModelTest {
         Node child = children.nextNode();
         assertEquals(image1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
-        assertEquals("Text with only one image: \n<img src=\"image1.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
+        assertEquals("Text with only one image: <img src=\"image1.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
     }
 
     @Test

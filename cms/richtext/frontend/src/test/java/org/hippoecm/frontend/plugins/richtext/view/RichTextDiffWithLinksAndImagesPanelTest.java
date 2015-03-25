@@ -53,7 +53,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
     public static void staticSetUp() {
         IPluginConfig cleanerConfig = EasyMock.createMock(IPluginConfig.class);
         expect(cleanerConfig.getString(eq("charset"), eq("UTF-8"))).andReturn("UTF-8");
-        expect(cleanerConfig.getString(eq("serializer"), eq("compact"))).andReturn("compact");
+        expect(cleanerConfig.getString(eq("serializer"), eq("simple"))).andReturn("simple");
         expect(cleanerConfig.getBoolean(eq("omitComments"))).andReturn(false);
         expect(cleanerConfig.get(eq("filter"))).andReturn(false);
         EasyMock.replay(cleanerConfig);
