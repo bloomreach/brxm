@@ -30,6 +30,7 @@ public class Dialog<T> extends AbstractDialog<T> {
 
     private IValueMap properties;
     private Component bottomLeft;
+    private String cssClass;
 
     public Dialog() {
         this(null);
@@ -81,7 +82,11 @@ public class Dialog<T> extends AbstractDialog<T> {
     }
 
     protected String getCssClass() {
-        return null;
+        return cssClass;
+    }
+
+    protected void setCssClass(final String cssClass) {
+        this.cssClass = cssClass;
     }
 
     protected IValueMap getSize() {

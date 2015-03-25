@@ -181,6 +181,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
 
         @Override
+        public boolean isVisible() {
+            return super.isVisible() && hasFeedbackMessage();
+        }
+
+        @Override
         protected Component newMessageDisplayComponent(String id, FeedbackMessage message) {
             Serializable serializable = message.getMessage();
             if (serializable instanceof Exception) {
