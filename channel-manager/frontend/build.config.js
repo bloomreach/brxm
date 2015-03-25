@@ -15,7 +15,7 @@
  */
 
 module.exports = {
-    bower: 'target/bower/components',
+    bower: 'target/bower_components',
     ngsource: 'js',
     ngtarget: 'target/classes/angular',
     cmsource: 'src/main/resources/org/onehippo/cms7/channelmanager',
