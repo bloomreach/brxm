@@ -68,10 +68,6 @@ public class CleanupValve extends AbstractBaseOrderableValve {
             sessionSecurityDelegation.cleanupSessionDelegates(requestContext);
         }
 
-        if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
-            getRequestContextComponent().release(requestContext);
-        }
-
         // continue
         context.invokeNext();
     }
