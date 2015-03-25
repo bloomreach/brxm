@@ -138,6 +138,12 @@ public class AbstractPageComposerTest {
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
+
+    protected Session createLiveUserSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("liveuser", "liveuserpass".toCharArray()));
+    }
+
     protected Configuration getContainerConfiguration() {
         return new PropertiesConfiguration();
     }

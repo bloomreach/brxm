@@ -17,7 +17,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Credentials;
@@ -27,6 +29,8 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.parameters.DocumentLink;
@@ -87,9 +91,10 @@ public class DocumentUtils {
                     if (method.isAnnotationPresent(Parameter.class)) {
                         final Parameter propAnnotation = method.getAnnotation(Parameter.class);
                         final Annotation annotation = ParameterType.getTypeAnnotation(method);
-                        String propertyName = null;
-                        boolean absolutePath = true;
+                        final String propertyName;
+                        boolean absolutePath;
                         if (annotation instanceof DocumentLink) {
+                            absolutePath = false;
                             // for DocumentLink we need some extra processing
                             final DocumentLink documentLink = (DocumentLink) annotation;
                             propertyName = propAnnotation.name();
@@ -98,26 +103,38 @@ public class DocumentUtils {
                             final JcrPath jcrPath = (JcrPath) annotation;
                             propertyName = propAnnotation.name();
                             absolutePath = !jcrPath.isRelative();
+                        } else {
+                            continue;
                         }
 
                         if (propertyName != null) {
-                            String documentLocation = item.getParameter(propertyName);
-                            if (documentLocation == null || "/".equals(documentLocation)) {
-                                continue;
-                            }
-
-                            if (absolutePath && !documentLocation.startsWith(contentPath + "/")) {
-                                continue;
-                            }
-
-                            if (!absolutePath) {
-                                if (documentLocation.startsWith("/")) {
-                                    documentLocation = contentPath + documentLocation;
-                                } else {
-                                    documentLocation = contentPath + "/" + documentLocation;
+                            List<String> propertyNames = new ArrayList<>();
+                            propertyNames.add(propertyName);
+                            for (String prefix : item.getParameterPrefixes()) {
+                                if (StringUtils.isNotEmpty(prefix)) {
+                                    propertyNames.add(ConfigurationUtils.createPrefixedParameterName(prefix, propertyName));
                                 }
                             }
-                            documentRepresentations.add(getDocumentRepresentationHstConfigUser(documentLocation, contentPath));
+                            for (String parameterName : propertyNames) {
+                                String documentLocation = item.getParameter(parameterName);
+                                if (documentLocation == null || "/".equals(documentLocation)) {
+                                    continue;
+                                }
+
+                                if (absolutePath && !documentLocation.startsWith(contentPath + "/")) {
+                                    continue;
+                                }
+
+                                if (!absolutePath) {
+                                    if (documentLocation.startsWith("/")) {
+                                        documentLocation = contentPath + documentLocation;
+                                    } else {
+                                        documentLocation = contentPath + "/" + documentLocation;
+                                    }
+                                }
+                                documentRepresentations.add(getDocumentRepresentationHstConfigUser(documentLocation, contentPath));
+                            }
+
                         }
                     }
                 }

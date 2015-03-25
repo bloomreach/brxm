@@ -96,6 +96,9 @@ public class DocumentRepresentation {
         if (exists != that.exists) {
             return false;
         }
+        if (isDocument != that.isDocument) {
+            return false;
+        }
         if (!path.equals(that.path)) {
             return false;
         }
@@ -110,6 +113,7 @@ public class DocumentRepresentation {
     public int hashCode() {
         int result = path.hashCode();
         result = 31 * result + rootMountContentPath.hashCode();
+        result = 31 * result + (isDocument ? 1 : 0);
         result = 31 * result + (exists ? 1 : 0);
         return result;
     }

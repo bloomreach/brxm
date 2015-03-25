@@ -16,10 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -27,11 +25,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -41,7 +38,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
@@ -52,13 +49,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.junit.After;
 import org.junit.Before;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
 import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
@@ -168,22 +162,16 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
         // override the config identifier to have sitemap id
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
-        final Mount mount = ctx.getResolvedMount().getMount();
 
-        if (siteMapItemToRepresent == null) {
+         if (siteMapItemToRepresent == null) {
             return null;
         }
 
-        DocumentRepresentation primaryDocumentRepresentation = null;
-        if (siteMapItemToRepresent.getRelativeContentPath() != null) {
-            final String rootContentPath = pageComposerContextService.getEditingMount().getContentPath();
-            primaryDocumentRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(rootContentPath + "/" + siteMapItemToRepresent.getRelativeContentPath(), rootContentPath);
-        }
+        Response response = createResource().getSiteMapItem(((CanonicalInfo) siteMapItemToRepresent).getCanonicalIdentifier());
+        SiteMapItemRepresentation siteMapItemRepresentation =
+                (SiteMapItemRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
-        final HstComponentConfiguration page = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration(siteMapItemToRepresent.getComponentConfigurationId());
-        Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(pageComposerContextService, page);
-
-        return new SiteMapItemRepresentation().represent(siteMapItemToRepresent, mount, primaryDocumentRepresentation , availableDocumentRepresentations);
+        return siteMapItemRepresentation;
 
     }
 
