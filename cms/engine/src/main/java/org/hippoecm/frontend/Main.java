@@ -530,7 +530,11 @@ public class Main extends PluginApplication {
     }
 
     public IApplicationFactory getApplicationFactory(final javax.jcr.Session jcrSession) {
-        return new JcrApplicationFactory(new JcrNodeModel(FRONTEND_PATH));
+        try {
+            return new JcrApplicationFactory(new JcrNodeModel(jcrSession.getNode(FRONTEND_PATH)));
+        } catch (RepositoryException e) {
+            return new JcrApplicationFactory(new JcrNodeModel(FRONTEND_PATH));
+        }
     }
 
     public HippoRepository getRepository() throws RepositoryException {
