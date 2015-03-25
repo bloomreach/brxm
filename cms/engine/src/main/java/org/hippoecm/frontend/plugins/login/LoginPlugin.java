@@ -204,15 +204,6 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         @Override
-        public void onDetach() {
-            ServletWebRequest webRequest = (ServletWebRequest) RequestCycle.get().getRequest();
-            if (!webRequest.getContainerRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
-                UserSession.get().releaseJcrSession();
-            }
-            super.onDetach();
-        }
-
-        @Override
         protected void onBeforeRender() {
             super.onBeforeRender();
 
@@ -243,7 +234,7 @@ public class LoginPlugin extends RenderPlugin {
             boolean success = true;
             PageParameters loginExceptionPageParameters = null;
             try {
-                userSession.login(new UserCredentials(new SimpleCredentials(username, password == null ? null : password.toCharArray())));
+                userSession.login(new UserCredentials(new SimpleCredentials(username, password == null ? new char[] {} : password.toCharArray())));
             } catch (LoginException le) {
                 log.debug(ERROR_MESSAGE_LOGIN_FAILURE, le);
                 success = false;
@@ -256,7 +247,7 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         protected void redirect(boolean success, PageParameters errorParameters) {
-            if (success == false) {
+            if (!success) {
                 Main main = (Main) Application.get();
                 main.resetConnection();
 
