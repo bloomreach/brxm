@@ -25,13 +25,6 @@
             'hippo.channel.menu.PickerService',
             function ($scope, $state, $stateParams, PickerService) {
                 var PickerTreeCtrl = this;
-                $scope.$watch('selectedItem', function(item) {
-                    if(item) {
-                        $state.go('picker.docs', {
-                            pickerTreeItemId: item.id
-                        });
-                    }
-                });
 
                 PickerTreeCtrl.callbacks = {
                     displayTreeItem: function(item) {
@@ -42,6 +35,9 @@
                             PickerService.getData(item);
                             $scope.PickerCtrl.selectedDocument = null;
                         }
+                        $state.go('picker.docs', {
+                            pickerTreeItemId: item.id
+                        });
                     },
                     toggleItem: function(item) {
                         if(item.collapsed === false && item.items.length === 0) {
