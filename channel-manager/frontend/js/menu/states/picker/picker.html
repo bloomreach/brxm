@@ -25,7 +25,7 @@
         </div>
         <div class="tree-col">
           <div class="hippo-tree-wrapper" data-keep-scroll-pos>
-            <div hippo-tree data-items="PickerCtrl.treeItems" data-callbacks="PickerTreeCtrl.callbacks" data-selected-item-id="PickerCtrl.selectedItem.id" drag="false">
+            <div hippo-tree data-items="PickerCtrl.treeItems" data-callbacks="PickerTreeCtrl.callbacks" data-selected-item="PickerCtrl.selectedItem" drag="false">
               <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propagation data-ng-if="item.expandable">
                 <hippo-icon name="{{collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
               </a>
