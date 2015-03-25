@@ -15,6 +15,6 @@
  */
 
 module.exports = {
-    bower: 'target/bower/components',
+    bower: 'target/bower_components',
     dashboardtarget: 'target/dashboard/components'
 };
