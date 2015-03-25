@@ -569,11 +569,15 @@
 #componentPropertiesWindow .field-group-title {
     display: block;
     font-weight: bold;
-    margin: 10px 0 5px;
+    margin: 20px 0 5px;
+    padding-top: 20px;
+    border-top: 1px solid #d4d6d8;
 }
 
 #componentPropertiesWindow .field-group-title:first-child {
     margin: 0 0 5px;
+    padding-top: 0;
+    border: none;
 }
 
 #componentPropertiesWindow .create-document-link {
