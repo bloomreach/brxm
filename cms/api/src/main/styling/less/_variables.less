@@ -12,265 +12,236 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Hippo Theme variables
+@import "../../../../target/bower/components/hippo-theme/src/less/_variables.less";
+
 // Paths
-@images:                            '../../../wicket/resource/org.hippoecm.frontend.skin.Icon/images';
-@images_extjs:                      '../../../resource/org.hippoecm.frontend.skin.Icon/images';
-@images_legacy:                     '../../images';
-
-// Gray shades
-@black:                             #000000;
-@darkest-shade:                     #22272f;
-@darker-shade:                      #39434C;
-@dark-shade:                        #9BA0A5;
-@dark-gray:                         #B8BCBF;
-@light-gray:                        #D4D6D8;
-@light-shade:                       #E1E3E5;
-@lighter-shade:                     #EBECED;
-@lightest-shade:                    #F2F2F2;
-@white:                             #ffffff;
-
-// Colors
-@primary:                           #0086F8;
-@primary-light:                     #C7E2F9;
-@success:                           #5BBC5B;
-@success-light:                     #ccffcc;
-@info:                              #5BC0DE;
-@info-light:                        #CCF8FF;
-@warning:                           #FFAF45;
-@warning-light:                     #fffada;
-@danger:                            #F45151;
-@danger-light:                      #fdc6c6;
-
-// Typography
-@font-family-sans-serif:            "Helvetica Neue", Helvetica, Arial, sans-serif;
-@font-family-monospace:             Menlo, Monaco, Consolas, "Courier New", monospace;
-@font-family-base:                  "Open Sans", @font-family-sans-serif;
+@images:                             '../../../wicket/resource/org.hippoecm.frontend.skin.Icon/images';
+@images_extjs:                       '../../../resource/org.hippoecm.frontend.skin.Icon/images';
+@images_legacy:                      '../../images';
 
 // Font sizes
 // If we define a font-size on the body element that is uneven, Firefox will render certain SVG images blurry unless
 // the font-size of a container element (not yet sure which ones specifically apart from the divs in the tree) is an
 // even number of px.
-@font-size-svg-fix:                 12px;
-@font-size-base:                    13px;
-@font-size-extjs:                   12px;
-@font-size-large:                   ceil((@font-size-base * 1.10)); // ~15px
-@font-size-small:                   ceil((@font-size-base * 0.85)); // ~12px
-@font-size-tiny:                    ceil((@font-size-base * 0.75)); // ~10px
+@font-size-svg-fix:                  12px;
+@font-size-base:                     13px;
+@font-size-extjs:                    12px;
+@font-size-large:                    ceil((@font-size-base * 1.10)); // ~15px
+@font-size-small:                    ceil((@font-size-base * 0.85)); // ~12px
+@font-size-tiny:                     ceil((@font-size-base * 0.75)); // ~10px
 
-@font-size-h1:                      floor((@font-size-base * 2.6)); // ~33px
-@font-size-h2:                      floor((@font-size-base * 2.15)); // ~27px
-@font-size-h3:                      ceil((@font-size-base * 1.7)); // ~23px
-@font-size-h4:                      ceil((@font-size-base * 1.25)); // ~17px
-@font-size-h5:                      @font-size-base;
-@font-size-h6:                      ceil((@font-size-base * 0.85)); // ~12px
+@font-size-h1:                       floor((@font-size-base * 2.6)); // ~33px
+@font-size-h2:                       floor((@font-size-base * 2.15)); // ~27px
+@font-size-h3:                       ceil((@font-size-base * 1.7)); // ~23px
+@font-size-h4:                       ceil((@font-size-base * 1.25)); // ~17px
+@font-size-h5:                       @font-size-base;
+@font-size-h6:                       ceil((@font-size-base * 0.85)); // ~12px
 
 // Line height
-@line-height-base:                  1.2;
-@line-height-computed:              ceil(@font-size-base * @line-height-base); // ~16px
+@line-height-base:                   1.2;
+@line-height-computed:               ceil(@font-size-base * @line-height-base); // ~16px
 
-
-// Colors and sizes
-
-// Global
-@body-bgcolor:                      @white;
-@text-color:                        @darkest-shade;
-@link-color:                        @primary;
-@link-hover-color:                  @darker-shade;
+// Scaffolding
+@body-bgcolor:                       @white;
+@text-color:                         @darkest-shade;
+@link-color:                         @primary;
+@link-hover-color:                   @darker-shade;
 
 // Main menu
-@main-menu-width:                   64px;
-@main-menu-bgcolor:                 @darker-shade;
-@main-menu-border-size:             3px;
-@main-menu-text-color:              @light-shade;
-@main-menu-icon-color:              @light-gray;
-@main-menu-hover-text-color:        @white;
-@main-menu-hover-icon-color:        @white;
-@main-menu-selected-bgcolor:        @darkest-shade;
-@main-menu-selected-border-color:   @primary;
-@main-menu-selected-text-color:     @white;
-@main-menu-selected-icon-color:     @white;
-@main-menu-current-user-color:      @lighter-shade;
+@main-menu-width:                    64px;
+@main-menu-bgcolor:                  @darker-shade;
+@main-menu-border-size:              3px;
+@main-menu-text-color:               @light-shade;
+@main-menu-icon-color:               @light-gray;
+@main-menu-hover-text-color:         @white;
+@main-menu-hover-icon-color:         @white;
+@main-menu-selected-bgcolor:         @darkest-shade;
+@main-menu-selected-border-color:    @primary;
+@main-menu-selected-text-color:      @white;
+@main-menu-selected-icon-color:      @white;
+@main-menu-current-user-color:       @lighter-shade;
 
 // Dashboard
-@dashboard-header-height:           41px;
+@dashboard-header-height:            41px;
 
 // Modal
-@modal-mask-opacity:                0.5;
-@modal-border-color:                @dark-shade;
-@modal-border-width:                3px;
-@modal-header-color:                @darker-shade;
-@modal-header-bgcolor:              @light-shade;
-@modal-header-font-size:            15px;
-@modal-header-height:               41px;
-@modal-header-padding:              16px;
-@modal-body-top-padding:            12px;
-@modal-body-padding:                16px;
-@modal-footer-padding:              16px;
-@modal-bgcolor:                     @lightest-shade;
-@modal-button-bgcolor:              @lightest-shade;
-@modal-button-border:               @dark-gray;
-@modal-button-border-radius:        4px;
-@modal-button-focus-bgcolor:        @darker-shade;
-@modal-button-focus-border:         @darker-shade;
-@modal-button-focus-color:          @white;
+@modal-mask-opacity:                 0.5;
+@modal-border-color:                 @dark-shade;
+@modal-border-width:                 3px;
+@modal-header-color:                 @darker-shade;
+@modal-header-bgcolor:               @light-shade;
+@modal-header-font-size:             15px;
+@modal-header-height:                41px;
+@modal-header-padding:               16px;
+@modal-body-top-padding:             12px;
+@modal-body-padding:                 16px;
+@modal-footer-padding:               16px;
+@modal-bgcolor:                      @lightest-shade;
+@modal-button-bgcolor:               @lightest-shade;
+@modal-button-border:                @dark-gray;
+@modal-button-border-radius:         4px;
+@modal-button-focus-bgcolor:         @darker-shade;
+@modal-button-focus-border:          @darker-shade;
+@modal-button-focus-color:           @white;
 
 // Hippo logo
-@hippo-logo-width:                  @main-menu-width;
-@hippo-logo-height:                 40px;
-@hippo-logo-bgcolor:                @main-menu-bgcolor;
+@hippo-logo-width:                   @main-menu-width;
+@hippo-logo-height:                  40px;
+@hippo-logo-bgcolor:                 @main-menu-bgcolor;
 
 // Developer extensions
-@hippo-dev-extensions-bgcolor:      @lighter-shade;
+@hippo-dev-extensions-bgcolor:       @lighter-shade;
 
 // Footer
-@footer-bgcolor:                    @light-shade;
-@footer-height:                     40;
+@footer-bgcolor:                     @light-shade;
+@footer-height:                      40;
 
 // Document tabs
-@document-tab-width:                250;
-@document-tab-height:               @footer-height;
-@document-tab-hover-bgcolor:        @light-shade;
-@document-tab-hover-close-color:    @black;
-@document-tab-selected-bgcolor:     @lightest-shade;
-@document-tab-font-size:            @font-size-small;
-@document-tab-title-color:          @darkest-shade;
-@document-tab-border-color:         @dark-gray;
-@document-tab-close-color:          @dark-gray;
-@document-tab-close-hover-color:    @primary;
+@document-tab-width:                 250;
+@document-tab-height:                @footer-height;
+@document-tab-hover-bgcolor:         @light-shade;
+@document-tab-hover-close-color:     @black;
+@document-tab-selected-bgcolor:      @lightest-shade;
+@document-tab-font-size:             @font-size-small;
+@document-tab-title-color:           @darkest-shade;
+@document-tab-border-color:          @dark-gray;
+@document-tab-close-color:           @dark-gray;
+@document-tab-close-hover-color:     @primary;
 
 // Navigator
-@navigator-bgcolor:                 @white;
-@navigator-border-color:            @light-shade;
+@navigator-bgcolor:                  @white;
+@navigator-border-color:             @light-shade;
 
 // Section viewer
-@section-selection-bgcolor:         @light-shade;
-@sections-select-height:            41;
-@sections-top-height:               40;
-@sections-top-search-result-height: 64;
-@sections-bottom-height:            41;
-@sections-border-color:             @light-shade;
-@sections-top-bgcolor:              @white;
+@section-selection-bgcolor:          @light-shade;
+@sections-select-height:             41;
+@sections-top-height:                40;
+@sections-top-search-result-height:  64;
+@sections-bottom-height:             41;
+@sections-border-color:              @light-shade;
+@sections-top-bgcolor:               @white;
 
 // Section search
-@search-input-border-color:         @light-shade;
-@search-input-icon-color:           @darker-shade;
-@search-input-icon-hover-color:     @primary;
-@search-scope-active-bgcolor:       @light-shade;
-@search-scope-inactive-color:       @darkest-shade;
+@search-input-border-color:          @light-shade;
+@search-input-icon-color:            @darker-shade;
+@search-input-icon-hover-color:      @primary;
+@search-scope-active-bgcolor:        @light-shade;
+@search-scope-inactive-color:        @darkest-shade;
 
 // Section add root
-@add-root-folder-hover-color:       @lightest-shade;
+@add-root-folder-hover-color:        @lightest-shade;
 
 // Document listing
-@doclist-head-bgcolor:              @light-shade;
-@doclist-head-border-color:         @dark-gray;
-@doclist-head-color:                @darkest-shade;
-@doclist-head-sorted-color:         @primary;
-@doclist-head-height:               41px;
-@doclist-body-border-color:         @light-shade;
-@doclist-padding-left-right:        8px;
-@doclist-padding-icon:              12px;
-@doclist-row-separator-color:       @light-shade;
-@doclist-row-selected-bgcolor:      @primary;
-@doclist-row-selected-color:        @white;
-@doclist-foot-height:               @doclist-head-height;
-@doclist-paging-button-stroke:      @lighter-shade;
-@doclist-paging-button-fill:        @lightest-shade;
-@doclist-paging-button-hover-color: @white;
-@doclist-paging-button-hover-fill:  @primary;
-@doclist-paging-button-size:        25px;
+@doclist-head-bgcolor:               @light-shade;
+@doclist-head-border-color:          @dark-gray;
+@doclist-head-color:                 @darkest-shade;
+@doclist-head-sorted-color:          @primary;
+@doclist-head-height:                41px;
+@doclist-body-border-color:          @light-shade;
+@doclist-padding-left-right:         8px;
+@doclist-padding-icon:               12px;
+@doclist-row-separator-color:        @light-shade;
+@doclist-row-selected-bgcolor:       @primary;
+@doclist-row-selected-color:         @white;
+@doclist-foot-height:                @doclist-head-height;
+@doclist-paging-button-stroke:       @lighter-shade;
+@doclist-paging-button-fill:         @lightest-shade;
+@doclist-paging-button-hover-color:  @white;
+@doclist-paging-button-hover-fill:   @primary;
+@doclist-paging-button-size:         25px;
 
 // Image gallery
-@image-gallery-list-box-size:       32px;
-@image-gallery-thumbnail-box-size:  60px;
-@image-gallery-thumbnail-padding:   12px;
-@image-gallery-thumbnail-item-width:200px;
+@image-gallery-list-box-size:        32px;
+@image-gallery-thumbnail-box-size:   60px;
+@image-gallery-thumbnail-padding:    12px;
+@image-gallery-thumbnail-item-width: 200px;
 
 // Tree
-@tree-caret-color:                  @darker-shade;
-@tree-junction-color:               @darkest-shade;
-@tree-folder-color:                 @dark-shade;
-@tree-hover-color:                  @primary;
-@tree-text-color:                   @darkest-shade;
+@tree-caret-color:                   @darker-shade;
+@tree-junction-color:                @darkest-shade;
+@tree-folder-color:                  @dark-shade;
+@tree-hover-color:                   @primary;
+@tree-text-color:                    @darkest-shade;
 
 // Editor
-@editor-bgcolor:                    @lightest-shade;
-@editor-color:                      @darkest-shade;
-@editor-body-border-color:          @light-shade;
-@editor-subfield-bg:                @white;
-@editor-field-title-color:          @darker-shade;
-@editor-subfield-border:            @light-gray;
-@editor-field-bg-1:                 @lighter-shade;
-@editor-field-bg-2:                 @light-shade;
-@editor-field-bg-3:                 @light-gray;
-@editor-field-bg-4:                 @dark-gray;
-@editor-field-bg-5:                 @dark-shade;
-@editor-compound-field-border:      @light-gray;
+@editor-bgcolor:                     @lightest-shade;
+@editor-color:                       @darkest-shade;
+@editor-body-border-color:           @light-shade;
+@editor-subfield-bg:                 @white;
+@editor-field-title-color:           @darker-shade;
+@editor-subfield-border:             @light-gray;
+@editor-field-bg-1:                  @lighter-shade;
+@editor-field-bg-2:                  @light-shade;
+@editor-field-bg-3:                  @light-gray;
+@editor-field-bg-4:                  @dark-gray;
+@editor-field-bg-5:                  @dark-shade;
+@editor-compound-field-border:       @light-gray;
 
 // Editor preview
-@editor-preview-field-bgcolor:      @lightest-shade;
-@rich-text-preview-link-hover-color:@primary;
+@editor-preview-field-bgcolor:       @lightest-shade;
+@rich-text-preview-link-hover-color: @primary;
 
 // Editor toolbar
-@editor-toolbar-bgcolor:            @light-shade;
-@editor-toolbar-border-color:       @dark-gray;
-@editor-toolbar-fontsize:           15;
-@editor-toolbar-height:             41;
-@editor-toolbar-color:              @darker-shade;
-@editor-toolbar-hover-color:        @primary;
-@editor-toolbar-active-color:       @darker-shade;
-@editor-toolbar-active-bgcolor:     @lightest-shade;
-@editor-toolbar-item-minwidth:      90;
-@editor-toolbar-item-margin-right:  12;
+@editor-toolbar-bgcolor:             @light-shade;
+@editor-toolbar-border-color:        @dark-gray;
+@editor-toolbar-fontsize:            15;
+@editor-toolbar-height:              41;
+@editor-toolbar-color:               @darker-shade;
+@editor-toolbar-hover-color:         @primary;
+@editor-toolbar-active-color:        @darker-shade;
+@editor-toolbar-active-bgcolor:      @lightest-shade;
+@editor-toolbar-item-minwidth:       90;
+@editor-toolbar-item-margin-right:   12;
 
 // Editor validation
-@validation-title-color:            @danger;
-@validation-border:                 @danger;
+@validation-title-color:             @danger;
+@validation-border:                  @danger;
 
 // CKEditor
-@ckeditor-button-off-color:         @lightest-shade;
-@ckeditor-button-off-hover-color:   @light-gray;
-@ckeditor-button-on-color:          @dark-shade;
-@ckeditor-button-on-hover-color:    @dark-gray;
-@ckeditor-button-border-color:      @dark-gray;
+@ckeditor-button-off-color:          @lightest-shade;
+@ckeditor-button-off-hover-color:    @light-gray;
+@ckeditor-button-on-color:           @dark-shade;
+@ckeditor-button-on-hover-color:     @dark-gray;
+@ckeditor-button-border-color:       @dark-gray;
 
 // Hippo dropdown/context menu
-@hippo-menu-fontsize:               13;
-@hippo-menu-bgcolor:                @light-shade;
-@hippo-menu-enabled-color:          @darkest-shade;
-@hippo-menu-enabled-hover-color:    @primary;
-@hippo-menu-enabled-hover-bgcolor:  @lightest-shade;
-@hippo-menu-disabled-color:         @dark-shade;
+@hippo-menu-fontsize:                13;
+@hippo-menu-bgcolor:                 @light-shade;
+@hippo-menu-enabled-color:           @darkest-shade;
+@hippo-menu-enabled-hover-color:     @primary;
+@hippo-menu-enabled-hover-bgcolor:   @lightest-shade;
+@hippo-menu-disabled-color:          @dark-shade;
 
 // Form elements
-@forms-select-bgcolor:              @white;
-@forms-select-border-radius:        3;
-@forms-select-button-color:         @dark-gray;
-@forms-select-button-hover-color:   @dark-shade;
-@forms-select-arrow-color:          @white;
-@forms-select-arrow-hover-color:    @white;
-@forms-select-open-bgcolor:         @white;
-@forms-select-items-bgcolor:        @white;
-@forms-select-items-hover-color:    @white;
-@forms-select-items-hover-bgcolor:  @darker-shade;
+@forms-select-bgcolor:               @white;
+@forms-select-border-radius:         3;
+@forms-select-button-color:          @dark-gray;
+@forms-select-button-hover-color:    @dark-shade;
+@forms-select-arrow-color:           @white;
+@forms-select-arrow-hover-color:     @white;
+@forms-select-open-bgcolor:          @white;
+@forms-select-items-bgcolor:         @white;
+@forms-select-items-hover-color:     @white;
+@forms-select-items-hover-bgcolor:   @darker-shade;
 
 // Date picker
-@datepicker-fontsize:               13px;
-@datepicker-button-bgcolor:         @lighter-shade;
-@datepicker-button-border:          @light-gray;
-@datepicker-button-border-radius:   3;
+@datepicker-fontsize:                13px;
+@datepicker-button-bgcolor:          @lighter-shade;
+@datepicker-button-border:           @light-gray;
+@datepicker-button-border-radius:    3;
 
 // Hippo icon default colors
-@hippo-icon-delete-enabled:         @danger;
+@hippo-icon-delete-enabled:          @danger;
 
 // Buttons
-@button-disabled-color:             @dark-shade;
+@button-disabled-color:              @dark-shade;
 
 // Feedback
-@feedback-error-color:              @danger;
+@feedback-error-color:               @danger;
 
 // Dashboard
-@dashboard-panel-bgcolor:           @white;
-@dashboard-panel-border-color:      @light-shade;
-@dashboard-panel-header-bgcolor:    @light-shade;
-@dashboard-panel-header-color:      @darkest-shade;
+@dashboard-panel-bgcolor:            @white;
+@dashboard-panel-border-color:       @light-shade;
+@dashboard-panel-header-bgcolor:     @light-shade;
+@dashboard-panel-header-color:       @darkest-shade;
