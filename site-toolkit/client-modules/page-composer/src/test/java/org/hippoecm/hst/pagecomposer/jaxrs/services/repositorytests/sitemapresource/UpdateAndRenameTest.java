@@ -109,6 +109,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         assertNotNull(home);
 
         home.setRelativeContentPath("testRelPath");
+        home.setPrimaryDocumentRepresentation(null);
+
         home.setScheme("https");
         Set<String> roles = new HashSet<>();
         roles.add("foo");
@@ -209,6 +211,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         // now news/_any_ has explicit lock: as a result, 'news' is partially locked
 
         news.setRelativeContentPath("foo");
+        news.setPrimaryDocumentRepresentation(null);
         final SiteMapResource siteMapResource = createResource();
 
         session.getRootNode().addNode("dummy-to-show-changes-are-discarded-when-update-fails");
@@ -224,6 +227,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
         {
             newsDefault.setRelativeContentPath("foobar");
+            newsDefault.setPrimaryDocumentRepresentation(null);
+
             Response response = siteMapResource.update(newsDefault);
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
@@ -263,6 +268,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation(session, "news/_any_");
         newsAny.setRelativeContentPath("foo");
+        newsAny.setPrimaryDocumentRepresentation(null);
+
         {
             Response response = siteMapResource.update(newsAny);
             assertEquals("update should fail because of partial lock.", Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());

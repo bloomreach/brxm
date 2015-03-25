@@ -24,6 +24,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +39,13 @@ public class SiteMapPagesRepresentation {
 
     public SiteMapPagesRepresentation represent(final HstSiteMap siteMap,
                                                 final Mount mount,
-                                                final String homePagePathInfo,
                                                 final String previewConfigurationPath) throws IllegalArgumentException {
         id = ((CanonicalInfo)siteMap).getCanonicalIdentifier();
         host = mount.getVirtualHost().getHostName();
         this.mount = mount.getMountPath();
+        final String homePagePathInfo = HstSiteMapUtils.getPath(mount, mount.getHomePage());
         for (HstSiteMapItem child : siteMap.getSiteMapItems()) {
-            addPages(child, null,homePagePathInfo, previewConfigurationPath);
+            addPages(child, null, homePagePathInfo, previewConfigurationPath);
         }
         Collections.sort(pages, new Comparator<SiteMapPageRepresentation>() {
             @Override

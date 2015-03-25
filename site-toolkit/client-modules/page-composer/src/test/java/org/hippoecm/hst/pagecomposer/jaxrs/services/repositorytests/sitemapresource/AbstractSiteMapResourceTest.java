@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapreso
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -29,6 +30,7 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -39,20 +41,24 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.junit.After;
 import org.junit.Before;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
 import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
@@ -147,7 +153,8 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                                                                   final String siteMapItemPath) throws Exception {
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
-        final HstSite site = mountResource.getPageComposerContextService().getEditingPreviewSite();
+        final PageComposerContextService pageComposerContextService = mountResource.getPageComposerContextService();
+        final HstSite site = pageComposerContextService.getEditingPreviewSite();
 
 
         final HstSiteMap siteMap = site.getSiteMap();
@@ -162,13 +169,21 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         // override the config identifier to have sitemap id
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
         final Mount mount = ctx.getResolvedMount().getMount();
-        String homePathPath =  HstSiteMapUtils.getPath(mount, mount.getHomePage());
 
         if (siteMapItemToRepresent == null) {
             return null;
         }
-        return new SiteMapItemRepresentation().represent(siteMapItemToRepresent, getPreviewConfigurationPath(), site.getComponentsConfiguration(),
-                homePathPath, null , Collections.emptySet());
+
+        DocumentRepresentation primaryDocumentRepresentation = null;
+        if (siteMapItemToRepresent.getRelativeContentPath() != null) {
+            final String rootContentPath = pageComposerContextService.getEditingMount().getContentPath();
+            primaryDocumentRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(rootContentPath + "/" + siteMapItemToRepresent.getRelativeContentPath(), rootContentPath);
+        }
+
+        final HstComponentConfiguration page = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration(siteMapItemToRepresent.getComponentConfigurationId());
+        Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(pageComposerContextService, page);
+
+        return new SiteMapItemRepresentation().represent(siteMapItemToRepresent, mount, primaryDocumentRepresentation , availableDocumentRepresentations);
 
     }
 

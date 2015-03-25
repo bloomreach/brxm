@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.util;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -22,13 +27,108 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentUtils.class);
+
+    public static Set<DocumentRepresentation> findAvailableDocumentRepresentations(final PageComposerContextService pageComposerContextService,
+                                                                                   final HstComponentConfiguration page) throws RepositoryException {
+        Set<DocumentRepresentation> documentRepresentations = new HashSet<>();
+        if (page == null) {
+            return documentRepresentations;
+        }
+        populateDocumentRepresentationsRecursive(pageComposerContextService, page, documentRepresentations);
+        return documentRepresentations;
+    }
+
+    public static void populateDocumentRepresentationsRecursive(final PageComposerContextService pageComposerContextService, final HstComponentConfiguration item, final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
+        populateDocumentRepresentations(pageComposerContextService, item, documentRepresentations);
+        for (HstComponentConfiguration child : item.getChildren().values()) {
+            populateDocumentRepresentationsRecursive(pageComposerContextService, child, documentRepresentations);
+        }
+    }
+
+    public static void populateDocumentRepresentations(final PageComposerContextService pageComposerContextService,
+                                                       final HstComponentConfiguration item,
+                                                       final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
+
+        if (item.getComponentClassName() == null ) {
+            return;
+        }
+        try {
+            Class<?> componentClass = Class.forName(item.getComponentClassName());
+            ParametersInfo info = componentClass.getAnnotation(ParametersInfo.class);
+            if (info != null) {
+
+                // we require a hst config user session that can read everywhere because we need to get the document names
+                // for all component picked documents, and the current webmaster might not have read access everywhere.
+
+                final String contentPath = pageComposerContextService.getEditingMount().getContentPath();
+                final Class<?> classType = info.type();
+                if (classType == null) {
+                    return;
+                }
+                for (Method method : classType.getMethods()) {
+                    if (method.isAnnotationPresent(Parameter.class)) {
+                        final Parameter propAnnotation = method.getAnnotation(Parameter.class);
+                        final Annotation annotation = ParameterType.getTypeAnnotation(method);
+                        String propertyName = null;
+                        boolean absolutePath = true;
+                        if (annotation instanceof DocumentLink) {
+                            // for DocumentLink we need some extra processing
+                            final DocumentLink documentLink = (DocumentLink) annotation;
+                            propertyName = propAnnotation.name();
+                        } else if (annotation instanceof JcrPath) {
+                            // for JcrPath we need some extra processing too
+                            final JcrPath jcrPath = (JcrPath) annotation;
+                            propertyName = propAnnotation.name();
+                            absolutePath = !jcrPath.isRelative();
+                        }
+
+                        if (propertyName != null) {
+                            String documentLocation = item.getParameter(propertyName);
+                            if (documentLocation == null || "/".equals(documentLocation)) {
+                                continue;
+                            }
+
+                            if (absolutePath && !documentLocation.startsWith(contentPath + "/")) {
+                                continue;
+                            }
+
+                            if (!absolutePath) {
+                                if (documentLocation.startsWith("/")) {
+                                    documentLocation = contentPath + documentLocation;
+                                } else {
+                                    documentLocation = contentPath + "/" + documentLocation;
+                                }
+                            }
+                            documentRepresentations.add(getDocumentRepresentationHstConfigUser(documentLocation, contentPath));
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            log.info("Cannot load component class '{}' for '{}'", item.getComponentClassName(), item);
+        }
+
+    }
+
+
 
     /**
      *

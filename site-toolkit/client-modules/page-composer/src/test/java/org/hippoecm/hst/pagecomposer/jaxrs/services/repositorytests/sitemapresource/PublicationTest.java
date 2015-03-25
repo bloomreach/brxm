@@ -53,6 +53,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
 
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         home.setRelativeContentPath("testRelPath");
+        home.setPrimaryDocumentRepresentation(null);
         home.setScheme("https");
         Set<String> roles = new HashSet<>();
         roles.add("foo");
@@ -295,6 +296,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // below ADMIN publishes
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+        news.setPrimaryDocumentRepresentation(null);
         news.setRelativeContentPath("bar");
         siteMapResource.update(news);
 

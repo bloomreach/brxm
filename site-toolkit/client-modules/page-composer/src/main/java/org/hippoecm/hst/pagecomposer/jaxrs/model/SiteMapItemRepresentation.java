@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -67,12 +67,12 @@ public class SiteMapItemRepresentation {
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
+
     public SiteMapItemRepresentation represent(final HstSiteMapItem item,
-                                                      final String previewConfigurationPath,
-                                                      final HstComponentsConfiguration hstComponentsConfiguration,
-                                                      final String homePagePathInfo,
-                                                      final DocumentRepresentation primaryDocumentRepresentation,
-                                                      final Set<DocumentRepresentation> availableDocumentRepresentations) throws IllegalArgumentException {
+                                               final Mount mount,
+                                               final DocumentRepresentation primaryDocumentRepresentation,
+                                               final Set<DocumentRepresentation> availableDocumentRepresentations) {
+
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -83,7 +83,7 @@ public class SiteMapItemRepresentation {
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
 
         this.pathInfo = HstSiteMapUtils.getPath(item, null);
-
+        final String homePagePathInfo =  HstSiteMapUtils.getPath(mount, mount.getHomePage());
         if (this.pathInfo.equals(homePagePathInfo)) {
             this.pathInfo = "/";
             this.isHomePage = true;
@@ -91,7 +91,7 @@ public class SiteMapItemRepresentation {
 
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
-        final HstComponentConfiguration page = hstComponentsConfiguration.getComponentConfiguration(componentConfigurationId);
+        final HstComponentConfiguration page = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
         hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(page);
 
         this.primaryDocumentRepresentation = primaryDocumentRepresentation;
@@ -99,7 +99,7 @@ public class SiteMapItemRepresentation {
 
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
-        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath() + "/");
         lockedBy = ((ConfigurationLockInfo) item).getLockedBy();
         lockedOn = ((ConfigurationLockInfo) item).getLockedOn();
         if (lockedOn != null) {
@@ -116,7 +116,9 @@ public class SiteMapItemRepresentation {
         roles = item.getRoles();
 
         return this;
+
     }
+
 
     private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration root) {
         if (root == null) {
@@ -338,4 +340,5 @@ public class SiteMapItemRepresentation {
     public void setHasContainerItemInPageDefinition(final boolean hasContainerItemInPageDefinition) {
         this.hasContainerItemInPageDefinition = hasContainerItemInPageDefinition;
     }
+
 }
