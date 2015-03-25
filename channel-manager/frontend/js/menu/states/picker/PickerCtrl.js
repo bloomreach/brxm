@@ -38,6 +38,9 @@
                 PickerCtrl.pickerTypes = [
                     {
                         name: 'Documents'
+                    },
+                    {
+                        name: 'Pages'
                     }
                 ];
                 PickerCtrl.pickerType = PickerCtrl.pickerTypes[0];
