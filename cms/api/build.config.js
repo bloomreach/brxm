@@ -15,7 +15,7 @@
  */
 
 module.exports = {
-    bower:      'target/bower/components',
+    bower:      'target/bower_components',
     extjs: {
         src:    'src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.less',
         target: 'target/classes/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css'

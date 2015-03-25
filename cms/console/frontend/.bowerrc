@@ -1,4 +1,3 @@
 {
-  "directory": "target/bower/components",
-  "json": "bower.json"
+  "directory": "target/bower_components"
 }
