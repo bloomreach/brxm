@@ -23,6 +23,7 @@
             'hippo.channel.menu.PickerService',
             function ($state, $stateParams, PickerService) {
                 var PickerCtrl = this;
+                PickerCtrl.selectedItem = {};
                 PickerCtrl.selectDocument = function() {
                     $state.go('menu-item.edit', {
                         menuItemId: $stateParams.menuItemId,
@@ -66,9 +67,7 @@
                     });
                 } else {
                     PickerService.getInitialData($stateParams.siteContentIdentifier);
-
                 }
-
             }
         ]);
 }());
