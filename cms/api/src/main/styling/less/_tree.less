@@ -31,9 +31,8 @@
     .row,
     .row-selected {
       white-space: nowrap;
-      // set row height to a little higher for better clickability
-      height: 1.8em;
-      padding: 0 4px 0 8px;
+      height: 20px;
+      padding: 2px 4px 0 8px;
       clear: both;
       font-size: @font-size-svg-fix;
 
@@ -114,6 +113,7 @@
       }
 
       // white SVGs when node is selected
+      .hippo-tree-junction-link svg.hi,
       .hippo-tree-node-link svg.hi {
         color: @white;
       }
