@@ -23,7 +23,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="picker-item" ng-repeat="item in PickerDocCtrl.selectedItem.items" ng-if="item.selectable" ng-class="{active: PickerCtrl.selectedDocument == item}" ng-click="PickerDocCtrl.selectDocument(item)">
+      <tr class="picker-item"
+          ng-repeat="item in PickerDocCtrl.selectedItem.items"
+          ng-if="item.selectable"
+          ng-class="{active: PickerCtrl.selectedDocument == item}"
+          ng-click="PickerDocCtrl.selectDocument(item)">
         <td class="status">
           <div class="hi-stack">
             <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}" class="file-type" size="l"></hippo-icon>
