@@ -39,9 +39,7 @@
                     $scope.$watch(function() {
                         return menuData.items;
                     }, function() {
-                        console.log('MenuItemCtrl.treeItems1', MenuItemCtrl.treeItems);
                         MenuItemCtrl.treeItems = menuData.items;
-                        console.log('MenuItemCtrl.treeItems2', MenuItemCtrl.treeItems);
                         $scope.$broadcast('menu-items-changed');
 
                         // merge pending changes into newly loaded tree
