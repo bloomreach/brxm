@@ -24,14 +24,12 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -128,37 +126,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
             feedback.setOutputMarkupId(true);
             feedback.setEscapeModelStrings(false);
             add(feedback);
-
-            AjaxButton ajaxButton = new AjaxButton("submit", new ResourceModel("submit-label")) {
-
-                @Override
-                protected void onError(AjaxRequestTarget target, Form<?> form) {
-                    target.add(feedback);
-                }
-
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    // final LoginStatusTuple loginStatus = SignInForm.this.login();
-                    if (SignInForm.this.login()) {
-                        redirect(true);
-                    } else {
-                        // Check whether to show captcha or not
-                        if (useCaptcha && attemptsCounter >= allowedAttempts) {
-                            createAndAddCaptcha(true);
-                        } else {
-                            // Increment the number of login trials
-                            attemptsCounter++;
-                        }
-
-                        target.add(SignInForm.this);
-                    }
-                }
-
-            };
-
-            // AjaxFormValidatingBehavior.addToAllFormComponents(this, "onkeyup", Duration.ONE_SECOND);
-            // ajaxButton.setDefaultFormProcessing(false);
-            add(ajaxButton);
+            add(new Button("submit", new ResourceModel("submit-label")));
         }
 
         public boolean login() {
@@ -204,6 +172,18 @@ public class SimpleLoginPlugin extends LoginPlugin {
 
         @Override
         public void onSubmit() {
+            // final LoginStatusTuple loginStatus = SignInForm.this.login();
+            if (login()) {
+                redirect(true);
+            } else {
+                // Check whether to show captcha or not
+                if (useCaptcha && attemptsCounter >= allowedAttempts) {
+                    createAndAddCaptcha(true);
+                } else {
+                    // Increment the number of login trials
+                    attemptsCounter++;
+                }
+            }
         }
 
         protected void createAndAddCaptcha(boolean isVisible) {
