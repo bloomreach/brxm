@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.plugins.standardworkflow.components.NameUriField;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,19 +63,19 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
 
             if (StringUtils.equals(newUrlName, originalUrl)) {
                 if (StringUtils.equals(newLocalizedName, originalName)) {
-                    showError(ERROR_SAME_NAMES, null);
+                    showError(ERROR_SAME_NAMES);
                 } else if (existedLocalizedName(parentNode, newLocalizedName)) {
-                    showError(ERROR_LOCALIZED_NAME_EXISTS, new Object[]{newLocalizedName});
+                    showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                 }
             } else if (parentNode.hasNode(newUrlName)) {
-                showError(ERROR_SNS_NODE_EXISTS, new Object[]{newUrlName});
+                showError(ERROR_SNS_NODE_EXISTS, newUrlName);
             } else if (!StringUtils.equals(newLocalizedName, originalName) &&
                         existedLocalizedName(parentNode, newLocalizedName)) {
-                showError(ERROR_LOCALIZED_NAME_EXISTS, new Object[]{newLocalizedName});
+                showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
             }
         } catch (RepositoryException e) {
             log.error("validation error", e);
-            showError(ERROR_VALIDATION_NAMES, null);
+            showError(ERROR_VALIDATION_NAMES);
         }
     }
 }

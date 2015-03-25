@@ -561,6 +561,7 @@ api/src/main/java/org/hippoecm/frontend/widgets/JcrTree.html svneol=native#text/
 api/src/main/java/org/hippoecm/frontend/widgets/LabelledBooleanFieldWidget.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/LabelledBooleanFieldWidget.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/ManagedReuseStrategy.java -text
+api/src/main/java/org/hippoecm/frontend/widgets/NameUriField.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/Pinger.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/RadioGroupWidget.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/RadioGroupWidget.java svneol=native#text/plain
@@ -1307,7 +1308,6 @@ builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/LanguageField_fr.properties svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/LanguageField_it.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/LanguageField_nl.properties svneol=native#text/plain
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/NameUriField.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/workflow-16.png -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.properties svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl_de.properties -text

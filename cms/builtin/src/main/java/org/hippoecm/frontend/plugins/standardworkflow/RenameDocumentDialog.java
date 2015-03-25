@@ -26,7 +26,7 @@ import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.plugins.standardworkflow.components.NameUriField;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;

@@ -26,21 +26,13 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.ajax.attributes.ThrottlingSettings;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.DestinationDialog;
@@ -57,7 +49,6 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
@@ -66,6 +57,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -538,16 +530,19 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
     }
 
-    public class RenameDocumentDialog extends AbstractWorkflowDialog {
+    public class RenameDocumentDialog extends AbstractWorkflowDialog<WorkflowDescriptor> {
 
         private final IModel<String> title;
-        private final TextField nameComponent;
-        private final TextField uriComponent;
-        private boolean uriModified;
+        private final IModel<String> nameModel;
+        private final IModel<String> uriModel;
+        private final NameUriField nameUriContainer;
 
         public RenameDocumentDialog(StdWorkflow action, IModel<String> title) {
             super(DefaultWorkflowPlugin.this.getModel(), action);
+
             this.title = title;
+            nameModel = PropertyModel.of(action, "targetName");
+            uriModel = PropertyModel.of(action, "uriName");
 
             String locale = null;
             try {
@@ -555,76 +550,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             } catch (RepositoryException e) {
                 //ignore
             }
-
             final IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
 
-            final PropertyModel<String> nameModel = new PropertyModel<>(action, "targetName");
-            final PropertyModel<String> uriModel = new PropertyModel<>(action, "uriName");
-
-            String s1 = nameModel.getObject();
-            String s2 = uriModel.getObject();
-            uriModified = !s1.equals(s2);
-
-            nameComponent = new TextField<>("name", nameModel);
-            nameComponent.setRequired(true);
-            nameComponent.setLabel(Model.of(getString("name-label")));
-            nameComponent.add(new OnChangeAjaxBehavior() {
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    if (!uriModified) {
-                        String uri = codecModel.getObject().encode(nameModel.getObject());
-                        uriModel.setObject(uri);
-                        target.add(uriComponent);
-                    }
-                }
-
-                @Override
-                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                    super.updateAjaxAttributes(attributes);
-                    attributes.setThrottlingSettings(new ThrottlingSettings("document-name", Duration.milliseconds(500)));
-                }
-            });
-            nameComponent.setOutputMarkupId(true);
-            setFocus(nameComponent);
-            add(nameComponent);
-
-            add(uriComponent = new TextField<String>("uriinput", uriModel) {
-                @Override
-                public boolean isEnabled() {
-                    return uriModified;
-                }
-            });
-
-            uriComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return uriModified ? "grayedin" : "grayedout";
-                }
-            }));
-            uriComponent.setOutputMarkupId(true);
-
-            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    uriModified = !uriModified;
-                    if (!uriModified) {
-                        StringCodec codec = codecModel.getObject();
-                        String uri = Strings.isEmpty(nameModel.getObject()) ? "" : codec.encode(nameModel.getObject());
-                        uriModel.setObject(uri);
-                        uriComponent.modelChanged();
-                    } else {
-                        target.focusComponent(uriComponent);
-                    }
-                    target.add(RenameDocumentDialog.this);
-                }
-            };
-            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return uriModified ? getString("url-reset") : getString("url-edit");
-                }
-            }));
-            add(uriAction);
+            final String originalTargetName = nameModel.getObject();
+            final String originalUriName = uriModel.getObject();
+            final boolean uriModified = !StringUtils.equals(originalTargetName, originalUriName);
+            add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalTargetName, uriModified));
         }
 
         @Override
@@ -635,6 +566,13 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         @Override
         public IValueMap getProperties() {
             return DialogConstants.MEDIUM;
+        }
+
+        @Override
+        protected void onOk() {
+            nameModel.setObject(nameUriContainer.getName());
+            uriModel.setObject(nameUriContainer.getUrl());
+            super.onOk();
         }
     }
 }

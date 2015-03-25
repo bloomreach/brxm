@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.components;
+package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,7 +35,6 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.repository.api.StringCodec;
 
 public class NameUriField extends WebMarkupContainer {
-    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private String url;
@@ -86,7 +85,6 @@ public class NameUriField extends WebMarkupContainer {
 
     private FormComponent createNameComponent(final PropertyModel<String> nameModel) {
         final FormComponent nameComponent = new TextField<>("name", new IModel<String>() {
-            private static final long serialVersionUID = 1L;
 
             public String getObject() {
                 return nameModel.getObject();

@@ -36,7 +36,7 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
-import org.hippoecm.frontend.plugins.standardworkflow.components.NameUriField;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
