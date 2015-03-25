@@ -44,7 +44,9 @@
                         link: $stateParams.link
                     });
                     if(PickerCtrl.pickerType.name == 'Pages') {
-                        PickerService.getInitialData($stateParams.siteMapIdentifier);
+                        PickerService.getInitialData($stateParams.siteMapIdentifier).then(function() {
+                            navigateToSelected(PickerCtrl.treeItems);
+                        });
                     } else {
                         $stateParams.link = null;
                         getDocumentData();
@@ -82,14 +84,11 @@
                 }
 
                 var getDocumentData = function() {
-                    if($stateParams.link) {
-                        PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
-                            PickerCtrl.pickerType = $filter('hippoGetByProperty')(PickerCtrl.pickerTypes, 'type', PickerCtrl.treeItems[0].pickerType);
-                            navigateToSelected(PickerCtrl.treeItems);
-                        });
-                    } else {
-                        PickerService.getInitialData($stateParams.siteContentIdentifier);
-                    }
+                    PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
+                        PickerCtrl.pickerType = $filter('hippoGetByProperty')(PickerCtrl.pickerTypes, 'type', PickerCtrl.treeItems[0].pickerType);
+                        navigateToSelected(PickerCtrl.treeItems);
+                    });
+
                 };
                 getDocumentData();
             }
