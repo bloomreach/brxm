@@ -44,7 +44,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
 
     private static final long serialVersionUID = 1L;
 
-    public static interface ITreeNodeTranslator extends IClusterable {
+    public interface ITreeNodeTranslator extends IClusterable {
         String getName(TreeNode treeNode, int level);
 
         String getTitleName(TreeNode treeNode);
@@ -145,7 +145,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
 
                 final Response response = RequestCycle.get().getResponse();
                 response.write("<span class=\"" + cssClassOuter + "\">");
-                response.write(icon.getSpriteReference(IconSize.M));
+                response.write(icon.getSpriteReference(IconSize.S));
                 response.write("</span>");
             }
         }.setRenderBodyOnly(true);
