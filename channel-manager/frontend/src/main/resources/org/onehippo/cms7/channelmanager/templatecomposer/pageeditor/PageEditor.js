@@ -898,7 +898,7 @@
         createPropertiesWindow: function(mountId) {
             var width, propertiesPanel, window;
 
-            width = Ext.isDefined(this.variantsUuid) ? 530 : 400;
+            width = Ext.isDefined(this.variantsUuid) ? 610 : 480;
             propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
                 id: 'componentPropertiesPanel',
                 resources: this.resources,

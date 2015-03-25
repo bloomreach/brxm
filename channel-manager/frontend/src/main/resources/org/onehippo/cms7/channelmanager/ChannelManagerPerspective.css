@@ -562,18 +562,90 @@
     background-color: #fff;
 }
 
-.channel-manager .component-properties .default-value {
-    opacity: 0.6;
+#componentPropertiesWindow .default-value {
+    color: rgba(34, 39, 47, 0.6);
 }
 
-.channel-manager .component-properties .field-group-title {
+#componentPropertiesWindow .field-group-title {
     display: block;
     font-weight: bold;
     margin: 10px 0 5px;
 }
 
-.channel-manager .component-properties .first-field-group-title {
+#componentPropertiesWindow .field-group-title:first-child {
     margin: 0 0 5px;
+}
+
+#componentPropertiesWindow .create-document-link {
+    font-size: 12px;
+}
+
+#componentPropertiesWindow .x-panel-body,
+#componentPropertiesWindow .x-panel-footer {
+    background-color: #F2F2F2;
+}
+
+#componentPropertiesWindow .x-panel-footer {
+    font-size: 13px;
+    padding: 0 12px 16px 12px;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-toolbar-cell {
+    padding: 0 4px;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-btn {
+    border: 1px solid #B8BCBF;
+    border-collapse: separate;
+    border-radius: 4px;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-btn:hover,
+#componentPropertiesWindow .x-panel-footer .x-btn:focus {
+    background-color: #39434C;
+    border-color: #39434C;
+    color: #ffffff;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-btn em {
+    padding: 0 4px;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-btn button {
+    color: inherit;
+    font: normal 13px "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    height: 22px;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-btn-tl,
+#componentPropertiesWindow .x-panel-footer .x-btn-tc,
+#componentPropertiesWindow .x-panel-footer .x-btn-tr,
+#componentPropertiesWindow .x-panel-footer .x-btn-ml,
+#componentPropertiesWindow .x-panel-footer .x-btn-mc,
+#componentPropertiesWindow .x-panel-footer .x-btn-mr,
+#componentPropertiesWindow .x-panel-footer .x-btn-bl,
+#componentPropertiesWindow .x-panel-footer .x-btn-bc,
+#componentPropertiesWindow .x-panel-footer .x-btn-br {
+    background: none;
+    width: auto;
+    height: auto;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-btn-tl i,
+#componentPropertiesWindow .x-panel-footer .x-btn-tc i,
+#componentPropertiesWindow .x-panel-footer .x-btn-tr i,
+#componentPropertiesWindow .x-panel-footer .x-btn-ml i,
+#componentPropertiesWindow .x-panel-footer .x-btn-mc i,
+#componentPropertiesWindow .x-panel-footer .x-btn-mr i,
+#componentPropertiesWindow .x-panel-footer .x-btn-bl i,
+#componentPropertiesWindow .x-panel-footer .x-btn-bc i,
+#componentPropertiesWindow .x-panel-footer .x-btn-br i {
+    width: 0;
+    height: 0;
+}
+
+#createDocumentForm .x-panel-body {
+    padding: 16px;
 }
 
 .channel-manager-mask.ext-el-mask {
@@ -777,8 +849,8 @@
     left: 0;
 }
 
-.channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
-    overflow-x: hidden;
+.channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body {
+    overflow-x: hidden !important;
     overflow-y: auto;
 }
 

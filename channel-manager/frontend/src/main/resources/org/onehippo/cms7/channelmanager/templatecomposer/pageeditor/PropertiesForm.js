@@ -31,6 +31,13 @@
         return newStore;
     }
 
+    function fixComboLeftPadding() {
+        // Workaround, the padding-left which gets set on a combo element places the combo a little too much to the right.
+        // Removing the style attribute after render fixes the layout
+        var formElement = this.el.findParent('.x-form-element');
+        formElement.removeAttribute('style');
+    }
+
     Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
 
         mountId: null,
@@ -43,7 +50,7 @@
 
         store: null,
 
-        PADDING: 10,
+        PADDING: 16,
 
         constructor: function(config) {
             this.variant = config.variant;
@@ -115,7 +122,7 @@
                 border: false,
                 padding: this.PADDING,
                 autoScroll: true,
-                labelWidth: 100,
+                labelWidth: 120,
                 labelSeparator: '',
                 monitorValid: true,
                 defaults: {
@@ -136,7 +143,7 @@
 
         getVisibleHeight: function() {
             if (this.rendered) {
-                return this.getHeight() + (2 * this.PADDING);
+                return this.getHeight() + this.PADDING;
             }
             return 0;
         },
@@ -227,14 +234,16 @@
         },
 
         _initFields: function() {
+            var lastGroupLabel = null;
+
             this.store.each(function(record) {
-                var groupLabel, lastGroupLabel;
+                var groupLabel;
 
                 if (record.get('hiddenInChannelManager') === false) {
                     groupLabel = record.get('groupLabel');
                     if (groupLabel !== lastGroupLabel) {
                         this.add({
-                            cls: 'field-group-title ' + (lastGroupLabel === undefined ? 'first-field-group-title' : ''),
+                            cls: 'field-group-title',
                             text: Ext.util.Format.htmlEncode(groupLabel),
                             xtype: 'label'
                         });
@@ -320,6 +329,7 @@
                 displayField: 'path',
                 valueField: 'path',
                 listeners: {
+                    afterrender: fixComboLeftPadding,
                     select: function(combo, comboRecord) {
                         record.set('value', comboRecord.get('path') || defaultValue);
                     }
@@ -356,14 +366,13 @@
             createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
             createDocumentWindow = new Ext.Window({
                 title: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-window-title'],
-                height: 150,
-                width: 400,
+                height: 200,
+                width: 450,
                 modal: true,
                 items: [
                     {
                         xtype: 'form',
-                        height: 150,
-                        padding: 10,
+                        height: 200,
                         labelWidth: 120,
                         id: 'createDocumentForm',
                         defaults: {
@@ -465,12 +474,7 @@
                 valueField: 'id',
                 displayField: 'displayText',
                 listeners: {
-                    afterrender: function(combo) {
-                        // workaround, the padding-left which gets set on the element, let the right box side disappear,
-                        // removing the style attribute after render fixes the layout
-                        var formElement = this.el.findParent('.x-form-element');
-                        formElement.removeAttribute('style');
-                    },
+                    afterrender: fixComboLeftPadding,
                     select: function(combo, comboRecord) {
                         record.set('value', comboRecord.get('id') || defaultValue);
                     }

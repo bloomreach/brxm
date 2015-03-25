@@ -18,7 +18,7 @@
     <!-- START confirmation dialogs -->
     <div class="overlay" data-ng-show="EditMenuItemCtrl.remove.isVisible || EditMenuItemCtrl.externalLink.isVisible">&#160;</div>
     <div hippo-confirmation-dialog
-         confirm-icon="trash-o"
+         confirm-icon="trash"
          data-show="EditMenuItemCtrl.remove.isVisible"
          data-perform-confirmation="EditMenuItemCtrl.remove.execute()"
          data-perform-cancel="EditMenuItemCtrl.remove.cancel()"
@@ -71,19 +71,17 @@
                    data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
             <span class="form-control-feedback" data-ng-show="form.title.$dirty">
-              <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title"
+              <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title && !EditMenuItemCtrl.isSaved.title"
                           name="spinner"
                           size="m">
               </hippo-icon>
               <hippo-icon ng-if="form.title.$valid && EditMenuItemCtrl.isSaved.title"
                           name="check-circle"
-                          size="m"
-                          class="hi-color-white hi-fill-success">
+                          size="m">
               </hippo-icon>
               <hippo-icon ng-if="form.title.$invalid || !EditMenuItemCtrl.isSaved.title"
                           name="minus-circle"
-                          size="m"
-                          class="hi-color-white hi-fill-danger">
+                          size="m">
               </hippo-icon>
             </span>
         </div>
@@ -132,7 +130,7 @@
                        data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)">
                 
               <span class="form-control-feedback" data-ng-show="form.sitemapItem.$dirty">
-                  <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
+                  <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link && !EditMenuItemCtrl.isSaved.link"
                               name="spinner"
                               size="m">
                   </hippo-icon>
@@ -156,8 +154,8 @@
                         <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.openPicker()">
                           Pick
                         </button>
-                        <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.showPage()">
-                          <hippo-icon name="link" size="m"></hippo-icon>
+                        <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.showPage">
+                            <hippo-icon name="link" size="m"></hippo-icon>
                         </button>
                     </div>
                 </span>
@@ -182,19 +180,17 @@
                        data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
                 <span class="form-control-feedback" data-ng-show="form.url.$dirty">
-                    <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
+                    <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link && !EditMenuItemCtrl.isSaved.link"
                                 name="spinner"
                                 size="m">
                     </hippo-icon>
                     <hippo-icon ng-if="form.url.$valid && EditMenuItemCtrl.isSaved.link"
                                 name="check-circle"
-                                size="m"
-                                class="hi-color-white hi-fill-success">
+                                size="m">
                     </hippo-icon>
                     <hippo-icon ng-if="form.url.$invalid || !EditMenuItemCtrl.isSaved.link"
                                 name="minus-circle"
-                                size="m"
-                                class="hi-color-white hi-fill-danger">
+                                size="m">
                     </hippo-icon>
                 </span>
                 <span class="input-group-btn">
@@ -208,7 +204,7 @@
         <hr />
 
         <button type="button" class="btn btn-default" data-ng-click="EditMenuItemCtrl.remove.show()">
-          <hippo-icon name="trash" size="m"></hippo-icon> {{ 'DELETE_MENU_ITEM' | translate }}
+          <hippo-icon name="trash" size="m"></hippo-icon>&nbsp;{{ 'DELETE_MENU_ITEM' | translate }}
         </button>
     </form>
 </div>
