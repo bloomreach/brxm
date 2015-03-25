@@ -20,8 +20,9 @@
         .controller('hippo.channel.menu.PickerCtrl', [
             '$state',
             '$stateParams',
+            '$filter',
             'hippo.channel.menu.PickerService',
-            function ($state, $stateParams, PickerService) {
+            function ($state, $stateParams, $filter, PickerService) {
                 var PickerCtrl = this;
                 PickerCtrl.selectedItem = {};
                 PickerCtrl.selectDocument = function() {
@@ -36,43 +37,55 @@
                     });
                 };
                 PickerCtrl.changePickerType = function() {
+                    $state.go('picker', {
+                        menuItemId: $stateParams.menuItemId,
+                        siteContentIdentifier: $stateParams.siteContentIdentifier,
+                        siteMapIdentifier: $stateParams.siteMapIdentifier,
+                        link: $stateParams.link
+                    });
                     if(PickerCtrl.pickerType.name == 'Pages') {
                         PickerService.getInitialData($stateParams.siteMapIdentifier);
                     } else {
+                        $stateParams.link = null;
                         getDocumentData();
                     }
+                    PickerCtrl.selectedDocument = null;
 
                 };
                 PickerCtrl.treeItems = PickerService.getTree();
                 PickerCtrl.pickerTypes = [
                     {
-                        name: 'Documents'
+                        name: 'Documents',
+                        type: 'documents'
                     },
                     {
-                        name: 'Pages'
+                        name: 'Pages',
+                        type: 'pages'
                     }
                 ];
                 PickerCtrl.pickerType = PickerCtrl.pickerTypes[0];
                 PickerCtrl.selectedDocument = null;
 
+                function navigateToSelected(items, parent) {
+                    angular.forEach(items, function (item) {
+                        if (item.selected) {
+                            $state.go('picker.docs', {
+                                pickerTreeItemId: parent.id
+                            });
+                            PickerCtrl.selectedItem = parent;
+                            PickerCtrl.selectedDocument = item;
+                        }
+                        if(item.items) {
+                            navigateToSelected(item.items, item);
+                        }
+                    });
+                }
+
                 var getDocumentData = function() {
                     if($stateParams.link) {
                         PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
+                            PickerCtrl.pickerType = $filter('hippoGetByProperty')(PickerCtrl.pickerTypes, 'type', PickerCtrl.treeItems[0].pickerType);
                             navigateToSelected(PickerCtrl.treeItems);
-                            function navigateToSelected(items, parent) {
-                                angular.forEach(items, function (item) {
-                                    if (item.selected) {
-                                        $state.go('picker.docs', {
-                                            pickerTreeItemId: parent.id
-                                        });
-                                        PickerCtrl.selectedItem = parent;
-                                        PickerCtrl.selectedDocument = item;
-                                    }
-                                    if(item.items) {
-                                        navigateToSelected(item.items, item);
-                                    }
-                                });
-                            }
                         });
                     } else {
                         PickerService.getInitialData($stateParams.siteContentIdentifier);
