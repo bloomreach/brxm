@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.repository.api.NodeNameCodec;
 
 public class SiteMapPageRepresentation {
 
@@ -34,25 +37,33 @@ public class SiteMapPageRepresentation {
     private String relativeContentPath;
 
 
-    public SiteMapPageRepresentation represent(final SiteMapItemRepresentation siteMapItemRepresentation,
-                                               final String parentId, final String mountPath) throws IllegalArgumentException {
+    public SiteMapPageRepresentation represent(final HstSiteMapItem item,
+                                               final String parentId,
+                                               final String mountPath,
+                                               final String homePagePathInfo,
+                                               final String previewConfigurationPath) throws IllegalArgumentException {
 
-        id = siteMapItemRepresentation.getId();
+        id = item.getId();
         this.parentId = parentId;
-        name = siteMapItemRepresentation.getName();
-        pageTitle = siteMapItemRepresentation.getPageTitle();
-        pathInfo = siteMapItemRepresentation.getPathInfo();
-        if (siteMapItemRepresentation.getIsHomePage()) {
+        name = NodeNameCodec.decode(item.getValue());
+        pageTitle = item.getPageTitle();
+        pathInfo =  HstSiteMapUtils.getPath(item, null);
+
+        if (pathInfo.equals(homePagePathInfo)) {
+            pathInfo = "/";
             renderPathInfo = mountPath;
-        } else if (pathInfo.startsWith("/")){
-            renderPathInfo = mountPath + pathInfo;
         } else {
-            renderPathInfo = mountPath + "/" + pathInfo;
+            if (pathInfo.startsWith("/")){
+                renderPathInfo = mountPath + pathInfo;
+            } else {
+                renderPathInfo = mountPath + "/" + pathInfo;
+            }
         }
-        componentConfigurationId = siteMapItemRepresentation.getComponentConfigurationId();
-        workspaceConfiguration = siteMapItemRepresentation.isWorkspaceConfiguration();
-        inherited = siteMapItemRepresentation.isInherited();
-        relativeContentPath = siteMapItemRepresentation.getRelativeContentPath();
+
+        componentConfigurationId = item.getComponentConfigurationId();
+        workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
+        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        relativeContentPath = item.getRelativeContentPath();
         return this;
     }
 

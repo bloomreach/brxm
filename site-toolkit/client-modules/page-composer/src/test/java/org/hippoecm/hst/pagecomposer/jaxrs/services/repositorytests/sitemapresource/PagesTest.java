@@ -25,7 +25,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
@@ -34,7 +33,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -262,16 +260,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     public SiteMapItemRepresentation getHomePage() throws Exception {
-        initContext();
-        final SiteMapResource siteMapResource = createResource();
-
-        final Response response = siteMapResource.getSiteMap();
-        SiteMapRepresentation siteMap = (SiteMapRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
-        for (SiteMapItemRepresentation siteMapItemRepresentation : siteMap.getChildren()) {
-            if (siteMapItemRepresentation.getName().equals("home")) {
-                return siteMapItemRepresentation;
-            }
-        }
-        throw new AssertionError("Homepage sitemap item not found");
+        return getSiteMapItemRepresentation(session, "home");
     }
 }

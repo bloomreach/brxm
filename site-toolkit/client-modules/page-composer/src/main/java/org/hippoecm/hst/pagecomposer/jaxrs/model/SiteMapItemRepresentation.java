@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,7 +67,7 @@ public class SiteMapItemRepresentation {
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapItemRepresentation representShallow(final HstSiteMapItem item,
+    public SiteMapItemRepresentation represent(final HstSiteMapItem item,
                                                       final String previewConfigurationPath,
                                                       final HstComponentsConfiguration hstComponentsConfiguration,
                                                       final String homePagePathInfo,
@@ -115,25 +114,6 @@ public class SiteMapItemRepresentation {
         isExplicitElement = item.isExplicitElement();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
-
-        return this;
-    }
-
-    public SiteMapItemRepresentation represent(final HstSiteMapItem item,
-                                               final String previewConfigurationPath,
-                                               final HstComponentsConfiguration hstComponentsConfiguration,
-                                               final String homePagePathInfo) {
-        representShallow(item, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo, null, Collections.emptySet());
-
-        for (HstSiteMapItem childItem : item.getChildren()) {
-            if (childItem.isContainerResource() || childItem.isHiddenInChannelManager()) {
-                log.debug("Skip '{}' from page overview because represents container resource or is marked " +
-                        "explicitly to be hidden in channel manager", childItem);
-            }
-            SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
-            children.add(child);
-        }
 
         return this;
     }

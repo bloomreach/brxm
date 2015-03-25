@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -80,21 +79,6 @@ public class SiteMapResource extends AbstractConfigResource {
     }
 
     @GET
-    @Path("/")
-    public Response getSiteMap() {
-        return tryGet(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
-                final HstSiteMap siteMap = site.getSiteMap();
-                final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
-                        site.getComponentsConfiguration(), getHomePagePath());
-                return ok("Sitemap loaded successfully", representation);
-            }
-        });
-    }
-
-    @GET
     @Path("/mount")
     public Response getMountRepresentation() {
         return tryGet(new Callable<Response>() {
@@ -115,10 +99,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
                 final Mount mount = getPageComposerContextService().getEditingMount();
-                final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
-                        site.getComponentsConfiguration(), getHomePagePath());
-                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap,
-                        mount);
+                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
+                        mount, getHomePagePath(), getPreviewConfigurationPath());
                 return ok("Sitemap loaded successfully", pages);
             }
         });
@@ -146,7 +128,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(page);
 
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
-                        .representShallow(siteMapItem, site.getConfigurationPath(), componentsConfiguration,
+                        .represent(siteMapItem, site.getConfigurationPath(), componentsConfiguration,
                                 getHomePagePath(), primaryDocumentRepresentation, availableDocumentRepresentations);
 
                 return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
