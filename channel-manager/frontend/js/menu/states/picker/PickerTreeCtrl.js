@@ -28,13 +28,13 @@
 
                 PickerTreeCtrl.callbacks = {
                     displayTreeItem: function(item) {
-                        return item.type === 'folder';
+                        return item.type === 'folder' || item.type === 'page';
                     },
                     selectItem: function(item) {
                         if(!item.leaf && item.items.length < 1) {
                             PickerService.getData(item);
-                            $scope.PickerCtrl.selectedDocument = null;
                         }
+                        $scope.PickerCtrl.selectedDocument = null;
                         $state.go('picker.docs', {
                             pickerTreeItemId: item.id
                         });
