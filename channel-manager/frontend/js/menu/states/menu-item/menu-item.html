@@ -21,7 +21,7 @@
         <div class="hippo-tree-wrapper" data-keep-scroll-pos>
           <div hippo-tree data-items="MenuItemCtrl.treeItems" data-callbacks="TreeCtrl.callbacks" class="hippo-tree" data-selected-item-id="MenuItemCtrl.selectedMenuItem.id" drag="true">
             <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propagation data-ng-hide="childNodes().length === 0">
-              <hippo-icon name="{{collapsed ? 'caret-right-medium' : 'caret-down-medium'}}" size="tiny"></hippo-icon>
+              <hippo-icon name="{{collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
             </a>
             <span class="spacer" data-ng-show="childNodes().length === 0">&#9679;</span>
             <span class="angular-ui-tree-title-wrapper">
