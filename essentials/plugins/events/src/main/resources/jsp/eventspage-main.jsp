@@ -30,7 +30,7 @@
     <figure>
       <img src="${img}" title="${fn:escapeXml(document.image.fileName)}"
            alt="${fn:escapeXml(document.image.fileName)}"/>
-      <figcaption>${fn:escapeXml(document.image.description)}</figcaption>
+      <figcaption><c:out value="${document.image.description}"/></figcaption>
     </figure>
   </c:if>
 

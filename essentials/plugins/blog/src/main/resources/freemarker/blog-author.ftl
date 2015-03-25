@@ -4,6 +4,6 @@
 <@hst.defineObjects/>
 <#if document??>
 <h1>
-${document.fullName}
+${document.fullName?html}
 </h1>
 </#if>

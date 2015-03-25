@@ -8,7 +8,7 @@
   <div class="row form-group">
     <div class="col-xs-8">
     <#if query??>
-      <input type="search" value="${query}" name="query" class="form-control" placeholder="<@fmt.message key='facets.placeholder'/>">
+      <input type="search" value="${query?html}" name="query" class="form-control" placeholder="<@fmt.message key='facets.placeholder'/>">
     <#else>
       <input type="search" value="" name="query" class="form-control" placeholder="<@fmt.message key='facets.placeholder'/>">
     </#if>
@@ -24,18 +24,18 @@
   <ul class="nav nav-list">
     <#list facets.folders as facetvalue>
       <#if facetvalue.folders?? && (facetvalue.folders?size > 0)>
-        <li><label class="nav-header">${facetvalue.name}</label>
+        <li><label class="nav-header">${facetvalue.name?html}</label>
           <ul class="nav nav-list">
             <#list facetvalue.folders as item>
               <#if (item.leaf?? && item.leaf && (item.count > 0))>
                 <@hst.facetnavigationlink  current=facets remove=item var="removeLink"/>
                 <li class="active">
-                  <a href="${removeLink}">${item.name}&nbsp;<span class="alert-danger"><@fmt.message key='facets.remove'/></span></a>
+                  <a href="${removeLink}">${item.name?html}&nbsp;<span class="alert-danger"><@fmt.message key='facets.remove'/></span></a>
                 </li>
               <#else>
                 <@hst.link var="link" hippobean=item navigationStateful=true/>
                 <li <#if (item_index >= facetLimit)>class="extra"</#if>>
-                  <a href="${link}">${item.name}&nbsp;<span>(${item.count})</span></a>
+                  <a href="${link}">${item.name?html}&nbsp;<span>(${item.count?html})</span></a>
                 </li>
               </#if>
             </#list>

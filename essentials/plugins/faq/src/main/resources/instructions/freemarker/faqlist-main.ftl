@@ -5,13 +5,13 @@
 <#if document??>
 <div class="has-edit-button">
 <@hst.cmseditlink hippobean=document/>
-<h1>${document.title}</h1>
+<h1>${document.title?html}</h1>
 <div>
     <@hst.html hippohtml=document.description/>
 </div>
     <#list document.faqDocuments as faq>
     <div>
-        <h3><a href="<@hst.link hippobean=faq />">${faq.question}</a></h3>
+        <h3><a href="<@hst.link hippobean=faq />">${faq.question?html}</a></h3>
         <@hst.html hippohtml=faq.answer/>
     </div>
     </#list>

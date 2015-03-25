@@ -7,12 +7,12 @@
         <@hst.link var="link" hippobean=item />
     <article class="has-edit-button">
         <@hst.cmseditlink hippobean=item/>
-        <h3><a href="${link}">${item.title}</a></h3>
+        <h3><a href="${link}">${item.title?html}</a></h3>
         <#if item.date?? && item.date.time??>
             <p><@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/></p>
         </#if>
-        <p>${item.location}</p>
-        <p>${item.introduction}</p>
+        <p>${item.location?html}</p>
+        <p>${item.introduction?html}</p>
     </article>
     </#list>
     <#if cparam.showPagination>

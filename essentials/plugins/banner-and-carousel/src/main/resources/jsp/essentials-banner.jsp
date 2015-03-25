@@ -2,7 +2,7 @@
 
 <%--@elvariable id="document" type="{{beansPackage}}.Banner"--%>
 <div class="row">
-  <a href="<hst:link hippobean="${document.link}" />"><img src="<hst:link hippobean="${document.image}" />" alt="${document.title}"/></a>
+  <a href="<hst:link hippobean="${document.link}" />"><img src="<hst:link hippobean="${document.image}" />" alt="${fn:escapeXml(document.title)}"/></a>
 </div>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${editMode && (document eq null)}">

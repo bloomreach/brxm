@@ -5,7 +5,7 @@
 <#if document??>
 <div class="has-edit-button">
     <@hst.cmseditlink hippobean=document/>
-    <h1>${document.title}
+    <h1>${document.title?html}
         <small><@hst.html hippohtml=document.description/></small>
     </h1>
     <div class="panel-group" id="faqitems" role="tablist" aria-multiselectable="true">
@@ -14,7 +14,7 @@
                 <div class="panel-heading" role="tab" id="heading${faq_index}">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#faqitems" href="#faq_${faq_index}" aria-expanded="false" aria-controls="collapse${faq_index}">
-                        ${faq.question}
+                        ${faq.question?html}
                         </a>
                     </h4>
                 </div>

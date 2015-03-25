@@ -12,19 +12,19 @@
             <a href="${link}">
                 <#if item.image?? && item.image.thumbnail??>
                     <@hst.link var="img" hippobean=item.image.thumbnail/>
-                    <img src="${img}" title="${item.image.fileName}" alt="${item.image.fileName}"/>
+                    <img src="${img}" title="${item.image.fileName?html}" alt="${item.image.fileName?html}"/>
                 </#if>
             </a>
         </div>
         <div class="media-body">
-            <h4 class="media-heading"><a href="${link}">${item.title}</a>
+            <h4 class="media-heading"><a href="${link}">${item.title?html}</a>
                     <span class="label label-success pull-right">
                         <#if item.date?? && item.date.time??>
                             <@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/>
                         </#if>
                     </span>
             </h4>
-            <p>${item.introduction}</p>
+            <p>${item.introduction?html}</p>
         </div>
     </div>
     </#list>

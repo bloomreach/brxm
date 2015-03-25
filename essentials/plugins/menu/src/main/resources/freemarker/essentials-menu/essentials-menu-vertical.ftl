@@ -5,9 +5,9 @@
 <ul class="nav nav-pills nav-stacked">
     <#list menu.siteMenuItems as item>
         <#if  item.selected || item.expanded>
-            <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
+            <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
         <#else>
-            <li><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
+            <li><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
         </#if>
     </#list>
 </ul>

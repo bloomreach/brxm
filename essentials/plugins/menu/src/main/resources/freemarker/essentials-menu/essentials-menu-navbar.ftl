@@ -6,9 +6,9 @@
     <ul class="nav navbar-nav">
         <#list menu.siteMenuItems as item>
             <#if  item.selected || item.expanded>
-                <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
+                <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
             <#else>
-                <li><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
+                <li><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
             </#if>
         </#list>
     </ul>

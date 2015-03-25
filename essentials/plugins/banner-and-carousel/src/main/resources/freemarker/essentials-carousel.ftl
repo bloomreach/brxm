@@ -28,9 +28,9 @@
                     <#assign active = ''/>
                 </#if>
                 <div class="item${active}">
-                    <img src="<@hst.link hippobean=item.image />" alt="${item.title}"/>
+                    <img src="<@hst.link hippobean=item.image />" alt="${item.title?html}"/>
                     <div class="carousel-caption">
-                        <h3>${item.title}</h3>
+                        <h3>${item.title?html}</h3>
                         <@hst.html hippohtml=item.content/>
                     </div>
                 </div>

@@ -23,9 +23,9 @@
       <c:forEach var="item" items="${pageable.items}" varStatus="counter">
         <c:set var="active" value="${counter.first ? ' active':''}"/>
         <div class="item${active}">
-          <img src="<hst:link hippobean="${item.image}" />" alt="${item.title}"/>
+          <img src="<hst:link hippobean="${item.image}" />" alt="${fn:escapeXml(item.title)}"/>
           <div class="carousel-caption">
-            <h3>${item.title}</h3>
+            <h3><c:out value="${item.title}"/></h3>
             <hst:html hippohtml="${item.content}"/>
           </div>
         </div>

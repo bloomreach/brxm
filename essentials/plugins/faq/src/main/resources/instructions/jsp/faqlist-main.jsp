@@ -3,11 +3,11 @@
 <%--@elvariable id="document" type="{{beansPackage}}.FaqListDocument"--%>
 <div class="has-edit-button">
 <hst:cmseditlink hippobean="${document}"/>
-<h1>${document.title}</h1>
+<h1><c:out value="${document.title}"/></h1>
 <div><hst:html hippohtml="${document.description}"/></div>
 <c:forEach var="faq" items="${document.faqDocuments}">
   <div>
-    <h3><a href="<hst:link hippobean="${faq}"/>">${faq.question}</a></h3>
+    <h3><a href="<hst:link hippobean="${faq}"/>"><c:out value="${faq.question}"/></a></h3>
     <hst:html hippohtml="${faq.answer}"/>
   </div>
 </c:forEach>

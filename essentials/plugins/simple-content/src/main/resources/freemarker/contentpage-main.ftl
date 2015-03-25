@@ -5,7 +5,7 @@
   <@hst.link var="link" hippobean=document/>
   <article class="has-edit-button">
     <@hst.cmseditlink hippobean=document/>
-    <h3><a href="${link}">${document.title}</a></h3>
+    <h3><a href="${link}">${document.title?html}</a></h3>
     <#if document.publicationDate??>
       <p>
         <@fmt.formatDate value=document.publicationDate.time type="both" dateStyle="medium" timeStyle="short"/>
@@ -13,7 +13,7 @@
     </#if>
     <#if document.introduction??>
       <p>
-        ${document.introduction}
+        ${document.introduction?html}
       </p>
     </#if>
     <@hst.html hippohtml=document.content/>

@@ -8,7 +8,7 @@
     <article class="has-edit-button">
         <@hst.cmseditlink hippobean=item/>
         <h3><a href="${link}">
-        ${item.title}
+        ${item.title?html}
         </a></h3>
         <#if item.publicationDate??>
             <p>
@@ -16,7 +16,7 @@
             </p>
         </#if>
         <p>
-        ${item.introduction}
+        ${item.introduction?html}
         </p>
     </article>
     </#list>

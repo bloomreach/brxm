@@ -8,13 +8,13 @@
 <#if pageable??>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title"><@fmt.message key="blog.moreby"/>&nbsp;${author.fullName}</h3>
+        <h3 class="panel-title"><@fmt.message key="blog.moreby"/>&nbsp;${author.fullName?html}</h3>
     </div>
     <#if pagebale?? && pageable.total > 0>
         <div class="panel-body">
             <#list pageable.items as item>
                 <@hst.link hippobean=item var="link"/>
-                <p><a href="${link}">${item.title}</a></p>
+                <p><a href="${link}">${item.title?html}</a></p>
             </#list>
         </div>
     <#else>

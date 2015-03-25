@@ -20,20 +20,20 @@
   <ul class="nav nav-list">
     <c:forEach var="facetvalue" items="${facets.folders}">
       <c:if test="${not empty facetvalue.folders}">
-        <li><label class="nav-header">${facetvalue.name}</label>
+        <li><label class="nav-header"><c:out value="${facetvalue.name}"/></label>
           <ul class="nav nav-list">
             <c:forEach items="${facetvalue.folders}" var="item" varStatus="index">
               <c:choose>
                 <c:when test="${item.leaf and item.count gt 0}">
                   <hst:facetnavigationlink remove="${item}" current="${facets}" var="removeLink"/>
                   <li class="active">
-                    <a href="${removeLink}">${item.name}&nbsp;<span class="alert-danger"><fmt:message key='facets.remove'/></span></a>
+                    <a href="${removeLink}"><c:out value="${item.name}"/>&nbsp;<span class="alert-danger"><fmt:message key='facets.remove'/></span></a>
                   </li>
                 </c:when>
                 <c:otherwise>
                   <hst:link var="link" hippobean="${item}" navigationStateful="true"/>
                   <li <c:if test="${index.count > facetLimit}">class="extra"</c:if>>
-                    <a href="${link}">${item.name}&nbsp;<span>(${item.count})</span></a>
+                    <a href="${link}"><c:out value="${item.name}"/>&nbsp;<span>(${item.count})</span></a>
                   </li>
                 </c:otherwise>
               </c:choose>
