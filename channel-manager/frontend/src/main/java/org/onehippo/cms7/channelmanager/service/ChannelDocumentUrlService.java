@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.DocumentService;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.slf4j.Logger;
@@ -67,7 +66,6 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
         }
 
         log.debug("Using type '{}'", type);
-
 
         final String serviceId = config.getString("service.id", IDocumentUrlService.DEFAULT_SERVICE_ID);
         context.registerService(this, serviceId);
