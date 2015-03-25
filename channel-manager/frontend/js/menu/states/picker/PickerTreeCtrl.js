@@ -34,7 +34,7 @@
                         if(!item.leaf && item.items.length < 1) {
                             PickerService.getData(item);
                         }
-                        $scope.PickerCtrl.selectedDocument = null;
+                        $scope.PickerCtrl.selectedDocument = item;
                         $state.go('picker.docs', {
                             pickerTreeItemId: item.id
                         });
