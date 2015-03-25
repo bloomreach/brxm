@@ -1954,12 +1954,12 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.ja
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.html svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin_de.properties -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.html -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.java -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.properties -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_de.properties -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_fr.properties -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_nl.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.html -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.java -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin_de.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin_fr.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin_nl.properties -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/icons/dialog-information-32.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginback.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginbottom.png -text svneol=unset#image/png
