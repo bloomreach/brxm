@@ -116,6 +116,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private Map<String, Object> unmodifiableAttributes;
 
     private boolean disposed;
+    private boolean matchingFinished;
 
 
     public HstRequestContextImpl(Repository repository) {
@@ -316,6 +317,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public HstSiteMenus getHstSiteMenus() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getHstSiteMenus");
         if (resolvedSiteMapItem == null) {
             throw new IllegalStateException("HstRequestContext#getHstSiteMenus() is not allowed to be invoked without " +
                     "there being a ResolvedSiteMapItem matched and set on this HstRequestContext.");
@@ -433,6 +435,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public VirtualHost getVirtualHost() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getVirtualHost");
         return resolvedMount.getMount().getVirtualHost();
     }
 
@@ -492,6 +495,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public String getPathSuffix() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getPathSuffix");
         return pathSuffix;
     }
 
@@ -513,6 +517,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public Mount getMount(String alias) {
         checkStateValidity();
+        checkMatchingPhaseFinished("getMount");
         if (alias == null) {
             throw new IllegalArgumentException("Alias is not allowed to be null");
         }
@@ -533,6 +538,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public Mount getMount(String alias, String type) {
         checkStateValidity();
+        checkMatchingPhaseFinished("getMount");
         if (alias == null || type == null) {
             throw new IllegalArgumentException("Alias and type are not allowed to be null");
         }
@@ -634,6 +640,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public boolean isFullyQualifiedURLs() {
         checkStateValidity();
+        checkMatchingPhaseFinished("isFullyQualifiedURLs");
         return fullyQualifiedURLs;
     }
 
@@ -646,6 +653,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public String getRenderHost() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getRenderHost");
         return renderHost;
     }
 
@@ -662,7 +670,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void addComponentWindowFilter(HstComponentWindowFilter filter) {
         checkStateValidity();
         if (filters == null) {
-            filters = new ArrayList<HstComponentWindowFilter>();
+            filters = new ArrayList<>();
         }
         filters.add(filter);
     }
@@ -700,6 +708,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public HippoBean getContentBean() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getContentBean");
         if (getResolvedSiteMapItem() != null) {
             return getBeanForResolvedSiteMapItem(getResolvedSiteMapItem());
         }
@@ -717,6 +726,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public <T extends HippoBean> T getContentBean(final Class<T> beanMappingClass) {
         checkStateValidity();
+        checkMatchingPhaseFinished("getContentBean");
         HippoBean bean = getContentBean();
         if (bean == null) {
             return null;
@@ -731,12 +741,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public String getSiteContentBasePath() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getSiteContentBasePath");
         return PathUtils.normalizePath(getResolvedMount().getMount().getContentPath());
     }
 
     @Override
     public HippoBean getSiteContentBaseBean() {
         checkStateValidity();
+        checkMatchingPhaseFinished("getSiteContentBaseBean");
         String base = getSiteContentBasePath();
         try {
             return (HippoBean) getObjectBeanManager().getObject("/" + base);
@@ -867,6 +879,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         disposed = true;
     }
 
+    @Override
+    public void matchingFinished() {
+        matchingFinished = true;
+    }
+
     private ObjectBeanManager createObjectBeanManager(Session session) {
         return new ObjectBeanManagerImpl(session, getObjectConverter());
     }
@@ -888,6 +905,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             throw new IllegalStateException("Invocation on an invalid HstRequestContext instance. \n" +
                     "An HstRequestContext instance MUST not be used after a request processing cycle.\n" +
                     "Check if your component implementation is thread-safe!!!");
+        }
+    }
+
+    private void checkMatchingPhaseFinished(final String methodName) {
+        if (!matchingFinished) {
+            throw new IllegalStateException(String.format("Invocation of method '%s' is only allowed after " +
+                    "all matching to host, mount and optionally sitemap has finished, but matching " +
+                    "is not yes finished. Problematic request is '%s'", methodName, getServletRequest()));
         }
     }
 }

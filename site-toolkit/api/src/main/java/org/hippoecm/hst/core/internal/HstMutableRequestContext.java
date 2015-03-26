@@ -144,5 +144,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
      */
     public void dispose();
 
+    /**
+     * Marks the {@link HstRequestContext} that its matching phase has been finished
+     */
+    public void matchingFinished();
+
     void setHstSiteMenusManager(HstSiteMenusManager siteMenusManager);
 }

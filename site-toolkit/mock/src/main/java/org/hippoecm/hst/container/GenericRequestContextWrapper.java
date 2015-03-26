@@ -419,4 +419,9 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     public void dispose() {
         context.dispose();
     }
+
+    @Override
+    public void matchingFinished() {
+        context.matchingFinished();
+    }
 }

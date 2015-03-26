@@ -309,6 +309,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
                     log.debug("{} matched to sitemapitem  '{}'", containerRequest, resolvedSiteMapItem.getHstSiteMapItem());
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+                    requestContext.matchingFinished();
                 }
 
                 if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
@@ -357,6 +358,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     return;
                 }
                 else {
+                    requestContext.matchingFinished();
                     if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
                         final Mount mount = resolvedMount.getMount();
                         final String urlWithExplicitSchemeForRequest;

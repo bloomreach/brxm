@@ -177,6 +177,7 @@ public abstract class AbstractSpringTestCase
         ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
         requestContext.setBaseURL(hstContainerURL);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        requestContext.matchingFinished();
         return requestContext;
     }
 }

@@ -621,6 +621,10 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         disposed = true;
     }
 
+    @Override
+    public void matchingFinished() {
+    }
+
     private void checkStateValidity() {
         if (disposed) {
             throw new IllegalStateException("Invocation on an invalid HstRequestContext instance. \n" +

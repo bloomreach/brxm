@@ -178,7 +178,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         HstMutableRequestContext requestContext = createRequestContext(pathInfo);
         requestContext.setServletRequest(request);
         requestContext.setServletResponse(response);
-
+        requestContext.matchingFinished();
         ModifiableRequestContextProvider.set(requestContext);
 
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
