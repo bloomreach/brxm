@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,7 @@ public abstract class NodePickerController implements IDetachable {
             } catch (RepositoryException e) {
                 log.error("Could not create base model from UUID[" + baseUUID + "]", e);
             }
-        }   
+        }
     }
 
     public Component create(final String id) {
@@ -91,7 +91,7 @@ public abstract class NodePickerController implements IDetachable {
         control.start();
 
         IClusterConfig clusterConfig = control.getClusterConfig();
-        
+
         final String selectionModelServiceId = clusterConfig.getString(settings.getSelectionServiceKey());
         selectionModelReference = context.getService(selectionModelServiceId, IModelReference.class);
         context.registerService(selectionModelObserver = new IObserver() {
@@ -129,7 +129,7 @@ public abstract class NodePickerController implements IDetachable {
         return renderer.getComponent();
     }
 
-    private void setSelectedFolder(final IModel<Node> model){
+    public void setSelectedFolder(final IModel<Node> model){
         selectionModelReference.setModel(model);
         setSelectedModel(model);
         onFolderSelected(model);
@@ -168,7 +168,7 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     /**
-     * A hook that allows subclasses to specify a default location. 
+     * A hook that allows subclasses to specify a default location.
      *
      * @return An model used as default initial selection
      */
@@ -340,7 +340,7 @@ public abstract class NodePickerController implements IDetachable {
      * Save the last visited location in the preferences store. By default, only nodes of type hippostd:folder are
      * allowed, other nodetypes can be specified by configuring a multi-value String property named "last.visited.nodetypes".
      *
-     * By default, all nodes except hippo document are allowed 
+     * By default, all nodes except hippo document are allowed
      */
     private void saveLastModelVisited() {
         if (lastModelVisited != null && lastModelVisited.getObject() != null) {
@@ -391,6 +391,14 @@ public abstract class NodePickerController implements IDetachable {
     public IModel<Node> getFolderModel() {
         if (folderModelReference != null) {
             return folderModelReference.getModel();
+        }
+        return null;
+    }
+
+    public String[] getRootPaths() {
+        if (control != null) {
+            IClusterConfig clusterConfig = control.getClusterConfig();
+            return clusterConfig.getStringArray("root.paths");
         }
         return null;
     }
