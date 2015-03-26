@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,22 +20,22 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.breadcrumb.BreadCrumb;
+import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadCrumbWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkPickerDialog extends AbstractDialog<String> {
-
-    private static final long serialVersionUID = 1L;
+public class LinkPickerDialog extends Dialog<String> {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
 
@@ -43,6 +43,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
     private final IPluginConfig config;
 
     private final NodePickerController controller;
+    private final NodeBreadCrumbWidget breadcrumbs;
 
     public LinkPickerDialog(IPluginContext context, IPluginConfig config, IModel<String> model) {
         super(model);
@@ -52,7 +53,11 @@ public class LinkPickerDialog extends AbstractDialog<String> {
 
         setOutputMarkupId(true);
 
-        controller = new NodePickerController(context, NodePickerControllerSettings.fromPluginConfig(config)) {
+        setTitleKey("link-picker");
+        setCssClass("hippo-dialog-picker");
+
+        final NodePickerControllerSettings settings = NodePickerControllerSettings.fromPluginConfig(config);
+        controller = new NodePickerController(context, settings) {
 
             @Override
             protected IModel<Node> getInitialModel() {
@@ -82,10 +87,14 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         };
 
         add(controller.create("content"));
-    }
 
-    public IModel<String> getTitle() {
-        return new StringResourceModel("link-picker", this, null);
+        addOrReplace(breadcrumbs = new NodeBreadCrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
+            @Override
+            protected void onClickBreadCrumb(final BreadCrumb<Node> crumb, final AjaxRequestTarget target) {
+                controller.setSelectedFolder(crumb.getModel());
+            }
+        });
+        breadcrumbs.update(controller.getFolderModel());
     }
 
     @Override
@@ -102,14 +111,11 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         super.render(target);
     }
 
-    protected IModel<Node> getFolderModel() {
-        return controller.getFolderModel();
-    }
-
     @Override
     public void onOk() {
-        if (controller.getSelectedModel() != null) {
-            saveNode(controller.getSelectedModel().getObject());
+        final IModel<Node> selectedModel = controller.getSelectedModel();
+        if (selectedModel != null) {
+            saveNode(selectedModel.getObject());
         } else {
             error("No node selected");
         }
@@ -130,7 +136,14 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         }
     }
 
-    protected void onFolderSelected(final IModel<Node> model){
+    protected IModel<Node> getFolderModel() {
+        return controller.getFolderModel();
+    }
+
+    protected void onFolderSelected(final IModel<Node> model) {
+        if (breadcrumbs != null) {
+            breadcrumbs.update(model);
+        }
     }
 
     protected IPluginContext getPluginContext() {
