@@ -4,7 +4,7 @@
 <%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%>
 <c:if test="${not empty document}">
   <h3><c:out value="${document.title}"/></h3>
-  <iframe width="${cparam.width}" height="${cparam.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
+  <iframe width="${cparam.width}" height="${cparam.height}" src="${fn:escapeXml(document.link)}" frameborder="0" allowfullscreen></iframe>
   <p><c:out value="${document.description}"/></p>
 </c:if>
 <c:if test="${editMode && empty document}">

@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 
-<%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
+<%--@elvariable id="item" type="{{beansPackage}}.NewsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 
 <c:forEach var="item" items="${pageable.items}" varStatus="status">

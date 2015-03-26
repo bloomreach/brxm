@@ -21,9 +21,6 @@
     <#if document.location??>
         <p>${document.location?html}</p>
     </#if>
-    <#if document.location??>
-        <p>${document.location?html}</p>
-    </#if>
     <#if document.introduction??>
         <p>${document.introduction?html}</p>
     </#if>

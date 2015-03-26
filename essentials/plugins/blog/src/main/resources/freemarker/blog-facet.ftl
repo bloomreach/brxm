@@ -35,7 +35,7 @@
               <#else>
                 <@hst.link var="link" hippobean=item navigationStateful=true/>
                 <li <#if (item_index >= facetLimit)>class="extra"</#if>>
-                  <a href="${link}">${item.name?html}&nbsp;<span>(${item.count?html})</span></a>
+                  <a href="${link}">${item.name?html}&nbsp;<span>(${item.count})</span></a>
                 </li>
               </#if>
             </#list>
