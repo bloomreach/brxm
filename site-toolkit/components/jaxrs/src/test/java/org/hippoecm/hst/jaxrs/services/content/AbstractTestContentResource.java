@@ -208,6 +208,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
             HstMutableRequestContext requestContext = createRequestContext(pathInfo);
             requestContext.setServletRequest(request);
             requestContext.setServletResponse(response);
+            requestContext.matchingFinished();
             Repository repository = componentManager.getComponent(Repository.class.getName() + ".delegating");
             admin = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
 

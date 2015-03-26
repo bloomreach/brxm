@@ -141,6 +141,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, pathInfo);
         requestContext.setBaseURL(containerUrl);
         requestContext.setResolvedMount(getResolvedMount(containerUrl, requestContext));
+        requestContext.matchingFinished();
         HstURLFactory hstURLFactory = getComponentManager().getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);
