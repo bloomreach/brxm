@@ -14,53 +14,38 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:head>
+  <wicket:head>
     <script type="text/javascript" language="JavaScript">
-        Wicket.Window.unloadConfirmation = false;
+      Wicket.Window.unloadConfirmation = false;
     </script>
-</wicket:head>
-<wicket:panel>
-    <div class="hippo-dialog-picker">
+  </wicket:head>
+  <wicket:extend>
+      <wicket:container wicket:id="fragment"/>
 
+      <wicket:fragment wicket:id="upload-fragment">
+          <form wicket:id="uploadForm">
+              <div class="upload-wrapper">
 
-        <form wicket:id="form">
-            <div wicket:id="feedback" class="hippo-modal-feedback"/>
+                  <wicket:enclosure child="uploadField">
+                      <label for="upload">
+                          <wicket:message key="select-file-label"/>
+                      </label>
+                      <input wicket:id="uploadField" size="60" id="upload" type="file" class="browse-button"/>
+                  </wicket:enclosure>
 
-            <wicket:container wicket:id="fragment"/>
+                  <wicket:enclosure child="type">
+                      <label for="typeselect">
+                          <wicket:message key="file-type-label"/>
+                      </label>
+                      <select wicket:id="type" id="typeselect"/>
+                  </wicket:enclosure>
 
-            <wicket:fragment wicket:id="upload-fragment">
-                <form wicket:id="uploadForm">
-                    <div class="upload-wrapper">
+                  <input wicket:id="uploadButton" type="submit" value="Upload" class="upload-button"/>
+              </div>
+          </form>
+      </wicket:fragment>
 
-                        <wicket:enclosure child="uploadField">
-                          <label for="upload">
-                            <wicket:message key="select-file-label"/>
-                          </label>
-                          <input wicket:id="uploadField" size="60" id="upload" type="file" class="browse-button"/>
-                        </wicket:enclosure>
-
-                        <wicket:enclosure child="type">
-                          <label for="typeselect">
-                            <wicket:message key="file-type-label"/>
-                          </label>
-                          <select wicket:id="type" id="typeselect"/>
-                        </wicket:enclosure>
-
-                        <input wicket:id="uploadButton" type="submit" value="Upload" class="upload-button"/>
-                    </div>
-                </form>
-            </wicket:fragment>
-
-            <wicket:fragment wicket:id="empty-fragment"></wicket:fragment>
-
-            <div wicket:id="content">[ plugins here ]</div>
-            <div class="hippo-window-buttons">
-                <wicket:container wicket:id="buttons">
-                    <input type="submit" wicket:id="button"/>
-                </wicket:container>
-            </div>
-        </form>
-    </div>
-</wicket:panel>
+      <wicket:fragment wicket:id="empty-fragment"></wicket:fragment>
+  </wicket:extend>
 </html>
 
