@@ -28,6 +28,12 @@
       <sv:value>wicket.model</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
+    <sv:property sv:multiple="true" sv:name="frontend:properties" sv:type="String">
+      <sv:value>root.paths</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="root.paths" sv:type="String">
+      <sv:value>/content/gallery</sv:value>
+    </sv:property>
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -76,23 +82,6 @@
           <sv:value>8</sv:value>
         </sv:property>
       </sv:node>
-    </sv:node>
-    <sv:node sv:name="dialogBreadcrumbPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.paths" sv:type="String">
-        <sv:value>/content/gallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="imagesTreeLoader">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -137,9 +126,15 @@
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>nodetypes</sv:value>
       <sv:value>root.path</sv:value>
+      <sv:value>root.paths</sv:value>
     </sv:property>
     <sv:property sv:name="root.path" sv:type="String">
       <sv:value>/content/documents</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="root.paths" sv:type="String">
+      <sv:value>/content/documents</sv:value>
+      <sv:value>/content/gallery</sv:value>
+      <sv:value>/content/assets</sv:value>
     </sv:property>
     <sv:property sv:name="nodetypes" sv:type="String" sv:multiple="true">
     </sv:property>
@@ -163,12 +158,6 @@
       </sv:property>
       <sv:property sv:name="section.files" sv:type="String">
         <sv:value>service.dialog.tree.files</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.breadcrumb" sv:type="String">
-        <sv:value>service.dialog.breadcrumb</sv:value>
       </sv:property>
       <sv:property sv:name="extension.list" sv:type="String">
         <sv:value>service.dialog.list</sv:value>
@@ -199,25 +188,6 @@
           <sv:value>8</sv:value>
         </sv:property>
       </sv:node>
-    </sv:node>
-    <sv:node sv:name="breadcrumbs">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.paths" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-        <sv:value>/content/gallery</sv:value>
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="documentsTreeLoader">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -313,6 +283,14 @@
       <sv:value>wicket.model</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
+    <sv:property sv:multiple="true" sv:name="frontend:properties" sv:type="String">
+      <sv:value>root.paths</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="root.paths" sv:type="String">
+      <sv:value>/content/documents</sv:value>
+      <sv:value>/content/gallery</sv:value>
+      <sv:value>/content/assets</sv:value>
+    </sv:property>
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -369,25 +347,6 @@
           <sv:value>8</sv:value>
         </sv:property>
       </sv:node>
-    </sv:node>
-    <sv:node sv:name="breadcrumbs">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.paths" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-        <sv:value>/content/gallery</sv:value>
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="documentsTreeLoader">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
