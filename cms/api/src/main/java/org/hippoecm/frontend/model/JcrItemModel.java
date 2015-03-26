@@ -33,7 +33,6 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
-import org.hippoecm.frontend.session.InvalidSessionException;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,15 +68,14 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     public JcrItemModel(T item) {
         super(item);
+        setUserId();
         relPath = null;
         uuid = null;
         if (item != null) {
             TraceMonitor.track(item);
             property = !item.isNode();
             doSave();
-            setObject(item);
         }
-        setUserId();
     }
 
     @Deprecated
@@ -431,29 +429,16 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     }
 
     private boolean isValidSession() {
-        return getJcrSession().getUserID().equals(userId);
+        final Session session = UserSession.get().getJcrSession();
+        return session.getUserID().equals(userId);
     }
 
     private void setUserId() {
-        userId = getJcrSession().getUserID();
+        userId = UserSession.get().getJcrSession().getUserID();
     }
 
     private void checkLiveJcrSession() {
-        if (!getJcrSession().isLive()) {
-            throw new InvalidSessionException("Invalid (non-live) session found.");
-        }
-    }
-
-    private Session getJcrSession() {
-        if (isAttached()) {
-            try {
-                final T item = getObject();
-                if (item != null) {
-                    return item.getSession();
-                }
-            } catch (RepositoryException ignored) {
-            }
-        }
-        return UserSession.get().getJcrSession();
+        // method below will throw runtime exception in case of non live session
+        UserSession.get().getJcrSession();
     }
 }
