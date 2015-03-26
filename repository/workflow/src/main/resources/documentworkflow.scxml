@@ -263,7 +263,8 @@
           <if cond="!targetDate">
             <!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event -->
             <send event="workflowType"/>
-            <hippo:logEvent actionexpr="workflowType" />
+            <!-- log the workflowType after it has been processed -->
+            <send event="'logEvent.'+workflowType"/>
           <else/>
             <!-- the request did have a targetDate: trigger a 'scheduled' workflow action event -->
             <send event="workflowType" namelist="targetDate"/>
@@ -559,6 +560,17 @@
         </transition>
 
       </state>
+
+    </state>
+
+    <!-- the simple and non-transitional logEvent state is used to log actions:
+         such actions needs to be 'send' using an event name prefixed by 'logEvent.'
+         the remainder of the event name will be logged as event action
+    -->
+    <state id="logEvent">
+      <transition event="logEvent.*">
+        <hippo:logEvent actionexpr="_event.name.substring('logEvent.'.length())" />
+      </transition>
 
     </state>
 
