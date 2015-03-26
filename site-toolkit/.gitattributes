@@ -652,7 +652,6 @@ components/core/src/main/java/org/hippoecm/hst/core/container/PersistableSession
 components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SSIAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/WebFileValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text

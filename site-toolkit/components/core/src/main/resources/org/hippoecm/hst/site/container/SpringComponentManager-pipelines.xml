@@ -119,10 +119,6 @@
     <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}" />
   </bean>
 
-  <bean id="siteMenusResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteMenusResolvingValve">
-    <property name="valveName" value="siteMenusResolvingValve" />
-  </bean>
-
   <bean id="actionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ActionValve">
     <property name="valveName" value="actionValve" />
   </bean>
@@ -209,7 +205,6 @@
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
                 <ref bean="contextResolvingValve" />
                 <ref bean="localizationValve" />
-                <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
                 <ref bean="pageInfoRenderingValve" />
@@ -242,7 +237,6 @@
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve" />
-                <ref bean="siteMenusResolvingValve" />
                 <ref bean="filterChainInvokingValve" />
               </list>
             </property>

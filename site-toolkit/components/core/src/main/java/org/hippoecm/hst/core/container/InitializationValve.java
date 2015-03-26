@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,28 +35,6 @@ public class InitializationValve extends AbstractBaseOrderableValve {
     public void invoke(ValveContext context) throws ContainerException
     {
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
-
-        if (requestContext.getURLFactory() == null) {
-            requestContext.setURLFactory(getUrlFactory());
-        }
-
-        if (requestContext.getHstLinkCreator() == null) {
-            requestContext.setLinkCreator(getLinkCreator());
-        }
-
-        if (requestContext.getSiteMapMatcher() == null) {
-            requestContext.setSiteMapMatcher(getSiteMapMatcher());
-        }
-
-        if (requestContext.getHstQueryManagerFactory() == null) {
-            requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
-        }
-
-        if (requestContext.getContentBeansTool() == null) {
-            requestContext.setContentBeansTool(getContentBeansTool());
-        }
-
-        requestContext.setCachingObjectConverter(isCachingObjectConverter());
 
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {

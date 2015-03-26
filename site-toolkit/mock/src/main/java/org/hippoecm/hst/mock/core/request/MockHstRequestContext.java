@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 
 public class MockHstRequestContext implements HstMutableRequestContext {
 
@@ -93,6 +94,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private HippoBean contentBean;
     private HippoBean siteContentBean;
     private String siteContentBasePath;
+    private HstSiteMenusManager siteMenusManager;
 
     private ObjectBeanManager defaultObjectBeanManager;
     private Map<Session, ObjectBeanManager> nonDefaultObjectBeanManagers;
@@ -512,6 +514,12 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public void setCachingObjectConverter(final boolean enabled) {
         checkStateValidity();
         this.cachingObjectConverterEnabled = enabled;
+    }
+
+    @Override
+    public void setHstSiteMenusManager(final HstSiteMenusManager siteMenusManager) {
+        checkStateValidity();
+        this.siteMenusManager = siteMenusManager;
     }
 
     @Override

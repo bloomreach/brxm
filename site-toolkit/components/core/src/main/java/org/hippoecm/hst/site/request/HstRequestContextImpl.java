@@ -23,6 +23,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.LoginException;
@@ -62,6 +63,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +91,10 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstLinkCreator linkCreator;
     protected HstParameterInfoProxyFactory parameterInfoProxyFactory;
     protected HstSiteMapMatcher siteMapMatcher;
-    protected HstSiteMenus siteMenus;
+    protected Optional<HstSiteMenus> siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected ContentBeansTool contentBeansTool;
+    protected HstSiteMenusManager siteMenusManager;
     protected boolean cachingObjectConverterEnabled;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
@@ -114,6 +117,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private boolean disposed;
 
+
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
     }
@@ -123,42 +127,51 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
 
+    @Override
     public boolean isPreview() {
         checkStateValidity();
         return this.resolvedMount.getMount().isPreview();
     }
 
+    @Override
     public ServletContext getServletContext() {
         checkStateValidity();
         return servletContext;
     }
 
+    @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
+    @Override
     public HttpServletRequest getServletRequest() {
         checkStateValidity();
         return servletRequest;
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest servletRequest) {
         this.servletRequest = servletRequest;
     }
 
+    @Override
     public HttpServletResponse getServletResponse() {
         checkStateValidity();
         return servletResponse;
     }
 
+    @Override
     public void setServletResponse(HttpServletResponse servletResponse) {
         this.servletResponse = servletResponse;
     }
 
+    @Override
     public Session getSession() throws RepositoryException {
         return getSession(true);
     }
 
+    @Override
     public Session getSession(boolean create) throws RepositoryException {
         checkStateValidity();
 
@@ -188,71 +201,85 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return this.session;
     }
 
+    @Override
     public void setSession(Session session) {
         checkStateValidity();
         this.session = session;
     }
 
+    @Override
     public void setResolvedMount(ResolvedMount resolvedMount) {
         checkStateValidity();
         this.resolvedMount = resolvedMount;
     }
 
+    @Override
     public ResolvedMount getResolvedMount() {
         checkStateValidity();
         return this.resolvedMount;
     }
 
+    @Override
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         checkStateValidity();
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
 
+    @Override
     public ResolvedSiteMapItem getResolvedSiteMapItem() {
         checkStateValidity();
         return this.resolvedSiteMapItem;
     }
 
+    @Override
     public void setBaseURL(HstContainerURL baseURL) {
         checkStateValidity();
         this.baseURL = baseURL;
     }
 
+    @Override
     public HstContainerURL getBaseURL() {
         checkStateValidity();
         return this.baseURL;
     }
 
+    @Override
     public void setURLFactory(HstURLFactory urlFactory) {
         checkStateValidity();
         this.urlFactory = urlFactory;
     }
 
+    @Override
     public HstURLFactory getURLFactory() {
         checkStateValidity();
         return this.urlFactory;
     }
 
+    @Override
     public HstContainerURLProvider getContainerURLProvider() {
         checkStateValidity();
         return urlFactory != null ? urlFactory.getContainerURLProvider() : null;
     }
 
+    @Override
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
         checkStateValidity();
         this.siteMapMatcher = siteMapMatcher;
     }
 
+    @Override
     public HstSiteMapMatcher getSiteMapMatcher() {
         checkStateValidity();
         return this.siteMapMatcher;
     }
 
+    @Override
     public void setLinkCreator(HstLinkCreator linkCreator) {
         checkStateValidity();
         this.linkCreator = linkCreator;
     }
 
+    @Override
     public HstLinkCreator getHstLinkCreator() {
         checkStateValidity();
         return this.linkCreator;
@@ -273,26 +300,45 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return parameterInfoProxyFactory;
     }
 
+    @Override
+    public void setHstSiteMenusManager(final HstSiteMenusManager siteMenusManager) {
+        checkStateValidity();
+        this.siteMenusManager = siteMenusManager;
+    }
+
+    @Override
+
     public void setHstSiteMenus(HstSiteMenus siteMenus) {
         checkStateValidity();
-        this.siteMenus = siteMenus;
+        this.siteMenus = Optional.ofNullable(siteMenus);
     }
 
+    @Override
     public HstSiteMenus getHstSiteMenus() {
         checkStateValidity();
-        return this.siteMenus;
+        if (resolvedSiteMapItem == null) {
+            throw new IllegalStateException("HstRequestContext#getHstSiteMenus() is not allowed to be invoked without " +
+                    "there being a ResolvedSiteMapItem matched and set on this HstRequestContext.");
+        }
+        if (siteMenus == null) {
+            siteMenus = Optional.ofNullable(siteMenusManager.getSiteMenus(this));
+        }
+        return siteMenus.orElse(null);
     }
 
+    @Override
     public HstQueryManagerFactory getHstQueryManagerFactory() {
         checkStateValidity();
         return hstQueryManagerFactory;
     }
 
+    @Override
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
         checkStateValidity();
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
 
+    @Override
     public Object getAttribute(String name) {
         checkStateValidity();
 
@@ -309,6 +355,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return value;
     }
 
+    @Override
     public Enumeration<String> getAttributeNames() {
         checkStateValidity();
 
@@ -320,6 +367,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
     }
 
+    @Override
     public void removeAttribute(String name) {
         checkStateValidity();
 
@@ -332,6 +380,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
     }
 
+    @Override
     public void setAttribute(String name, Object object) {
         checkStateValidity();
 
@@ -354,6 +403,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.attributes.put(name, object);
     }
 
+    @Override
     public Map<String, Object> getAttributes() {
         checkStateValidity();
 
@@ -368,51 +418,61 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return unmodifiableAttributes;
     }
 
+    @Override
     public ContainerConfiguration getContainerConfiguration() {
         checkStateValidity();
         return this.containerConfiguration;
     }
 
+    @Override
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
         checkStateValidity();
         this.containerConfiguration = containerConfiguration;
     }
 
+    @Override
     public VirtualHost getVirtualHost() {
         checkStateValidity();
         return resolvedMount.getMount().getVirtualHost();
     }
 
+    @Override
     public ContextCredentialsProvider getContextCredentialsProvider() {
         checkStateValidity();
         return contextCredentialsProvider;
     }
 
+    @Override
     public void setSubject(Subject subject) {
         checkStateValidity();
         this.subject = subject;
     }
 
+    @Override
     public Subject getSubject() {
         checkStateValidity();
         return subject;
     }
 
+    @Override
     public void setPreferredLocale(Locale preferredLocale) {
         checkStateValidity();
         this.preferredLocale = preferredLocale;
     }
 
+    @Override
     public Locale getPreferredLocale() {
         checkStateValidity();
         return preferredLocale;
     }
 
+    @Override
     public void setLocales(List<Locale> locales) {
         checkStateValidity();
         this.locales = locales;
     }
 
+    @Override
     public Enumeration<Locale> getLocales() {
         checkStateValidity();
 
@@ -423,11 +483,13 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return null;
     }
 
+    @Override
     public void setPathSuffix(String pathSuffix) {
         checkStateValidity();
         this.pathSuffix = pathSuffix;
     }
 
+    @Override
     public String getPathSuffix() {
         checkStateValidity();
         return pathSuffix;
@@ -448,6 +510,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return Collections.unmodifiableSet(componentFilterTags);
     }
 
+    @Override
     public Mount getMount(String alias) {
         checkStateValidity();
         if (alias == null) {
@@ -467,6 +530,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return lookupMount(alias.toLowerCase());
     }
 
+    @Override
     public Mount getMount(String alias, String type) {
         checkStateValidity();
         if (alias == null || type == null) {

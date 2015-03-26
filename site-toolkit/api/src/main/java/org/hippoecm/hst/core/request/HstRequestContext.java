@@ -157,8 +157,9 @@ public interface HstRequestContext {
     HstLinkCreator getHstLinkCreator();
     
     /**
-     * 
      * @return the HstSiteMenus
+     * @throws java.lang.IllegalStateException when this method is invoked while there is no {@link ResolvedSiteMapItem} available
+     * on this {@link HstRequestContext} via {@link #getResolvedSiteMapItem()}
      */
     HstSiteMenus getHstSiteMenus();
         

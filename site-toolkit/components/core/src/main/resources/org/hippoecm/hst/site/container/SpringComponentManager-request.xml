@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -30,6 +30,15 @@
     <constructor-arg ref="javax.jcr.Repository" />
     <constructor-arg ref="org.hippoecm.hst.core.request.ContextCredentialsProvider" />
     <constructor-arg ref="containerConfiguration" />
+
+    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
+    <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
+    <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
+    <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
+    <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
+    <property name="contentBeansTool" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
+    <property name="cachingObjectConverter" value="${object.converter.caching}" />
+
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
