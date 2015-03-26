@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,13 +48,22 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthStringFormatter;
+import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadCrumbWidget;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated This plugin is deprecated since 10.0.x and replaced by the {@link NodeBreadCrumbWidget}. This widget is
+ * included by default in the {@link LinkPickerDialog } and {@link AbstractBrowserDialog} which means that the
+ * complete breadcrumb plugin configuration can be removed. The <em>root.paths</em> property should be moved to
+ * cluster node of the picker, e.g. cms-pickers/documents, and a value <em>root.paths</em> should be added to the
+ * <em>frontend:properties</em> property if this cluster node.
+ */
+
+@Deprecated
 public class BreadcrumbPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
-
 
     static final Logger log = LoggerFactory.getLogger(BreadcrumbPlugin.class);
 
