@@ -571,7 +571,6 @@
       <transition event="logEvent.*">
         <hippo:logEvent actionexpr="_event.name.substring('logEvent.'.length())" />
       </transition>
-
     </state>
 
   </parallel>
