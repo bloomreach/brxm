@@ -60,6 +60,7 @@ import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandle
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
@@ -159,6 +160,13 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         protected ExceptionFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
             super(id, filter);
             setOutputMarkupId(true);
+
+            add(CssClass.append(new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return hasFeedbackMessage() ? "feedback-enabled" : "feedback-disabled";
+                }
+            }));
         }
 
         protected class ExceptionLabel extends Panel {
@@ -178,11 +186,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 link.add(label);
                 add(link);
             }
-        }
-
-        @Override
-        public boolean isVisible() {
-            return super.isVisible() && hasFeedbackMessage();
         }
 
         @Override
@@ -329,13 +332,18 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             addButton(goFullscreen);
         }
 
-        add(indicator = new AjaxIndicatorAppender() {
-            @Override
-            protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
-            }
-        });
+        if (addAjaxIndicator()) {
+            add(indicator = new AjaxIndicatorAppender() {
+                @Override
+                protected CharSequence getIndicatorUrl() {
+                    return RequestCycle.get().urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
+                }
+            });
+        }
+    }
 
+    protected boolean addAjaxIndicator() {
+        return true;
     }
 
     /**
@@ -413,7 +421,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      * @return the markup id of the ajax indicator
      */
     public String getAjaxIndicatorMarkupId() {
-        return indicator.getMarkupId();
+        if (indicator != null) {
+            return indicator.getMarkupId();
+        }
+        return null;
     }
 
     protected final void closeDialog() {
